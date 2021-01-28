@@ -69,6 +69,7 @@ const prosecutorUpdateRule = {
     'lawsBroken',
     'custodyProvisions',
     'requestedCustodyRestrictions',
+    'requestedOtherRestrictions',
     'caseFacts',
     'legalArguments',
     'comments',

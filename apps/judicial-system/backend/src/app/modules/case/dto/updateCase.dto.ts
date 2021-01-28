@@ -100,6 +100,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly requestedOtherRestrictions?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly caseFacts?: string
 
   @IsOptional()

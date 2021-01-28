@@ -103,6 +103,7 @@ export interface Case {
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  requestedOtherRestrictions?: string
   caseFacts?: string
   witnessAccounts?: string
   investigationProgress?: string

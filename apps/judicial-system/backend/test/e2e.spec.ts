@@ -84,6 +84,7 @@ function remainingProsecutorCaseData() {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ],
+    requestedOtherRestrictions: 'Requested Other Restrictions',
     caseFacts: 'Case Facts',
     legalArguments: 'Legal Arguments',
     comments: 'Comments',
@@ -201,6 +202,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.requestedCustodyRestrictions || null).toStrictEqual(
     caseTwo.requestedCustodyRestrictions || null,
+  )
+  expect(caseOne.requestedOtherRestrictions || null).toBe(
+    caseTwo.requestedOtherRestrictions || null,
   )
   expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)

@@ -181,6 +181,13 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
+  requestedOtherRestrictions: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
   caseFacts: string
 
   @Column({

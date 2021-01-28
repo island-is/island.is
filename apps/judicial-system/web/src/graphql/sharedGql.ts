@@ -24,6 +24,7 @@ export const CaseQuery = gql`
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
+      requestedOtherRestrictions
       caseFacts
       witnessAccounts
       investigationProgress

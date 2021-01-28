@@ -83,6 +83,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly requestedOtherRestrictions?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly caseFacts?: string
 
   @Allow()

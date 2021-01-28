@@ -80,6 +80,9 @@ export class Case implements TCase {
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
   @Field({ nullable: true })
+  readonly requestedOtherRestrictions?: string
+
+  @Field({ nullable: true })
   readonly caseFacts?: string
 
   @Field({ nullable: true })

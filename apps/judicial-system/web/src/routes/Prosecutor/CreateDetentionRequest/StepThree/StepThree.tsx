@@ -506,14 +506,14 @@ export const StepThree: React.FC = () => {
                   />
                 </Box>
                 <Input
-                  name="otherRestrictions"
-                  data-testid="otherRestrictions"
+                  name="requestedOtherRestrictions"
+                  data-testid="requestedOtherRestrictions"
                   label="Nánari útlistun eða aðrar takmarkanir"
-                  defaultValue={workingCase.otherRestrictions} // REQUESTED !!!!
+                  defaultValue={workingCase.requestedOtherRestrictions}
                   placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
                   onChange={(event) =>
                     removeTabsValidateAndSet(
-                      'otherRestrictions', // REQUESTED !!!!
+                      'requestedOtherRestrictions',
                       event,
                       [],
                       workingCase,
@@ -522,7 +522,7 @@ export const StepThree: React.FC = () => {
                   }
                   onBlur={(event) =>
                     validateAndSendToServer(
-                      'otherRestrictions', // REQUESTED !!!!
+                      'requestedOtherRestrictions',
                       event.target.value,
                       [],
                       workingCase,

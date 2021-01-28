@@ -43,6 +43,7 @@ export const CreateCaseMutation = gql`
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
+      requestedOtherRestrictions
       caseFacts
       witnessAccounts
       investigationProgress
@@ -136,6 +137,7 @@ export const ExtendCaseMutation = gql`
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
+      requestedOtherRestrictions
       caseFacts
       witnessAccounts
       investigationProgress
