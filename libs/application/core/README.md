@@ -22,7 +22,7 @@ Many applications need to store external data that cannot be manipulated, but sh
 ## Application Template
 
 The `ApplicationTemplate` interface is the heart of the whole system. Each self-service application flow depends on having a template that extends this interface.
-Each application template has a unique`type`, a `dataSchema` for quick data validation, and, most importantly,
+Each application template has a unique `type`, a `dataSchema` for quick data validation, `answerValidators` for more customizable server side validation, and, most importantly,
 a `stateMachineConfig` to describe the overall flow for the application, and how users with different roles can interact with an application in its varying states.
 
 ### Application Type
@@ -35,6 +35,12 @@ In order to have consistent form validation in the frontend and backend, each ap
 implemented using [Zod](https://github.com/vriad/zod) which is a powerful TypeScript-first schema declaration and validation library. The schema is an object, where
 the keys are the ids of all the questions that need validation for this given application template, and the value is a zod object describing what validation is needed
 for that given question and what error message to show if it fails.
+
+### Answer Validators
+
+Sometimes, we need to provide our application templates with more complicated validation than a Zod dataschema can offer. That is where answer validators come in.
+The answer validators are stored in a map, where the key is a path to the answer that needs to have this custom validation, and the value is a function which gets the
+current application and the new answer as parameters. The validators are only run on the server when the client tries to update an answer with a designated validator.
 
 ### State Machine
 
