@@ -53,8 +53,11 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
   const { control } = methods
 
   useEffect(() => {
-    if (url.includes('vimeo.com')) {
-      const match = /vimeo.*\/(\d+)/i.exec(url)
+    const item = new URL(url)
+
+    console.log(item.hostname.match(/(vimeo.com)/g))
+    if (item.hostname.match(/(vimeo.com)/g)) {
+      const match = /vimeo.*\/(\d+)/i.exec(item.href)
 
       if (match) {
         setEmbedUrl(`https://player.vimeo.com/video/${match[1]}`)
@@ -63,9 +66,10 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
       }
     }
 
-    if (url.match(/(youtube.com|youtu.be)/g)) {
+    console.log(item.hostname.match(/(youtube.com|youtu.be)/g))
+    if (item.hostname.match(/(youtube.com|youtu.be)/g)) {
       const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
-      const match = url.match(regExp)
+      const match = item.href.match(regExp)
 
       const youtubeId = match && match[7].length === 11 ? match[7] : false
 
@@ -96,7 +100,7 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
     return null
   }
 
-  let textSettings = { termsUrl }
+  const textSettings = { termsUrl }
 
   const TextsData = Texts(textSettings)
 
