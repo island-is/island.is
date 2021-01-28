@@ -5,6 +5,7 @@ import {
   Field,
   FieldBaseProps,
   getValueViaPath,
+  RecordObject,
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 
@@ -13,7 +14,7 @@ const FormField: FC<{
   autoFocus?: boolean
   field: FieldDef
   showFieldName?: boolean
-  errors: object
+  errors: RecordObject
   goToScreen: (id: string) => void
   refetch: () => void
 }> = ({
@@ -26,6 +27,7 @@ const FormField: FC<{
   refetch,
 }) => {
   const [allFields] = useFields()
+
   if (!field.isNavigable) {
     return null
   }
@@ -33,6 +35,7 @@ const FormField: FC<{
   const error = getValueViaPath(errors, field.id, undefined) as
     | string
     | undefined
+
   const fieldProps: FieldBaseProps = {
     application,
     autoFocus,
@@ -42,7 +45,9 @@ const FormField: FC<{
     showFieldName,
     refetch,
   }
+
   const Component = allFields[field.component]
+
   if (!Component) {
     return <p>We have not implemented this field yet {field.type}</p>
   }

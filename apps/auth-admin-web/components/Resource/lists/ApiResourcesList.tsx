@@ -7,6 +7,7 @@ import { ApiResource } from '../../../entities/models/api-resource.model'
 import ConfirmModal from '../../common/ConfirmModal'
 import Link from 'next/link'
 import Paginator from '../../common/Paginator'
+import { downloadCSV } from '../../../utils/csv.utils'
 
 const ApiResourcesList: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -96,6 +97,18 @@ const ApiResourcesList: React.FC = () => {
     )
   }
 
+  const exportCsv = async () => {
+    const filename = `API Resources, ${
+      new Date().toISOString().split('T')[0]
+    }.csv`
+
+    await downloadCSV(
+      filename,
+      ResourcesService.getApiResourcesCsvHeaders(),
+      ResourcesService.getApiResourcesCsv,
+    )
+  }
+
   return (
     <div>
       <div className="api-resources-list">
@@ -136,8 +149,8 @@ const ApiResourcesList: React.FC = () => {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Display Name</th>
                     <th>National Id</th>
+                    <th>Contact Email</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -149,8 +162,8 @@ const ApiResourcesList: React.FC = () => {
                         className={resource.archived ? 'archived' : ''}
                       >
                         <td>{resource.name}</td>
-                        <td>{resource.displayName}</td>
                         <td>{resource.nationalId}</td>
+                        <td>{resource.contactEmail}</td>
                         <td className="api-resources-list__table__button">
                           <button
                             type="button"
@@ -183,7 +196,17 @@ const ApiResourcesList: React.FC = () => {
                 </tbody>
               </table>
             </div>
-            <Paginator lastPage={lastPage} handlePageChange={handlePager} />
+            <div>
+              <div className="api-resources-list__container__export">
+                <div className="api-resources-list__container__export__container__button">
+                  <button type="button" onClick={() => exportCsv()}>
+                    <i className="icon__export__csv" aria-hidden="true"></i>
+                    <span>Export</span>
+                  </button>
+                </div>
+              </div>
+              <Paginator lastPage={lastPage} handlePageChange={handlePager} />
+            </div>
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   mockCaseQueries,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
+  mockUsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
@@ -29,6 +30,7 @@ describe('Create detention request, step two', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockProsecutorQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               arrestDate: '2020-11-15',
@@ -109,7 +111,7 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
         addTypename={false}
       >
         <MemoryRouter initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}>
@@ -139,7 +141,7 @@ describe('Create detention request, step two', () => {
     // Act
     render(
       <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
         addTypename={false}
       >
         <MemoryRouter

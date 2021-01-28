@@ -20,11 +20,16 @@ export const OidcSignIn: FC = () => {
         })
 
         setClientAuthToken(user.access_token)
-        history.push(typeof user.state === 'string' ? user.state : '/')
+        const isRootState =
+          user.state === '/minarsidur' || user.state === '/minarsidur/'
+
+        history.push(
+          typeof user.state === 'string' && !isRootState ? user.state : '/',
+        )
       })
       .catch(function (error) {
-        // TODO: Handle error
-        console.log('error', error)
+        console.error(error)
+        window.location.replace(window.location.origin)
       })
   }, [])
 

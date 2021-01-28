@@ -267,6 +267,7 @@ export interface ArticleProps {
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+  const { activeLocale } = useI18n()
   const portalRef = useRef()
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
@@ -444,7 +445,11 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
-          {richText((subArticle ?? article).body as SliceType[])}
+          {richText(
+            (subArticle ?? article).body as SliceType[],
+            undefined,
+            activeLocale,
+          )}
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
             {!!processEntry && <ProcessEntry {...processEntry} />}
             <Box marginTop={3}>

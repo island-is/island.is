@@ -38,7 +38,7 @@ describe('Signed Verdict Overview route', () => {
           screen.getByText('Kröfu hafnað', { selector: 'h1' }),
         ),
       ).toBeInTheDocument()
-    })
+    }, 10000)
 
     test('should have the correct subtitle if case is not accepted', async () => {
       render(

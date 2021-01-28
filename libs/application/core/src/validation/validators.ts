@@ -49,6 +49,7 @@ function partialSchemaValidation(
     const answerIsEmptyArray = Array.isArray(answer) && answer.length === 0
     const answerIsObject = typeof answer === 'object' && !answerIsArray
     const answerIsPrimitive = !answerIsArray && !answerIsObject
+
     if (answerIsPrimitive || answerIsEmptyArray) {
       try {
         trimmedSchema.parse({ [key]: answer })
@@ -57,8 +58,10 @@ function partialSchemaValidation(
       }
     } else if (answerIsArray) {
       const arrayElements = answer as Answer[]
+
       arrayElements.forEach((el, index) => {
         const elementPath = `${newPath}[${index}]`
+
         if (typeof el === 'object') {
           if (!isStrict && el !== null) {
             error = partialSchemaValidation(
