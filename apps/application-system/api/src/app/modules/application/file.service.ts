@@ -10,6 +10,7 @@ import { getJSDocReturnType } from 'typescript'
 @Injectable()
 export class FileService {
   private s3 = new AWS.S3()
+  private one_minute = 60
 
   constructor() {}
 
@@ -60,8 +61,7 @@ export class FileService {
 
     const id = uuid()
     const fileName = `${parentA.ssn}/${id}.pdf`
-    // TODO: Change local to environment
-    const bucket = 'local-legal-residence-change'
+    const bucket = `${process.env.NODE_ENV}-legal-residence-change`
 
     return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
   }
@@ -89,7 +89,7 @@ export class FileService {
     const presignedUrlParams = {
       Bucket: bucket,
       Key: fileName,
-      Expires: 60 * 20,
+      Expires: this.one_minute * 60,
     }
 
     return await new Promise((resolve, reject) => {
