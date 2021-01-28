@@ -99,11 +99,7 @@ export class ElasticService {
     const opts: any = { body: { source: { index: src }, dest: { index: dst } } }
 
     await this.client.reindex(opts)
-    //await this.putAlias(dst, src);
-    console.log(
-      'info',
-      `[REINDEX] successfully reindexed [${src}] to [${dst}]. Time is: ${new Date().toLocaleTimeString()}`,
-    )
+    logger.info(`Successfully reindexed [${src}] to [${dst}].`)
   }
 
   /**
@@ -111,10 +107,11 @@ export class ElasticService {
    * @param {string} destinationIndex - if not specified the default value is getIndexName()
    */
   async moveWorkerValuesToIndex(destinationIndex: string = this.indexName) {
-    await this.deleteIndex(destinationIndex)
     const res = await this.getMapping(this.getIndexNameWorker())
     const mappingProperties =
       res?.body[this.getIndexNameWorker()]?.mappings?.properties
+
+    await this.deleteIndex(destinationIndex)
     await this.createIndexIfNotExists(
       destinationIndex,
       //copy mapping properties from worker index
