@@ -14,10 +14,10 @@ We want to be able to roll out new features gradually, perform A/B testing and t
 
 - Ease of setup
 - Ease of maintenance
+- Cost
 - Developer experience
 - Usability/UX
 - Operational concerns
-- Cost
 - Handling of PII
 
 ## Considered Options
@@ -31,11 +31,12 @@ We want to be able to roll out new features gradually, perform A/B testing and t
 
 ## Decision Outcome
 
-Chosen option: "LaunchDarkly", because:
+Chosen option: "ConfigCat", because:
 
-- It's the market leader, quite customizable, has lots of examples and a large community
-- It provides an easy and intuitive local development environment
+- We can probably get away with using it for very low cost
 - We can start using it almost right away with little configuration
+
+If we decide later that we would like some of the features of LaunchDarkly, we want to be able to quickly swap. Thus, it is vital that we write some kind of service-agnostic wrapper.
 
 ### Positive Consequences
 
