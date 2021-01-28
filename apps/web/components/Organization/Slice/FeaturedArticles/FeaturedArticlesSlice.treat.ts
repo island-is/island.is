@@ -10,10 +10,3 @@ export const popularTitleWrap = style({
     },
   }),
 })
-
-export const popularTitle = style({
-  fontSize: 34,
-  lineHeight: 44 / 34,
-  fontWeight: 600,
-  marginBottom: 30,
-})

@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './OneColumnTextSlice.treat'
 import Markdown from 'markdown-to-jsx'
@@ -28,7 +29,9 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           >
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12']}>
-                <h3 className={styles.oneColumnSliceTitle}>{slice.title}</h3>
+                <Text variant="h3" as="h2">
+                  {slice.title}
+                </Text>
                 <div className={styles.oneColumnSliceContent}>
                   <Markdown>{slice.content}</Markdown>
                 </div>

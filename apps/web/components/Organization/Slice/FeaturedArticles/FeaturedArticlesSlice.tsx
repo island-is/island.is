@@ -41,12 +41,9 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
             <GridRow>
               <GridColumn span={['12/12', '12/12', '5/12']}>
                 <Box className={styles.popularTitleWrap}>
-                  <h2
-                    className={styles.popularTitle}
-                    id={'sliceTitle-' + slice.id}
-                  >
+                  <Text variant="h2" as="h2">
                     {slice.title}
-                  </h2>
+                  </Text>
                   <Box display={['none', 'none', 'block']}>
                     <img src={slice.image.url} alt="" />
                   </Box>

@@ -5,8 +5,8 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Text,
 } from '@island.is/island-ui/core'
-import * as styles from './OfficesSlice.treat'
 import { OfficeCard } from '@island.is/web/components'
 
 interface SliceProps {
@@ -24,7 +24,9 @@ export const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
             paddingTop={[4, 4, 6]}
             paddingBottom={[4, 5, 10]}
           >
-            <h3 className={styles.title}>{slice.title}</h3>
+            <Text variant="h3" as="h3" marginBottom={2}>
+              {slice.title}
+            </Text>
             <GridContainer>
               <GridRow>
                 {slice.offices.map((office) => (

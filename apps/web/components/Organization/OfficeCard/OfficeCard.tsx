@@ -1,6 +1,5 @@
 import React from 'react'
-import { Box } from '@island.is/island-ui/core'
-import * as styles from './OfficeCard.treat'
+import { Box, Text } from '@island.is/island-ui/core'
 
 interface OfficeCardProps {
   name: string
@@ -28,11 +27,15 @@ export const OfficeCard: React.FC<OfficeCardProps> = ({
       paddingX={[3, 3, 3]}
       paddingY={[3, 3, 3]}
     >
-      <h1 className={styles.title}>{name}</h1>
-      <p style={{ fontWeight: 300, marginTop: 14 }}>{address}</p>
-      <div style={{ paddingTop: 18, fontWeight: 'bold' }}>Opnunartími</div>
+      <Text variant="h4" as="h1">
+        {name}
+      </Text>
+      <Text marginTop={1}>{address}</Text>
+      <Text marginTop={2} fontWeight="semiBold">
+        Opnunartími
+      </Text>
       {openingHours.split('\n').map((line) => (
-        <p style={{ fontWeight: 300, marginTop: 14 }}>{line}</p>
+        <Text marginTop={1}>{line}</Text>
       ))}
     </Box>
   )

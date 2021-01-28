@@ -6,6 +6,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './DistrictsSlice.treat'
 import Link from 'next/link'
@@ -28,9 +29,9 @@ export const DistrictsSlice: React.FC<SliceProps> = ({
           paddingTop={[8, 6, 15]}
           paddingBottom={[4, 5, 10]}
         >
-          <h2 id={'sliceTitle-' + slice.id} className={styles.districtsTitle}>
+          <Text variant="h3" as="h2">
             {slice.title}
-          </h2>
+          </Text>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '7/12']}>
               <ul className={styles.districtsList}>
