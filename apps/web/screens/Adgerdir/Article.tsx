@@ -9,7 +9,7 @@ import {
   Inline,
   Text,
 } from '@island.is/island-ui/core'
-import { Slice as SliceType } from '@island.is/island-ui/contentful'
+import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -19,12 +19,7 @@ import {
   QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  HeadWithSocialSharing,
-  RichText,
-  ChatPanel,
-} from '@island.is/web/components'
-import Intro from './components/Intro/Intro'
+import { HeadWithSocialSharing, ChatPanel } from '@island.is/web/components'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import { Tag } from './components/UI/Tag/Tag'
 import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
@@ -72,8 +67,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
-
-  const description = article.longDescription || article.description
 
   const processEntry = article.processEntry
 
@@ -145,13 +138,12 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
               <ProcessEntry {...processEntry} />
             </Box>
           )}
-          {description ? <Intro>{description}</Intro> : null}
         </Stack>
-        <RichText
-          body={article.content as SliceType[]}
-          config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
-          locale={activeLocale}
-        />
+        {richText(
+          (article ?? article).content as SliceType[],
+          undefined,
+          activeLocale,
+        )}
         <Box>
           {!!processEntry &&
             mounted &&
