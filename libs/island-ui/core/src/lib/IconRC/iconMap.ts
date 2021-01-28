@@ -37,8 +37,10 @@ export type Icon =
   | 'menu'
   | 'notifications'
   | 'open'
+  | 'pencil'
   | 'people'
   | 'person'
+  | 'playCircle'
   | 'reader'
   | 'receipt'
   | 'removeCircle'
@@ -89,8 +91,10 @@ export default {
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pencil: 'Pencil',
     people: 'People',
     person: 'Person',
+    playCircle: 'PlayCircle',
     reader: 'Reader',
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
@@ -140,8 +144,10 @@ export default {
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
+    playCircle: 'PlayCircleOutline',
     reader: 'ReaderOutline',
     receipt: 'ReceiptOutline',
     removeCircle: 'RemoveCircleOutline',

@@ -162,8 +162,7 @@ export const m = defineMessages({
     id: 'pl.application:rights.description',
     defaultMessage:
       'Sjálfstæður réttur hvers foreldris er sex mánuðir í fæðingarorlof, en annað foreldrið má yfirfæra allt að einn mánuð af sínum réttindum yfir á hitt foreldrið.',
-    description:
-      'Both parents have 6 months, but can transfer to 1 month to the other parent.',
+    description: `Both parents have 6 months, but can transfer up to 45 days to the other parent.`,
   },
   requestRightsName: {
     id: 'pl.application:request.rights.name',
@@ -239,9 +238,8 @@ export const m = defineMessages({
   },
   requestRightsDescription: {
     id: 'pl.application:request.rights.description',
-    defaultMessage:
-      'Hitt foreldrið má yfirfæra allt að 45 dagar af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.',
-    description: 'The other parent can transfer up to 45 days of their rights',
+    defaultMessage: `Hitt foreldrið má yfirfæra allt að 45 dagar af réttindum þess yfir á þig. Kjósir þú að óska eftir þessu, þá þarf hitt foreldrið að samþykkja beiðni þína.`,
+    description: `The other parent can transfer up to 45 days of their rights`,
   },
   requestRightsYes: {
     id: 'pl.application:request.rights.yes',
@@ -268,9 +266,8 @@ export const m = defineMessages({
   },
   giveRightsDescription: {
     id: 'pl.application:give.rights.description',
-    defaultMessage:
-      'Þú getur yfirfært allt að 45 dagar af þínum réttindum yfir á hitt foreldrið',
-    description: 'You can give the other parent up to 45 days of your rights',
+    defaultMessage: `Þú getur yfirfært allt að 45 dagar af þínum réttindum yfir á hitt foreldrið`,
+    description: `You can give the other parent up to 45 days of your rights`,
   },
   giveRightsDay: {
     id: 'pl.application:request.rights.months',
@@ -289,9 +286,8 @@ export const m = defineMessages({
   },
   giveRightsYes: {
     id: 'pl.application:give.rights.yes',
-    defaultMessage:
-      'Já, ég vil yfirfæra allt að einn mánuð af mínum réttindum til hins foreldrisins',
-    description: 'Yes, I wish to give one of my months to the other parent',
+    defaultMessage: `Já, ég vil yfirfæra allt að 45 dagar af mínum réttindum til hins foreldrisins`,
+    description: `Yes, I wish to give up to 45 days to the other parent`,
   },
   giveRightsNo: {
     id: 'pl.application:give.rights.no',
@@ -572,10 +568,8 @@ export const mm: MessageDir = {
     },
     description: {
       id: 'pl.application:periods.first.period.description',
-      defaultMessage:
-        'Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.',
-      description:
-        'You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.',
+      defaultMessage: `Þú mátt kjósa að byrja á áætluðum fæðingardegi, eða ákveðinni dagsetningu. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
+      description: `You can choose to start on the date of birth, or on a specific date. Please note, that your rights end 18 months after the date of birth.`,
     },
     dateOfBirthOption: {
       id: 'pl.application:periods.first.period.dateOfBirth',
@@ -610,10 +604,8 @@ export const mm: MessageDir = {
     },
     description: {
       id: 'pl.application:end.date.description',
-      defaultMessage:
-        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið tvær vikur.',
-      description:
-        'Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than two weeks.',
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.`,
+      description: `Please note, that your parental leave rights end 18 months after the date of birth. A parental leave period can be no shorter than 14 days.`,
     },
     label: {
       id: 'pl.application:end.date.label',
@@ -634,10 +626,8 @@ export const mm: MessageDir = {
     },
     description: {
       id: 'pl.application:start.date.description',
-      defaultMessage:
-        'Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.',
-      description:
-        'Please note, that your parental leave rights end 18 months after the date of birth',
+      defaultMessage: `Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 18 mánuðum eftir fæðingu barnsins.`,
+      description: `Please note, that your parental leave rights end 18 months after the date of birth`,
     },
     label: {
       id: 'pl.application:start.date.label',
@@ -829,62 +819,101 @@ export const mm: MessageDir = {
   reviewScreen: defineMessages({
     titleInReview: {
       id: 'pl.application:review.titleInReview',
-      defaultMessage: 'Your application is in review',
+      defaultMessage: 'Umsókn þín er í skoðun',
       description: 'Your application is in review',
     },
     titleApproved: {
       id: 'pl.application:review.titleApproved',
-      defaultMessage: 'Your application is in approved',
+      defaultMessage: 'Umsókn þín er samþykkt',
       description: 'Your application is in approved',
     },
     desc: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'Below are the steps that will happen next.',
+      defaultMessage: 'Hér að neðan eru skrefin sem gerast næst.',
       description: 'Below are the steps that will happen next.',
+    },
+    descReview: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'Hér að neðan er umsókn þín sem þú sendir inn.',
+      description: 'Below is your submitted application.',
     },
     buttonsView: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'View application',
+      defaultMessage: 'Skoða forrit',
       description: 'View application',
+    },
+    buttonsViewProgress: {
+      id: 'pl.application:review.desc',
+      defaultMessage: 'Skoða framfarir',
+      description: 'View progress',
     },
     buttonsEdit: {
       id: 'pl.application:review.desc',
-      defaultMessage: 'Edit application',
-      description: 'Edit application',
+      defaultMessage: 'Breyta / bæta við tímabilum',
+      description: 'Edit or add periods to the application',
+    },
+    editApplicationModalTitle: {
+      id: 'pl.application:review.edit.modal.title',
+      defaultMessage: 'Breyta umsókn?',
+      description: 'Edit application?',
+    },
+    editApplicationModalDesc: {
+      id: 'pl.application:review.edit.modal.desc',
+      defaultMessage:
+        'Ef þú heldur áfram að breyta umsókn þinni, þá verður að endurtaka sumar eða allar samþykktirnar.',
+      description:
+        'If you continue to edit your submitted application, then some or all of the approvals will have to be repeated.',
+    },
+    editApplicationModalAria: {
+      id: 'pl.application:review.edit.modal.aria',
+      defaultMessage:
+        'Venjulegur valmynd til að staðfesta hvort þú viljir breyta forritinu.',
+      description:
+        'A modal dialog to confirm if you want to edit your application.',
+    },
+    editApplicationModalConfirmButton: {
+      id: 'pl.application:review.edit.modal.confirmButton',
+      defaultMessage: 'Haltu áfram',
+      description: 'Continue',
+    },
+    editApplicationModalCancelButton: {
+      id: 'pl.application:review.edit.modal.cancelButton',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
     },
     otherParentTitle: {
       id: 'pl.application:review.otherParent.title',
-      defaultMessage: 'Other parent approves extra time',
+      defaultMessage: 'Annað foreldri samþykkir framlengingu',
       description: 'Other parent approves extra time',
     },
     otherParentDesc: {
       id: 'pl.application:review.otherParent.description',
       defaultMessage:
-        'The other parent will need to approve the extra days you’ve requested.',
+        'Hitt foreldrið þarf að samþykkja aukadagana sem þú hefur beðið um.',
       description:
         'The other parent will need to approve the extra days you’ve requested.',
     },
     employerTitle: {
       id: 'pl.application:review.employer.title',
-      defaultMessage: 'Employer approves your leave',
+      defaultMessage: 'Vinnuveitandi samþykkir leyfi þitt',
       description: 'Employer approves your leave',
     },
     employerDesc: {
       id: 'pl.application:review.employer.description',
       defaultMessage:
-        'Your employer will confirm the dates of your parental leave.',
+        'Vinnuveitandi þinn mun staðfesta dagsetningar foreldraorlofs þíns.',
       description:
         'Your employer will confirm the dates of your parental leave.',
     },
     deptTitle: {
       id: 'pl.application:review.employer.title',
-      defaultMessage: 'Vinnumálastofnun approves application',
+      defaultMessage: 'Vinnumálastofnun samþykkir umsókn',
       description: 'Vinnumálastofnun approves application',
     },
     deptDesc: {
       id: 'pl.application:review.employer.description',
       defaultMessage:
-        'Vinnumálastofnun will review and approve your application.',
+        'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
     },
   }),
@@ -920,17 +949,29 @@ export const mm: MessageDir = {
   finalScreen: defineMessages({
     title: {
       id: 'pl.application:finalscreen.title',
-      defaultMessage: 'Næstu skref:',
-      description: 'All done, here are the next steps:',
+      defaultMessage: 'Til hamingju, hér að neðan eru næstu skref',
+      description: 'Congratulations, below are the next steps',
     },
-    description: {
-      id: 'pl.application:finalscreen.description',
+    step1: {
+      id: 'pl.application:finalscreen.step1',
       defaultMessage:
-        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
+        'Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess.',
       description:
-        'The other parent will need to approve your request to use their shared month (if you did so). Then, ' +
-        'your employer will approve your parental leave dates.' +
-        'And finally Vinnumálastofnun will review your application.',
+        'The other parent must approve your application if you requested the transfer of part of their rights to you, or the use of their personal allowance.',
+    },
+    step2: {
+      id: 'pl.application:finalscreen.step2',
+      defaultMessage:
+        'Síðan þarf vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs.',
+      description:
+        'Then your employer has to approve your maternity leave arrangements.',
+    },
+    step3: {
+      id: 'pl.application:finalscreen.step3',
+      defaultMessage:
+        'Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
+      description:
+        'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
     },
   }),
 }

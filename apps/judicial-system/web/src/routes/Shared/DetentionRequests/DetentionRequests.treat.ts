@@ -124,22 +124,24 @@ export const deleteButton = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100px',
-  height: '100px',
-  borderRadius: theme.border.radius.large,
+  marginRight: 32,
+  padding: 10,
+  minWidth: 36,
+  minHeight: 36,
+  borderRadius: theme.border.radius.circle,
   outline: 'none',
+  transition: 'all .4s ease-out',
 
   selectors: {
     '&:focus': {
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
     '&:hover': {
-      backgroundColor: theme.color.transparent,
       boxShadow: `inset 0 0 0 2px ${theme.color.blueberry400}`,
       color: theme.color.blueberry400,
     },
     '&:focus:active': {
-      backgroundColor: theme.color.transparent,
+      backgroundColor: theme.color.mint400,
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },

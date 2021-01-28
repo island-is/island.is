@@ -17,6 +17,7 @@ import { Link } from '../Link/Link'
 
 import * as styles from './Footer.treat'
 import { Button } from '../Button/Button'
+import Hyphen from '../Hyphen/Hyphen'
 
 export interface FooterLinkProps {
   title: string
@@ -81,7 +82,7 @@ export const Footer = ({
                       color={'blue600'}
                     >
                       <Link href={href} color="blue600" underline="normal">
-                        {title}
+                        <Hyphen>{title}</Hyphen>
                       </Link>
                     </Text>
                   )

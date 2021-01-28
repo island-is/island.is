@@ -1,5 +1,5 @@
-export { DirectorateOfLabor } from './DirectorateOfLabor'
-export { InternalRevenue } from './InternalRevenue'
+export { HealthInsuranceProvider } from './HealthInsuranceProvider'
+export { OldPendingApplications } from './OldPendingApplications'
 export {
   UserProfileProvider,
   NationalRegistryProvider,

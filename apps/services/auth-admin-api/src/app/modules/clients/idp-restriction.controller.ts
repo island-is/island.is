@@ -26,7 +26,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('idp-restriction')
-@Controller('idp-restriction')
+@Controller('backend/idp-restriction')
 export class IdpRestrictionController {
   constructor(private readonly clientsService: ClientsService) {}
 
@@ -53,7 +53,7 @@ export class IdpRestrictionController {
     return await this.clientsService.removeIdpRestriction(clientId, name)
   }
 
-  /** Finds available idp restrictions */
+  /** Finds available idp providers that can be restricted */
   @Get()
   @ApiOkResponse({ type: [IdpRestriction] })
   async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {

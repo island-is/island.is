@@ -116,14 +116,8 @@ const Home: Screen<HomeProps> = ({
       </Stack>
     </Box>
   )
-
-  const LIFE_EVENTS_THRESHOLD = 6
-  const includeLifeEventSectionBleed =
-    lifeEvents.length <= LIFE_EVENTS_THRESHOLD
-  const showSleeve = lifeEvents.length > LIFE_EVENTS_THRESHOLD
-
   return (
-    <>
+    <div id="main-content">
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={frontpageSlides as FrontpageSliderType[]}
@@ -133,22 +127,19 @@ const Home: Screen<HomeProps> = ({
       <Section
         aria-labelledby="lifeEventsTitle"
         paddingTop={4}
-        backgroundBleed={
-          includeLifeEventSectionBleed && {
-            bleedAmount: 100,
-            mobileBleedAmount: 50,
-            bleedDirection: 'bottom',
-            fromColor: 'white',
-            toColor: 'purple100',
-            bleedInMobile: true,
-          }
-        }
+        backgroundBleed={{
+          bleedAmount: 100,
+          mobileBleedAmount: 50,
+          bleedDirection: 'bottom',
+          fromColor: 'white',
+          toColor: 'purple100',
+          bleedInMobile: true,
+        }}
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
           titleId="lifeEventsTitle"
           lifeEvents={lifeEvents}
-          showSleeve={showSleeve}
         />
       </Section>
       <Section
@@ -181,7 +172,7 @@ const Home: Screen<HomeProps> = ({
           linkUrl={n('ourGoalsLink')}
         />
       </Section>
-    </>
+    </div>
   )
 }
 

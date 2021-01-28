@@ -1,9 +1,9 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
-  FieldBaseProps,
+  Application,
   getValueViaPath,
-  Option,
+  ValidAnswers,
 } from '@island.is/application/core'
 import {
   Accordion,
@@ -21,32 +21,36 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { useQuery } from '@apollo/client'
+
 import Timeline from '../components/Timeline'
-import {
-  formatPeriods,
-  getExpectedDateOfBirth,
-  getNameAndIdOfSpouse,
-} from '../parentalLeaveUtils'
+import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
-import { useQuery } from '@apollo/client'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { m, mm } from '../../lib/messages'
 import { YES, NO } from '../../constants'
 import useOtherParentOptions from '../../hooks/useOtherParentOptions'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
-type ValidRadioAnswer = 'yes' | 'no' | undefined
 
-const Review: FC<FieldBaseProps> = ({
+interface ReviewScreenProps {
+  application: Application
+  goToScreen?: (id: string) => void
+  editable?: boolean
+}
+
+const Review: FC<ReviewScreenProps> = ({
   application,
-  goToScreen = () => undefined,
+  goToScreen,
+  editable = true,
 }) => {
   const [allItemsExpanded, toggleAllItemsExpanded] = useState(true)
 
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
+
   const {
     options: otherParentOptions,
     loading: loadingSpouseName,
@@ -63,12 +67,12 @@ const Review: FC<FieldBaseProps> = ({
   )
 
   const [statefulPrivatePension, setStatefulPrivatePension] = useState<
-    ValidRadioAnswer
+    ValidAnswers
   >(
     getValueViaPath(
       application.answers,
       'usePrivatePensionFund',
-    ) as ValidRadioAnswer,
+    ) as ValidAnswers,
   )
 
   const dob = getExpectedDateOfBirth(application)
@@ -136,9 +140,9 @@ const Review: FC<FieldBaseProps> = ({
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="12/12">
-                  {loadingSpouseName ? (
+              <Box>
+                {editable ? (
+                  loadingSpouseName ? (
                     <SkeletonLoader repeat={3} space={1} height={48} />
                   ) : (
                     <RadioController
@@ -158,28 +162,59 @@ const Review: FC<FieldBaseProps> = ({
                         )
                       }}
                     />
-                  )}
-                </GridColumn>
-              </GridRow>
+                  )
+                ) : (
+                  <Text>
+                    {
+                      getValueViaPath(
+                        application.answers,
+                        'otherParent',
+                      ) as string[]
+                    }
+                  </Text>
+                )}
+              </Box>
               {statefulOtherParentConfirmed === 'manual' && (
                 <>
                   <Box marginTop={3} />
                   <GridRow>
                     <GridColumn span="6/12">
-                      <Input
-                        id="otherParentName"
-                        name="otherParentName"
-                        label={formatMessage(m.otherParentName)}
-                        ref={register}
-                      />
+                      {editable ? (
+                        <Input
+                          id="otherParentName"
+                          name="otherParentName"
+                          label={formatMessage(m.otherParentName)}
+                          ref={register}
+                        />
+                      ) : (
+                        <Text>
+                          {
+                            getValueViaPath(
+                              application.answers,
+                              'otherParentName',
+                            ) as string[]
+                          }
+                        </Text>
+                      )}
                     </GridColumn>
                     <GridColumn span="6/12">
-                      <Input
-                        id="otherParentId"
-                        name="otherParentId"
-                        label={formatMessage(m.otherParentID)}
-                        ref={register}
-                      />
+                      {editable ? (
+                        <Input
+                          id="otherParentId"
+                          name="otherParentId"
+                          label={formatMessage(m.otherParentID)}
+                          ref={register}
+                        />
+                      ) : (
+                        <Text>
+                          {
+                            getValueViaPath(
+                              application.answers,
+                              'otherParentId',
+                            ) as string[]
+                          }
+                        </Text>
+                      )}
                     </GridColumn>
                   </GridRow>
                 </>
@@ -195,12 +230,23 @@ const Review: FC<FieldBaseProps> = ({
             <Box paddingY={4}>
               <GridRow>
                 <GridColumn span="6/12">
-                  <Input
-                    id="payments.bank"
-                    name="payments.bank"
-                    label={formatMessage(m.paymentInformationBank)}
-                    ref={register}
-                  />
+                  {editable ? (
+                    <Input
+                      id="payments.bank"
+                      name="payments.bank"
+                      label={formatMessage(m.paymentInformationBank)}
+                      ref={register}
+                    />
+                  ) : (
+                    <Text>
+                      {
+                        getValueViaPath(
+                          application.answers,
+                          'payments.bank',
+                        ) as string[]
+                      }
+                    </Text>
+                  )}
                 </GridColumn>
                 <GridColumn span="6/12">
                   {
@@ -211,75 +257,126 @@ const Review: FC<FieldBaseProps> = ({
               <Box marginTop={3} />
               <GridRow>
                 <GridColumn span="6/12">
-                  <SelectController
-                    label={formatMessage(m.salaryLabelPensionFund)}
-                    name="payments.pensionFund"
-                    disabled={false}
-                    id="payments.pensionFund"
-                    options={[{ label: 'TODO', value: 'todo' }]}
-                  />
+                  {editable ? (
+                    <SelectController
+                      label={formatMessage(m.salaryLabelPensionFund)}
+                      name="payments.pensionFund"
+                      disabled={false}
+                      id="payments.pensionFund"
+                      options={[{ label: 'TODO', value: 'todo' }]}
+                    />
+                  ) : (
+                    <Text>
+                      {
+                        getValueViaPath(
+                          application.answers,
+                          'payments.pensionFund',
+                        ) as string[]
+                      }
+                    </Text>
+                  )}
                 </GridColumn>
                 <GridColumn span="6/12">
-                  <SelectController
-                    label={formatMessage(m.union)}
-                    name="payments.union"
-                    disabled={false}
-                    id="payments.union"
-                    options={[{ label: 'TODO', value: 'todo' }]}
-                  />
-                </GridColumn>
-              </GridRow>
-              <Box marginTop={3} />
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Box marginTop={1} marginBottom={2} marginLeft={4}>
-                    <Text variant="h5">
-                      {formatMessage(m.privatePensionFundName)}
+                  {editable ? (
+                    <SelectController
+                      label={formatMessage(m.union)}
+                      name="payments.union"
+                      disabled={false}
+                      id="payments.union"
+                      options={[{ label: 'TODO', value: 'todo' }]}
+                    />
+                  ) : (
+                    <Text>
+                      {
+                        getValueViaPath(
+                          application.answers,
+                          'payments.union',
+                        ) as string[]
+                      }
                     </Text>
-                  </Box>
-
-                  <RadioController
-                    id="usePrivatePensionFund"
-                    disabled={false}
-                    name="usePrivatePensionFund"
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'usePrivatePensionFund',
-                      ) as string[]
-                    }
-                    options={[
-                      { label: formatMessage(m.yesOptionLabel), value: YES },
-                      { label: formatMessage(m.noOptionLabel), value: NO },
-                    ]}
-                    onSelect={(s: string) => {
-                      setStatefulPrivatePension(s as ValidRadioAnswer)
-                    }}
-                  />
+                  )}
                 </GridColumn>
               </GridRow>
+
+              <Box marginTop={3} />
+
+              <Text variant="h5" marginTop={1} marginBottom={2}>
+                {formatMessage(m.privatePensionFundName)}
+              </Text>
+
+              {editable ? (
+                <RadioController
+                  id="usePrivatePensionFund"
+                  disabled={false}
+                  name="usePrivatePensionFund"
+                  defaultValue={
+                    getValueViaPath(
+                      application.answers,
+                      'usePrivatePensionFund',
+                    ) as string[]
+                  }
+                  options={[
+                    { label: formatMessage(m.yesOptionLabel), value: YES },
+                    { label: formatMessage(m.noOptionLabel), value: NO },
+                  ]}
+                  onSelect={(s: string) => {
+                    setStatefulPrivatePension(s as ValidAnswers)
+                  }}
+                />
+              ) : (
+                <Text>
+                  {
+                    getValueViaPath(
+                      application.answers,
+                      'usePrivatePensionFund',
+                    ) as string[]
+                  }
+                </Text>
+              )}
 
               {statefulPrivatePension === YES && (
                 <>
                   <Box marginTop={3} />
                   <GridRow>
                     <GridColumn span="6/12">
-                      <SelectController
-                        label={formatMessage(m.privatePensionFund)}
-                        name="payments.pensionFund"
-                        disabled={false}
-                        id="payments.pensionFund"
-                        options={[{ label: 'TODO', value: 'todo' }]}
-                      />
+                      {editable ? (
+                        <SelectController
+                          label={formatMessage(m.privatePensionFund)}
+                          name="payments.pensionFund"
+                          disabled={false}
+                          id="payments.pensionFund"
+                          options={[{ label: 'TODO', value: 'todo' }]}
+                        />
+                      ) : (
+                        <Text>
+                          {
+                            getValueViaPath(
+                              application.answers,
+                              'payments.pensionFund',
+                            ) as string[]
+                          }
+                        </Text>
+                      )}
                     </GridColumn>
                     <GridColumn span="6/12">
-                      <SelectController
-                        label={formatMessage(m.union)}
-                        name={'payments.union'}
-                        disabled={false}
-                        id={'payments.union'}
-                        options={[{ label: 'TODO', value: 'todo' }]}
-                      />
+                      {editable ? (
+                        <SelectController
+                          label={formatMessage(m.union)}
+                          name={'payments.union'}
+                          disabled={false}
+                          id={'payments.union'}
+                          options={[{ label: 'TODO', value: 'todo' }]}
+                        />
+                      ) : (
+                        <Text>
+                          {
+                            getValueViaPath(
+                              application.answers,
+                              'payments.union',
+                            ) as string[]
+                          }
+                        </Text>
+                      )}
                     </GridColumn>
                   </GridRow>
                 </>
@@ -291,18 +388,25 @@ const Review: FC<FieldBaseProps> = ({
             label={formatMessage(mm.employer.subSection)}
             startExpanded={allItemsExpanded}
           >
-            <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Input
-                    id={'employer.email'}
-                    name={'employer.email'}
-                    label={formatMessage(mm.employer.email)}
-                    ref={register}
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
+            {editable ? (
+              <Box paddingY={4}>
+                <Input
+                  id={'employer.email'}
+                  name={'employer.email'}
+                  label={formatMessage(mm.employer.email)}
+                  ref={register}
+                />
+              </Box>
+            ) : (
+              <Text paddingY={4}>
+                {
+                  getValueViaPath(
+                    application.answers,
+                    'employer.email',
+                  ) as string[]
+                }
+              </Text>
+            )}
           </AccordionItem>
 
           <AccordionItem
@@ -311,11 +415,7 @@ const Review: FC<FieldBaseProps> = ({
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="12/12">
-                  <YourRightsBoxChart application={application} />
-                </GridColumn>
-              </GridRow>
+              <YourRightsBoxChart application={application} />
             </Box>
           </AccordionItem>
 
@@ -325,24 +425,22 @@ const Review: FC<FieldBaseProps> = ({
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Timeline
-                    initDate={dobDate}
-                    title={formatMessage(m.expectedDateOfBirthTitle)}
-                    titleSmall={formatMessage(m.dateOfBirthTitle)}
-                    periods={formatPeriods(
-                      application.answers.periods as Period[],
-                      otherParentPeriods,
-                    )}
-                  />
-                  <Box paddingTop={3}>
-                    <Button size="small" onClick={() => goToScreen('periods')}>
-                      {formatMessage(mm.leavePlan.change)}
-                    </Button>
-                  </Box>
-                </GridColumn>
-              </GridRow>
+              <Timeline
+                initDate={dobDate}
+                title={formatMessage(m.expectedDateOfBirthTitle)}
+                titleSmall={formatMessage(m.dateOfBirthTitle)}
+                periods={formatPeriods(
+                  application.answers.periods as Period[],
+                  otherParentPeriods,
+                )}
+              />
+              {editable && (
+                <Box paddingTop={3}>
+                  <Button size="small" onClick={() => goToScreen?.('periods')}>
+                    {formatMessage(mm.leavePlan.change)}
+                  </Button>
+                </Box>
+              )}
             </Box>
           </AccordionItem>
 
@@ -352,16 +450,12 @@ const Review: FC<FieldBaseProps> = ({
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="12/12">
-                  {!loading && !error && (
-                    <PaymentsTable
-                      application={application}
-                      payments={data.getEstimatedPayments}
-                    />
-                  )}
-                </GridColumn>
-              </GridRow>
+              {!loading && !error && (
+                <PaymentsTable
+                  application={application}
+                  payments={data.getEstimatedPayments}
+                />
+              )}
             </Box>
           </AccordionItem>
 
@@ -371,31 +465,38 @@ const Review: FC<FieldBaseProps> = ({
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
-              <GridRow>
-                <GridColumn span="12/12">
-                  <Box marginTop={1} marginBottom={2} marginLeft={4}>
-                    <Text variant="h5">
-                      {formatMessage(mm.shareInformation.title)}
-                    </Text>
-                  </Box>
+              <Box marginTop={1} marginBottom={2} marginLeft={4}>
+                <Text variant="h5">
+                  {formatMessage(mm.shareInformation.title)}
+                </Text>
+              </Box>
 
-                  <RadioController
-                    id={'shareInformationWithOtherParent'}
-                    disabled={false}
-                    name={'shareInformationWithOtherParent'}
-                    defaultValue={
-                      getValueViaPath(
-                        application.answers,
-                        'shareInformationWithOtherParent',
-                      ) as string[]
-                    }
-                    options={[
-                      { label: formatMessage(m.yesOptionLabel), value: YES },
-                      { label: formatMessage(m.noOptionLabel), value: NO },
-                    ]}
-                  />
-                </GridColumn>
-              </GridRow>
+              {editable ? (
+                <RadioController
+                  id={'shareInformationWithOtherParent'}
+                  disabled={false}
+                  name={'shareInformationWithOtherParent'}
+                  defaultValue={
+                    getValueViaPath(
+                      application.answers,
+                      'shareInformationWithOtherParent',
+                    ) as string[]
+                  }
+                  options={[
+                    { label: formatMessage(m.yesOptionLabel), value: YES },
+                    { label: formatMessage(m.noOptionLabel), value: NO },
+                  ]}
+                />
+              ) : (
+                <Text>
+                  {
+                    getValueViaPath(
+                      application.answers,
+                      'shareInformationWithOtherParent',
+                    ) as string[]
+                  }
+                </Text>
+              )}
             </Box>
           </AccordionItem>
         </Accordion>

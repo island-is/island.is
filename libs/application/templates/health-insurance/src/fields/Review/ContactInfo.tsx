@@ -40,12 +40,12 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
     ) as ExternalDataNationalRegistry) || {}
 
   return (
-    <Box paddingY={2}>
-      <Stack space={5}>
+    <Box marginTop={[0, 0, 1]} marginBottom={[1, 1, 3]}>
+      <Stack space={[3, 5]}>
         <Box>
           <Stack space={2}>
             <GridRow>
-              <GridColumn span="6/12">
+              <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
                 <Input
                   id={'applicant.name'}
                   name={'applicant.name'}
@@ -55,7 +55,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
                   defaultValue={data?.name}
                 />
               </GridColumn>
-              <GridColumn span="6/12">
+              <GridColumn span={['12/12', '6/12']}>
                 <Input
                   id={'applicant.nationalId'}
                   name={'applicant.nationalId'}
@@ -67,7 +67,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn span="6/12">
+              <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
                 <Input
                   id={'applicant.address'}
                   name={'applicant.address'}
@@ -77,7 +77,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
                   defaultValue={data?.address}
                 />
               </GridColumn>
-              <GridColumn span="6/12">
+              <GridColumn span={['12/12', '6/12']}>
                 <Input
                   id={'applicant.postalCode'}
                   name={'applicant.postalCode'}
@@ -89,7 +89,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn span="6/12">
+              <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
                 <Input
                   id={'applicant.city'}
                   name={'applicant.city'}
@@ -99,7 +99,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
                   defaultValue={data?.city}
                 />
               </GridColumn>
-              <GridColumn span="6/12">
+              <GridColumn span={['12/12', '6/12']}>
                 <Input
                   id={'applicant.nationality'}
                   name={'applicant.nationality'}
@@ -121,23 +121,23 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
         </Box>
         <Box>
           <GridRow>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
               <Input
                 id={'applicant.email'}
                 name={'applicant.email'}
                 label={formatText(m.email, application, formatMessage)}
                 ref={register}
-                disabled={!isEditable}
+                disabled
                 defaultValue={data?.email}
               />
             </GridColumn>
-            <GridColumn span="6/12">
+            <GridColumn span={['12/12', '6/12']}>
               <Input
                 id={'applicant.phoneNumber'}
                 name={'applicant.phoneNumber'}
                 label={formatText(m.phoneNumber, application, formatMessage)}
                 ref={register}
-                disabled={!isEditable}
+                disabled
                 defaultValue={data?.phoneNumber}
               />
             </GridColumn>
