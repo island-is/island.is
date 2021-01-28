@@ -70,7 +70,7 @@ We use the following databases as of this writing:
 
 ## Queues
 
-We use [AWS SQS](https://aws.amazon.com/sqs/) which is a fully managed queue service. This is a proprietary service and protocol so it is not suitable for `critical` applications.
+We use [AWS SQS](https://aws.amazon.com/sqs/), which is a fully managed queue service. This is a proprietary service and protocol so it is not suitable for `critical` applications.
 
 ## Applications
 

@@ -34,13 +34,13 @@ For metrics we use DataDog. We collect metrics from both AWS services as well as
 
 #### Tracing
 
-Again we use DataDog for effortless Application Performance Monitoring (APM). With this capability we get end-to-end visibility into our services - from the browser, all the way to the database. In the context of a microservice architecture, this is an essential tool to undertand behaviour during interactions and troubleshoot individual issues.
+We use DataDog for effortless Application Performance Monitoring (APM). With this capability, we get end-to-end visibility into our services - from the web browser, all the way to the database. In the context of a microservice architecture, this is an essential tool to undertand behaviour during interactions and troubleshoot individual issues.
 
 ![DataDog APM](./assets/datadog-apm.png)
 
 #### Accessing logs, metrics and traces
 
-Every developer has access to logs, metrics and tracing (APM) information through the DataDog portal.
+Every developer has access to logs, metrics and tracing (APM) information through the [DataDog portal](https://app.datadoghq.com).
 
 ### Define the boundaries of expected behaviour
 
