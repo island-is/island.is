@@ -55,7 +55,6 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
   useEffect(() => {
     const item = new URL(url)
 
-    console.log(item.hostname.match(/(vimeo.com)/g))
     if (item.hostname.match(/(vimeo.com)/g)) {
       const match = /vimeo.*\/(\d+)/i.exec(item.href)
 
@@ -66,7 +65,6 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url, locale }) => {
       }
     }
 
-    console.log(item.hostname.match(/(youtube.com|youtu.be)/g))
     if (item.hostname.match(/(youtube.com|youtu.be)/g)) {
       const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
       const match = item.href.match(regExp)
