@@ -66,7 +66,7 @@ describe('Confirmation route', () => {
           }) as HTMLButtonElement,
       ),
     ).not.toBeDisabled()
-  })
+  }, 10000)
 
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
