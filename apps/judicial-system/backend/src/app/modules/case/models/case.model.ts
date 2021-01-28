@@ -94,14 +94,14 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  requestedDefenderName: string
+  defenderName: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  requestedDefenderEmail: string
+  defenderEmail: string
 
   @Column({
     type: DataType.STRING,
@@ -221,20 +221,6 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   courtRoom: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderName: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderEmail: string
 
   @Column({
     type: DataType.DATE,

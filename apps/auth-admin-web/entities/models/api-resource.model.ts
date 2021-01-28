@@ -10,6 +10,7 @@ export class ApiResource {
   description!: string
   showInDiscoveryDocument!: boolean
   archived!: Date
+  contactEmail!: string
   public userClaims?: ApiResourceUserClaim[]
   readonly created!: Date
   readonly modified?: Date
