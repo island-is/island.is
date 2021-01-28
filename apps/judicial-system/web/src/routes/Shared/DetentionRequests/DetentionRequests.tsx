@@ -283,58 +283,54 @@ export const DetentionRequests: React.FC = () => {
                   </Text>
                 </th>
                 <th className={cn(styles.th, styles.largeColumn)}>
-                  <Text as="span" fontWeight="regular">
+                  <Box
+                    component="button"
+                    display="flex"
+                    alignItems="center"
+                    className={styles.thButton}
+                    onClick={() => requestSort('accusedName')}
+                  >
+                    <Text fontWeight="regular">Sakborningur</Text>
                     <Box
-                      component="button"
+                      className={cn(styles.sortIcon, {
+                        [styles.sortAccusedNameAsc]:
+                          getClassNamesFor('accusedName') === 'ascending',
+                        [styles.sortAccusedNameDes]:
+                          getClassNamesFor('accusedName') === 'descending',
+                      })}
+                      marginLeft={1}
+                      component="span"
                       display="flex"
                       alignItems="center"
-                      className={styles.thButton}
-                      onClick={() => requestSort('accusedName')}
                     >
-                      Sakborningur
-                      <Box
-                        className={cn(styles.sortIcon, {
-                          [styles.sortAccusedNameAsc]:
-                            getClassNamesFor('accusedName') === 'ascending',
-                          [styles.sortAccusedNameDes]:
-                            getClassNamesFor('accusedName') === 'descending',
-                        })}
-                        marginLeft={1}
-                        component="span"
-                        display="flex"
-                        alignItems="center"
-                      >
-                        <Icon icon="caretDown" size="small" />
-                      </Box>
+                      <Icon icon="caretDown" size="small" />
                     </Box>
-                  </Text>
+                  </Box>
                 </th>
                 <th className={styles.th}>
-                  <Text as="span" fontWeight="regular">
+                  <Box
+                    component="button"
+                    display="flex"
+                    alignItems="center"
+                    className={styles.thButton}
+                    onClick={() => requestSort('created')}
+                  >
+                    <Text fontWeight="regular">Krafa stofnuð</Text>
                     <Box
-                      component="button"
+                      className={cn(styles.sortIcon, {
+                        [styles.sortCreatedAsc]:
+                          getClassNamesFor('created') === 'ascending',
+                        [styles.sortCreatedDes]:
+                          getClassNamesFor('created') === 'descending',
+                      })}
+                      marginLeft={1}
+                      component="span"
                       display="flex"
                       alignItems="center"
-                      className={styles.thButton}
-                      onClick={() => requestSort('created')}
                     >
-                      Krafa stofnuð
-                      <Box
-                        className={cn(styles.sortIcon, {
-                          [styles.sortCreatedAsc]:
-                            getClassNamesFor('created') === 'ascending',
-                          [styles.sortCreatedDes]:
-                            getClassNamesFor('created') === 'descending',
-                        })}
-                        marginLeft={1}
-                        component="span"
-                        display="flex"
-                        alignItems="center"
-                      >
-                        <Icon icon="caretUp" size="small" />
-                      </Box>
+                      <Icon icon="caretUp" size="small" />
                     </Box>
-                  </Text>
+                  </Box>
                 </th>
                 <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
@@ -376,7 +372,7 @@ export const DetentionRequests: React.FC = () => {
                     )}
                   >
                     <Text>
-                      <Box as="span" className={styles.accusedName}>
+                      <Box component="span" className={styles.accusedName}>
                         {c.accusedName || '-'}
                       </Box>
                     </Text>
