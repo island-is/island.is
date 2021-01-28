@@ -34,7 +34,7 @@ Many people are working on the project and any PR will be noticed very quickly. 
 
 Before you submit your PR, please make sure to follow the following steps:
 
-- Based your work on the `main` branch.
+- Base your work on the `main` branch.
 - If you fixed a bug or added a new feature, and existing tests already existed, make sure the tests are still passing, and add more if needed.
 - Run the [tests](../../README.md#running-unit-tests) and [lint](../../README.md#running-lint-checks) for you changes locally.
 - [Format](../../README.md#formatting-your-code) your changes to follow NX code conventions.
