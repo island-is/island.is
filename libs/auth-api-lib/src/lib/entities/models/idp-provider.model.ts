@@ -17,7 +17,7 @@ import { ApiProperty } from '@nestjs/swagger'
     },
   ],
 })
-export class IdpRestriction extends Model<IdpRestriction> {
+export class IdpProvider extends Model<IdpProvider> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
