@@ -2,6 +2,7 @@ import React, { ReactNode, Fragment, useEffect } from 'react'
 import { ErrorPageQuery, Html } from '@island.is/web/graphql/schema'
 import {
   Text,
+  Box,
   GridContainer,
   GridRow,
   GridColumn,
@@ -63,18 +64,30 @@ export const ErrorPage: React.FC<ErrorProps> = ({ errPage, statusCode }) => {
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span={'6/12'} paddingBottom={10} paddingTop={8}>
-          <Text variant="eyebrow" as="div" paddingBottom={2} color="purple400">
-            {statusCode}
-          </Text>
-          <Text variant="h1" as="h1" paddingBottom={3}>
-            {errorMessages.title}
-          </Text>
-          <Text variant="intro" as="p">
-            {errorMessages.description
-              ? renderHtml(errorMessages.description.document as Document)
-              : formatBody(errorMessages.body, asPath)}
-          </Text>
+        <GridColumn span={'12/12'} paddingBottom={10} paddingTop={8}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            width="full"
+            alignItems="center"
+          >
+            <Text
+              variant="eyebrow"
+              as="div"
+              paddingBottom={2}
+              color="purple400"
+            >
+              {statusCode}
+            </Text>
+            <Text variant="h1" as="h1" paddingBottom={3}>
+              {errorMessages.title}
+            </Text>
+            <Text variant="intro" as="p">
+              {errorMessages.description
+                ? renderHtml(errorMessages.description.document as Document)
+                : formatBody(errorMessages.body, asPath)}
+            </Text>
+          </Box>
         </GridColumn>
       </GridRow>
     </GridContainer>
