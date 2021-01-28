@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
     BEGIN;
       ALTER TABLE idp_restrictions
-        RENAME TO idp_providers;
+      RENAME TO idp_providers;
     END;
     `)
   },
@@ -14,7 +14,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
     BEGIN;
       ALTER TABLE idp_providers
-        RENAME TO idp_restrictions;
+      RENAME TO idp_restrictions;
     END;
     `)
   }
