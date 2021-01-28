@@ -187,13 +187,18 @@ class ClientsList extends Component {
                 </table>
               </div>
               <div>
+                <div className="clients__container__export">
+                  <div className="clients__container__export__container__button">
+                    <button type="button" onClick={() => this.exportCsv()}>
+                      <i className="icon__export__csv" aria-hidden="true"></i>
+                      <span>Export</span>
+                    </button>
+                  </div>
+                </div>
                 <Paginator
                   lastPage={Math.ceil(this.state.rowCount / this.state.count)}
                   handlePageChange={this.handlePageChange}
                 />
-                <button type="button" onClick={() => this.exportCsv()}>
-                  <span>Export</span>
-                </button>
               </div>
             </div>
           </div>
