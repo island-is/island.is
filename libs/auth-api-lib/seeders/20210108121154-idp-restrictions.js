@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('idp_restrictions', [
+    return queryInterface.bulkInsert('idp_providers', [
       {
         name: 'sim',
         description: 'Sim Card',
@@ -20,7 +20,7 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.bulkDelete(
-      'idp_restrictions',
+      'idp_providers',
       {
         name: 'sim',
       },

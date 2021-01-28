@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
-import { IdpRestriction } from './../../../entities/models/idp-restriction.model'
+import { IdpProvider } from './../../../entities/models/IdpProvider.model'
 
 interface Props {
   clientId: string
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
-  const [idpProviders, setIdpProviders] = useState<IdpRestriction[]>([])
+  const [idpProviders, setIdpProviders] = useState<IdpProvider[]>([])
   const [allowAll, setAllowAll] = useState<boolean>(
     props.restrictions.length === 0,
   )
@@ -129,29 +129,25 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
                 !allowAll ? ' show' : ' hidden'
               }`}
             >
-              {idpProviders?.map((idpRestriction: IdpRestriction) => {
+              {idpProviders?.map((idp: IdpProvider) => {
                 return (
                   <div
-                    key={idpRestriction.name}
+                    key={idp.name}
                     className="client-idp-restriction__container__checkbox__field"
                   >
                     <label className="client-idp-restriction__label">
-                      {idpRestriction.description}
+                      {idp.description}
                     </label>
                     <input
                       type="checkbox"
-                      name={idpRestriction.name}
+                      name={idp.name}
                       className="client__checkbox"
-                      checked={props.restrictions?.includes(
-                        idpRestriction.name,
-                      )}
-                      onChange={(e) =>
-                        setIdp(idpRestriction.name, e.target.checked)
-                      }
-                      title={idpRestriction.helptext}
-                      disabled={idpRestriction.name === 'sim' || allowAll}
+                      checked={props.restrictions?.includes(idp.name)}
+                      onChange={(e) => setIdp(idp.name, e.target.checked)}
+                      title={idp.helptext}
+                      disabled={idp.name === 'sim' || allowAll}
                     />
-                    <HelpBox helpText={idpRestriction.helptext} />
+                    <HelpBox helpText={idp.helptext} />
                   </div>
                 )
               })}

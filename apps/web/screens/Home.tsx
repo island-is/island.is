@@ -74,12 +74,10 @@ const Home: Screen<HomeProps> = ({
   }
 
   const cards = categories.map(({ __typename, title, slug, description }) => {
-    const cardUrl = linkResolver(__typename as LinkType, [slug])
     return {
       title,
       description,
-      href: cardUrl.href,
-      as: cardUrl.as,
+      href: linkResolver(__typename as LinkType, [slug]).href,
     }
   })
 
@@ -99,9 +97,8 @@ const Home: Screen<HomeProps> = ({
         <Inline space={2}>
           {page.featuredThings.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
-
-            return cardUrl.href && cardUrl.href.length > 0 ? (
-              <Link key={title} href={cardUrl.href} as={cardUrl.as}>
+            return cardUrl?.href && cardUrl?.href.length > 0 ? (
+              <Link key={title} {...cardUrl}>
                 <Tag variant="darkerBlue" attention={attention}>
                   {title}
                 </Tag>
