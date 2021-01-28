@@ -20,6 +20,7 @@ export const OidcSignIn: FC = () => {
         })
 
         setClientAuthToken(user.access_token)
+        console.log(user)
         history.push(typeof user.state === 'string' ? user.state : '/')
       })
       .catch(function (error) {
