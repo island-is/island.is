@@ -53,7 +53,10 @@ export class RestServiceCollector implements ServiceCollector {
     logger.debug(
       `Added all services to index "${this.elasticService.getIndexNameWorker()}" , so lets copy them to to index "${this.elasticService.getIndexName()}". time is: ${new Date().toISOString()}`,
     )
+    logger.debug(
+      `Starting update for index "${this.elasticService.getIndexName()}" at: ${new Date().toISOString()}`,
+    )
     await this.elasticService.moveWorkerValuesToIndex()
-    logger.debug(`Indexing done time is: ${new Date().toISOString()}`)
+    logger.debug(`Done updating values at: ${new Date().toISOString()}`)
   }
 }
