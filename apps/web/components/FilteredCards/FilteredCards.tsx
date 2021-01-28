@@ -271,7 +271,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
 
               return (
                 <Card
-                  href={link}
+                  link={{ href: link }}
                   key={index}
                   description={description}
                   title={title}
