@@ -18,8 +18,8 @@ environment variables to exist to configure connection to X-Road Security Server
 Two variables are available from AWS Parameter Store under the /k8s/xroad-collector/ path.
 The variable are named:
 
-- *XROAD_BASE_PATH*
-- *XROAD_CLIENT_ID*
+- _XROAD_BASE_PATH_
+- _XROAD_CLIENT_ID_
 
 The other two are set for the environment the service is executed in
 
