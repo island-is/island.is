@@ -4,6 +4,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import {
   formatConclusion,
@@ -582,12 +583,14 @@ describe('formatConclusion', () => {
 describe('formatHeadsUpSmsNotification', () => {
   test('should format heads up notification', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorName = 'Árni Ákærandi'
     const arrestDate = new Date('2020-11-24T13:22')
     const requestedCourtDate = new Date('2020-11-25T09:15')
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      type,
       prosecutorName,
       arrestDate,
       requestedCourtDate,
@@ -601,10 +604,12 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification with missing dates', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorName = 'Árni Ákærandi'
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      type,
       prosecutorName,
       undefined,
       undefined,
@@ -617,8 +622,12 @@ describe('formatHeadsUpSmsNotification', () => {
   })
 
   test('should format heads up notification with missing prosecutor', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      type,
       undefined,
       undefined,
       undefined,
@@ -634,11 +643,16 @@ describe('formatHeadsUpSmsNotification', () => {
 describe('formatReadyForCourtSmsNotification', () => {
   test('should format ready for court SMS notification', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorName = 'Árni Ákærandi'
     const court = 'Héraðsdómur Reykjavíkur'
 
     // Act
-    const res = formatCourtReadyForCourtSmsNotification(prosecutorName, court)
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
 
     // Assert
     expect(res).toBe(
@@ -647,8 +661,15 @@ describe('formatReadyForCourtSmsNotification', () => {
   })
 
   test('should format ready for court SMS notification with missing prosecutor and court', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+
     // Act
-    const res = formatCourtReadyForCourtSmsNotification(undefined, undefined)
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      undefined,
+      undefined,
+    )
 
     // Assert
     expect(res).toBe(
@@ -996,12 +1017,14 @@ describe('formatPrisonRulingEmailNotification', () => {
 describe('formatCourtRevokedSmsNotification', () => {
   test('should format revoked sms with court date', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorName = 'Kiddi Kærari'
     const requestedCourtDate = new Date('2021-01-20T11:10')
     const courtDate = new Date('2021-12-20T11:30')
 
     // Act
     const res = formatCourtRevokedSmsNotification(
+      type,
       prosecutorName,
       requestedCourtDate,
       courtDate,
@@ -1015,11 +1038,13 @@ describe('formatCourtRevokedSmsNotification', () => {
 
   test('should format revoked sms without court date', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorName = 'Kiddi Kærari'
     const requestedCourtDate = new Date('2021-01-20T11:10')
 
     // Act
     const res = formatCourtRevokedSmsNotification(
+      type,
       prosecutorName,
       requestedCourtDate,
       undefined,
@@ -1032,8 +1057,12 @@ describe('formatCourtRevokedSmsNotification', () => {
   })
 
   test('should format revoked sms without any info', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+
     // Act
     const res = formatCourtRevokedSmsNotification(
+      type,
       undefined,
       undefined,
       undefined,

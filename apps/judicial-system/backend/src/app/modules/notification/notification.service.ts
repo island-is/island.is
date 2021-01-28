@@ -183,6 +183,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
+      existingCase.type,
       existingCase.prosecutor?.name,
       existingCase.arrestDate,
       existingCase.requestedCourtDate,
@@ -207,6 +208,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtReadyForCourtSmsNotification(
+      existingCase.type,
       existingCase.prosecutor?.name,
       existingCase.court,
     )
@@ -413,6 +415,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtRevokedSmsNotification(
+      existingCase.type,
       existingCase.prosecutor?.name,
       existingCase.requestedCourtDate,
       existingCase.courtDate,

@@ -13,6 +13,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 export function formatProsecutorDemands(
@@ -170,6 +171,7 @@ export function formatAppeal(
 }
 
 export function formatCourtHeadsUpSmsNotification(
+  type: CaseType,
   prosecutorName: string,
   arrestDate: Date,
   requestedCourtDate: Date,
@@ -193,10 +195,13 @@ export function formatCourtHeadsUpSmsNotification(
       )}.`
     : ''
 
-  return `Ný gæsluvarðhaldskrafa í vinnslu.${prosecutorText}${arrestDateText}${requestedCourtDateText}`
+  return `Ný ${
+    type === CaseType.CUSTODY ? 'gæsluvarðhaldskrafa' : 'farbannskrafa'
+  } í vinnslu.${prosecutorText}${arrestDateText}${requestedCourtDateText}`
 }
 
 export function formatCourtReadyForCourtSmsNotification(
+  type: CaseType,
   prosecutorName: string,
   court: string,
 ) {
@@ -206,7 +211,9 @@ export function formatCourtReadyForCourtSmsNotification(
   // Court
   const courtText = ` Dómstóll: ${court || 'Ekki skráður'}.`
 
-  return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${prosecutorText}${courtText}`
+  return `${
+    type === CaseType.CUSTODY ? 'Gæsluvarðhaldskrafa' : 'Farbannskrafa'
+  } tilbúin til afgreiðslu.${prosecutorText}${courtText}`
 }
 
 export function formatProsecutorCourtDateEmailNotification(
@@ -334,6 +341,7 @@ export function formatPrisonRulingEmailNotification(
 }
 
 export function formatCourtRevokedSmsNotification(
+  type: CaseType,
   prosecutorName: string,
   requestedCourtDate: Date,
   courtDate: Date,
@@ -351,7 +359,9 @@ export function formatCourtRevokedSmsNotification(
       )}.`
     : ''
 
-  return `Gæsluvarðhaldskrafa afturkölluð.${prosecutorText}${courtDateText}`
+  return `${
+    type === CaseType.CUSTODY ? 'Gæsluvarðhaldskrafa' : 'Farbannskrafa'
+  } afturkölluð.${prosecutorText}${courtDateText}`
 }
 
 export function formatPrisonRevokedEmailNotification(
