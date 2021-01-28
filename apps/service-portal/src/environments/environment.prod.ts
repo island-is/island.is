@@ -3,7 +3,7 @@ export default {
   identityServer: {
     IDENTITY_SERVER_ISSUER_URL:
       window.location.origin === 'https://beta.staging01.devland.is'
-        ? 'https://beta.dev01.devland.is/minarsidur'
+        ? 'https://beta.dev01.devland.is'
         : window.location.origin === 'https://island.is'
         ? 'https://innskra.island.is'
         : 'https://identity-server.dev01.devland.is',
