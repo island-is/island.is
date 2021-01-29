@@ -20,19 +20,6 @@ export type ApplicationAPITemplateAction =
   | SendEmail
   | AssignApplicationThroughEmail
 
-export interface PersonResidenceChange {
-  name: string
-  ssn: string
-}
-
-export interface ParentResidenceChange extends PersonResidenceChange {
-  phoneNumber: string
-  email: string
-  homeAddress: string
-  postalCode: string
-  city: string
-}
-
 export enum PDF_TYPES {
   CHILDREN_RESIDENCE_CHANGE = 'CHILDREN_RESIDENCE_CHANGE',
 }

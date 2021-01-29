@@ -3,7 +3,7 @@ import streamBuffers from 'stream-buffers'
 import {
   ParentResidenceChange,
   PersonResidenceChange,
-} from '@island.is/application/api-template-utils'
+} from '@island.is/application/templates/children-residence-change'
 
 export async function generateResidenceChangePdf(
   childrenAppliedFor: Array<PersonResidenceChange>,
@@ -38,7 +38,7 @@ export async function generateResidenceChangePdf(
   })
 
   const parentHomeAddress = (parent: ParentResidenceChange) => {
-    return `${parent.homeAddress}, ${parent.postalCode} ${parent.city}`
+    return `${parent.address}, ${parent.postalCode} ${parent.city}`
   }
 
   const addToDoc = (

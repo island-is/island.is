@@ -1,16 +1,13 @@
-export type RegisteredChildren = {
+export interface PersonResidenceChange {
   id: string
   name: string
-  address: string
+  ssn: string
   postalCode: string
+  address: string
   city: string
 }
 
-export type Parent = {
-  id: string
-  name: string
-  address: string
-  postalCode: string
-  city: string
-  ssn: string
+export interface ParentResidenceChange extends PersonResidenceChange {
+  phoneNumber: string | undefined
+  email: string | undefined
 }

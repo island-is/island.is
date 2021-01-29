@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
+import { PDF_TYPES } from '@island.is/application/api-template-utils'
+import { Application } from './application.model'
+import { FormValue } from '@island.is/application/core'
 import {
   ParentResidenceChange,
   PersonResidenceChange,
-  PDF_TYPES,
-} from '@island.is/application/api-template-utils'
-import { Application } from './application.model'
-import { FormValue } from '@island.is/application/core'
+} from '@island.is/application/templates/children-residence-change'
 
 @Injectable()
 export class FileService {
@@ -45,11 +45,12 @@ export class FileService {
 
     // TODO: Revisit once connection with national registry is up and we have actual schema for this data.
     const parentA: ParentResidenceChange = {
+      id: answers.ssn as string,
       name: answers.name as string,
       ssn: answers.ssn as string,
       phoneNumber: answers.phoneNumber as string,
       email: answers.email as string,
-      homeAddress: answers.homeAddress as string,
+      address: answers.address as string,
       postalCode: answers.postalCode as string,
       city: answers.city as string,
     }
