@@ -6,6 +6,7 @@ server {
     location $BASEPATH {
         alias   /usr/share/nginx/html;
         index  index.html index.htm;
+        autoindex on;
         # The following is necessary for React router based apps
         try_files $uri $uri/ /index.html =404;
         # We don't want to redirect to localhost:3333
