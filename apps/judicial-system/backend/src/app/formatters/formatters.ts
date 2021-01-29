@@ -217,6 +217,7 @@ export function formatCourtReadyForCourtSmsNotification(
 }
 
 export function formatProsecutorCourtDateEmailNotification(
+  type: CaseType,
   court: string,
   courtDate: Date,
   courtRoom: string,
@@ -227,7 +228,9 @@ export function formatProsecutorCourtDateEmailNotification(
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${
+    type === CaseType.CUSTODY ? 'gæsluvarðhaldskröfu' : 'farbannskröfu'
+  }.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
 }
 
 export function formatPrisonCourtDateEmailNotification(

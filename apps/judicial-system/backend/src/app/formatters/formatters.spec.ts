@@ -638,6 +638,27 @@ describe('formatHeadsUpSmsNotification', () => {
       'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Ekki skráður.',
     )
   })
+
+  test('should format heads up notification for travel ban', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const prosecutorName = 'Ákærandinn'
+    const arrestDate = new Date('2021-01-24T13:00')
+    const requestedCourtDate = new Date('2021-01-25T19:15')
+
+    // Act
+    const res = formatCourtHeadsUpSmsNotification(
+      type,
+      prosecutorName,
+      arrestDate,
+      requestedCourtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Ný farbannskrafa í vinnslu. Ákærandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
+    )
+  })
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
@@ -676,11 +697,31 @@ describe('formatReadyForCourtSmsNotification', () => {
       'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Ekki skráður. Dómstóll: Ekki skráður.',
     )
   })
+
+  test('should format ready for court SMS notification for travel ban', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Farbannskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
   test('should format court date notification', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = '101'
@@ -688,6 +729,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      type,
       court,
       courtDate,
       courtRoom,
@@ -702,12 +744,14 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
   test('should format court date notification with no defender', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = '101'
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      type,
       court,
       courtDate,
       courtRoom,
@@ -717,6 +761,29 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
+    )
+  })
+
+  test('should format court date notification for travel ban', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const defenderName = 'Valdi Verjandi'
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      defenderName,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir farbannskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 })
@@ -1070,6 +1137,27 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe('Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Ekki skráður.')
+  })
+
+  test('should format revoked sms for travel ban', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const prosecutorName = 'Kiddi Kærari'
+    const requestedCourtDate = new Date('2021-01-20T11:10')
+    const courtDate = new Date('2021-12-20T11:30')
+
+    // Act
+    const res = formatCourtRevokedSmsNotification(
+      type,
+      prosecutorName,
+      requestedCourtDate,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Farbannskrafa afturkölluð. Ákærandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+    )
   })
 })
 
