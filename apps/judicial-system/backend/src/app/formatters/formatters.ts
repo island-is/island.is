@@ -234,6 +234,7 @@ export function formatProsecutorCourtDateEmailNotification(
 }
 
 export function formatPrisonCourtDateEmailNotification(
+  type: CaseType,
   prosecutorOffice: string,
   court: string,
   courtDate: Date,
@@ -256,17 +257,24 @@ export function formatPrisonCourtDateEmailNotification(
     ?.replace(' kl.', ', kl.')
   const requestText = `Nafn sakbornings: ${accusedName}.<br /><br />Kyn sakbornings: ${formatGender(
     accusedGender,
-  )}.<br /><br />Krafist er gæsluvarðhalds til ${requestedCustodyEndDateText}.`
-  const isolationText = isolation
-    ? 'Farið er fram á einangrun.'
-    : 'Ekki er farið fram á einangrun.'
+  )}.<br /><br />Krafist er ${
+    type === CaseType.CUSTODY ? 'gæsluvarðhalds' : 'farbanns'
+  } til ${requestedCustodyEndDateText}.`
+  const isolationText =
+    type === CaseType.CUSTODY
+      ? isolation
+        ? '<br /><br />Farið er fram á einangrun.'
+        : '<br /><br />Ekki er farið fram á einangrun.'
+      : ''
   const defenderText = defenderName
     ? `Verjandi sakbornings: ${defenderName}`
     : 'Verjandi sakbornings hefur ekki verið skráður'
 
   return `${prosecutorOffice} hefur sent kröfu um ${
     isExtension ? 'áframhaldandi ' : ''
-  }gæsluvarðhald til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}<br /><br />${defenderText}.`
+  }${
+    type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+  } til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}${isolationText}<br /><br />${defenderText}.`
 }
 
 export function formatDefenderCourtDateEmailNotification(

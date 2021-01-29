@@ -791,6 +791,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 describe('formatPrisonCourtDateEmailNotification', () => {
   test('should format court date notification', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -803,6 +804,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
+      type,
       prosecutorOffice,
       court,
       courtDate,
@@ -822,6 +824,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with unknown gender', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -834,6 +837,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
+      type,
       prosecutorOffice,
       court,
       courtDate,
@@ -853,6 +857,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with no isolation', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -865,6 +870,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
+      type,
       prosecutorOffice,
       court,
       courtDate,
@@ -884,6 +890,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with no defender', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -895,6 +902,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
+      type,
       prosecutorOffice,
       court,
       courtDate,
@@ -912,8 +920,42 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     )
   })
 
+  test('should format court date notification for travel ban', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
+    const court = 'Héraðsdómur Austurlands'
+    const courtDate = new Date('2021-02-04T02:02')
+    const accusedName = 'Maggi Mörder'
+    const accusedGender = CaseGender.FEMALE
+    const requestedCustodyEndDate = new Date('2030-08-12T08:25')
+    const isolation = false
+    const defenderName = 'Varði Varnari'
+    const isExtension = false
+
+    // Act
+    const res = formatPrisonCourtDateEmailNotification(
+      type,
+      prosecutorOffice,
+      court,
+      courtDate,
+      accusedName,
+      accusedGender,
+      requestedCustodyEndDate,
+      isolation,
+      defenderName,
+      isExtension,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um farbann til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn, 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Mörder.<br /><br />Kyn sakbornings: Kona.<br /><br />Krafist er farbanns til mánudagsins, 12. ágúst 2030, kl. 08:25.<br /><br />Verjandi sakbornings: Varði Varnari.',
+    )
+  })
+
   test('should format court date notification for extension requests', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
@@ -926,6 +968,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
+      type,
       prosecutorOffice,
       court,
       courtDate,
