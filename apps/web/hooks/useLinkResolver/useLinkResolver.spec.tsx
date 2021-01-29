@@ -153,12 +153,26 @@ describe('Type resolver', () => {
     expect(types).toBeNull()
   })
 
-  it('Should ignore dynamic paths', () => {
+  it('Should not resolve partial matches when ignore dynamic is false', () => {
+    const types = typeResolver('/fretr/andesbar/other')
+    expect(types).toBeNull()
+  })
+
+  it('Should resolve partial matches when ignore dynamic is true', () => {
     const types = typeResolver('/frett/mycustomnews', true)
     expect(types).toEqual({
       type: 'newsoverview',
       locale: 'is',
       slug: [],
+    })
+  })
+
+  it('Should resolve paths with dashes', () => {
+    const types = typeResolver('/andes-foo/andes-bar')
+    expect(types).toEqual({
+      type: 'subarticle',
+      locale: 'is',
+      slug: ['andes-foo', 'andes-bar'],
     })
   })
 })
@@ -201,11 +215,16 @@ describe('Replace variable in path', () => {
 describe('Convert to regex', () => {
   it('Should convert dynamic template string to regex', () => {
     const regex = convertToRegex('/test/[replaceme]')
-    expect(regex).toEqual('\\/test\\/\\w+$')
+    expect(regex).toEqual('^\\/test\\/[-\\w]+$')
+  })
+
+  it('Should convert deep dynamic template string to regex', () => {
+    const regex = convertToRegex('/test/[replaceme]/then/[me]/ending')
+    expect(regex).toEqual('^\\/test\\/[-\\w]+\\/then\\/[-\\w]+\\/ending$')
   })
 
   it('Should convert static template string to regex', () => {
     const regex = convertToRegex('/test')
-    expect(regex).toEqual('\\/test$')
+    expect(regex).toEqual('^\\/test$')
   })
 })
