@@ -138,8 +138,7 @@ export const CourtRecord: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
-      // TODO: UNCOMMENT
-      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>

@@ -149,7 +149,6 @@ export const StepThree: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
-      // TODO: UNCOMMENT
       caseType={workingCase?.type}
     >
       {workingCase ? (
@@ -181,132 +180,55 @@ export const StepThree: React.FC = () => {
                 </Box>
               )}
             </Box>
-            {
-              // TODO: THIS IS DUPLICATE CODE, REFACTOR!!
-              workingCase.type === CaseType.CUSTODY ? (
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <GridRow>
-                      <GridColumn span="5/12">
-                        <RadioButton
-                          name="alternativeTravelBan"
-                          id="alternativeTravelBanOff"
-                          label="Gæsluvarðhald"
-                          checked={!workingCase.alternativeTravelBan}
-                          onChange={() =>
-                            setAndSendToServer(
-                              'alternativeTravelBan',
-                              false,
-                              workingCase,
-                              setWorkingCase,
-                              updateCase,
-                            )
-                          }
-                          large
-                          filled
-                        />
-                      </GridColumn>
-                      <GridColumn span="7/12">
-                        <RadioButton
-                          name="alternativeTravelBan"
-                          id="alternativeTravelBanOn"
-                          label="Gæsluvarðhald, farbann til vara"
-                          checked={workingCase.alternativeTravelBan}
-                          onChange={() =>
-                            setAndSendToServer(
-                              'alternativeTravelBan',
-                              true,
-                              workingCase,
-                              setWorkingCase,
-                              updateCase,
-                            )
-                          }
-                          large
-                          filled
-                        />
-                      </GridColumn>
-                    </GridRow>
-                  </Box>
+            {workingCase.type === CaseType.CUSTODY ? (
+              <BlueBox>
+                <Box marginBottom={2}>
                   <GridRow>
-                    <GridColumn span="5/8">
-                      <DatePicker
-                        id="reqCustodyEndDate"
-                        label="Gæsluvarðhald til"
-                        placeholderText="Veldu dagsetningu"
-                        selected={
-                          workingCase.requestedCustodyEndDate
-                            ? parseISO(
-                                workingCase.requestedCustodyEndDate?.toString(),
-                              )
-                            : null
-                        }
-                        locale="is"
-                        minDate={new Date()}
-                        hasError={requestedCustodyEndDateErrorMessage !== ''}
-                        errorMessage={requestedCustodyEndDateErrorMessage}
-                        handleCloseCalendar={(date) =>
-                          setAndSendDateToServer(
-                            'requestedCustodyEndDate',
-                            workingCase.requestedCustodyEndDate,
-                            date,
+                    <GridColumn span="5/12">
+                      <RadioButton
+                        name="alternativeTravelBan"
+                        id="alternativeTravelBanOff"
+                        label="Gæsluvarðhald"
+                        checked={!workingCase.alternativeTravelBan}
+                        onChange={() =>
+                          setAndSendToServer(
+                            'alternativeTravelBan',
+                            false,
                             workingCase,
-                            true,
                             setWorkingCase,
                             updateCase,
-                            setRequestedCustodyEndDateErrorMessage,
                           )
                         }
-                        required
+                        large
+                        filled
                       />
                     </GridColumn>
-                    <GridColumn span="3/8">
-                      <TimeInputField
-                        disabled={!workingCase?.requestedCustodyEndDate}
-                        onChange={(evt) =>
-                          validateAndSetTime(
-                            'requestedCustodyEndDate',
-                            workingCase.requestedCustodyEndDate,
-                            evt.target.value,
-                            ['empty', 'time-format'],
+                    <GridColumn span="7/12">
+                      <RadioButton
+                        name="alternativeTravelBan"
+                        id="alternativeTravelBanOn"
+                        label="Gæsluvarðhald, farbann til vara"
+                        checked={workingCase.alternativeTravelBan}
+                        onChange={() =>
+                          setAndSendToServer(
+                            'alternativeTravelBan',
+                            true,
                             workingCase,
                             setWorkingCase,
-                            requestedCustodyEndTimeErrorMessage,
-                            setRequestedCustodyEndTimeErrorMessage,
-                            setRequestedCustodyEndTime,
-                          )
-                        }
-                        onBlur={(evt) =>
-                          validateAndSendTimeToServer(
-                            'requestedCustodyEndDate',
-                            workingCase.requestedCustodyEndDate,
-                            evt.target.value,
-                            ['empty', 'time-format'],
-                            workingCase,
                             updateCase,
-                            setRequestedCustodyEndTimeErrorMessage,
                           )
                         }
-                      >
-                        <Input
-                          data-testid="requestedCustodyEndTime"
-                          name="requestedCustodyEndTime"
-                          label="Tímasetning (kk:mm)"
-                          placeholder="Settu inn tíma"
-                          defaultValue={requestedCustodyEndTime}
-                          errorMessage={requestedCustodyEndTimeErrorMessage}
-                          hasError={requestedCustodyEndTimeErrorMessage !== ''}
-                          required
-                        />
-                      </TimeInputField>
+                        large
+                        filled
+                      />
                     </GridColumn>
                   </GridRow>
-                </BlueBox>
-              ) : (
+                </Box>
                 <GridRow>
                   <GridColumn span="5/8">
                     <DatePicker
                       id="reqCustodyEndDate"
-                      label="Farbann til"
+                      label="Gæsluvarðhald til"
                       placeholderText="Veldu dagsetningu"
                       selected={
                         workingCase.requestedCustodyEndDate
@@ -375,8 +297,82 @@ export const StepThree: React.FC = () => {
                     </TimeInputField>
                   </GridColumn>
                 </GridRow>
-              )
-            }
+              </BlueBox>
+            ) : (
+              <GridRow>
+                <GridColumn span="5/8">
+                  <DatePicker
+                    id="reqCustodyEndDate"
+                    label="Farbann til"
+                    placeholderText="Veldu dagsetningu"
+                    selected={
+                      workingCase.requestedCustodyEndDate
+                        ? parseISO(
+                            workingCase.requestedCustodyEndDate?.toString(),
+                          )
+                        : null
+                    }
+                    locale="is"
+                    minDate={new Date()}
+                    hasError={requestedCustodyEndDateErrorMessage !== ''}
+                    errorMessage={requestedCustodyEndDateErrorMessage}
+                    handleCloseCalendar={(date) =>
+                      setAndSendDateToServer(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        date,
+                        workingCase,
+                        true,
+                        setWorkingCase,
+                        updateCase,
+                        setRequestedCustodyEndDateErrorMessage,
+                      )
+                    }
+                    required
+                  />
+                </GridColumn>
+                <GridColumn span="3/8">
+                  <TimeInputField
+                    disabled={!workingCase?.requestedCustodyEndDate}
+                    onChange={(evt) =>
+                      validateAndSetTime(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        requestedCustodyEndTimeErrorMessage,
+                        setRequestedCustodyEndTimeErrorMessage,
+                        setRequestedCustodyEndTime,
+                      )
+                    }
+                    onBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'requestedCustodyEndDate',
+                        workingCase.requestedCustodyEndDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setRequestedCustodyEndTimeErrorMessage,
+                      )
+                    }
+                  >
+                    <Input
+                      data-testid="requestedCustodyEndTime"
+                      name="requestedCustodyEndTime"
+                      label="Tímasetning (kk:mm)"
+                      placeholder="Settu inn tíma"
+                      defaultValue={requestedCustodyEndTime}
+                      errorMessage={requestedCustodyEndTimeErrorMessage}
+                      hasError={requestedCustodyEndTimeErrorMessage !== ''}
+                      required
+                    />
+                  </TimeInputField>
+                </GridColumn>
+              </GridRow>
+            )}
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={3}>

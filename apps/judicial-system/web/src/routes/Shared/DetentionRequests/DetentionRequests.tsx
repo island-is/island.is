@@ -250,7 +250,7 @@ export const DetentionRequests: React.FC = () => {
               icon="add"
               items={[
                 {
-                  href: Constants.STEP_ONE_ROUTE,
+                  href: Constants.STEP_ONE_NEW_DETENTION_ROUTE,
                   title: 'Gæsluvarðhald',
                 },
                 {

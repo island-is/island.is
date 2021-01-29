@@ -159,8 +159,7 @@ export const RulingStepOne: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
-      // TODO: UNCOMMENT
-      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
+      caseType={workingCase?.type} // {workingCase.caseType}
     >
       {workingCase ? (
         <>

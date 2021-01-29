@@ -148,8 +148,7 @@ export const Overview: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
-      // TODO: UNCOMMENT
-      caseType={CaseType.TRAVEL_BAN} // {workingCase.caseType}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -158,8 +157,7 @@ export const Overview: React.FC = () => {
               {`Yfirlit kröfu um ${
                 workingCase.parentCase ? 'framlengingu' : ''
               } á ${
-                // TODO: REPLACE COMMENTS WITH CASETYPE
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+                workingCase.type === workingCase.type ? 'gæslu' : 'farbann'
               }`}
             </Text>
           </Box>
