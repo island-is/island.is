@@ -6,11 +6,12 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import { Card } from '../Card/Card'
+import { LinkResolverResponse } from 'apps/web/hooks/useLinkResolver'
 
 interface Card {
   title: string
   description: string
-  href: string
+  link: LinkResolverResponse
 }
 
 interface CategoriesProps {

@@ -77,7 +77,7 @@ const Home: Screen<HomeProps> = ({
     return {
       title,
       description,
-      href: linkResolver(__typename as LinkType, [slug]).href,
+      link: linkResolver(__typename as LinkType, [slug]),
     }
   })
 
@@ -166,7 +166,7 @@ const Home: Screen<HomeProps> = ({
           introText={n('ourGoalsIntro')}
           text={n('ourGoalsText')}
           linkText={n('ourGoalsButtonText')}
-          linkUrl={n('ourGoalsLink')}
+          linkUrl={{href: n('ourGoalsLink')}}
         />
       </Section>
     </div>
