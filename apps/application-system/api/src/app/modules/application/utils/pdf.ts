@@ -41,6 +41,15 @@ export async function generateResidenceChangePdf(
     return `${parent.homeAddress}, ${parent.postalCode} ${parent.city}`
   }
 
+  const addToDoc = (
+    font: string,
+    fontSize: number,
+    lineGap: number,
+    text: string,
+  ) => {
+    doc.font(font).fontSize(fontSize).lineGap(lineGap).text(text)
+  }
+
   const addParentToDoc = (header: string, parent: ParentResidenceChange) => {
     addToDoc(boldFont, subheadingFontSize, normalLineGap, header)
     addToDoc(normalFont, valueFontSize, noLineGap, `Nafn: ${parent.name}`)
@@ -51,14 +60,6 @@ export async function generateResidenceChangePdf(
       .text(`Símanúmer: ${parent.phoneNumber}`)
       .lineGap(largeLineGap)
       .text(`Heimilisfang: ${parentHomeAddress(parent)}`)
-  }
-  const addToDoc = (
-    font: string,
-    fontSize: number,
-    lineGap: number,
-    text: string,
-  ) => {
-    doc.font(font).fontSize(fontSize).lineGap(lineGap).text(text)
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
