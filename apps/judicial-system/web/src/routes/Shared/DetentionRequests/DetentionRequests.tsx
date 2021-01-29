@@ -28,7 +28,6 @@ import {
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   insertAt,
@@ -69,10 +68,7 @@ export const DetentionRequests: React.FC = () => {
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({

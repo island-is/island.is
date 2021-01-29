@@ -1,4 +1,4 @@
-import { CaseCustodyRestrictions } from 'libs/judicial-system/types/src'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 export const restrictions = [
   {

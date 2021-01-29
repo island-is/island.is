@@ -25,7 +25,7 @@ import {
   Header,
 } from '@island.is/judicial-system-web/src/shared-components'
 import SignedVerdictOverview from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
-import { CaseType } from 'libs/judicial-system/types/src/lib/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
 const App: React.FC = () => {
   return (

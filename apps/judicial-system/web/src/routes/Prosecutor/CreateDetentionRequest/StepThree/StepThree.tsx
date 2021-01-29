@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
   Text,
-  GridContainer,
   GridRow,
   GridColumn,
   Box,
@@ -10,13 +9,7 @@ import {
   RadioButton,
   Tooltip,
 } from '@island.is/island-ui/core'
-import {
-  Case,
-  CaseCustodyProvisions,
-  CaseCustodyRestrictions,
-  CaseType,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -48,15 +41,15 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import CheckboxList from 'apps/judicial-system/web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
   custodyProvisions,
   travelBanProvisions,
-} from 'apps/judicial-system/web/src/utils/laws'
+} from '@island.is/judicial-system-web/src/utils/laws'
 import {
   alternativeTravelBanRestrictions,
   restrictions,
-} from 'apps/judicial-system/web/src/utils/Restrictions'
+} from '@island.is/judicial-system-web/src/utils/Restrictions'
 
 interface CaseData {
   case?: Case

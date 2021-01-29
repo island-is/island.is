@@ -39,11 +39,11 @@ import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import CheckboxList from 'apps/judicial-system/web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
   alternativeTravelBanRestrictions,
   judgeRestrictions,
-} from 'apps/judicial-system/web/src/utils/Restrictions'
+} from '@island.is/judicial-system-web/src/utils/Restrictions'
 import {
   capitalize,
   formatAccusedByGender,

@@ -166,7 +166,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         accusedGender: undefined,
       })
     }
-  }, [id, workingCase, setWorkingCase, data])
+  }, [id, workingCase, setWorkingCase, data, type])
 
   // Validate step
   useEffect(() => {

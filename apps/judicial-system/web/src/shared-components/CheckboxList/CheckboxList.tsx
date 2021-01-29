@@ -5,7 +5,7 @@ import {
   GridRow,
   GridColumn,
   Checkbox,
-} from 'libs/island-ui/core/src'
+} from '@island.is/island-ui/core'
 
 interface CheckboxInfo {
   title: string

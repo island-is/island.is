@@ -52,8 +52,8 @@ import {
   setCheckboxAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
-import { isolation } from 'apps/judicial-system/web/src/utils/Restrictions'
-import CheckboxList from 'apps/judicial-system/web/src/shared-components/CheckboxList/CheckboxList'
+import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
+import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 
 interface CaseData {
   case?: Case
