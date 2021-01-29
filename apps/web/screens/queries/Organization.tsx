@@ -62,37 +62,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       slices {
-        ... on HeadingSlice {
-          id
-          title
-          body
-        }
-        ... on Districts {
-          id
-          title
-          description
-          links {
-            text
-            url
-          }
-          image {
-            url
-          }
-        }
-        ... on FeaturedArticles {
-          id
-          title
-          image {
-            url
-          }
-          articles {
-            title
-            slug
-            processEntry {
-              id
-            }
-          }
-        }
+        ...AllSlices
       }
       featuredImage {
         url
@@ -110,6 +80,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       }
     }
   }
+  ${slices}
 `
 
 export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
