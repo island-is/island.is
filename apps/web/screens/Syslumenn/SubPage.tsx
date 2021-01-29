@@ -61,8 +61,6 @@ const SubPage: Screen<SubPageProps> = ({
     }),
   )
 
-  console.log(subpage.slices)
-
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
@@ -94,11 +92,7 @@ const SubPage: Screen<SubPageProps> = ({
       }}
     >
       <GridContainer>
-        <Box
-          className={styles.intro}
-          paddingTop={[4, 4, 0]}
-          paddingBottom={[4, 4, 6]}
-        >
+        <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
