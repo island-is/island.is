@@ -990,6 +990,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 describe('formatDefenderCourtDateEmailNotification', () => {
   test('should format defender court date notification', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '1212129999'
     const accusedName = 'Robbi Ræningi'
     const court = 'Héraðsdómur Norðurlands'
@@ -998,6 +999,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
+      type,
       accusedNationalId,
       accusedName,
       court,
@@ -1008,6 +1010,31 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Dómsalur: 101.<br /><br />Sakborningur: Robbi Ræningi, kt. 121212-9999.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.',
+    )
+  })
+
+  test('should format defender court date notification for travel ban', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const accusedNationalId = '1212129999'
+    const accusedName = 'Robbi Ræningi'
+    const court = 'Héraðsdómur Norðurlands'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = '101'
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      type,
+      accusedNationalId,
+      accusedName,
+      court,
+      courtDate,
+      courtRoom,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur staðfest fyrirtökutíma fyrir farbannskröfu.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Dómsalur: 101.<br /><br />Sakborningur: Robbi Ræningi, kt. 121212-9999.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.',
     )
   })
 })

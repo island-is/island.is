@@ -314,6 +314,7 @@ export class NotificationService {
 
     const subject = 'Krafa um gæsluvarðhald í vinnslu'
     const html = formatDefenderCourtDateEmailNotification(
+      existingCase.type,
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.court,

@@ -278,16 +278,16 @@ export function formatPrisonCourtDateEmailNotification(
 }
 
 export function formatDefenderCourtDateEmailNotification(
+  type: CaseType,
   accusedNationalId: string,
   accusedName: string,
   court: string,
   courtDate: Date,
   courtRoom: string,
 ): string {
-  return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${formatDate(
-    courtDate,
-    'PPPPp',
-  )
+  return `${court} hefur staðfest fyrirtökutíma fyrir ${
+    type === CaseType.CUSTODY ? 'gæsluvarðhaldskröfu' : 'farbannskröfu'
+  }.<br /><br />Fyrirtaka mun fara fram ${formatDate(courtDate, 'PPPPp')
     ?.replace('dagur', 'daginn')
     ?.replace(
       ' kl.',
