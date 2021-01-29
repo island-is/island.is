@@ -20,6 +20,8 @@ interface InstitutionsPanelProps {
   locale: HyphenProps['locale']
   responsibleParty?: Institution[]
   relatedInstitution?: Institution[]
+  contactText?: string
+  onContactClick?: () => void
 }
 
 export const InstitutionsPanel = ({
@@ -28,6 +30,8 @@ export const InstitutionsPanel = ({
   responsibleParty = [],
   relatedInstitution = [],
   locale,
+  contactText,
+  onContactClick,
 }: InstitutionsPanelProps) => {
   return (
     <Box background="purple100" borderRadius="large">
@@ -45,14 +49,21 @@ export const InstitutionsPanel = ({
             label={institution.label}
             title={institution.title}
             href="#"
-            large
+            locale={locale}
           />
         </Box>
-        <Box marginLeft="auto" display="none">
-          <Button variant="ghost" icon="open" iconType="outline">
-            Hafa samband
-          </Button>
-        </Box>
+        {onContactClick && (
+          <Box marginLeft="auto">
+            <Button
+              variant="ghost"
+              icon="open"
+              iconType="outline"
+              onClick={onContactClick}
+            >
+              {contactText}
+            </Button>
+          </Box>
+        )}
       </Box>
       {(responsibleParty.length > 0 || relatedInstitution.length > 0) && (
         <Box
@@ -65,12 +76,12 @@ export const InstitutionsPanel = ({
         >
           {responsibleParty.map((institution, index) => (
             <Box marginRight={6} marginBottom={3}>
-              <LabeledLink key={index} {...institution} />
+              <LabeledLink key={index} {...institution} locale={locale} />
             </Box>
           ))}
           {relatedInstitution.map((institution, index) => (
             <Box marginRight={6} marginBottom={3}>
-              <LabeledLink key={index} {...institution} />
+              <LabeledLink key={index} {...institution} locale={locale} />
             </Box>
           ))}
         </Box>
@@ -83,22 +94,17 @@ const LabeledLink = ({
   label,
   title,
   href,
-  large,
+  locale,
 }: Institution & {
-  large?: boolean
+  locale: InstitutionsPanelProps['locale']
 }) => (
   <>
     <Text variant="eyebrow" color="purple600">
       {label}
     </Text>
     <Link href={href}>
-      <Button
-        variant="text"
-        icon="arrowForward"
-        size={large ? 'large' : 'default'}
-        nowrap
-      >
-        {title}
+      <Button variant="text" icon="arrowForward">
+        <Hyphen locale={locale}>{title}</Hyphen>
       </Button>
     </Link>
   </>

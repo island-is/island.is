@@ -473,6 +473,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                 },
               ]}
               locale={activeLocale}
+              contactText="Hafa samband"
+              onContactClick={() => {
+                // Open modal
+              }}
             />
           </Box>
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
