@@ -52,7 +52,7 @@ describe('/domari-krafa with an ID', () => {
       ),
       '000-0000-000',
     )
-    userEvent.tab()
+
     expect(
       screen.getByRole('button', {
         name: /Halda áfram/i,

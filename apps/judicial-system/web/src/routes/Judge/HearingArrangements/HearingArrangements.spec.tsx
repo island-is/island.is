@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen, act } from '@testing-library/react'
 import { HearingArrangements } from './HearingArrangements'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -16,62 +16,64 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    render(
-      <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockJudgeQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'test_id_2',
-              courtDate: '2020-09-12',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              courtDate: '2020-09-12T14:51:00.000Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              courtRoom: '999',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              defenderName: 'Saul Goodman',
-            } as UpdateCase,
-            {
-              id: 'test_id_2',
-              defenderEmail: 'saul@goodman.com',
-            } as UpdateCase,
-          ]),
-        ]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_2`]}
+    await act(async () => {
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockUpdateCaseMutation([
+              {
+                id: 'test_id_2',
+                courtDate: '2020-09-12',
+              } as UpdateCase,
+              {
+                id: 'test_id_2',
+                courtDate: '2020-09-12T14:51:00.000Z',
+              } as UpdateCase,
+              {
+                id: 'test_id_2',
+                courtRoom: '999',
+              } as UpdateCase,
+              {
+                id: 'test_id_2',
+                defenderName: 'Saul Goodman',
+              } as UpdateCase,
+              {
+                id: 'test_id_2',
+                defenderEmail: 'saul@goodman.com',
+              } as UpdateCase,
+            ]),
+          ]}
+          addTypename={false}
         >
-          <UserProvider>
-            <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
-              <HearingArrangements />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
+          <MemoryRouter
+            initialEntries={[
+              `${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_2`,
+            ]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
+                <HearingArrangements />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
 
-    // Act
-    userEvent.type(
-      await waitFor(() => screen.getByLabelText('Dómsalur *')),
-      '999',
-    )
+      // Act
+      userEvent.type(
+        await waitFor(() => screen.getByLabelText('Dómsalur *')),
+        '999',
+      )
 
-    userEvent.tab()
-
-    // Assert
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).not.toBeDisabled()
+      // Assert
+      expect(
+        screen.getByRole('button', {
+          name: /Halda áfram/i,
+        }) as HTMLButtonElement,
+      ).not.toBeDisabled()
+    })
   })
 
   test('should not allow users to continue if the case has a DRAFT status code', async () => {
@@ -118,19 +120,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    // Act
-    userEvent.type(
-      await waitFor(() => screen.getByLabelText('Dómsalur *')),
-      '999',
-    )
-
-    userEvent.tab()
-
     // Assert
     expect(
-      screen.getByRole('button', {
+      (await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      })) as HTMLButtonElement,
     ).toBeDisabled()
   })
 
