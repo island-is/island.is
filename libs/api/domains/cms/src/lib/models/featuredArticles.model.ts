@@ -1,34 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { IArticle, IFeaturedArticles } from '../generated/contentfulTypes'
+import { IFeaturedArticles } from '../generated/contentfulTypes'
 
 import { SystemMetadata } from 'api-cms-domain'
 import { Image, mapImage } from './image.model'
-
-@ObjectType()
-export class FeaturedArticle {
-  @Field(() => ID)
-  id: string
-
-  @Field({ nullable: true })
-  title: string
-
-  @Field()
-  slug: string
-
-  @Field()
-  isApplication: boolean
-}
-
-export const mapFeaturedArticle = ({
-  sys,
-  fields,
-}: IArticle): FeaturedArticle => ({
-  id: sys.id,
-  title: fields.title ?? '',
-  slug: fields.slug ?? '',
-  isApplication: fields.processEntry ? true : false,
-})
+import { Article, mapArticle } from './article.model'
 
 @ObjectType()
 export class FeaturedArticles {
@@ -41,8 +17,8 @@ export class FeaturedArticles {
   @Field({ nullable: true })
   image?: Image
 
-  @Field(() => [FeaturedArticle])
-  articles: Array<FeaturedArticle>
+  @Field(() => [Article])
+  articles: Array<Article>
 }
 
 export const mapFeaturedArticles = ({
@@ -53,5 +29,5 @@ export const mapFeaturedArticles = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image ? mapImage(fields.image) : null,
-  articles: (fields.articles ?? []).map(mapFeaturedArticle),
+  articles: (fields.articles ?? []).map(mapArticle),
 })
