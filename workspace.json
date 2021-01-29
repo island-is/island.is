@@ -2137,6 +2137,32 @@
         }
       }
     },
+    "feature-flags": {
+      "root": "libs/feature-flags",
+      "sourceRoot": "libs/feature-flags/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/feature-flags/tsconfig.lib.json",
+              "libs/feature-flags/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/feature-flags/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/feature-flags/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "file-storage": {
       "root": "libs/file-storage",
       "sourceRoot": "libs/file-storage/src",
