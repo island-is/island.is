@@ -36,7 +36,8 @@
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
     "postinstall": "node ./scripts/postinstall.js",
-    "gitbook": "node ./scripts/gitbook.js"
+    "gitbook": "node ./scripts/gitbook.js",
+    "secret-service": "./scripts/create-secret.sh"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",
