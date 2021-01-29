@@ -286,7 +286,7 @@ export function formatDefenderCourtDateEmailNotification(
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
 }
 
-export function formatCourtDateNotificationCondition(
+export function formatCourtDateSmsNotificationCondition(
   courtDate: Date,
   defenderEmail: string,
 ): string {

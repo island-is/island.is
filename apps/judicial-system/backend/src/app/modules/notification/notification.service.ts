@@ -14,7 +14,7 @@ import {
 import { environment } from '../../../environments'
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCourtDateNotificationCondition,
+  formatCourtDateSmsNotificationCondition,
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
@@ -330,7 +330,7 @@ export class NotificationService {
   private async sendCourtDateNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
-    const condition = formatCourtDateNotificationCondition(
+    const condition = formatCourtDateSmsNotificationCondition(
       existingCase.courtDate,
       existingCase.defenderEmail,
     )
