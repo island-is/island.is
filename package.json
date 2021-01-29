@@ -106,6 +106,8 @@
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "classnames": "2.2.6",
+    "configcat-js": "5.4.0",
+    "configcat-node": "6.5.0",
     "contentful": "7.14.6",
     "contentful-management": "6.0.5",
     "cookie-parser": "1.4.5",
