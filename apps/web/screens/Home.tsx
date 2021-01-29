@@ -166,7 +166,7 @@ const Home: Screen<HomeProps> = ({
           introText={n('ourGoalsIntro')}
           text={n('ourGoalsText')}
           linkText={n('ourGoalsButtonText')}
-          linkUrl={{href: n('ourGoalsLink')}}
+          linkUrl={{ href: n('ourGoalsLink') }}
         />
       </Section>
     </div>
