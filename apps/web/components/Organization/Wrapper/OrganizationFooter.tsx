@@ -20,7 +20,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   return (
     <footer aria-labelledby="organizationFooterTitle" className={styles.footer}>
       <GridContainer>
-        <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
+        <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
           <Box
             display="flex"
             flexDirection="row"
