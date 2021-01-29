@@ -37,12 +37,8 @@ const Overview = ({ application }: FieldBaseProps) => {
         <Text variant="h4">
           Núverandi lögheimili {usePluralForChildren ? 'barna' : 'barns'}:
         </Text>
-        <Text>
-          {applicant?.fullName}
-        </Text>
-        <Text>
-          {applicant?.legalResidence}
-        </Text>
+        <Text>{applicant?.fullName}</Text>
+        <Text>{applicant?.legalResidence}</Text>
       </Box>
       <Box marginBottom={4}>
         <Text variant="h4">Nýtt lögheimili barna:</Text>

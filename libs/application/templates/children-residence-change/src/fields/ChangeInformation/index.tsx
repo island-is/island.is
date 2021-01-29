@@ -28,9 +28,7 @@ const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
         <Text variant="h4" color="blue400">
           {applicant?.fullName}
         </Text>
-        <Text fontWeight="light">
-          {applicant?.legalResidence}
-        </Text>
+        <Text fontWeight="light">{applicant?.legalResidence}</Text>
       </Box>
       <Box marginBottom={6}>
         <Text variant="h4">Nýtt lögheimili barna:</Text>

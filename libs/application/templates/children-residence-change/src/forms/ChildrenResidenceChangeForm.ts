@@ -39,7 +39,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   id: 'nationalRegistry',
                   type: 'NationalRegistryProvider',
                   title: 'Persónuupplýsingar úr Þjóðskrá',
-                  subTitle: 'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+                  subTitle:
+                    'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
                 }),
                 buildDataProviderItem({
                   id: 'childrenNationalRegistry',
