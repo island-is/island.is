@@ -14,53 +14,41 @@ const { elastic } = elasticEnvironment
 @Injectable()
 export class ElasticService {
   private client: Client
-  private indexName: string
-  private indexNameWorker: string
-  private environment: Environment = Environment.DEV
+  private indexName: string | null = null
+  private workerIndexName: string | null = null
+  private environment: Environment | null = null
 
   constructor() {
     this.client = this.createEsClient()
-    const indexName = process.env.API_CATALOGUE_INDEX_NAME
-    if (!indexName) {
-      throw new Error(
-        `Environment variable "API_CATALOGUE_INDEX_NAME" not set.`,
-      )
-    }
-    this.indexName = indexName as string
-    this.indexNameWorker = `${this.indexName}_work`
-
-    const environment = process.env.ENVIRONMENT
-    if (!environment) {
-      throw new Error(`Environment variable "ENVIRONMENT" not set.`)
-    }
-
-    this.setEnvironment(environment)
   }
 
-  private setEnvironment(environment: string | undefined) {
-    console.log('setEnvironment -> ' + environment)
-    switch (environment) {
-      case Environment.PROD:
-        this.environment = Environment.PROD
-        break
-      case Environment.STAGING:
-        this.environment = Environment.STAGING
-        break
-      case Environment.DEV:
-        this.environment = Environment.DEV
-        break
-      default:
-        throw new Error(
-          `Invalid value in environment variable "ENVIRONMENT". Valid values:[${Environment.DEV}|${Environment.STAGING}|${Environment.PROD}]`,
-        )
+  initWorker(indexName: string, environment: Environment) {
+    if (!indexName) {
+      throw new Error('indexName cannot be empty')
     }
+
+    this.indexName = indexName
+    this.environment = environment
+    this.workerIndexName = null
+    this.deleteWorkerIndices()
+    logger.debug(`Worker index name "${this.getIndexNameWorker()}"`)
+  }
+
+  private GenerateUuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
+      c,
+    ) {
+      var r = (Math.random() * 16) | 0,
+        v = c == 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
   }
 
   /**
    * Tries to delete the index.
    * If the index does not exists it does nothing.
    */
-  async deleteIndex(indexName: string = this.indexName): Promise<void> {
+  async deleteIndex(indexName: string = this.getIndexName()): Promise<void> {
     logger.info('Deleting index')
 
     const { body } = await this.client.indices.exists({
@@ -74,21 +62,54 @@ export class ElasticService {
     }
   }
 
-  async deleteWorkerIndex(): Promise<void> {
-    await this.deleteIndex(this.getIndexNameWorker())
+  async deleteWorkerIndices() {
+    logger.debug('deleteWorkerIndex()')
+    const indices = await this.getAllIndicesNames()
+    logger.debug('all indices ' + indices)
+    if (indices) {
+      const workers = indices.filter((e) =>
+        e.startsWith(`${this.getWorkerPrefix()}`),
+      )
+      logger.debug('all worker indices ' + workers)
+      workers.forEach(async (indexName) => {
+        await this.deleteIndex(indexName)
+      })
+    }
   }
 
+  /**
+   * Before calling this function, initCollectionValues must have been set
+   */
+  getEnvironment(): Environment {
+    if (!this.environment) throw new Error('No environment set')
+
+    return this.environment as Environment
+  }
+
+  /**
+   * Before calling this function, initWorker must have been set
+   */
   getIndexName() {
+    if (!this.indexName) throw new Error('Index name not set')
+
     return this.indexName
   }
-  getIndexNameWorker() {
-    return this.indexNameWorker
-  }
-  getEnvironment(): Environment {
-    return this.environment
+
+  private getWorkerPrefix() {
+    return `apiCollectorWorker-${this.getEnvironment()}`
   }
 
-  private async getMapping(indexName: string = this.indexName) {
+  /**
+   * Before calling this function, initWorker must have been set
+   */
+  getIndexNameWorker(): string {
+    if (!this.workerIndexName) {
+      this.workerIndexName = `${this.getWorkerPrefix()}${this.GenerateUuidv4()}`
+    }
+    return this.workerIndexName as string
+  }
+
+  private async getMapping(indexName: string = this.getIndexName()) {
     const response = await this.client.indices.getMapping({
       index: indexName,
     })
@@ -106,7 +127,9 @@ export class ElasticService {
    * Moves all values from worker index to the destinationIndex.
    * @param {string} destinationIndex - if not specified the default value is getIndexName()
    */
-  async moveWorkerValuesToIndex(destinationIndex: string = this.indexName) {
+  async moveWorkerValuesToIndex(
+    destinationIndex: string = this.getIndexName(),
+  ) {
     const res = await this.getMapping(this.getIndexNameWorker())
     const mappingProperties =
       res?.body[this.getIndexNameWorker()]?.mappings?.properties
@@ -147,8 +170,9 @@ export class ElasticService {
    */
   async bulk(
     services: Array<Service>,
-    indexName: string = this.indexName,
+    indexName: string = this.getIndexName(),
   ): Promise<void> {
+    logger.debug(`Inserting into index ${indexName}`)
     logger.info('Bulk insert', services)
 
     if (services.length) {
@@ -167,9 +191,9 @@ export class ElasticService {
         body: bulk,
         index: indexName,
       })
+    } else {
+      logger.debug('nothing to bulk insert')
     }
-
-    logger.debug('nothing to bulk insert')
   }
 
   async bulkWorker(services: Array<Service>) {
@@ -213,7 +237,7 @@ export class ElasticService {
     logger.debug('Searching for', query)
     return await this.client.search<ResponseBody, RequestBody>({
       body: query,
-      index: this.indexName,
+      index: this.getIndexName(),
     })
   }
 
@@ -224,7 +248,7 @@ export class ElasticService {
 
     logger.info('Deleting based on indexes', { ids })
     return await this.client.delete_by_query({
-      index: this.indexName,
+      index: this.getIndexName(),
       body: {
         query: {
           bool: {
@@ -238,7 +262,7 @@ export class ElasticService {
   async deleteAllExcept(excludeIds: Array<string>) {
     logger.info('Deleting everything except', { excludeIds })
     return await this.client.delete_by_query({
-      index: this.indexName,
+      index: this.getIndexName(),
       body: {
         query: {
           bool: {
@@ -255,6 +279,24 @@ export class ElasticService {
     })
     logger.info('Got elasticsearch ping response')
     return result
+  }
+  async getAllIndicesNames() {
+    interface Item {
+      index: string
+    }
+
+    return await this.client.cat
+      .indices({ format: 'json', h: ['index'] })
+      .then((result) => {
+        if (result && result.body) {
+          const indices: Array<string> = []
+          const list: Array<Item> = result.body as Array<Item>
+          list.forEach((item) => {
+            if (item.index) indices.push(item.index)
+          })
+          return indices
+        }
+      })
   }
 
   private createEsClient(): Client {
