@@ -343,8 +343,7 @@ export const Overview: React.FC = () => {
           {modalVisible && (
             <Modal
               title={`Krafa um ${
-                workingCase.type ===
-                CaseType.CUSTODY
+                workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhald'
                   : 'Farbann'
               }  hefur verið staðfest`}
