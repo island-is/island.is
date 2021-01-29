@@ -35,15 +35,6 @@ export const variants = styleMap({
   red: {
     color: theme.color.red600,
     backgroundColor: theme.color.red100,
-    ':focus': {
-      backgroundColor: theme.color.red200,
-      color: theme.color.red600,
-    },
-    ':hover': {
-      textDecoration: 'none',
-      backgroundColor: theme.color.red200,
-      color: theme.color.red600,
-    },
   },
   mint: {
     color: theme.color.dark400,
@@ -60,15 +51,6 @@ export const variants = styleMap({
   blueberry: {
     color: theme.color.blueberry400,
     backgroundColor: theme.color.blueberry100,
-    ':focus': {
-      backgroundColor: theme.color.blueberry400,
-      color: theme.color.blueberry100,
-    },
-    ':hover': {
-      textDecoration: 'none',
-      backgroundColor: theme.color.blueberry400,
-      color: theme.color.blueberry100,
-    },
   },
   label: {},
 })

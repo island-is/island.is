@@ -1,5 +1,5 @@
 import {
-  IdpRestriction,
+  IdpProvider,
   IdpProviderService,
   AccessService,
   AdminAccess,
@@ -9,7 +9,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { IdpProviderController } from './idp-provider.controller'
 
 @Module({
-  imports: [SequelizeModule.forFeature([IdpRestriction, AdminAccess])],
+  imports: [SequelizeModule.forFeature([IdpProvider, AdminAccess])],
   controllers: [IdpProviderController],
   providers: [IdpProviderService, AccessService],
 })
