@@ -54,28 +54,27 @@ export const InstitutionsPanel = ({
           </Button>
         </Box>
       </Box>
-      {responsibleParty.length > 0 ||
-        (relatedInstitution.length > 0 && (
-          <Box
-            borderTopWidth="standard"
-            borderColor="purple200"
-            padding={[3, 3, 6]}
-            paddingBottom={[1, 1, 3]}
-            display="flex"
-            flexWrap="wrap"
-          >
-            {responsibleParty.map((institution, index) => (
-              <Box marginRight={6} marginBottom={3}>
-                <LabeledLink key={index} {...institution} />
-              </Box>
-            ))}
-            {relatedInstitution.map((institution, index) => (
-              <Box marginRight={6} marginBottom={3}>
-                <LabeledLink key={index} {...institution} />
-              </Box>
-            ))}
-          </Box>
-        ))}
+      {(responsibleParty.length > 0 || relatedInstitution.length > 0) && (
+        <Box
+          borderTopWidth="standard"
+          borderColor="purple200"
+          padding={[3, 3, 6]}
+          paddingBottom={[1, 1, 3]}
+          display="flex"
+          flexWrap="wrap"
+        >
+          {responsibleParty.map((institution, index) => (
+            <Box marginRight={6} marginBottom={3}>
+              <LabeledLink key={index} {...institution} />
+            </Box>
+          ))}
+          {relatedInstitution.map((institution, index) => (
+            <Box marginRight={6} marginBottom={3}>
+              <LabeledLink key={index} {...institution} />
+            </Box>
+          ))}
+        </Box>
+      )}
     </Box>
   )
 }
