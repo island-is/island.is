@@ -68,22 +68,26 @@ export const FormStepperSection: FC<{
   useEffect(() => {
     if (!isClient) return
     let throttleTimeout: number
+    let isMounted: boolean = true
 
     const handleResize = () => {
       clearTimeout(throttleTimeout)
+
       throttleTimeout = window.setTimeout(function () {
         setIsSmallScreen(window.innerWidth <= islandUITheme.breakpoints.md)
       }, 250)
     }
 
-    handleResize()
-
-    window.addEventListener('resize', handleResize)
+    if (isMounted) {
+      handleResize()
+      window.addEventListener('resize', handleResize)
+    }
 
     return () => {
       window.removeEventListener('resize', handleResize)
+      isMounted = false
     }
-  }, [, isClient])
+  }, [isClient])
 
   return (
     <Box

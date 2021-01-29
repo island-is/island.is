@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen, act } from '@testing-library/react'
 import StepFour from './StepFour'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -16,58 +16,59 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 describe('Create detention request, step four', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-
-    render(
-      <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockProsecutorQuery,
-          ...mockUpdateCaseMutation([
-            { caseFacts: 'Lorem ipsum dolor sit amet,' } as UpdateCase,
-            {
-              legalArguments:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
-            } as UpdateCase,
-          ]),
-        ]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_FOUR_ROUTE}/test_id_2`]}
+    await act(async () => {
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockUpdateCaseMutation([
+              { caseFacts: 'Lorem ipsum dolor sit amet,' } as UpdateCase,
+              {
+                legalArguments:
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+              } as UpdateCase,
+            ]),
+          ]}
+          addTypename={false}
         >
-          <UserProvider>
-            <Route path={`${Constants.STEP_FOUR_ROUTE}/:id`}>
-              <StepFour />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
+          <MemoryRouter
+            initialEntries={[`${Constants.STEP_FOUR_ROUTE}/test_id_2`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.STEP_FOUR_ROUTE}/:id`}>
+                <StepFour />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
 
-    // Act and Assert
-    userEvent.type(
-      await waitFor(
-        () => screen.getByLabelText('Málsatvik *') as HTMLInputElement,
-      ),
-      'Lorem ipsum dolor sit amet,',
-    )
+      // Act and Assert
+      userEvent.type(
+        await waitFor(
+          () => screen.getByLabelText('Málsatvik *') as HTMLInputElement,
+        ),
+        'Lorem ipsum dolor sit amet,',
+      )
 
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
+      expect(
+        screen.getByRole('button', {
+          name: /Halda áfram/i,
+        }) as HTMLButtonElement,
+      ).toBeDisabled()
 
-    userEvent.type(
-      screen.getByLabelText('Lagarök *') as HTMLInputElement,
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
-    )
+      userEvent.type(
+        screen.getByLabelText('Lagarök *') as HTMLInputElement,
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+      )
 
-    expect(
-      screen.getByRole('button', {
-        name: /Halda áfram/i,
-      }) as HTMLButtonElement,
-    ).not.toBeDisabled()
+      expect(
+        screen.getByRole('button', {
+          name: /Halda áfram/i,
+        }) as HTMLButtonElement,
+      ).not.toBeDisabled()
+    })
   })
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, waitFor, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne from './StepOne'
@@ -174,74 +174,78 @@ describe('/krafa without ID', () => {
 
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    render(
-      <MockedProvider
-        mocks={[
-          ...mockCaseQueries,
-          ...mockProsecutorQuery,
-          ...mockUpdateCaseMutation([
-            {
-              id: 'testid',
-              accusedName: 'Jon Harring',
-            } as UpdateCase,
-            {
-              id: 'testid',
-              accusedAddress: 'Harringvej 2',
-            } as UpdateCase,
-            {
-              id: 'testid',
-              accusedGender: CaseGender.FEMALE,
-            } as UpdateCase,
-          ]),
-        ]}
-        addTypename={false}
-      >
-        <MemoryRouter initialEntries={['/krafa']}>
-          <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
+    await act(async () => {
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockUpdateCaseMutation([
+              {
+                id: 'testid',
+                accusedName: 'Jon Harring',
+              } as UpdateCase,
+              {
+                id: 'testid',
+                accusedAddress: 'Harringvej 2',
+              } as UpdateCase,
+              {
+                id: 'testid',
+                accusedGender: CaseGender.FEMALE,
+              } as UpdateCase,
+            ]),
+          ]}
+          addTypename={false}
+        >
+          <MemoryRouter initialEntries={['/krafa']}>
+            <UserProvider>
+              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
+                <StepOne />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
 
-    // Act and Assert
-    userEvent.type(
-      await waitFor(
-        () =>
-          screen.getByLabelText('Slá inn LÖKE málsnúmer *') as HTMLInputElement,
-      ),
-      '000-0000-0010',
-    )
+      // Act and Assert
+      userEvent.type(
+        await waitFor(
+          () =>
+            screen.getByLabelText(
+              'Slá inn LÖKE málsnúmer *',
+            ) as HTMLInputElement,
+        ),
+        '000-0000-0010',
+      )
 
-    userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
+      userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
 
-    userEvent.type(
-      screen.getByLabelText('Kennitala *') as HTMLInputElement,
-      '1112902539',
-    )
+      userEvent.type(
+        screen.getByLabelText('Kennitala *') as HTMLInputElement,
+        '1112902539',
+      )
 
-    userEvent.type(
-      screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
-      'Jon Harring',
-    )
+      userEvent.type(
+        screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
+        'Jon Harring',
+      )
 
-    expect(
-      screen.getByRole('button', {
-        name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
-    ).toBeDisabled()
+      expect(
+        screen.getByRole('button', {
+          name: /Stofna kröfu/i,
+        }) as HTMLButtonElement,
+      ).toBeDisabled()
 
-    userEvent.type(
-      screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
-      'Harringvej 2',
-    )
+      userEvent.type(
+        screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
+        'Harringvej 2',
+      )
 
-    expect(
-      screen.getByRole('button', {
-        name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
-    ).not.toBeDisabled()
+      expect(
+        screen.getByRole('button', {
+          name: /Stofna kröfu/i,
+        }) as HTMLButtonElement,
+      ).not.toBeDisabled()
+    })
   })
 })
