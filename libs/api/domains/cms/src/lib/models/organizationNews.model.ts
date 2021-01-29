@@ -3,6 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IOrganizationNews } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { mapOrganization, Organization } from './organization.model'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class OrganizationNews {
@@ -24,8 +25,8 @@ export class OrganizationNews {
   @Field({ nullable: true })
   featuredImage?: Image
 
-  @Field({ nullable: true })
-  content?: string
+  @Field(() => [SliceUnion])
+  content: Array<typeof SliceUnion>
 
   @Field()
   slug: string
@@ -41,6 +42,8 @@ export const mapOrganizationNews = ({
   date: fields.date ?? '',
   introduction: fields.introduction,
   featuredImage: mapImage(fields.featuredImage),
-  content: (fields.content && JSON.stringify(fields.content)) ?? null,
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':body')
+    : null,
   slug: fields.slug,
 })
