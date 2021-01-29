@@ -8,14 +8,16 @@ import {
   PDF_TYPES,
 } from '@island.is/application/api-template-utils'
 import { Application } from './application.model'
-import { FormValue } from 'libs/application/core/src/types/Application'
+import { FormValue } from '@island.is/application/core'
 
 @Injectable()
 export class FileService {
-  private s3 = new AWS.S3()
+  s3: AWS.S3
   private one_minute = 60
 
-  constructor() {}
+  constructor() {
+    this.s3 = new AWS.S3()
+  }
 
   async createPdf(application: Application, type: PDF_TYPES): Promise<string> {
     const answers = application.answers as FormValue
@@ -36,7 +38,7 @@ export class FileService {
     const childrenAppliedFor = (answers.selectChild as unknown) as Array<
       PersonResidenceChange
     >
-    let parentB = (parentBNationalRegistry.data as unknown) as ParentResidenceChange
+    const parentB = (parentBNationalRegistry.data as unknown) as ParentResidenceChange
 
     parentB.email = answers.parentBEmail as string
     parentB.phoneNumber = answers.parentBPhoneNumber as string
