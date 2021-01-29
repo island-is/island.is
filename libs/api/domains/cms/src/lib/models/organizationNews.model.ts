@@ -37,11 +37,13 @@ export const mapOrganizationNews = ({
   fields,
 }: IOrganizationNews): OrganizationNews => ({
   id: sys.id,
-  organization: mapOrganization(fields.organization),
-  title: fields.title,
+  organization: fields.organization
+    ? mapOrganization(fields.organization)
+    : null,
+  title: fields.title ?? '',
   date: fields.date ?? '',
-  introduction: fields.introduction,
-  featuredImage: mapImage(fields.featuredImage),
+  introduction: fields.introduction ?? '',
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':body')
     : null,

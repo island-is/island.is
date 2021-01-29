@@ -43,14 +43,16 @@ export class OrganizationSubpage {
 export const mapOrganizationSubpage = ({
   fields,
 }: IOrganizationSubpage): OrganizationSubpage => ({
-  title: fields.title,
-  slug: fields.slug,
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
   description: fields.description ?? '',
   links: (fields.links ?? []).map(mapLink),
   sidebarCards: (fields.sidebarCards ?? []).map(mapStaffCard),
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
-  menuItem: fields.menuItem?.fields,
+  menuItem: fields.menuItem ? mapLink(fields.menuItem) : null,
   parentSubpage: fields.parentSubpage?.fields.slug,
-  organizationPage: mapOrganizationPage(fields.organizationPage),
-  featuredImage: mapImage(fields.featuredImage),
+  organizationPage: fields.organizationPage
+    ? mapOrganizationPage(fields.organizationPage)
+    : null,
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
 })

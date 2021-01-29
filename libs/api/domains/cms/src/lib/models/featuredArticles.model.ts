@@ -51,7 +51,7 @@ export const mapFeaturedArticles = ({
 }: IFeaturedArticles): SystemMetadata<FeaturedArticles> => ({
   typename: 'FeaturedArticles',
   id: sys.id,
-  title: fields.title,
-  image: mapImage(fields.image),
-  articles: fields.articles.map(mapFeaturedArticle),
+  title: fields.title ?? '',
+  image: fields.image ? mapImage(fields.image) : null,
+  articles: (fields.articles ?? []).map(mapFeaturedArticle),
 })

@@ -29,8 +29,8 @@ export const mapDistricts = ({
 }: IDistricts): SystemMetadata<Districts> => ({
   typename: 'Districts',
   id: sys.id,
-  title: fields.title,
-  description: fields.description,
-  image: mapImage(fields.image),
-  links: fields.links.map(mapLink),
+  title: fields.title ?? '',
+  description: fields.description ?? '',
+  image: fields.image ? mapImage(fields.image) : null,
+  links: (fields.links ?? []).map(mapLink),
 })

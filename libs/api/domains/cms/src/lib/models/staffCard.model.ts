@@ -22,9 +22,9 @@ export class StaffCard {
 }
 
 export const mapStaffCard = ({ fields }: IStaffCard): StaffCard => ({
-  name: fields.name,
+  name: fields.name ?? '',
   intro: fields.intro ?? '',
   email: fields.email ?? '',
   phone: fields.phone ?? '',
-  logo: mapImage(fields.logo),
+  logo: fields.logo ? mapImage(fields.logo) : null,
 })

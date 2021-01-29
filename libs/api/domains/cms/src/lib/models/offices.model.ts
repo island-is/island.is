@@ -26,6 +26,6 @@ export const mapOffices = ({
 }: IOffices): SystemMetadata<Offices> => ({
   typename: 'Offices',
   id: sys.id,
-  title: fields.title,
+  title: fields.title ?? '',
   offices: (fields.offices ?? []).map(mapOrganizationOffice),
 })

@@ -18,6 +18,6 @@ export class LinkGroup {
 
 export const mapLinkGroup = ({ fields }: ILinkGroup): LinkGroup => ({
   name: fields.name ?? '',
-  primaryLink: mapLink(fields.primaryLink),
+  primaryLink: fields.primaryLink ? mapLink(fields.primaryLink) : null,
   childrenLinks: (fields.childrenLinks ?? []).map(mapLink),
 })

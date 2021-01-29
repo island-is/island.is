@@ -33,10 +33,10 @@ export const mapOrganization = ({
   sys,
 }: IOrganization): Organization => ({
   id: sys.id,
-  title: fields.title,
-  slug: fields.slug,
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
   description: fields.description ?? '',
   tag: (fields.tag ?? []).map(mapOrganizationTag),
-  logo: mapImage(fields.logo),
+  logo: fields.logo ? mapImage(fields.logo) : null,
   link: fields.link ?? '',
 })

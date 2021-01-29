@@ -16,7 +16,7 @@ export class FooterItem {
 }
 
 export const mapFooterItem = ({ fields }: IFooterItem): FooterItem => ({
-  title: fields.title,
+  title: fields.title ?? '',
   link: fields.link ? mapLink(fields.link) : null,
   content: fields.content ?? '',
 })

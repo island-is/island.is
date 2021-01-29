@@ -42,12 +42,14 @@ export const mapOrganizationPage = ({
   fields,
 }: IOrganizationPage): OrganizationPage => ({
   id: sys.id,
-  title: fields.title,
-  slug: fields.slug,
-  description: fields.description,
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
+  description: fields.description ?? '',
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
-  organization: mapOrganization(fields.organization),
-  featuredImage: mapImage(fields.featuredImage),
+  organization: fields.organization
+    ? mapOrganization(fields.organization)
+    : null,
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
 })
