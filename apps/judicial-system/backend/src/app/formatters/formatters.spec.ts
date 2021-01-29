@@ -10,7 +10,7 @@ import {
   formatConclusion,
   formatCourtCaseNumber,
   formatProsecutorCourtDateEmailNotification,
-  formatCourtDateSmsNotificationCondition,
+  formatCourtDateNotificationCondition,
   formatCustodyProvisions,
   formatCourtHeadsUpSmsNotification,
   formatProsecutorDemands,
@@ -909,10 +909,7 @@ describe('formatCourtDateNotificationCondition', () => {
     const defenderEmail = 'defender@defenders.is'
 
     // Act
-    const res = formatCourtDateSmsNotificationCondition(
-      courtDate,
-      defenderEmail,
-    )
+    const res = formatCourtDateNotificationCondition(courtDate, defenderEmail)
 
     // Assert
     expect(res).toBe(

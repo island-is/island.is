@@ -5,7 +5,7 @@ export {
   formatProsecutorCourtDateEmailNotification,
   formatPrisonCourtDateEmailNotification,
   formatDefenderCourtDateEmailNotification,
-  formatCourtDateSmsNotificationCondition,
+  formatCourtDateNotificationCondition,
   formatPrisonRulingEmailNotification,
   formatCourtRevokedSmsNotification,
   formatPrisonRevokedEmailNotification,
