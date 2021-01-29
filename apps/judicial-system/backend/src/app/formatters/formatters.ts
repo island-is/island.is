@@ -390,6 +390,7 @@ export function formatPrisonRevokedEmailNotification(
 }
 
 export function formatDefenderRevokedEmailNotification(
+  type: CaseType,
   accusedNationalId: string,
   accusedName: string,
   court: string,
@@ -400,7 +401,9 @@ export function formatDefenderRevokedEmailNotification(
     ?.replace('dagur', 'daginn')
     ?.replace(' kl.', ', kl.')
 
-  return `Gæsluvarðhaldskrafa sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
+  return `${
+    type === CaseType.CUSTODY ? 'Gæsluvarðhaldskrafa' : 'Farbannskrafa'
+  } sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.`
 }

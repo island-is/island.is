@@ -463,6 +463,7 @@ export class NotificationService {
 
     const subject = 'Gæsluvarðhaldskrafa afturkölluð'
     const html = formatDefenderRevokedEmailNotification(
+      existingCase.type,
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.court,
@@ -491,10 +492,12 @@ export class NotificationService {
       promises.push(this.sendRevokedSmsNotificationToCourt(existingCase))
     }
 
-    const prisonWasNotified = await this.existsRevokableNotification(
-      existingCase.id,
-      environment.notifications.prisonEmail,
-    )
+    const prisonWasNotified =
+      existingCase.type === CaseType.CUSTODY &&
+      (await this.existsRevokableNotification(
+        existingCase.id,
+        environment.notifications.prisonEmail,
+      ))
 
     if (prisonWasNotified) {
       promises.push(this.sendRevokedEmailNotificationToPrison(existingCase))
