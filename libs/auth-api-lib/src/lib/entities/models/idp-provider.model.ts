@@ -10,14 +10,14 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
-  tableName: 'idp_restrictions',
+  tableName: 'idp_providers',
   indexes: [
     {
       fields: ['name'],
     },
   ],
 })
-export class IdpRestriction extends Model<IdpRestriction> {
+export class IdpProvider extends Model<IdpProvider> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

@@ -43,9 +43,9 @@
           box-sizing: border-box;
           border-radius: $border-radius;
           background: $color-body-bg;
-          font-size: 15px;
+          font-size: 0.9rem;
           font-style: normal;
-          font-weight: 600;
+          font-weight: $weight-semi-bold;
           line-height: 25px;
           letter-spacing: 0em;
           text-align: center;
@@ -55,6 +55,45 @@
           padding: 0;
           margin-left: 15px;
           cursor: pointer;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+
+    &__export {
+      display: flex;
+      margin-top: 20px;
+
+      &__container__button {
+        flex: 1;
+        text-align: right;
+
+        button {
+          border: 1px solid $color-border;
+          box-sizing: border-box;
+          border-radius: $border-radius;
+          background: $color-body-bg;
+          font-size: 0.9rem;
+          font-style: normal;
+          font-weight: $weight-semi-bold;
+          line-height: 25px;
+          text-align: center;
+          color: $color-text-primary;
+          height: 30px;
+          padding: 0px 15px;
+          margin-left: 15px;
+          cursor: pointer;
+
+          &:focus {
+            outline: none;
+          }
+
+          span {
+            margin-left: 10px;
+          }
         }
       }
     }

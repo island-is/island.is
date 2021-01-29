@@ -40,7 +40,7 @@ export const ContentLink: FC<ContentLinkProps> = ({
     }
 
     return (
-      <Link href={fallbackLink} passHref pureChildren>
+      <Link href={fallbackLink} pureChildren>
         {children}
       </Link>
     )
@@ -49,7 +49,7 @@ export const ContentLink: FC<ContentLinkProps> = ({
   const linkProps = linkResolver(contentType, [slug])
 
   return (
-    <Link {...linkProps} passHref pureChildren>
+    <Link {...linkProps} pureChildren>
       {children}
     </Link>
   )
