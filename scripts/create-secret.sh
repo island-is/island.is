@@ -106,7 +106,7 @@ function validate_length() {
   then
     echo $GREEN'Length: Ok!'$RESET
   else
-    echo $RED'To short, should be 6-16 characters long.'$RESET
+    echo $RED'To short, should be 6-32 characters long.'$RESET
     exit 0
   fi
 }

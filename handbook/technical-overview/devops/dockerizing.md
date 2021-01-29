@@ -24,7 +24,7 @@ When you push this change to `main` your Docker image will get built and pushed 
 
 Yes you can!
 
-You can run the `create-secret` script and you will be prompted for input.
+You can run the `yarn create-secret` or `./scripts/create-secret.sh` and you will be prompted for input.
 
 ```bash
 ./scripts/create-secret
