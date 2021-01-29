@@ -60,7 +60,7 @@ export const ErrorPage: React.FC<ErrorProps> = ({ errPage, statusCode }) => {
       el.setAttribute('rel', 'stylesheet')
     })
   }, [])
-  console.log('isnide error page ')
+
   return (
     <GridContainer>
       <GridRow>
