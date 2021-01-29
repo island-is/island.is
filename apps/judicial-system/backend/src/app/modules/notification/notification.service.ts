@@ -282,7 +282,6 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu'
     const html = formatPrisonCourtDateEmailNotification(
-      existingCase.type,
       existingCase.prosecutor?.institution,
       existingCase.court,
       existingCase.courtDate,
