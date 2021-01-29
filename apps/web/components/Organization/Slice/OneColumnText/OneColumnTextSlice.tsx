@@ -26,28 +26,24 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           paddingTop={[4, 4, 6]}
           paddingBottom={[4, 5, 10]}
         >
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12']}>
-              <Text variant="h3" as="h2">
-                {slice.title}
-              </Text>
-              <div className={styles.oneColumnSliceContent}>
-                <Markdown>{slice.content}</Markdown>
-              </div>
-              {slice.link && (
-                <Link href="#">
-                  <Button
-                    icon="arrowForward"
-                    iconType="filled"
-                    type="button"
-                    variant="text"
-                  >
-                    {slice.link.text}
-                  </Button>
-                </Link>
-              )}
-            </GridColumn>
-          </GridRow>
+          <Text variant="h3" as="h2">
+            {slice.title}
+          </Text>
+          <div className={styles.oneColumnSliceContent}>
+            <Markdown>{slice.content}</Markdown>
+          </div>
+          {slice.link && (
+            <Link href="#">
+              <Button
+                icon="arrowForward"
+                iconType="filled"
+                type="button"
+                variant="text"
+              >
+                {slice.link.text}
+              </Button>
+            </Link>
+          )}
         </Box>
       </GridContainer>
     </section>
