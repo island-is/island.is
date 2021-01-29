@@ -6,9 +6,11 @@ import {
   extractChildrenFromApplication,
   extractAnswersFromApplication,
   constructParentAddressString,
+  extractApplicantFromApplication,
 } from '../../lib/utils'
 
 const Overview = ({ application }: FieldBaseProps) => {
+  const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
   const children = extractChildrenFromApplication(application)
@@ -36,12 +38,10 @@ const Overview = ({ application }: FieldBaseProps) => {
           Núverandi lögheimili {usePluralForChildren ? 'barna' : 'barns'}:
         </Text>
         <Text>
-          {/* // TODO: Get name of applicant */}
-          {application?.applicant}
+          {applicant?.fullName}
         </Text>
         <Text>
-          {/* TODO: Get address from applicant */}
-          Missing address
+          {applicant?.legalResidence}
         </Text>
       </Box>
       <Box marginBottom={4}>

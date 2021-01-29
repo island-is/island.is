@@ -2,6 +2,7 @@ import React from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
+  extractApplicantFromApplication,
   extractParentFromApplication,
   constructParentAddressString,
 } from '../../lib/utils'
@@ -9,6 +10,7 @@ import { CheckboxController } from '@island.is/shared/form-fields'
 
 const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
   const { id, disabled } = field
+  const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
   return (
@@ -24,12 +26,10 @@ const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
       <Box marginBottom={4}>
         <Text variant="h4">Núverandi lögheimili barna:</Text>
         <Text variant="h4" color="blue400">
-          {/* // TODO: Get name of applicant */}
-          {application?.applicant}
+          {applicant?.fullName}
         </Text>
         <Text fontWeight="light">
-          {/* TODO: Get address from applicant */}
-          Missing address
+          {applicant?.legalResidence}
         </Text>
       </Box>
       <Box marginBottom={6}>
