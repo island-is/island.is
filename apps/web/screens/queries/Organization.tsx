@@ -155,17 +155,3 @@ export const GET_ORGANIZATION_TAGS_QUERY = gql`
     }
   }
 `
-
-export const GET_ORGANIZATION_NEWS_QUERY = gql`
-  query GetOrganizationNews($input: GetOrganizationNewsInput!) {
-    getOrganizationNews(input: $input) {
-      slug
-      title
-      date
-      featuredImage {
-        url
-      }
-      introduction
-    }
-  }
-`

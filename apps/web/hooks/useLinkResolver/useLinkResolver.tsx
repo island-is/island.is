@@ -59,14 +59,6 @@ export const routesTemplate = {
     is: '/stofnanir/[slug]',
     en: '/en/organizations/[slug]',
   },
-  organizationnews: {
-    is: '/stofnanir/[organizationSlug]/frett/[slug]',
-    en: '/en/organizations/[organizationSlug]/news/[slug]',
-  },
-  organizationnewsoverview: {
-    is: '/stofnanir/[organizationSlug]/frett',
-    en: '/en/organizations/[organizationSlug]/news',
-  },
   lifeeventpage: {
     is: '/lifsvidburdur/[slug]',
     en: '/en/life-event/[slug]',

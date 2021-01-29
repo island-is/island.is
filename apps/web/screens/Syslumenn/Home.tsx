@@ -6,19 +6,16 @@ import {
   ContentLanguage,
   Query,
   QueryGetNamespaceArgs,
-  QueryGetOrganizationNewsArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_NEWS_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './Home.treat'
 import {
-  LatestOrganizationNewsSection,
   OrganizationSlice,
   OrganizationWrapper,
 } from '@island.is/web/components'
@@ -28,10 +25,9 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
   namespace: Query['getNamespace']
-  news: Query['getOrganizationNews']
 }
 
-const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
+const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -82,19 +78,6 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace, news }) => {
           namespace={namespace}
         />
       ))}
-      <Box
-        className={styles.newsBg}
-        paddingTop={[4, 5, 10]}
-        paddingBottom={[4, 5, 10]}
-      >
-        <LatestOrganizationNewsSection
-          label={n('newsAndAnnouncements')}
-          labelId="latestNewsTitle"
-          items={news}
-          subtitle={organizationPage.title}
-          organizationSlug={organizationPage.slug}
-        />
-      </Box>
     </OrganizationWrapper>
   )
 }
@@ -105,9 +88,6 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       data: { getOrganizationPage },
     },
     namespace,
-    {
-      data: { getOrganizationNews },
-    },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -133,15 +113,6 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
-    apolloClient.query<Query, QueryGetOrganizationNewsArgs>({
-      query: GET_ORGANIZATION_NEWS_QUERY,
-      variables: {
-        input: {
-          organizationSlug: 'syslumenn',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
   ])
 
   if (!getOrganizationPage) {
@@ -151,7 +122,6 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     organizationPage: getOrganizationPage,
     namespace,
-    news: getOrganizationNews,
     showSearchInHeader: false,
   }
 }
