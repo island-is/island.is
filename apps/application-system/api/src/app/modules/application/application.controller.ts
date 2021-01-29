@@ -524,7 +524,10 @@ export class ApplicationController {
     const { updatedApplication } = await this.applicationService.update(
       application.id,
       {
-        attachments: omit(application.attachments, url),
+        attachments: {
+          ...application.attachments,
+          [type]: url,
+        },
       },
     )
 
