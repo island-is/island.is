@@ -78,7 +78,7 @@ export const IntroductionSection: FC<Props> = ({
           </Text>
           <Text>{text}</Text>
           <Box paddingY={2}>
-            <Link {...linkUrl}>
+            <Link {...linkUrl} skipTab>
               <Button
                 icon="arrowForward"
                 iconType="filled"
