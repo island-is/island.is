@@ -7,6 +7,7 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -352,11 +353,16 @@ export class NotificationService {
       }
     }
 
-    const recipients = await Promise.all([
+    const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(existingCase),
-      this.sendCourtDateEmailNotificationToPrison(existingCase),
       this.sendCourtDateEmailNotificationToDefender(existingCase),
-    ])
+    ]
+
+    if (existingCase.type === CaseType.CUSTODY) {
+      promises.push(this.sendCourtDateEmailNotificationToPrison(existingCase))
+    }
+
+    const recipients = await Promise.all(promises)
 
     return this.recordNotification(
       existingCase.id,
