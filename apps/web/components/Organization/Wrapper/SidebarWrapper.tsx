@@ -7,8 +7,6 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './SidebarWrapper.treat'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 interface SidebarWrapperProps {
   sidebarContent: ReactNode
@@ -22,13 +20,11 @@ export const SidebarWrapper: FC<SidebarWrapperProps> = ({
   fullWidthContent = false,
   children,
 }) => {
-  const isMobile = useWindowSize().width < theme.breakpoints.md
-
   return (
     <GridContainer position="none">
       <Box
         display="flex"
-        flexDirection={isMobile ? 'column' : 'row'}
+        flexDirection={['column', 'column', 'row']}
         height="full"
         paddingBottom={6}
       >
