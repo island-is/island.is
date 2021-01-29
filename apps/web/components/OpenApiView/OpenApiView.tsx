@@ -5,88 +5,28 @@ import {
   Box,
   Text,
   LoadingIcon,
-  Select,
   Stack,
-  Link,
-  Button,
 } from '@island.is/island-ui/core'
 import {
-  Service,
   GetOpenApiInput,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { OpenApi, LinksObject } from '@island.is/api-catalogue/types'
+import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
 import YamlParser from 'js-yaml'
 import { OpenApiDocumentation } from '../OpenApiDocumentation'
-import * as styles from './OpenApiView.treat'
 
 export interface OpenApiViewProps {
-  service: Service
   strings: GetNamespaceQuery['getNamespace']
+  openApiInput: GetOpenApiInput
 }
 
-type SelectOption = {
-  label: string
-  value: any
-}
-
-export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
+export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
-  const options: Array<SelectOption> = service
-    ? service.environments[0].details.map((x) => {
-        // TODO: Change this when we add environmental aware services
-        const { __typename, ...identifier } = x.xroadIdentifier
-        return {
-          label: x.version,
-          value: identifier,
-        }
-      })
-    : [
-        {
-          label: n('noVersion'),
-          value: {
-            instance: '',
-            memberClass: '',
-            memberCode: '',
-            serviceCode: '',
-            subsystemCode: '',
-          },
-        },
-      ]
-
-  //sort in descending order, highest version first
-  options.sort((a, b) => (a.value.serviceCode < b.value.serviceCode ? 1 : -1))
-
-  const selectOptionValueToGetOpenApiInput = (
-    option: SelectOption,
-  ): GetOpenApiInput => {
-    return option.value
-      ? option.value
-      : {
-          instance: '',
-          memberClass: '',
-          memberCode: '',
-          serviceCode: '',
-          subsystemCode: '',
-        }
-  }
-
-  const [selectedOption, setSelectedOption] = useState<SelectOption>(options[0])
-
-  const onSelectChange = (option: SelectOption) => {
-    if (!option.value) return
-
-    setSelectedOption(option)
-    setOpenApiInput(selectOptionValueToGetOpenApiInput(option))
-  }
-
   const [documentation, setDocumentation] = useState<OpenApi>(null)
-  const [openApiInput, setOpenApiInput] = useState<GetOpenApiInput>(
-    selectOptionValueToGetOpenApiInput(selectedOption),
-  )
+
   const { data, loading, error } = useQuery(GET_OPEN_API_QUERY, {
     variables: {
       input: openApiInput,
@@ -108,117 +48,6 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
     }
   }, [loading, data, error])
 
-  const showTextLinks = (links: LinksObject) => {
-    return (
-      (links.documentation || links.responsibleParty) && (
-        <Box
-          display="flex"
-          marginRight={[0, 0, 0, 0, 2]}
-          justifyContent={[
-            'spaceBetween',
-            'spaceBetween',
-            'flexStart',
-            'flexEnd',
-          ]}
-          marginTop={['gutter', 'gutter', 'none']}
-          marginBottom={['gutter', 'gutter', 'none']}
-        >
-          {links.documentation && (
-            <Box
-              display="flex"
-              marginRight={[0, 0, 1, 1, 2]}
-              alignItems="center"
-            >
-              <Link href={links.documentation}>
-                <Button
-                  fluid
-                  iconType="outline"
-                  icon="open"
-                  colorScheme="light"
-                  size="small"
-                  variant="text"
-                >
-                  {n('linkDocumentation')}
-                </Button>
-              </Link>
-            </Box>
-          )}
-          {links.responsibleParty && (
-            <Box
-              display="flex"
-              marginRight={[0, 0, 1, 1, 2]}
-              alignItems="center"
-            >
-              <Link href={links.responsibleParty}>
-                <Button
-                  fluid
-                  iconType="outline"
-                  icon="open"
-                  colorScheme="light"
-                  size="small"
-                  variant="text"
-                >
-                  {n('linkResponsible')}
-                </Button>
-              </Link>
-            </Box>
-          )}
-        </Box>
-      )
-    )
-  }
-
-  const showButtonLinks = (links: LinksObject) => {
-    return (
-      (links.bugReport || links.featureRequest) && (
-        <Box
-          display="flex"
-          marginRight={[0, 0, 0, 0, 2]}
-          alignItems="center"
-          justifyContent={[
-            'spaceBetween',
-            'spaceBetween',
-            'flexStart',
-            'flexEnd',
-          ]}
-          marginBottom={['gutter', 'gutter', 'none']}
-        >
-          {links.bugReport && (
-            <Box display="flex" marginRight={[0, 0, 1, 1, 2]}>
-              <Link href={links.bugReport}>
-                <Button
-                  colorScheme="light"
-                  iconType="filled"
-                  size="small"
-                  type="button"
-                  variant="utility"
-                  fluid
-                >
-                  {n('linkBugReport')}
-                </Button>
-              </Link>
-            </Box>
-          )}
-          {links.featureRequest && (
-            <Box display="flex" marginRight={[0, 0, 1, 1, 2]}>
-              <Link href={links.featureRequest}>
-                <Button
-                  colorScheme="light"
-                  iconType="filled"
-                  size="small"
-                  type="button"
-                  variant="utility"
-                >
-                  {n('linkFeatureRequest')}
-                </Button>
-              </Link>
-            </Box>
-          )}
-        </Box>
-      )
-    )
-  }
-
   return (
     <Box>
       {/* Top Line */}
@@ -236,47 +65,6 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           <Text color="blue600" variant="h4" as="h4" truncate>
             {n('title')}
           </Text>
-        </Box>
-        {/* Links and Select box */}
-        <Box
-          display="flex"
-          flexDirection={['column', 'column', 'row', 'row']}
-          justifyContent={[
-            'flexStart',
-            'spaceBetween',
-            'spaceBetween',
-            'flexEnd',
-          ]}
-        >
-          {/* Links */}
-          {documentation && documentation?.info['x-links'] && (
-            <Box
-              display="flex"
-              flexDirection={['column', 'column', 'row']}
-              justifyContent={[
-                'flexStart',
-                'flexStart',
-                'flexStart',
-                'flexStart',
-                'flexEnd',
-              ]}
-            >
-              {showTextLinks(documentation.info['x-links'])}
-              {showButtonLinks(documentation.info['x-links'])}
-            </Box>
-          )}
-          <Box className={styles.selectDesktop}>
-            <Select
-              size="sm"
-              label="Version"
-              name="version"
-              disabled={options.length < 2}
-              isSearchable={false}
-              defaultValue={selectedOption}
-              options={options}
-              onChange={onSelectChange}
-            />
-          </Box>
         </Box>
       </Box>
       <Box>
