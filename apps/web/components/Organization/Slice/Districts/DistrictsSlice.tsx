@@ -6,10 +6,10 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './DistrictsSlice.treat'
-import Link from 'next/link'
 
 interface SliceProps {
   slice: Districts
@@ -38,9 +38,7 @@ export const DistrictsSlice: React.FC<SliceProps> = ({
                 {slice.links.map((link) => (
                   <li className={styles.districtsListItem}>
                     <Link href={link.url}>
-                      <a>
-                        <Button variant="text">{link.text}</Button>
-                      </a>
+                      <Button variant="text">{link.text}</Button>
                     </Link>
                   </li>
                 ))}
