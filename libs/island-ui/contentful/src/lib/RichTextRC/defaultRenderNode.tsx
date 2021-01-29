@@ -1,15 +1,16 @@
 import React from 'react'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import { Asset } from 'contentful'
-import Hyperlink from '../Hyperlink/Hyperlink'
+import { RenderNode } from '@contentful/rich-text-react-renderer'
+import slugify from '@sindresorhus/slugify'
 import {
   getTextStyles,
   Blockquote,
   ResponsiveSpace,
   Box,
 } from '@island.is/island-ui/core'
-import slugify from '@sindresorhus/slugify'
-import { RenderNode } from '@contentful/rich-text-react-renderer'
+import Hyperlink from '../Hyperlink/Hyperlink'
+
 import * as styles from './RichText.treat'
 
 const defaultHeaderMargins: {
@@ -22,10 +23,29 @@ const componentMargins: {
   marginTop: ResponsiveSpace
 } = { marginBottom: [5, 5, 5, 6], marginTop: [5, 5, 5, 6] }
 
+// Searches render node children recursively for the text
+const getInnerText = (node) => {
+  if (typeof node === 'string') {
+    return node
+  }
+
+  if (Array.isArray(node)) {
+    return getInnerText(node[0])
+  }
+
+  if (typeof node === 'object') {
+    const inner = node?.props?.children ?? null
+
+    return getInnerText(inner)
+  }
+
+  return ''
+}
+
 export const defaultRenderNode: RenderNode = {
   [BLOCKS.HEADING_1]: (_node, children) => (
     <Box
-      id={slugify(String(children))}
+      id={slugify(String(getInnerText(children)))}
       component="h1"
       className={getTextStyles({ variant: 'h1' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}
@@ -35,7 +55,7 @@ export const defaultRenderNode: RenderNode = {
   ),
   [BLOCKS.HEADING_2]: (_node, children) => (
     <Box
-      id={slugify(String(children))}
+      id={slugify(String(getInnerText(children)))}
       component="h2"
       className={getTextStyles({ variant: 'h2' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}
@@ -45,7 +65,7 @@ export const defaultRenderNode: RenderNode = {
   ),
   [BLOCKS.HEADING_3]: (_node, children) => (
     <Box
-      id={slugify(String(children))}
+      id={slugify(String(getInnerText(children)))}
       component="h3"
       className={getTextStyles({ variant: 'h3' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}
@@ -55,7 +75,7 @@ export const defaultRenderNode: RenderNode = {
   ),
   [BLOCKS.HEADING_4]: (_node, children) => (
     <Box
-      id={slugify(String(children))}
+      id={slugify(String(getInnerText(children)))}
       component="h4"
       className={getTextStyles({ variant: 'h4' }) + ' ' + styles.heading}
       {...defaultHeaderMargins}
