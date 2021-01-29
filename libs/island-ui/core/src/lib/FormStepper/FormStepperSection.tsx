@@ -68,7 +68,7 @@ export const FormStepperSection: FC<{
   useEffect(() => {
     if (!isClient) return
     let throttleTimeout: number
-    let isMounted: boolean = true
+    let isMounted = true
 
     const handleResize = () => {
       clearTimeout(throttleTimeout)
