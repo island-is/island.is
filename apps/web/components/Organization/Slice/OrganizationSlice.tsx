@@ -30,7 +30,7 @@ export const OrganizationSlice: FC<OrganizationSliceProps> = ({
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
     case 'Districts':
-      return <DistrictsSlice slice={slice} organization={organization} />
+      return <DistrictsSlice slice={slice} />
     case 'FeaturedArticles':
       return <FeaturedArticlesSlice slice={slice} namespace={namespace} />
     case 'TwoColumnText':

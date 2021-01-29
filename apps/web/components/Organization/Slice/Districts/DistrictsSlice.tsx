@@ -1,5 +1,5 @@
 import React from 'react'
-import { Districts, Organization } from '@island.is/web/graphql/schema'
+import { Districts } from '@island.is/web/graphql/schema'
 import {
   Box,
   Button,
@@ -13,13 +13,9 @@ import * as styles from './DistrictsSlice.treat'
 
 interface SliceProps {
   slice: Districts
-  organization?: Organization
 }
 
-export const DistrictsSlice: React.FC<SliceProps> = ({
-  organization,
-  slice,
-}) => {
+export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>
