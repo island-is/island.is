@@ -30,7 +30,3 @@ export const link = style({
   lineHeight: '42px',
   color: '#0061FF',
 })
-
-export const newsBg = style({
-  background: '#F8F5FA',
-})
