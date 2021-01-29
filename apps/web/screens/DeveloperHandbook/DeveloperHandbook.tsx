@@ -9,7 +9,7 @@ import {
 import { Screen } from '@island.is/web/types'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { SubpageMainContent } from '@island.is/web/components'
+import { SubpageMainContent, RichText } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
@@ -24,7 +24,6 @@ import {
 } from '@island.is/island-ui/core'
 
 import { useNamespace } from '@island.is/web/hooks'
-import RichText from '@island.is/web/components/RichText/RichText'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import { GET_NAMESPACE_QUERY, GET_SUBPAGE_HEADER_QUERY } from '../queries'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -45,12 +44,12 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
 
   const navigationItems = [
     {
-      href: linkResolver('webservicespage').as,
+      href: linkResolver('webservicespage').href,
       title: n('linkServicesText'),
     },
     {
       active: true,
-      href: linkResolver('handbookpage').as,
+      href: linkResolver('handbookpage').href,
       title: n('linkHandbookNavText'),
     },
     {
@@ -78,7 +77,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
               items={navigationItems}
               title={n('linkThrounText')}
               titleLink={{
-                href: linkResolver('developerspage').as,
+                href: linkResolver('developerspage').href,
               }}
             />
           }
@@ -95,7 +94,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                       size="small"
                       variant="text"
                     >
-                      <Link href={linkResolver('developerspage').as}>
+                      <Link {...linkResolver('developerspage')}>
                         {n('linkThrounText')}
                       </Link>
                     </Button>
@@ -108,7 +107,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                       items={navigationItems}
                       title={n('linkThrounText')}
                       titleLink={{
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage').href,
                       }}
                     />
                   </Box>
@@ -119,11 +118,11 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                     items={[
                       {
                         title: n('linkIslandIsText'),
-                        href: linkResolver('homepage').as,
+                        href: linkResolver('homepage').href,
                       },
                       {
                         title: n('linkThrounText'),
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage').href,
                       },
                     ]}
                   />

@@ -86,13 +86,14 @@ export interface Case {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
   alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
+  otherDemands?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
@@ -106,12 +107,11 @@ export interface Case {
   courtDate?: string
   isCourtDateInThePast?: boolean
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string
@@ -125,6 +125,8 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  parentCase?: Case
+  childCase?: Case
   notifications?: Notification[]
 }
 
@@ -133,6 +135,7 @@ export enum NotificationType {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
   RULING = 'RULING',
+  REVOKED = 'REVOKED',
 }
 
 export interface Notification {
@@ -150,8 +153,8 @@ export interface CreateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
 }
 
@@ -161,8 +164,8 @@ export interface UpdateCase {
   accusedName?: string
   accusedAddress?: string
   accusedGender?: CaseGender
-  requestedDefenderName?: string
-  requestedDefenderEmail?: string
+  defenderName?: string
+  defenderEmail?: string
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
@@ -174,15 +177,15 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  prosecutorId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string
-  defenderName?: string
-  defenderEmail?: string
   courtStartTime?: string
   courtEndTime?: string
   courtAttendees?: string
   policeDemands?: string
+  courtDocuments?: string[]
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string

@@ -13,13 +13,18 @@ const KeyValueFormField: FC<{
   application: Application
 }> = ({ field, application }) => {
   const { formatMessage } = useLocale()
+  const values = formatText(field.value, application, formatMessage)
 
   return (
     <Box>
-      <Text variant="h4">{field.label}</Text>
-      <Text>
-        {formatText(field.value as string, application, formatMessage)}
+      <Text variant="h4">
+        {formatText(field.label, application, formatMessage)}
       </Text>
+      {Array.isArray(values) ? (
+        (values as string[]).map((value) => <Text key={value}>{value}</Text>)
+      ) : (
+        <Text>{values}</Text>
+      )}
     </Box>
   )
 }

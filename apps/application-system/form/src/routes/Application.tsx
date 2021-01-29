@@ -12,6 +12,7 @@ export const Application = () => {
     'pl.application',
     'application.system',
     'example.application',
+    'dpo.application',
   ])
 
   const nationalRegistryId = userInfo?.profile?.nationalId

@@ -1,4 +1,9 @@
 import { FormatInputValueFunction } from 'react-number-format'
+import { Colors } from '@island.is/island-ui/theme'
+import type {
+  DatePickerBackgroundColor,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 
 import { Condition } from '../types/Condition'
 import {
@@ -21,14 +26,10 @@ import {
   MaybeWithApplication,
   AsyncSelectField,
   Context,
+  RecordObject,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
-import { FormText } from '../types/Form'
-import { Colors } from '@island.is/island-ui/theme'
-import {
-  DatePickerBackgroundColor,
-  InputBackgroundColor,
-} from '@island.is/island-ui/core'
+import { FormText, FormTextArray } from '../types/Form'
 
 interface SelectOption {
   label: string
@@ -317,7 +318,7 @@ export function buildCustomField(
     component: string
     defaultValue?: MaybeWithApplication<unknown>
   },
-  props?: object,
+  props?: RecordObject,
 ): CustomField {
   const { condition, defaultValue, id, title, description, component } = data
   return {
@@ -390,8 +391,8 @@ export function buildDividerField(data: {
 }
 
 export function buildKeyValueField(data: {
-  label: React.ReactNode
-  value: MaybeWithApplication<React.ReactNode>
+  label: FormText
+  value: FormText | FormTextArray
   width?: FieldWidth
 }): KeyValueField {
   const { label, value, width = 'full' } = data

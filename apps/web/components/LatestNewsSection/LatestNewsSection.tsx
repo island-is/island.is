@@ -27,7 +27,7 @@ interface LatestNewsProps {
   items: GetNewsQuery['getNews']['items']
 }
 
-const LatestNewsSection: React.FC<LatestNewsProps> = ({
+export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   items = [],
   label,
   labelId = '',
@@ -80,8 +80,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
                   readMoreText={t.readMore}
                   image={newsItem.image}
                   tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-                  as={linkResolver('news', [newsItem.slug]).as}
-                  url={linkResolver('news', [newsItem.slug]).href}
+                  href={linkResolver('news', [newsItem.slug]).href}
                 />
               </GridColumn>
             )
@@ -99,8 +98,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
               slug={newsItem.slug}
               image={newsItem.image}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-              as={linkResolver('news', [newsItem.slug]).as}
-              url={linkResolver('news', [newsItem.slug]).href}
+              href={linkResolver('news', [newsItem.slug]).href}
             />
           ))}
         </Swiper>

@@ -11,12 +11,16 @@ import {
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
-import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
-import { Header, Main, PageLoader } from '../components'
+import {
+  Header,
+  Main,
+  PageLoader,
+  SkipToMainContent,
+} from '@island.is/web/components'
 import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
@@ -44,6 +48,7 @@ import {
 } from '../utils/processMenuData'
 import { Locale } from '../i18n/I18n'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { stringHash } from '@island.is/web/utils/stringHash'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -146,7 +151,7 @@ const Layout: NextComponentType<
       links: categories.map((x) => {
         return {
           title: x.title,
-          ...linkResolver(x.__typename as LinkType, [x.slug]),
+          href: linkResolver(x.__typename as LinkType, [x.slug]).href,
         }
       }),
     },
@@ -158,7 +163,9 @@ const Layout: NextComponentType<
     },
   ]
 
-  const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
+  const alertBannerId = `alert-${stringHash(
+    JSON.stringify(alertBannerContent),
+  )}`
 
   return (
     <GlobalContextProvider namespace={namespace}>
@@ -232,6 +239,9 @@ const Layout: NextComponentType<
             key="twitterImage"
           />
         </Head>
+        <SkipToMainContent
+          title={n('skipToMainContent', 'Fara beint í efnið')}
+        />
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
             title={alertBannerContent.title}
@@ -436,12 +446,18 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
   ])
-
+  const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   return {
     categories,
-    alertBannerContent: alertBanner,
+    alertBannerContent: {
+      ...alertBanner,
+      showAlertBanner:
+        alertBanner.showAlertBanner &&
+        (!req?.headers.cookie ||
+          req.headers.cookie?.indexOf(alertBannerId) === -1),
+    },
     footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,

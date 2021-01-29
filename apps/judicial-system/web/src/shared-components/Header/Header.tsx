@@ -2,10 +2,10 @@ import React, { useContext } from 'react'
 import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 
-import { api } from '../../services'
+import { api } from '@island.is/judicial-system-web/src/services'
 import * as styles from './Header.treat'
-import * as Constants from '../../utils/constants'
-import { UserContext } from '../UserProvider/UserProvider'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface Props {
   pathname: string
@@ -21,7 +21,7 @@ const Header: React.FC<Props> = (props: Props) => {
         style={{ textDecoration: 'none' }}
         data-testid="link-to-home"
       >
-        <Box display="flex">
+        <Box display="flex" alignItems="center">
           <div className={styles.islandIsApplicationLogoWrapper}>
             <Logo width={146} />
           </div>

@@ -42,13 +42,14 @@ export class Client {
   frontChannelLogoutSessionRequired!: boolean
   backChannelLogoutUri?: string
   allowRememberConsent!: boolean
-  clientClaimsPrefix!: string
+  clientClaimsPrefix?: string
   clientName?: string
   clientUri?: string
   description?: string
   protocolType!: string
   requireClientSecret!: boolean
   archived!: Date
+  contactEmail!: string
   readonly created!: Date
   readonly modified?: Date
   allowedScopes?: ClientAllowedScope[]

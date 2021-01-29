@@ -10,8 +10,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
-import * as Constants from '../../../utils/constants'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -190,7 +190,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).toBeInTheDocument()
   })
 
-  test('should have a prefilled court date and dedender info with requested  date and dedender info', async () => {
+  test('should have a prefilled court date with requested date', async () => {
     // Arrange
     render(
       <MockedProvider
@@ -205,14 +205,6 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             {
               id: 'test_id_3',
               courtDate: '2020-09-16T19:51:00.000Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              defenderName: 'Saul Goodman',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
-              defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
           ]),
         ]}
@@ -242,19 +234,5 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     expect(
       (screen.getByLabelText('Tímasetning *') as HTMLInputElement).value,
     ).toEqual('19:51')
-
-    expect(
-      await waitFor(
-        () =>
-          (screen.getByLabelText('Nafn verjanda') as HTMLInputElement).value,
-      ),
-    ).toEqual('Saul Goodman')
-
-    expect(
-      await waitFor(
-        () =>
-          (screen.getByLabelText('Netfang verjanda') as HTMLInputElement).value,
-      ),
-    ).toEqual('saul@goodman.com')
   })
 })

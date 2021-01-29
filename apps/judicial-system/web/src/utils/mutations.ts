@@ -31,13 +31,14 @@ export const CreateCaseMutation = gql`
       accusedName
       accusedAddress
       accusedGender
-      requestedDefenderName
-      requestedDefenderEmail
+      defenderName
+      defenderEmail
       court
       arrestDate
       requestedCourtDate
       alternativeTravelBan
       requestedCustodyEndDate
+      otherDemands
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
@@ -54,12 +55,11 @@ export const CreateCaseMutation = gql`
       courtDate
       isCourtDateInThePast
       courtRoom
-      defenderName
-      defenderEmail
       courtStartTime
       courtEndTime
       courtAttendees
       policeDemands
+      courtDocuments
       accusedPlea
       litigationPresentations
       ruling
@@ -75,6 +75,9 @@ export const CreateCaseMutation = gql`
       judge {
         name
         title
+      }
+      parentCase {
+        id
       }
     }
   }
@@ -93,6 +96,80 @@ export const CasesQuery = gql`
       custodyEndDate
       decision
       isCustodyEndDateInThePast
+    }
+  }
+`
+
+export const UsersQuery = gql`
+  query UsersQuery {
+    users {
+      id
+      name
+      role
+    }
+  }
+`
+
+export const ExtendCaseMutation = gql`
+  mutation ExtendCaseMutation($input: ExtendCaseInput!) {
+    extendCase(input: $input) {
+      id
+      created
+      modified
+      state
+      policeCaseNumber
+      accusedNationalId
+      accusedName
+      accusedAddress
+      accusedGender
+      defenderName
+      defenderEmail
+      court
+      arrestDate
+      requestedCourtDate
+      alternativeTravelBan
+      requestedCustodyEndDate
+      otherDemands
+      lawsBroken
+      custodyProvisions
+      requestedCustodyRestrictions
+      caseFacts
+      witnessAccounts
+      investigationProgress
+      legalArguments
+      comments
+      prosecutor {
+        name
+        title
+      }
+      courtCaseNumber
+      courtDate
+      isCourtDateInThePast
+      courtRoom
+      courtStartTime
+      courtEndTime
+      courtAttendees
+      policeDemands
+      courtDocuments
+      accusedPlea
+      litigationPresentations
+      ruling
+      decision
+      custodyEndDate
+      isCustodyEndDateInThePast
+      custodyRestrictions
+      otherRestrictions
+      accusedAppealDecision
+      accusedAppealAnnouncement
+      prosecutorAppealDecision
+      prosecutorAppealAnnouncement
+      judge {
+        name
+        title
+      }
+      parentCase {
+        id
+      }
     }
   }
 `

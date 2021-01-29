@@ -11,7 +11,6 @@ interface Card {
   title: string
   description: string
   href: string
-  as: string
 }
 
 interface CategoriesProps {

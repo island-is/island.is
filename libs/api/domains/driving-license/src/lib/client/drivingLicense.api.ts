@@ -10,23 +10,23 @@ import {
   PenaltyPointStatusResponse,
 } from './drivingLicense.type'
 
-const XROAD_PATH =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
-const XROAD_CLIENT = 'IS-DEV/GOV/10000/island-is-client'
-
 export class DrivingLicenseApi {
-  private readonly baseApiUrl: string
+  private readonly xroadApiUrl: string
+  private readonly xroadClientId: string
   private readonly secret: string
 
-  constructor(baseUrl: string, secret: string) {
-    this.baseApiUrl = `${baseUrl}/${XROAD_PATH}`
+  constructor(xroadBaseUrl: string, xroadClientId: string, secret: string) {
+    const xroadPath =
+      'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
+    this.xroadApiUrl = `${xroadBaseUrl}/${xroadPath}`
+    this.xroadClientId = xroadClientId
     this.secret = secret
   }
 
   async requestApi(url: string) {
-    const res = await fetch(`${this.baseApiUrl}/${url}`, {
+    const res = await fetch(`${this.xroadApiUrl}/${url}`, {
       headers: {
-        'X-Road-Client': XROAD_CLIENT,
+        'X-Road-Client': this.xroadClientId,
         SECRET: this.secret,
         Accept: 'application/json',
       },
