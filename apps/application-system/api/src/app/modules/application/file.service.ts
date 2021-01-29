@@ -41,6 +41,7 @@ export class FileService {
     parentB.email = answers.parentBEmail as string
     parentB.phoneNumber = answers.parentBPhoneNumber as string
 
+    // TODO: Revisit once connection with national registry is up and we have actual schema for this data.
     const parentA: ParentResidenceChange = {
       name: answers.name as string,
       ssn: answers.ssn as string,
@@ -90,7 +91,7 @@ export class FileService {
     const presignedUrlParams = {
       Bucket: bucket,
       Key: fileName,
-      Expires: this.one_minute * 60,
+      Expires: this.one_minute * 120, // TODO: Select length for presigned url's in island.is
     }
 
     return await new Promise((resolve, reject) => {
