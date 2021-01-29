@@ -105,7 +105,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 type: 'category',
               })),
               ...(entry.fields?.organization ?? []).map((x) => ({
-                key: x.fields?.slug,
+                key: x.fields?.slug ?? '',
                 value: x.fields?.title,
                 type: 'organization',
               })),
