@@ -200,7 +200,6 @@ const Control = (props: ControlProps<Option>) => {
   return (
     <components.Control
       className={cn(styles.container, styles.containerSizes[size!], {
-        [styles.containerDisabled]: props.isDisabled,
         [styles.hasError]: props.selectProps.hasError,
       })}
       {...props}

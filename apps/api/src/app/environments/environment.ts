@@ -1,10 +1,13 @@
 export default {
   production: false,
+  xroad: {
+    baseUrl: 'http://localhost:8081',
+    clientId: 'IS-DEV/GOV/10000/island-is-client',
+  },
   applicationSystem: {
     baseApiUrl: 'http://localhost:3333',
   },
   drivingLicense: {
-    baseApiUrl: 'http://localhost:8081',
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   nationalRegistry: {
@@ -17,8 +20,7 @@ export default {
     wsdlUrl:
       process.env.HEALTH_INSURANCE_XROAD_WSDLURL ??
       'https://test-huld.sjukra.is/islandrg?wsdl',
-    baseUrl:
-      process.env.HEALTH_INSURANCE_XROAD_BASEURL ?? 'http://localhost:8080',
+    baseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     username: process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? '',
     password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? '',
   },

@@ -17,7 +17,10 @@ import {
 
 import * as styles from './AboutLatestNews.treat'
 import NewsCard from '../NewsCard/NewsCard'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import {
+  useLinkResolver,
+  LinkResolverResponse,
+} from '@island.is/web/hooks/useLinkResolver'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
@@ -61,7 +64,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
         {first && (
           <BigNewsItem
             news={first}
-            {...linkResolver('news', [first.slug])}
+            link={linkResolver('news', [first.slug])}
             readMore={n('readMore', 'Lesa nánar')}
           />
         )}
@@ -80,8 +83,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              url={linkResolver('news', [newsItem.slug]).href}
-              as={linkResolver('news', [newsItem.slug]).as}
+              {...linkResolver('news', [newsItem.slug])}
               readMoreText={n('readMore', 'Lesa nánar')}
             />
           </GridColumn>
@@ -93,13 +95,11 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
 
 const BigNewsItem = ({
   news,
-  as,
-  href,
+  link,
   readMore,
 }: {
   news: LatestNewsItem
-  as: string
-  href: string
+  link: LinkResolverResponse
   readMore: string
 }) => {
   const { format } = useDateUtils()
@@ -123,7 +123,7 @@ const BigNewsItem = ({
         {news.title}
       </Text>
       <Text variant="intro">{news.intro}</Text>
-      <Link as={as} href={href}>
+      <Link {...link}>
         <Button
           icon="arrowForward"
           iconType="filled"

@@ -95,10 +95,10 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
 }
 
 export enum NounCases {
-  NOMINATIVE,
-  ACCUSATIVE,
-  DATIVE,
-  GENITIVE,
+  NOMINATIVE, // Nefnifall
+  ACCUSATIVE, // Þolfall
+  DATIVE, // Þágufall
+  GENITIVE, // Eignarfall
 }
 
 export function formatAccusedByGender(
