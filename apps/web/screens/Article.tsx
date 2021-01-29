@@ -454,21 +454,21 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           <Box marginTop={[7, 7, 7, 10]}>
             <InstitutionsPanel
               institution={{
-                title: 'Sýslumenn',
+                title: 'Vinnumálastofnun',
                 label: 'Þjónustuaðili',
                 href: '#',
               }}
               relatedInstitution={[
                 {
                   title: 'Ríkislögreglustjóri',
-                  label: 'Ábyrgðaraðili',
+                  label: 'Tengd stofnun',
                   href: '#',
                 },
               ]}
               responsibleParty={[
                 {
                   title: 'Samgöngustofa',
-                  label: 'Tengd stofnun',
+                  label: 'Ábyrgðaraðili',
                   href: '#',
                 },
               ]}
