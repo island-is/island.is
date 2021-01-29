@@ -14,7 +14,7 @@ There are additional steps required to run this template locally
 #### National Registry Provider
 
 Prerequisites
-- You have awscli installed
+- You have `awscli` installed
   - `brew install awscli`
 - You have access to the `island-is-development01` AWS account
   - Contact someone from the [Core team](https://github.com/orgs/island-is/teams/core)
