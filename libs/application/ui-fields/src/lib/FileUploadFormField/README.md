@@ -1,4 +1,4 @@
-# Adding the field to a form
+## Adding the field to a form
 
 To use the FileUploadFormField in an application
 
@@ -45,7 +45,7 @@ const ExampleSchema = z.object({
  })
 ```
 
-
+---
 ## Using with AWS S3 (locally)
 (TEMP: this step will continue to be refined as we build out the upload service)
 
@@ -53,6 +53,48 @@ const ExampleSchema = z.object({
 2. Install the aws-cli on your machine
 3. Run `aws configure` in the command line and enter your `ACCESS_KEY_ID` and then when prompted, enter your `SECRET_ACCESS_KEY`. Then confirm that the region is `eu-west-1`. Once those are set, the node app extracts the aws config and uses it, so no .env variables needed.
 4. Run you application locally and attempt to upload a file, you should get a 204 response if successful.
+
+---
+
+## Using the FileUploadController in other fields
+Sometimes you might want to use the FileUploadController separately from the field (in a custom field), for example a Review screen.
+You can do so by importing it from `shared`
+
+```
+import { FileUploadController } from '@island.is/shared/form-fields'
+
+...
+
+<FileUploadController
+  id={id}
+  application={application}
+  error={error}
+  header='Drag documents here to upload'
+  description='Please upload your PDF documents'
+  buttonLabel='Select documents to upload'
+  ...
+/>
+
+```
+---
+## Reading out the file upload answer
+Sometimes you might want to read out the stored answer of the file upload field. You can do so with `getValueViaPath` and then `map` through it in your jsx.
+```
+import { getValueViaPath } from '@island.is/application/core'
+
+...
+
+const uploads = getValueViaPath(application.answers, 'fileUpload') as string[]
+
+...
+
+<Box marginY={4}>
+  {uploads.map((upload, index) => (
+    <Text key={index}>{upload.name}</Text>
+  ))}
+</Box>
+
+```
 
 ## TODO: Remaining dev tasks
 1. Make it so that the Continue button is disabled while uploads are occuring, so that the upload promise does not complete when the component has unmounted (aka the user moved on to the next question).
