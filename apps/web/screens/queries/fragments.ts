@@ -341,7 +341,9 @@ export const slices = gql`
       id
       slug
       title
-      isApplication
+      processEntry {
+        id
+      }
     }
   }
 

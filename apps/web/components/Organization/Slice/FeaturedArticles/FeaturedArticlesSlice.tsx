@@ -50,7 +50,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '7/12']}>
               <Stack space={2}>
-                {slice.articles.map(({ title, slug, isApplication }) => {
+                {slice.articles.map(({ title, slug, processEntry }) => {
                   const url = linkResolver('Article' as LinkType, [slug])
                   return (
                     <FocusableBox
@@ -63,7 +63,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
                         <LinkCard
                           isFocused={isFocused}
                           tag={
-                            !!isApplication && n('applicationProcess', 'Umsókn')
+                            !!processEntry && n('applicationProcess', 'Umsókn')
                           }
                         >
                           {title}
