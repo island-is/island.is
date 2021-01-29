@@ -49,15 +49,8 @@
     "api": {
       "tags": []
     },
-    "api-catalogue": {
-      "tags": []
-    },
     "api-catalogue-consts": {
       "tags": []
-    },
-    "api-catalogue-e2e": {
-      "tags": [],
-      "implicitDependencies": ["api-catalogue"]
     },
     "api-catalogue-elastic": {
       "tags": []
@@ -375,6 +368,9 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-documents": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
@@ -417,6 +413,12 @@
     "skilavottord/web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
+    },
+    "utils-api": {
+      "tags": []
+    },
+    "vmst-client": {
+      "tags": []
     },
     "web": {
       "tags": []

@@ -30,7 +30,7 @@ export const App = () => {
             <ApplicationErrorBoundary>
               <div>
                 <UserProfileLocale />
-                <Router>
+                <Router basename="/minarsidur">
                   <Switch>
                     <Route
                       exact

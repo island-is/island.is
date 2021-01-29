@@ -15,6 +15,7 @@ import {
   generateAssignReviewerTemplate,
 } from '../emailTemplateGenerators'
 import { dataSchema, SchemaFormValues } from './dataSchema'
+import { answerValidators } from './answerValidators'
 import { YES } from '../constants'
 
 interface ApiTemplateUtilActions {
@@ -331,8 +332,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
         if (
-          currentApplicationAnswers.requestRights.isRequestingRights ===
-            'yes' &&
+          currentApplicationAnswers.requestRights.isRequestingRights === YES &&
           currentApplicationAnswers.otherParentId !== undefined &&
           currentApplicationAnswers.otherParentId !== ''
         ) {
@@ -360,6 +360,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default ParentalLeaveTemplate

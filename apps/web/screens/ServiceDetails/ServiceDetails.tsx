@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
@@ -6,10 +6,13 @@ import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
   GetNamespaceQuery,
+  GetOpenApiInput,
   Query,
   QueryGetApiServiceByIdArgs,
   QueryGetNamespaceArgs,
   Service,
+  ServiceDetail,
+  XroadIdentifier,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import {
@@ -57,6 +60,27 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   const { linkResolver } = useLinkResolver()
+  const [selectedServiceDetail, setselectedServiceDetail] = useState<
+    ServiceDetail
+  >(service.environments[0].details[0])
+  //TODO look into how to initialize
+
+  const xroadIdentifierToOpenApiInput = (xroadIdentifier: XroadIdentifier) => {
+    const { __typename, ...identifier } = xroadIdentifier
+    return identifier
+  }
+
+  const [selectedGetOpenApiInput, setSelectedGetOpenApiInput] = useState<
+    GetOpenApiInput
+  >(xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier))
+
+  const setApiContent = (serviceDetail: ServiceDetail) => {
+    setselectedServiceDetail(serviceDetail)
+
+    setSelectedGetOpenApiInput(
+      xroadIdentifierToOpenApiInput(serviceDetail.xroadIdentifier),
+    )
+  }
 
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -65,7 +89,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const navigationItems = [
     {
       active: true,
-      href: linkResolver('webservicespage').as,
+      href: linkResolver('webservicespage').href,
       title: n('linkServicesText'),
       items: [
         {
@@ -75,7 +99,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       ],
     },
     {
-      href: linkResolver('handbookpage').as,
+      href: linkResolver('handbookpage').href,
       title: n('linkHandbookNavText'),
     },
     {
@@ -91,7 +115,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       title: n('linkContentPolicyText'),
     },
   ]
-
   return (
     <SubpageLayout
       main={
@@ -103,7 +126,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               items={navigationItems}
               title={n('linkThrounText')}
               titleLink={{
-                href: linkResolver('developerspage').as,
+                href: linkResolver('developerspage').href,
               }}
             />
           }
@@ -120,7 +143,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                       size="small"
                       variant="text"
                     >
-                      <Link href={linkResolver('webservicespage').as}>
+                      <Link {...linkResolver('webservicespage')}>
                         {n('linkServicesText')}
                       </Link>
                     </Button>
@@ -134,7 +157,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                       title={n('linkThrounText')}
                       titleLink={{
                         active: true,
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage').href,
                       }}
                     />
                   </Box>
@@ -145,15 +168,15 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                     items={[
                       {
                         title: n('linkIslandIsText'),
-                        href: linkResolver('homepage').as,
+                        href: linkResolver('homepage').href,
                       },
                       {
                         title: n('linkThrounText'),
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage').href,
                       },
                       {
                         title: n('linkServicesText'),
-                        href: linkResolver('webservicespage').as,
+                        href: linkResolver('webservicespage').href,
                       },
                     ]}
                   />
@@ -168,6 +191,9 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   <ServiceInformation
                     strings={filterContent}
                     service={service}
+                    onSelectChange={(selectedServiceDetail) =>
+                      setApiContent(selectedServiceDetail)
+                    }
                   />
                 )}
               </Box>
@@ -176,10 +202,11 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-        !service ? (
-          <></>
-        ) : (
-          <OpenApiView strings={openApiContent} service={service} />
+        selectedGetOpenApiInput && (
+          <OpenApiView
+            strings={openApiContent}
+            openApiInput={selectedGetOpenApiInput}
+          />
         )
       }
     />

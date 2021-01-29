@@ -1,4 +1,5 @@
-export { SjukratryggingarProvider } from './SjukratryggingarProvider'
+export { HealthInsuranceProvider } from './HealthInsuranceProvider'
+export { OldPendingApplications } from './OldPendingApplications'
 export {
   UserProfileProvider,
   NationalRegistryProvider,
