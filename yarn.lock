@@ -2475,10 +2475,10 @@
   dependencies:
     "@contentful/forma-36-tokens" "^0.10.0"
 
-"@contentful/forma-36-react-components@3.75.0":
-  version "3.75.0"
-  resolved "https://registry.yarnpkg.com/@contentful/forma-36-react-components/-/forma-36-react-components-3.75.0.tgz#039d991b7a5cfe830fc16a42c3903dd29e55c821"
-  integrity sha512-m3fuHQRtXHcD2DaM7IZNfJaFwf5+G2CCytCLcvdlZBcWL8gcgJl+cCqNCROZd3Wpl0UH69+WUbS+aro7QM48Qg==
+"@contentful/forma-36-react-components@3.77.1":
+  version "3.77.1"
+  resolved "https://registry.yarnpkg.com/@contentful/forma-36-react-components/-/forma-36-react-components-3.77.1.tgz#9b95fc458708f5e964aa186853bd7d18eeb6f9f6"
+  integrity sha512-HAEQ57y4kVrwOuJ3sCZWmXjBGYypOPfd0yofmIu1eqlu8SSWvFzNRx8rYl9yzamlEUUlUIcARTu2ecKi2DrcPg==
   dependencies:
     "@babel/runtime" "^7.3.4"
     "@contentful/forma-36-fcss" "^0.3.0"
@@ -3291,13 +3291,17 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@jeremybarbet/contentful-extension-scripts@0.22.1":
-  version "0.22.1"
-  resolved "https://registry.yarnpkg.com/@jeremybarbet/contentful-extension-scripts/-/contentful-extension-scripts-0.22.1.tgz#7401a280365f6b20bf34835095bccbb5bb320ef9"
-  integrity sha512-Q7pKzbl0MW0N5A2ZOgBrR1OIQzrqEpKoiCtOfZZutg/8ywUx2QQECURXia94utEweoeI03WvL6XRcUEHmh4F1Q==
+"@jeremybarbet/contentful-extension-scripts@0.22.2":
+  version "0.22.2"
+  resolved "https://registry.yarnpkg.com/@jeremybarbet/contentful-extension-scripts/-/contentful-extension-scripts-0.22.2.tgz#752e0682bf09db973d9f70c7f018aaccd805613c"
+  integrity sha512-DHOEgkW/K1oUdMTHe4+QkV6E8INav8areFtO5l0cfzd3ByoQRKtG1ULEUZAJmm1AtSfKZ1qi5wqvS5pezXa8lA==
   dependencies:
+    "@contentful/forma-36-fcss" "0.3.0"
+    "@contentful/forma-36-react-components" "3.77.1"
+    "@contentful/forma-36-tokens" "0.10.0"
     babel-jest "^26.6.1"
     chalk "4.1.0"
+    contentful-ui-extensions-sdk "3.31.0"
     cross-spawn "7.0.3"
     fs-extra "9.0.1"
     htmlnano "^0.2.7"
@@ -5442,23 +5446,10 @@
     "@svgr/plugin-svgo" "^5.4.0"
     loader-utils "^2.0.0"
 
-"@testing-library/dom@7.24.2":
-  version "7.24.2"
-  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.24.2.tgz#6d2b7dd21efbd5358b98c2777fc47c252f3ae55e"
-  integrity sha512-ERxcZSoHx0EcN4HfshySEWmEf5Kkmgi+J7O79yCJ3xggzVlBJ2w/QjJUC+EBkJJ2OeSw48i3IoePN4w8JlVUIA==
-  dependencies:
-    "@babel/code-frame" "^7.10.4"
-    "@babel/runtime" "^7.10.3"
-    "@types/aria-query" "^4.2.0"
-    aria-query "^4.2.2"
-    chalk "^4.1.0"
-    dom-accessibility-api "^0.5.1"
-    pretty-format "^26.4.2"
-
-"@testing-library/dom@^7.17.1":
-  version "7.29.4"
-  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.29.4.tgz#1647c2b478789621ead7a50614ad81ab5ae5b86c"
-  integrity sha512-CtrJRiSYEfbtNGtEsd78mk1n1v2TUbeABlNIcOCJdDfkN5/JTOwQEbbQpoSRxGqzcWPgStMvJ4mNolSuBRv1NA==
+"@testing-library/dom@7.29.1", "@testing-library/dom@^7.17.1":
+  version "7.29.1"
+  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.29.1.tgz#a08ebeb26b2ea859b1621ff9642d114c1f04fe3a"
+  integrity sha512-6BU7vAjKuMspCy9QQEtbWgmkuXi/yOSZo3ANdvZmNQW8N/WQGjO9cvlcA5EFJaPtp2hL1RAaPGpCXxumijUxCg==
   dependencies:
     "@babel/code-frame" "^7.10.4"
     "@babel/runtime" "^7.12.5"
@@ -11613,11 +11604,6 @@ document-register-element@1.13.1:
   integrity sha512-92ZyLDKg9j4rOll//NNXj25f+8rAzOkYsGJonhugKwXfeqH7bzs8Ucpvey0WzZ2ZzKdrvW9RnUw3UyOZ/uhBFw==
   dependencies:
     lightercollective "^0.1.0"
-
-dom-accessibility-api@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/dom-accessibility-api/-/dom-accessibility-api-0.5.1.tgz#152f5e88583d900977119223e3e76c2d93d23830"
-  integrity sha512-8DhtmKTYWXNpPiL/QOszbnkAbCGuPz9ieVwDrmWM1rNx4KRI3zqmvKANAD1PJdvvov3+eq1BPLXQkYTpqTrWng==
 
 dom-accessibility-api@^0.5.4:
   version "0.5.4"
