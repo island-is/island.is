@@ -31,7 +31,7 @@ export const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
               {slice.offices.map((office) => (
                 <GridColumn
                   span={['12/12', '12/12', '12/12', '6/12']}
-                  paddingBottom={[1, 1, 1]}
+                  paddingBottom={1}
                 >
                   <OfficeCard
                     name={office.name}
