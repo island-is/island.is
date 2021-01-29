@@ -50,7 +50,9 @@ export class ParentNationalRegistryProvider extends BasicDataProvider {
       data: result,
     }
   }
-  onProvideSuccess(result: ParentResidenceChange): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: ParentResidenceChange,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

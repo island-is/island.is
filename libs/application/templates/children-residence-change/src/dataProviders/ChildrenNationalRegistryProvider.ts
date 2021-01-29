@@ -4,7 +4,7 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change' 
+import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 
 /** This is a temporary mock provider for children residence change. National registry team are setting up real provider which we will connect to once it is up. **/
 export class ChildrenNationalRegistryProvider extends BasicDataProvider {
@@ -58,7 +58,9 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
       data: result,
     }
   }
-  onProvideSuccess(result: PersonResidenceChange): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: PersonResidenceChange,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }
