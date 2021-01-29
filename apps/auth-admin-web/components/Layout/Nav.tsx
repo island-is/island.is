@@ -52,6 +52,13 @@ const Nav: React.FC = () => {
             </a>
           </Link>
         </li>
+        <li className="nav__container">
+          <Link href="/admin">
+            <a className={router?.pathname.includes('admin') ? 'active' : ''}>
+              Admin control
+            </a>
+          </Link>
+        </li>
       </ul>
     </nav>
   )

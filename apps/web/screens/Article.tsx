@@ -87,14 +87,12 @@ const createArticleNavigation = (
   nav.push({
     title: article.title,
     url: linkResolver('article', [article.slug]).href,
-    as: linkResolver('article', [article.slug]).as,
   })
 
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
       url: linkResolver('article', [article.slug, subArticle.slug]).href,
-      as: linkResolver('article', [article.slug, subArticle.slug]).as,
     })
 
     // expand sub-article navigation for selected sub-article
@@ -269,6 +267,7 @@ export interface ArticleProps {
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+  const { activeLocale } = useI18n()
   const portalRef = useRef()
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
@@ -291,7 +290,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const relatedLinks = (article.relatedArticles ?? []).map((article) => ({
     title: article.title,
     url: linkResolver('article', [article.slug]).href,
-    as: linkResolver('article', [article.slug]).as,
   }))
 
   const combinedMobileNavigation = [
@@ -382,7 +380,9 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
               <Text truncate>
                 <Link
-                  {...linkResolver('articlecategory', [article.category.slug])}
+                  href={linkResolver('articlecategory', [
+                    article.category.slug,
+                  ])}
                 >
                   <Button
                     preTextIcon="arrowBack"
@@ -445,7 +445,11 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
-          {richText((subArticle ?? article).body as SliceType[])}
+          {richText(
+            (subArticle ?? article).body as SliceType[],
+            undefined,
+            activeLocale,
+          )}
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
             {!!processEntry && <ProcessEntry {...processEntry} />}
             <Box marginTop={3}>

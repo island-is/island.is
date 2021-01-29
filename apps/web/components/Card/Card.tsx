@@ -10,20 +10,19 @@ import {
   Tag,
   Inline,
   TagProps,
-  Icon,
   FocusableBox,
   TagVariant,
 } from '@island.is/island-ui/core'
 import { ColorSchemeContext } from '@island.is/web/context'
 import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
+import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './Card.treat'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
   href?: string
-  as?: string
   title: string
 }
 
@@ -37,8 +36,7 @@ interface CardProps {
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
-  href?: string
-  as?: string
+  link?: LinkResolverResponse
   status?: string
 }
 
@@ -47,8 +45,7 @@ export const Card: FC<CardProps> = ({
   image,
   description,
   tags = [],
-  href,
-  as,
+  link,
   status,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
@@ -101,25 +98,23 @@ export const Card: FC<CardProps> = ({
         {tags.length > 0 && (
           <Box paddingTop={3} flexGrow={0} position="relative">
             <Inline space={1}>
-              {tags.map(
-                ({ title, href, as, ...props }: CardTagsProps, index) => {
-                  const tagProps = {
-                    ...tagPropsDefaults,
-                    ...props.tagProps,
-                    variant: tagVariant,
-                  }
+              {tags.map(({ title, href, ...props }: CardTagsProps, index) => {
+                const tagProps = {
+                  ...tagPropsDefaults,
+                  ...props.tagProps,
+                  variant: tagVariant,
+                }
 
-                  return href ? (
-                    <Link key={index} href={href} as={as}>
-                      <Tag {...tagProps}>{title}</Tag>
-                    </Link>
-                  ) : (
-                    <Tag key={index} {...tagProps}>
-                      {title}
-                    </Tag>
-                  )
-                },
-              )}
+                return href ? (
+                  <Link key={index} {...link}>
+                    <Tag {...tagProps}>{title}</Tag>
+                  </Link>
+                ) : (
+                  <Tag key={index} {...tagProps}>
+                    {title}
+                  </Tag>
+                )
+              })}
             </Inline>
           </Box>
         )}
@@ -169,11 +164,10 @@ export const Card: FC<CardProps> = ({
     </Box>
   )
 
-  if (href) {
+  if (link?.href) {
     return (
       <FocusableBox
-        href={href}
-        as={as}
+        href={link.href}
         borderRadius="large"
         flexDirection="column"
         height="full"

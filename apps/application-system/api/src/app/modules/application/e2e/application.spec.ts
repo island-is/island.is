@@ -115,7 +115,7 @@ describe('Application system API', () => {
           careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
         },
       })
-      .expect(400)
+      .expect(403)
 
     // Assert
     expect(putResponse.body.message).toBe('Schema validation has failed')
@@ -152,7 +152,7 @@ describe('Application system API', () => {
           dreamJob: 'firefighter',
         },
       })
-      .expect(400)
+      .expect(403)
 
     expect(failedResponse.body.message).toBe(
       'Current user is not permitted to update the following answers: dreamJob',

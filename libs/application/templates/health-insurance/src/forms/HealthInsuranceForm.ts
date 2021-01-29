@@ -43,8 +43,14 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'sjukratryggingar',
-              type: 'SjukratryggingarProvider',
+              id: 'healthInsurance',
+              type: 'HealthInsuranceProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'oldPendingApplications',
+              type: 'OldPendingApplications',
               title: '',
               subTitle: '',
             }),
@@ -176,6 +182,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.email,
               width: 'half',
               variant: 'email',
+              disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.userProfile?.data as {
                   email?: string
@@ -186,6 +193,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.phoneNumber,
               width: 'half',
               variant: 'tel',
+              disabled: true,
               format: '###-####',
               placeholder: '000-0000',
               defaultValue: (application: Application) =>
@@ -302,15 +310,18 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
               width: 'half',
+              backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'formerInsurance.personalId',
               title: m.formerPersonalId,
               width: 'half',
+              backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
+              backgroundColor: 'blue',
             }),
             buildCustomField({
               id: 'formerInsurance.entitlementDescription',
@@ -333,6 +344,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceAdditionalInformation,
               placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
               variant: 'textarea',
+              backgroundColor: 'blue',
               condition: (answers) =>
                 (answers as {
                   formerInsurance: { entitlement: string }
@@ -371,6 +383,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.additionalRemarks,
               variant: 'textarea',
               placeholder: m.additionalRemarksPlaceholder,
+              backgroundColor: 'blue',
               condition: {
                 questionId: 'additionalInfo.hasAdditionalInfo',
                 isMultiCheck: false,
