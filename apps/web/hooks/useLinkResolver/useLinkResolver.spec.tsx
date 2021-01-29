@@ -12,7 +12,6 @@ describe('Link resolver', () => {
   it('should return correct path to type with out variable', () => {
     const nextLinks = linkResolver('adgerdirfrontpage', [], 'is')
     expect(nextLinks).toEqual({
-      as: '/covid-adgerdir',
       href: '/covid-adgerdir',
     })
   })
@@ -20,29 +19,25 @@ describe('Link resolver', () => {
   it('should return correct path to type with variable', () => {
     const nextLinks = linkResolver('lifeeventpage', ['cat'], 'is')
     expect(nextLinks).toEqual({
-      as: '/lifsvidburdur/cat',
-      href: '/lifsvidburdur/[slug]',
+      href: '/lifsvidburdur/cat',
     })
   })
 
   it('should return correct path for all locales', () => {
     const nextIsLinks = linkResolver('news', ['hundur'], 'is')
     expect(nextIsLinks).toEqual({
-      as: '/frett/hundur',
-      href: '/frett/[slug]',
+      href: '/frett/hundur',
     })
 
     const nextEnLinks = linkResolver('news', ['dog'], 'en')
     expect(nextEnLinks).toEqual({
-      as: '/en/news/dog',
-      href: '/en/news/[slug]',
+      href: '/en/news/dog',
     })
   })
 
   it('should direct unresolvable links to 404', () => {
     const nextEnLink = linkResolver('page', [], 'en')
     expect(nextEnLink).toEqual({
-      as: '/404',
       href: '/404',
     })
   })
@@ -50,8 +45,7 @@ describe('Link resolver', () => {
   it('should handle content type with uppercase', () => {
     const nextLinks = linkResolver('lifeEventPage' as LinkType, ['cat'], 'is')
     expect(nextLinks).toEqual({
-      as: '/lifsvidburdur/cat',
-      href: '/lifsvidburdur/[slug]',
+      href: '/lifsvidburdur/cat',
     })
   })
 
@@ -62,7 +56,6 @@ describe('Link resolver', () => {
     ]
     nextLinks.map((link) => {
       expect(link).toEqual({
-        as: '/404',
         href: '/404',
       })
     })
@@ -71,7 +64,6 @@ describe('Link resolver', () => {
   it('should handle content type as empty string', () => {
     const nextLinks = linkResolver('' as LinkType, [], 'is')
     expect(nextLinks).toEqual({
-      as: '/404',
       href: '/404',
     })
   })
@@ -79,7 +71,6 @@ describe('Link resolver', () => {
   it('should handle content type as undefined', () => {
     const nextLinks = linkResolver(undefined as LinkType, [], 'is')
     expect(nextLinks).toEqual({
-      as: '/404',
       href: '/404',
     })
   })
@@ -91,7 +82,6 @@ describe('Link resolver', () => {
       'is',
     )
     expect(nextLinks).toEqual({
-      as: 'https://example.com',
       href: 'https://example.com',
     })
   })

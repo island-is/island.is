@@ -183,7 +183,7 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
     (q: string) => {
       if (q) {
         Router.push({
-          pathname: linkResolver('search').as,
+          pathname: linkResolver('search').href,
           query: { q },
         }).then(() => {
           window.scrollTo(0, 0)

@@ -141,7 +141,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               description={description}
               title={title}
               tags={tags}
-              {...linkResolver('adgerdirpage', [slug])}
+              href={linkResolver('adgerdirpage', [slug]).href}
             />
           </div>
         ))}

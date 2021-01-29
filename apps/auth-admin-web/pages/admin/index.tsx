@@ -54,9 +54,19 @@ const Index: React.FC = () => {
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
             <div className="temp-page">
-              To view logs on Datadog click{' '}
+              To view IDS related logs in Datadog click{' '}
               <a
-                href="https://app.datadoghq.eu/"
+                href="https://app.datadoghq.eu/logs?cols=core_host%2Ccore_service&from_ts=1603725071881&index=&live=true&messageDisplay=expanded-md&query=kube_namespace%3Aidentity-server&stream_sort=desc&to_ts=1603725971881"
+                target="_blank"
+                rel="noreferrer"
+              >
+                here
+              </a>
+            </div>
+            <div className="temp-page">
+              To view IDS dashboard in Datadog click{' '}
+              <a
+                href="https://app.datadoghq.eu/dashboard/i9j-xs6-zbu/identity-server?from_ts=1611271075147&live=true&to_ts=1611875875147"
                 target="_blank"
                 rel="noreferrer"
               >
