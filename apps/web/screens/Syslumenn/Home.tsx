@@ -11,7 +11,6 @@ import {
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-import * as styles from './Home.treat'
 import {
   OrganizationSlice,
   OrganizationWrapper,
