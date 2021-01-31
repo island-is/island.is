@@ -27,7 +27,7 @@ export const OfficeCard: React.FC<OfficeCardProps> = ({
       paddingX={[3, 3, 3]}
       paddingY={[3, 3, 3]}
     >
-      <Text variant="h4" as="h1">
+      <Text variant="h4" as="h3">
         {name}
       </Text>
       <Text marginTop={1}>{address}</Text>

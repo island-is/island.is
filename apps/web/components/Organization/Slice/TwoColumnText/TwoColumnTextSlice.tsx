@@ -26,14 +26,16 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
         >
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <Text variant="h3" as="h2">
+              <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>
                 {slice.leftTitle}
               </Text>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <Text variant="h3" as="h2">
-                {slice.rightTitle}
-              </Text>
+              {slice.rightTitle && (
+                <Text variant="h3" as="h2">
+                  {slice.rightTitle}
+                </Text>
+              )}
             </GridColumn>
           </GridRow>
           <GridRow>

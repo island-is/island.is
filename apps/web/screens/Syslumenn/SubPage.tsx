@@ -7,6 +7,8 @@ import {
   GridRow,
   Link,
   NavigationItem,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -97,7 +99,11 @@ const SubPage: Screen<SubPageProps> = ({
             <GridColumn
               span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
             >
-              <h2 className={styles.heading}>{subpage.title}</h2>
+              <Box marginBottom={6}>
+                <Text variant="h1" as="h2">
+                  {subpage.title}
+                </Text>
+              </Box>
             </GridColumn>
           </GridRow>
           <GridRow>
@@ -119,17 +125,15 @@ const SubPage: Screen<SubPageProps> = ({
                 span={['12/12', '12/12', '4/12']}
                 offset={[null, null, '1/12']}
               >
-                <ul>
+                <Stack space={2}>
                   {subpage.links.map((link) => (
-                    <li>
-                      <Link href={link.url}>
-                        <a className={styles.link} href={link.url}>
-                          {link.text}
-                        </a>
+                    <Text fontWeight="light" color="blue400">
+                      <Link href={link.url} underline="small">
+                        {link.text}
                       </Link>
-                    </li>
+                    </Text>
                   ))}
-                </ul>
+                </Stack>
               </GridColumn>
             )}
           </GridRow>

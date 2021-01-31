@@ -1,11 +1,5 @@
 import { globalStyle, style } from 'treat'
 
-export const heading = style({
-  fontSize: 42,
-  fontWeight: 600,
-  marginBottom: 56,
-})
-
 export const description = style({})
 
 globalStyle(`${description} p`, {
@@ -21,12 +15,4 @@ globalStyle(`${smallDescription} p`, {
   fontWeight: 300,
   lineHeight: '34px',
   marginBottom: 32,
-})
-
-export const link = style({
-  fontWeight: 300,
-  textDecoration: 'none',
-  fontSize: 18,
-  lineHeight: '42px',
-  color: '#0061FF',
 })

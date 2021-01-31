@@ -26,7 +26,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           paddingTop={[4, 4, 6]}
           paddingBottom={[4, 5, 10]}
         >
-          <Text variant="h3" as="h2">
+          <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>
             {slice.title}
           </Text>
           <div className={styles.oneColumnSliceContent}>

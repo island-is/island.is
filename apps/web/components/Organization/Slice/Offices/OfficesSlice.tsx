@@ -23,7 +23,12 @@ export const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
           paddingTop={[4, 4, 6]}
           paddingBottom={[4, 5, 10]}
         >
-          <Text variant="h3" as="h3" marginBottom={2}>
+          <Text
+            variant="h3"
+            as="h2"
+            marginBottom={2}
+            id={'sliceTitle-' + slice.id}
+          >
             {slice.title}
           </Text>
           <GridContainer>
