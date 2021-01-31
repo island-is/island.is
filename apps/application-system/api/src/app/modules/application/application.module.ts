@@ -4,8 +4,11 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import {
+  BaseTemplateAPIModuleConfig,
   ParentalLeaveModule,
+  ParentalLeaveService,
   ReferenceTemplateModule,
+  ReferenceTemplateService,
 } from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
@@ -23,6 +26,14 @@ const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
 const XROAD_VMST_CLIENT_ID = process.env.XROAD_VMST_CLIENT_ID ?? ''
 
 // import { AuthModule } from '@island.is/auth-nest-tools'
+
+const templateApiModules = [ReferenceTemplateModule, ParentalLeaveModule]
+const templateApiModuleConfig: BaseTemplateAPIModuleConfig = {
+  xRoadBasePathWithEnv: XROAD_BASE_PATH_WITH_ENV,
+  clientLocationOrigin: environment.clientLocationOrigin,
+  emailOptions: environment.emailOptions,
+  jwtSecret: environment.auth.jwtSecret,
+}
 
 let BullModule: DynamicModule
 
@@ -51,16 +62,9 @@ if (process.env.INIT_SCHEMA === 'true') {
     //   issuer: environment.identityServer.issuer,
     //   jwksUri: `${environment.identityServer.jwksUri}`,
     // }),
-    ParentalLeaveModule.register({
-      xRoadBasePathWithEnv: XROAD_BASE_PATH_WITH_ENV,
-      xRoadVmstMemberCode: XROAD_VMST_MEMBER_CODE,
-      xRoadVmstAPIPath: XROAD_VMST_API_PATH,
-      xRoadVmstClientId: XROAD_VMST_CLIENT_ID,
-      vmstApiKey: VMST_API_KEY,
-    }),
-    ReferenceTemplateModule.register({
-      sampleConfigProp: 'hello world',
-    }),
+    ...templateApiModules.map((Module) =>
+      Module.register(templateApiModuleConfig),
+    ),
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
     BullModule,

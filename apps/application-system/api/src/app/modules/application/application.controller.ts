@@ -12,6 +12,7 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
+  Inject,
   // UseGuards,
 } from '@nestjs/common'
 
@@ -91,6 +92,7 @@ export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly emailService: EmailService,
+    @Inject(ApplicationActionRunnerService)
     private readonly actionRunner: ApplicationActionRunnerService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
@@ -447,12 +449,7 @@ export class ApplicationController {
           onErrorEvent,
         } = newStateOnEntry
 
-        console.log('####')
-        console.log(
-          'there is an onEntry defined',
-          JSON.stringify(newStateOnEntry),
-        )
-        const [success] = await this.actionRunner.performAction({
+        const [success, response] = await this.actionRunner.performAction({
           templateId: template.type,
           type: apiModuleAction,
           props: {
@@ -475,6 +472,11 @@ export class ApplicationController {
             onErrorEvent,
             authorization,
           )
+        }
+
+        if (!success) {
+          console.log(response)
+          return [false]
         }
       }
 

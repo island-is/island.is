@@ -1,4 +1,4 @@
 export enum API_MODULE {
-  exampleAction = 'exampleAction',
+  assignApplication = 'assignApplication',
   sendApplication = 'sendApplication',
 }
