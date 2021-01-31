@@ -33,11 +33,12 @@ export class ApplicationActionRunnerService {
     // No index signature with a parameter of type 'string' was found on type
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
-    const handler = service[action.type]
-
-    if (typeof handler === 'function') {
+    if (typeof service[action.type] === 'function') {
       try {
-        const response = await handler(action.props)
+        // No index signature with a parameter of type 'string' was found on type
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        const response = await service[action.type](action.props)
 
         return [true, { response }]
       } catch (e) {
