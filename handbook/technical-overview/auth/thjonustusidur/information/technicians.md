@@ -2,7 +2,7 @@
 
 ## Upplýsingar um innskráningarkerfi Stafræns Íslands
 
-Innskráningarþjónusta Stafræns Íslands er auðkenningarkerfi sem tengir notendur kerfisins við þjónustu Stafræns Íslands.\
+Innskráningarþjónusta Stafræns Íslands er auðkenningarkerfi sem tengir notendur kerfisins við þjónustu Stafræns Íslands.  
 Innskráningarkerfið leitast við að bjóða upp á val um innskráningarleiðir eftir þörfum notenda og viðskiptavina þess.
 
 ## Forritun á móti innskráningarkerfinu
@@ -51,32 +51,32 @@ Við þróun auðkenningarinnar notast rekstraraðili við kerfið [Identity ser
 
 2.  ### Biðlarar (e. clients)
 
-    Hugbúnaður sem biður um auðkenni frá [Identity server](https://identityserver.io/), ýmist til þess að auðkenna notanda eða nálgast tilföng.\
-    Skrá þarf biðlara hjá [Identity server](https://identityserver.io/) áður en hægt er að óska eftir auðkennum.\
+    Hugbúnaður sem biður um auðkenni frá [Identity server](https://identityserver.io/), ýmist til þess að auðkenna notanda eða nálgast tilföng.  
+    Skrá þarf biðlara hjá [Identity server](https://identityserver.io/) áður en hægt er að óska eftir auðkennum.  
     Biðlarar geta til dæmis verið vefir, öpp fyrir síma og hugbúnaður fyrir borðtölvur.
 
 3.  ### Tilföng (e. resources)
 
     Tilföng eru það sem [Identity server](https://identityserver.io/) þarf að vernda, þ.e. ýmist auðkennisgögn [notenda](../instructions/users/) eða
-    forritaskil (_API_).\
+    forritaskil (_API_).  
     Tilföng skiptast í þrennt:
 
     1.  #### Forritaskilatilföng (e. API Resources)
 
-        Forritaskil eru viðmót sem [biðlarar](../instructions/client/README.md) kalla á.\
+        Forritaskil eru viðmót sem [biðlarar](../instructions/client/README.md) kalla á.  
         Þau hýsa auðkennisgögnin og svarar beiðnum biðlara um auðkennisgögn í gegnum [aðgangstóka (e. _access token_)](../instructions/concepts.md#access-token).
 
     2.  #### Forritaskilaumfang (e. API Scopes)
 
         Umfang eru virkni í OAuth 2.0 sem takmarkar aðgang [biðlara](../instructions/client/README.md) að reikningum [notenda](../instructions/users/README.md).
-        Biðlari getur sótt um eitt eða fleiri umföng.\
+        Biðlari getur sótt um eitt eða fleiri umföng.  
         Þessar upplýsingar eru síðan birtar notanda í staðfestingarglugga (e. _consent screen_) en [auðkennistókinn](../instructions/concepts.md#access-token) sem viðkomandi biðlari hefur hlotið er takmarkaður við umfang biðlarans.
 
     3.  #### Auðkennistilföng (e. Identity Resources)
 
-        Auðkennisgögn sem auðkenna notendur, t.d. nöfn og netföng.\
-        Auðkennistilföng hafa eigið nafn og hægt er að ánafna þeim [staðhæfingartegundir (_claim type_)](../instructions/concepts.md#claims) að eigin vali.\
-        Þessar staðhæfingar eru síðan innifaldar í [auðkennistóka (e._identity token_)](../instructions/concepts.md#identity-token) notenda.\
+        Auðkennisgögn sem auðkenna notendur, t.d. nöfn og netföng.  
+        Auðkennistilföng hafa eigið nafn og hægt er að ánafna þeim [staðhæfingartegundir (_claim type_)](../instructions/concepts.md#claims) að eigin vali.  
+        Þessar staðhæfingar eru síðan innifaldar í [auðkennistóka (e._identity token_)](../instructions/concepts.md#identity-token) notenda.  
         Biðlari notast við stika umfangsins (e. _scope parameter_) til að
         sækja um aðgang að auðkennistilföngunum.
 

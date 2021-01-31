@@ -46,7 +46,7 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 - ### <a name="front-channel-uri"></a>Front Channel Logout URI
 
   Velur útskrániningar-URI biðlara fyrir HTTP-byggða front-channel
-  útskráningu.\
+  útskráningu.  
    [Sjá OIDC Connect Session Managment spec fyrir nánari umfjöllun](https://openid.net/specs/openid-connect-session-1_0.html).
 
 - ### <a name="rair-wise-subject-salt"></a>Rair Wise Subject Salt
@@ -55,7 +55,7 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 
 - ### <a name="user-code-type"></a>User Code Type
 
-  Tilgreinir hvers konar notendakóða á að nota fyrir viðkomandi biðlara.\
+  Tilgreinir hvers konar notendakóða á að nota fyrir viðkomandi biðlara.  
    Ef ekkert gildi er skráð er farið aftur í sjálfgefna stillingu.
 
 - ### <a name="access-token-type"></a>Access Token Type
@@ -73,7 +73,7 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 
 - ### <a name="consent-lifetime"></a>Consent Lifetime
 
-  Gildistími notendastaðfestingar í sekúndum talið.\
+  Gildistími notendastaðfestingar í sekúndum talið.  
    Sjálfgefið val er 0 (óendanlegur gildistími).
 
 - ### <a name="device-code-lifetime"></a>Device Code Lifetime
@@ -85,28 +85,28 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 - ### <a name="user-sso-lifetime"></a>User Sso Lifetime
 
   Hámarks gildistími frá því að notandi auðkenndi sig síðast í sekúndum
-  talið.\
+  talið.  
    Sjálfgefið val er 0.
 
 - ### <a name="refresh-token-usage"></a>Refresh Token Usage
 
-  Ef gildið _ReUse_ er valið mun haldfang endurnýjaðs tóka (_refresh token handle_) vera það sama þegar tóki er endurnýjaður.\
-   Ef gildið _OneTime_ er valið mun haldfang endurnýjaða tókans uppfærast þegar tóki er endurnýjaður.\
+  Ef gildið _ReUse_ er valið mun haldfang endurnýjaðs tóka (_refresh token handle_) vera það sama þegar tóki er endurnýjaður.  
+   Ef gildið _OneTime_ er valið mun haldfang endurnýjaða tókans uppfærast þegar tóki er endurnýjaður.  
    _OneTime_ er sjálfgefið val.
 
 - ### <a name="refresh-token-expiration"></a>Refresh Token Expiration
 
-  Ef valið er gildið _Absolute_ mun endurnýjaði tókinn renna út á ákveðnum tímapunkti (tilgreindur í [Absolute Refresh Token Lifetime](#absolute-refresh-token-lifetime)).\
+  Ef valið er gildið _Absolute_ mun endurnýjaði tókinn renna út á ákveðnum tímapunkti (tilgreindur í [Absolute Refresh Token Lifetime](#absolute-refresh-token-lifetime)).  
    Ef gildið _Sliding_ er valið mun gildistími endurnýjaða tókans endurnýjast (að því marki sem stillt er í [Sliding Refresh Token Lifetime](#sliding-refresh-token-lifetime)). Gildistíminn getur þó ekki verið lengri en [Absolute Refresh Token Lifetime](#absolute-refresh-token-lifetime).
 
 - ### <a name="sliding-refresh-token-lifetime"></a>Sliding Refresh Token Lifetime
 
-  Gildistími endurnýjaða tókans ef _Sliding_ var valið í [Refresh Token Expiration](#refresh-token-expiration).\
+  Gildistími endurnýjaða tókans ef _Sliding_ var valið í [Refresh Token Expiration](#refresh-token-expiration).  
    Sjálfgefið gildi er 1296000 sekúndur / 15 dagar.
 
 - ### <a name="absolute-refresh-token-lifetime"></a>Absolute Refresh Token Lifetime
 
-  Hámarks gildistími endurnýjaða tókans í sekúndum talið.\
+  Hámarks gildistími endurnýjaða tókans í sekúndum talið.  
    Sjálfgefið gildi er 2592000 sekúndur / 30 dagar.
 
 - ### <a name="id-token-lifetime"></a>Identity Token Lifetime
@@ -120,8 +120,8 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 - ### <a name="prefix"></a>Client Claims Prefix
 
   Ef gildi er skráð í þennan reit mun biðlarastaðhæfing af
-  viðkomandi gerð fá skráð gildi sem forskeyti (_prefix_).\
-   Sjálfgefið gildi er \_client\_\_.\
+  viðkomandi gerð fá skráð gildi sem forskeyti (_prefix_).  
+   Sjálfgefið gildi er   _client  _  _.  
    Tilgangurinn með þessu er að koma í veg fyrir að biðlarastaðhæfingar rekist saman við notendastaðhæfingar.
 
 ![detailed-form-advanced3.png](images/detailed-form-advanced3.png)
@@ -129,8 +129,8 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 - ### <a name="access-token-browser"></a>Allow Access Token Via Browser
 
   Hakreitur sem segir til um hvort viðkomandi biðlari megi taka við 
-  [aðgangstókum](../concepts.md#access-token) frá vöfrum.\
-   Þetta getur nýst við að skerpa á flæði sem heimila fjölþátta svörunargerðir (_response types_).\
+  [aðgangstókum](../concepts.md#access-token) frá vöfrum.  
+   Þetta getur nýst við að skerpa á flæði sem heimila fjölþátta svörunargerðir (_response types_).  
    Það er gert með því að heimila ekki biðlara með blandað flæði (_hybrid flow_) sem á að nota _code id_token_ til að bæta við svörunargerðina og þannig leka [tókanum](../concepts.md#token) yfir í vafrann.
 
 - ### <a name="offline-access"></a>Allow Offline Access
@@ -151,15 +151,15 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 
   Ef hakað er við þennan reit eiga [auðkennistókar](../concepts.md#id-token) alltaf að innihalda
   notendastaðhæfingar (_user claims_ þegar sótt er bæði um [auðkennistóka](../concepts.md#id-token) og
-  [aðgangstóka](../concepts.md#access-token).\
+  [aðgangstóka](../concepts.md#access-token).  
    Ef ekki er hakað við reitinn eiga biðlarar að nota endapunkt fyrir 
-   notendaupplýsingar (_userinfo endpoint_).\
+   notendaupplýsingar (_userinfo endpoint_).  
    Sjálfgefið gildi er _false_.
 
 - ### <a name="send-client-claims"></a>Always Send Client Claims
 
-  Ef hakað er við þennan reit verður biðlarastaðhæfing (_client claim_) send fyrir hvert flæði (_flow_).\
-   Ef ekki er hakað við þennan reit verða biðlarastaðhæfingar einungis sendar fyrir flæði biðlaraskírteina (_client credential flow_).\
+  Ef hakað er við þennan reit verður biðlarastaðhæfing (_client claim_) send fyrir hvert flæði (_flow_).  
+   Ef ekki er hakað við þennan reit verða biðlarastaðhæfingar einungis sendar fyrir flæði biðlaraskírteina (_client credential flow_).  
    Sjálfgefið gildi er _false_.
 
 - ### <a name="back-channel"></a>Back Channel Logout Session Required

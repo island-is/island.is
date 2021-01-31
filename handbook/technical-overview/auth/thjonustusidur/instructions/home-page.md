@@ -1,6 +1,6 @@
 # Home Page
 
-Upphafssíða þjónustusíðna Stafræns Íslands.\
+Upphafssíða þjónustusíðna Stafræns Íslands.  
 Hér geta notendur kerfisins fengið aðgang, haft samband við hjálparborðið og valið úr nokkrum flýtileiðum.
 
 ![home](images/home.png)

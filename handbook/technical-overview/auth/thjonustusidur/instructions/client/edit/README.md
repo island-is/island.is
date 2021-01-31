@@ -14,14 +14,14 @@
 
 - ## <a name="client-settings"></a>Client Settings
 
-  Hér er hægt að breyta upplýsingunum um biðlarana sem var sett upp með einfalda eða flókna forminu.\
+  Hér er hægt að breyta upplýsingunum um biðlarana sem var sett upp með einfalda eða flókna forminu.  
   Hér má sjá frekari upplýsingar um [flókna formið](../detailed-form.md).
 
 - ## <a name="redirect-uri"></a>Redirect Uri
 
   Hér eru þær vefslóðir, _URL_, tilgreindar sem skila má [tókum](../../concepts.md#token) eða
-  [heimilunarkóðum (authorization codes)](../../concepts.md#auth-code) til.\
-   Vefslóð er skráð í _Callback URL_ og smellt á hnappinn _Add_ til að staðfesta skráninguna.\
+  [heimilunarkóðum (authorization codes)](../../concepts.md#auth-code) til.  
+   Vefslóð er skráð í _Callback URL_ og smellt á hnappinn _Add_ til að staðfesta skráninguna.  
    Ef vefslóð er þegar skráð er það sama vefslóðin og skráð var í
   [Display URL í fyrsta skráningarþrepinu](../detailed-form.md#display-url).
 
@@ -29,7 +29,7 @@
 
   ### Callback Url
 
-  Í þennan reit er vefslóðin sem vísað er aftur til skráð.\
+  Í þennan reit er vefslóðin sem vísað er aftur til skráð.  
    Þetta verkferli er háð _TLS_.
 
   ### Add
@@ -46,10 +46,10 @@
 
 - ## <a name="idp-restrictions"></a>Idp Restrictions
 
-  Hér er tilgreint hvaða ytri auðkennisveitur (_Identity provider_) viðkomandi biðlari má nota.\
+  Hér er tilgreint hvaða ytri auðkennisveitur (_Identity provider_) viðkomandi biðlari má nota.  
    Valið er hvort leyfa eigi allar ytri auðkennisveitur fyrir biðlara með því að smella á _Allow All_ eða hvort leyfa eigi einungis
-  _Sim Card_ sem ytri auðkennisveitu með því að smella á _Allow Only_.\
-   Ef svo er þarf að haka við viðeigandi ytri auðkennisveitur fyrir biðlarann, _Identity Card_ eða _MobileApp_.\
+  _Sim Card_ sem ytri auðkennisveitu með því að smella á _Allow Only_.  
+   Ef svo er þarf að haka við viðeigandi ytri auðkennisveitur fyrir biðlarann, _Identity Card_ eða _MobileApp_.  
    _Sim Card_ er sjálfgefið val og ekki hægt að haka það út.
 
   ![idp-restrictions](images/idp-restrictions.png)
@@ -64,7 +64,7 @@
 
   - <a name="sim-card"></a>#### Sim Card
 
-  Ef hakað er við þennan reit geta notendur biðlarans skráð sig inn í gegnum [síma (_SIM-kort_)](https://www.audkenni.is/rafraen-skilriki/skilriki-i-farsima/).\
+  Ef hakað er við þennan reit geta notendur biðlarans skráð sig inn í gegnum [síma (_SIM-kort_)](https://www.audkenni.is/rafraen-skilriki/skilriki-i-farsima/).  
    _Sim Card_ er sjálfgefið val og ekki hægt að haka það út.
 
   - <a name="identity-card"></a>#### Identity Card
@@ -85,15 +85,15 @@
 
 - ## <a name="post-logout-uris"></a>Post Logout Uris
 
-  Hér er tilgreint hvaða vefslóðir má vísa aftur á eftir útskráningu.\
-   Vefslóð er skráð í _Logout URL_ og smellt á hnappinn _Add_ til að staðfesta valið.\
-   Ef vefslóð er þegar fyrir hendi er það sama vefslóð og valin var í [Display URL í fyrsta þrepi skráningarinnar](../detailed-form.md#display-url).\
+  Hér er tilgreint hvaða vefslóðir má vísa aftur á eftir útskráningu.  
+   Vefslóð er skráð í _Logout URL_ og smellt á hnappinn _Add_ til að staðfesta valið.  
+   Ef vefslóð er þegar fyrir hendi er það sama vefslóð og valin var í [Display URL í fyrsta þrepi skráningarinnar](../detailed-form.md#display-url).  
 
   ![post-logout](images/post-logout.png)
 
   ### Logout URL
 
-  Í þennan reit er skráð vefslóðin sem vísað er aftur á eftir útskráningu.\
+  Í þennan reit er skráð vefslóðin sem vísað er aftur á eftir útskráningu.  
    Þetta verkferli er háð _TLS_.
 
   ### Add
@@ -143,7 +143,7 @@
 
   Ef hakað er við þennan reit verður viðkomandi biðlara leyft að nota
   [leyfistegundina (_grant type_)](../../concepts.md#grant-type)
-  [heimilunarkóði (_Authorization code_)](../../concepts.md#auth-code).\
+  [heimilunarkóði (_Authorization code_)](../../concepts.md#auth-code).  
    Heimilunarkóðar er notaðir af biðlurum til að skipta þeim út í staðinn fyrir [aðgangstóka (_access token_)](../../concepts.md#token).
 
   ### Client_credentials / Biðlaraskírteini
@@ -164,7 +164,7 @@
 - ## <a name="allowed-scopes"></a>Allowed scopes
 
   Hér eru þau [tilföng](../../resources/README.md) sem heimilað er viðkomandi biðlari hafi aðgang að
-  (m.ö.o. [umfang þeirra (e. _scope_)](../../resources/api-scopes.md)) tilgreind í _Scope Name_ og smellt á hnappinn _Add_ til að staðfesta valið.\
+  (m.ö.o. [umfang þeirra (e. _scope_)](../../resources/api-scopes.md)) tilgreind í _Scope Name_ og smellt á hnappinn _Add_ til að staðfesta valið.  
    Sjálfgefið er að biðlarinn hafa ekki aðgang að neinum tilföngum.
 
   ![allowed-scopes](images/allowed-scopes.png)
@@ -187,7 +187,7 @@
 
 - ## <a name="client-claims"></a>Client claims
 
-  Hér eru staðhæfingar viðkomandi biðlara skilgreindar með því að skrá þær í _Claim Type (Key)_ og _Claim Value_.\
+  Hér eru staðhæfingar viðkomandi biðlara skilgreindar með því að skrá þær í _Claim Type (Key)_ og _Claim Value_.  
    Skráðar staðhæfingar eru síðan staðfestar með því að smella á hnappinn _Add_.
 
   ![add-claims](images/add-claims.png)
@@ -215,7 +215,7 @@
 - ## <a name="client-secret"></a>Client secret
 
   Huldustrengurinn er skráður í _Client Secret_, gerð
-  huldustrengsins valin í _Type_ og lýsing á strengnum skráð _í Description_.\
+  huldustrengsins valin í _Type_ og lýsing á strengnum skráð _í Description_.  
    Smellt er á hnappinn _Add_ til að staðfesta skráðan huldustreng.
 
   ![secret](images/secrets.png)
@@ -223,7 +223,7 @@
   ### Client Secret
 
   Hér birtist sjálfgefinn slembistrengur sem nota má sem huldustreng en
-  einnig er hægt að mynda eigin streng.\
+  einnig er hægt að mynda eigin streng.  
    Mælt er með að hafa strenginn flókinn.
 
   ### Type
@@ -237,7 +237,7 @@
   ### Add
 
   Ef smellt er á þennan hnapp opnast aðvörunargluggi sem sýnir
-  huldustrenginn og segir að hann hafi verið afritaður á klippiborðið.\
+  huldustrenginn og segir að hann hafi verið afritaður á klippiborðið.  
    Þegar búið er að smella á _Ok_ er valinn huldustrengur staðfestur.
 
   ![secret-clipboard](images/secret-clipboard.png)
@@ -252,7 +252,7 @@
 
 ## Steps completed
 
-Þetta er lokaþrep skráningarferlis biðlarans.\
+Þetta er lokaþrep skráningarferlis biðlarans.  
 Smellt er á _Go back_ til að fara aftur í upphafsþrep skráningarferlisins.
 
 ![steps-completed](images/steps-completed.png)

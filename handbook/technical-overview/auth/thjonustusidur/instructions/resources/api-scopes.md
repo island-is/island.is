@@ -33,12 +33,12 @@ _Enabled_, _Show in Discovery Document_, _Emphasize_ og _Required_.
 
 - ### Show In Discovery Document
 
-  Ef hakað er við þennan reit verður _umfang viðkomandi forritaskila_ sýnt í uppgötvunarskjalinu (_discovery document_).\
+  Ef hakað er við þennan reit verður _umfang viðkomandi forritaskila_ sýnt í uppgötvunarskjalinu (_discovery document_).  
    Sjálfgefið er hakað við þennan reit.
 
 - ### Emphasize
 
-  Ef hakað er við þennan reit mun staðfestingarglugginn (_consent screen_) leggja áherslu (_emphasize_) á umfang þessara forritaskila (þ.e.a.s. ef staðfestingarglugginn notast á annað borð við slíkan eiginleika).\
+  Ef hakað er við þennan reit mun staðfestingarglugginn (_consent screen_) leggja áherslu (_emphasize_) á umfang þessara forritaskila (þ.e.a.s. ef staðfestingarglugginn notast á annað borð við slíkan eiginleika).  
    Mælt er með að nota þessa stillingu fyrir sérstaklega viðkvæm og mikilvæg umföng.
 
 - ### Required

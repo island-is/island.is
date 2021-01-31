@@ -23,7 +23,7 @@
   Grunnvefslóð þessa biðlara.  
   Notað til að bæta við [Cors origin](edit/README.md#allowed-cors-origin), 
   [RedirectURI](edit/README.md#redirect-uri) og 
-  [Post Logout URI](edit/README.md#post-logout-uris).\
+  [Post Logout URI](edit/README.md#post-logout-uris).  
    Út frá þessu gildi eer fyrsta Redirect Uri biðlarans búið til.
 
 ## Detailed form

@@ -10,7 +10,7 @@ Hægt er að leita að [biðlurum](client/README.md), [forritaskilatilföngum](r
 
 Hægt er að breyta skráðum [biðlurum](client/README.md), [forritaskilatilföngum](resources/api-resources.md),
 [forritaskilaumföngum](resources/api-scopes.md), [auðkennistilföngum](resources/identity-resources.md) 
-og [umsjónarmönnum](users/system-users.md) með því að smella á pennamerki ![pen-icon](images/pen-icon.png) þeirra hlutar sem á að breyta í viðkomandi lista.\
+og [umsjónarmönnum](users/system-users.md) með því að smella á pennamerki ![pen-icon](images/pen-icon.png) þeirra hlutar sem á að breyta í viðkomandi lista.  
 Við það er farið í upphafsþrep skráningar viðkomandi aðila þar sem hægt er að breyta skráningunni.
 
 ![edit-client](images/edit-client.png)
@@ -35,7 +35,7 @@ Við það er farið í upphafsþrep skráningar viðkomandi aðila þar sem hæ
   ![garbage-can](images/garbage-can.png) þeirra forritaskilatilfanga á listanum sem á að eyða.
 
 - ### Eyða skráðum gildum
-  Ef ruslatunnuhnappur ![garbage-can](images/garbage-can.png) er við hlið skráðs gildis í einhverju þrepi skráningarinnar er hægt að smella á hann til að eyða viðkomandi gildi.\
+  Ef ruslatunnuhnappur ![garbage-can](images/garbage-can.png) er við hlið skráðs gildis í einhverju þrepi skráningarinnar er hægt að smella á hann til að eyða viðkomandi gildi.  
   Þetta á við um allar tegundir skráningar: [biðlara](client/README.md), 
   [forritaskilatilföng](resources/api-resources.md), 
   [forritaskilaumföng](resources/api-scopes.md), 
@@ -43,10 +43,10 @@ Við það er farið í upphafsþrep skráningar viðkomandi aðila þar sem hæ
 
 ## Keyra út / Export
 
-Hægt er að keyra út lista yfir skráða aðila í Excel með því að smella á hnappinn ![export](images/export.png) á viðeigandi lista.\
+Hægt er að keyra út lista yfir skráða aðila í Excel með því að smella á hnappinn ![export](images/export.png) á viðeigandi lista.  
 Bæði er hægt að keyra út lista yfir skráða [biðlara](client/README.md) og [forritaskilatilföng](resources/README.md).
 
 ## Útskráning / Logout
 
-Efst í hægra horni þjónustusíðnanna, við hliðina á nafni viðkomandi kerfisnotanda, er hnappurinn ![logout](images/logout.png)\
+Efst í hægra horni þjónustusíðnanna, við hliðina á nafni viðkomandi kerfisnotanda, er hnappurinn ![logout](images/logout.png)  
 Ef smellt er á hann skráir notandi sig út úr kerfinu.

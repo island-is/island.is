@@ -2,7 +2,7 @@
 
 ## Upplýsingar um innskráningarkerfi Stafræns Íslands
 
-Innskráningarþjónusta Stafræns Íslands er auðkenningarkerfi sem tengir notendur kerfisins við þjónustu Stafræns Íslands.\
+Innskráningarþjónusta Stafræns Íslands er auðkenningarkerfi sem tengir notendur kerfisins við þjónustu Stafræns Íslands.  
 Innskráningarkerfið leitast við að bjóða upp á val um innskráningarleiðir eftir þörfum notenda og viðskiptavina þess.
 
 ## Innskráningarkerfi virkar ekki
@@ -28,7 +28,7 @@ Innskráningarkerfið leitast við að bjóða upp á val um innskráningarleið
   Einnig er hægt er að skrá sig inn með rafrænni auðkenningu í gegnum kortaþjónustu.
 
 - ### Auðkenning í gegnum SmartId
-  Svo er líka hægt að skrá sig inn í gegnum SmartId-kerfið.\
+  Svo er líka hægt að skrá sig inn í gegnum SmartId-kerfið.  
   Á eftirfarandi hlekkjum má finna upplýsingar um kerfið:
     - https://audkenni.atlassian.net/wiki/spaces/DOC/overview
     - https://audkenni.atlassian.net/wiki/spaces/DOC/pages/1059684353/Step+by+step+instructions
