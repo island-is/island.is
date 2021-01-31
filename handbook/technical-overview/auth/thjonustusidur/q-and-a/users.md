@@ -1,4 +1,4 @@
-# Endanotendur / End users
+# End Users
 Leiðbeiningar fyrir endanotendur má finna
 [hér](#leiðbeiningar-fyrir-endanotendur).
 

@@ -1,4 +1,4 @@
-# User management
+# User Management
 
 Í innskráningarkerfi Stafræns Íslands merkir hugtakið _notandi_ (e. _user_) mannlegan notanda sem notar skráðan biðlara til að nálgast tilföngin.  
 Hægt er að leita að þessum notendum í kerfinu, sjá meira [hér](system-users.md)

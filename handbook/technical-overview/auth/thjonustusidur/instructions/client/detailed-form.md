@@ -1,4 +1,4 @@
-# Client detailed form
+# Client Detailed Form
 
 Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað gildin gera.
 

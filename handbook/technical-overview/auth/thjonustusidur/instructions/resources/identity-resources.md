@@ -1,6 +1,6 @@
-# <a name="identity-resources"></a>Identity resources, auðkennistilföng
+# Identity Resources
 
-Auðkennistilföngin eru gögn sem auðkenna notendur, t.d. kennitölur, nöfn og netföng.  
+<a name="identity resources"></a>Auðkennistilföngin eru gögn sem auðkenna notendur, t.d. kennitölur, nöfn og netföng.  
 Til að skrá ný auðkennistilföng er smellt á _+ Create new Identity resource_.
 
 ![](identity-resources-images/frontpage.png)

@@ -1,4 +1,4 @@
-# Viðskiptavinir þjónustusíðnanna / Clients / Resources
+# Customers
 
   - ## Hvað eru þjónustusíður Stafræns Íslands ?
     Hér má finna upplýsingar um [þjónustusíður Stafræns Íslands](../instructions/README.md).

@@ -1,4 +1,4 @@
-# Client types
+# Client Types
 
 Tegundir biðlara geta verið einhverjar af eftirfarandi
 

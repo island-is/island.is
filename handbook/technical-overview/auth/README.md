@@ -1,4 +1,4 @@
-# Authentication system
+# Authentication System
 
 Auðkenningarþjónusta island.is er byggt á tveimur kerfum.  
 Auðkenningarþjónustan sjálf sem má lesa meira um [hér](system/README.md)  

@@ -1,6 +1,6 @@
-# <a name="edit-client"></a>Edit clients
+# Edit Clients
 
-Þegar búið er að búa til biðlara / client er hægt að breyta upplýsingunum um biðlarann með flipunum
+<a name="edit-client"></a>Þegar búið er að búa til biðlara / client er hægt að breyta upplýsingunum um biðlarann með flipunum
 
 [Client Settings](#client-settings)  
 [Redirect URI](#redirect-uri)  

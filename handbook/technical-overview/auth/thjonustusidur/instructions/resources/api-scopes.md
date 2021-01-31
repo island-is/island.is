@@ -1,4 +1,4 @@
-# Api Scopes, forritaskilaumfang
+# API Scopes
 
 Umfang eru virkni sem takmarkar aðgang biðlara að reikningum
 notenda en biðlari getur sótt um eitt eða fleiri umfang.  

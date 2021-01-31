@@ -1,4 +1,4 @@
-# System users
+# System Users
 
 Í þessum flipa er hægt að leita að skráðum notanda í kerfinu með því að fylla út reitinn _Search By National Id Or Subject Id_ og smella á hnappinn _Search_  
 

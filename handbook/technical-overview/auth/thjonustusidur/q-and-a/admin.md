@@ -1,4 +1,4 @@
-# Umsjón með þjónustusíðunum / Admin Control
+# Admin Control
 
 - ## Hvernig er umsjón þjónustusíðnanna / Admin Control háttað?
   Hér má finna upplýsingar um 

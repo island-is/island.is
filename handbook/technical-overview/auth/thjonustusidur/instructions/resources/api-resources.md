@@ -1,6 +1,6 @@
-# <a name="resources"></a>Api Resources, forritaskilatilföng
+# Api Resources
 
-Til að skrá ný forritaskilatilföng er smellt á [+ Create new Api resource](#create-api-resource).
+<a name="resources"></a>Til að skrá ný forritaskilatilföng er smellt á [+ Create new Api resource](#create-api-resource).
 
 
 ![](api-resources-images/frontpage.png)

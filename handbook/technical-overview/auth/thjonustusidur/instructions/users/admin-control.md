@@ -1,4 +1,4 @@
-# Admin control
+# Admin Control
 
 Umsjónarmenn þjónustusíðna eru þeir sem hafa aðgang að þjónustusíðunum.
 Í þessum flipa er hægt að hafa stýra fjórum þáttum kerfisins  

@@ -1,4 +1,4 @@
-# Common features
+# Common Features
 
 ## Leita að skráðum aðila
 

@@ -1,4 +1,4 @@
-# End users
+# End Users
 
 ## Upplýsingar um innskráningarkerfi Stafræns Íslands
 
