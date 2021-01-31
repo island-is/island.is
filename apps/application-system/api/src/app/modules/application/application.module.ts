@@ -14,7 +14,6 @@ import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { ApplicationActionRunnerService } from './application-actionRunner.service'
 import { UploadProcessor } from './upload.processor'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
@@ -68,11 +67,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     ApplicationService,
     ApplicationActionRunnerService,
     UploadProcessor,
-    {
-      provide: EMAIL_OPTIONS,
-      useValue: environment.emailOptions,
-    },
-    EmailService,
   ],
 })
 export class ApplicationModule {}

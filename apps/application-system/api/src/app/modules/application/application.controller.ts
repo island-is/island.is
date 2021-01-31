@@ -12,7 +12,6 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
-  Inject,
   // UseGuards,
 } from '@nestjs/common'
 
@@ -66,7 +65,6 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
-import { EmailService } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
@@ -89,8 +87,6 @@ interface DecodedAssignmentToken {
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly emailService: EmailService,
-    @Inject(ApplicationActionRunnerService)
     private readonly actionRunner: ApplicationActionRunnerService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
@@ -426,7 +422,6 @@ export class ApplicationController {
 
     const apiActionProps = {
       jwtSecret: environment.auth.jwtSecret,
-      emailService: this.emailService,
       clientLocationOrigin: environment.clientLocationOrigin,
       authorization: authorization || '',
     }
