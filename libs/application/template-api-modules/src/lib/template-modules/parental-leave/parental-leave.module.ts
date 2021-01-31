@@ -3,6 +3,7 @@ import { VMSTClientModule } from '@island.is/vmst-client'
 import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 
 import { BaseTemplateAPIModuleConfig } from '../../types'
+import { SharedTemplateAPIModule } from '../../shared'
 import { ParentalLeaveService } from './parental-leave.service'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
@@ -28,6 +29,7 @@ export class ParentalLeaveModule {
           xRoadClient: XROAD_VMST_CLIENT_ID,
           apiKey: VMST_API_KEY,
         }),
+        SharedTemplateAPIModule.register(config),
       ],
       providers: [ParentalLeaveService],
       exports: [ParentalLeaveService],
