@@ -1,4 +1,4 @@
-# Resources And Scopes
+# Resources and Scopes
 
 Tilföng (e. _Resources_) eru það sem innskráningarkerfið verndar, sem
 sagt auðkennisgögn notenda eða [forritaskil (e. _API_)](api-resources.md):

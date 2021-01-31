@@ -1,4 +1,4 @@
-# Api Resources
+# API Resources
 
 <a name="resources"></a>Til að skrá ný forritaskilatilföng er smellt á [+ Create new Api resource](#create-api-resource).
 
