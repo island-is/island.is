@@ -23,6 +23,7 @@ import { ActionTypes } from '../reducer/ReducerTypes'
 import * as styles from './FormShell.treat'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useHistorySync } from '../hooks/useHistorySync'
+import { useApplicationTitle } from '../hooks/useApplicationTitle'
 
 export const FormShell: FC<{
   application: Application
@@ -45,6 +46,7 @@ export const FormShell: FC<{
     initializeReducer,
   )
   useHistorySync(state, dispatch)
+  useApplicationTitle(state)
   const {
     activeScreen,
     application: storedApplication,

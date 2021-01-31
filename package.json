@@ -62,6 +62,7 @@
     "@nestjs/swagger": "4.5.12",
     "@nestjs/terminus": "7.0.1",
     "@rehooks/component-size": "1.0.3",
+    "@rehooks/document-title": "1.0.2",
     "@sendgrid/mail": "7.2.6",
     "@sentry/browser": "5.26.0",
     "@sentry/integrations": "5.26.0",

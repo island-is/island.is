@@ -3660,6 +3660,13 @@
   resolved "https://registry.yarnpkg.com/@rehooks/component-size/-/component-size-1.0.3.tgz#823eabeb42084893d46d43e3a9d1d0e34252b3cb"
   integrity sha512-pnYld+8SSF2vXwdLOqBGUyOrv/SjzwLjIUcs/4c1JJgR0q4E9eBtBfuZMD6zUD51fvSehSsbnlQMzotSmPTXPg==
 
+"@rehooks/document-title@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@rehooks/document-title/-/document-title-1.0.2.tgz#d03e8a09e09f6fd481518982b151ab0da4bc5eec"
+  integrity sha512-8ckcelpgqmWtGNXob+P6Lw2lHM2IfkP7sl8QJ2BNHkFeDQnc1CYeYf2NMVuFflYh3YVlAlfUzAxcIG1QCBrRQQ==
+  dependencies:
+    react "^16.13.1"
+
 "@rollup/plugin-babel@5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-babel/-/plugin-babel-5.0.2.tgz#d9351b9545b0c586a193fc99830d4b1a25317ed5"
@@ -19830,7 +19837,7 @@ react-use@15.3.3:
     ts-easing "^0.2.0"
     tslib "^2.0.0"
 
-react@16.13.1, react@^16.8.3:
+react@16.13.1, react@^16.8.3, react@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
   integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==
