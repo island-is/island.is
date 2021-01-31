@@ -72,6 +72,7 @@ const goToSpecificScreen = (
   return {
     ...state,
     activeScreen,
+    historyReason: 'navigate',
   }
 }
 
@@ -110,7 +111,7 @@ const answerAndGoNextScreen = (
       true,
     )
   }
-  return { ...newState, activeScreen }
+  return { ...newState, activeScreen, historyReason: 'navigate' }
 }
 
 function expandRepeater(state: ApplicationUIState): ApplicationUIState {
@@ -140,6 +141,7 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
       state.activeScreen + repeaterValues.length * repeater.children.length + 1,
       true,
     ),
+    historyReason: 'navigate',
   }
 }
 
@@ -175,6 +177,7 @@ export const ApplicationReducer = (
             findNearestRepeater(state.activeScreen, state.screens),
             false,
           ),
+          historyReason: 'navigate',
         }
       }
       return {
@@ -184,6 +187,7 @@ export const ApplicationReducer = (
           state.activeScreen - 1,
           false,
         ),
+        historyReason: 'navigate',
       }
     case ActionTypes.ANSWER:
       return addNewAnswersToState(state, action.payload)
@@ -201,6 +205,12 @@ export const ApplicationReducer = (
             ...action.payload,
           },
         },
+      }
+    case ActionTypes.HISTORY_POP:
+      return {
+        ...state,
+        activeScreen: action.payload.screen,
+        historyReason: 'pop',
       }
     default:
       return state

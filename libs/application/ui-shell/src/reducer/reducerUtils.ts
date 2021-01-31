@@ -62,7 +62,7 @@ export const moveToScreen = (
   if (screenIndex < 0) {
     return 0
   }
-  if (screenIndex === screens.length) {
+  if (screenIndex >= screens.length) {
     return screens.length - 1
   }
 
