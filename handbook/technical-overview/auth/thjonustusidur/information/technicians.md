@@ -7,7 +7,7 @@ Innskráningarkerfið leitast við að bjóða upp á val um innskráningarleið
 
 ## Forritun á móti innskráningarkerfinu
 
-Nákvæmar leiðbeiningar um hvernig hægt er að forrita á móti innskráningarkerfinu er að finna í kerfishandbókunum með því að smella [hér](https://github.com/island-is/island.is/tree/main/handbook/technical-overview/auth)
+Nákvæmar leiðbeiningar um hvernig hægt er að forrita á móti innskráningarkerfinu er að finna í kerfishandbókunum með því að smella [hér](https://github.com/island-is/island.is/tree/main/handbook/technical-overview/auth/system)
 
 ## Kóðadæmi
 
