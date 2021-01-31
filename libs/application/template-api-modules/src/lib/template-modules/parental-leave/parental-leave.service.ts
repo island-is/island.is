@@ -5,7 +5,15 @@ import { ParentalLeaveApi, ParentalLeave } from '@island.is/vmst-client'
 export class ParentalLeaveService {
   constructor(private parentalLeaveApi: ParentalLeaveApi) {}
 
-  async postParentalLeave(
+  async assignOtherParent() {
+    console.log('TODO implement assignOtherParent')
+  }
+
+  async assignEmployer() {
+    console.log('TODO implement assignEmployer')
+  }
+
+  async sendApplication(
     nationalRegistryId: string,
     parentalLeave: ParentalLeave,
   ): Promise<ParentalLeave> {

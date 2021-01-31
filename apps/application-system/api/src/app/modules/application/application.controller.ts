@@ -70,7 +70,6 @@ import { ApplicationResponseDto } from './dto/application.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { EmailService } from '@island.is/email-service'
 import { environment } from '../../../environments'
-import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
@@ -78,8 +77,9 @@ import { ApplicationActionRunnerService } from './application-actionRunner.servi
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
-interface DecodedToken {
+interface DecodedAssignmentToken {
   applicationId: string
+  state: string
 }
 
 @ApiTags('applications')
@@ -204,7 +204,9 @@ export class ApplicationController {
     @NationalId() nationalId: string,
     @AuthorizationHeader() authorization: string,
   ): Promise<ApplicationResponseDto> {
-    const decodedToken = verifyToken<DecodedToken>(assignApplicationDto.token)
+    const decodedToken = verifyToken<DecodedAssignmentToken>(
+      assignApplicationDto.token,
+    )
 
     if (decodedToken === null) {
       throw new BadRequestException('Invalid token')
@@ -217,6 +219,14 @@ export class ApplicationController {
     if (existingApplication === null) {
       throw new NotFoundException('No application found')
     }
+
+    if (existingApplication.state !== decodedToken.state) {
+      throw new NotFoundException('Application no longer in assignable state')
+    }
+
+    // TODO check if assignee is still the same?
+    // decodedToken.assignedEmail === get(existingApplication.answers, decodedToken.emailPath)
+    // throw new BadRequestException('Invalid token')
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -420,15 +430,7 @@ export class ApplicationController {
       authorization: authorization || '',
     }
 
-    const apiTemplateUtils = new ApplicationAPITemplateUtils(
-      application,
-      apiActionProps,
-    )
-
-    const [hasChanged, newState, newApplication] = helper.changeState(
-      event,
-      apiTemplateUtils,
-    )
+    const [hasChanged, newState, newApplication] = helper.changeState(event)
 
     if (hasChanged) {
       const {
@@ -454,7 +456,7 @@ export class ApplicationController {
           type: apiModuleAction,
           props: {
             ...apiActionProps,
-            application,
+            application: updatedApplication as BaseApplication,
           },
         })
 

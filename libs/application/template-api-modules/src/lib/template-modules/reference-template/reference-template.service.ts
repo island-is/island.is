@@ -31,7 +31,7 @@ export class ReferenceTemplateService {
     await new Promise((resolve) => setTimeout(resolve, 2000))
     console.log('\t\tdone')
 
-    console.log('\t-assigning application')
+    console.log('\t-sending application')
     await this.sharedTemplateAPIService.sendEmail(
       generateApplicationApprovedEmail,
       application,

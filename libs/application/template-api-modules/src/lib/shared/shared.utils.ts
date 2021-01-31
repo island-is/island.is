@@ -10,6 +10,7 @@ export const createAssignToken = (application: Application, secret: string) => {
   const token = jwt.sign(
     {
       applicationId: application.id,
+      state: application.state,
     },
     secret,
     { expiresIn: 24 * 60 * 60 },

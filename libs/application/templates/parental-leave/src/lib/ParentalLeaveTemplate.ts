@@ -8,51 +8,9 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
 
-import {
-  generateAssignParentTemplate,
-  generateAssignReviewerTemplate,
-} from '../emailTemplateGenerators'
 import { dataSchema, SchemaFormValues } from './dataSchema'
-import { YES } from '../constants'
-
-interface ApiTemplateUtilActions {
-  [key: string]: ApplicationAPITemplateAction
-}
-
-const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
-  assignParentThroughEmail: {
-    type: 'assignThroughEmail',
-    generateTemplate: generateAssignParentTemplate,
-  },
-  assignReviewerThroughEmail: {
-    type: 'assignThroughEmail',
-    generateTemplate: generateAssignReviewerTemplate,
-  },
-  sendApplication: {
-    type: 'callAPI',
-    // TODO: replace with correct API url
-    url: 'http://localhost:8080/test',
-    generateRequestOptions: (application, authorization) => ({
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        auth: authorization,
-      },
-      body: JSON.stringify({
-        query: `
-          mutation ExampleCreateApplication(answers: ${JSON.stringify(
-            application.answers,
-          )}, applicant: ${application.applicant}) {
-            success
-          }
-        `,
-      }),
-    }),
-  },
-}
+import { YES, API_MODULE_ACTIONS } from '../constants'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -131,15 +89,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        invoke: {
-          src: {
-            type: 'apiTemplateUtils',
-            action: TEMPLATE_API_ACTIONS.assignParentThroughEmail,
-          },
-        },
         meta: {
           name: 'Needs other parent approval',
           progress: 0.4,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
+          },
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -196,16 +151,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        invoke: {
-          src: {
-            type: 'apiTemplateUtils',
-            action: TEMPLATE_API_ACTIONS.assignReviewerThroughEmail,
-            // TODO: handle async onDone / onError when transitioning states
-          },
-        },
         meta: {
           name: 'Waiting to assign employer',
           progress: 0.4,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+            onErrorEvent: DefaultEvents.REJECT,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -283,15 +235,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
-        invoke: {
-          src: {
-            type: 'apiTemplateUtils',
-            action: TEMPLATE_API_ACTIONS.sendApplication,
-          },
-        },
         meta: {
           name: 'Vinnumálastofnun Approval',
           progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

@@ -23,13 +23,6 @@ import {
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 
-interface APITemplateUtilsServiceInvokeSourceDefinition
-  extends InvokeSourceDefinition {
-  // TODO: use action type from apiTemplateUtils
-  // import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
-  action: any
-}
-
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -88,38 +81,8 @@ export class ApplicationTemplateHelper<
    * @param event A state machine event
    * returns [hasChanged, newState, newApplication] where newApplication has the updated state value
    */
-  changeState(
-    event: Event<TEvents>,
-    // TODO: import type from application-api-template-utils
-    apiTemplateUtils: any,
-  ): [boolean, string, Application] {
-    this.initializeStateMachine(undefined, {
-      services: {
-        apiTemplateUtils: (
-          context: TContext,
-          event: TEvents,
-          { src }: InvokeMeta,
-        ) => {
-          if (event.type === ActionTypes.Init) {
-            // Do not send emails on xstate.init event
-            return Promise.reject('')
-          }
-
-          const {
-            action,
-          } = src as APITemplateUtilsServiceInvokeSourceDefinition
-
-          try {
-            return apiTemplateUtils.performAction(action)
-          } catch (e) {
-            console.log(e)
-            // pass
-          }
-
-          return Promise.reject('')
-        },
-      },
-    })
+  changeState(event: Event<TEvents>): [boolean, string, Application] {
+    this.initializeStateMachine(undefined)
     const service = interpret(
       this.stateMachine,
       this.template.stateMachineOptions,
