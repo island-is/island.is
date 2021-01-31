@@ -244,6 +244,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run air-discount-scheme-web:build-next:production",
+              "yarn nx run air-discount-scheme-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/air-discount-scheme/web",
@@ -260,15 +269,31 @@
             }
           }
         },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/air-discount-scheme/web",
+            "main": "apps/air-discount-scheme/web/server.ts",
+            "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
         "serve": {
           "builder": "@nrwl/next:server",
           "options": {
-            "buildTarget": "air-discount-scheme-web:build",
+            "buildTarget": "air-discount-scheme-web:build-next",
             "dev": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "air-discount-scheme-web:build:production",
+              "buildTarget": "air-discount-scheme-web:build-next:production",
               "dev": false
             }
           }
@@ -1757,6 +1782,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run auth-admin-web:build-next:production",
+              "yarn nx run auth-admin-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/auth-admin-web",
@@ -1766,16 +1800,32 @@
             "production": {}
           }
         },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/auth-admin-web",
+            "main": "apps/auth-admin-web/server.ts",
+            "tsConfig": "apps/auth-admin-web/tsconfig.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
         "serve": {
           "builder": "@nrwl/next:server",
           "options": {
-            "buildTarget": "auth-admin-web:build",
+            "buildTarget": "auth-admin-web:build-next",
             "dev": true,
             "proxyConfig": "apps/auth-admin-web/proxy.config.json"
           },
           "configurations": {
             "production": {
-              "buildTarget": "auth-admin-web:build:production",
+              "buildTarget": "auth-admin-web:build-next:production",
               "dev": false
             }
           }
@@ -2455,6 +2505,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run gjafakort-web:build-next:production",
+              "yarn nx run gjafakort-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/gjafakort/web",
@@ -2471,6 +2530,22 @@
             }
           }
         },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/gjafakort/web",
+            "main": "apps/gjafakort/web/server.ts",
+            "tsConfig": "apps/gjafakort/web/tsconfig.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
         "translations": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2481,12 +2556,12 @@
         "serve": {
           "builder": "@nrwl/next:server",
           "options": {
-            "buildTarget": "gjafakort-web:build",
+            "buildTarget": "gjafakort-web:build-next",
             "dev": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "gjafakort-web:build:production",
+              "buildTarget": "gjafakort-web:build-next:production",
               "dev": false
             }
           }
@@ -3523,6 +3598,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run reference-next-app:build-next:production",
+              "yarn nx run reference-next-app:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/reference-next-app",
@@ -3539,15 +3623,31 @@
             }
           }
         },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/reference-next-app",
+            "main": "apps/reference-next-app/server.ts",
+            "tsConfig": "apps/reference-next-app/tsconfig.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
         "serve": {
           "builder": "@nrwl/next:server",
           "options": {
-            "buildTarget": "reference-next-app:build",
+            "buildTarget": "reference-next-app:build-next",
             "dev": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "reference-next-app:build:production",
+              "buildTarget": "reference-next-app:build-next:production",
               "dev": false
             }
           }
@@ -4902,6 +5002,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run skilavottord-web:build-next:production",
+              "yarn nx run skilavottord-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/skilavottord/web",
@@ -4918,16 +5027,32 @@
             }
           }
         },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/skilavottord/web",
+            "main": "apps/skilavottord/web/server.ts",
+            "tsConfig": "apps/skilavottord/web/tsconfig.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
         "serve": {
           "builder": "@nrwl/next:server",
           "options": {
-            "buildTarget": "skilavottord-web:build",
+            "buildTarget": "skilavottord-web:build-next",
             "dev": true,
             "proxyConfig": "apps/skilavottord/web/proxy.conf.json"
           },
           "configurations": {
             "production": {
-              "buildTarget": "skilavottord-web:build:production",
+              "buildTarget": "skilavottord-web:build-next:production",
               "dev": false
             }
           }
