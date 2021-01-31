@@ -116,35 +116,12 @@ export class CaseService {
   getAll(): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    const sevenDaysFromNow = this.sevenDaysFromNow()
-
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
       where: {
-        [Op.or]: [
-          {
-            state: {
-              [Op.in]: [
-                CaseState.NEW,
-                CaseState.DRAFT,
-                CaseState.SUBMITTED,
-                CaseState.RECEIVED,
-              ],
-            },
-          },
-          {
-            [Op.and]: [
-              { state: CaseState.ACCEPTED },
-              { custodyEndDate: { [Op.gt]: sevenDaysFromNow } },
-            ],
-          },
-          {
-            [Op.and]: [
-              { state: CaseState.REJECTED },
-              { courtEndTime: { [Op.gt]: sevenDaysFromNow } },
-            ],
-          },
-        ],
+        state: {
+          [Op.not]: CaseState.DELETED,
+        },
       },
       include: [
         { model: User, as: 'prosecutor' },
@@ -169,10 +146,13 @@ export class CaseService {
     })
   }
 
-  create(caseToCreate: CreateCaseDto): Promise<Case> {
+  create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    return this.caseModel.create(caseToCreate)
+    return this.caseModel.create({
+      ...caseToCreate,
+      prosecutorId: user.id,
+    })
   }
 
   async update(

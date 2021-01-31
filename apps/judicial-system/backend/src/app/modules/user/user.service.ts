@@ -15,7 +15,10 @@ export class UserService {
   ) {}
 
   getAll(): Promise<User[]> {
+    this.logger.debug('Getting all users')
+
     return this.userModel.findAll({
+      order: ['name'],
       where: {
         active: true,
       },

@@ -83,12 +83,12 @@ Examples:
 
 ### Fetch development secrets
 
-Run `AWS_PROFILE=<profile> yarn nx env-secrets <project>`
+Run `AWS_PROFILE=<profile> yarn nx get-secrets <project>`
 
 **Example**:
 
 ```bash
-AWS_PROFILE=islandis yarn nx env-secrets api
+AWS_PROFILE=islandis yarn nx get-secrets api
 ```
 
 ### Test requirements

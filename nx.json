@@ -210,6 +210,9 @@
     "email-service": {
       "tags": []
     },
+    "feature-flags": {
+      "tags": []
+    },
     "file-storage": {
       "tags": []
     },

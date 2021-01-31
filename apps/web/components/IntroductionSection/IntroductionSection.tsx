@@ -9,6 +9,7 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
+import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 // TODO:
 // This component is just hard coded for now.
@@ -31,7 +32,7 @@ interface Props {
   text?: string
   image?: ImageProps
   linkText: string
-  linkUrl: string
+  linkUrl: LinkResolverResponse
 }
 
 export const IntroductionSection: FC<Props> = ({
@@ -77,7 +78,7 @@ export const IntroductionSection: FC<Props> = ({
           </Text>
           <Text>{text}</Text>
           <Box paddingY={2}>
-            <Link href={linkUrl}>
+            <Link {...linkUrl} skipTab>
               <Button
                 icon="arrowForward"
                 iconType="filled"

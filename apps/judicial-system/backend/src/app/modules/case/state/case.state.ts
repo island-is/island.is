@@ -46,7 +46,12 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.DELETE,
     {
-      from: [CaseState.NEW, CaseState.DRAFT],
+      from: [
+        CaseState.NEW,
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+      ],
       to: CaseState.DELETED,
     },
   ],

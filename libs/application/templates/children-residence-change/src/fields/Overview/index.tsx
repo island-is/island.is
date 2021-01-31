@@ -55,10 +55,6 @@ const Overview = ({ application }: FieldBaseProps) => {
           {answers.durationDate ? answers.durationDate : 'Til frambúðar'}
         </Text>
       </Box>
-      <Box marginBottom={4}>
-        <Text variant="h4">Áhrif umsóknar:</Text>
-        <Text>Ég skil hvaða áhrif lögheimilisbreyting hefur</Text>
-      </Box>
     </>
   )
 }

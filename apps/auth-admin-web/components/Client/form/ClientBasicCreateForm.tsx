@@ -5,6 +5,8 @@ import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
+import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
+import { TimeUtils } from './../../../utils/time.utils'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: Client) => void
@@ -23,9 +25,11 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
   const [clientIdLength, setClientIdLength] = useState<number>(0)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
-  const [clientTypeInfo, setClientTypeInfo] = useState<string>('')
+  const [clientTypeInfo, setClientTypeInfo] = useState<JSX.Element>(<div></div>)
   const client = props.client
   const [callbackUri, setCallbackUri] = useState('')
+  const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
+  const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
 
   useEffect(() => {
     if (props.client && props.client.clientId) {
@@ -33,6 +37,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
       setAvailable(true)
       setClientTypeSelected(true)
       setClientType(props.client.clientType)
+    } else {
+      setClientTypeInfo(getClientTypeHTML(''))
     }
   }, [props.client])
 
@@ -77,60 +83,65 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
     }
   }
 
+  const getClientTypeHTML = (clientType): JSX.Element => {
+    const clientInfo = ClientTypeInfoService.getClientTypeInfo(clientType)
+
+    return (
+      <div className="detail-container">
+        <div className="detail-title">{clientInfo.title}</div>
+        <div className={`detail-flow${clientInfo.flow ? ' show' : ' hidden'}`}>
+          {clientInfo.flow}
+        </div>
+        <div className="detail-description">{clientInfo.description}</div>
+        <div className="detail-link">
+          <a href={clientInfo.url} target="_blank" rel="noreferrer">
+            {clientInfo.urlText}
+          </a>
+        </div>
+      </div>
+    )
+  }
+
   const setClientType = async (clientType: string) => {
     if (clientType) {
       if (clientType === 'spa') {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo(
-          `Authorization code flow + PKCE\n
-          A single-page application (spa) doesn't need to reload the page during its use and works within a browser, f.x. Google and Facebook.
-          Since it is running in the users browser, it cannot keep a secret.\n
-          <a href="todo#[spa]" target="_blank">more information</a>
-          `,
-        )
+        setClientTypeInfo(getClientTypeHTML('spa'))
       }
 
       if (clientType === 'native') {
         client.requireClientSecret = false
         client.requirePkce = true
 
-        setClientTypeInfo(`Authorization code flow + PKCE\n
-        A native application is designed specifically for use on a particular platform or device. 
-        Since it runs on user´s devices it cannot keep a secret.\n
-        <a href="todo#[native]" target="_blank">more information</a>`)
+        setClientTypeInfo(getClientTypeHTML('native'))
       }
 
       if (clientType === 'web') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo(`Hybrid flow with client authentication\n
-        A web application runs on a web server and is accessed by a web browser. Examples of common web applications are 
-        online banking and online retail sales. Is capable of keeping a secret.\n
-        <a href="todo#[web]" target="_blank">more information</a>`)
+        setClientTypeInfo(getClientTypeHTML('web'))
       }
 
       if (clientType === 'machine') {
         client.requireClientSecret = true
         client.requirePkce = false
 
-        setClientTypeInfo(`Hybrid flow with client authentication\n
-        An application or service running on a confidential server. Is capable of keeping a secret.\n
-        <a href="todo#[machine]" target="_blank">more information</a>`)
+        setClientTypeInfo(getClientTypeHTML('machine'))
       }
-
-      // Is commented out in the dropdown list as of now and is hence commented out
-      // if (clientType === 'device') {
-      //   setClientTypeInfo('Device flow using external browser')
-      // }
 
       setClientTypeSelected(true)
     } else {
-      setClientTypeInfo('Please select a client Type')
+      setClientTypeInfo(getClientTypeHTML(''))
       setClientTypeSelected(false)
     }
+  }
+
+  const hideClientInfo = async () => {
+    await TimeUtils.delay(1000)
+    setShowClientTypeInfo(false)
   }
 
   return (
@@ -144,7 +155,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client-basic__container__fields">
-                <div className="field-with-details">
+                <div className={clientTypeSelected ? '' : 'field-with-details'}>
                   <div className="client-basic__container__field">
                     <label className="client-basic__label">Client Type</label>
                     <select
@@ -152,6 +163,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       ref={register({ required: true })}
                       title="Type of Client"
                       onChange={(e) => setClientType(e.target.value)}
+                      onFocus={() => setShowClientTypeInfo(true)}
+                      onBlur={hideClientInfo}
                     >
                       <option value="" selected={!client.clientType}>
                         Select Client Type
@@ -168,12 +181,6 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       >
                         Native
                       </option>
-                      {/* <option
-                        value="device"
-                        selected={client.clientType === 'device'}
-                      >
-                        Device
-                      </option> */}
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
@@ -186,6 +193,13 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       >
                         Machine
                       </option>
+                      <option
+                        value="device"
+                        selected={client.clientType === 'device'}
+                        disabled
+                      >
+                        Device (not supported)
+                      </option>
                     </select>
 
                     <HelpBox helpText="Select the appropriate Client Type" />
@@ -195,7 +209,11 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.clientType"
                       message="Client Type is required"
                     />
-                    <div className={`client-basic__container__field__details`}>
+                    <div
+                      className={`client__container__field__details${
+                        showClientTypeInfo ? ' show' : ' hidden'
+                      }`}
+                    >
                       {clientTypeInfo}
                     </div>
                   </div>
@@ -291,6 +309,8 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         placeholder="https://localhost:4200"
                         title="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc"
                         onChange={(e) => setCallbackUri(e.target.value)}
+                        onFocus={() => setShowBaseUrlInfo(true)}
+                        onBlur={() => setShowBaseUrlInfo(false)}
                       />
                       <HelpBox helpText="Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc" />
                       <ErrorMessage
@@ -301,12 +321,18 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       />
                       <div
                         className={`client-basic__container__field__details${
-                          callbackUri !== '' ? ' show' : ' hidden'
+                          showBaseUrlInfo ? ' show' : ' hidden'
                         }`}
                       >
-                        Callback Uri will be:{' '}
-                        <strong>{callbackUri}/signin-oidc</strong> <br />
-                        This can be changed later
+                        <div className="detail-title">
+                          Redirect (Callback) Uri will be:
+                        </div>
+                        <div className="detail-uri">
+                          {callbackUri}/signin-oidc
+                        </div>
+                        <div className="detail-link">
+                          This can be changed later
+                        </div>
                       </div>
                     </div>
                   </div>

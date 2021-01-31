@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 
 import { dataSchema, SchemaFormValues } from './dataSchema'
+import { answerValidators } from './answerValidators'
 import { YES, API_MODULE_ACTIONS } from '../constants'
 
 type Events =
@@ -308,8 +309,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
         if (
-          currentApplicationAnswers.requestRights.isRequestingRights ===
-            'yes' &&
+          currentApplicationAnswers.requestRights.isRequestingRights === YES &&
           currentApplicationAnswers.otherParentId !== undefined &&
           currentApplicationAnswers.otherParentId !== ''
         ) {
@@ -337,6 +337,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default ParentalLeaveTemplate

@@ -317,6 +317,11 @@ a {
   @extend .fa-trash-o;
 }
 
+.icon__export__csv {
+  @extend .fa;
+  @extend .fa-file-excel-o;
+}
+
 // Buttons
 .button__warning {
   background: $color-error;
@@ -345,4 +350,21 @@ footer {
 
 .indent {
   padding-left: 35px !important;
+}
+
+.fake-input {
+  height: 0;
+  width: 0;
+  position: absolute;
+  border: none;
+  margin: 0;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.temp-page {
+  padding: 30px 40px;
 }

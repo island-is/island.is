@@ -155,6 +155,7 @@
       ],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
+      "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/gjafakort/application/*": [
