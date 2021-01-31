@@ -5,11 +5,8 @@ import { ReferenceTemplateService } from './reference-template.service'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../types'
 
-interface ReferenceTemplateApiModuleConfig
-  extends BaseTemplateAPIModuleConfig {}
-
 export class ReferenceTemplateModule {
-  static register(config: ReferenceTemplateApiModuleConfig): DynamicModule {
+  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: ReferenceTemplateModule,
       imports: [SharedTemplateAPIModule.register(config)],

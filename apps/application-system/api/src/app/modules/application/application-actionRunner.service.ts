@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { logger } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
+
 import {
   ParentalLeaveService,
   ReferenceTemplateService,
@@ -14,7 +14,7 @@ interface ApplicationApiAction {
 }
 
 interface PerformActionEvent {
-  response: any
+  response: Error | string
 }
 
 type PerformActionResult = [boolean, PerformActionEvent?]
@@ -27,12 +27,17 @@ export class ApplicationActionRunnerService {
   ) {}
 
   async tryRunningActionOnService(
-    service: any,
+    service: ReferenceTemplateService | ParentalLeaveService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
-    if (typeof service[action.type] === 'function') {
+    // No index signature with a parameter of type 'string' was found on type
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    const handler = service[action.type]
+
+    if (typeof handler === 'function') {
       try {
-        const response = await service[action.type](action.props)
+        const response = await handler(action.props)
 
         return [true, { response }]
       } catch (e) {

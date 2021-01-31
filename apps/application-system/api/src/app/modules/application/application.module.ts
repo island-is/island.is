@@ -6,9 +6,7 @@ import { createRedisCluster } from '@island.is/cache'
 import {
   BaseTemplateAPIModuleConfig,
   ParentalLeaveModule,
-  ParentalLeaveService,
   ReferenceTemplateModule,
-  ReferenceTemplateService,
 } from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
@@ -20,10 +18,6 @@ import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
-const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
-const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
-const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
-const XROAD_VMST_CLIENT_ID = process.env.XROAD_VMST_CLIENT_ID ?? ''
 
 // import { AuthModule } from '@island.is/auth-nest-tools'
 

@@ -88,21 +88,6 @@ export async function getApplicationStateInformation(
   return helper.getApplicationStateInformation() || null
 }
 
-// TODO return generic APIAction type
-export async function getApplicationAPIModule(
-  templateId: ApplicationTypes,
-): Promise<any> {
-  const templateLib = await loadTemplateLib(templateId)
-  if (templateLib.getAPIModule) {
-    const apiActionModule = await templateLib.getAPIModule()
-
-    if (apiActionModule.default) {
-      return apiActionModule.default
-    }
-  }
-  return Promise.resolve({})
-}
-
 // Object [Module] {
 //   default: { performSomeAPIAction: [Function: performSomeAPIAction] }
 // }

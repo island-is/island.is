@@ -42,9 +42,7 @@ import { Unwrap } from '@island.is/shared/types'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
-  getApplicationAPIModule,
 } from '@island.is/application/template-loader'
-import { ParentalLeaveService } from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -230,6 +228,7 @@ export class ApplicationController {
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
+
     // TODO
     if (template === null) {
       throw new BadRequestException(

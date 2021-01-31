@@ -53,6 +53,7 @@ describe('ApplicationAPITemplateUtils', () => {
       jwtSecret: testToken,
       emailService: mockEmailService,
       clientLocationOrigin,
+      authorization: '',
     })
   })
 
@@ -84,6 +85,7 @@ describe('ApplicationAPITemplateUtils', () => {
         jwtSecret: testToken,
         emailService: mockEmailService,
         clientLocationOrigin,
+        authorization: '',
       })
 
       const sendEmailSpy = jest.spyOn(mockEmailService, 'sendEmail')
