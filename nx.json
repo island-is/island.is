@@ -239,10 +239,16 @@
     "infra-express-server": {
       "tags": []
     },
+    "infra-metrics": {
+      "tags": []
+    },
     "infra-monitoring": {
       "tags": []
     },
     "infra-nest-server": {
+      "tags": []
+    },
+    "infra-next-server": {
       "tags": []
     },
     "infra-tracing": {
