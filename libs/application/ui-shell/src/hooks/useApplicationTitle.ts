@@ -7,9 +7,17 @@ import {
   Section,
   SubSection,
 } from '@island.is/application/core'
+import { MessageDescriptor } from 'react-intl'
 
-export const useApplicationTitle = (state: ApplicationUIState) => {
-  const { formatMessage } = useLocale()
+type FormatMessage = (
+  descriptor: MessageDescriptor | string,
+  values?: any,
+) => string
+
+export const getApplicationTitle = (
+  state: ApplicationUIState,
+  formatMessage: FormatMessage,
+) => {
   const activeScreen = state.screens[state.activeScreen]
   let activeSection: Section | SubSection =
     state.sections[activeScreen.sectionIndex]
@@ -30,5 +38,12 @@ export const useApplicationTitle = (state: ApplicationUIState) => {
     titleParts.unshift(sectionTitle)
   }
 
-  useDocumentTitle(titleParts.join(' - '))
+  return titleParts.join(' - ')
+}
+
+export const useApplicationTitle = (state: ApplicationUIState) => {
+  const { formatMessage } = useLocale()
+  const applicationTitle = getApplicationTitle(state, formatMessage)
+
+  useDocumentTitle(applicationTitle)
 }

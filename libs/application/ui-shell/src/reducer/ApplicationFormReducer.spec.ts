@@ -113,6 +113,7 @@ describe('ApplicationFormReducer', () => {
     nationalRegistryId: '1111112199',
     screens: [],
     sections: [],
+    historyReason: 'initial',
   }
   let initializedState: ApplicationUIState
   beforeAll(() => {
@@ -343,7 +344,7 @@ describe('ApplicationFormReducer', () => {
       expect(updatedState.screens[3].isNavigable).toBeFalsy()
     })
     it('should use the newest value of an array and not merge the previous value', () => {
-      const initialState = {
+      const initialState: ApplicationUIState = {
         dataSchema: z.object({ text: z.string() }),
         form: buildForm({
           id: 'ExampleForm',
@@ -358,6 +359,7 @@ describe('ApplicationFormReducer', () => {
         nationalRegistryId: '1111112199',
         screens: [],
         sections: [],
+        historyReason: 'initial',
       }
 
       const updateAction = {

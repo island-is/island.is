@@ -39,6 +39,9 @@ export const useHistorySync = (
 
   // Act on history state.
   useEffect(() => {
+    if (!history) {
+      return
+    }
     const location = `${history.location.pathname}${history.location.search}${history.location.hash}`
     if (lastHistoryState.historyReason === 'navigate') {
       history.push(location, lastHistoryState)
@@ -49,6 +52,9 @@ export const useHistorySync = (
 
   // Listen for browser navigation.
   useEffect(() => {
+    if (!history) {
+      return
+    }
     return history.listen(({ state: payload }, action) => {
       if (action === 'POP' && payload.screen != null && payload.state != null) {
         dispatch({ type: ActionTypes.HISTORY_POP, payload })
