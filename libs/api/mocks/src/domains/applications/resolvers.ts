@@ -1,6 +1,7 @@
 import orderBy from 'lodash/orderBy'
 import { Resolvers } from '../../types'
 import { store } from './store'
+import { application, externalData } from './factories'
 
 export const resolvers: Resolvers = {
   Slice: {
@@ -20,6 +21,26 @@ export const resolvers: Resolvers = {
     },
     nationalRegistryFamily: () => {
       return store.familyMembers
+    },
+  },
+  Mutation: {
+    createApplication: (parent, args) => {
+      const newApplication = application(args.input)
+      store.applications.push(newApplication)
+      return newApplication
+    },
+
+    updateApplicationExternalData: (parent, args) => {
+      const application = store.applications.find(
+        (app) => app.id === args.input.id,
+      )
+      if (!application) {
+        throw new Error('Missing application')
+      }
+      args.input.dataProviders.forEach(({ id, type }) => {
+        application.externalData[id] = externalData(type)
+      })
+      return application
     },
   },
 }
