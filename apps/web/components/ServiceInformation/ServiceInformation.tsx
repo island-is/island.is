@@ -107,7 +107,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
       </Box>
 
       <GridRow>
-        <GridColumn span={['6/12', '6/12', '6/12', '4/12']}>
+        <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
           <Select
             backgroundColor="blue"
             size="sm"
@@ -119,7 +119,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
             onChange={onSelectEnviroment}
           />
         </GridColumn>
-        <GridColumn span={['6/12', '6/12', '6/12', '3/12']}>
+        <GridColumn span={['6/12', '6/12', '6/12', '6/12', '3/12']}>
           <Select
             backgroundColor="blue"
             size="sm"
@@ -131,13 +131,19 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
             onChange={onSelectVersion}
           />
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '5/12']}>
           <Box
-            marginTop={[2, 2, 2, 0]}
+            marginTop={[2, 2, 2, 2, 0]}
             display="flex"
             alignItems="center"
             height="full"
-            justifyContent={['flexStart', 'flexStart', 'flexStart', 'flexEnd']}
+            justifyContent={[
+              'flexStart',
+              'flexStart',
+              'flexStart',
+              'flexStart',
+              'flexEnd',
+            ]}
           >
             <Link href={serviceDetail.links.bugReport}>
               <Button
@@ -152,7 +158,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
                 {n('linkBugReport')}
               </Button>
             </Link>
-            <Box marginLeft={[3, 3, 3, 2]}>
+            <Box marginLeft={[3, 3, 3, 3, 2]}>
               <Link href={serviceDetail.links.featureRequest}>
                 <Button
                   disabled={!serviceDetail.links.featureRequest}
