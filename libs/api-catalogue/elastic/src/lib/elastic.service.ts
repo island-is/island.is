@@ -96,7 +96,7 @@ export class ElasticService {
   }
 
   private getWorkerPrefix() {
-    return `apiCollectorWorker-${this.getEnvironment()}`
+    return `apicollectworker-${this.getEnvironment()}`
   }
 
   /**
