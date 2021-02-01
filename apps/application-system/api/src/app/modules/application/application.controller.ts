@@ -42,6 +42,7 @@ import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
 } from '@island.is/application/template-loader'
+import { TemplateAPIService } from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -65,11 +66,9 @@ import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
-import { environment } from '../../../environments'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
-import { ApplicationActionRunnerService } from './application-actionRunner.service'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
@@ -87,7 +86,7 @@ interface DecodedAssignmentToken {
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly actionRunner: ApplicationActionRunnerService,
+    private readonly templateAPIService: TemplateAPIService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
@@ -441,14 +440,16 @@ export class ApplicationController {
           onErrorEvent,
         } = newStateOnEntry
 
-        const [success, response] = await this.actionRunner.performAction({
-          templateId: template.type,
-          type: apiModuleAction,
-          props: {
-            application: updatedApplication as BaseApplication,
-            authorization,
+        const [success, response] = await this.templateAPIService.performAction(
+          {
+            templateId: template.type,
+            type: apiModuleAction,
+            props: {
+              application: updatedApplication as BaseApplication,
+              authorization,
+            },
           },
-        })
+        )
 
         if (success && onSuccessEvent) {
           return this.changeState(

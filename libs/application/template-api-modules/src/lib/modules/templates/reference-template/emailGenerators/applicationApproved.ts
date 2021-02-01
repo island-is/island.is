@@ -1,7 +1,7 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
-import { EmailTemplateGenerator } from '../../../types'
+import { EmailTemplateGenerator } from '../../../../types'
 
 export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
   props,

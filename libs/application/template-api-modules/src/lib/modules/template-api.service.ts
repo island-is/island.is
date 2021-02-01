@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
 
-import {
-  ParentalLeaveService,
-  ReferenceTemplateService,
-  TemplateApiModuleActionProps,
-} from '@island.is/application/template-api-modules'
 import { ApplicationTypes } from '@island.is/application/core'
+
+import { TemplateApiModuleActionProps } from '../types'
+
+import { ParentalLeaveService, ReferenceTemplateService } from './templates'
 
 interface ApplicationApiAction {
   templateId: string
@@ -20,7 +19,7 @@ interface PerformActionEvent {
 type PerformActionResult = [boolean, PerformActionEvent?]
 
 @Injectable()
-export class ApplicationActionRunnerService {
+export class TemplateAPIService {
   constructor(
     private readonly parentalLeaveService: ParentalLeaveService,
     private readonly referenceTemplateService: ReferenceTemplateService,

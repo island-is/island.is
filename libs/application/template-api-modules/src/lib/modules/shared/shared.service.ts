@@ -8,7 +8,7 @@ import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
-} from '../types'
+} from '../../types'
 
 import { createAssignToken, getConfigValue } from './shared.utils'
 

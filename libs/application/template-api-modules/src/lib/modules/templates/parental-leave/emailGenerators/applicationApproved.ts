@@ -1,11 +1,10 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
-import { AssignmentEmailTemplateGenerator } from '../../../types'
+import { EmailTemplateGenerator } from '../../../../types'
 
-export const generateAssignOtherParentApplicationEmail: AssignmentEmailTemplateGenerator = (
+export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
   props,
-  assignLink,
 ) => {
   const {
     application,
@@ -17,27 +16,24 @@ export const generateAssignOtherParentApplicationEmail: AssignmentEmailTemplateG
   // TODO translate using locale
   const subject =
     locale === 'is'
-      ? 'Yfirferð á umsókn um fæðingarorlof'
-      : 'Request for review on paternity leave'
+      ? 'Umsókn um fæðingarorlof samþykkt'
+      : 'Paternity leave application approved'
   const body =
     locale === 'is'
       ? dedent(`Góðan dag.
 
-        Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni.
-    
-        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${assignLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
-    
+        Umsókn þín um fæðingarorlof hefur verið samþykkt.
+
         Með kveðju,
         Fæðingarorlofssjóðsjóður
       `)
       : dedent(`Hello.
 
-        An application from applicant with national registry ${application.applicant} awaits your approval.
-
-        To review, <a href="${assignLink}">click here</a>.
+        Your application for paternity leave has been approved.
 
         Best regards,
-        ReferenceTemplateInstitution`)
+        Fæðingarorlofssjóðsjóður
+      `)
 
   return {
     from: {

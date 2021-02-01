@@ -3,30 +3,17 @@ import { BullModule as NestBullModule } from '@nestjs/bull'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
-import {
-  BaseTemplateAPIModuleConfig,
-  ParentalLeaveModule,
-  ReferenceTemplateModule,
-} from '@island.is/application/template-api-modules'
+import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
-import { ApplicationActionRunnerService } from './application-actionRunner.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
 
 // import { AuthModule } from '@island.is/auth-nest-tools'
-
-const templateApiModules = [ReferenceTemplateModule, ParentalLeaveModule]
-const templateApiModuleConfig: BaseTemplateAPIModuleConfig = {
-  xRoadBasePathWithEnv: XROAD_BASE_PATH_WITH_ENV,
-  clientLocationOrigin: environment.clientLocationOrigin,
-  emailOptions: environment.emailOptions,
-  jwtSecret: environment.auth.jwtSecret,
-}
 
 let BullModule: DynamicModule
 
@@ -55,18 +42,17 @@ if (process.env.INIT_SCHEMA === 'true') {
     //   issuer: environment.identityServer.issuer,
     //   jwksUri: `${environment.identityServer.jwksUri}`,
     // }),
-    ...templateApiModules.map((Module) =>
-      Module.register(templateApiModuleConfig),
-    ),
+    TemplateAPIModule.register({
+      xRoadBasePathWithEnv: XROAD_BASE_PATH_WITH_ENV,
+      clientLocationOrigin: environment.clientLocationOrigin,
+      emailOptions: environment.emailOptions,
+      jwtSecret: environment.auth.jwtSecret,
+    }),
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
     BullModule,
   ],
   controllers: [ApplicationController],
-  providers: [
-    ApplicationService,
-    ApplicationActionRunnerService,
-    UploadProcessor,
-  ],
+  providers: [ApplicationService, UploadProcessor],
 })
 export class ApplicationModule {}

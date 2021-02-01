@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../types'
+import { TemplateApiModuleActionProps } from '../../../types'
 
 import {
   generateApplicationApprovedEmail,
@@ -16,7 +16,7 @@ export class ReferenceTemplateService {
 
   async assignApplication({ application }: TemplateApiModuleActionProps) {
     console.log('Running sendApplication from ReferenceTemplate api module')
-    console.log('\t-assignin application and sending application')
+    console.log('\t-assigning application and sending email to notify assignee')
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignApplicationEmail,
       application,

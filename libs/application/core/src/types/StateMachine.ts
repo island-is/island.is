@@ -60,6 +60,8 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
   progress?: number
   roles?: RoleInState<T>[]
+  // TODO: rename to something closer related to what
+  // it is doing? (running some template API action)
   onEntry?: ApplicationStateMetaOnEntry<T>
 }
 

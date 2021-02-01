@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ParentalLeaveApi } from '@island.is/vmst-client'
 
 import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../types'
+import { TemplateApiModuleActionProps } from '../../../types'
 
 import {
   generateAssignOtherParentApplicationEmail,
