@@ -32,7 +32,7 @@
 /libs/application/graphql/                                @island-is/aranja
 /libs/application/ui-fields/                              @island-is/aranja
 /libs/application/ui-shell/                               @island-is/aranja
-/libs/application/api-template-modules/                     @island-is/aranja
+/libs/application/api-template-modules/                   @island-is/aranja
 /libs/application/template-loader/                        @island-is/aranja
 /libs/application/templates/meta-application/             @island-is/aranja
 /libs/application/templates/parental-leave/               @island-is/aranja
