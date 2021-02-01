@@ -63,8 +63,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     groups: [],
   })
 
-  console.log(parameters)
-
   const categories: FilterItem[] = []
   const groups: FilterItem[] = []
 
@@ -99,7 +97,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       (parameters.groups.length === 0 ||
         parameters.groups.includes(x.group?.slug)),
   )
-  console.log(matches)
 
   return (
     <OrganizationWrapper
@@ -131,7 +128,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <FilterMultiChoice
               labelClear={'Hreinsa'}
               onChange={({ categoryId, selected }) => {
-                console.log({ categoryId, selected })
                 setParameters({
                   ...parameters,
                   [categoryId]: selected,
