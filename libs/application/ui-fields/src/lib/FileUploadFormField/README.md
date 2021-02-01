@@ -1,9 +1,9 @@
-##### Adding the Field to a Form
+# Adding the Field to a Form
 
 To use the FileUploadFormField in an application
 
 
-### 1. Add it to the *schema* using the following structure:
+## 1. Add it to the *schema* using the following structure:
    
 ```
 const File = z.object({
@@ -26,7 +26,7 @@ const ExampleSchema = z.object({
 }
 ```
 
-### 2. Add the field to the *form* using the same key as in the schema:
+## 2. Add the field to the *form* using the same key as in the schema:
 
 ```
  buildSection({
