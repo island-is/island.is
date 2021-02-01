@@ -18,251 +18,238 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/urskurdarord', () => {
+  afterEach(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  })
+
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
 
     // Act and Assert
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockUpdateCaseMutation([
-              {
-                accusedAppealDecision: CaseAppealDecision.APPEAL,
-              } as UpdateCase,
-              {
-                prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-              } as UpdateCase,
-            ]),
-          ]}
-          addTypename={false}
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              accusedAppealDecision: CaseAppealDecision.APPEAL,
+            } as UpdateCase,
+            {
+              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-                <RulingStepTwo />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      userEvent.click(
-        await waitFor(
-          () =>
-            screen.getByRole('radio', {
-              name: 'Kærði kærir úrskurðinn',
-            }) as HTMLInputElement,
-        ),
-      )
+    userEvent.click(
+      (await screen.findByRole('radio', {
+        name: 'Kærði kærir úrskurðinn',
+      })) as HTMLInputElement,
+    )
 
-      expect(
-        screen.getByRole('button', {
-          name: /Halda áfram/i,
-        }) as HTMLButtonElement,
-      ).toBeDisabled()
+    expect(
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
+    ).toBeDisabled()
 
-      userEvent.click(
-        screen.getByRole('radio', {
-          name: 'Sækjandi tekur sér lögboðinn frest',
-        }) as HTMLInputElement,
-      )
+    userEvent.click(
+      await screen.findByRole('radio', {
+        name: 'Sækjandi tekur sér lögboðinn frest',
+      }),
+    )
 
-      expect(
-        screen.getByRole('button', {
-          name: /Halda áfram/i,
-        }) as HTMLButtonElement,
-      ).not.toBeDisabled()
-    })
+    expect(
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
+    ).not.toBeDisabled()
   })
 
   test('should not have a selected radio button by default', async () => {
     // Arrange
 
     // Act
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
-          addTypename={false}
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_3`]}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_3`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-                <RulingStepTwo />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      // Assert
-      expect(
-        (
-          await waitFor(
-            () => screen.getAllByRole('radio') as HTMLInputElement[],
-          )
-        ).filter((input) => input.checked),
-      ).toHaveLength(0)
-    })
+    // Assert
+    expect(
+      ((await screen.findAllByRole('radio')) as HTMLInputElement[]).filter(
+        (input) => input.checked,
+      ),
+    ).toHaveLength(0)
   })
 
   test(`should have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
 
     // Act
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockUpdateCaseMutation([
-              {
-                accusedAppealDecision: CaseAppealDecision.POSTPONE,
-              } as UpdateCase,
-              {
-                prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-              } as UpdateCase,
-            ]),
-          ]}
-          addTypename={false}
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              accusedAppealDecision: CaseAppealDecision.POSTPONE,
+            } as UpdateCase,
+            {
+              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-                <RulingStepTwo />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      await waitFor(() =>
-        userEvent.click(
-          screen.getByRole('radio', {
-            name: 'Kærði tekur sér lögboðinn frest',
-          }),
-        ),
-      )
+    userEvent.click(
+      await screen.findByRole('radio', {
+        name: 'Kærði tekur sér lögboðinn frest',
+      }),
+    )
 
-      userEvent.click(
-        screen.getByRole('radio', {
-          name: 'Sækjandi tekur sér lögboðinn frest',
-        }),
-      )
+    userEvent.click(
+      await screen.findByRole('radio', {
+        name: 'Sækjandi tekur sér lögboðinn frest',
+      }),
+    )
 
-      // Assert
-      expect(
-        await waitFor(() => screen.getByLabelText('Yfirlýsing um kæru kærða')),
-      ).toBeDisabled()
-      expect(
-        screen.getByLabelText('Yfirlýsing um kæru sækjanda'),
-      ).toBeDisabled()
-    })
+    // Assert
+    expect(
+      await screen.findByLabelText('Yfirlýsing um kæru kærða'),
+    ).toBeDisabled()
+
+    expect(
+      await screen.findByLabelText('Yfirlýsing um kæru sækjanda'),
+    ).toBeDisabled()
   })
 
   test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
 
     // Act
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockUpdateCaseMutation([
-              {
-                accusedAppealDecision: CaseAppealDecision.APPEAL,
-              } as UpdateCase,
-              {
-                prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-              } as UpdateCase,
-            ]),
-          ]}
-          addTypename={false}
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              accusedAppealDecision: CaseAppealDecision.APPEAL,
+            } as UpdateCase,
+            {
+              prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-                <RulingStepTwo />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      // Assert
-      expect(
-        await waitFor(() => screen.getByLabelText('Yfirlýsing um kæru kærða')),
-      ).not.toBeDisabled()
-      expect(
-        screen.getByLabelText('Yfirlýsing um kæru sækjanda'),
-      ).not.toBeDisabled()
-    })
+    // Assert
+    expect(
+      await screen.findByLabelText('Yfirlýsing um kæru kærða'),
+    ).not.toBeDisabled()
+
+    expect(
+      await screen.findByLabelText('Yfirlýsing um kæru sækjanda'),
+    ).not.toBeDisabled()
   })
 
   test('should save custodyRestrictions with requestedCustodyRestrictions if custodyRestrictions have not been set', async () => {
     // Arrange
 
     // Act
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockUpdateCaseMutation([
-              {
-                id: 'test_id',
-                custodyRestrictions: [
-                  CaseCustodyRestrictions.ISOLATION,
-                  CaseCustodyRestrictions.MEDIA,
-                ],
-              } as UpdateCase,
-            ]),
-          ]}
-          addTypename={false}
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'test_id',
+              custodyRestrictions: [
+                CaseCustodyRestrictions.ISOLATION,
+                CaseCustodyRestrictions.MEDIA,
+              ],
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-                <RulingStepTwo />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+          <UserProvider>
+            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
+              <RulingStepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      // Assert
-      expect(
-        await waitFor(
-          () =>
-            screen.getByRole('checkbox', {
-              name: 'E - Fjölmiðlabann',
-            }) as HTMLInputElement,
-        ),
-      ).toBeChecked()
-    })
+    // Assert
+    expect(
+      (await screen.findByRole('checkbox', {
+        name: 'E - Fjölmiðlabann',
+      })) as HTMLInputElement,
+    ).toBeChecked()
   })
 
   test('should not display the alternative travel ban retstirction section if the decision is not ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
     // Arrange
 
     // Act
+
     render(
       <MockedProvider
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
@@ -282,14 +269,13 @@ describe('/domari-krafa/urskurdarord', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.queryByRole('checkbox', {
-            name: 'Tilkynningarskylda',
-          }) as HTMLInputElement,
+      await waitFor(() =>
+        screen.queryByRole('checkbox', {
+          name: 'Tilkynningarskylda',
+        }),
       ),
     ).not.toBeInTheDocument()
-  }, 10000)
+  })
 
   test('should display the alternative travel ban retstirction section if the decision is ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
     // Arrange
@@ -314,12 +300,9 @@ describe('/domari-krafa/urskurdarord', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('checkbox', {
-            name: 'Tilkynningarskylda',
-          }) as HTMLInputElement,
-      ),
+      await screen.findByRole('checkbox', {
+        name: 'Tilkynningarskylda',
+      }),
     ).toBeInTheDocument()
-  }, 10000)
+  })
 })

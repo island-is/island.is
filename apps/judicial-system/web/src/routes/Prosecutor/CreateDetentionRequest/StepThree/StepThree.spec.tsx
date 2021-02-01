@@ -63,36 +63,36 @@ describe('Create detention request, step three', () => {
 
       // Act and Assert
       userEvent.type(
-        await waitFor(
-          () =>
-            screen.getByLabelText(
-              'Lagaákvæði sem ætluð brot kærða þykja varða við *',
-            ) as HTMLInputElement,
+        await screen.findByLabelText(
+          'Lagaákvæði sem ætluð brot kærða þykja varða við *',
         ),
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
       )
 
       expect(
-        screen.getByRole('button', {
+        await screen.findByRole('button', {
           name: /Halda áfram/i,
-        }) as HTMLButtonElement,
+        }),
       ).toBeDisabled()
 
       userEvent.click(
-        screen.getByRole('checkbox', { name: 'c-lið 1. mgr. 95. gr.' }),
+        await screen.findByRole('checkbox', { name: 'c-lið 1. mgr. 95. gr.' }),
       )
 
       userEvent.type(
-        screen.getByLabelText(/Gæsluvarðhald \/ farbann til */),
+        await screen.findByLabelText(/Gæsluvarðhald \/ farbann til */),
         `${formattedTodaysDate}.${formattedTodaysMonth}.${todaysDate.getFullYear()}`,
       )
 
-      userEvent.type(screen.getByLabelText('Tímasetning (kk:mm) *'), '13:37')
+      userEvent.type(
+        await screen.findByLabelText('Tímasetning (kk:mm) *'),
+        '13:37',
+      )
 
       expect(
-        screen.getByRole('button', {
+        await screen.findByRole('button', {
           name: /Halda áfram/i,
-        }) as HTMLButtonElement,
+        }),
       ).not.toBeDisabled()
     })
   })
@@ -118,12 +118,9 @@ describe('Create detention request, step three', () => {
 
     // Assert
     expect(
-      (
-        await waitFor(
-          () =>
-            screen.getByLabelText('Tímasetning (kk:mm) *') as HTMLInputElement,
-        )
-      ).value,
+      ((await screen.findByLabelText(
+        'Tímasetning (kk:mm) *',
+      )) as HTMLInputElement).value,
     ).toEqual('19:51')
   }, 10000)
 
@@ -150,12 +147,9 @@ describe('Create detention request, step three', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Halda áfram/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
     ).not.toBeDisabled()
   }, 10000)
 
@@ -181,12 +175,10 @@ describe('Create detention request, step three', () => {
     )
 
     // Assert
-    expect(
-      await waitFor(() => screen.getByText('Fyrri gæsla var/er til')),
-    ).toBeTruthy()
+    expect(await screen.findByText('Fyrri gæsla var/er til')).toBeTruthy()
 
     expect(
-      screen.getByText('mánudagsins 18. janúar 2021 kl. 19:50'),
+      await screen.findByText('mánudagsins 18. janúar 2021 kl. 19:50'),
     ).toBeTruthy()
   })
 })

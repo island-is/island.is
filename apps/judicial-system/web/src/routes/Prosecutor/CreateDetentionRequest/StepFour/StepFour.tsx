@@ -162,7 +162,6 @@ export const StepFour: React.FC = () => {
             </Box>
             <Box marginBottom={3}>
               <Input
-                data-testid="caseFacts"
                 name="caseFacts"
                 label="Málsatvik"
                 placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
@@ -209,7 +208,6 @@ export const StepFour: React.FC = () => {
             </Box>
             <Box marginBottom={7}>
               <Input
-                data-testid="legalArguments"
                 name="legalArguments"
                 label="Lagarök"
                 placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
@@ -242,7 +240,7 @@ export const StepFour: React.FC = () => {
                 rows={14}
               />
             </Box>
-            <Box component="section" marginBottom={7}>
+            {/* <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Athugasemdir vegna málsmeðferðar{' '}
@@ -281,7 +279,7 @@ export const StepFour: React.FC = () => {
                   rows={7}
                 />
               </Box>
-            </Box>
+            </Box> */}
           </Box>
           <FormFooter
             nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}

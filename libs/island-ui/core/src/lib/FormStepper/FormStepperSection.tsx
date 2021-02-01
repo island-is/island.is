@@ -9,6 +9,7 @@ import { SubSections } from './SubSections/SubSections'
 import { theme as islandUITheme } from '@island.is/island-ui/theme'
 import * as styles from './FormStepperSection.treat'
 import * as types from './types'
+import { useWindowSize } from 'react-use'
 
 function getSubSectionsInSection(
   section: types.FormStepperSection,
@@ -44,10 +45,11 @@ export const FormStepperSection: FC<{
   const { height: activeHeight, width: activeWidth } = useComponentSize(
     containerRef,
   )
+  const { width } = useWindowSize()
   const [containerHeight, setContainerHeight] = useState(0)
   const [containerWidth, setContainerWidth] = useState(0)
-  const [isSmallScreen, setIsSmallScreen] = useState(false)
   const isClient = typeof window === 'object'
+  const isSmallScreen = width <= islandUITheme.breakpoints.md
 
   useEffect(() => {
     if (!isClient) return
@@ -64,30 +66,6 @@ export const FormStepperSection: FC<{
       setContainerWidth(activeWidth)
     }
   }, [isComplete, isActive, activeWidth])
-
-  useEffect(() => {
-    if (!isClient) return
-    let throttleTimeout: number
-    let isMounted = true
-
-    const handleResize = () => {
-      clearTimeout(throttleTimeout)
-
-      throttleTimeout = window.setTimeout(function () {
-        setIsSmallScreen(window.innerWidth <= islandUITheme.breakpoints.md)
-      }, 250)
-    }
-
-    if (isMounted) {
-      handleResize()
-      window.addEventListener('resize', handleResize)
-    }
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      isMounted = false
-    }
-  }, [isClient])
 
   return (
     <Box
