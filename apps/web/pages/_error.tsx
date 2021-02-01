@@ -8,8 +8,9 @@ import ErrorScreen from '../screens/Error/Error'
 import Layout, { LayoutProps } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
 import { withApollo } from '../graphql/withApollo'
-import { linkResolver, LinkType, typeResolver } from '../hooks/useLinkResolver'
+import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 import { NextPageContext } from 'next'
+import { getLocaleFromPath } from '../i18n/withLocale'
 
 type ErrorPageProps = {
   statusCode: number
@@ -57,7 +58,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   static async getInitialProps(props: ErrorPageInitialProps) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
-    const { locale } = typeResolver(asPath)
+    const locale = getLocaleFromPath(asPath)
 
     // check if we have a redirect condition
     if (statusCode === 404) {
@@ -78,7 +79,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
         // Found an URL content type that contained this
         // path (which has a page assigned to it) so we redirect to that page
-        const url = linkResolver(type as LinkType, [slug], locale).as
+        const url = linkResolver(type as LinkType, [slug], locale).href
         if (!process.browser) {
           res.writeHead(302, { Location: url })
           res.end()
