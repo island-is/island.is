@@ -15,6 +15,12 @@ manifest=$(curl -s \
     "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$LAST_GOOD_BUILD_DOCKER_TAG" \
 )
 
+if [[ "$manifest" == *errors* ]]; then
+    echo "Error getting manifest for $IMAGE:$LAST_GOOD_BUILD_DOCKER_TAG"
+    echo $manifest
+    exit 2
+fi
+
 status_code=$(curl -s -XPUT \
     -H "Authorization: Basic $TOKEN" \
     -H 'content-type: application/vnd.docker.distribution.manifest.v2+json' \
