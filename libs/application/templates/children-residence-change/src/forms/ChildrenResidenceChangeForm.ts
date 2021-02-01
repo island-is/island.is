@@ -119,7 +119,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               variant: 'textarea',
               label: 'Tilefni',
               rows: 6,
-              placeholder: 'Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra',
+              placeholder:
+                'Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra',
             }),
           ],
         }),

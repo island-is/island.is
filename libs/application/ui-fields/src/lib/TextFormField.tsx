@@ -16,12 +16,7 @@ import { useDefaultValue } from '../useDefaultValue'
 interface Props extends FieldBaseProps {
   field: TextField
 }
-const TextFormField: FC<Props> = ({
-  autoFocus,
-  application,
-  error,
-  field,
-}) => {
+const TextFormField: FC<Props> = ({ autoFocus, application, error, field }) => {
   const {
     id,
     disabled,
