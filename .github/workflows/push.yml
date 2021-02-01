@@ -373,7 +373,7 @@ jobs:
             "branch": "$GIT_BRANCH_DEPLOY",
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]._-')",
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]._-' | tr '[:upper:]' '[:lower:]')",
               "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
             }
           }
