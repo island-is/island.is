@@ -451,34 +451,32 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
-          <Box marginTop={[7, 7, 7, 10]}>
-            <InstitutionsPanel
-              institution={{
-                title: 'Vinnumálastofnun',
-                label: 'Þjónustuaðili',
-                href: '#',
-              }}
-              relatedInstitution={[
-                {
-                  title: 'Ríkislögreglustjóri',
-                  label: 'Tengd stofnun',
-                  href: '#',
-                },
-              ]}
-              responsibleParty={[
-                {
-                  title: 'Samgöngustofa',
-                  label: 'Ábyrgðaraðili',
-                  href: '#',
-                },
-              ]}
-              locale={activeLocale}
-              contactText="Hafa samband"
-              onContactClick={() => {
-                // Open modal
-              }}
-            />
-          </Box>
+          {article.organization.length > 0 && (
+            <Box marginTop={[7, 7, 7, 10]}>
+              <InstitutionsPanel
+                institution={{
+                  title: article.organization[0].title,
+                  label: article.organization[0].title,
+                  href: article.organization[0].link,
+                }}
+                relatedInstitution={article.relatedOrganization.map((x) => ({
+                  title: x.title,
+                  label: x.title,
+                  href: x.link,
+                }))}
+                responsibleParty={article.responsibleParty.map((x) => ({
+                  title: x.title,
+                  label: x.title,
+                  href: x.link,
+                }))}
+                locale={activeLocale}
+                contactText="Hafa samband"
+                onContactClick={() => {
+                  // Open modal
+                }}
+              />
+            </Box>
+          )}
           <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
             {!!processEntry && <ProcessEntry {...processEntry} />}
             <Box marginTop={3}>
