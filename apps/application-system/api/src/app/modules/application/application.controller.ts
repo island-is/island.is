@@ -43,7 +43,7 @@ import {
 } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
-import { FileService } from './file.service'
+import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'

@@ -3,7 +3,7 @@ import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
 import { PDF_TYPES } from '@island.is/application/api-template-utils'
-import { Application } from './application.model'
+import { Application } from './../application.model'
 import { FormValue } from '@island.is/application/core'
 import {
   ParentResidenceChange,
@@ -36,7 +36,7 @@ export class FileService {
     externalData: FormValue,
   ): Promise<string> {
     const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
-    const nationalRegistry = externalData.nationialRegistry as FormValue
+    const nationalRegistry = externalData.nationalRegistry as FormValue
     const nationalRegistryData = nationalRegistry.data as NationalRegistryUser
     const childrenAppliedFor = (answers.selectChild as unknown) as Array<
       PersonResidenceChange
