@@ -35,6 +35,7 @@ interface WrapperProps {
   organizationPage?: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
+  sidebarContent?: ReactNode
   navigationData: NavigationData
   fullWidthContent?: boolean
 }
@@ -46,6 +47,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   organizationPage,
   breadcrumbItems,
   mainContent,
+  sidebarContent,
   navigationData,
   fullWidthContent = false,
   children,
@@ -78,8 +80,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </Box>
         </GridContainer>
         <Box className={styles.headerWrapper}>
-          <SidebarWrapper sidebarContent="" hideSidebarInMobile={true}>
-            <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
+          <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
+            <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <img
                   src={organizationPage.organization.logo.url}
@@ -115,6 +117,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     )
                   }}
                 />
+                {sidebarContent}
               </Box>
             }
           >
