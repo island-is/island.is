@@ -386,6 +386,8 @@ jobs:
       - pre-checks
       - deploy
     steps:
+      - name: Check retag success
+        run: '[[ ${{ needs.retag-unaffected.result }} != "failure" ]] || exit 1'
       - name: Check deploy success
         run: '[[ ${{ needs.deploy.result }} != "failure" ]] || exit 1'
       - name: Announce success
