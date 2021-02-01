@@ -10,7 +10,7 @@ export const uploadFileToS3 = (
   return new Promise<S3UploadResponse>((resolve, reject) => {
     const req = new XMLHttpRequest()
 
-    const onError = (e) => {
+    const onError = () => {
       dispatch({
         type: ActionTypes.UPDATE,
         payload: { file, status: 'error', percent: 0 },
@@ -29,9 +29,9 @@ export const uploadFileToS3 = (
       }
     })
 
-    req.onload = (e) => {
+    req.onload = () => {
       if (req.status !== 200 && req.status !== 204) {
-        onError(e)
+        onError()
         return
       }
 
