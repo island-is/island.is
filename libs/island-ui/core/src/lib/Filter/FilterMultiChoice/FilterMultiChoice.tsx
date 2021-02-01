@@ -110,6 +110,7 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
       ) : (
         <Box paddingX={3} paddingY={1} borderRadius="large" background="white">
           <Accordion
+            space={3}
             dividerOnBottom={false}
             dividerOnTop={false}
             singleExpand={false}
