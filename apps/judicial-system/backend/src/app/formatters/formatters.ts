@@ -17,6 +17,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 export function formatProsecutorDemands(
+  type: CaseType,
   accusedNationalId: string,
   accusedName: string,
   court: string,
@@ -32,7 +33,7 @@ export function formatProsecutorDemands(
     isExtension && previousDecision === CaseDecision.ACCEPTING
       ? ' áframhaldandi'
       : ''
-  } gæsluvarðhaldi${
+  } ${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'}${
     alternativeTravelBan
       ? `,${
           isExtension &&
@@ -47,7 +48,7 @@ export function formatProsecutorDemands(
   )}, til ${formatDate(requestedCustodyEndDate, 'PPPPp')
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}${
-    isolation
+    type === CaseType.CUSTODY && isolation
       ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
       : ''
   }.`

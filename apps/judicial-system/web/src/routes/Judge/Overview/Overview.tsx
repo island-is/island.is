@@ -285,6 +285,7 @@ export const JudgeOverview: React.FC = () => {
               </Box>
               <Text>
                 {formatRequestedCustodyRestrictions(
+                  workingCase.type,
                   workingCase.requestedCustodyRestrictions,
                 )}
               </Text>

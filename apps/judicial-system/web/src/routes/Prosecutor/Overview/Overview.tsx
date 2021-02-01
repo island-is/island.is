@@ -267,6 +267,7 @@ export const Overview: React.FC = () => {
               >
                 <Text>
                   {formatRequestedCustodyRestrictions(
+                    workingCase.type,
                     workingCase.requestedCustodyRestrictions,
                   )}
                 </Text>

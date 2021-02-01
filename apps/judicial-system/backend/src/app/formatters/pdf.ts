@@ -6,6 +6,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   User,
 } from '@island.is/judicial-system/types'
 import {
@@ -50,7 +51,12 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(26)
     .lineGap(8)
-    .text('Krafa um gæsluvarðhald', { align: 'center' })
+    .text(
+      `Krafa um ${
+        existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      }`,
+      { align: 'center' },
+    )
     .font('Helvetica')
     .fontSize(18)
     .text(`LÖKE málsnúmer: ${existingCase.policeCaseNumber}`, {
@@ -85,6 +91,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(
       formatProsecutorDemands(
+        existingCase.type,
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.court,
@@ -136,18 +143,39 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Takmarkanir á gæslu', {})
+    .text(
+      `Takmarkanir ${
+        existingCase.type === CaseType.CUSTODY
+          ? 'á gæslu'
+          : 'og tilhögun farbanns'
+      }`,
+      {},
+    )
     .font('Helvetica')
     .fontSize(12)
     .text(
       `${formatRequestedCustodyRestrictions(
+        existingCase.type,
         existingCase.requestedCustodyRestrictions,
       )}.`,
       {
         lineGap: 6,
-        paragraphGap: 26,
+        paragraphGap: 0,
       },
     )
+
+  if (
+    existingCase.type === CaseType.TRAVEL_BAN &&
+    existingCase.requestedOtherRestrictions
+  ) {
+    doc.text(' ').text(existingCase.requestedOtherRestrictions, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
+    .text(' ')
     .font('Helvetica-Bold')
     .fontSize(18)
     .lineGap(8)
@@ -336,6 +364,7 @@ export async function generateRulingPdf(
     .fontSize(12)
     .text(
       formatProsecutorDemands(
+        existingCase.type,
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.court,

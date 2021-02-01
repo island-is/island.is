@@ -70,7 +70,10 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </Box>
       <Box marginBottom={4}>
         <Text>
-          {formatRequestedCustodyRestrictions(workingCase.custodyRestrictions)}
+          {formatRequestedCustodyRestrictions(
+            workingCase.type,
+            workingCase.custodyRestrictions,
+          )}
         </Text>
       </Box>
       <Box marginBottom={2}>

@@ -5,6 +5,8 @@ import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-import
 import {
   CaseCustodyRestrictions,
   CaseGender,
+  CaseTransition,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -216,6 +218,7 @@ export const formatAlternativeTravelBanRestrictions = (
 }
 
 export const formatRequestedCustodyRestrictions = (
+  type: CaseType,
   restrictions?: CaseCustodyRestrictions[],
 ) => {
   return restrictions && restrictions.length > 0
@@ -223,7 +226,9 @@ export const formatRequestedCustodyRestrictions = (
         .map((restriction) => getRestrictionByValue(restriction))
         .toString()
         .replace(',', ', ')
-    : 'Ekki er farið fram á takmarkanir á gæslu'
+    : `Ekki er farið fram á takmarkanir á ${
+        type === CaseType.CUSTODY ? 'gæslu' : 'farbanni'
+      }`
 }
 
 export function formatGender(gender: CaseGender): string {
