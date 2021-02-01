@@ -195,8 +195,16 @@ export class CaseController {
       state: transitionCase(transition.transition, existingCase.state),
     } as UpdateCaseDto
 
-    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
-      user.id
+    if (user.role === UserRole.PROSECUTOR) {
+      update['prosecutorId'] = user.id
+    } else if (
+      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
+        transition.transition,
+      ) &&
+      user.role === UserRole.JUDGE
+    ) {
+      update['judgeId'] = user.id
+    }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
