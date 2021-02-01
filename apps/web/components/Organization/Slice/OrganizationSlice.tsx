@@ -6,14 +6,31 @@ import {
   Slice,
 } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
-import {
-  DistrictsSlice,
-  FeaturedArticlesSlice,
-  HeadingSlice,
-  OfficesSlice,
-  OneColumnTextSlice,
-  TwoColumnTextSlice,
-} from '@island.is/web/components'
+import dynamic from 'next/dynamic'
+
+const DistrictsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
+)
+
+const FeaturedArticlesSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.FeaturedArticlesSlice),
+)
+
+const HeadingSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.HeadingSlice),
+)
+
+const OfficesSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.OfficesSlice),
+)
+
+const OneColumnTextSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.OneColumnTextSlice),
+)
+
+const TwoColumnTextSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.TwoColumnTextSlice),
+)
 
 interface OrganizationSliceProps {
   slice: Slice
