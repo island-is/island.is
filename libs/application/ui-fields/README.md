@@ -19,7 +19,7 @@ The file upload form field provides a general way to upload files for your appli
 ### To use the FileUploadFormField in an application
 
 1. Add it to the _schema_ using the following structure:
-   
+
 ```
 const File = z.object({
   name: z.string(),
