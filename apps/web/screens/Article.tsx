@@ -461,19 +461,16 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                 }}
                 relatedInstitution={article.relatedOrganization.map((x) => ({
                   title: x.title,
-                  label: x.title,
+                  label: n('relatedOrganization'),
                   href: x.link,
                 }))}
                 responsibleParty={article.responsibleParty.map((x) => ({
                   title: x.title,
-                  label: x.title,
+                  label: n('responsibleParty'),
                   href: x.link,
                 }))}
                 locale={activeLocale}
                 contactText="Hafa samband"
-                onContactClick={() => {
-                  // Open modal
-                }}
               />
             </Box>
           )}
