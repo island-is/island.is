@@ -18,13 +18,14 @@ const Reason = ({ error, application }: FieldBaseProps) => {
         return (
           <Box marginTop={4}>
             <Input
-              hasError={!!error}
               id="reason"
               name="reason"
               label="Tilefni"
-              errorMessage="Required"
+              required={true}
               value={value}
               placeholder="Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra"
+              hasError={!!error}
+              errorMessage="Required"
               textarea={true}
               rows={6}
               onChange={(e) => {
