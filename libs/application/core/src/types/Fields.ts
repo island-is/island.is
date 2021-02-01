@@ -137,7 +137,9 @@ export interface TextField extends BaseField {
   disabled?: boolean
   minLength?: number
   maxLength?: number
+  label?: FormText
   placeholder?: FormText
+  rows?: number
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction

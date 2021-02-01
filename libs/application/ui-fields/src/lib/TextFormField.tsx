@@ -21,14 +21,14 @@ const TextFormField: FC<Props> = ({
   application,
   error,
   field,
-  showFieldName,
 }) => {
   const {
     id,
     disabled,
-    title,
     description,
+    label,
     placeholder,
+    rows,
     backgroundColor,
     format,
     variant = 'text',
@@ -54,11 +54,8 @@ const TextFormField: FC<Props> = ({
             application,
             formatMessage,
           )}
-          label={
-            showFieldName
-              ? formatText(title, application, formatMessage)
-              : undefined
-          }
+          rows={rows}
+          label={label && formatText(label, application, formatMessage)}
           autoFocus={autoFocus}
           error={error}
           onChange={() => {
