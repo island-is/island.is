@@ -20,7 +20,7 @@ The file upload form field provides a general way to upload files for your appli
 
 1. Add it to the _schema_ using the following structure:
 
-```
+```typescript
 const File = z.object({
   name: z.string(),
   key: z.string(),
@@ -35,7 +35,7 @@ const ExampleSchema = z.object({
 
 Optionally you can set it to be required:
 
-```
+```typescript
 const ExampleSchema = z.object({
   fileUpload: z.array(File).nonempty(),
   ...
@@ -44,7 +44,7 @@ const ExampleSchema = z.object({
 
 2. Add the field to the _form_ using the same key as in the schema:
 
-```
+```typescript
  buildSection({
     id: 'someSection',
     title: m.someSection,
@@ -75,7 +75,7 @@ const ExampleSchema = z.object({
 Sometimes you might want to use the FileUploadController separately from the field (in a custom field), for example a Review screen.
 You can do so by importing it from `shared`
 
-```
+```typescript
 import { FileUploadController } from '@island.is/shared/form-fields'
 
 ...
@@ -96,7 +96,7 @@ import { FileUploadController } from '@island.is/shared/form-fields'
 
 Sometimes you might want to read out the stored answer of the file upload field. You can do so with `getValueViaPath` and then `map` through it in your jsx.
 
-```
+```typescript
 import { getValueViaPath } from '@island.is/application/core'
 
 ...
