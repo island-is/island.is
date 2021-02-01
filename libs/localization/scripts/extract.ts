@@ -3,22 +3,28 @@ import glob from 'glob'
 import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
-import { MessageDict } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
 
 import {
+  createStringsObject,
+  updateDefaultsObject,
   DEFAULT_LOCALE,
-  translationsFromContentful,
-} from './translationsFromContentful'
-import { translationsFromLocal } from './translationsFromLocal'
-import { mergeArray } from './mergeArray'
+  Locales,
+  updateStringsObject,
+  MessageDict,
+} from './utils'
 
-const { CONTENTFUL_MANAGEMENT_ACCESS_TOKEN, CONTENTFUL_SPACE } = process.env
+const {
+  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
+  CONTENTFUL_SPACE,
+  CONTENTFUL_ENVIRONMENT,
+} = process.env
+const spaceId = CONTENTFUL_SPACE ?? '8k0h54kbe6bj'
+const environmentId = CONTENTFUL_ENVIRONMENT ?? 'master'
 
-if (!CONTENTFUL_SPACE || !CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
-  throw new Error(
-    'Missing Contentful environment variables: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN and/or CONTENTFUL_SPACE',
-  )
+if (!CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
+  logger.error('Missing CONTENTFUL_MANAGEMENT_ACCESS_TOKEN')
+  process.exit()
 }
 
 const client = createClient({ accessToken: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN })
@@ -35,13 +41,13 @@ try {
   ])
 } catch (e) {
   console.error(`Error while trying to extract strings ${e}`)
-  process.exit(1)
+  process.exit()
 }
 
 const getLocales = () =>
   client
-    .getSpace(CONTENTFUL_SPACE)
-    .then((space) => space.getEnvironment('master'))
+    .getSpace(spaceId)
+    .then((space) => space.getEnvironment(environmentId))
     .then((environment) => environment.getLocales())
     .catch((err) => {
       logger.error('Error getting locales', { message: err.message })
@@ -49,28 +55,28 @@ const getLocales = () =>
 
 const getNamespace = (id: string) =>
   client
-    .getSpace(CONTENTFUL_SPACE)
-    .then((space) => space.getEnvironment('master'))
+    .getSpace(spaceId)
+    .then((space) => space.getEnvironment(environmentId))
     .then((environment) => environment.getEntry(id))
     .catch(() => null)
 
-const createNamespace = (id: string, messages: MessageDict) =>
+const createNamespace = (id: string, messages: MessageDict, locales: Locales) =>
   client
-    .getSpace(CONTENTFUL_SPACE)
-    .then((space) => space.getEnvironment('master'))
+    .getSpace(spaceId)
+    .then((space) => space.getEnvironment(environmentId))
     .then(async (environment) => {
+      const namespace = { [DEFAULT_LOCALE]: id }
+      const defaults = { [DEFAULT_LOCALE]: messages }
+      const strings = createStringsObject(locales, messages)
+
       const entry = await environment.createEntryWithId(
         'namespaceJeremyDev',
         id,
         {
-          // TODO: put namespace back after review
           fields: {
-            namespace: {
-              [DEFAULT_LOCALE]: id,
-            },
-            strings: {
-              [DEFAULT_LOCALE]: translationsFromLocal(messages),
-            },
+            namespace,
+            defaults,
+            strings,
           },
         },
       )
@@ -86,15 +92,13 @@ const createNamespace = (id: string, messages: MessageDict) =>
 export const updateNamespace = async (
   namespace: Entry,
   messages: MessageDict,
+  locales: Locales,
 ) => {
-  const locales = ((await getLocales()) as {
-    items: Record<string, any>[]
-  }).items.map((locale) => ({ id: locale.code }))
-  const fromLocal = translationsFromLocal(messages)
-  const fromContentful = translationsFromContentful(namespace)
-  const merged = mergeArray(fromLocal, fromContentful, locales)
-
-  namespace.fields.strings[DEFAULT_LOCALE] = merged
+  namespace.fields.defaults[DEFAULT_LOCALE] = updateDefaultsObject(
+    namespace,
+    messages,
+  )
+  namespace.fields.strings = updateStringsObject(namespace, messages, locales)
 
   return namespace
     .update()
@@ -111,23 +115,26 @@ export const updateNamespace = async (
 }
 
 glob
-  // .sync('libs/localization/messages.json')
-  .sync('libs/localization/temp-dev.json') // TODO: put messages.json back after review
+  .sync('libs/localization/messages.json')
   .map((filename) => readFileSync(filename, { encoding: 'utf-8' }))
   .map((file) => JSON.parse(file))
   .forEach((f) => {
     Object.entries<MessageDict>(f).forEach(
       async ([namespaceId, namespaceMessages]) => {
         const namespace = await getNamespace(namespaceId)
+        const locales = ((await getLocales()) as {
+          items: Record<string, any>[]
+        }).items.map((locale) => ({ id: locale.code }))
 
-        // If namespace does exist we update it, else we create it
+        // If namespace exists we update it, else we create it
         if (namespace) {
-          updateNamespace(namespace, namespaceMessages)
+          updateNamespace(namespace, namespaceMessages, locales)
         } else {
-          logger.warn(
-            `${namespaceId} doesn't exist, we are going to create it for you now`,
+          logger.info(
+            `${namespaceId} doesn't exist, we are going to create it for you now. You will need to publish the changes in Contentful to get the data from the GraphQL API.`,
           )
-          createNamespace(namespaceId, namespaceMessages)
+
+          createNamespace(namespaceId, namespaceMessages, locales)
         }
       },
     )

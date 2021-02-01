@@ -2,6 +2,10 @@
 
 This library provides components to support Internationalization in nextjs and react projects using [Formatjs](https://formatjs.io/).
 
+{% hint style="warning" %}
+You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` environnement variable to run the extract script. You can create it [here in contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types).
+{% endhint %}
+
 ## Usage in Next.js
 
 ### Wrap your App with the `appWithLocale` HOC

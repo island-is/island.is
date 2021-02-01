@@ -3,14 +3,14 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
 import isEmpty from 'lodash/isEmpty'
-import { DictArray } from '@island.is/shared/types'
+import mergeWith from 'lodash/mergeWith'
 
 export interface TranslationsDict {
   [key: string]: string
 }
 
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
-// this can be replaced by fetching contentful locales if fallback is set in the future, same format.
+// this can be replaced by fetching Contentful locales if fallback is set in the future, same format.
 const locales = [
   { code: 'is-IS', fallbackCode: null },
   { code: 'en', fallbackCode: 'is-IS' },
@@ -34,23 +34,25 @@ export class TranslationsService {
     const locale = locales.find((l) => l.code === localeMap[lang])
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<any>('is-IS', {
-        ['content_type']: 'namespaceJeremyDev', // TODO: replace after review
+      .getLocalizedEntries<any>('*', {
+        ['content_type']: 'namespaceJeremyDev',
         select: 'fields.strings',
         'fields.namespace[in]': namespaces.join(','),
       })
       .catch(errorHandler('getNamespace'))
 
-    const results = {}
+    return result.items.reduce((acc, cur) => {
+      const strings = cur.fields.strings
 
-    for (const item of result.items) {
-      for (const message of item.fields.strings as DictArray[]) {
-        results[message.id] = isEmpty(message[locale.code])
-          ? message?.[locale.fallbackCode]
-          : message?.[locale.code]
+      return {
+        ...acc,
+        ...mergeWith(
+          {},
+          locale.fallbackCode ? strings?.[locale.fallbackCode] : {},
+          strings?.[locale.code],
+          (o, s) => (isEmpty(s) ? o : s),
+        ),
       }
-    }
-
-    return results
+    }, {})
   }
 }

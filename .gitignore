@@ -56,7 +56,7 @@ helm/**/*.tgz
 /cache*
 
 # Extracted strings for localization
-/libs/localization/messages.json
+libs/localization/messages.json
 
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
 /generated_files.tar.gz

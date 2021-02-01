@@ -11,7 +11,6 @@ import {
   FieldExtensionSDK,
   EditorLocaleSettings,
 } from 'contentful-ui-extensions-sdk'
-import { DictArray } from '@island.is/shared/types'
 
 import '@contentful/forma-36-react-components/dist/styles.css'
 import './index.css'
@@ -64,37 +63,30 @@ class App extends React.Component<AppProps, AppState> {
 
   onChange = (locale: string, key: string, value: string | Document) => {
     const { strings } = this.props.extension.entry.fields
-    const values = strings.getValue()
-    const translations: DictArray[] = values
+    const currentJson = strings.getValue(locale)
 
-    const newJson = translations.map((item) => {
-      if (item.id === key) {
-        return {
-          ...item,
-          [locale]: value,
-        }
-      }
+    const newJson = {
+      ...currentJson,
+      [key]: value,
+    }
 
-      return item
-    })
-
-    strings.setValue(newJson, 'is-IS')
+    strings.setValue(newJson, locale)
   }
 
   render() {
-    const { strings } = this.props.extension.entry.fields
+    const { strings, defaults } = this.props.extension.entry.fields
     const { activeLocales } = this.state
-    const values: DictArray[] = strings.getValue()
+    const values = defaults.getValue()
 
-    return values.map((item) => (
+    return Object.keys(values).map((item, i) => (
       <Table
-        key={item.id}
+        key={`${item}-${i}`}
         style={{ marginBottom: '20px', border: '1px solid #e5ebed' }}
       >
         <TableHead>
           <TableRow>
             <TableCell width="50%" style={{ backgroundColor: '#e5ebed' }}>
-              Key: {item.id}
+              Key: {item}
             </TableCell>
 
             <TableCell style={{ backgroundColor: '#e5ebed' }} />
@@ -102,7 +94,7 @@ class App extends React.Component<AppProps, AppState> {
         </TableHead>
 
         <TableBody>
-          {item.deprecated && (
+          {values[item].deprecated && (
             <TableRow>
               <TableCell
                 colSpan={2}
@@ -137,7 +129,7 @@ class App extends React.Component<AppProps, AppState> {
                 backgroundColor: '#f7f9fa',
               }}
             >
-              {item.defaultMessage}
+              {values[item].defaultMessage}
             </TableCell>
           </TableRow>
 
@@ -152,17 +144,17 @@ class App extends React.Component<AppProps, AppState> {
             <TableCell
               style={{ verticalAlign: 'middle', backgroundColor: '#f7f9fa' }}
             >
-              {item.description}
+              {values[item].description}
             </TableCell>
           </TableRow>
 
           {activeLocales
             .sort((a, b) => (a.id === 'is-IS' ? -1 : b.id === 'is-IS' ? 1 : 0))
             .map((locale, ii) => {
-              const value = (item as any)?.[locale.id]
+              const value = strings.getForLocale(locale.id).getValue()?.[item]
 
               return (
-                <TableRow key={`${item.id}-${ii}`}>
+                <TableRow key={`${item}-${ii}`}>
                   <TableCell width="50%" style={{ verticalAlign: 'middle' }}>
                     {locale.name}
                   </TableCell>
@@ -172,7 +164,7 @@ class App extends React.Component<AppProps, AppState> {
                     style={{ verticalAlign: 'middle' }}
                   >
                     <TextField
-                      id={value}
+                      id={`${item}-${value}`}
                       name=""
                       labelText=""
                       value={value}
@@ -180,7 +172,7 @@ class App extends React.Component<AppProps, AppState> {
                         !value ? 'Translation missing' : undefined
                       }
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        this.onChange(locale.id, item.id, e.currentTarget.value)
+                        this.onChange(locale.id, item, e.currentTarget.value)
                       }
                     />
                   </TableCell>
@@ -197,16 +189,14 @@ class App extends React.Component<AppProps, AppState> {
  * The content model has two fields:
  *
  * Namespace:
- * Which is the id of the content
+ * Which is the id of the namespace. e.g. `application.system`
+ *
+ * Defaults:
+ * Which contains the `defaultMessage`, `description` and `deprecated` boolean.
+ * We use the local values extracted from formatjs to populate these fields.
  *
  * Strings:
  * Which is used to store the translations for each locales.
- * However "Enable localization of this field" is disabled.
- * We instead create another object inside the default locale
- * from the space ("is-IS") and we create objects for each locales inside.
- * This is a bit hacky but by enabling localization for the field inside Contentful,
- * it creates the following extension for both locales (or more in the future)
- * which mean duplicating the same fields over and over. Not nice neither.
  */
 init((extension: FieldExtensionSDK) => {
   extension.window.startAutoResizer()

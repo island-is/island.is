@@ -1,11 +1,9 @@
-import { translationsFromContentful } from './translationsFromContentful'
-import { translationsFromLocal } from './translationsFromLocal'
-import { mergeArray } from './mergeArray'
+import { updateDefaultsObject, updateStringsObject } from './utils'
 
 describe('extractFunctions', () => {
   const locales = [{ id: 'is-IS' }, { id: 'en' }]
 
-  it('should use local values if none is defined in contentful', () => {
+  it('should update defaults strings if changed locally', () => {
     const localValues = {
       'application.system:no.value.in.contentful': {
         defaultMessage: 'Takk',
@@ -15,75 +13,52 @@ describe('extractFunctions', () => {
 
     const contentfulValues = {
       fields: {
-        strings: {
-          'is-IS': [
-            {
-              id: 'application.system:no.value.in.contentful',
-              defaultMessage: '',
-              description: '',
-              'is-IS': '',
-              en: '',
+        defaults: {
+          'is-IS': {
+            'application.system:no.value.in.contentful': {
+              defaultMessage: 'Old default message',
+              description: 'Description',
             },
-          ],
+          },
         },
       },
-    }
+    } as any
 
-    const local = translationsFromLocal(localValues)
-    const distant = translationsFromContentful(contentfulValues as any)
-
-    expect(mergeArray(local, distant, locales)).toStrictEqual([
-      {
-        id: 'application.system:no.value.in.contentful',
+    expect(updateDefaultsObject(contentfulValues, localValues)).toStrictEqual({
+      'application.system:no.value.in.contentful': {
         defaultMessage: 'Takk',
         description: `Some field's description`,
-        'is-IS': 'Takk',
-        en: '',
         deprecated: false,
       },
-    ])
+    })
   })
 
-  it('should use contentful values if already defined', () => {
-    const localValues = {
-      'application.system:applications': {
-        defaultMessage: 'Þínar umsóknir',
-        description: `Some field's description`,
-      },
-    }
+  it('should pass `deprecated` to true if the contentful message is not defined locally anymore', () => {
+    const localValues = {}
 
     const contentfulValues = {
       fields: {
-        strings: {
-          'is-IS': [
-            {
-              id: 'application.system:applications',
+        defaults: {
+          'is-IS': {
+            'application.system:removed.locally': {
               defaultMessage: 'Þínar umsóknir',
               description: `Some field's description`,
-              'is-IS': 'Skilaboð',
-              en: 'Message',
             },
-          ],
+          },
         },
       },
-    }
+    } as any
 
-    const local = translationsFromLocal(localValues)
-    const distant = translationsFromContentful(contentfulValues as any)
-
-    expect(mergeArray(local, distant, locales)).toStrictEqual([
-      {
-        id: 'application.system:applications',
+    expect(updateDefaultsObject(contentfulValues, localValues)).toStrictEqual({
+      'application.system:removed.locally': {
         defaultMessage: 'Þínar umsóknir',
         description: `Some field's description`,
-        'is-IS': 'Skilaboð',
-        en: 'Message',
-        deprecated: false,
+        deprecated: true,
       },
-    ])
+    })
   })
 
-  it('should use local values if object is missing inside contentful', () => {
+  it('should use local defaultMessage to populate icelandic translation if not existing in contentful yet', () => {
     const localValues = {
       'application.system:new.field.missing.from.contentful': {
         defaultMessage: 'Takk',
@@ -91,53 +66,61 @@ describe('extractFunctions', () => {
       },
     }
 
-    const contentfulValues = {}
-    const local = translationsFromLocal(localValues)
-    const distant = translationsFromContentful(contentfulValues as any)
+    const contentfulValues = { fields: {} } as any
 
-    expect(mergeArray(local, distant, locales)).toStrictEqual([
-      {
-        id: 'application.system:new.field.missing.from.contentful',
+    expect(updateDefaultsObject(contentfulValues, localValues)).toStrictEqual({
+      'application.system:new.field.missing.from.contentful': {
         defaultMessage: 'Takk',
         description: `Some field's description`,
-        'is-IS': 'Takk',
-        en: '',
         deprecated: false,
       },
-    ])
+    })
   })
 
-  it('should keep the production messages even if removed from the local messages', () => {
-    const localValues = {}
+  it('should use Contentful values if already defined and use local ones when undefined in Contentful', () => {
+    const localValues = {
+      'application.system:applications': {
+        defaultMessage: 'Þínar umsóknir',
+        description: `Some field's description`,
+      },
+      'application.system:heading': {
+        defaultMessage: 'Daginn',
+        description: `Heading's copy`,
+      },
+      'application.system:back': {
+        defaultMessage: 'Til baka',
+        description: 'Back button copy',
+      },
+    }
 
     const contentfulValues = {
       fields: {
         strings: {
-          'is-IS': [
-            {
-              id: 'application.system:removed.locally',
-              defaultMessage: 'Þínar umsóknir',
-              description: `Some field's description`,
-              'is-IS': 'Skilaboð',
-              en: 'Message',
-            },
-          ],
+          'is-IS': {
+            'application.system:applications': 'Þínar umsóknir',
+            'application.system:heading': 'Goðan daginn',
+          },
+          en: {
+            'application.system:applications': 'Your applications',
+            'application.system:heading': 'Good morning',
+          },
         },
       },
-    }
+    } as any
 
-    const local = translationsFromLocal(localValues)
-    const distant = translationsFromContentful(contentfulValues as any)
-
-    expect(mergeArray(local, distant, locales)).toStrictEqual([
-      {
-        id: 'application.system:removed.locally',
-        defaultMessage: 'Þínar umsóknir',
-        description: `Some field's description`,
-        'is-IS': 'Skilaboð',
-        en: 'Message',
-        deprecated: true,
+    expect(
+      updateStringsObject(contentfulValues, localValues, locales),
+    ).toStrictEqual({
+      'is-IS': {
+        'application.system:applications': 'Þínar umsóknir',
+        'application.system:heading': 'Goðan daginn',
+        'application.system:back': 'Til baka',
       },
-    ])
+      en: {
+        'application.system:applications': 'Your applications',
+        'application.system:heading': 'Good morning',
+        'application.system:back': '',
+      },
+    })
   })
 })
