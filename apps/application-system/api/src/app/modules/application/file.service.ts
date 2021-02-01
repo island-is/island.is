@@ -9,6 +9,7 @@ import {
   ParentResidenceChange,
   PersonResidenceChange,
 } from '@island.is/application/templates/children-residence-change'
+import { NationalRegistryUser } from '@island.is/api/schema'
 
 @Injectable()
 export class FileService {
@@ -35,6 +36,8 @@ export class FileService {
     externalData: FormValue,
   ): Promise<string> {
     const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
+    const nationalRegistry = externalData.nationialRegistry as FormValue
+    const nationalRegistryData = nationalRegistry.data as NationalRegistryUser
     const childrenAppliedFor = (answers.selectChild as unknown) as Array<
       PersonResidenceChange
     >
@@ -43,16 +46,15 @@ export class FileService {
     parentB.email = answers.parentBEmail as string
     parentB.phoneNumber = answers.parentBPhoneNumber as string
 
-    // TODO: Revisit once connection with national registry is up and we have actual schema for this data.
     const parentA: ParentResidenceChange = {
-      id: answers.ssn as string,
-      name: answers.name as string,
-      ssn: answers.ssn as string,
+      id: nationalRegistryData.nationalId,
+      name: nationalRegistryData.fullName,
+      ssn: nationalRegistryData.nationalId,
       phoneNumber: answers.phoneNumber as string,
       email: answers.email as string,
-      address: answers.address as string,
-      postalCode: answers.postalCode as string,
-      city: answers.city as string,
+      address: nationalRegistryData.address?.streetAddress as string,
+      postalCode: nationalRegistryData.address?.postalCode as string,
+      city: nationalRegistryData.address?.city as string,
     }
 
     const expiry = answers.expiry as string
