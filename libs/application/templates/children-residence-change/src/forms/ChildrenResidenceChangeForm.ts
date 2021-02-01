@@ -113,14 +113,10 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'confirmResidenceChangeInfo',
           title: 'Tilefni',
           children: [
-            buildTextField({
+            buildCustomField({
               id: 'reason',
               title: 'Hvert er tilefni breytingar á lögheimili?',
-              variant: 'textarea',
-              label: 'Tilefni',
-              rows: 6,
-              placeholder:
-                'Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra',
+              component: 'Reason',
             }),
           ],
         }),
