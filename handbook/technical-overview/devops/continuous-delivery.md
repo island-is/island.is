@@ -47,7 +47,7 @@ The pipelines are defined and versioned in [our Helm repo](https://github.com/is
 - a Docker image tag - specifies which revision of the code/assets to be deployed.
 - a Helm config tag - specifies which revision of the configuration to be deployed.
 
-The [Helm](https://helm.sh) chart stored in our [Charmuseum](https://chartmuseum.com) comes in as an asset as well as value files containing environmental specific values. Docker tag, value files and helm chart are baked together creating Kubernetes manifest, that can be deployed to a specific environment.
+The [Helm](https://helm.sh) chart stored in our [Chartmuseum](https://chartmuseum.com) comes in as an asset as well as value files containing environmental specific values. Docker tag, value files and helm chart are baked together creating Kubernetes manifest, that can be deployed to a specific environment.
 
 The CI process triggers the pipelines upon a successful build, which automatically deploys to our `Dev` environment. After manual approval, it is possible to deploy to `Staging` and then `Prod` as well.
 
