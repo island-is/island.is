@@ -15,12 +15,27 @@ export type BackgroundImageProps = {
   backgroundSize?: 'cover' | 'contain'
 }
 
+const useIsMounted = () => {
+  const isMounted = React.useRef(true)
+  useEffect(() => {
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
+  return isMounted
+}
+
 const useImageLoader = (url: string): boolean => {
+  const isMounted = useIsMounted()
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     const img = new window.Image(100)
-    img.onload = img.onerror = () => setLoaded(true)
+    img.onload = img.onerror = () => {
+      if (isMounted.current) {
+        setLoaded(true)
+      }
+    }
     img.src = url
   }, [url])
 
