@@ -111,6 +111,20 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'confirmResidenceChangeInfo',
+          title: 'Tilefni',
+          children: [
+            buildTextField({
+              id: 'reason',
+              title: 'Hvert er tilefni breytingar á lögheimili?',
+              variant: 'textarea',
+              label: 'Tilefni',
+              rows: 6,
+              placeholder: 'Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'confirmResidenceChangeInfo',
           title: 'Nýtt lögheimili',
           children: [
             buildCustomField({
