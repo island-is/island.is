@@ -177,22 +177,22 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
 
     // Upload each file.
     newUploadFiles.forEach(async (f: UploadFile) => {
-      await uploadFileFlow(f)
-        .then((answer) => {
-          dispatch({
-            type: ActionTypes.UPDATE,
-            payload: {
-              file: f,
-              status: 'done',
-              percent: 100,
-              key: answer.key,
-              url: answer.url,
-            },
-          })
+      try {
+        const res = await uploadFileFlow(f)
+
+        dispatch({
+          type: ActionTypes.UPDATE,
+          payload: {
+            file: f,
+            status: 'done',
+            percent: 100,
+            key: res.key,
+            url: res.url,
+          },
         })
-        .catch((e) => {
-          setUploadError('An error occurred uploading one or more files')
-        })
+      } catch (e) {
+        setUploadError('An error occurred uploading one or more files')
+      }
     })
   }
 
