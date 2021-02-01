@@ -33,6 +33,8 @@ import { CustomNextError } from '@island.is/web/units/errors'
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
   services: Query['getArticles']
+  categories: FilterItem[]
+  groups: FilterItem[]
   namespace: Query['getNamespace']
 }
 
@@ -44,6 +46,8 @@ type FilterItem = {
 const ServicesPage: Screen<ServicesPageProps> = ({
   organizationPage,
   services,
+  categories,
+  groups,
   namespace,
 }) => {
   const n = useNamespace(namespace)
@@ -62,27 +66,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     categories: [],
     groups: [],
   })
-
-  const categories: FilterItem[] = []
-  const groups: FilterItem[] = []
-
-  for (const service of services) {
-    if (
-      !!service.category &&
-      categories.every((x) => x.value !== service.category?.slug)
-    ) {
-      categories.push({
-        value: service.category?.slug,
-        label: service.category?.title,
-      })
-    }
-    if (
-      !!service.group &&
-      groups.every((x) => x.value !== service.group?.slug)
-    ) {
-      groups.push({ value: service.group?.slug, label: service.group?.title })
-    }
-  }
 
   const filterItemComparator = (a, b) => a.label.localeCompare(b.label)
 
@@ -276,10 +259,33 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization services page not found')
   }
 
+  const categories: FilterItem[] = []
+  const groups: FilterItem[] = []
+
+  for (const service of getArticles) {
+    if (
+      !!service.category &&
+      categories.every((x) => x.value !== service.category?.slug)
+    ) {
+      categories.push({
+        value: service.category?.slug,
+        label: service.category?.title,
+      })
+    }
+    if (
+      !!service.group &&
+      groups.every((x) => x.value !== service.group?.slug)
+    ) {
+      groups.push({ value: service.group?.slug, label: service.group?.title })
+    }
+  }
+
   return {
     organizationPage: getOrganizationPage,
     services: getArticles,
     namespace,
+    categories,
+    groups,
     showSearchInHeader: false,
   }
 }
