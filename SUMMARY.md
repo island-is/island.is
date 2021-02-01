@@ -114,7 +114,7 @@
     - [Children Residence Change Template](libs/application/templates/children-residence-change/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
-  - [UI Fields](libs/application/ui-fields/README.md) - [Adding the Field to a Form](libs/application/ui-fields/src/lib/FileUploadFormField/README.md)
+  - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
