@@ -83,14 +83,14 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={'Þjónusta'}
+      pageTitle={n('services', 'Þjónusta')}
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
       sidebarContent={
         <Box paddingTop={8}>
           <Filter
-            labelClear={'Hreinsa'}
+            labelClear={n('filterClear', 'Hreinsa')}
             labelOpen={'openFilterButton'}
             labelClose={'closeFilter'}
             labelResult={'mobileResult'}
@@ -101,7 +101,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             }
           >
             <FilterInput
-              placeholder={'Leita'}
+              placeholder={n('filterSearch', 'Leita')}
               name="filterInput"
               value={parameters.query}
               onChange={(value) =>
@@ -109,7 +109,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               }
             />
             <FilterMultiChoice
-              labelClear={'Hreinsa'}
+              labelClear={n('filterClear', 'Hreinsa')}
               onChange={({ categoryId, selected }) => {
                 setParameters({
                   ...parameters,
@@ -125,14 +125,14 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               categories={[
                 {
                   id: 'categories',
-                  label: 'Þjónstuflokkar',
+                  label: n('filterCategories', 'Þjónustuflokkar'),
                   selected: parameters.categories,
                   filters: categories,
                 },
               ]}
             />
             <FilterMultiChoice
-              labelClear={'Hreinsa'}
+              labelClear={n('filterClear', 'Hreinsa')}
               onChange={({ categoryId, selected }) => {
                 setParameters({
                   ...parameters,
@@ -148,7 +148,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               categories={[
                 {
                   id: 'groups',
-                  label: 'Málefni',
+                  label: n('filterGroups', 'Málefni'),
                   selected: parameters.groups,
                   filters: groups,
                 },
@@ -181,7 +181,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       }}
     >
       <Text variant="h1" as="h1" marginBottom={4}>
-        Öll þjónusta
+        {n('allServices', 'Öll þjónusta')}
       </Text>
       <Stack space={4}>
         {matches.map((article) => {
