@@ -16,7 +16,6 @@ import {
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
-import { useLocale } from '@island.is/localization'
 
 type UploadFileAnswer = {
   name: string
@@ -25,13 +24,17 @@ type UploadFileAnswer = {
 }
 
 // Transform an uploaded file to an form answer.
-const transformToAnswer = (f: UploadFile): UploadFileAnswer => {
-  return { name: f.name, key: f.key, url: f.url }
+const transformToAnswer = ({
+  name,
+  key,
+  url,
+}: UploadFile): UploadFileAnswer => {
+  return { name, key, url }
 }
 
 // Transform an form answer to an uploaded file object to display.
-const answerToUploadFile = (a: UploadFile): UploadFile => {
-  return { name: a.name, key: a.key, url: a.url, status: 'done' }
+const answerToUploadFile = ({ name, key, url }: UploadFile): UploadFile => {
+  return { name, key, url, status: 'done' }
 }
 
 function reducer(state: UploadFile[], action: Action) {
