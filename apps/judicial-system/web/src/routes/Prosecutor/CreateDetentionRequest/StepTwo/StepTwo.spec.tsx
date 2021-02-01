@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen, within, act } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -109,65 +109,51 @@ describe('Create detention request, step two', () => {
     // Arrange
 
     // Act
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockProsecutorQuery,
-            ...mockUsersQuery,
-          ]}
-          addTypename={false}
-        >
-          <MemoryRouter
-            initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
-                <StepTwo />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}>
+          <UserProvider>
+            <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
+              <StepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      // Assert
-      expect(
-        await screen.findByRole('button', {
-          name: /Halda áfram/i,
-        }),
-      ).not.toBeDisabled()
-    })
+    // Assert
+    expect(
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
+    ).not.toBeDisabled()
   })
 
   test('should have a disabled requestedCourtDate if judge has set a court date', async () => {
     // Arrange
 
     // Act
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockProsecutorQuery,
-            ...mockUsersQuery,
-          ]}
-          addTypename={false}
+    render(
+      <MockedProvider
+        mocks={[...mockCaseQueries, ...mockProsecutorQuery, ...mockUsersQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_3`]}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id_3`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
-                <StepTwo />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+          <UserProvider>
+            <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
+              <StepTwo />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      // Assert
-      expect(await screen.findByLabelText('Veldu dagsetningu *')).toBeDisabled()
-    })
+    // Assert
+    expect(await screen.findByLabelText('Veldu dagsetningu *')).toBeDisabled()
   })
 })

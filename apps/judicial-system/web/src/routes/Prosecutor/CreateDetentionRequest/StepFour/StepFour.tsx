@@ -240,7 +240,7 @@ export const StepFour: React.FC = () => {
                 rows={14}
               />
             </Box>
-            {/* <Box component="section" marginBottom={7}>
+            <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Athugasemdir vegna málsmeðferðar{' '}
@@ -279,7 +279,7 @@ export const StepFour: React.FC = () => {
                   rows={7}
                 />
               </Box>
-            </Box> */}
+            </Box>
           </Box>
           <FormFooter
             nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}

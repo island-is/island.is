@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'

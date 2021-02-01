@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { Route, Router } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import Overview from './Overview'

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import StepFour from './StepFour'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -14,7 +14,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('Create detention request, step four', () => {
-  test('should not allow users to continue unless every required field has been filled ooout', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     render(
       <MockedProvider

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import CourtRecord from './CourtRecord'
@@ -16,7 +16,7 @@ import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/thingbok', () => {
-  test('should not allow users to continue unless every required field has been filled outt', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     render(
       <MockedProvider

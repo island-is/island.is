@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen, act } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { RulingStepTwo } from './RulingStepTwo'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {

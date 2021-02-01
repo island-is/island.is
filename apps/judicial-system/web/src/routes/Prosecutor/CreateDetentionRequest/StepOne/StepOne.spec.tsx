@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne from './StepOne'
@@ -170,72 +170,67 @@ describe('/krafa without ID', () => {
 
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    await act(async () => {
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockProsecutorQuery,
-            ...mockUpdateCaseMutation([
-              {
-                id: 'testid',
-                accusedName: 'Jon Harring',
-              } as UpdateCase,
-              {
-                id: 'testid',
-                accusedAddress: 'Harringvej 2',
-              } as UpdateCase,
-              {
-                id: 'testid',
-                accusedGender: CaseGender.FEMALE,
-              } as UpdateCase,
-            ]),
-          ]}
-          addTypename={false}
-        >
-          <MemoryRouter initialEntries={['/krafa']}>
-            <UserProvider>
-              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
-                <StepOne />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
-        </MockedProvider>,
-      )
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockUpdateCaseMutation([
+            {
+              id: 'testid',
+              accusedName: 'Jon Harring',
+            } as UpdateCase,
+            {
+              id: 'testid',
+              accusedAddress: 'Harringvej 2',
+            } as UpdateCase,
+            {
+              id: 'testid',
+              accusedGender: CaseGender.FEMALE,
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={['/krafa']}>
+          <UserProvider>
+            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
+              <StepOne />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
 
-      // Act and Assert
-      userEvent.type(
-        await screen.findByLabelText('Slá inn LÖKE málsnúmer *'),
-        '000-0000-0010',
-      )
+    // Act and Assert
+    userEvent.type(
+      await screen.findByLabelText('Slá inn LÖKE málsnúmer *'),
+      '000-0000-0010',
+    )
 
-      userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
+    userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
 
-      userEvent.type(await screen.findByLabelText('Kennitala *'), '1112902539')
+    userEvent.type(await screen.findByLabelText('Kennitala *'), '1112902539')
 
-      userEvent.type(
-        await screen.findByLabelText('Fullt nafn *'),
-        'Jon Harring',
-      )
+    userEvent.type(await screen.findByLabelText('Fullt nafn *'), 'Jon Harring')
 
-      expect(
-        (await screen.findByRole('button', {
-          name: /Stofna kröfu/i,
-        })) as HTMLButtonElement,
-      ).toBeDisabled()
+    expect(
+      await screen.findByRole('button', {
+        name: /Stofna kröfu/i,
+      }),
+    ).toBeDisabled()
 
-      userEvent.type(
-        (await screen.findByLabelText(
-          'Lögheimili/dvalarstaður *',
-        )) as HTMLInputElement,
-        'Harringvej 2',
-      )
+    userEvent.type(
+      (await screen.findByLabelText(
+        'Lögheimili/dvalarstaður *',
+      )) as HTMLInputElement,
+      'Harringvej 2',
+    )
 
-      expect(
-        (await screen.findByRole('button', {
-          name: /Stofna kröfu/i,
-        })) as HTMLButtonElement,
-      ).not.toBeDisabled()
-    })
+    expect(
+      await screen.findByRole('button', {
+        name: /Stofna kröfu/i,
+      }),
+    ).not.toBeDisabled()
   })
 })
