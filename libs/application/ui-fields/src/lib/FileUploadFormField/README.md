@@ -1,4 +1,4 @@
-## Adding the field to a form
+### Adding the Field to a Form
 
 To use the FileUploadFormField in an application
 
