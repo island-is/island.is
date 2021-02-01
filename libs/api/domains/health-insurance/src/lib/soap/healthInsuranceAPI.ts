@@ -1,7 +1,7 @@
 import {
   InternalServerErrorException,
   Inject,
-  Injectable,
+  Injectable, NotFoundException
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 
@@ -28,105 +28,95 @@ export class HealthInsuranceAPI {
   ) {}
 
   public async getProfun(): Promise<string> {
-    const client = await SoapClient.generateClient(
-      this.clientConfig.wsdlUrl,
-      this.clientConfig.baseUrl,
-      this.clientConfig.username,
-      this.clientConfig.password,
-      'profun',
-    )
-    return new Promise((resolve, reject) => {
-      if (!client) {
-        throw new InternalServerErrorException(
-          'HealthInsurance Soap Client not initialized',
-        )
-      }
-      return client.profun(
-        {
-          sendandi: '',
-        },
-        function (err: any, result: any) {
-          if (err) {
-            reject(err)
-          }
-          resolve(
-            result['ProfunType']['radnumer_si']
-              ? result['ProfunType']['radnumer_si']
-              : null,
-          )
-        },
-      )
-    })
+    logger.info(`--- Starting getProfun api call ---`)
+    
+    const args = {
+      sendandi: '',
+    }
+    const res = await this.xroadCall('profun', args)
+    return res.ProfunType.radnumer_si ?? null
   }
 
   // check whether the person is health insured
   public async isHealthInsured(
     nationalId: string,
-  ): Promise<GetSjukratryggdurTypeDto> {
+  ): Promise<boolean> {
     logger.info(`--- Starting isHealthInsured api call for ${nationalId} ---`)
-    // create 'soap' client
-    const client = await SoapClient.generateClient(
-      this.clientConfig.wsdlUrl,
-      this.clientConfig.baseUrl,
-      this.clientConfig.username,
-      this.clientConfig.password,
-      'sjukratryggdur',
-    )
-    if (!client) {
-      logger.error('HealthInsurance Soap Client not initialized')
-      throw new InternalServerErrorException(
-        'HealthInsurance Soap Client not initialized',
-      )
+    
+    const args = {
+      sendandi: '',
+      kennitala: nationalId,
+      dagsetning: Date.now()
     }
+    const res: GetSjukratryggdurTypeDto = await this.xroadCall('sjukratryggdur', args)
 
-    return new Promise((resolve, reject) => {
-      // call 'sjukratryggdur' function/endpoint
-      client.sjukratryggdur(
-        {
-          sendandi: '',
-          kennitala: nationalId,
-          dagsetning: Date.now(),
-        },
-        function (err: any, result: any) {
-          if (err) {
-            logger.error(JSON.stringify(err, null, 2))
-            reject(err)
-          } else if (!result.SjukratryggdurType) {
-            logger.error(
-              `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
-                result,
-                null,
-                2,
-              )}`,
-            )
-            reject(result)
-          } else {
-            logger.info(
-              `Successful get sjukratryggdur information for ${nationalId} with result: ${JSON.stringify(
-                result,
-                null,
-                2,
-              )}`,
-            )
-            resolve(result)
-          }
-        },
+    if(!res.SjukratryggdurType){
+      logger.error(
+        `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
+          res,
+          null,
+          2,
+        )}`,
       )
-    })
+      throw new NotFoundException(`Unexpected results: ${JSON.stringify(res)}`)
+    } else {
+      logger.info(`--- Finished isHealthInsured api call for ${nationalId} ---`)
+      return res.SjukratryggdurType.sjukratryggdur == 1
+    }
   }
 
-  // get user's applications
-  public async getApplication(
+  // get user's pending applications
+  public async getPendingApplication(
     nationalId: string,
-  ): Promise<GetFaUmsoknSjukratryggingTypeDto> {
-    logger.info(`--- Starting getApplication api call for ${nationalId} ---`)
+  ): Promise<number[]> {
+    logger.info(`--- Starting getPendingApplication api call for ${nationalId} ---`)
+
+    const args = {
+      sendandi: '',
+      kennitala: nationalId
+    }
+    /*
+      API returns null when there is no application in the system,
+      but it returns also null when the nationalId is not correct,
+      we return all reponses to developer to handle them
+
+      Application statuses:
+      0: Samþykkt/Accepted
+      1: Synjað/Refused
+      2: Í bið/Pending
+      3: Ógilt/Invalid
+    */
+    const res: GetFaUmsoknSjukratryggingTypeDto = await this.xroadCall('faumsoknirsjukratrygginga', args)
+
+    if (!res.FaUmsoknSjukratryggingType?.umsoknir) {
+      logger.info(`return empty array to graphQL`)
+      return []
+    }
+
+    logger.info(`Start filtering Pending status`)
+    // Return all caseIds with Pending status
+    const pendingCases: number[] = []
+    res.FaUmsoknSjukratryggingType.umsoknir
+      .filter((umsokn) => {
+        return umsokn.stada == 2
+      })
+      .forEach((value) => {
+        pendingCases.push(value.skjalanumer)
+      })
+
+    logger.info(`--- Finished getPendingApplication api call for ${nationalId} ---`)
+    return pendingCases
+  }
+
+  private async xroadCall(functionName: string, args: object): Promise<any>{
     // create 'soap' client
+    logger.info(`Start ${functionName} function call.`)
     const client = await SoapClient.generateClient(
       this.clientConfig.wsdlUrl,
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
-      'faumsoknirsjukratrygginga',
+      functionName,
     )
     if (!client) {
       logger.error('HealthInsurance Soap Client not initialized')
@@ -137,38 +127,15 @@ export class HealthInsuranceAPI {
 
     return new Promise((resolve, reject) => {
       // call 'faumsoknirsjukratrygginga' function/endpoint
-      client.faumsoknirsjukratrygginga(
-        {
-          sendandi: '',
-          kennitala: nationalId,
-        },
-        function (err: any, result: any) {
-          if (err) {
-            logger.error(JSON.stringify(err, null, 2))
-            reject(err)
-          } else {
-            /*
-             API returns null when there is no application in the system,
-             but it returns also null when the nationalId is not correct,
-             we return all reponses to developer to handle them
-
-             Application statuses:
-              0: Samþykkt/Accepted
-              1: Synjað/Refused
-              2: Í bið/Pending
-              3: Ógilt/Invalid
-            */
-            logger.info(
-              `Successful get faumsoknirsjukratrygginga information for ${nationalId} with result: ${JSON.stringify(
-                result,
-                null,
-                2,
-              )}`,
-            )
-            resolve(result)
-          }
-        },
-      )
+      client[functionName](args, function (err: any, result: any) {
+        if (err) {
+          logger.error(JSON.stringify(err, null, 2))
+          reject(err)
+        } else {
+          logger.info(`Successful call ${functionName} function and get result: ${JSON.stringify(result, null, 2)}`)
+          resolve(result)
+        }
+      })
     })
   }
 }
