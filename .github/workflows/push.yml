@@ -149,7 +149,11 @@ jobs:
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
       - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          if [[ "$GITHUB_HEAD_REF" == "" ]]; then
+            echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          else
+            echo "HEAD=$(git rev-parse $GITHUB_HEAD_REF)" >> $GITHUB_ENV
+          fi
         id: git_nx_head
         name: Preparing HEAD tag
 
