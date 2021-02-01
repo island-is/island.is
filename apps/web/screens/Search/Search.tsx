@@ -191,7 +191,7 @@ const Search: Screen<CategoryProps> = ({
   >).map((item) => ({
     title: item.title,
     description: item.intro ?? item.seoDescription ?? item.description,
-    href: linkResolver(typenameResolver(item.__typename), [item.slug]).href,
+    link: linkResolver(typenameResolver(item.__typename), [item.slug]),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
