@@ -24,7 +24,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   termsUserAgreementTitle: {
-    id: 'dpo.application:terms.userAgreementLabel',
+    id: 'dpo.application:terms.userAgreementTitle',
     defaultMessage: 'Notendaskilmálar',
     description: 'Some description',
   },
@@ -40,18 +40,18 @@ export const m = defineMessages({
     description: 'Some description',
   },
   termsSafetyAgreementTitle: {
-    id: 'dpo.application:terms.safetyAgreementLabel',
+    id: 'dpo.application:terms.safetyAgreementTitle',
     defaultMessage: 'Öryggisskilmálar',
     description: 'Some description',
   },
   termsSafetyAgreementMessage: {
-    id: 'dpo.application:terms.safetyAgreementLabel',
+    id: 'dpo.application:terms.safetyAgreementMessage',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nibh metus, ornare sed neque id, efficitur mollis mauris. Proin eget metus cursus, eleifend sapien ut, consectetur ex. Sed vel ante ac magna pretium scelerisque faucibus sodales diam. Donec id leo posuere, tincidunt erat quis, venenatis purus. Ut sollicitudin mauris vitae ipsum mattis, vel iaculis ante pellentesque. Nam sed facilisis sapien. Proin facilisis porta blandit. Nunc ac dictum nisl, sit amet varius tortor. Suspendisse a lacinia lacus, non lobortis purus. Nullam eget nisi vitae augue iaculis euismod. Nulla rhoncus est vitae mi condimentum, nec convallis diam ullamcorper.',
     description: 'Some description',
   },
   termsSafetyAgreementRequiredMessage: {
-    id: 'dpo.application:terms.safetyAgreementLabel',
+    id: 'dpo.application:terms.safetyAgreementRequiredMessage',
     defaultMessage: 'Þú verður að samþykkja öryggisskilmála',
     description: 'Some description',
   },
@@ -91,6 +91,11 @@ export const m = defineMessages({
     id: 'dpo.application:applicant.nationalid-placeholder',
     defaultMessage: 'Skráðu inn kennitölu stofnunar',
     description: '',
+  },
+  applicantNationalIdErrorMessage: {
+    id: 'dpo.application:applicant.nationalid-errorMessage',
+    defaultMessage: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
+    description: 'Invalid national ID',
   },
   applicantName: {
     id: 'dpo.application:applicant.name',

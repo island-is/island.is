@@ -1,3 +1,6 @@
+import { assign } from 'xstate'
+import * as z from 'zod'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -6,8 +9,10 @@ import {
   ApplicationTemplate,
   Application,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
-import * as z from 'zod'
+import { m } from '../forms/messages'
+import { useLocale } from '@island.is/localization'
+
+//const { formatMessage } = useLocale()
 
 type Events =
   | { type: 'APPROVE' }
@@ -35,11 +40,17 @@ const helpDeskContact = z.object({
 
 //TODO: extend contact. Couldn't get it to work easily with contact.extend
 const applicant = z.object({
-  name: z.string().nonempty(),
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
   email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmerið þarf að vera gilt.' },
+  ),
   nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false), {
-    message: 'Skrá þarf löglega kennitölu, með eða án bandstriks', //Question: how should error messages be translated?
+    message: 'blobb', //formatMessage(m.applicantNationalIdErrorMessage), //Question: how should error messages be translated?
   }),
   address: z.string().nonempty(),
   zipCode: z.string().nonempty(),
@@ -48,11 +59,11 @@ const applicant = z.object({
 const termsOfAgreement = z.object({
   userTerms: z.boolean().refine((v) => v, {
     //When to show these ?
-    message: 'Þú verður að samþykkja notendaskilmála',
+    //message: 'Þú verður að samþykkja notendaskilmála  tessst',
   }),
   securityTerms: z.boolean().refine((v) => v, {
     //When to show these ?
-    message: 'Þú verður að samþykkja öryggisskilmála ',
+    //message: 'Þú verður að samþykkja öryggisskilmála tesssst',
   }),
 })
 
