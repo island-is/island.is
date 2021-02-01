@@ -109,9 +109,6 @@
     "api-schema": {
       "tags": []
     },
-    "application-api-template-utils": {
-      "tags": []
-    },
     "application-core": {
       "tags": []
     },
