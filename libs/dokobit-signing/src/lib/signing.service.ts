@@ -18,10 +18,10 @@ export interface SigningServiceOptions {
 
 export class SigningServiceResponse {
   @ApiProperty()
-  controlCode: string
+  controlCode?: string
 
   @ApiProperty()
-  documentToken: string
+  documentToken?: string
 }
 
 export class DokobitError extends Error {

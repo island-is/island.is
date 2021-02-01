@@ -181,7 +181,7 @@ export function formatCourtHeadsUpSmsNotification(
 
   // Arrest date
   const arrestDateText = arrestDate
-    ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp').replace(
+    ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp')?.replace(
         ' ',
         ', kl. ',
       )}.`
@@ -189,7 +189,7 @@ export function formatCourtHeadsUpSmsNotification(
 
   // Court date
   const requestedCourtDateText = requestedCourtDate
-    ? ` ÓE fyrirtöku ${formatDate(requestedCourtDate, 'Pp').replace(
+    ? ` ÓE fyrirtöku ${formatDate(requestedCourtDate, 'Pp')?.replace(
         ' ',
         ', eftir kl. ',
       )}.`
@@ -354,9 +354,9 @@ export function formatCourtRevokedSmsNotification(
 
   // Court date
   const courtDateText = courtDate
-    ? ` Fyrirtökutími: ${formatDate(courtDate, 'Pp').replace(' ', ', kl. ')}.`
+    ? ` Fyrirtökutími: ${formatDate(courtDate, 'Pp')?.replace(' ', ', kl. ')}.`
     : requestedCourtDate
-    ? ` ÓVE fyrirtöku ${formatDate(requestedCourtDate, 'Pp').replace(
+    ? ` ÓVE fyrirtöku ${formatDate(requestedCourtDate, 'Pp')?.replace(
         ' ',
         ', eftir kl. ',
       )}.`
