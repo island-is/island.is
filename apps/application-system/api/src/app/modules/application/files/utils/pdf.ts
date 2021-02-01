@@ -37,8 +37,18 @@ export async function generateResidenceChangePdf(
   }
 
   const addParentToDoc = (header: string, parent: ParentResidenceChange) => {
-    addToDoc(Constants.BOLD_FONT, Constants.SUB_HEADER_FONT_SIZE, Constants.NORMAL_LINE_GAP, header)
-    addToDoc(Constants.NORMAL_FONT, Constants.VALUE_FONT_SIZE, Constants.NO_LINE_GAP, `Nafn: ${parent.name}`)
+    addToDoc(
+      Constants.BOLD_FONT,
+      Constants.SUB_HEADER_FONT_SIZE,
+      Constants.NORMAL_LINE_GAP,
+      header,
+    )
+    addToDoc(
+      Constants.NORMAL_FONT,
+      Constants.VALUE_FONT_SIZE,
+      Constants.NO_LINE_GAP,
+      `Nafn: ${parent.name}`,
+    )
 
     doc
       .text(`Kennitala: ${parent.ssn}`)
@@ -84,7 +94,9 @@ export async function generateResidenceChangePdf(
     addToDoc(
       Constants.NORMAL_FONT,
       Constants.VALUE_FONT_SIZE,
-      i === childrenAppliedFor.length - 1 ? Constants.LARGE_LINE_GAP : Constants.NO_LINE_GAP,
+      i === childrenAppliedFor.length - 1
+        ? Constants.LARGE_LINE_GAP
+        : Constants.NO_LINE_GAP,
       `Nafn og kennitala barns: ${c.name}, ${c.ssn}`,
     ),
   )
@@ -92,7 +104,12 @@ export async function generateResidenceChangePdf(
   addParentToDoc('Foreldri A', parentA)
   addParentToDoc('Foreldri B', parentB)
 
-  addToDoc(Constants.BOLD_FONT, Constants.SUB_HEADER_FONT_SIZE, Constants.NORMAL_LINE_GAP, 'Lögheimilsbreyting:')
+  addToDoc(
+    Constants.BOLD_FONT,
+    Constants.SUB_HEADER_FONT_SIZE,
+    Constants.NORMAL_LINE_GAP,
+    'Lögheimilsbreyting:',
+  )
 
   addToDoc(
     Constants.NORMAL_FONT,
@@ -108,7 +125,12 @@ export async function generateResidenceChangePdf(
     `Fyrra lögheimili: ${parentHomeAddress(parentB)}`,
   )
 
-  addToDoc(Constants.BOLD_FONT, Constants.SUB_HEADER_FONT_SIZE, Constants.NORMAL_LINE_GAP, 'Gildistími samnings')
+  addToDoc(
+    Constants.BOLD_FONT,
+    Constants.SUB_HEADER_FONT_SIZE,
+    Constants.NORMAL_LINE_GAP,
+    'Gildistími samnings',
+  )
 
   addToDoc(
     Constants.NORMAL_FONT,
