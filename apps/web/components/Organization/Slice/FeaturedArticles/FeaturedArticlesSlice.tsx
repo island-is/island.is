@@ -2,7 +2,6 @@ import React from 'react'
 import { FeaturedArticles } from '@island.is/web/graphql/schema'
 import {
   Box,
-  Button,
   FocusableBox,
   GridColumn,
   GridContainer,
@@ -13,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './FeaturedArticlesSlice.treat'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import Link from 'next/link'
 import { useNamespace } from '@island.is/web/hooks'
 import { Namespace } from '@island.is/api/schema'
 
@@ -56,7 +54,6 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
                     <FocusableBox
                       key={slug}
                       href={url.href}
-                      as={url.as}
                       borderRadius="large"
                     >
                       {({ isFocused }) => (
