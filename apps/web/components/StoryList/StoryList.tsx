@@ -36,9 +36,7 @@ export const StoryList: FC<StoryListProps> = ({
         <div className={styles.margin}>
           <Link
             href={{
-              pathname: `${
-                linkResolver('newsoverview').href
-              }?tag=${PROJECT_STORIES_TAG_ID}`,
+              pathname: linkResolver('newsoverview').href,
               query: { tag: PROJECT_STORIES_TAG_ID },
             }}
             pureChildren
