@@ -59,6 +59,11 @@
 - [Personas](handbook/technical-overview/personas.md)
 - [Teamwork](handbook/technical-overview/teamwork.md)
 - [Technical Direction](handbook/technical-overview/technical-direction.md)
+- [X-Road / Straumurinn](handbook/technical-overview/x-road/README.md)
+  - [Straumurinn – Notkun Og Umsýsla](handbook/technical-overview/x-road/straumurinn-usage-and-operation.md)
+  - [Architecture Guidelines for Service Providers and Consumers](handbook/technical-overview/x-road/x-road-architecture-guidelines-for-service-providers-and-consumers.md)
+  - [Straumurinn - Security Server Installation and Registration Steps](handbook/technical-overview/x-road/x-road-security-server-installation-and-registration-steps.md)
+  - [X-Road - Kerfisuppsetning](handbook/technical-overview/x-road/x-road-system-requirements.md)
 
 ## Repository
 
@@ -119,6 +124,7 @@
 - [Content Search Toolkit](libs/content-search-toolkit/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
+- [Feature Flags](libs/feature-flags/README.md)
 - [Island UI](libs/island-ui/README.md)
 - [Localization](libs/localization/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)

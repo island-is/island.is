@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useContext,
 } from 'react'
-import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
@@ -19,6 +18,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Link,
 } from '@island.is/island-ui/core'
 import { renderHtml } from '@island.is/island-ui/contentful'
 import { Document } from '@contentful/rich-text-types'
@@ -252,7 +252,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
                                 [styles.textItemVisible]: visible,
                               })}
                             >
-                              <Link {...linkUrls}>
+                              <Link {...linkUrls} skipTab>
                                 <Button
                                   variant="text"
                                   icon="arrowForward"
