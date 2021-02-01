@@ -38,7 +38,7 @@ Special note about pricing comparison: This is a very high-level price compariso
 | Total                               |                    |               |                           | **ISK5,780,400.00**               | **ISK8,200,800.00**                    |
 |                                     |                    |               |                           |                                   |                                        |
 | **SaaS**                            |                    |               |                           |                                   |                                        |
-| DataDog | 0 | 0 | $1,750.00 | **ISK2,751,000.00** | **ISK5,502,000.00** | |
+| DataDog                             | 0                  | 0             | \$1,750.00                | **ISK2,751,000.00**               | **ISK5,502,000.00**                    |  |
 |                                     |                    |               |                           |                                   |                                        |
 |                                     |                    |               |                           |                                   |                                        |
 |                                     |                    |               |                           |                                   |                                        |
