@@ -49,18 +49,18 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       breadcrumbItems={[
         {
           title: 'Ísland.is',
-          href: linkResolver('homepage').as,
+          href: linkResolver('homepage').href,
         },
         {
           title: n('organizations', 'Stofnanir'),
-          href: linkResolver('organizations').as,
+          href: linkResolver('organizations').href,
         },
       ]}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
         titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).as,
+          href: linkResolver('organizationpage', [organizationPage.slug]).href,
           active: false,
         },
       }}
