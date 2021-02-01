@@ -76,6 +76,10 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'E - Fjölmiðlabann'
     case CaseCustodyRestrictions.VISITAION:
       return 'C - Heimsóknarbann'
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
+      return 'Tilkynningaskilda'
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
+      return 'Afhending vegabréfs'
   }
 }
 

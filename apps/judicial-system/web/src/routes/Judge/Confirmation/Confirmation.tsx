@@ -501,29 +501,33 @@ export const Confirmation: React.FC = () => {
               </Box>
             )}
           </Box>
-          {workingCase.decision === CaseDecision.ACCEPTING && (
-            <Box marginBottom={7}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Tilhögun gæsluvarðhalds
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
+          {workingCase.decision === CaseDecision.ACCEPTING &&
+            workingCase.type == CaseType.CUSTODY && (
+              <Box marginBottom={7}>
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Tilhögun gæsluvarðhalds
+                  </Text>
+                </Box>
+                <Box marginBottom={2}>
+                  <Text>
+                    {formatCustodyRestrictions(
+                      workingCase.accusedGender || CaseGender.OTHER,
+                      workingCase.custodyRestrictions || [],
+                    )}
+                  </Text>
+                </Box>
                 <Text>
-                  {formatCustodyRestrictions(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                    workingCase.custodyRestrictions || [],
-                  )}
+                  Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                  bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir
+                  dómara.
                 </Text>
               </Box>
-              <Text>
-                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-              </Text>
-            </Box>
-          )}
-          {workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
+            )}
+          {(workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            (workingCase.type == CaseType.TRAVEL_BAN &&
+              workingCase.decision === CaseDecision.ACCEPTING)) && (
             <Box marginBottom={7}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
