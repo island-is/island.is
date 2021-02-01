@@ -34,7 +34,8 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             buildExternalDataProvider({
               title: 'Gagnaöflun',
               id: 'approveExternalData',
-              subTitle: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+              subTitle:
+                'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
               checkboxLabel: 'Ég samþykki gagnaöflun',
               dataProviders: [
                 buildDataProviderItem({

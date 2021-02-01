@@ -160,7 +160,7 @@ const FormExternalDataProvider: FC<{
                   }}
                   checked={value}
                   name={`${id}`}
-                  label={checkboxLabel || 'Ég samþykki'}
+                  label={checkboxLabel || 'Ég samþykki'}
                   value={id}
                 />
               </Box>
