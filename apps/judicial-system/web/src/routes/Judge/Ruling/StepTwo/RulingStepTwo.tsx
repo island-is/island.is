@@ -426,34 +426,35 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
               </BlueBox>
             </Box>
-            {(!workingCase.decision ||
-              workingCase.decision === CaseDecision.ACCEPTING) && (
-              <Box component="section" marginBottom={3}>
-                <Box marginBottom={3}>
-                  <Text as="h3" variant="h3">
-                    Tilhögun gæsluvarðhalds
-                  </Text>
+            {workingCase.decision === CaseDecision.ACCEPTING &&
+              workingCase.type === CaseType.CUSTODY && (
+                <Box component="section" marginBottom={3}>
+                  <Box marginBottom={3}>
+                    <Text as="h3" variant="h3">
+                      Tilhögun gæsluvarðhalds
+                    </Text>
+                  </Box>
+                  <BlueBox>
+                    <CheckboxList
+                      checkboxes={judgeRestrictions}
+                      selected={workingCase.custodyRestrictions}
+                      onChange={(id) =>
+                        setCheckboxAndSendToServer(
+                          'custodyRestrictions',
+                          id,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                    />
+                  </BlueBox>
                 </Box>
-                <BlueBox>
-                  <CheckboxList
-                    checkboxes={judgeRestrictions}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
-                </BlueBox>
-              </Box>
-            )}
-            {(!workingCase.decision ||
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
+              )}
+            {(workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+              (workingCase.decision === CaseDecision.ACCEPTING &&
+                workingCase.type === CaseType.TRAVEL_BAN)) && (
               <Box component="section" marginBottom={4}>
                 <Box marginBottom={3}>
                   <Text as="h3" variant="h3">
