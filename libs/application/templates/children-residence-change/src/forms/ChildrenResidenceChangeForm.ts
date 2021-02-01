@@ -114,7 +114,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           title: 'Tilefni',
           children: [
             buildCustomField({
-              id: 'reason',
+              id: 'residenceChangeReason',
               title: 'Hvert er tilefni breytingar á lögheimili?',
               component: 'Reason',
             }),

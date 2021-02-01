@@ -3,7 +3,8 @@ import { Box, Input } from '@island.is/island-ui/core'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 
-const Reason = ({ error, application }: FieldBaseProps) => {
+const Reason = ({ error, application, field }: FieldBaseProps) => {
+  const { id, disabled } = field
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
@@ -18,8 +19,8 @@ const Reason = ({ error, application }: FieldBaseProps) => {
         return (
           <Box marginTop={4}>
             <Input
-              id="reason"
-              name="reason"
+              id={id}
+              name={`${id}`}
               label="Tilefni"
               required={true}
               value={value}
@@ -30,7 +31,7 @@ const Reason = ({ error, application }: FieldBaseProps) => {
               rows={6}
               onChange={(e) => {
                 onChange(e.target.value)
-                setValue('reason', e.target.value)
+                setValue(id as string, e.target.value)
               }}
             />
           </Box>
