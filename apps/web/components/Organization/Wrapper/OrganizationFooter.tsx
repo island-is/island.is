@@ -6,6 +6,7 @@ import {
   GridContainer,
   GridRow,
   Link,
+  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './OrganizationFooter.treat'
 import Markdown from 'markdown-to-jsx'
@@ -18,43 +19,77 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   organizationPage,
 }) => {
   return (
-    <footer aria-labelledby="organizationFooterTitle" className={styles.footer}>
-      <GridContainer>
-        <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            className={styles.footerTitleWrapper}
-          >
-            <img
-              src={organizationPage.organization.logo.url}
-              className={styles.footerLogo}
-              alt=""
-            />
-            <div id="organizationFooterTitle" className={styles.footerTitle}>
-              {organizationPage.title}
-            </div>
+    <footer aria-labelledby="organizationFooterTitle">
+      <Box background={'blueberry600'} color={'white'} paddingTop={5}>
+        <GridContainer>
+          <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              paddingBottom={5}
+              marginBottom={5}
+              borderColor={'blueberry300'}
+              borderBottomWidth={'standard'}
+            >
+              <Box marginRight={4}>
+                <img
+                  src={organizationPage.organization.logo.url}
+                  alt=""
+                  width={'70'}
+                />
+              </Box>
+              <div id="organizationFooterTitle">
+                <Text variant="h2" color="white">
+                  {organizationPage.title}
+                </Text>
+              </div>
+            </Box>
+            <GridRow>
+              {organizationPage.footerItems.map((item, index) => (
+                <GridColumn
+                  span={['12/12', '6/12', '4/12', '1/5']}
+                  className={index === 0 ? styles.footerItemFirst : null}
+                >
+                  <Box marginBottom={5}>
+                    <Box marginBottom={1}>
+                      <Text
+                        color={'white'}
+                        fontWeight={index === 0 ? 'semiBold' : 'regular'}
+                      >
+                        {item.link ? (
+                          <Link
+                            href={item.link.url}
+                            underline={'normal'}
+                            underlineVisibility={'always'}
+                          >
+                            {item.title}
+                          </Link>
+                        ) : (
+                          item.title
+                        )}
+                      </Text>
+                    </Box>
+                    <Text variant={'small'} color={'white'} lineHeight={'lg'}>
+                      <Markdown
+                        options={{
+                          overrides: {
+                            p: {
+                              component: 'div',
+                            },
+                          },
+                        }}
+                      >
+                        {item.content}
+                      </Markdown>
+                    </Text>
+                  </Box>
+                </GridColumn>
+              ))}
+            </GridRow>
           </Box>
-          <GridRow>
-            {organizationPage.footerItems.map((item) => (
-              <GridColumn
-                span={['12/12', '6/12', '4/12', '1/5']}
-                className={styles.footerItem}
-              >
-                <div className={styles.footerItemTitle}>
-                  {item.link ? (
-                    <Link href={item.link.url}>{item.title}</Link>
-                  ) : (
-                    item.title
-                  )}
-                </div>
-                <Markdown>{item.content}</Markdown>
-              </GridColumn>
-            ))}
-          </GridRow>
-        </Box>
-      </GridContainer>
+        </GridContainer>
+      </Box>
     </footer>
   )
 }
