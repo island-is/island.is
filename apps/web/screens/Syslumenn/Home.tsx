@@ -17,6 +17,9 @@ import {
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -24,6 +27,11 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
+  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
+  if (disablePage === 'true') {
+    throw new CustomNextError(404, 'Not found')
+  }
+
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
