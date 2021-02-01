@@ -67,9 +67,7 @@ import { Location, mapLocation } from '../models/location.model'
 import { mapTellUsAStory, TellUsAStory } from '../models/tellUsAStory.model'
 import { Districts, mapDistricts } from '../models/districts.model'
 import {
-  FeaturedArticle,
   FeaturedArticles,
-  mapFeaturedArticle,
   mapFeaturedArticles,
 } from '../models/featuredArticles.model'
 import { mapTwoColumnText, TwoColumnText } from '../models/twoColumnText.model'
