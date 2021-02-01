@@ -49,8 +49,8 @@ export interface ApplicationStateMetaOnEntry<
   T extends EventObject = AnyEventObject
 > {
   // Name of the action that will be run on the API
-  // these actions are exported from template source as:
-  // export const getAPIModule = () => import('./apiModule/')
+  // these actions are exported are found in:
+  // /libs/application/template-api-modules
   apiModuleAction: string
   onSuccessEvent?: T[keyof T]
   onErrorEvent?: T[keyof T]

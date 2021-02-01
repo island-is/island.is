@@ -19,8 +19,6 @@ type TemplateLibraryModule = {
   default: unknown
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
   getFields?: () => Promise<UIFields>
-  // TODO generic APIAction type
-  getAPIModule?: () => Promise<any>
 }
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 

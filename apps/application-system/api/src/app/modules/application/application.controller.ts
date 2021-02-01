@@ -420,12 +420,6 @@ export class ApplicationController {
   ): Promise<[false] | [true, BaseApplication]> {
     const helper = new ApplicationTemplateHelper(application, template)
 
-    const apiActionProps = {
-      jwtSecret: environment.auth.jwtSecret,
-      clientLocationOrigin: environment.clientLocationOrigin,
-      authorization: authorization || '',
-    }
-
     const [hasChanged, newState, newApplication] = helper.changeState(event)
 
     if (hasChanged) {
@@ -451,8 +445,8 @@ export class ApplicationController {
           templateId: template.type,
           type: apiModuleAction,
           props: {
-            ...apiActionProps,
             application: updatedApplication as BaseApplication,
+            authorization,
           },
         })
 
