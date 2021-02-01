@@ -10,7 +10,6 @@ interface Props {
   error?: string
   id: string
   label?: string
-  rows?: number
   name?: string
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -40,7 +39,6 @@ export const InputController: FC<Props> = ({
   label,
   name = id,
   placeholder,
-  rows,
   backgroundColor,
   textarea,
   currency,
@@ -127,7 +125,6 @@ export const InputController: FC<Props> = ({
           hasError={error !== undefined}
           errorMessage={error}
           textarea={textarea}
-          rows={rows}
           type={type}
           onChange={(e) => {
             onChange(e.target.value)

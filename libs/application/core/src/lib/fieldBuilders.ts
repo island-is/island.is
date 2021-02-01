@@ -267,12 +267,10 @@ export function buildTextField(data: {
   id: string
   title: FormText
   description?: FormText
-  label?: FormText
   disabled?: boolean
   width?: FieldWidth
   variant?: TextFieldVariant
   placeholder?: FormText
-  rows?: number
   format?: string | FormatInputValueFunction
   backgroundColor?: InputBackgroundColor
   suffix?: string
@@ -284,8 +282,6 @@ export function buildTextField(data: {
     id,
     title,
     description,
-    label,
-    rows,
     backgroundColor,
     placeholder,
     disabled = false,
@@ -298,7 +294,6 @@ export function buildTextField(data: {
     children: undefined,
     defaultValue,
     placeholder,
-    rows,
     disabled,
     width,
     condition,
@@ -306,7 +301,6 @@ export function buildTextField(data: {
     id,
     title,
     description,
-    label,
     variant,
     format,
     suffix,

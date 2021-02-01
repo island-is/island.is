@@ -16,12 +16,19 @@ import { useDefaultValue } from '../useDefaultValue'
 interface Props extends FieldBaseProps {
   field: TextField
 }
-const TextFormField: FC<Props> = ({ autoFocus, application, error, field }) => {
+const TextFormField: FC<Props> = ({
+  autoFocus,
+  application,
+  error,
+  field,
+  showFieldName,
+}) => {
   const {
     id,
     disabled,
     description,
     label,
+    title,
     placeholder,
     rows,
     backgroundColor,
@@ -50,7 +57,11 @@ const TextFormField: FC<Props> = ({ autoFocus, application, error, field }) => {
             formatMessage,
           )}
           rows={rows}
-          label={label && formatText(label, application, formatMessage)}
+          label={
+            showFieldName
+              ? formatText(title, application, formatMessage)
+              : undefined
+          }
           autoFocus={autoFocus}
           error={error}
           onChange={() => {
