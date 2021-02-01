@@ -41,13 +41,21 @@ export class CmsElasticsearchService {
 
   async getArticles(
     index: string,
-    { category, size }: GetArticlesInput,
+    input: GetArticlesInput,
   ): Promise<Article[]> {
     const query = {
       types: ['webArticle'],
-      tags: [{ type: 'category', key: category }],
+      tags: [],
       sort: { 'title.sort': 'asc' as sortDirection },
-      size,
+      size: input.size,
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
     }
 
     const articlesResponse = await this.elasticService.getDocumentsByMetaData(

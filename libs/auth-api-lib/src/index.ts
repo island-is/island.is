@@ -21,7 +21,7 @@ export * from './lib/entities/models/api-resource-user-claim.model'
 export * from './lib/entities/models/identity-resource-user-claim.model'
 export * from './lib/entities/models/identity-resource.model'
 export * from './lib/entities/models/admin-access.model'
-export * from './lib/entities/models/idp-restriction.model'
+export * from './lib/entities/models/idp-provider.model'
 
 // DTO's
 export * from './lib/entities/dto/api-scopes.dto'

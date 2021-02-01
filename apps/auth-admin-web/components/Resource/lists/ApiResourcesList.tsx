@@ -197,10 +197,15 @@ const ApiResourcesList: React.FC = () => {
               </table>
             </div>
             <div>
+              <div className="api-resources-list__container__export">
+                <div className="api-resources-list__container__export__container__button">
+                  <button type="button" onClick={() => exportCsv()}>
+                    <i className="icon__export__csv" aria-hidden="true"></i>
+                    <span>Export</span>
+                  </button>
+                </div>
+              </div>
               <Paginator lastPage={lastPage} handlePageChange={handlePager} />
-              <button type="button" onClick={() => exportCsv()}>
-                <span>Export</span>
-              </button>
             </div>
           </div>
         </div>
