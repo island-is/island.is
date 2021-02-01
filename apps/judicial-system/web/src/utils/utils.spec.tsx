@@ -10,7 +10,7 @@ import {
 } from './formatters'
 import * as formatters from './formatters'
 import {
-  constructConclusion,
+  getConclusion,
   constructProsecutorDemands,
   getShortGender,
   isDirty,
@@ -324,7 +324,7 @@ describe('Step helper', () => {
     })
   })
 
-  describe('constructConclution', () => {
+  describe('getConclution', () => {
     test('should return rejected message if the case is being rejected', async () => {
       // Arrange
       const wc = {
@@ -335,7 +335,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -375,7 +375,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -406,10 +406,11 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
+        type: CaseType.CUSTODY,
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -442,7 +443,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -479,7 +480,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -516,7 +517,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(

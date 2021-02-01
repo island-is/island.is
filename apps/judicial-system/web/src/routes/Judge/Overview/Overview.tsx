@@ -137,7 +137,11 @@ export const JudgeOverview: React.FC = () => {
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              Yfirlit kröfu
+              {`Yfirlit ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'kröfu'
+                  : 'farbannskröfu'
+              }`}
             </Text>
           </Box>
           <Box component="section" marginBottom={7}>
@@ -280,7 +284,11 @@ export const JudgeOverview: React.FC = () => {
             <div className={styles.infoSection}>
               <Box marginBottom={1}>
                 <Text variant="h3" as="h3">
-                  Takmarkanir og tilhögun á gæslu
+                  {`Takmarkanir og tilhögun ${
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'á gæslu'
+                      : 'farbanns'
+                  }`}
                 </Text>
               </Box>
               <Text>

@@ -8,7 +8,7 @@ import {
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
@@ -21,7 +21,9 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="id_1"
-      label="Krafan um gæsluvarðhald frá lögreglu"
+      label={`Krafan um ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      } frá lögreglu`}
       labelVariant="h3"
     >
       <Box marginBottom={2}>

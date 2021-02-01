@@ -23,7 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { constructConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -115,7 +115,7 @@ export const RulingStepTwo: React.FC = () => {
                 </Text>
               </Box>
               <Box marginBottom={3}>
-                <Text>{constructConclusion(workingCase)}</Text>
+                <Text>{getConclusion(workingCase)}</Text>
               </Box>
               <Text variant="h4" fontWeight="light">
                 Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.

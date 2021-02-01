@@ -19,7 +19,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  constructConclusion,
+  getConclusion,
   getAppealDecisionText,
   isNextDisabled,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -433,7 +433,7 @@ export const Confirmation: React.FC = () => {
                 Úrskurðarorð
               </Text>
             </Box>
-            <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
+            <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={1}>
