@@ -27,10 +27,8 @@ const TextFormField: FC<Props> = ({
     id,
     disabled,
     description,
-    label,
     title,
     placeholder,
-    rows,
     backgroundColor,
     format,
     variant = 'text',
@@ -56,7 +54,6 @@ const TextFormField: FC<Props> = ({
             application,
             formatMessage,
           )}
-          rows={rows}
           label={
             showFieldName
               ? formatText(title, application, formatMessage)
