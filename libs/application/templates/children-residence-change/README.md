@@ -32,7 +32,7 @@ Prerequisites
 
 2. Fetch development secrets for the project
 
-- Run `yarn get-secrets service-portal`
+- Run `yarn env-secrets service-portal`
 
 3. Get kubeconfig
 
