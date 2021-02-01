@@ -5,7 +5,7 @@ Umsjónarmenn þjónustusíðna eru þeir sem hafa aðgang að þjónustusíðun
 [Admin Users](#admin-users)  
 [Identity Providers](#identity-providers)  
 [IP Addresses](#ip-adresses)  
-[Logs](#logs)  
+[Logs](#logs)
 
 ![admin-control.png](images/admin-control.png)
 
@@ -20,8 +20,8 @@ hnappinn _+ Create new Admin UI User_.
 
 ![new-admin-user-details](images/new-admin-user-details.png)
 
-Fylla þarf út reitina _National Id (Kennitala)_ og User Email_ en
-reiturinn _Scope_ er með sjálfgefið gildi sem ekki er hægt að
+Fylla þarf út reitina _National Id (Kennitala)_ og User Email* en
+reiturinn \_Scope* er með sjálfgefið gildi sem ekki er hægt að
 skipta um.
 
 - #### <a name="national-id"></a>National Id / Kennitala
@@ -89,4 +89,3 @@ Fylla þarf út alla reitina: _Name_, _Label_, _HelpText_ og _Level_.
 
 Í þessum flipa er hægt að fá aðgang að loggum úr innskráningarkerfinu
 frá loggunarkerfinu [Datadog](https://app.datadoghq.eu/logs?cols=core_host%2Ccore_service&from_ts=1603725071881&index=&live=true&messageDisplay=expanded-md&query=kube_namespace%3Aidentity-server%20service%3Aauth-admin-web&stream_sort=desc&to_ts=1603725971881)
-

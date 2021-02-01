@@ -121,21 +121,21 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 
   Ef gildi er skráð í þennan reit mun biðlarastaðhæfing af
   viðkomandi gerð fá skráð gildi sem forskeyti (_prefix_).  
-   Sjálfgefið gildi er   _client  _  _.  
+   Sjálfgefið gildi er _client _ \_.  
    Tilgangurinn með þessu er að koma í veg fyrir að biðlarastaðhæfingar rekist saman við notendastaðhæfingar.
 
 ![detailed-form-advanced3.png](images/detailed-form-advanced3.png)
 
 - ### <a name="access-token-browser"></a>Allow Access Token Via Browser
 
-  Hakreitur sem segir til um hvort viðkomandi biðlari megi taka við 
+  Hakreitur sem segir til um hvort viðkomandi biðlari megi taka við
   [aðgangstókum](../concepts.md#access-token) frá vöfrum.  
    Þetta getur nýst við að skerpa á flæði sem heimila fjölþátta svörunargerðir (_response types_).  
    Það er gert með því að heimila ekki biðlara með blandað flæði (_hybrid flow_) sem á að nota _code id_token_ til að bæta við svörunargerðina og þannig leka [tókanum](../concepts.md#token) yfir í vafrann.
 
 - ### <a name="offline-access"></a>Allow Offline Access
 
-  Hakreitur sem segir til um hvort þessi biðlari megi biðja um að endurnýjaða 
+  Hakreitur sem segir til um hvort þessi biðlari megi biðja um að endurnýjaða
   [tóka](../concepts.md#token) (með því að sækja um _offline_access_ umfangið).  
   Svo að biðlarar geti notað _refresh token_ að þá verður þetta gildi að vera á.
 
@@ -152,8 +152,8 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
   Ef hakað er við þennan reit eiga [auðkennistókar](../concepts.md#id-token) alltaf að innihalda
   notendastaðhæfingar (_user claims_ þegar sótt er bæði um [auðkennistóka](../concepts.md#id-token) og
   [aðgangstóka](../concepts.md#access-token).  
-   Ef ekki er hakað við reitinn eiga biðlarar að nota endapunkt fyrir 
-   notendaupplýsingar (_userinfo endpoint_).  
+   Ef ekki er hakað við reitinn eiga biðlarar að nota endapunkt fyrir
+  notendaupplýsingar (_userinfo endpoint_).  
    Sjálfgefið gildi er _false_.
 
 - ### <a name="send-client-claims"></a>Always Send Client Claims
@@ -187,14 +187,14 @@ Hér verður lýst flókna ferlinu við að búa til biðlara og lýst vel hvað
 
 - ### <a name="pkce"></a>Require Pkce
 
-  Ef hakað er við þennan reit verða biðlarar sem notast við 
+  Ef hakað er við þennan reit verða biðlarar sem notast við
   [leyfistegund (_grant type_)](../concepts.md#grant-type) byggða á
-  [heimilunarkóða (_authorization code_)](../concepts.md#access-token) að senda frá sér 
+  [heimilunarkóða (_authorization code_)](../concepts.md#access-token) að senda frá sér
   prófunarlykil (_proof key_).
 
 - ### <a name="update-access-tokens-refresh"></a>Update Access Token Claims On Refresh
 
-  Ef hakað er við þennan reit er ákvarðað gildi sem segir til um hvort 
+  Ef hakað er við þennan reit er ákvarðað gildi sem segir til um hvort
   [aðgangstókinn](../concepts.md#access-token) og [gildi hans (_claims_)](../concepts.md#claims)
   verði uppfærðar þegar staðhæfing kemur um endurnýjun tókans.
 

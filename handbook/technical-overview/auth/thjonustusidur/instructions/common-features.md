@@ -9,7 +9,7 @@ Hægt er að leita að [biðlurum](client/README.md), [forritaskilatilföngum](r
 ## Breyta skráðum aðila
 
 Hægt er að breyta skráðum [biðlurum](client/README.md), [forritaskilatilföngum](resources/api-resources.md),
-[forritaskilaumföngum](resources/api-scopes.md), [auðkennistilföngum](resources/identity-resources.md) 
+[forritaskilaumföngum](resources/api-scopes.md), [auðkennistilföngum](resources/identity-resources.md)
 og [umsjónarmönnum](users/system-users.md) með því að smella á pennamerki ![pen-icon](images/pen-icon.png) þeirra hlutar sem á að breyta í viðkomandi lista.  
 Við það er farið í upphafsþrep skráningar viðkomandi aðila þar sem hægt er að breyta skráningunni.
 
@@ -31,14 +31,14 @@ Við það er farið í upphafsþrep skráningar viðkomandi aðila þar sem hæ
 
   Hægt er að eyða skráðum [biðlurum](client/README.md), [forritaskilatilföngum](resources/api-resources.md),
   [forritaskilaumföngum](resources/api-scopes.md), [auðkennistilföngum](resources/identity-redsources.md) og
-  [umsjónarmönnum](users/system-users.md) með því að smella á ruslatunnumerki 
+  [umsjónarmönnum](users/system-users.md) með því að smella á ruslatunnumerki
   ![garbage-can](images/garbage-can.png) þeirra forritaskilatilfanga á listanum sem á að eyða.
 
 - ### Eyða skráðum gildum
   Ef ruslatunnuhnappur ![garbage-can](images/garbage-can.png) er við hlið skráðs gildis í einhverju þrepi skráningarinnar er hægt að smella á hann til að eyða viðkomandi gildi.  
-  Þetta á við um allar tegundir skráningar: [biðlara](client/README.md), 
-  [forritaskilatilföng](resources/api-resources.md), 
-  [forritaskilaumföng](resources/api-scopes.md), 
+  Þetta á við um allar tegundir skráningar: [biðlara](client/README.md),
+  [forritaskilatilföng](resources/api-resources.md),
+  [forritaskilaumföng](resources/api-scopes.md),
   [auðkennistilföng](resources/identity-resources.md) og [umsjónarmenn](users/system-users.md).
 
 ## Keyra út / Export

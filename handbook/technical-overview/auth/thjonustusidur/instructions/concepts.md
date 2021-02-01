@@ -1,6 +1,6 @@
 # Concepts
 
-Hér má sjá yfirlit yfir hugtök sem tengjast OAuth2 staðlinum, IdentityServer4 og auðkenningarþjónustu 
+Hér má sjá yfirlit yfir hugtök sem tengjast OAuth2 staðlinum, IdentityServer4 og auðkenningarþjónustu
 island.is
 
 ### <a name="oauth"></a>OAuth 2
@@ -36,7 +36,6 @@ Sjá nánar [hér](https://identityserver4.readthedocs.io/en/latest/)
 
    Auðkennistókar geyma upplýsingar um notendann sem var að skrá sig inn og veitir forritum aðgang að þeim upplýsingum í gegnum þennan tóka.
 
-
 ### <a name="cors"></a>Cross-origin resource sharing (CORS)
 
 CORS er aðferð sem gerir vefsíðum kleift að biðja um aðgang að takmörkuðum auðlindum frá öðru léni.  
@@ -61,7 +60,7 @@ Lesa má nánar um það [hér](https://tools.ietf.org/html/rfc6749#section-4.4)
 ### <a name="claims"></a>Claims
 
 Claim er upplýsingabútur sem lýsir gefnu gildinu að einhverju leyti eða gefur því gildi.  
-Dæmi um Claim eru nöfn, símanúmer og kennitölur einstaklinga. 
+Dæmi um Claim eru nöfn, símanúmer og kennitölur einstaklinga.
 
 ### <a name="security-level"></a>Öryggisstig
 

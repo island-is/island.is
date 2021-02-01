@@ -30,5 +30,5 @@ Innskráningarkerfið leitast við að bjóða upp á val um innskráningarleið
 - ### Auðkenning í gegnum SmartId
   Svo er líka hægt að skrá sig inn í gegnum SmartId-kerfið.  
   Á eftirfarandi hlekkjum má finna upplýsingar um kerfið:
-    - https://audkenni.atlassian.net/wiki/spaces/DOC/overview
-    - https://audkenni.atlassian.net/wiki/spaces/DOC/pages/1059684353/Step+by+step+instructions
+  - https://audkenni.atlassian.net/wiki/spaces/DOC/overview
+  - https://audkenni.atlassian.net/wiki/spaces/DOC/pages/1059684353/Step+by+step+instructions

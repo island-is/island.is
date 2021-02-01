@@ -8,7 +8,7 @@ Til að skrá ný forritaskilaumfang er smellt á [+ Create new Api scope](#crea
 
 ## <a name="create-new-api-scope"></a>+ Create new Api scope
 
-Fylla þarf út reitina _Name_ og _Display Name_, fylla má út reitinn _Description_ og haka má við reitina 
+Fylla þarf út reitina _Name_ og _Display Name_, fylla má út reitinn _Description_ og haka má við reitina
 _Enabled_, _Show in Discovery Document_, _Emphasize_ og _Required_.
 
 ![](api-scopes-images/create.png)
@@ -63,12 +63,12 @@ Hakað er við þær notendastaðhæfingar sem þörf er á að nota.
 
 - ### Back
 
-  Ef smellt er á þennan hnapp er farið aftur aftur í upphafsþrep skráningarinnar 
+  Ef smellt er á þennan hnapp er farið aftur aftur í upphafsþrep skráningarinnar
   [Api Scope](#create-new-api-scope).
 
 - ### Next
 
-  Ef smellt er á þennan hnapp er skráningarferlinu lokið og farið í lokþrep forritaskilatilfanganna 
+  Ef smellt er á þennan hnapp er skráningarferlinu lokið og farið í lokþrep forritaskilatilfanganna
   [Steps completed](#steps-completed)
 
 ## Steps completed

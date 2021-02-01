@@ -15,7 +15,7 @@ _Enabled_, _Show in Discovery Document_, _Emphasize_ og _Required_.
 ### Name / Nafn
 
 Nafn auðkennistilfanganna.  
-Biðlarinn mun nota þetta gildi í umfangsstika (_scope parameter_) sínum þegar hann biður um 
+Biðlarinn mun nota þetta gildi í umfangsstika (_scope parameter_) sínum þegar hann biður um
 [leyfistegund](../concepts.md#grant-type).
 
 ### Display name / Birtingarnafn
@@ -38,7 +38,7 @@ Sjálfgefið er hakað við þennan reit.
 
 ### Emphasize
 
-Ef hakað er við þennan reit mun staðfestingarglugginn (_consent screen_) leggja áherslu (_emphasize_) á [umfang þessara forritaskila](api-scopes.md) 
+Ef hakað er við þennan reit mun staðfestingarglugginn (_consent screen_) leggja áherslu (_emphasize_) á [umfang þessara forritaskila](api-scopes.md)
 (þ.e.a.s. ef staðfestingarglugginn notast á annað borð við slíkan eiginleika).
 Mælt er með að nota þessa stillingu fyrir sérstaklega viðkvæm og mikilvæg umfang.
 
@@ -62,12 +62,12 @@ Hér er hægt að velja [notendastaðhæfingar (_user claims_)](../concepts.md#c
 
 ### Back
 
-Ef smellt er á þennan hnapp er farið aftur aftur í upphafsþrep skráningarinnar 
+Ef smellt er á þennan hnapp er farið aftur aftur í upphafsþrep skráningarinnar
 [Identity Resource](#identity-resources).
 
 ### Next
 
-Ef smellt er á þennan hnapp er skráningarferlinu lokið og farið í lokþrep forritaskilatilfanganna 
+Ef smellt er á þennan hnapp er skráningarferlinu lokið og farið í lokþrep forritaskilatilfanganna
 [Steps completed](#steps-completed)
 
 ## <a name="steps-completed"></a>Steps completed

@@ -23,8 +23,8 @@ Innskráningarkerfið skiptist í þrjá meginhluta
 
 2.  ### Auðkennisveita
 
-    Auðkenningin sjálf. Auðkenningin getur farið fram í 
-    [síma](../instructions/client/edit/README.md#sim-card) og á 
+    Auðkenningin sjálf. Auðkenningin getur farið fram í
+    [síma](../instructions/client/edit/README.md#sim-card) og á
     [korti](../instructions/client/edit/README.md#identity-card).
 
 3.  ### Framendi
@@ -33,7 +33,7 @@ Innskráningarkerfið skiptist í þrjá meginhluta
 
 Hlutverk rekstraraðila er að viðhalda þessum þremur hlutum kerfisins og sjá til þess að þeir virki rétt.
 
-Við þróun auðkenningarinnar notast rekstraraðili við kerfið 
+Við þróun auðkenningarinnar notast rekstraraðili við kerfið
 [Identity server](#ids4) sem er stöðluð hugbúnaðarlausn sem sér um auðkenninguna og vinnur samhliða lausnum rekstraraðila.
 
 Nánari upplýsingar um innskráningarkerfið má finna í kerfishandbókunum á eftirfarandi hlekk:
@@ -83,4 +83,3 @@ Við þróun auðkenningarinnar notast rekstraraðili við kerfið [Identity ser
 ## Frekari upplýsingar
 
 Hægt er að lesa um fleiri hugtök tengt auðkenningarþjónustu island.is [hér](../instructions/concepts.md)
-

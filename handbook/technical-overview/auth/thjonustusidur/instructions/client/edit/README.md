@@ -87,7 +87,7 @@
 
   Hér er tilgreint hvaða vefslóðir má vísa aftur á eftir útskráningu.  
    Vefslóð er skráð í _Logout URL_ og smellt á hnappinn _Add_ til að staðfesta valið.  
-   Ef vefslóð er þegar fyrir hendi er það sama vefslóð og valin var í [Display URL í fyrsta þrepi skráningarinnar](../detailed-form.md#display-url).  
+   Ef vefslóð er þegar fyrir hendi er það sama vefslóð og valin var í [Display URL í fyrsta þrepi skráningarinnar](../detailed-form.md#display-url).
 
   ![post-logout](images/post-logout.png)
 
@@ -259,5 +259,5 @@ Smellt er á _Go back_ til að fara aftur í upphafsþrep skráningarferlisins.
 
 ### Go back
 
-Ef smellt er á þennan hnapp er farið aftur í upphafsþrep skráningarferlis 
+Ef smellt er á þennan hnapp er farið aftur í upphafsþrep skráningarferlis
 biðlarans [Edit clients](#edit-client).
