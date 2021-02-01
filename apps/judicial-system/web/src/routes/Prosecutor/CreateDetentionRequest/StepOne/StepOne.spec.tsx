@@ -68,7 +68,7 @@ describe('/krafa with an id', () => {
       ((await screen.findByLabelText('Netfang verjanda')) as HTMLInputElement)
         .value,
     ).toEqual('saul@goodman.com')
-  }, 15000)
+  })
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange

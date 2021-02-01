@@ -18,10 +18,6 @@ import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa/urskurdarord', () => {
-  afterEach(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0))
-  })
-
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
 

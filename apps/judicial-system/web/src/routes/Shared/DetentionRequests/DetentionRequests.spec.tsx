@@ -122,7 +122,7 @@ describe('Detention requests route', () => {
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
     ).toEqual(5)
-  }, 10000)
+  })
 
   test('should display the judge logo if you are a judge', async () => {
     render(

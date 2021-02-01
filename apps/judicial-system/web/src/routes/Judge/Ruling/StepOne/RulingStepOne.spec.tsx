@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { RulingStepOne } from './RulingStepOne'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -85,9 +85,9 @@ describe('/domari-krafa/urskurdur', () => {
     userEvent.type(await screen.findByLabelText('Tímasetning *'), '12:31')
 
     expect(
-      (await screen.findByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      })) as HTMLButtonElement,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -130,9 +130,9 @@ describe('/domari-krafa/urskurdur', () => {
 
     // Assert
     expect(
-      (await screen.findByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      })) as HTMLButtonElement,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -173,9 +173,11 @@ describe('/domari-krafa/urskurdur', () => {
     )
     // Assert
     expect(
-      screen.queryByRole('checkbox', {
-        name: 'Kærði skal sæta einangrun',
-      }),
+      await waitFor(() =>
+        screen.queryByRole('checkbox', {
+          name: 'Kærði skal sæta einangrun',
+        }),
+      ),
     ).not.toBeInTheDocument()
   })
 
@@ -216,9 +218,11 @@ describe('/domari-krafa/urskurdur', () => {
     )
     // Assert
     expect(
-      screen.queryByRole('checkbox', {
-        name: 'Kærði skal sæta einangrun',
-      }),
+      await waitFor(() =>
+        screen.queryByRole('checkbox', {
+          name: 'Kærði skal sæta einangrun',
+        }),
+      ),
     ).not.toBeInTheDocument()
   })
 })

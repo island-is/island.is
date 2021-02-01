@@ -120,7 +120,7 @@ describe('Create detention request, step three', () => {
         'Tímasetning (kk:mm) *',
       )) as HTMLInputElement).value,
     ).toEqual('19:51')
-  }, 10000)
+  })
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
@@ -149,7 +149,7 @@ describe('Create detention request, step three', () => {
         name: /Halda áfram/i,
       }),
     ).not.toBeDisabled()
-  }, 10000)
+  })
 
   test('should display the custody end date of the parent case when the case is an extension', async () => {
     // Arrange
