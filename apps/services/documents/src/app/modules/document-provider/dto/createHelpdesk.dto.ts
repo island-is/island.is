@@ -1,14 +1,14 @@
 import { IsOptional, IsString, IsEmail } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateHelpdeskDto {
   @IsOptional()
   @IsEmail()
-  @ApiProperty()
+  @ApiPropertyOptional()
   email?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   phoneNumber?: string
 }

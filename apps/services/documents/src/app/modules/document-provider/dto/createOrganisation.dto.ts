@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsOptional, IsString, IsEmail } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CreateContactDto } from './createContact.dto'
+import { CreateHelpdeskDto } from './createHelpdesk.dto'
 
 export class CreateOrganisationDto {
   @IsNotEmpty()
@@ -29,6 +30,14 @@ export class CreateOrganisationDto {
   phoneNumber?: string
 
   @IsOptional()
-  @ApiProperty()
+  @ApiPropertyOptional()
   administrativeContact?: CreateContactDto
+
+  @IsOptional()
+  @ApiPropertyOptional()
+  technicalContact?: CreateContactDto
+
+  @IsOptional()
+  @ApiPropertyOptional()
+  helpdesk?: CreateHelpdeskDto
 }

@@ -37,6 +37,7 @@ export default {
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
   documentProviderService: {
+    documentsServiceBasePath: 'http://localhost:3369',
     test: {
       basePath:
         'https://test-documentprovidermanagement-island-is.azurewebsites.net',

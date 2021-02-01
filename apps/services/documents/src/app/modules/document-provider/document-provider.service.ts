@@ -44,7 +44,7 @@ export class DocumentProviderService {
     this.logger.debug(`Finding organisation for nationalId - "${nationalId}"`)
     return this.organisationModel.findOne({
       where: { nationalId },
-      include: [Provider, AdministrativeContact],
+      include: [Provider, AdministrativeContact, TechnicalContact, Helpdesk],
     })
   }
 
@@ -54,8 +54,9 @@ export class DocumentProviderService {
     this.logger.debug(
       `Creating organisation with nationalId - ${organisation.nationalId}`,
     )
+    console.log(JSON.stringify(organisation))
     return this.organisationModel.create(organisation, {
-      include: [AdministrativeContact],
+      include: [AdministrativeContact, TechnicalContact, Helpdesk],
     })
   }
 
@@ -202,7 +203,7 @@ export class DocumentProviderService {
   ): Promise<Helpdesk> {
     this.logger.debug(`Creating helpdesk`)
 
-    return await this.technicalContactModel.create({
+    return await this.helpdeskModel.create({
       organisationId,
       ...helpdesk,
     })
