@@ -217,7 +217,7 @@ export const RulingStepOne: React.FC = () => {
                   <RadioButton
                     name="case-decision"
                     id="case-decision-rejecting"
-                    label={`Krafa um ${
+                    label={`Kröfu um ${
                       workingCase.type === CaseType.CUSTODY
                         ? 'gæsluvarðhald'
                         : 'farbann'
