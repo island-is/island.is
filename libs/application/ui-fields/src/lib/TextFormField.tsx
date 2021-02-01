@@ -26,8 +26,8 @@ const TextFormField: FC<Props> = ({
   const {
     id,
     disabled,
-    description,
     title,
+    description,
     placeholder,
     backgroundColor,
     format,
