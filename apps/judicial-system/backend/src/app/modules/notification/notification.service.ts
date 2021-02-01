@@ -281,7 +281,7 @@ export class NotificationService {
   private sendCourtDateEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
-    const subject = 'Krafa um gæsluvarðhald í vinnslu'
+    const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     const html = formatPrisonCourtDateEmailNotification(
       existingCase.prosecutor?.institution,
       existingCase.court,
@@ -312,7 +312,9 @@ export class NotificationService {
       return
     }
 
-    const subject = 'Krafa um gæsluvarðhald í vinnslu'
+    const subject = `Krafa um ${
+      existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+    } í vinnslu`
     const html = formatDefenderCourtDateEmailNotification(
       existingCase.type,
       existingCase.accusedNationalId,
@@ -377,7 +379,7 @@ export class NotificationService {
   private sendRulingEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
-    const subject = 'Úrskurður um gæsluvarðhald'
+    const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(
       existingCase.accusedNationalId,
       existingCase.accusedName,
@@ -408,6 +410,12 @@ export class NotificationService {
   private async sendRulingNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
+    if (existingCase.type !== CaseType.CUSTODY) {
+      return {
+        notificationSent: false,
+      }
+    }
+
     const recipient = await this.sendRulingEmailNotificationToPrison(
       existingCase,
     )
@@ -435,7 +443,7 @@ export class NotificationService {
   private sendRevokedEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
-    const subject = 'Gæsluvarðhaldskrafa afturkölluð'
+    const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     const html = formatPrisonRevokedEmailNotification(
       existingCase.prosecutor?.institution,
       existingCase.court,
@@ -461,7 +469,11 @@ export class NotificationService {
       return
     }
 
-    const subject = 'Gæsluvarðhaldskrafa afturkölluð'
+    const subject = `${
+      existingCase.type === CaseType.CUSTODY
+        ? 'Gæsluvarðhaldskrafa'
+        : 'Farbannskrafa'
+    } afturkölluð`
     const html = formatDefenderRevokedEmailNotification(
       existingCase.type,
       existingCase.accusedNationalId,
@@ -520,6 +532,10 @@ export class NotificationService {
         NotificationType.REVOKED,
         recipients,
       )
+    }
+
+    return {
+      notificationSent: false,
     }
   }
 
