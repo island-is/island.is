@@ -26,9 +26,7 @@ export class RestServiceCollector implements ServiceCollector {
     const indexName = this.configService.get<string>('indexName')
     const environmentValue = this.configService.get<string>('environment')
     if (!indexName) {
-      throw new Error(
-        'Environment variable API_CATALOGUE_INDEX_NAME is missing',
-      )
+      throw new Error('Environment variable XROAD_COLLECTOR_ALIAS is missing')
     }
     if (!environmentValue) {
       throw new Error('Environment variable ENVIRONMENT is missing')
@@ -72,6 +70,7 @@ export class RestServiceCollector implements ServiceCollector {
 
     const config = this.getConfig()
     this.elasticService.initWorker(config.indexName, config.environment)
+
     for (const provider of providers) {
       try {
         // For each provider get list af all REST services
@@ -94,12 +93,14 @@ export class RestServiceCollector implements ServiceCollector {
     }
 
     logger.debug(
-      `Added all services to index "${this.elasticService.getIndexNameWorker()}" , so lets copy them to to index "${this.elasticService.getIndexName()}".`,
+      `Added all services to index "${this.elasticService.getIndexNameWorker()}"`,
     )
     logger.debug(
-      `Starting update for index "${this.elasticService.getIndexName()}" at: ${new Date().toISOString()}`,
+      `Adding index "${this.elasticService.getAliasName()}" to alias at: ${new Date().toISOString()}`,
     )
-    await this.elasticService.moveWorkerValuesToIndex()
+    await this.elasticService.updateAlias()
     logger.debug(`Done updating values at: ${new Date().toISOString()}`)
+
+    await this.elasticService.deleteDanglingIndices()
   }
 }

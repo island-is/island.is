@@ -23,7 +23,7 @@ The variable are named:
 
 The other two are set for the environment the service is executed in
 
-- API_CATALOGUE_INDEX_NAME - _Name of the index the service uses._
+- XROAD*COLLECTOR_ALIAS - \_Name of the index the service uses.*
 - ENVIRONMENT - _Name of the environment. Valid values_: `dev`, `staging` and `prod`.
 
 ## Developing
