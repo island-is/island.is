@@ -8,8 +8,8 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import { MarkdownText } from '@island.is/web/components'
 import * as styles from './OrganizationFooter.treat'
-import Markdown from 'markdown-to-jsx'
 
 interface FooterProps {
   organizationPage: OrganizationPage
@@ -70,19 +70,9 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
                         )}
                       </Text>
                     </Box>
-                    <Text variant={'small'} color={'white'} lineHeight={'lg'}>
-                      <Markdown
-                        options={{
-                          overrides: {
-                            p: {
-                              component: 'div',
-                            },
-                          },
-                        }}
-                      >
-                        {item.content}
-                      </Markdown>
-                    </Text>
+                    <MarkdownText color="white" variant="small">
+                      {item.content}
+                    </MarkdownText>
                   </Box>
                 </GridColumn>
               ))}

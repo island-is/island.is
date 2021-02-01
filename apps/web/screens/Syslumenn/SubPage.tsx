@@ -30,9 +30,9 @@ import * as styles from './SubPage.treat'
 import {
   OrganizationSlice,
   OrganizationWrapper,
+  MarkdownText,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import Markdown from 'markdown-to-jsx'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -110,15 +110,9 @@ const SubPage: Screen<SubPageProps> = ({
             <GridColumn
               span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
             >
-              <div
-                className={
-                  subpage.slices.length
-                    ? styles.description
-                    : styles.smallDescription
-                }
-              >
-                <Markdown>{subpage.description}</Markdown>
-              </div>
+              <MarkdownText variant={subpage.slices.length ? 'h3' : 'default'}>
+                {subpage.description}
+              </MarkdownText>
             </GridColumn>
             {subpage.links.length > 0 && (
               <GridColumn

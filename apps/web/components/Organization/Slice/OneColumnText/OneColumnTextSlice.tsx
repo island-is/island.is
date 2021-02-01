@@ -1,16 +1,8 @@
 import React from 'react'
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
-import * as styles from './OneColumnTextSlice.treat'
-import Markdown from 'markdown-to-jsx'
+import { Box, Button, GridContainer, Text } from '@island.is/island-ui/core'
 import { OneColumnText } from '@island.is/web/graphql/schema'
 import Link from 'next/link'
+import { MarkdownText } from '@island.is/web/components'
 
 interface SliceProps {
   slice: OneColumnText
@@ -26,12 +18,15 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           paddingTop={[4, 4, 6]}
           paddingBottom={[4, 5, 10]}
         >
-          <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>
+          <Text
+            variant="h3"
+            as="h2"
+            id={'sliceTitle-' + slice.id}
+            paddingBottom={2}
+          >
             {slice.title}
           </Text>
-          <div className={styles.oneColumnSliceContent}>
-            <Markdown>{slice.content}</Markdown>
-          </div>
+          <MarkdownText>{slice.content}</MarkdownText>
           {slice.link && (
             <Link href="#">
               <Button

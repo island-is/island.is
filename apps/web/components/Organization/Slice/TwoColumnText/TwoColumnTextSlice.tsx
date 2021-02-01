@@ -7,8 +7,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './TwoColumnTextSlice.treat'
-import Markdown from 'markdown-to-jsx'
+import { MarkdownText } from '@island.is/web/components'
 
 interface SliceProps {
   slice: TwoColumnText
@@ -25,12 +24,12 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           paddingBottom={[4, 5, 10]}
         >
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '6/12']}>
+            <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={2}>
               <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>
                 {slice.leftTitle}
               </Text>
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '6/12']}>
+            <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={2}>
               {slice.rightTitle && (
                 <Text variant="h3" as="h2">
                   {slice.rightTitle}
@@ -40,14 +39,10 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <div className={styles.twoColumnSliceContent}>
-                <Markdown>{slice.leftContent}</Markdown>
-              </div>
+              <MarkdownText>{slice.leftContent}</MarkdownText>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <div className={styles.twoColumnSliceContent}>
-                <Markdown>{slice.rightContent}</Markdown>
-              </div>
+              <MarkdownText>{slice.leftContent}</MarkdownText>
             </GridColumn>
           </GridRow>
         </Box>
