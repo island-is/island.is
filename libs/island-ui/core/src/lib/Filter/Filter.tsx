@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createContext, FC } from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
@@ -13,17 +13,17 @@ export interface FilterProps {
   /** Lable for open filter button when in mobile version. */
   labelOpen: string
 
-  /** Label for close icon to add title to button for screen readers. */
-  labelClose: string
+  /** Label for close icon to add title to button for screen readers in mobile version. */
+  labelClose?: string
 
   /** Label for filter title when expanded in mobile version. */
-  labelTitle: string
+  labelTitle?: string
 
   /** Label for show result button in expanded mobile version. */
-  labelResult: string
+  labelResult?: string
 
-  /** Number of search results to display on the show result button. */
-  resultCount: number
+  /** Number of search results to display on the show result button in mobile version*/
+  resultCount?: number
 
   /** Controls if the Filter renders as desktop like sidenavbar or mobile dialog */
   isDialog?: boolean
@@ -32,7 +32,20 @@ export interface FilterProps {
   onFilterClear: () => void
 }
 
-export const Filter: React.FC<FilterProps> = ({
+/**
+ * Datatype to use for Filter context.
+ * Provides the Filter's childs access to shared values,
+ * like the `isDialog` state with out bloating the childs props.
+ */
+interface FilterContextValue {
+  isDialog: boolean
+}
+
+export const FilterContext = createContext<FilterContextValue>({
+  isDialog: false,
+})
+
+export const Filter: FC<FilterProps> = ({
   labelClear = '',
   labelOpen = '',
   labelClose = '',
@@ -46,7 +59,7 @@ export const Filter: React.FC<FilterProps> = ({
   const dialog = useDialogState()
 
   return (
-    <>
+    <FilterContext.Provider value={{ isDialog }}>
       {isDialog ? (
         <>
           <DialogDisclosure {...dialog} className={styles.dialogDisclosure}>
@@ -131,6 +144,7 @@ export const Filter: React.FC<FilterProps> = ({
           <Stack space={2} dividers={false}>
             {children}
           </Stack>
+
           <Box textAlign="right" paddingTop={2}>
             <Button
               icon="reload"
@@ -143,6 +157,6 @@ export const Filter: React.FC<FilterProps> = ({
           </Box>
         </>
       )}
-    </>
+    </FilterContext.Provider>
   )
 }
