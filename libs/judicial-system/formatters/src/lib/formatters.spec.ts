@@ -1,6 +1,7 @@
 import {
   CaseCustodyRestrictions,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 import * as Constants from './constants'
@@ -54,27 +55,41 @@ describe('formatDate', () => {
 describe('formatRequestedCustodyRestrictions', () => {
   test('should return a comma separated list of restrictions', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const restrictions: CaseCustodyRestrictions[] = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.COMMUNICATION,
     ]
 
     // Act
-    const r = formatRequestedCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(type, restrictions)
 
     // Assert
     expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
   })
 
-  test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplyed', () => {
+  test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplied', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const restrictions: CaseCustodyRestrictions[] = []
 
     // Act
-    const r = formatRequestedCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(type, restrictions)
 
     // Assert
     expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu')
+  })
+
+  test('should return "Ekki er farið fram á takmarkanir á farbanni" if no custody restriction is supplied', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const restrictions: CaseCustodyRestrictions[] = []
+
+    // Act
+    const r = formatRequestedCustodyRestrictions(type, restrictions)
+
+    // Assert
+    expect(r).toEqual('Ekki er farið fram á takmarkanir á farbanni')
   })
 })
 
