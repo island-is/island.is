@@ -49,6 +49,11 @@ input[type='checkbox'] {
   height: 30px;
 }
 
+input[type='radio'] {
+  width: 30px;
+  height: 30px;
+}
+
 input[type='submit'] {
   @extend button;
 }
@@ -251,8 +256,8 @@ nav[class$='pagination'] {
       border-radius: 0;
 
       &:disabled {
-        color: $color-disabled;
-        border-bottom: solid 2px $color-disabled;
+        color: $color-button-disabled;
+        border-bottom: solid 2px $color-button-disabled;
       }
 
       &:focus {
@@ -272,7 +277,6 @@ nav[class$='pagination'] {
 
 a {
   &[class$='new'] {
-    display: block;
     padding: 20px 0px;
     color: $color-link;
     text-decoration: none;
@@ -313,6 +317,11 @@ a {
   @extend .fa-trash-o;
 }
 
+.icon__export__csv {
+  @extend .fa;
+  @extend .fa-file-excel-o;
+}
+
 // Buttons
 .button__warning {
   background: $color-error;
@@ -337,4 +346,25 @@ footer {
 
 .with-details {
   margin-bottom: 35px;
+}
+
+.indent {
+  padding-left: 35px !important;
+}
+
+.fake-input {
+  height: 0;
+  width: 0;
+  position: absolute;
+  border: none;
+  margin: 0;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.temp-page {
+  padding: 30px 40px;
 }

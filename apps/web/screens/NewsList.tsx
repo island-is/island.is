@@ -6,8 +6,7 @@ import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import Head from 'next/head'
 import { Screen } from '../types'
-import NativeSelect from '../components/Select/Select'
-import Bullet from '../components/Bullet/Bullet'
+import { Select as NativeSelect, Bullet } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   Box,
@@ -111,7 +110,7 @@ const NewsList: Screen<NewsListProps> = ({
     }, {})
 
     return {
-      pathname: linkResolver('newsoverview').as,
+      pathname: linkResolver('newsoverview').href,
       query,
     }
   }
@@ -273,9 +272,8 @@ const NewsList: Screen<NewsListProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              as={linkResolver('news', [newsItem.slug]).as}
               titleAs="h2"
-              url={linkResolver('news', [newsItem.slug]).href}
+              href={linkResolver('news', [newsItem.slug]).href}
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
@@ -289,7 +287,7 @@ const NewsList: Screen<NewsListProps> = ({
                 renderLink={(page, className, children) => (
                   <Link
                     href={{
-                      pathname: linkResolver('newsoverview').as,
+                      pathname: linkResolver('newsoverview').href,
                       query: { ...Router.query, page },
                     }}
                   >

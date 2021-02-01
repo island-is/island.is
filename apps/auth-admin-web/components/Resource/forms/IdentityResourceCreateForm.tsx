@@ -3,17 +3,17 @@ import { useForm } from 'react-hook-form'
 import HelpBox from '../../common/HelpBox'
 import { ErrorMessage } from '@hookform/error-message'
 import { ResourcesService } from '../../../services/ResourcesService'
-import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto'
+import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 
 interface Props {
-  handleSave?: (object: IdentityResourcesDTO) => void
+  handleSave?: (object: IdentityResourceDTO) => void
   handleCancel?: () => void
-  identityResource: IdentityResourcesDTO
+  identityResource: IdentityResourceDTO
 }
 
 const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   const { register, handleSubmit, errors, formState } = useForm<
-    IdentityResourcesDTO
+    IdentityResourceDTO
   >()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -29,15 +29,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
 
   const checkAvailability = async (name: string) => {
     setNameLength(name.length)
-    const response = await ResourcesService.getIdentityResourceByName(name)
-    if (response) {
+    if (name.length === 0) {
       setAvailable(false)
-    } else {
-      setAvailable(true)
+      return
     }
+    const response = await ResourcesService.isScopeNameAvailable(name)
+    setAvailable(response)
   }
 
-  const save = async (data: IdentityResourcesDTO) => {
+  const save = async (data: IdentityResourceDTO) => {
     let response = null
 
     if (!isEditing) {

@@ -19,6 +19,7 @@ ADD . .
 FROM src as builder
 ARG APP
 ENV APP=${APP}
+ENV NODE_ENV=production
 
 RUN yarn run build ${APP} --prod
 
@@ -73,6 +74,8 @@ LABEL commit=${GIT_SHA}
 ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_SHA=${GIT_SHA}
 ENV APP=${APP}
+ENV BASEPATH=/
 
-ADD scripts/ci/dockerfile-config/static-nginx.conf /etc/nginx/conf.d/default.conf
+RUN mkdir -p /etc/nginx/templates
+ADD scripts/ci/dockerfile-config/nginx/* /etc/nginx/templates
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html

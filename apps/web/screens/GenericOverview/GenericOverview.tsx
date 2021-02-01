@@ -21,7 +21,6 @@ import {
   QueryGetGenericOverviewPageArgs,
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
-import NextLink from 'next/link'
 import { Image, renderHtml } from '@island.is/island-ui/contentful'
 
 interface GenericOverviewProps {
@@ -49,9 +48,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
         ]}
         renderLink={(link, { typename, slug }) => {
           return (
-            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
-              {link}
-            </NextLink>
+            <Link {...linkResolver(typename as LinkType, slug)}>{link}</Link>
           )
         }}
       />
@@ -119,13 +116,14 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                           {renderHtml(intro.document as Document)}
                         </Box>
                       )}
-                      <NextLink
+                      <Link
                         {...linkResolver(link.type as LinkType, [link.slug])}
+                        skipTab
                       >
                         <Button icon="arrowForward" variant="text">
                           {linkTitle}
                         </Button>
-                      </NextLink>
+                      </Link>
                     </Box>
                   </Box>
                 </GridColumn>

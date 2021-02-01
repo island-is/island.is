@@ -3,7 +3,6 @@ import { Locale, I18nContext } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
   href: string
-  as: string
 }
 
 interface LinkResolverInput {
@@ -13,8 +12,9 @@ interface LinkResolverInput {
 }
 
 interface TypeResolverResponse {
-  type: LinkType
   locale: Locale
+  type?: LinkType
+  slug?: string[]
 }
 
 export type LinkType = keyof typeof routesTemplate | 'linkurl'
@@ -94,15 +94,33 @@ export const routesTemplate = {
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
-const replaceVariableInPath = (path: string, replacement: string): string => {
+export const replaceVariableInPath = (
+  path: string,
+  replacement: string,
+): string => {
   return path.replace(/\[\w+\]/, replacement)
 }
 
 // converts a path template to a regex query for matching
-const convertToRegex = (routeTemplate: string) =>
-  routeTemplate
+export const convertToRegex = (routeTemplate: string) => {
+  const query = routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
-    .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
+    .replace(/\[\w+\]/g, '[-\\w]+') // make path variables be regex word matches
+  return `^${query}$` // to prevent partial matches
+}
+
+// extracts slugs from given path
+export const extractSlugsByRouteTemplate = (
+  path: string,
+  template: string,
+): string[] => {
+  const pathParts = path.split('/')
+  const templateParts = template.split('/')
+
+  return pathParts.filter((_, index) => {
+    return templateParts[index]?.startsWith('[') ?? false
+  })
+}
 
 /*
 Finds the correct path for a given type and locale.
@@ -122,7 +140,6 @@ export const linkResolver = (
   // special case for external url resolution
   if (type === 'linkurl') {
     return {
-      as: variables[0],
       href: variables[0],
     }
   }
@@ -134,23 +151,20 @@ export const linkResolver = (
     if (variables.length) {
       // populate path templates with variables
       return {
-        href: typePath,
-        as: variables.reduce(
-          (asPath, slug) => replaceVariableInPath(asPath, slug),
+        href: variables.reduce(
+          (path, slug) => replaceVariableInPath(path, slug),
           typePath,
         ),
       }
     } else {
       // there are no variables, return path template as path
       return {
-        as: typePath,
         href: typePath,
       }
     }
   } else {
     // we return to 404 page if no path is found, if this happens we have a bug
     return {
-      as: '/404',
       href: '/404',
     }
   }
@@ -173,17 +187,26 @@ export const typeResolver = (
 
       // handle homepage en path
       if (path === '/en') {
-        return { type: 'homepage', locale: 'en' }
+        return { type: 'homepage', locale: 'en', slug: [] }
       }
 
       // convert the route template string into a regex query
       const regex = convertToRegex(routeTemplate)
-      // if this path matches query return route info else continue
-      if (path?.match(regex)) {
-        return { type, locale } as TypeResolverResponse
+
+      // if the path starts with the routeTemplate string or matches dynamic route regex we have found the type
+      if (
+        (!skipDynamic && path?.match(regex)) ||
+        (skipDynamic && path?.startsWith(routeTemplate))
+      ) {
+        return {
+          slug: extractSlugsByRouteTemplate(path, routeTemplate),
+          type,
+          locale,
+        } as TypeResolverResponse
       }
     }
   }
+
   return null
 }
 

@@ -3,13 +3,15 @@ import {
   typeResolver,
   LinkType,
   routesTemplate,
+  extractSlugsByRouteTemplate,
+  replaceVariableInPath,
+  convertToRegex,
 } from './useLinkResolver'
 
 describe('Link resolver', () => {
   it('should return correct path to type with out variable', () => {
     const nextLinks = linkResolver('adgerdirfrontpage', [], 'is')
     expect(nextLinks).toEqual({
-      as: '/covid-adgerdir',
       href: '/covid-adgerdir',
     })
   })
@@ -17,29 +19,25 @@ describe('Link resolver', () => {
   it('should return correct path to type with variable', () => {
     const nextLinks = linkResolver('lifeeventpage', ['cat'], 'is')
     expect(nextLinks).toEqual({
-      as: '/lifsvidburdur/cat',
-      href: '/lifsvidburdur/[slug]',
+      href: '/lifsvidburdur/cat',
     })
   })
 
   it('should return correct path for all locales', () => {
     const nextIsLinks = linkResolver('news', ['hundur'], 'is')
     expect(nextIsLinks).toEqual({
-      as: '/frett/hundur',
-      href: '/frett/[slug]',
+      href: '/frett/hundur',
     })
 
     const nextEnLinks = linkResolver('news', ['dog'], 'en')
     expect(nextEnLinks).toEqual({
-      as: '/en/news/dog',
-      href: '/en/news/[slug]',
+      href: '/en/news/dog',
     })
   })
 
   it('should direct unresolvable links to 404', () => {
     const nextEnLink = linkResolver('page', [], 'en')
     expect(nextEnLink).toEqual({
-      as: '/404',
       href: '/404',
     })
   })
@@ -47,8 +45,7 @@ describe('Link resolver', () => {
   it('should handle content type with uppercase', () => {
     const nextLinks = linkResolver('lifeEventPage' as LinkType, ['cat'], 'is')
     expect(nextLinks).toEqual({
-      as: '/lifsvidburdur/cat',
-      href: '/lifsvidburdur/[slug]',
+      href: '/lifsvidburdur/cat',
     })
   })
 
@@ -59,7 +56,6 @@ describe('Link resolver', () => {
     ]
     nextLinks.map((link) => {
       expect(link).toEqual({
-        as: '/404',
         href: '/404',
       })
     })
@@ -68,7 +64,6 @@ describe('Link resolver', () => {
   it('should handle content type as empty string', () => {
     const nextLinks = linkResolver('' as LinkType, [], 'is')
     expect(nextLinks).toEqual({
-      as: '/404',
       href: '/404',
     })
   })
@@ -76,7 +71,6 @@ describe('Link resolver', () => {
   it('should handle content type as undefined', () => {
     const nextLinks = linkResolver(undefined as LinkType, [], 'is')
     expect(nextLinks).toEqual({
-      as: '/404',
       href: '/404',
     })
   })
@@ -88,7 +82,6 @@ describe('Link resolver', () => {
       'is',
     )
     expect(nextLinks).toEqual({
-      as: 'https://example.com',
       href: 'https://example.com',
     })
   })
@@ -121,6 +114,7 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'articlecategory',
       locale: 'is',
+      slug: ['mycustomcategory'],
     })
   })
 
@@ -129,6 +123,7 @@ describe('Type resolver', () => {
     expect(types).toEqual({
       type: 'newsoverview',
       locale: 'is',
+      slug: [],
     })
   })
 
@@ -137,12 +132,14 @@ describe('Type resolver', () => {
     expect(typesIs).toEqual({
       type: 'news',
       locale: 'is',
+      slug: ['mycustomnews'],
     })
 
     const typesEn = typeResolver('/en/news/mycustomnews')
     expect(typesEn).toEqual({
       type: 'news',
       locale: 'en',
+      slug: ['mycustomnews'],
     })
   })
 
@@ -156,11 +153,78 @@ describe('Type resolver', () => {
     expect(types).toBeNull()
   })
 
-  it('Should ignore dynamic paths', () => {
+  it('Should not resolve partial matches when ignore dynamic is false', () => {
+    const types = typeResolver('/fretr/andesbar/other')
+    expect(types).toBeNull()
+  })
+
+  it('Should resolve partial matches when ignore dynamic is true', () => {
     const types = typeResolver('/frett/mycustomnews', true)
     expect(types).toEqual({
       type: 'newsoverview',
       locale: 'is',
+      slug: [],
     })
+  })
+
+  it('Should resolve paths with dashes', () => {
+    const types = typeResolver('/andes-foo/andes-bar')
+    expect(types).toEqual({
+      type: 'subarticle',
+      locale: 'is',
+      slug: ['andes-foo', 'andes-bar'],
+    })
+  })
+})
+
+describe('Extract slugs by route template', () => {
+  it('Should handle short static paths', () => {
+    const slug = extractSlugsByRouteTemplate('/en', '/en')
+    expect(slug).toEqual([])
+  })
+
+  it('Should handle short dynamic paths', () => {
+    const slug = extractSlugsByRouteTemplate('/theslug', '/[slug]')
+    expect(slug).toEqual(['theslug'])
+  })
+
+  it('Should handle long static paths', () => {
+    const slug = extractSlugsByRouteTemplate(
+      '/mega/long/path',
+      '/mega/long/path',
+    )
+    expect(slug).toEqual([])
+  })
+
+  it('Should handle long dynamic paths', () => {
+    const slug = extractSlugsByRouteTemplate(
+      '/mega/long/path',
+      '/[slug]/[subSlug]/[subSubSlug]',
+    )
+    expect(slug).toEqual(['mega', 'long', 'path'])
+  })
+})
+
+describe('Replace variable in path', () => {
+  it('Should replace variable ins string', () => {
+    const path = replaceVariableInPath('/test/[replaceme]', 'case')
+    expect(path).toEqual('/test/case')
+  })
+})
+
+describe('Convert to regex', () => {
+  it('Should convert dynamic template string to regex', () => {
+    const regex = convertToRegex('/test/[replaceme]')
+    expect(regex).toEqual('^\\/test\\/[-\\w]+$')
+  })
+
+  it('Should convert deep dynamic template string to regex', () => {
+    const regex = convertToRegex('/test/[replaceme]/then/[me]/ending')
+    expect(regex).toEqual('^\\/test\\/[-\\w]+\\/then\\/[-\\w]+\\/ending$')
+  })
+
+  it('Should convert static template string to regex', () => {
+    const regex = convertToRegex('/test')
+    expect(regex).toEqual('^\\/test$')
   })
 })

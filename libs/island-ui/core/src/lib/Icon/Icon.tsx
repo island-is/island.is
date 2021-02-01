@@ -327,3 +327,5 @@ export const Icon = ({
     />
   )
 }
+
+export { Icon as IconDeprecated }

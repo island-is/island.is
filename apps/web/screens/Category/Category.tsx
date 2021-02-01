@@ -13,7 +13,7 @@ import {
   FocusableBox,
   Navigation,
 } from '@island.is/island-ui/core'
-import { Card } from '@island.is/web/components'
+import { Card, Sticky } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -188,8 +188,10 @@ const Category: Screen<CategoryProps> = ({
 
     setHash(newHash)
 
-    const url = linkResolver(category.__typename as LinkType, [slug])
-    Router.replace(url.href, url.as + `#${newHash}`)
+    Router.replace(
+      linkResolver(category.__typename as LinkType, [slug]).href +
+        `#${newHash}`,
+    )
   }
 
   const sortArticles = (articles: Articles) => {
@@ -250,24 +252,26 @@ const Category: Screen<CategoryProps> = ({
         <title>{category.title} | Ísland.is</title>
       </Head>
       <SidebarLayout
-        isSticky
+        isSticky={false}
         sidebarContent={
-          <Navigation
-            baseId="desktopNav"
-            colorScheme="purple"
-            items={sidebarCategoryLinks}
-            title={n('sidebarHeader')}
-            renderLink={(link, { typename, slug }) => {
-              return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
-                  passHref
-                >
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
+          <Sticky>
+            <Navigation
+              baseId="desktopNav"
+              colorScheme="purple"
+              items={sidebarCategoryLinks}
+              title={n('sidebarHeader')}
+              renderLink={(link, { typename, slug }) => {
+                return (
+                  <NextLink
+                    {...linkResolver(typename as LinkType, slug)}
+                    passHref
+                  >
+                    {link}
+                  </NextLink>
+                )
+              }}
+            />
+          </Sticky>
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
@@ -383,15 +387,15 @@ const Category: Screen<CategoryProps> = ({
                           <Stack space={2}>
                             {sortedArticles.map(
                               ({ __typename, title, slug, processEntry }) => {
-                                const url = linkResolver(
-                                  __typename.toLowerCase() as LinkType,
-                                  [slug],
-                                )
                                 return (
                                   <FocusableBox
                                     key={slug}
-                                    href={url.href}
-                                    as={url.as}
+                                    href={
+                                      linkResolver(
+                                        __typename.toLowerCase() as LinkType,
+                                        [slug],
+                                      ).href
+                                    }
                                     borderRadius="large"
                                   >
                                     {({ isFocused }) => (
@@ -420,12 +424,10 @@ const Category: Screen<CategoryProps> = ({
           })}
           {lifeEvents.map(
             ({ __typename, title, slug, intro, thumbnail, image }, index) => {
-              const url = linkResolver(__typename as LinkType, [slug])
               return (
                 <Card
                   key={index}
-                  href={url.href}
-                  as={url.as}
+                  link={linkResolver(__typename as LinkType, [slug])}
                   description={intro}
                   title={title}
                   image={(thumbnail || image) as Image}
@@ -439,14 +441,12 @@ const Category: Screen<CategoryProps> = ({
             },
           )}
           {cards.map(({ __typename, title, content, slug }, index) => {
-            const url = linkResolver(__typename as LinkType, [slug])
             return (
               <Card
                 key={index}
                 title={title}
                 description={content}
-                href={url.href}
-                as={url.as}
+                link={linkResolver(__typename as LinkType, [slug])}
               />
             )
           })}

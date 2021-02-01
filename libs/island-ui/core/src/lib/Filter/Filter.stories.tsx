@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box } from '../Box/Box'
 import { Filter } from './Filter'
 import { FilterMultiChoice } from './FilterMultiChoice/FilterMultiChoice'
 import { FilterInput } from './FilterInput/FilterInput'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 export default {
   title: 'Components/Filter',
@@ -10,6 +12,14 @@ export default {
 }
 
 export const Default = () => {
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
   const [filter, setFilter] = useState<{
     price: Array<string>
     data: Array<string>
@@ -53,95 +63,52 @@ export const Default = () => {
     },
   ]
 
+  const renderDefaultFilter = (asDialog?: boolean) => (
+    <Filter
+      labelClear="Hreinsa síu"
+      labelOpen="Opna síu"
+      labelClose="Loka síu"
+      labelTitle="Sía API Vörulista"
+      labelResult="Sýna niðurstöður"
+      resultCount={64}
+      isDialog={asDialog}
+      onFilterClear={() =>
+        setFilter({
+          price: [],
+          data: [],
+          input: '',
+        })
+      }
+    >
+      <FilterInput
+        name="filter-input"
+        placeholder="Sía eftir leitarorði"
+        value={filter.input}
+        onChange={(value) => setFilter({ ...filter, input: value })}
+      />
+
+      <FilterMultiChoice
+        labelClear="Hreinsa val"
+        categories={categories}
+        onChange={(event) =>
+          setFilter({
+            ...filter,
+            [event.categoryId]: event.selected,
+          })
+        }
+        onClear={(categoryId) =>
+          setFilter({
+            ...filter,
+            [categoryId]: [],
+          })
+        }
+      />
+    </Filter>
+  )
+
   return (
-    <>
-      <Box padding={2} background="blue100" display={['none', 'none', 'block']}>
-        <Filter
-          labelClear="Hreinsa síu"
-          labelOpen="Opna síu"
-          labelClose="Loka síu"
-          labelTitle="Sía API Vörulista"
-          labelResult="Sýna niðurstöður"
-          resultCount={64}
-          onFilterClear={() =>
-            setFilter({
-              price: [],
-              data: [],
-              input: '',
-            })
-          }
-        >
-          <FilterInput
-            name="filter-input"
-            placeholder="Sía eftir leitarorði"
-            value={filter.input}
-            onChange={(value) => setFilter({ ...filter, input: value })}
-          />
-
-          <FilterMultiChoice
-            labelClear="Hreinsa val"
-            categories={categories}
-            onChange={(event) =>
-              setFilter({
-                ...filter,
-                [event.categoryId]: event.selected,
-              })
-            }
-            onClear={(categoryId) =>
-              setFilter({
-                ...filter,
-                [categoryId]: [],
-              })
-            }
-          />
-        </Filter>
-      </Box>
-      <Box
-        padding={2}
-        background="blue100"
-        display={['block', 'block', 'none']}
-      >
-        <Filter
-          labelClear="Hreinsa síu"
-          labelOpen="Opna síu"
-          labelClose="Loka síu"
-          labelTitle="Sía API Vörulista"
-          labelResult="Sýna niðurstöður"
-          resultCount={64}
-          isDialog
-          onFilterClear={() =>
-            setFilter({
-              price: [],
-              data: [],
-              input: '',
-            })
-          }
-        >
-          <FilterInput
-            name="filter-input"
-            placeholder="Sía eftir leitarorði"
-            value={filter.input}
-            onChange={(value) => setFilter({ ...filter, input: value })}
-          />
-
-          <FilterMultiChoice
-            labelClear="Hreinsa val"
-            categories={categories}
-            onChange={(event) =>
-              setFilter({
-                ...filter,
-                [event.categoryId]: event.selected,
-              })
-            }
-            onClear={(categoryId) =>
-              setFilter({
-                ...filter,
-                [categoryId]: [],
-              })
-            }
-          />
-        </Filter>
-      </Box>
-    </>
+    <Box padding={2} background="blue100">
+      {renderDefaultFilter(isMobile)}
+    </Box>
   )
 }

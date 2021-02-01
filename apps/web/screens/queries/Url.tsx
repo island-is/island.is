@@ -8,7 +8,7 @@ export const GET_URL_QUERY = gql`
       urlsList
       page {
         slug
-        contentType
+        type
       }
     }
   }

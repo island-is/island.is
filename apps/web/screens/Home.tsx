@@ -1,10 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
-import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
+import { Box, Stack, Inline, Tag, Link } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
-import Link from 'next/link'
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
@@ -74,12 +73,10 @@ const Home: Screen<HomeProps> = ({
   }
 
   const cards = categories.map(({ __typename, title, slug, description }) => {
-    const cardUrl = linkResolver(__typename as LinkType, [slug])
     return {
       title,
       description,
-      href: cardUrl.href,
-      as: cardUrl.as,
+      link: linkResolver(__typename as LinkType, [slug]),
     }
   })
 
@@ -99,9 +96,8 @@ const Home: Screen<HomeProps> = ({
         <Inline space={2}>
           {page.featuredThings.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
-
-            return cardUrl.href && cardUrl.href.length > 0 ? (
-              <Link key={title} href={cardUrl.href} as={cardUrl.as}>
+            return cardUrl?.href && cardUrl?.href.length > 0 ? (
+              <Link key={title} {...cardUrl} skipTab>
                 <Tag variant="darkerBlue" attention={attention}>
                   {title}
                 </Tag>
@@ -116,14 +112,8 @@ const Home: Screen<HomeProps> = ({
       </Stack>
     </Box>
   )
-
-  const LIFE_EVENTS_THRESHOLD = 6
-  const includeLifeEventSectionBleed =
-    lifeEvents.length <= LIFE_EVENTS_THRESHOLD
-  const showSleeve = lifeEvents.length > LIFE_EVENTS_THRESHOLD
-
   return (
-    <>
+    <div id="main-content">
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={frontpageSlides as FrontpageSliderType[]}
@@ -133,22 +123,19 @@ const Home: Screen<HomeProps> = ({
       <Section
         aria-labelledby="lifeEventsTitle"
         paddingTop={4}
-        backgroundBleed={
-          includeLifeEventSectionBleed && {
-            bleedAmount: 100,
-            mobileBleedAmount: 50,
-            bleedDirection: 'bottom',
-            fromColor: 'white',
-            toColor: 'purple100',
-            bleedInMobile: true,
-          }
-        }
+        backgroundBleed={{
+          bleedAmount: 100,
+          mobileBleedAmount: 50,
+          bleedDirection: 'bottom',
+          fromColor: 'white',
+          toColor: 'purple100',
+          bleedInMobile: true,
+        }}
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
           titleId="lifeEventsTitle"
           lifeEvents={lifeEvents}
-          showSleeve={showSleeve}
         />
       </Section>
       <Section
@@ -178,10 +165,10 @@ const Home: Screen<HomeProps> = ({
           introText={n('ourGoalsIntro')}
           text={n('ourGoalsText')}
           linkText={n('ourGoalsButtonText')}
-          linkUrl={n('ourGoalsLink')}
+          linkUrl={{ href: n('ourGoalsLink') }}
         />
       </Section>
-    </>
+    </div>
   )
 }
 
