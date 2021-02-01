@@ -2,6 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
+import useIsMounted from '@island.is/web/hooks/useIsMounted'
 import * as styles from './BackgroundImage.treat'
 
 export type BackgroundImageProps = {
@@ -13,16 +14,6 @@ export type BackgroundImageProps = {
   boxProps?: BoxProps
   positionX?: 'left' | 'right'
   backgroundSize?: 'cover' | 'contain'
-}
-
-const useIsMounted = () => {
-  const isMounted = React.useRef(true)
-  useEffect(() => {
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
-  return isMounted
 }
 
 const useImageLoader = (url: string): boolean => {
