@@ -27,7 +27,6 @@ import { useParams } from 'react-router-dom'
 import {
   Case,
   CaseGender,
-  CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'

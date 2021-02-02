@@ -22,7 +22,6 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
-  CaseDecision,
   CaseState,
   CaseTransition,
   CaseType,
