@@ -11,7 +11,9 @@ If you want to introduce something behind a feature flag you can follow these st
 
 ## Naming convention
 
-When creating your feature flag, please try to have both the "Key for humans" and "key for programs" descriptive. If the feature flag will be used by a single service, make sure that the human key contains the service name.
+When creating your feature flag, please try to have both the "Key for humans" and "key for programs" descriptive. If the feature flag will be used by a single service, make sure that at least the human key contains the service name. Adding a clear description will also help others knowing what your new flag does.
+
+Example: Your service name is "my-awesome-service" and you're introducing a feature flag called "show-content". The key for humans could be "My awesome service: Show content" and the key for programs could be "myAwesomeServiceShowContent" (Hint: The UI generates the program key automatically from the human key)
 
 ## Feature flag lifecycle
 

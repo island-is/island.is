@@ -1,6 +1,6 @@
 # What Feature Flag Service/application Should We Use at Island.is?
 
-- Status: proposed
+- Status: accepted
 - Deciders: developers and product owners of island.is
 - Date: 2021-01-18
 
