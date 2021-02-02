@@ -1,4 +1,6 @@
-# infra-metrics
+<!-- gitbook-ignore -->
+
+# Infra Metrics
 
 This library was generated with [Nx](https://nx.dev).
 

@@ -53,6 +53,7 @@
   - [Environment Setup](handbook/technical-overview/devops/environment-setup.md)
   - [Logging](handbook/technical-overview/devops/logging.md)
   - [Metrics](handbook/technical-overview/devops/metrics.md)
+  - [NextJS Custom Server](handbook/technical-overview/devops/next-server.md)
   - [Observability](handbook/technical-overview/devops/observability.md)
   - [Operations Base Principles](handbook/technical-overview/devops/operations-base-principles.md)
 - [Monorepo](handbook/technical-overview/monorepo.md)

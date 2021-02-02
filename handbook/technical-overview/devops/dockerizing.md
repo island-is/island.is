@@ -14,6 +14,10 @@ You need to ask the [DevOps](technical-overview/devops/personas.md#devops) team 
 
 means your service will be packaged as a NextJS Docker container image. We have support the following types of Docker containers: `docker-next`: suitable for [NextJS](https://nextjs.org/) services. `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services. `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
 
+{% hint style="info" %}
+To dockerize NextJS projects, you additionally need to configure it to use [our custom server](./next-server.md#setup-in-new-project).
+{% endhint %}
+
 If you need help just search for "docker" in that file and you should find plenty of examples on how to do it.
 
 That's it.
