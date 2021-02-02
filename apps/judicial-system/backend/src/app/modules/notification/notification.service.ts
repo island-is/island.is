@@ -9,7 +9,6 @@ import {
   CaseDecision,
   CaseType,
   NotificationType,
-  User,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'

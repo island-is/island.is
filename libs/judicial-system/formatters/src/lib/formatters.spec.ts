@@ -12,6 +12,7 @@ import {
   formatGender,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
+  isFalsy,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -360,5 +361,27 @@ describe('formatGender', () => {
 
     // Assert
     expect(r).toBe('Kynsegin/Annað')
+  })
+})
+
+describe('isFalsy', () => {
+  test('should return true if given an empty string, undefined or null and false otherwise', () => {
+    // Arrange
+    const e = ''
+    const u = undefined
+    const n = null
+    const v = 'Lorem'
+
+    // Act
+    const r = isFalsy(e)
+    const s = isFalsy(u)
+    const t = isFalsy(n)
+    const z = isFalsy(v)
+
+    // Assert
+    expect(r).toBe(true)
+    expect(s).toBe(true)
+    expect(t).toBe(true)
+    expect(z).toBe(false)
   })
 })

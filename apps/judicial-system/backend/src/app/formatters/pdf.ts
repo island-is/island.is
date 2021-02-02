@@ -19,6 +19,7 @@ import {
   formatAlternativeTravelBanRestrictions,
   NounCases,
   formatAccusedByGender,
+  isFalsy,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -79,6 +80,13 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(`Fullt nafn: ${existingCase.accusedName}`)
     .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
+    .text(
+      `Verjandi sakbornings: ${
+        isFalsy(existingCase.defenderName)
+          ? 'Hefur ekki verið skráður.'
+          : existingCase.defenderName
+      }`,
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
