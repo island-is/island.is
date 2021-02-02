@@ -1,0 +1,18 @@
+# Feature Flags
+
+## Developer usage
+
+If you want to introduce something behind a feature flag you can follow these steps:
+
+1. Ask someone from DevOps for invite to ConfigCat.
+2. Once you're in (https://app.configcat.com/) you can add your feature flag. The initial values should always be "On" in Dev and (probably always to start with) "Off" in Production and Staging.
+3. Make sure that the CONFIGCAT_SDK_KEY environment variable is in `.env.secrets` in the root of the repository. You can fetch it using the `./scripts/secrets.sh` script.
+4. Start using your flag by using the package `@island.is/feature-flags`.
+
+## Naming convention
+
+When creating your feature flag, please try to have both the "Key for humans" and "key for programs" descriptive. If the feature flag will be used by a single service, make sure that the human key contains the service name.
+
+## Feature flag lifecycle
+
+After a feature flag has been flipped on for all environments be mindful to clean it up. That involves removing all mentions of that flag in the source code and deleting it from ConfigCat. You will need to contact an administrator to delete the flag.

@@ -20,6 +20,8 @@ function main {
     echo "export $secret" >> $env_secret_file
   done
 
+  echo "export CONFIGCAT_SDK_KEY='$(aws ssm --region eu-west-1 get-parameter --name=/k8s/configcat/sdk-key --profile=island-dev --with-decryption --query=Parameter.Value --output=text)'" >> $env_secret_file
+
   echo "Done"
 }
 
