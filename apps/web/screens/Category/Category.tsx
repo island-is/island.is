@@ -9,7 +9,7 @@ import {
   Box,
   Breadcrumbs,
   AccordionCard,
-  LinkCard,
+  TopicCard,
   FocusableBox,
   Navigation,
 } from '@island.is/island-ui/core'
@@ -388,27 +388,21 @@ const Category: Screen<CategoryProps> = ({
                             {sortedArticles.map(
                               ({ __typename, title, slug, processEntry }) => {
                                 return (
-                                  <FocusableBox
-                                    key={slug}
-                                    href={
-                                      linkResolver(
-                                        __typename.toLowerCase() as LinkType,
-                                        [slug],
-                                      ).href
-                                    }
-                                    borderRadius="large"
-                                  >
-                                    {({ isFocused }) => (
-                                      <LinkCard
-                                        isFocused={isFocused}
-                                        tag={
-                                          !!processEntry &&
-                                          n('applicationProcess', 'Umsókn')
-                                        }
-                                      >
-                                        {title}
-                                      </LinkCard>
-                                    )}
+                                  <FocusableBox key={slug} borderRadius="large">
+                                    <TopicCard
+                                      href={
+                                        linkResolver(
+                                          __typename.toLowerCase() as LinkType,
+                                          [slug],
+                                        ).href
+                                      }
+                                      tag={
+                                        !!processEntry &&
+                                        n('applicationProcess', 'Umsókn')
+                                      }
+                                    >
+                                      {title}
+                                    </TopicCard>
                                   </FocusableBox>
                                 )
                               },

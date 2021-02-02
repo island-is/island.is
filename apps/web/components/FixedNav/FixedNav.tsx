@@ -4,7 +4,7 @@ import * as styles from './FixedNav.treat'
 import {
   ContentBlock,
   Box,
-  ButtonDeprecated as Button,
+  Button,
   FocusableBox,
   Logo,
   Link,
@@ -78,8 +78,9 @@ export const FixedNav: FC = () => {
             </Box>
             <Box marginLeft={2}>
               <Button
-                white
-                variant="menu"
+                variant="ghost"
+                colorScheme="negative"
+                size="small"
                 icon="arrowUp"
                 onClick={() => {
                   window.scrollTo(0, 0)
