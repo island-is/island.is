@@ -38,6 +38,17 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
                 lineHeight: 'lg',
               },
             },
+            h1: {
+              component: Text,
+              props: {
+                fontWeight: 'semiBold',
+                color,
+                variant,
+                lineHeight: 'lg',
+                paddingBottom: '2',
+                paddingTop: '2',
+              },
+            },
             ul: {
               component: BulletList,
               props: {
