@@ -422,14 +422,16 @@ export async function generateRulingPdf(
     .fontSize(12)
     .text(
       formatConclusion(
+        existingCase.type,
         existingCase.accusedNationalId,
         existingCase.accusedName,
         existingCase.accusedGender,
         existingCase.decision,
         existingCase.custodyEndDate,
-        existingCase.custodyRestrictions?.includes(
-          CaseCustodyRestrictions.ISOLATION,
-        ),
+        existingCase.type === CaseType.CUSTODY &&
+          existingCase.custodyRestrictions?.includes(
+            CaseCustodyRestrictions.ISOLATION,
+          ),
         existingCase.parentCase !== null,
         existingCase.parentCase?.decision,
       ),
@@ -514,7 +516,10 @@ export async function generateRulingPdf(
       })
   }
 
-  if (existingCase.decision === CaseDecision.ACCEPTING) {
+  if (
+    existingCase.type === CaseType.CUSTODY &&
+    existingCase.decision === CaseDecision.ACCEPTING
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')
@@ -543,7 +548,13 @@ export async function generateRulingPdf(
       )
   }
 
-  if (existingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
+  if (
+    (existingCase.type === CaseType.CUSTODY &&
+      existingCase.decision ===
+        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) ||
+    (existingCase.type === CaseType.TRAVEL_BAN &&
+      existingCase.decision === CaseDecision.ACCEPTING)
+  ) {
     doc
       .text(' ')
       .font('Helvetica-Bold')

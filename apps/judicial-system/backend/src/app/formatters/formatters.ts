@@ -105,6 +105,7 @@ export function formatCourtCaseNumber(
 }
 
 export function formatConclusion(
+  type: CaseType,
   accusedNationalId: string,
   accusedName: string,
   accusedGender: CaseGender,
@@ -121,7 +122,7 @@ export function formatConclusion(
         isExtension && previousDecision === CaseDecision.ACCEPTING
           ? ' áframhaldandi'
           : ''
-      } gæsluvarðhaldi er hafnað.`
+      } ${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'} er hafnað.`
     : `${capitalize(
         formatAccusedByGender(accusedGender),
       )}, ${accusedName}, kt. ${formatNationalId(
@@ -132,8 +133,9 @@ export function formatConclusion(
               isExtension && previousDecision === CaseDecision.ACCEPTING
                 ? 'áframhaldandi '
                 : ''
-            }gæsluvarðhaldi`
-          : `${
+            }${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'}`
+          : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            `${
               isExtension &&
               previousDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                 ? 'áframhaldandi '
@@ -322,6 +324,7 @@ export function formatPrisonRulingEmailNotification(
     courtDate,
     'PPP',
   )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${defenderName}.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
+    CaseType.CUSTODY,
     accusedNationalId,
     accusedName,
     accusedGender,
