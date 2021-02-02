@@ -1,7 +1,8 @@
 import {
   InternalServerErrorException,
   Inject,
-  Injectable, NotFoundException
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 
@@ -29,7 +30,7 @@ export class HealthInsuranceAPI {
 
   public async getProfun(): Promise<string> {
     logger.info(`--- Starting getProfun api call ---`)
-    
+
     const args = {
       sendandi: '',
     }
@@ -38,19 +39,20 @@ export class HealthInsuranceAPI {
   }
 
   // check whether the person is health insured
-  public async isHealthInsured(
-    nationalId: string,
-  ): Promise<boolean> {
+  public async isHealthInsured(nationalId: string): Promise<boolean> {
     logger.info(`--- Starting isHealthInsured api call for ${nationalId} ---`)
-    
+
     const args = {
       sendandi: '',
       kennitala: nationalId,
-      dagsetning: Date.now()
+      dagsetning: Date.now(),
     }
-    const res: GetSjukratryggdurTypeDto = await this.xroadCall('sjukratryggdur', args)
+    const res: GetSjukratryggdurTypeDto = await this.xroadCall(
+      'sjukratryggdur',
+      args,
+    )
 
-    if(!res.SjukratryggdurType){
+    if (!res.SjukratryggdurType) {
       logger.error(
         `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
           res,
@@ -66,14 +68,14 @@ export class HealthInsuranceAPI {
   }
 
   // get user's pending applications
-  public async getPendingApplication(
-    nationalId: string,
-  ): Promise<number[]> {
-    logger.info(`--- Starting getPendingApplication api call for ${nationalId} ---`)
+  public async getPendingApplication(nationalId: string): Promise<number[]> {
+    logger.info(
+      `--- Starting getPendingApplication api call for ${nationalId} ---`,
+    )
 
     const args = {
       sendandi: '',
-      kennitala: nationalId
+      kennitala: nationalId,
     }
     /*
       API returns null when there is no application in the system,
@@ -86,7 +88,10 @@ export class HealthInsuranceAPI {
       2: Í bið/Pending
       3: Ógilt/Invalid
     */
-    const res: GetFaUmsoknSjukratryggingTypeDto = await this.xroadCall('faumsoknirsjukratrygginga', args)
+    const res: GetFaUmsoknSjukratryggingTypeDto = await this.xroadCall(
+      'faumsoknirsjukratrygginga',
+      args,
+    )
 
     if (!res.FaUmsoknSjukratryggingType?.umsoknir) {
       logger.info(`return empty array to graphQL`)
@@ -104,11 +109,13 @@ export class HealthInsuranceAPI {
         pendingCases.push(value.skjalanumer)
       })
 
-    logger.info(`--- Finished getPendingApplication api call for ${nationalId} ---`)
+    logger.info(
+      `--- Finished getPendingApplication api call for ${nationalId} ---`,
+    )
     return pendingCases
   }
 
-  private async xroadCall(functionName: string, args: object): Promise<any>{
+  private async xroadCall(functionName: string, args: object): Promise<any> {
     // create 'soap' client
     logger.info(`Start ${functionName} function call.`)
     const client = await SoapClient.generateClient(
@@ -132,7 +139,13 @@ export class HealthInsuranceAPI {
           logger.error(JSON.stringify(err, null, 2))
           reject(err)
         } else {
-          logger.info(`Successful call ${functionName} function and get result: ${JSON.stringify(result, null, 2)}`)
+          logger.info(
+            `Successful call ${functionName} function and get result: ${JSON.stringify(
+              result,
+              null,
+              2,
+            )}`,
+          )
           resolve(result)
         }
       })
