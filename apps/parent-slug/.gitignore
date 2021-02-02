@@ -1,0 +1,23 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv environment variables file
+.env
+.contentfulrc.json
+
+# Parcel-bundler cache
+.cache
+
+# Dependency directories
+node_modules/
+
+# Coverage
+.coverage
+
+# Build
+build/*
+!/build/index.html
