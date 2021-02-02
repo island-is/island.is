@@ -69,17 +69,13 @@ const createNamespace = (id: string, messages: MessageDict, locales: Locales) =>
       const defaults = { [DEFAULT_LOCALE]: messages }
       const strings = createStringsObject(locales, messages)
 
-      const entry = await environment.createEntryWithId(
-        'namespaceJeremyDev',
-        id,
-        {
-          fields: {
-            namespace,
-            defaults,
-            strings,
-          },
+      const entry = await environment.createEntryWithId('namespace', id, {
+        fields: {
+          namespace,
+          defaults,
+          strings,
         },
-      )
+      })
 
       logger.info(`New namespace created`, { message: entry.sys.id })
     })

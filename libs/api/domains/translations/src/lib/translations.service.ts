@@ -35,7 +35,7 @@ export class TranslationsService {
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<any>('*', {
-        ['content_type']: 'namespaceJeremyDev',
+        ['content_type']: 'namespace',
         select: 'fields.strings',
         'fields.namespace[in]': namespaces.join(','),
       })
