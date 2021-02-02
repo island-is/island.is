@@ -452,4 +452,19 @@ export const m = defineMessages({
     defaultMessage: 'Contact info',
     description: 'Contact info',
   },
+  alreadyInsuredTitle: {
+    id: 'hi.application:alreadyInsured.title',
+    defaultMessage: 'Already insured',
+    description: 'Already insured',
+  },
+  alreadyInsuredDescription: {
+    id: 'hi.application:alreadyInsured.description',
+    defaultMessage: 'It seems like you already have a health insurance in Iceland',
+    description: 'already insured',
+  },
+  alreadyInsuredButtonText: {
+    id: 'hi.application:alreadyInsured.buttonText',
+    defaultMessage: 'OK',
+    description: 'ok',
+  },
 })

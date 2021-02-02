@@ -19,6 +19,7 @@ import { APPLICANT_APPLICATIONS } from '@island.is/application/graphql'
 import { Address } from '@island.is/api/schema'
 import * as styles from './ErrorModal.treat'
 import { m } from '../../forms/messages'
+import useModalContent from '../../hooks/useModalContent'
 
 interface ContentType {
   title?: string
@@ -28,95 +29,11 @@ interface ContentType {
 }
 
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
-  const { typeId } = application
+  const { typeId, externalData } = application
 
   const { formatMessage } = useLocale()
   const history = useHistory()
-
-  const [content, setContent] = useState<ContentType>()
-
-  const { data: applicationData, error: applicationsError } = useQuery(
-    APPLICANT_APPLICATIONS,
-    {
-      variables: {
-        typeId: typeId,
-      },
-    },
-  )
-
-  // TODO: Add conditions if former country is outside EU and if paper application is active
-  useEffect(() => {
-    const { externalData } = application
-    const address = (externalData?.nationalRegistry?.data as {
-      address?: Address
-    })?.address
-    const isInsured = externalData?.healthInsurance?.data
-    const oldPendingApplications = externalData?.oldPendingApplications
-      ?.data as string[]
-
-    if (isInsured === true) {
-      setContent({
-        title: 'Already insured',
-        description:
-          'It seems like you already have a health insurance in Iceland',
-        buttonText: 'OK',
-        buttonAction: () => history.push(`../umsoknir/${typeId}`),
-      })
-    } else if (
-      applicationData &&
-      applicationData.getApplicationsByApplicant.length > 1
-    ) {
-      setContent({
-        title: formatText(m.activeApplicationTitle, application, formatMessage),
-        description: formatText(
-          m.activeApplicationDescription,
-          application,
-          formatMessage,
-        ),
-        buttonText: formatText(
-          m.activeApplicationButtonText,
-          application,
-          formatMessage,
-        ),
-      })
-    } else if (oldPendingApplications?.length > 0) {
-      setContent({
-        title: formatText(m.activeApplicationTitle, application, formatMessage),
-        description: formatText(
-          () => ({
-            ...m.oldPendingApplicationDescription,
-            values: { applicationNumber: oldPendingApplications[0] },
-          }),
-          application,
-          formatMessage,
-        ),
-        buttonText: formatText(
-          m.oldPendingApplicationButtonText,
-          application,
-          formatMessage,
-        ),
-      })
-    }
-    // if user is not registered in Island, display error modal
-    else if (
-      !address ||
-      (address && !(address.streetAddress && address.postalCode))
-    ) {
-      setContent({
-        title: formatText(m.registerYourselfTitle, application, formatMessage),
-        description: formatText(
-          m.registerYourselfDescription,
-          application,
-          formatMessage,
-        ),
-        buttonText: formatText(
-          m.registerYourselfButtonText,
-          application,
-          formatMessage,
-        ),
-      })
-    }
-  }, [applicationData])
+  const content = useModalContent(externalData)
 
   return (
     <ModalBase
@@ -140,9 +57,19 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
           </FocusableBox>
           <Stack space={[5, 5, 5, 7]}>
             <Stack space={2}>
-              <Text variant={'h1'}>{content?.title}</Text>
+              <Text variant={'h1'}>{
+                formatText(
+                  content?.title,
+                  application,
+                  formatMessage,
+                )
+              }</Text>
               <Text variant={'intro'}>
-                <Markdown>{content?.description as string}</Markdown>
+                <Markdown>{formatText(
+                  content?.description,
+                  application,
+                  formatMessage,
+                ) as string}</Markdown>
               </Text>
             </Stack>
             <GridRow align="spaceBetween" className={styles.gridFix}>
@@ -173,7 +100,13 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   }}
                   fluid
                 >
-                  {content?.buttonText}
+                  {
+                    formatText(
+                      content?.buttonText,
+                      application,
+                      formatMessage,
+                    )
+                  }
                 </Button>
               </GridColumn>
             </GridRow>

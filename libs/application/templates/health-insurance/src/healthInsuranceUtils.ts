@@ -14,7 +14,7 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
   return isInsured === true
 }
 
-export const activeApplication = (externalData: ExternalData) => {
+export const hasActiveApplication = (externalData: ExternalData) => {
     const pendingApplications = externalData?.pendingApplications
     ?.data as PendingApplications[]
     return pendingApplications?.length > 1
@@ -44,5 +44,5 @@ export const isFormerCountryOutsideEu = (externalData: ExternalData) => {
 }
 
 export const shouldShowModal = (externalData: ExternalData) => {
-    return hasHealthInsurance(externalData) || activeApplication(externalData) || hasOldPendingApplications(externalData) || hasIcelandicAddress(externalData) // || isFormerCountryOutsideEu(externalData)
+    return hasHealthInsurance(externalData) || hasActiveApplication(externalData) || hasOldPendingApplications(externalData) || hasIcelandicAddress(externalData) // || isFormerCountryOutsideEu(externalData)
 }

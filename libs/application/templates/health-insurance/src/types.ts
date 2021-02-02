@@ -23,3 +23,10 @@ export interface ReviewFieldProps extends FieldBaseProps {
   isEditable: boolean
   index?: number
 }
+
+export interface ContentType {
+  title?: string
+  description?: string
+  buttonText?: string
+  buttonAction?: () => void
+}
