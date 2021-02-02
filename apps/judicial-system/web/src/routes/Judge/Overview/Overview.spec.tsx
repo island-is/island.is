@@ -1,8 +1,8 @@
 import { createMemoryHistory } from 'history'
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { Route, Router } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import Overview from './Overview'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -12,7 +12,7 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/domari-krafa with an ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -47,16 +47,14 @@ describe('/domari-krafa with an ID', () => {
       </MockedProvider>,
     )
     userEvent.type(
-      await waitFor(
-        () => screen.getByLabelText('Slá inn málsnúmer *') as HTMLInputElement,
-      ),
+      await screen.findByLabelText('Slá inn málsnúmer *'),
       '000-0000-000',
     )
-    userEvent.tab()
+
     expect(
-      screen.getByRole('button', {
+      (await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      })) as HTMLButtonElement,
     ).not.toBeDisabled()
   })
 
@@ -86,10 +84,8 @@ describe('/domari-krafa with an ID', () => {
 
     // Assert
     expect(
-      await waitFor(() =>
-        screen.getByText('Ekki er farið fram á takmarkanir á gæslu'),
-      ),
-    ).toBeTruthy()
+      await screen.findByText('Ekki er farið fram á takmarkanir á gæslu'),
+    ).toBeInTheDocument()
   })
 
   test('should display the approprieate custody restrictions if there are any', async () => {
@@ -118,7 +114,7 @@ describe('/domari-krafa with an ID', () => {
 
     // Assert
     expect(
-      await waitFor(() => screen.getByText('B - Einangrun, E - Fjölmiðlabann')),
+      await screen.findByText('B - Einangrun, E - Fjölmiðlabann'),
     ).toBeInTheDocument()
   })
 
@@ -147,9 +143,7 @@ describe('/domari-krafa with an ID', () => {
     )
 
     // Assert
-    expect(
-      await waitFor(() => screen.getByText('a-lið 1. mgr. 95. gr.')),
-    ).toBeInTheDocument()
-    expect(screen.getByText('c-lið 1. mgr. 95. gr.')).toBeInTheDocument()
+    expect(await screen.findByText('a-lið 1. mgr. 95. gr.')).toBeInTheDocument()
+    expect(await screen.findByText('c-lið 1. mgr. 95. gr.')).toBeInTheDocument()
   })
 })

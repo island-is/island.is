@@ -3,23 +3,27 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
 import {
   Text,
   Stack,
   Breadcrumbs,
   Box,
-  Link,
   Button,
   GridContainer,
   LoadingIcon,
   Filter,
   FilterInput,
   FilterMultiChoice,
+  Navigation,
+  Link,
 } from '@island.is/island-ui/core'
+
 import {
   ServiceList,
   SubpageDetailsContent,
   SubpageMainContent,
+  RichText,
 } from '@island.is/web/components'
 
 import getConfig from 'next/config'
@@ -43,7 +47,6 @@ import {
   GET_SUBPAGE_HEADER_QUERY,
 } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
-import RichText from '@island.is/web/components/RichText/RichText'
 import { useI18n } from '@island.is/web/i18n'
 import { useQuery } from '@apollo/client'
 import {
@@ -52,6 +55,7 @@ import {
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const { publicRuntimeConfig } = getConfig()
 const LIMIT = 20
@@ -62,12 +66,14 @@ interface ApiCatalogueProps {
   subpageHeader: GetSubpageHeaderQuery['getSubpageHeader']
   staticContent: GetNamespaceQuery['getNamespace']
   filterContent: GetNamespaceQuery['getNamespace']
+  navigationLinks: GetNamespaceQuery['getNamespace']
 }
 
 const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   subpageHeader,
   staticContent,
   filterContent,
+  navigationLinks,
 }) => {
   /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
@@ -79,6 +85,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const { activeLocale } = useI18n()
   const sn = useNamespace(staticContent)
   const fn = useNamespace(filterContent)
+  const nn = useNamespace(navigationLinks)
+
+  const { linkResolver } = useLinkResolver()
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
@@ -200,20 +209,91 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     },
   ]
 
+  const navigationItems = [
+    {
+      active: true,
+      href: linkResolver('webservicespage').href,
+      title: nn('linkServicesText'),
+    },
+    {
+      href: linkResolver('handbookpage').href,
+      title: nn('linkHandbookNavText'),
+    },
+    {
+      href: nn('linkIslandUI'),
+      title: nn('linkIslandUIText'),
+    },
+    {
+      href: nn('linkDesignSystem'),
+      title: nn('linkDesignSystemText'),
+    },
+    {
+      href: nn('linkContentPolicy'),
+      title: nn('linkContentPolicyText'),
+    },
+  ]
+
   return (
     <SubpageLayout
       main={
-        <SidebarLayout sidebarContent={<>Navigation goes here</>}>
+        <SidebarLayout
+          sidebarContent={
+            <Navigation
+              baseId="service-list-navigation"
+              colorScheme="blue"
+              items={navigationItems}
+              title={nn('linkThrounText')}
+              titleLink={{
+                href: linkResolver('developerspage').href,
+              }}
+            />
+          }
+        >
           <SubpageMainContent
             main={
               <Box>
-                <Box marginBottom={2}>
-                  <Breadcrumbs>
-                    <Link href="/">Ísland.is</Link>
-                    <a href="/throun">Þróun</a>
-                    <a href="/throun/vefthjonustur">Vefþjónustur</a>
-                    <span>{subpageHeader.title}</span>
-                  </Breadcrumbs>
+                <Box display={['inline', 'inline', 'none']}>
+                  {/* Show when a device */}
+                  <Box paddingBottom="gutter">
+                    <Button
+                      colorScheme="default"
+                      preTextIcon="arrowBack"
+                      size="small"
+                      variant="text"
+                    >
+                      <Link {...linkResolver('developerspage')}>
+                        {nn('linkThrounText')}
+                      </Link>
+                    </Button>
+                  </Box>
+                  <Box marginBottom="gutter">
+                    <Navigation
+                      baseId="service-list-navigation"
+                      colorScheme="blue"
+                      isMenuDialog
+                      items={navigationItems}
+                      title={nn('linkThrounText')}
+                      titleLink={{
+                        href: linkResolver('developerspage').href,
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box marginBottom={2} display={['none', 'none', 'inline']}>
+                  {/* Show when NOT a device */}
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: nn('linkIslandIsText'),
+                        href: linkResolver('homepage').href,
+                      },
+
+                      {
+                        title: nn('linkThrounText'),
+                        href: linkResolver('developerspage').href,
+                      },
+                    ]}
+                  />
                 </Box>
                 <Stack space={1}>
                   <Text variant="h1">{subpageHeader.title}</Text>
@@ -262,6 +342,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   <Filter
                     labelClear={fn('clear')}
                     labelOpen={fn('openFilterButton')}
+                    labelClose={fn('closeFilter')}
                     labelResult={fn('mobileResult')}
                     labelTitle={fn('mobileTitle')}
                     resultCount={data?.getApiCatalogue?.services?.length ?? 0}
@@ -317,6 +398,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               {data?.getApiCatalogue?.services.length > 0 && (
                 <GridContainer>
                   <ServiceList
+                    baseUrl={linkResolver('webservicespage').href + '/'}
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}
                   />
@@ -348,6 +430,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     staticContent,
     filterContent,
+    navigationLinks,
   ] = await Promise.all([
     apolloClient.query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
       query: GET_SUBPAGE_HEADER_QUERY,
@@ -364,7 +447,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalog',
-            lang: locale,
+            lang: locale as ContentLanguage,
           },
         },
       })
@@ -375,7 +458,18 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             namespace: 'ApiCatalogFilter',
-            lang: locale,
+            lang: locale as ContentLanguage,
+          },
+        },
+      })
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'ApiCatalogueLinks',
+            lang: locale as ContentLanguage,
           },
         },
       })
@@ -386,6 +480,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
     subpageHeader,
     staticContent,
     filterContent,
+    navigationLinks,
   }
 }
 

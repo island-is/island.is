@@ -5,7 +5,7 @@ import {
 } from './reducerUtils'
 import {
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRepeater,
   buildSection,
@@ -22,10 +22,10 @@ describe('reducerUtils', () => {
       sectionIndex = -1,
       subSectionIndex = -1,
     ) => ({
-      ...buildIntroductionField({
+      ...buildDescriptionField({
         id,
-        name: 'Introduction',
-        introduction: 'welcome',
+        title: 'Introduction',
+        description: 'welcome',
       }),
       isNavigable,
       sectionIndex,
@@ -39,7 +39,7 @@ describe('reducerUtils', () => {
     ) => ({
       ...buildTextField({
         id: id,
-        name: 'What is the family name?',
+        title: 'What is the family name?',
       }),
       isNavigable,
       sectionIndex,
@@ -72,7 +72,7 @@ describe('reducerUtils', () => {
         buildMultiField({
           id: 'multifield',
           children: [buildTextScreen('a'), buildTextScreen('b')],
-          name: 'This is a great screen',
+          title: 'This is a great screen',
         }) as MultiFieldScreen,
         buildTextScreen('c'),
       ]
@@ -85,7 +85,7 @@ describe('reducerUtils', () => {
         buildMultiField({
           id: 'multifield',
           children: [buildTextScreen('a'), buildTextScreen('b')],
-          name: 'This is a great screen',
+          title: 'This is a great screen',
         }) as MultiFieldScreen,
         buildTextScreen('c'),
       ]
@@ -98,7 +98,7 @@ describe('reducerUtils', () => {
         buildRepeater({
           id: 'person',
           children: [buildTextScreen('a'), buildTextScreen('b')],
-          name: 'This is a great screen',
+          title: 'This is a great screen',
           component: 'SomeComponent',
         }) as RepeaterScreen,
         buildTextScreen('c'),
@@ -113,17 +113,17 @@ describe('reducerUtils', () => {
   describe('get navigable sections in form', () => {
     const firstSection = buildSection({
       id: '1',
-      name: 'first',
+      title: 'first',
       children: [],
     })
     const secondSection = buildSection({
       id: '2',
-      name: 'second',
+      title: 'second',
       children: [],
     })
     const thirdSection = buildSection({
       id: '3',
-      name: 'third',
+      title: 'third',
       children: [],
     })
     it('should return all sections if no section has a condition', () => {
@@ -131,7 +131,7 @@ describe('reducerUtils', () => {
       const form = buildForm({
         id: 'ExampleForm',
         children: sections,
-        name: 'asdf',
+        title: 'asdf',
       })
 
       expect(getNavigableSectionsInForm(form, {}, {})).toEqual(sections)
@@ -141,7 +141,7 @@ describe('reducerUtils', () => {
         firstSection,
         buildSection({
           id: '2',
-          name: 'second',
+          title: 'second',
           children: [],
           condition: () => false,
         }),
@@ -150,7 +150,7 @@ describe('reducerUtils', () => {
       const form = buildForm({
         id: 'ExampleForm',
         children: sections,
-        name: 'asdf',
+        title: 'asdf',
       })
 
       expect(getNavigableSectionsInForm(form, {}, {})).toEqual([
@@ -161,19 +161,19 @@ describe('reducerUtils', () => {
     it('should only return non-condition-violating sub-sections of sections', () => {
       const subSection = buildSubSection({
         id: 'sub1',
-        name: 'sub1',
+        title: 'sub1',
         children: [],
         condition: () => false,
       })
       const subSection2 = buildSubSection({
         id: 'sub2',
-        name: 'sub2',
+        title: 'sub2',
         children: [],
         condition: () => true,
       })
       const subSection3 = buildSubSection({
         id: 'sub3',
-        name: 'sub3',
+        title: 'sub3',
         children: [],
       })
 
@@ -182,14 +182,14 @@ describe('reducerUtils', () => {
         secondSection,
         buildSection({
           id: 'withSubsections',
-          name: 'sick',
+          title: 'sick',
           children: [subSection, subSection2, subSection3],
         }),
       ]
       const form = buildForm({
         id: 'ExampleForm',
         children: sections,
-        name: 'asdf',
+        title: 'asdf',
       })
 
       expect(getNavigableSectionsInForm(form, {}, {})).toEqual([
@@ -197,7 +197,7 @@ describe('reducerUtils', () => {
         secondSection,
         buildSection({
           id: 'withSubsections',
-          name: 'sick',
+          title: 'sick',
           children: [subSection2, subSection3],
         }),
       ])
@@ -208,26 +208,26 @@ describe('reducerUtils', () => {
       it('should hide all fields that belong to a section that violates condition', () => {
         const invisibleSection = buildSection({
           id: '1',
-          name: 'where am i',
+          title: 'where am i',
           condition: () => false,
           children: [
-            buildTextField({ id: '1', name: '1' }),
-            buildTextField({ id: '2', name: '2' }),
+            buildTextField({ id: '1', title: '1' }),
+            buildTextField({ id: '2', title: '2' }),
           ],
         })
         const visibleSection = buildSection({
           id: '2',
-          name: 'visible',
+          title: 'visible',
           condition: () => true,
           children: [
-            buildTextField({ id: '3', name: '3' }),
-            buildTextField({ id: '4', name: '4' }),
-            buildTextField({ id: '5', name: '5' }),
+            buildTextField({ id: '3', title: '3' }),
+            buildTextField({ id: '4', title: '4' }),
+            buildTextField({ id: '5', title: '5' }),
           ],
         })
         const form = buildForm({
           id: 'ExampleForm',
-          name: 'asdf',
+          title: 'asdf',
           children: [invisibleSection, visibleSection],
         })
         const screens = convertFormToScreens(form, {}, {})
@@ -248,18 +248,18 @@ describe('reducerUtils', () => {
       it('should convert multifield to a single screen', () => {
         const multifield = buildMultiField({
           id: 'multi',
-          name: 'multi',
+          title: 'multi',
           children: [
-            buildTextField({ id: '1', name: '1' }),
-            buildTextField({ id: '2', name: '2' }),
-            buildTextField({ id: '3', name: '3' }),
-            buildTextField({ id: '4', name: '4' }),
-            buildTextField({ id: '5', name: '5' }),
+            buildTextField({ id: '1', title: '1' }),
+            buildTextField({ id: '2', title: '2' }),
+            buildTextField({ id: '3', title: '3' }),
+            buildTextField({ id: '4', title: '4' }),
+            buildTextField({ id: '5', title: '5' }),
           ],
         })
         const form = buildForm({
           id: 'ExampleForm',
-          name: 'asdf',
+          title: 'asdf',
           children: [multifield],
         })
         const screens = convertFormToScreens(form, {}, {})
@@ -269,13 +269,13 @@ describe('reducerUtils', () => {
     })
     describe('repeaters', () => {
       const children = [
-        buildTextField({ id: '1', name: '1' }),
-        buildTextField({ id: '2', name: '2' }),
+        buildTextField({ id: '1', title: '1' }),
+        buildTextField({ id: '2', title: '2' }),
       ]
       const repeater = {
         ...buildRepeater({
           id: 'id',
-          name: 'repeater',
+          title: 'repeater',
           component: 'asdf',
           children,
         }),
@@ -283,7 +283,7 @@ describe('reducerUtils', () => {
       it('should only include the repeater screen if it has not been expanded', () => {
         const form = buildForm({
           id: 'ExampleForm',
-          name: 'asdf',
+          title: 'asdf',
           children: [repeater],
         })
         const screens = convertFormToScreens(form, {}, {})
@@ -300,46 +300,46 @@ describe('reducerUtils', () => {
       it('should attach the index of the section and possibly subsections which own the screens', () => {
         const invisibleSection = buildSection({
           id: '1',
-          name: 'where am i',
+          title: 'where am i',
           condition: () => false,
           children: [
-            buildTextField({ id: '1', name: '1' }),
+            buildTextField({ id: '1', title: '1' }),
             buildSubSection({
               id: 'sub1',
-              name: 'sub1',
-              children: [buildTextField({ id: '2', name: '2' })],
+              title: 'sub1',
+              children: [buildTextField({ id: '2', title: '2' })],
             }),
           ],
         })
         const visibleSection = buildSection({
           id: '2',
-          name: 'visible',
+          title: 'visible',
           condition: () => true,
           children: [
             buildSubSection({
               id: 'sub2',
-              name: 'sub2',
+              title: 'sub2',
               children: [
-                buildTextField({ id: '3', name: '3' }),
-                buildTextField({ id: '4', name: '4' }),
+                buildTextField({ id: '3', title: '3' }),
+                buildTextField({ id: '4', title: '4' }),
               ],
             }),
             buildSubSection({
               id: 'sub3',
-              name: 'sub3',
-              children: [buildTextField({ id: '5', name: '5' })],
+              title: 'sub3',
+              children: [buildTextField({ id: '5', title: '5' })],
             }),
           ],
         })
         const form = buildForm({
           id: 'ExampleForm',
-          name: 'asdf',
+          title: 'asdf',
           children: [
             invisibleSection,
             visibleSection,
             buildTextField({
               id: 'noSection',
-              name: 'Part of no section nor parent',
+              title: 'Part of no section nor parent',
             }),
           ],
         })

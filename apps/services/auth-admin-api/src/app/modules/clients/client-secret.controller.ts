@@ -9,14 +9,16 @@ import {
   Controller,
   Delete,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { NationalIdGuard } from '../access/national-id-guard'
 
-@ApiOAuth2(['@identityserver.api/read'])
-// TODO: ADD guards when functional
-// @UseGuards(AuthGuard('jwt'))
+// @ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('client-secret')
-@Controller('client-secret')
+@Controller('backend/client-secret')
 export class ClientSecretController {
   constructor(private readonly clientsService: ClientsService) {}
 

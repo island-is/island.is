@@ -2,11 +2,15 @@ import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
 import { SignedVerdictOverview } from './SignedVerdictOverview'
 import { MemoryRouter, Route } from 'react-router-dom'
-import { mockCaseQueries, mockJudgeQuery } from '../../../utils/mocks'
+import {
+  mockCaseQueries,
+  mockJudgeQuery,
+  mockProsecutorQuery,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import '@testing-library/jest-dom'
-import { UserProvider } from '../../../shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
 describe('Signed Verdict Overview route', () => {
@@ -30,9 +34,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Kröfu hafnað', { selector: 'h1' }),
-        ),
+        await screen.findByText('Kröfu hafnað', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -55,9 +57,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Úrskurðað 16. september 2020 kl. 19:51'),
-        ),
+        await screen.findByText('Úrskurðað 16. september 2020 kl. 19:51'),
       ).toBeInTheDocument()
     })
 
@@ -85,6 +85,31 @@ describe('Signed Verdict Overview route', () => {
         ),
       ).not.toBeInTheDocument()
     })
+
+    test('should not show a button for extention', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_2`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+        ),
+      ).not.toBeInTheDocument()
+    })
   })
 
   describe('Accepted case with active custody', () => {
@@ -107,9 +132,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Gæsluvarðhald virkt', { selector: 'h1' }),
-        ),
+        await screen.findByText('Gæsluvarðhald virkt', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -133,13 +156,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
-              date,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
+            date,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -163,10 +184,33 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Fjölmiðlabann', { selector: 'span' }),
-        ),
+        await screen.findByText('Fjölmiðlabann', { selector: 'span' }),
       ).toBeInTheDocument()
+    })
+
+    test('should not show a button for extention because the user is a judge', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+        ),
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -190,10 +234,86 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
+        await screen.findByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
+      ).toBeInTheDocument()
+    })
+
+    test('should have the correct subtitle', async () => {
+      const dateInPast = '2020-09-24T19:50:08.033Z'
+
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_6`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText(
+          `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
+            dateInPast,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
+    })
+
+    test('should display restriction tags if there are restrictions', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_6`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText('Heimsóknarbann', { selector: 'span' }),
+      ).toBeInTheDocument()
+    })
+
+    test('should not show a button for extention because the user is a judge', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+        ),
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -217,9 +337,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Farbann virkt', { selector: 'h1' }),
-        ),
+        await screen.findByText('Farbann virkt', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -243,15 +361,38 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
-              date,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
+            date,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
+    })
+
+    test('should not show a button for extention because the user is a judge', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockJudgeQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+        ),
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -275,9 +416,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Farbanni lokið', { selector: 'h1' }),
-        ),
+        await screen.findByText('Farbanni lokið', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -302,72 +441,36 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-              dateInPast,
-              TIME_FORMAT,
-            )}`,
-          ),
-        ),
-      ).toBeInTheDocument()
-    })
-  })
-
-  test('should have the correct subtitle', async () => {
-    const dateInPast = '2020-09-24T19:50:08.033Z'
-
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_6`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-              <SignedVerdictOverview />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    expect(
-      await waitFor(() =>
-        screen.getByText(
-          `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
+        await screen.findByText(
+          `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
             dateInPast,
             TIME_FORMAT,
           )}`,
         ),
-      ),
-    ).toBeInTheDocument()
-  })
+      ).toBeInTheDocument()
+    })
 
-  test('should display restriction tags if there are restrictions', async () => {
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockJudgeQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_6`]}
+    test('should show a button for extention because the user is a prosecutor', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          addTypename={false}
         >
-          <UserProvider>
-            <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-              <SignedVerdictOverview />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
 
-    expect(
-      await waitFor(() =>
-        screen.getByText('Heimsóknarbann', { selector: 'span' }),
-      ),
-    ).toBeInTheDocument()
+      expect(
+        await screen.findByRole('button', { name: 'Framlengja gæslu' }),
+      ).toBeInTheDocument()
+    })
   })
 })

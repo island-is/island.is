@@ -13,6 +13,7 @@ import { CommunicationsModule } from '@island.is/api/domains/communications'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
 import { environment } from './environments'
@@ -49,7 +50,9 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      baseApiUrl: environment.drivingLicense.baseApiUrl,
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
+      secret: environment.drivingLicense.secret,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
@@ -83,6 +86,12 @@ const autoSchemaFile = environment.production
       user: environment.nationalRegistry.user,
       password: environment.nationalRegistry.password,
       host: environment.nationalRegistry.host,
+    }),
+    HealthInsuranceModule.register({
+      wsdlUrl: environment.healthInsurance.wsdlUrl,
+      baseUrl: environment.healthInsurance.baseUrl,
+      username: environment.healthInsurance.username,
+      password: environment.healthInsurance.password,
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:

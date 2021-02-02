@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { Text, Input, Box, RadioButton } from '@island.is/island-ui/core'
-import { isDirty, isNextDisabled } from '../../../../utils/stepHelper'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import { FormFooter } from '../../../../shared-components/FormFooter'
+import {
+  FormFooter,
+  BlueBox,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   parseString,
   replaceTabsOnChange,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import {
   Case,
   UpdateCase,
@@ -34,7 +37,6 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import BlueBox from '../../../../shared-components/BlueBox/BlueBox'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface CaseData {
@@ -63,10 +65,9 @@ export const StepOne: React.FC = () => {
     string
   >('')
 
-  const [
-    requestedDefenderEmailErrorMessage,
-    setRequestedDefenderEmailErrorMessage,
-  ] = useState<string>('')
+  const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState<
+    string
+  >('')
 
   const { id } = useParams<{ id: string }>()
 
@@ -89,8 +90,8 @@ export const StepOne: React.FC = () => {
             accusedName: workingCase?.accusedName,
             accusedAddress: workingCase?.accusedAddress,
             accusedGender: workingCase?.accusedGender,
-            requestedDefenderName: workingCase?.requestedDefenderName,
-            requestedDefenderEmail: workingCase?.requestedDefenderEmail,
+            defenderName: workingCase?.defenderName,
+            defenderEmail: workingCase?.defenderEmail,
             court: 'Héraðsdómur Reykjavíkur',
           },
         },
@@ -136,7 +137,7 @@ export const StepOne: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Grunnupplýsingar - Réttarvörslugátt'
+    document.title = 'Sakborningur - Réttarvörslugátt'
   }, [])
 
   // Run this if id is in url, i.e. if user is opening an existing request.
@@ -153,19 +154,14 @@ export const StepOne: React.FC = () => {
         accusedNationalId: '',
         accusedName: '',
         accusedAddress: '',
-        requestedDefenderName: '',
-        requestedDefenderEmail: '',
+        defenderName: '',
+        defenderEmail: '',
         accusedGender: undefined,
       })
     }
   }, [id, workingCase, setWorkingCase, data])
 
-  /**
-   * Run this to validate form after each change
-   *
-   * This can't be done in the render function because the time refs will always be null
-   * until the user clicks the time inputs and then the continue button becomes enabled.
-   *  */
+  // Validate step
   useEffect(() => {
     if (workingCase) {
       setIsStepIllegal(
@@ -181,7 +177,7 @@ export const StepOne: React.FC = () => {
           { value: workingCase.accusedName || '', validations: ['empty'] },
           { value: workingCase.accusedAddress || '', validations: ['empty'] },
           {
-            value: workingCase.requestedDefenderEmail || '',
+            value: workingCase.defenderEmail || '',
             validations: ['email-format'],
           },
           {
@@ -197,16 +193,21 @@ export const StepOne: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
+      isExtension={!!workingCase?.parentCase}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
           <Box marginBottom={7}>
             <Text as="h1" variant="h1">
-              Krafa um gæsluvarðhald
+              Sakborningur
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
@@ -311,7 +312,7 @@ export const StepOne: React.FC = () => {
                   <RadioButton
                     name="accused-gender"
                     id="genderOther"
-                    label="Annað"
+                    label="Kynsegin/Annað"
                     checked={workingCase.accusedGender === CaseGender.OTHER}
                     onChange={() =>
                       setAndSendToServer(
@@ -441,34 +442,23 @@ export const StepOne: React.FC = () => {
               <Text as="h3" variant="h3">
                 Verjandi sakbornings
               </Text>
-              {(isDirty(workingCase.defenderName) ||
-                isDirty(workingCase.defenderEmail)) && (
-                <Text variant="eyebrow" color="blue400">
-                  (Verjanda hefur verið úthlutað)
-                </Text>
-              )}
             </Box>
             <Box marginBottom={2}>
               <Input
-                name="requestedDefenderName"
+                name="defenderName"
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
-                defaultValue={workingCase.requestedDefenderName}
-                disabled={isDirty(workingCase.defenderName)}
-                icon={
-                  isDirty(workingCase.defenderName) ? 'lockClosed' : undefined
-                }
-                iconType="outline"
+                defaultValue={workingCase.defenderName}
                 onBlur={(evt) => {
-                  if (workingCase.requestedDefenderName !== evt.target.value) {
+                  if (workingCase.defenderName !== evt.target.value) {
                     setWorkingCase({
                       ...workingCase,
-                      requestedDefenderName: evt.target.value,
+                      defenderName: evt.target.value,
                     })
 
                     updateCase(
                       workingCase.id,
-                      parseString('requestedDefenderName', evt.target.value),
+                      parseString('defenderName', evt.target.value),
                     )
                   }
                 }}
@@ -476,36 +466,31 @@ export const StepOne: React.FC = () => {
               />
             </Box>
             <Input
-              name="requestedDefenderEmail"
+              name="defenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
-              disabled={isDirty(workingCase.defenderEmail)}
-              icon={
-                isDirty(workingCase.defenderEmail) ? 'lockClosed' : undefined
-              }
-              iconType="outline"
-              defaultValue={workingCase.requestedDefenderEmail}
-              errorMessage={requestedDefenderEmailErrorMessage}
-              hasError={requestedDefenderEmailErrorMessage !== ''}
+              defaultValue={workingCase.defenderEmail}
+              errorMessage={defenderEmailErrorMessage}
+              hasError={defenderEmailErrorMessage !== ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
-                  'requestedDefenderEmail',
+                  'defenderEmail',
                   event,
                   ['email-format'],
                   workingCase,
                   setWorkingCase,
-                  requestedDefenderEmailErrorMessage,
-                  setRequestedDefenderEmailErrorMessage,
+                  defenderEmailErrorMessage,
+                  setDefenderEmailErrorMessage,
                 )
               }
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'requestedDefenderEmail',
+                  'defenderEmail',
                   event.target.value,
                   ['email-format'],
                   workingCase,
                   updateCase,
-                  setRequestedDefenderEmailErrorMessage,
+                  setDefenderEmailErrorMessage,
                 )
               }
             />

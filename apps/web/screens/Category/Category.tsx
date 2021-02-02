@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import intersection from 'lodash/intersection'
-import NextLink, { LinkProps } from 'next/link'
+import NextLink from 'next/link'
 import {
   Text,
   Stack,
@@ -10,13 +10,11 @@ import {
   Breadcrumbs,
   AccordionCard,
   LinkCard,
-  Link,
   FocusableBox,
   Navigation,
 } from '@island.is/island-ui/core'
-import { Card } from '@island.is/web/components'
+import { Card, Sticky } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
-import pathNames, { ContentType } from '@island.is/web/i18n/routes'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {
@@ -42,6 +40,7 @@ import {
   ArticleGroup,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -66,6 +65,7 @@ const Category: Screen<CategoryProps> = ({
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   const getCurrentCategory = () => categories.find((x) => x.slug === slug)
 
@@ -188,12 +188,10 @@ const Category: Screen<CategoryProps> = ({
 
     setHash(newHash)
 
-    const url = pathNames(
-      activeLocale,
-      category.__typename.toLowerCase() as ContentType,
-      [slug],
+    Router.replace(
+      linkResolver(category.__typename as LinkType, [slug]).href +
+        `#${newHash}`,
     )
-    Router.replace(url.href, url.as + `#${newHash}`)
   }
 
   const sortArticles = (articles: Articles) => {
@@ -254,32 +252,44 @@ const Category: Screen<CategoryProps> = ({
         <title>{category.title} | Ísland.is</title>
       </Head>
       <SidebarLayout
-        isSticky
+        isSticky={false}
         sidebarContent={
-          <Navigation
-            baseId="desktopNav"
-            colorScheme="purple"
-            items={sidebarCategoryLinks}
-            title={n('sidebarHeader')}
-            renderLink={(link, { typename, slug }) => {
+          <Sticky>
+            <Navigation
+              baseId="desktopNav"
+              colorScheme="purple"
+              items={sidebarCategoryLinks}
+              title={n('sidebarHeader')}
+              renderLink={(link, { typename, slug }) => {
+                return (
+                  <NextLink
+                    {...linkResolver(typename as LinkType, slug)}
+                    passHref
+                  >
+                    {link}
+                  </NextLink>
+                )
+              }}
+            />
+          </Sticky>
+        }
+      >
+        <Box paddingBottom={[2, 2, 4]}>
+          <Breadcrumbs
+            items={[
+              {
+                title: 'Ísland.is',
+                href: '/',
+              },
+            ]}
+            renderLink={(link) => {
               return (
-                <NextLink
-                  {...pathNames(activeLocale, typename as ContentType, slug)}
-                  passHref
-                >
+                <NextLink {...linkResolver('homepage')} passHref>
                   {link}
                 </NextLink>
               )
             }}
           />
-        }
-      >
-        <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <Link {...(pathNames() as LinkProps)} passHref>
-              Ísland.is
-            </Link>
-          </Breadcrumbs>
         </Box>
         <Box paddingBottom={[5, 5, 10]}>
           <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
@@ -298,7 +308,7 @@ const Category: Screen<CategoryProps> = ({
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
-                  {...pathNames(activeLocale, typename as ContentType, slug)}
+                  {...linkResolver(typename as LinkType, slug)}
                   passHref
                 >
                   {link}
@@ -377,16 +387,15 @@ const Category: Screen<CategoryProps> = ({
                           <Stack space={2}>
                             {sortedArticles.map(
                               ({ __typename, title, slug, processEntry }) => {
-                                const url = pathNames(
-                                  activeLocale,
-                                  __typename.toLowerCase() as ContentType,
-                                  [slug],
-                                )
                                 return (
                                   <FocusableBox
                                     key={slug}
-                                    href={url.href}
-                                    as={url.as}
+                                    href={
+                                      linkResolver(
+                                        __typename.toLowerCase() as LinkType,
+                                        [slug],
+                                      ).href
+                                    }
                                     borderRadius="large"
                                   >
                                     {({ isFocused }) => (
@@ -415,16 +424,10 @@ const Category: Screen<CategoryProps> = ({
           })}
           {lifeEvents.map(
             ({ __typename, title, slug, intro, thumbnail, image }, index) => {
-              const url = pathNames(
-                activeLocale,
-                __typename.toLowerCase() as ContentType,
-                [slug],
-              )
               return (
                 <Card
                   key={index}
-                  href={url.href}
-                  as={url.as}
+                  link={linkResolver(__typename as LinkType, [slug])}
                   description={intro}
                   title={title}
                   image={(thumbnail || image) as Image}
@@ -438,18 +441,12 @@ const Category: Screen<CategoryProps> = ({
             },
           )}
           {cards.map(({ __typename, title, content, slug }, index) => {
-            const url = pathNames(
-              activeLocale,
-              __typename.toLowerCase() as ContentType,
-              [slug],
-            )
             return (
               <Card
                 key={index}
                 title={title}
                 description={content}
-                href={url.href}
-                as={url.as}
+                link={linkResolver(__typename as LinkType, [slug])}
               />
             )
           })}

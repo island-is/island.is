@@ -1,9 +1,9 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
 import StepOne from './StepOne'
-import * as Constants from '../../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   mockCaseQueries,
   mockProsecutorQuery,
@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
 import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -35,39 +35,40 @@ describe('/krafa with an id', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          (screen.getByLabelText(
-            'Slá inn LÖKE málsnúmer *',
-          ) as HTMLInputElement).value,
-      ),
+      ((await screen.findByLabelText(
+        'Slá inn LÖKE málsnúmer *',
+      )) as HTMLInputElement).value,
     ).toEqual('000-0000-0000')
 
     expect(
-      screen.getByRole('radio', { name: 'Karl' }) as HTMLInputElement,
+      (await screen.findByRole('radio', { name: 'Karl' })) as HTMLInputElement,
     ).toBeChecked()
 
     expect(
-      (screen.getByLabelText('Kennitala *') as HTMLInputElement).value,
+      ((await screen.findByLabelText('Kennitala *')) as HTMLInputElement).value,
     ).toEqual('111111-1110')
 
     expect(
-      (screen.getByLabelText('Fullt nafn *') as HTMLInputElement).value,
+      ((await screen.findByLabelText('Fullt nafn *')) as HTMLInputElement)
+        .value,
     ).toEqual('Jon Harring')
 
     expect(
-      (screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement)
-        .value,
+      ((await screen.findByLabelText(
+        'Lögheimili/dvalarstaður *',
+      )) as HTMLInputElement).value,
     ).toEqual('Harringvej 2')
 
     expect(
-      (screen.getByLabelText('Nafn verjanda') as HTMLInputElement).value,
+      ((await screen.findByLabelText('Nafn verjanda')) as HTMLInputElement)
+        .value,
     ).toEqual('Saul Goodman')
 
     expect(
-      (screen.getByLabelText('Netfang verjanda') as HTMLInputElement).value,
+      ((await screen.findByLabelText('Netfang verjanda')) as HTMLInputElement)
+        .value,
     ).toEqual('saul@goodman.com')
-  }, 15000)
+  })
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
@@ -91,80 +92,10 @@ describe('/krafa with an id', () => {
     // Assert
 
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Halda áfram/i,
-          }) as HTMLButtonElement,
-      ),
+      (await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      })) as HTMLButtonElement,
     ).not.toBeDisabled()
-  })
-
-  test('should have a disabled defender name and email if judge has set a defender', async () => {
-    // Arrange
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    // Assert
-    expect(
-      await waitFor(
-        () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
-      ),
-    ).toBeDisabled()
-
-    expect(
-      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
-    ).toBeDisabled()
-  })
-
-  test('should have a disabled defender name and email even if a judge erases that info from the hearing arrangement screen', async () => {
-    // Arrange
-
-    // Act
-    render(
-      <MockedProvider
-        mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
-        addTypename={false}
-      >
-        <MemoryRouter
-          initialEntries={[`${Constants.SINGLE_REQUEST_BASE_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <StepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
-      </MockedProvider>,
-    )
-
-    // Assert
-    // A value is considered dirty if it's a string, even an empty one.
-    expect(
-      await waitFor(
-        () => screen.getByLabelText('Nafn verjanda') as HTMLInputElement,
-      ),
-    ).toBeDisabled()
-
-    expect(
-      screen.getByLabelText('Netfang verjanda') as HTMLInputElement,
-    ).toBeDisabled()
   })
 })
 
@@ -190,7 +121,7 @@ describe('/krafa without ID', () => {
 
     // Assert
     expect(
-      await waitFor(() => screen.getByRole('button', { name: /Stofna kröfu/ })),
+      await screen.findByRole('button', { name: /Stofna kröfu/ }),
     ).toBeInTheDocument()
   })
 
@@ -213,29 +144,27 @@ describe('/krafa without ID', () => {
 
     // Act
     const textInputs = [
-      await waitFor(() => screen.getByLabelText('Slá inn LÖKE málsnúmer *')),
-      await waitFor(() => screen.getByLabelText('Kennitala *')),
-      await waitFor(() => screen.getByLabelText('Fullt nafn *')),
-      await waitFor(() => screen.getByLabelText('Lögheimili/dvalarstaður *')),
-      await waitFor(() => screen.getByLabelText('Nafn verjanda')),
-      await waitFor(() => screen.getByLabelText('Netfang verjanda')),
+      await screen.findByLabelText('Slá inn LÖKE málsnúmer *'),
+      await screen.findByLabelText('Kennitala *'),
+      await screen.findByLabelText('Fullt nafn *'),
+      await screen.findByLabelText('Lögheimili/dvalarstaður *'),
+      await screen.findByLabelText('Nafn verjanda'),
+      await screen.findByLabelText('Netfang verjanda'),
     ]
 
     // Assert
     expect(textInputs.filter((a) => a.innerHTML !== '').length).toEqual(0)
+    expect(await screen.findByRole('radio', { name: 'Karl' })).not.toBeChecked()
+    expect(await screen.findByRole('radio', { name: 'Kona' })).not.toBeChecked()
     expect(
-      screen.getByRole('radio', { name: 'Karl' }) as HTMLInputElement,
+      await screen.findByRole('radio', {
+        name: 'Kynsegin/Annað',
+      }),
     ).not.toBeChecked()
     expect(
-      screen.getByRole('radio', { name: 'Kona' }) as HTMLInputElement,
-    ).not.toBeChecked()
-    expect(
-      screen.getByRole('radio', { name: 'Annað' }) as HTMLInputElement,
-    ).not.toBeChecked()
-    expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
+      }),
     ).toBeDisabled()
   })
 
@@ -275,40 +204,33 @@ describe('/krafa without ID', () => {
 
     // Act and Assert
     userEvent.type(
-      await waitFor(
-        () =>
-          screen.getByLabelText('Slá inn LÖKE málsnúmer *') as HTMLInputElement,
-      ),
+      await screen.findByLabelText('Slá inn LÖKE málsnúmer *'),
       '000-0000-0010',
     )
 
-    userEvent.click(screen.getByRole('radio', { name: 'Kona' }))
+    userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
 
-    userEvent.type(
-      screen.getByLabelText('Kennitala *') as HTMLInputElement,
-      '1112902539',
-    )
+    userEvent.type(await screen.findByLabelText('Kennitala *'), '1112902539')
 
-    userEvent.type(
-      screen.getByLabelText('Fullt nafn *') as HTMLInputElement,
-      'Jon Harring',
-    )
+    userEvent.type(await screen.findByLabelText('Fullt nafn *'), 'Jon Harring')
 
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
+      }),
     ).toBeDisabled()
 
     userEvent.type(
-      screen.getByLabelText('Lögheimili/dvalarstaður *') as HTMLInputElement,
+      (await screen.findByLabelText(
+        'Lögheimili/dvalarstaður *',
+      )) as HTMLInputElement,
       'Harringvej 2',
     )
 
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Stofna kröfu/i,
-      }) as HTMLButtonElement,
+      }),
     ).not.toBeDisabled()
   })
 })

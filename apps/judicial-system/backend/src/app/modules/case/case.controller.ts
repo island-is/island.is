@@ -58,19 +58,21 @@ const prosecutorUpdateRule = {
     'accusedName',
     'accusedAddress',
     'accusedGender',
-    'requestedDefenderName',
-    'requestedDefenderEmail',
+    'defenderName',
+    'defenderEmail',
     'court',
     'arrestDate',
     'requestedCourtDate',
     'alternativeTravelBan',
     'requestedCustodyEndDate',
+    'otherDemands',
     'lawsBroken',
     'custodyProvisions',
     'requestedCustodyRestrictions',
     'caseFacts',
     'legalArguments',
     'comments',
+    'prosecutorId',
   ],
 } as RolesRule
 
@@ -79,21 +81,23 @@ const judgeUpdateRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD,
   dtoFields: [
+    'defenderName',
+    'defenderEmail',
     'courtCaseNumber',
     'courtDate',
     'courtRoom',
-    'defenderName',
-    'defenderEmail',
     'courtStartTime',
     'courtEndTime',
     'courtAttendees',
     'policeDemands',
+    'courtDocuments',
     'accusedPlea',
     'litigationPresentations',
     'ruling',
     'decision',
     'custodyEndDate',
     'custodyRestrictions',
+    'otherRestrictions',
     'accusedAppealDecision',
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
@@ -113,12 +117,16 @@ const prosecutorTransitionRule = {
   ],
 } as RolesRule
 
-// Allows judges to accept and reject cases
+// Allows judges to receive, accept and reject cases
 const judgeTransitionRule = {
   role: UserRole.JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.ACCEPT, CaseTransition.REJECT],
+  dtoFieldValues: [
+    CaseTransition.RECEIVE,
+    CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+  ],
 } as RolesRule
 
 @UseGuards(RolesGuard)
@@ -145,10 +153,11 @@ export class CaseController {
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
+    @CurrentHttpUser() user: User,
     @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
   ): Promise<Case> {
-    return this.caseService.create(caseToCreate)
+    return this.caseService.create(caseToCreate, user)
   }
 
   @RolesRules(prosecutorUpdateRule, judgeUpdateRule)
@@ -189,8 +198,15 @@ export class CaseController {
       state: transitionCase(transition.transition, existingCase.state),
     } as UpdateCaseDto
 
-    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
-      user.id
+    // Remove when client has started assigning a judge to each case
+    if (
+      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
+        transition.transition,
+      ) &&
+      user.role === UserRole.JUDGE
+    ) {
+      update['judgeId'] = user.id
+    }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -307,5 +323,21 @@ export class CaseController {
       user,
       documentToken,
     )
+  }
+
+  @RolesRules(prosecutorRule)
+  @Post('case/:id/extend')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Clones a new case based on an existing case',
+  })
+  async extend(@Param('id') id: string): Promise<Case> {
+    const existingCase = await this.findCaseById(id)
+
+    if (existingCase.childCase) {
+      return existingCase.childCase
+    }
+
+    return this.caseService.extend(existingCase)
   }
 }

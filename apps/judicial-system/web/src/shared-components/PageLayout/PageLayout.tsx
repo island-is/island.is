@@ -9,12 +9,14 @@ import {
   LinkContext,
 } from '@island.is/island-ui/core'
 import * as styles from './PageLayout.treat'
-import { JudgeLogo, ProsecutorLogo } from '../Logos'
+import { ProsecutorLogo } from '../Logos'
+import { JudgeLogo } from '../Logos'
 import Loading from '../Loading/Loading'
-import * as Constants from '../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../UserProvider/UserProvider'
+import { Sections } from '@island.is/judicial-system-web/src/types'
 
 interface PageProps {
   children: ReactNode
@@ -22,23 +24,112 @@ interface PageProps {
   isLoading: boolean
   notFound: boolean
   activeSubSection?: number
-  // Only needed for the SignedVerdictOverview screen
-  rejectedCase?: boolean
   decision?: CaseDecision
+  parentCaseDecision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
+  isExtension?: boolean
 }
 
-export const PageLayout: FC<PageProps> = ({
+const PageLayout: FC<PageProps> = ({
   children,
   activeSection,
   activeSubSection,
   isLoading,
   notFound,
-  rejectedCase,
   decision,
+  parentCaseDecision,
   isCustodyEndDateInThePast,
 }) => {
   const { user } = useContext(UserContext)
+
+  const caseResult = () => {
+    if (
+      decision === CaseDecision.REJECTING ||
+      parentCaseDecision === CaseDecision.REJECTING
+    ) {
+      return 'Kröfu hafnað'
+    } else if (
+      decision === CaseDecision.ACCEPTING ||
+      parentCaseDecision === CaseDecision.ACCEPTING
+    ) {
+      return isCustodyEndDateInThePast
+        ? 'Gæsluvarðhaldi lokið'
+        : 'Gæsluvarðhald virkt'
+    } else if (
+      decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      parentCaseDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
+      return isCustodyEndDateInThePast ? 'Farbanni lokið' : 'Farbann virkt'
+    } else {
+      return 'Niðurstaða'
+    }
+  }
+
+  const sections = [
+    {
+      name: 'Krafa um gæsluvarðhald',
+      children: [
+        { type: 'SUB_SECTION', name: 'Sakborningur' },
+        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Dómkröfur og lagagrundvöllur',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Greinargerð',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+        },
+      ],
+    },
+    {
+      name: 'Úrskurður Héraðsdóms',
+      children: [
+        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
+        { type: 'SUB_SECTION', name: 'Þingbók' },
+        { type: 'SUB_SECTION', name: 'Úrskurður' },
+        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+      ],
+    },
+    {
+      name: caseResult(),
+    },
+    {
+      name: 'Krafa um framlengingu',
+      children: [
+        { type: 'SUB_SECTION', name: 'Sakborningur' },
+        { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
+        {
+          type: 'SUB_SECTION',
+          name: 'Dómkröfur og lagagrundvöllur',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Greinargerð',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Yfirlit kröfu',
+        },
+      ],
+    },
+    {
+      name: 'Úrskurður Héraðsdóms',
+      children: [
+        { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
+        { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
+        { type: 'SUB_SECTION', name: 'Þingbók' },
+        { type: 'SUB_SECTION', name: 'Úrskurður' },
+        { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
+        { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
+      ],
+    },
+  ]
 
   return children ? (
     <Box
@@ -76,51 +167,13 @@ export const PageLayout: FC<PageProps> = ({
                 </Box>
               ) : null}
               <FormStepper
-                sections={[
-                  {
-                    name: 'Krafa um gæsluvarðhald',
-                    children: [
-                      { type: 'SUB_SECTION', name: 'Sakborningur' },
-                      { type: 'SUB_SECTION', name: 'Dómkröfur' },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Lagagrundvöllur og takmarkanir',
-                      },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Greinargerð',
-                      },
-                      {
-                        type: 'SUB_SECTION',
-                        name: 'Yfirlit kröfu',
-                      },
-                    ],
-                  },
-                  {
-                    name: 'Úrskurður Héraðsdóms',
-                    children: [
-                      { type: 'SUB_SECTION', name: 'Yfirlit kröfu' },
-                      { type: 'SUB_SECTION', name: 'Fyrirtökutími' },
-                      { type: 'SUB_SECTION', name: 'Þingbók' },
-                      { type: 'SUB_SECTION', name: 'Úrskurður' },
-                      { type: 'SUB_SECTION', name: 'Úrskurðarorð' },
-                      { type: 'SUB_SECTION', name: 'Yfirlit úrskurðar' },
-                    ],
-                  },
-                  {
-                    name: rejectedCase
-                      ? 'Kröfu hafnað'
-                      : isCustodyEndDateInThePast
-                      ? decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                        ? 'Farbanni lokið'
-                        : 'Gæsluvarðhaldi lokið'
-                      : decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      ? 'Farbann virkt'
-                      : 'Gæsluvarðhald virkt',
-                  },
-                ]}
+                // Remove the extension parts of the formstepper if the user is not applying for an extension
+                sections={
+                  activeSection === Sections.EXTENSION ||
+                  activeSection === Sections.JUDGE_EXTENSION
+                    ? sections
+                    : sections.filter((_, index) => index <= 2)
+                }
                 formName="Gæsluvarðhald"
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}
@@ -158,3 +211,5 @@ export const PageLayout: FC<PageProps> = ({
     </LinkContext.Provider>
   )
 }
+
+export default PageLayout

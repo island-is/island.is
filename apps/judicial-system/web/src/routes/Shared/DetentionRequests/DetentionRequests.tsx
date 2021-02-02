@@ -16,24 +16,31 @@ import {
   Box,
   Icon,
 } from '@island.is/island-ui/core'
-import Loading from '../../../shared-components/Loading/Loading'
+import { Loading } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseDecision,
   CaseState,
   CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { insertAt, parseTransition } from '../../../utils/formatters'
+import {
+  insertAt,
+  parseTransition,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
-import { UserContext } from '../../../shared-components/UserProvider/UserProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useHistory } from 'react-router-dom'
-import { TransitionCaseMutation } from '../../../graphql'
-import { CasesQuery } from '../../../utils/mutations'
+import {
+  SendNotificationMutation,
+  TransitionCaseMutation,
+} from '@island.is/judicial-system-web/src/graphql'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 type directionType = 'ascending' | 'descending'
 interface SortConfig {
@@ -60,6 +67,21 @@ export const DetentionRequests: React.FC = () => {
   })
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
+
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+
+  const sendNotification = async (id: string) => {
+    const { data } = await sendNotificationMutation({
+      variables: {
+        input: {
+          caseId: id,
+          type: NotificationType.REVOKED,
+        },
+      },
+    })
+
+    return data?.sendNotification?.notificationSent
+  }
 
   const resCases = data?.cases
 
@@ -110,13 +132,14 @@ export const DetentionRequests: React.FC = () => {
     decision?: CaseDecision,
     isCustodyEndDateInThePast?: boolean,
   ): { color: TagVariant; text: string } => {
-    console.log(decision)
     switch (state) {
       case CaseState.NEW:
       case CaseState.DRAFT:
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
         return { color: 'purple', text: 'Krafa send' }
+      case CaseState.RECEIVED:
+        return { color: 'darkerMint', text: 'Krafa móttekin' }
       case CaseState.ACCEPTED:
         if (isCustodyEndDateInThePast) {
           return {
@@ -147,8 +170,8 @@ export const DetentionRequests: React.FC = () => {
       history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
     } else if (isJudge) {
       history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
-    } else if (c.isCourtDateInThePast) {
-      history.push(`${Constants.STEP_THREE_ROUTE}/${c.id}`)
+    } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
+      history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
       history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     }
@@ -177,7 +200,9 @@ export const DetentionRequests: React.FC = () => {
   const deleteCase = async (caseToDelete: Case) => {
     if (
       caseToDelete.state === CaseState.NEW ||
-      caseToDelete.state === CaseState.DRAFT
+      caseToDelete.state === CaseState.DRAFT ||
+      caseToDelete.state === CaseState.SUBMITTED ||
+      caseToDelete.state === CaseState.RECEIVED
     ) {
       const transitionRequest = parseTransition(
         caseToDelete.modified,
@@ -203,6 +228,12 @@ export const DetentionRequests: React.FC = () => {
         }, 800)
 
         clearTimeout()
+
+        const sent = await sendNotification(caseToDelete.id)
+
+        if (!sent) {
+          // TODO: Handle error
+        }
       } catch (e) {
         console.log(e)
       }
@@ -248,59 +279,55 @@ export const DetentionRequests: React.FC = () => {
                     LÖKE málsnr.
                   </Text>
                 </th>
-                <th className={styles.th}>
-                  <Text as="span" fontWeight="regular">
+                <th className={cn(styles.th, styles.largeColumn)}>
+                  <Box
+                    component="button"
+                    display="flex"
+                    alignItems="center"
+                    className={styles.thButton}
+                    onClick={() => requestSort('accusedName')}
+                  >
+                    <Text fontWeight="regular">Sakborningur</Text>
                     <Box
-                      component="button"
+                      className={cn(styles.sortIcon, {
+                        [styles.sortAccusedNameAsc]:
+                          getClassNamesFor('accusedName') === 'ascending',
+                        [styles.sortAccusedNameDes]:
+                          getClassNamesFor('accusedName') === 'descending',
+                      })}
+                      marginLeft={1}
+                      component="span"
                       display="flex"
                       alignItems="center"
-                      className={styles.thButton}
-                      onClick={() => requestSort('accusedName')}
                     >
-                      Sakborningur
-                      <Box
-                        className={cn(styles.sortIcon, {
-                          [styles.sortAccusedNameAsc]:
-                            getClassNamesFor('accusedName') === 'ascending',
-                          [styles.sortAccusedNameDes]:
-                            getClassNamesFor('accusedName') === 'descending',
-                        })}
-                        marginLeft={1}
-                        component="span"
-                        display="flex"
-                        alignItems="center"
-                      >
-                        <Icon icon="caretDown" size="small" />
-                      </Box>
+                      <Icon icon="caretDown" size="small" />
                     </Box>
-                  </Text>
+                  </Box>
                 </th>
                 <th className={styles.th}>
-                  <Text as="span" fontWeight="regular">
+                  <Box
+                    component="button"
+                    display="flex"
+                    alignItems="center"
+                    className={styles.thButton}
+                    onClick={() => requestSort('created')}
+                  >
+                    <Text fontWeight="regular">Krafa stofnuð</Text>
                     <Box
-                      component="button"
+                      className={cn(styles.sortIcon, {
+                        [styles.sortCreatedAsc]:
+                          getClassNamesFor('created') === 'ascending',
+                        [styles.sortCreatedDes]:
+                          getClassNamesFor('created') === 'descending',
+                      })}
+                      marginLeft={1}
+                      component="span"
                       display="flex"
                       alignItems="center"
-                      className={styles.thButton}
-                      onClick={() => requestSort('created')}
                     >
-                      Krafa stofnuð
-                      <Box
-                        className={cn(styles.sortIcon, {
-                          [styles.sortAccusedNameAsc]:
-                            getClassNamesFor('created') === 'ascending',
-                          [styles.sortAccusedNameDes]:
-                            getClassNamesFor('created') === 'descending',
-                        })}
-                        marginLeft={1}
-                        component="span"
-                        display="flex"
-                        alignItems="center"
-                      >
-                        <Icon icon="caretDown" size="small" />
-                      </Box>
+                      <Icon icon="caretUp" size="small" />
                     </Box>
-                  </Text>
+                  </Box>
                 </th>
                 <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
@@ -334,8 +361,18 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">{c.policeCaseNumber || '-'}</Text>
                   </td>
-                  <td className={cn(styles.td, 'flexDirectionCol')}>
-                    <Text>{c.accusedName || '-'}</Text>
+                  <td
+                    className={cn(
+                      styles.td,
+                      styles.largeColumn,
+                      'flexDirectionCol',
+                    )}
+                  >
+                    <Text>
+                      <Box component="span" className={styles.accusedName}>
+                        {c.accusedName || '-'}
+                      </Box>
+                    </Text>
                     <Text>
                       {c.accusedNationalId && (
                         <Text as="span" variant="small" color="dark400">
@@ -367,6 +404,7 @@ export const DetentionRequests: React.FC = () => {
                         ).color
                       }
                       outlined
+                      disabled
                     >
                       {
                         mapCaseStateToTagVariant(
@@ -386,11 +424,13 @@ export const DetentionRequests: React.FC = () => {
                   </td>
                   <td className={cn(styles.td, 'secondLast')}>
                     {!isJudge &&
-                      (c.state === CaseState.DRAFT ||
-                        c.state === CaseState.NEW) && (
+                      (c.state === CaseState.NEW ||
+                        c.state === CaseState.DRAFT ||
+                        c.state === CaseState.SUBMITTED ||
+                        c.state === CaseState.RECEIVED) && (
                         <Box
                           component="button"
-                          aria-label="Viltu eyða drögum?"
+                          aria-label="Viltu afturkalla kröfu?"
                           className={styles.deleteButton}
                           onClick={(evt) => {
                             evt.stopPropagation()
@@ -418,7 +458,7 @@ export const DetentionRequests: React.FC = () => {
                       }}
                     >
                       <Box as="span" className={styles.deleteButtonText}>
-                        Eyða drögum
+                        Afturkalla
                       </Box>
                     </Button>
                   </td>

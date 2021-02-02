@@ -11,17 +11,22 @@ import {
 } from '@island.is/application/core'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+
 import { FieldDescription } from '@island.is/shared/form-fields'
 import Slider from '../components/Slider'
 import * as styles from './Duration.treat'
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import {
+  getAvailableRights,
+  getExpectedDateOfBirth,
+} from '../../parentalLeaveUtils'
 import { m, mm } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
+import { usageMaxMonths, usageMinMonths } from '../../config'
 
 const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const expectedDateOfBirth = getExpectedDateOfBirth(application)
   const currentRepeaterIndex = extractRepeaterIndexFromField(field)
@@ -48,15 +53,13 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   )
   const [chosenDuration, setChosenDuration] = useState<number>(monthsToUse)
   const [percent, setPercent] = useState<number>(100)
-  const minMonths = 1
-  const rightsLeft = 6 // TODO calculate from application
-  const maxMonths = 18
+  const { months } = getAvailableRights(application)
 
   useEffect(() => {
-    if (chosenDuration > rightsLeft) {
+    if (chosenDuration > months) {
       const newPercent = Math.min(
         100,
-        Math.round((rightsLeft / chosenDuration) * 100),
+        Math.round((months / chosenDuration) * 100),
       )
       setPercent(newPercent)
     } else {
@@ -72,7 +75,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
         background="blue100"
         paddingTop={3}
         paddingX={3}
-        paddingBottom={10}
+        paddingBottom={3}
         marginTop={3}
       >
         <Box
@@ -117,8 +120,8 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
             name={id}
             render={({ onChange }) => (
               <Slider
-                min={minMonths}
-                max={maxMonths}
+                min={usageMinMonths}
+                max={usageMaxMonths}
                 trackStyle={{ gridTemplateRows: 8 }}
                 calculateCellStyle={() => {
                   return {
@@ -130,6 +133,16 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
                 label={{
                   singular: formatMessage(m.month),
                   plural: formatMessage(m.months),
+                }}
+                rangeDates={{
+                  start: {
+                    date: formatDateFns(currentStartDateAnswer),
+                    message: formatMessage(m.rangeStartDate),
+                  },
+                  end: {
+                    date: formatDateFns(chosenEndDate),
+                    message: formatMessage(m.rangeEndDate),
+                  },
                 }}
                 currentIndex={chosenDuration}
                 onChange={(selectedMonths: number) => {

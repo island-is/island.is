@@ -1,16 +1,26 @@
 export default {
   production: true,
+  xroad: {
+    baseUrl: process.env.XROAD_BASE_PATH,
+    clientId: process.env.XROAD_CLIENT_ID,
+  },
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
   },
   drivingLicense: {
-    baseApiUrl: process.env.DRIVING_LICENSE_REGISTRY_URL,
+    secret: process.env.DRIVING_LICENSE_SECRET,
   },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL,
     user: process.env.SOFFIA_USER,
     password: process.env.SOFFIA_PASS,
     host: process.env.SOFFIA_HOST_URL,
+  },
+  healthInsurance: {
+    wsdlUrl: process.env.HEALTH_INSURANCE_XROAD_WSDLURL,
+    baseUrl: process.env.XROAD_BASE_PATH,
+    username: process.env.HEALTH_INSURANCE_XROAD_USERNAME,
+    password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD,
   },
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,

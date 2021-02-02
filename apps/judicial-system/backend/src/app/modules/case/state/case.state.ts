@@ -23,23 +23,35 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     },
   ],
   [
-    CaseTransition.ACCEPT,
+    CaseTransition.RECEIVE,
     {
       from: [CaseState.SUBMITTED],
+      to: CaseState.RECEIVED,
+    },
+  ],
+  [
+    CaseTransition.ACCEPT,
+    {
+      from: [CaseState.RECEIVED],
       to: CaseState.ACCEPTED,
     },
   ],
   [
     CaseTransition.REJECT,
     {
-      from: [CaseState.SUBMITTED],
+      from: [CaseState.RECEIVED],
       to: CaseState.REJECTED,
     },
   ],
   [
     CaseTransition.DELETE,
     {
-      from: [CaseState.NEW, CaseState.DRAFT],
+      from: [
+        CaseState.NEW,
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+      ],
       to: CaseState.DELETED,
     },
   ],

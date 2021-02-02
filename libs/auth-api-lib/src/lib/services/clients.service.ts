@@ -23,7 +23,8 @@ import { ClientSecretDTO } from '../entities/dto/client-secret.dto'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { IdentityResource } from '../entities/models/identity-resource.model'
-import { ApiScope } from '../..'
+import { ApiScope } from '../entities/models/api-scope.model'
+import { IdpProvider } from '../entities/models/idp-provider.model'
 
 @Injectable()
 export class ClientsService {
@@ -44,6 +45,8 @@ export class ClientsService {
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
+    @InjectModel(IdpProvider)
+    private idpProvider: typeof IdpProvider,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
     @InjectModel(ApiScope)
@@ -114,6 +117,49 @@ export class ClientsService {
     return client
   }
 
+  /** Find clients by searh string and returns with paging */
+  async findClients(searchString: string, page: number, count: number) {
+    if (!searchString) {
+      throw new BadRequestException('Search String must be provided')
+    }
+
+    searchString = searchString.trim()
+
+    if (isNaN(+searchString)) {
+      return this.findAllClientsById(searchString, page, count)
+    } else {
+      return this.findAllClientsByNationalId(searchString, page, count)
+    }
+  }
+
+  /** Find clients by National Id */
+  async findAllClientsByNationalId(
+    searchString: string,
+    page: number,
+    count: number,
+  ) {
+    page--
+    const offset = page * count
+    return this.clientModel.findAndCountAll({
+      limit: count,
+      where: { nationalId: searchString },
+      offset: offset,
+      distinct: true,
+    })
+  }
+
+  /** Finds client by client Id with paging return type */
+  async findAllClientsById(searchString: string, page: number, count: number) {
+    page--
+    const offset = page * count
+    return this.clientModel.findAndCountAll({
+      limit: count,
+      where: { clientId: searchString },
+      offset: offset,
+      distinct: true,
+    })
+  }
+
   /** Gets all associations for Client */
   private findAssociations(client: Client): Promise<any> {
     return Promise.all([
@@ -177,43 +223,22 @@ export class ClientsService {
     return await this.findClientById(id)
   }
 
-  /** Deletes a client by id */
+  /** Soft delete on a client by id */
   async delete(id: string): Promise<number> {
-    this.logger.debug('Deleting client with id: ', id)
+    this.logger.debug('Soft deleting a client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    // Delete associations
-    await this.clientAllowedCorsOrigin.destroy({
-      where: { clientId: id },
-    })
+    const result = await this.clientModel.update(
+      { archived: new Date(), enabled: false },
+      {
+        where: { clientId: id },
+      },
+    )
 
-    await this.clientIdpRestriction.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientRedirectUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientSecret.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientPostLogoutUri.destroy({
-      where: { clientId: id },
-    })
-
-    await this.clientGrantType.destroy({
-      where: { clientId: id },
-    })
-
-    // Delete Client
-    return await this.clientModel.destroy({
-      where: { clientId: id },
-    })
+    return result[0]
   }
 
   /** Finds allowed cors origins by origin */
@@ -256,7 +281,7 @@ export class ClientsService {
 
     if (!name || !clientId) {
       throw new BadRequestException(
-        'IdpRestriction and clientId must be provided',
+        'IdpRestriction name and clientId must be provided',
       )
     }
 
@@ -488,11 +513,23 @@ export class ClientsService {
 
   /** Finds available scopes for AdminUI to select allowed scopes */
   async FindAvailabeScopes(): Promise<ApiScope[]> {
-    const identityResources = (await this.identityResourceModel.findAll()) as unknown
-    const apiScopes = await this.apiScopeModel.findAll()
+    const identityResources = (await this.identityResourceModel.findAll({
+      where: { archived: null },
+    })) as unknown
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        archived: null,
+      },
+    })
     const arrJoined: ApiScope[] = []
     arrJoined.push(...apiScopes)
     arrJoined.push(...(identityResources as ApiScope[]))
     return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
+  }
+
+  /** Finds available idp restrictions */
+  async findAllIdpRestrictions(): Promise<IdpProvider[] | null> {
+    const idpRestrictions = await this.idpProvider.findAll()
+    return idpRestrictions
   }
 }

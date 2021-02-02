@@ -3,18 +3,17 @@ import React from 'react'
 import transform from 'lodash/transform'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
+import NextLink from 'next/link'
 import Head from 'next/head'
 import { Screen } from '../types'
-import NativeSelect from '../components/Select/Select'
-import Bullet from '../components/Bullet/Bullet'
-import { useI18n } from '@island.is/web/i18n'
+import { Select as NativeSelect, Bullet } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import routeNames from '@island.is/web/i18n/routeNames'
 import {
   Box,
   Text,
   Stack,
   Breadcrumbs,
+  BreadCrumbItem,
   Divider,
   Pagination,
   Hidden,
@@ -22,7 +21,6 @@ import {
   Option,
   Link,
   GridColumn,
-  Tag,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -42,6 +40,7 @@ import {
 } from '../graphql/schema'
 import { NewsCard } from '../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 
 const PERPAGE = 10
 
@@ -67,8 +66,7 @@ const NewsList: Screen<NewsListProps> = ({
   namespace,
 }) => {
   const Router = useRouter()
-  const { activeLocale } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
 
@@ -112,7 +110,7 @@ const NewsList: Screen<NewsListProps> = ({
     }, {})
 
     return {
-      pathname: makePath('news'),
+      pathname: linkResolver('newsoverview').href,
       query,
     }
   }
@@ -138,6 +136,24 @@ const NewsList: Screen<NewsListProps> = ({
       },
       { id: '', title: '' },
     )
+
+  const breadCrumbs: BreadCrumbItem[] = [
+    {
+      title: 'Ísland.is',
+      typename: 'homepage',
+      href: '/',
+    },
+    {
+      title: n('newsTitle', 'Fréttir og tilkynningar'),
+      typename: 'newsoverview',
+      href: '/',
+    },
+  ]
+  const breadCrumbTags: BreadCrumbItem = !!selectedTag && {
+    isTag: true,
+    title: selectedTag.title,
+    typename: 'newsoverview',
+  }
 
   const sidebar = (
     <Stack space={3}>
@@ -190,17 +206,19 @@ const NewsList: Screen<NewsListProps> = ({
       </Head>
       <SidebarLayout sidebarContent={sidebar}>
         <Stack space={[3, 3, 4]}>
-          <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
-            <Link href={makePath('news')}>
-              {n('newsTitle', 'Fréttir og tilkynningar')}
-            </Link>
-            {!!selectedTag && (
-              <Tag variant="blue" outlined>
-                {selectedTag.title}
-              </Tag>
-            )}
-          </Breadcrumbs>
+          <Breadcrumbs
+            items={
+              breadCrumbTags ? [...breadCrumbs, breadCrumbTags] : breadCrumbs
+            }
+            renderLink={(link, { typename }) => {
+              return (
+                <NextLink {...linkResolver(typename as LinkType)} passHref>
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
+
           {selectedYear && (
             <Hidden below="lg">
               <Text variant="h1" as="h1">
@@ -254,9 +272,8 @@ const NewsList: Screen<NewsListProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              as={makePath('news', newsItem.slug)}
               titleAs="h2"
-              url={makePath('news', '[slug]')}
+              href={linkResolver('news', [newsItem.slug]).href}
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
@@ -270,7 +287,7 @@ const NewsList: Screen<NewsListProps> = ({
                 renderLink={(page, className, children) => (
                   <Link
                     href={{
-                      pathname: makePath('news'),
+                      pathname: linkResolver('newsoverview').href,
                       query: { ...Router.query, page },
                     }}
                   >

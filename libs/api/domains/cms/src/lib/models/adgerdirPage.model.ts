@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IVidspyrnaPage } from '../generated/contentfulTypes'
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
+import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { SystemMetadata } from '@island.is/shared/types'
 
@@ -44,6 +45,9 @@ export class AdgerdirPage {
 
   @Field({ nullable: true })
   finalCostIsk?: number
+
+  @Field(() => ProcessEntry, { nullable: true })
+  processEntry?: ProcessEntry
 }
 
 export const mapAdgerdirPage = ({
@@ -65,4 +69,7 @@ export const mapAdgerdirPage = ({
     sys?.id && fields?.content
       ? mapDocument(fields.content, sys.id + ':content')
       : [],
+  processEntry: fields.processEntry
+    ? mapProcessEntry(fields.processEntry)
+    : null,
 })

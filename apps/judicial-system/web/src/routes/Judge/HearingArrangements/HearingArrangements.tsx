@@ -8,14 +8,19 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import { isNextDisabled } from '../../../utils/stepHelper'
-import { Validation } from '../../../utils/validate'
-import * as Constants from '../../../utils/constants'
+import {
+  FormFooter,
+  PageLayout,
+  Modal,
+  TimeInputField,
+  CaseNumbers,
+} from '@island.is/judicial-system-web/src/shared-components'
+import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
@@ -30,13 +35,10 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import parseISO from 'date-fns/parseISO'
-import isValid from 'date-fns/isValid'
 import {
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import Modal from '../../../shared-components/Modal/Modal'
-import TimeInputField from '@island.is/judicial-system-web/src/shared-components/TimeInputField/TimeInputField'
 import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
@@ -104,7 +106,7 @@ export const HearingArrangements: React.FC = () => {
   }
 
   useEffect(() => {
-    document.title = 'Fyrirtökutími - Réttarvörslugátt'
+    document.title = 'Fyrirtaka - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -118,24 +120,6 @@ export const HearingArrangements: React.FC = () => {
         )
 
         theCase = { ...theCase, courtDate: theCase.requestedCourtDate }
-      }
-
-      if (!theCase.defenderName && theCase.requestedDefenderName) {
-        updateCase(
-          theCase.id,
-          parseString('defenderName', theCase.requestedDefenderName),
-        )
-
-        theCase = { ...theCase, defenderName: theCase.requestedDefenderName }
-      }
-
-      if (!theCase.defenderEmail && theCase.requestedDefenderEmail) {
-        updateCase(
-          theCase.id,
-          parseString('defenderEmail', theCase.requestedDefenderEmail),
-        )
-
-        theCase = { ...theCase, defenderEmail: theCase.requestedDefenderEmail }
       }
 
       setWorkingCase(theCase)
@@ -169,16 +153,19 @@ export const HearingArrangements: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
     >
       {workingCase ? (
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              Fyrirtökutími
+              Fyrirtaka
             </Text>
           </Box>
           {workingCase.state === CaseState.DRAFT && (
@@ -192,7 +179,7 @@ export const HearingArrangements: React.FC = () => {
           )}
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
@@ -216,21 +203,17 @@ export const HearingArrangements: React.FC = () => {
                         ? parseISO(workingCase.courtDate.toString())
                         : null
                     }
-                    handleChange={(date) =>
+                    handleCloseCalendar={(date: Date | null) => {
                       setAndSendDateToServer(
                         'courtDate',
                         workingCase.courtDate,
                         date,
                         workingCase,
+                        true,
                         setWorkingCase,
                         updateCase,
                         setCourtDateErrorMessage,
                       )
-                    }
-                    handleCloseCalendar={(date: Date | null) => {
-                      if (date === null || !isValid(date)) {
-                        setCourtDateErrorMessage('Reitur má ekki vera tómur')
-                      }
                     }}
                     required
                   />

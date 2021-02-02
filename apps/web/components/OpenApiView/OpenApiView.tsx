@@ -1,16 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import {
   AlertBanner,
   Box,
   Text,
-  GridColumn,
-  GridRow,
   LoadingIcon,
-  Select,
+  Stack,
 } from '@island.is/island-ui/core'
 import {
-  ApiService,
   GetOpenApiInput,
   GetNamespaceQuery,
 } from '@island.is/web/graphql/schema'
@@ -18,132 +15,68 @@ import { useNamespace } from '@island.is/web/hooks'
 import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
 import YamlParser from 'js-yaml'
-import { OpenApiDocumentation } from '..'
+import { OpenApiDocumentation } from '../OpenApiDocumentation'
 
 export interface OpenApiViewProps {
-  service: ApiService
   strings: GetNamespaceQuery['getNamespace']
+  openApiInput: GetOpenApiInput
 }
 
-type SelectOption = {
-  label: string
-  value: any
-}
-
-export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
+export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
-  const options: Array<SelectOption> = service
-    ? service.xroadIdentifier.map((x) => ({
-        label: x.serviceCode.split('-').pop(),
-        value: {
-          instance: x.instance,
-          memberClass: x.memberClass,
-          memberCode: x.memberCode,
-          serviceCode: x.serviceCode,
-          subsystemCode: x.subsystemCode,
-        },
-      }))
-    : [
-        {
-          label: n('noVersion'),
-          value: {
-            instance: '',
-            memberClass: '',
-            memberCode: '',
-            serviceCode: '',
-            subsystemCode: '',
-          },
-        },
-      ]
+  const [documentation, setDocumentation] = useState<OpenApi>(null)
 
-  const selectOptionValueToGetOpenApiInput = (
-    option: SelectOption,
-  ): GetOpenApiInput => {
-    return option.value
-      ? option.value
-      : {
-          instance: '',
-          memberClass: '',
-          memberCode: '',
-          serviceCode: '',
-          subsystemCode: '',
-        }
-  }
-
-  const [selectedOption, setSelectedOption] = useState<SelectOption>(options[0])
-
-  const onSelectChange = (option: SelectOption) => {
-    if (!option.value) return
-
-    setSelectedOption(option)
-    setOpenApi(selectOptionValueToGetOpenApiInput(option))
-  }
-
-  const [openApi, setOpenApi] = useState<GetOpenApiInput>(
-    selectOptionValueToGetOpenApiInput(selectedOption),
-  )
   const { data, loading, error } = useQuery(GET_OPEN_API_QUERY, {
     variables: {
-      input: openApi,
+      input: openApiInput,
     },
   })
 
-  const ShowOpenApiDocumentation = (theSpec: any) => {
-    const converted = YamlParser.safeLoad(theSpec)
-    if (typeof converted === 'undefined') {
-      return (
-        <Box paddingY={2}>
-          <AlertBanner
-            title={n('queryErrorTitle')}
-            description={n('queryErrorText')}
-            variant="error"
-          />
-        </Box>
-      )
-    }
+  useEffect(() => {
+    const onCompleted = (data) => {
+      const converted = YamlParser.safeLoad(data.getOpenApi.spec)
 
-    return (
-      <OpenApiDocumentation
-        spec={converted as OpenApi}
-        linkTitle={n('linkTitle')}
-        documentationLinkText={n('linkDocumentation')}
-        responsiblePartyLinkText={n('linkResponsible')}
-        bugReportLinkText={n('linkBugReport')}
-        featureRequestLinkText={n('linkFeatureRequest')}
-      />
-    )
-  }
+      setDocumentation(converted as OpenApi)
+    }
+    if (onCompleted) {
+      if (onCompleted && !loading && !error) {
+        onCompleted(data)
+      } else {
+        setDocumentation(null)
+      }
+    }
+  }, [loading, data, error])
 
   return (
     <Box>
-      <GridRow align="spaceBetween">
-        <GridColumn
-          span={['8/8', '4/8', '4/8', '2/8']}
-          paddingTop="containerGutter"
-          paddingBottom="containerGutter"
-        >
-          <Text color="blue600" variant="h4" as="h4">
+      {/* Top Line */}
+      <Box
+        display="flex"
+        flexDirection={['column', 'column', 'column', 'row', 'row']}
+        justifyContent={[
+          'flexStart',
+          'flexStart',
+          'spaceBetween',
+          'spaceBetween',
+        ]}
+      >
+        <Box display="flex" alignItems="center">
+          <Text color="blue600" variant="h4" as="h4" truncate>
             {n('title')}
           </Text>
-        </GridColumn>
-        <GridColumn
-          span={['8/8', '4/8', '4/8', '2/8']}
-          paddingTop="containerGutter"
-          paddingBottom="containerGutter"
-        >
-          <Select
-            label="Version"
-            name="version"
-            disabled={options.length < 2}
-            isSearchable={false}
-            defaultValue={selectedOption}
-            options={options}
-            onChange={onSelectChange}
-          />
-        </GridColumn>
-      </GridRow>
-      <Box>{loading && <LoadingIcon animate color="blue400" size={32} />}</Box>
+        </Box>
+      </Box>
+      <Box>
+        {loading && (
+          <Stack space={3} align="center">
+            <LoadingIcon animate size={40} color="blue400" />
+            <Text variant="h4" color="blue600">
+              {n('gettingDocumentation')}
+            </Text>
+          </Stack>
+        )}
+      </Box>
       {error && (
         <Box paddingY={2}>
           <AlertBanner
@@ -153,9 +86,22 @@ export const OpenApiView = ({ service, strings }: OpenApiViewProps) => {
           />
         </Box>
       )}
-
+      {/* Showing Api documentation with redoc */}
       <Box width="full">
-        {!loading && !error && ShowOpenApiDocumentation(data?.getOpenApi.spec)}
+        {!loading &&
+          !error &&
+          (documentation ? (
+            <OpenApiDocumentation spec={documentation} />
+          ) : (
+            // documentation missing
+            <Box paddingY={2}>
+              <AlertBanner
+                title={n('queryErrorTitle')}
+                description={n('queryErrorText')}
+                variant="error"
+              />
+            </Box>
+          ))}
       </Box>
     </Box>
   )

@@ -14,7 +14,7 @@ The apps and libraries documentation and our handbook are hosted on [GitBook](ht
 
 ## Storybook
 
-The Ísland.is design system is developed and showcased using [Storybook](https://www.storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).
+The Ísland.is design system is developed and showcased using [Storybook](https://storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).
 
 ## Reading material
 
@@ -27,6 +27,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 ## Prerequisites
 
 - You have Node installed `>= 12.0.0` and Yarn at `>= 1.20.0`.
+- You have [java](https://www.java.com/en/download/manual.jsp) installed.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - Run `yarn` to install the dependencies.
 
@@ -117,16 +118,16 @@ yarn nx dep-graph
 Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
 Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
 
-All secrets labeled with the `dev` label can be fetched using `yarn env-secrets`.
+All secrets labeled with the `dev` label can be fetched using `yarn get-secrets`.
 
 ### Fetch development secrets for your project
 
 ```bash
-yarn env-secrets <project> [options]
+yarn get-secrets <project> [options]
 ```
 
 **Example**:
 
 ```bash
-yarn env-secrets gjafakort --reset
+yarn get-secrets gjafakort --reset
 ```

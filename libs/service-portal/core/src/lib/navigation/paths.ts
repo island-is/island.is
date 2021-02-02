@@ -10,13 +10,14 @@ export enum ServicePortalPath {
   ApplicationNewApplication = '/umsoknir/ny-umsokn',
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',
+  ApplicationDrivingLicense = '/umsoknir/okuskirteini',
 
   // Settings
   SettingsRoot = '/stillingar',
 
   // Family
-  FamilyRoot = '/fjolskyldan',
-  FamilyMember = '/fjolskyldan/:nationalId',
+  FamilyRoot = '/min-gogn/fjolskyldan',
+  FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
@@ -49,11 +50,11 @@ export enum ServicePortalPath {
   DrivingLicense = '/min-rettindi/okuskirteini',
 
   // User Profile
-  UserProfileRoot = '/stillingar/minn-adgangur',
-  UserProfileEditPhoneNumber = '/stillingar/minn-adgangur/breyta-simanumeri',
-  UserProfileEditEmail = '/stillingar/minn-adgangur/breyta-netfangi',
-  UserProfileEditLanguage = '/stillingar/minn-adgangur/breyta-tungumali',
-  UserProfileEmailConfirmation = '/stillingar/minn-adgangur/stadfesta-netfang/:hash',
+  UserProfileRoot = '/stillingar',
+  UserProfileEditPhoneNumber = '/stillingar/breyta-simanumeri',
+  UserProfileEditEmail = '/stillingar/breyta-netfangi',
+  UserProfileEditLanguage = '/stillingar/breyta-tungumali',
+  UserProfileEmailConfirmation = '/stillingar/stadfesta-netfang/:hash',
 
   // Skjalaveita
   DocumentProviderRoot = '/skjalaveita',

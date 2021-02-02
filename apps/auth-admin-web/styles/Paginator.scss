@@ -1,0 +1,26 @@
+.paginator {
+  display: flex;
+  margin: 10px 0px 35px 0px;
+
+  &__pagination {
+    flex-basis: 60%;
+  }
+
+  &__container__form {
+    flex-basis: 40%;
+    position: relative;
+    padding: 0;
+    background: none;
+    border-radius: none;
+  }
+
+  &__container__field {
+    position: absolute;
+    right: 0px;
+    width: 100px !important;
+  }
+
+  &__select {
+    flex-basis: 100% !important;
+  }
+}

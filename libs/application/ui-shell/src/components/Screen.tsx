@@ -1,4 +1,12 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Application,
@@ -9,6 +17,7 @@ import {
   Schema,
   formatText,
   MessageFormatter,
+  mergeAnswers,
 } from '@island.is/application/core'
 import {
   Box,
@@ -23,7 +32,11 @@ import {
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { FormScreen, ResolverContext } from '../types'
+import { useLocale } from '@island.is/localization'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+
+import { FormScreen, ResolverContext, BeforeSubmitCallback } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
@@ -32,12 +45,11 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import {
   extractAnswersToSubmitFromScreen,
   findSubmitField,
-  verifyExternalData,
+  isJSONObject,
+  parseMessage,
 } from '../utils'
-import { useLocale } from '@island.is/localization'
 import ScreenFooter from './ScreenFooter'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import RefetchContext from '../context/RefetchContext'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -51,6 +63,7 @@ type ScreenProps = {
   numberOfScreens: number
   prevScreen(): void
   screen: FormScreen
+  renderLastScreenButton?: boolean
   goToScreen: (id: string) => void
 }
 
@@ -79,6 +92,7 @@ const Screen: FC<ScreenProps> = ({
   mode,
   numberOfScreens,
   prevScreen,
+  renderLastScreenButton,
   screen,
 }) => {
   const { answers: formValue, externalData, id: applicationId } = application
@@ -92,10 +106,21 @@ const Screen: FC<ScreenProps> = ({
     context: { dataSchema, formNode: screen },
   })
 
+  const refetch = useContext<() => void>(RefetchContext)
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION, {
-    onError: (e) => handleError(e.message, formatMessage),
-  })
+  const [updateApplication, { loading, error }] = useMutation(
+    UPDATE_APPLICATION,
+    {
+      onError: (e) => {
+        // We only show the error message if it doesn't contains a json data object
+        if (!isJSONObject(e.message)) {
+          return handleError(e.message, formatMessage)
+        }
+      },
+    },
+  )
+
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -103,17 +128,39 @@ const Screen: FC<ScreenProps> = ({
     },
   )
   const { handleSubmit, errors, reset } = hookFormData
-
   const submitField = useMemo(() => findSubmitField(screen), [screen])
+  const dataSchemaOrApiErrors = isJSONObject(error?.message)
+    ? parseMessage(error?.message)
+    : errors ?? {}
+
+  const beforeSubmitCallback = useRef<BeforeSubmitCallback | null>(null)
+
+  const setBeforeSubmitCallback = useCallback(
+    (callback: BeforeSubmitCallback | null) => {
+      beforeSubmitCallback.current = callback
+    },
+    [beforeSubmitCallback],
+  )
 
   const goBack = useCallback(() => {
     // using deepmerge to prevent some weird react-hook-form read-only bugs
     reset(deepmerge({}, formValue))
+    setBeforeSubmitCallback(null)
     prevScreen()
-  }, [formValue, prevScreen, reset])
+  }, [formValue, prevScreen, reset, setBeforeSubmitCallback])
 
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
+
+    if (typeof beforeSubmitCallback.current === 'function') {
+      const [canContinue] = await beforeSubmitCallback.current()
+
+      if (!canContinue) {
+        // TODO set error message
+        return
+      }
+    }
+
     if (submitField !== undefined) {
       const finalAnswers = { ...formValue, ...data }
       let event: string
@@ -129,6 +176,7 @@ const Screen: FC<ScreenProps> = ({
           event = nativeEvent?.submitter?.id ?? 'SUBMIT'
         }
       }
+
       response = await submitApplication({
         variables: {
           input: {
@@ -143,24 +191,24 @@ const Screen: FC<ScreenProps> = ({
         variables: {
           input: {
             id: applicationId,
-            answers: extractAnswersToSubmitFromScreen(data, screen),
+            answers: extractAnswersToSubmitFromScreen(
+              mergeAnswers(formValue, data),
+              screen,
+            ),
           },
         },
       })
     }
+
     if (response?.data) {
       answerAndGoToNextScreen(data)
+      setBeforeSubmitCallback(null)
     }
   }
 
   function canProceed(): boolean {
     const isLoadingOrPending = loading || loadingSubmit
-    if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
-      return (
-        !isLoadingOrPending &&
-        verifyExternalData(externalData, screen.dataProviders)
-      )
-    }
+
     return !isLoadingOrPending
   }
 
@@ -195,14 +243,14 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={['0', '0', '1/9']}
         >
-          <Text variant="h2" marginBottom={2}>
-            {formatText(screen.name, application, formatMessage)}
+          <Text variant="h2" marginBottom={1}>
+            {formatText(screen.title, application, formatMessage)}
           </Text>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
                 application={application}
-                errors={errors}
+                errors={dataSchemaOrApiErrors}
                 expandRepeater={expandRepeater}
                 repeater={screen}
                 onRemoveRepeaterItem={async (newRepeaterItems) => {
@@ -222,14 +270,16 @@ const Screen: FC<ScreenProps> = ({
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
                 answerQuestions={answerQuestions}
-                errors={errors}
+                errors={dataSchemaOrApiErrors}
                 multiField={screen}
                 application={application}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
                 addExternalData={addExternalData}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 applicationId={applicationId}
                 externalData={externalData}
                 externalDataProvider={screen}
@@ -238,10 +288,11 @@ const Screen: FC<ScreenProps> = ({
             ) : (
               <FormField
                 autoFocus
-                errors={errors}
+                errors={dataSchemaOrApiErrors}
                 field={screen}
                 application={application}
                 goToScreen={goToScreen}
+                refetch={refetch}
               />
             )}
           </Box>
@@ -249,6 +300,7 @@ const Screen: FC<ScreenProps> = ({
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
         <ScreenFooter
           application={application}
+          renderLastScreenButton={renderLastScreenButton}
           activeScreenIndex={activeScreenIndex}
           numberOfScreens={numberOfScreens}
           mode={mode}

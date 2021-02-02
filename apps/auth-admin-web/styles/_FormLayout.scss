@@ -1,0 +1,259 @@
+.client,
+.identity-resource,
+.client-redirect,
+.client-post-logout,
+.client-idp-restriction,
+.step-end,
+.users,
+.not-found,
+.paginator,
+.client-allowed-cors-origin,
+.client-allowed-scopes,
+.client-secret,
+.client-claim,
+.client-grant-types,
+.api-scope-form,
+.api-resource-form,
+.identity-resource-user-claims,
+.identity-resource-form,
+.api-scope-user-claims,
+.api-resource-secret-form,
+.api-resource-scope-form,
+.api-resource-user-claims,
+.client-basic,
+.admin-user-create-form,
+.idp-provider-create-form {
+  &__help {
+    padding: 0 10px 20px 10px;
+
+    &__note {
+      font-weight: $weight-semi-bold;
+      margin-bottom: 30px;
+    }
+  }
+
+  &__wrapper {
+    max-width: $width-content;
+  }
+  &__container {
+    h1 {
+      font-style: normal;
+      font-weight: $weight-semi-bold;
+      font-size: 42px;
+      line-height: 52px;
+      color: $color-text-primary;
+    }
+  }
+
+  &__container__form {
+    padding: 44px 40px;
+    background: $color-bg-content;
+    border-radius: $border-radius;
+  }
+
+  &__container__field,
+  &__container__checkbox__field,
+  &__container__radio__field {
+    display: block;
+    position: relative;
+
+    label {
+      position: absolute;
+      top: 12px;
+      left: 15px;
+      z-index: 1;
+      color: $color-link;
+      text-transform: capitalize;
+    }
+    input,
+    select {
+      position: relative;
+      flex-basis: 70%;
+      font-size: 0.9rem;
+    }
+
+    span // validation
+    {
+      position: absolute;
+      left: 60%;
+      color: $color-error;
+      text-shadow: 0 0 $color-shadow;
+    }
+
+    &__available {
+      position: absolute;
+      left: 38%;
+      top: 48px;
+      font-size: 0.8rem;
+      opacity: 0.8;
+
+      &.ok {
+        color: $color-ok;
+      }
+
+      &.taken {
+        color: $color-error;
+      }
+    }
+
+    &__details {
+      padding: 8px 30px;
+      position: absolute;
+      top: 0%;
+      left: 0px;
+      background: $color-body-bg;
+      width: 45%;
+      left: 55%;
+      border-radius: 5px;
+      border: solid 1px $color-border;
+
+      .detail-title {
+        font-weight: $weight-semi-bold;
+      }
+
+      .detail-flow {
+        font-style: italic;
+        margin: 5px 0;
+      }
+
+      .detail-uri {
+        font-size: 0.9rem;
+        margin: 5px 0;
+        font-weight: $weight-light;
+        text-decoration: underline;
+      }
+
+      .detail-link {
+        margin: 8px 0;
+      }
+    }
+  }
+
+  .field-with-details {
+    margin-bottom: 90px;
+  }
+
+  .toggleable-fields {
+    margin-top: 20px;
+  }
+
+  &__selected__item {
+    padding: 13px;
+    font-size: 0.8rem;
+    display: flex;
+
+    .selected-item-property {
+      flex: 1;
+      .selected-item-property-name {
+        font-weight: $weight-semi-bold;
+        margin-bottom: 8px;
+      }
+      .selected-item-property-value {
+      }
+    }
+  }
+
+  &__container__list {
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+    width: 100%;
+    padding: 8px 8px 24px 8px;
+    align-items: center;
+
+    &__item {
+      display: flex;
+      margin-bottom: 16px;
+
+      .list-value {
+        flex: 1;
+        padding: 10px 0px 0px 5px;
+        text-decoration: underline;
+        color: $color-link;
+        font-size: 0.8rem;
+      }
+
+      .list-name {
+        padding: 10px 0px 0px 5px;
+        text-decoration: underline;
+        color: $color-link;
+        font-size: 0.8rem;
+      }
+
+      .list-remove {
+        align-self: flex-end;
+
+        button {
+          justify-self: flex-end;
+        }
+      }
+    }
+  }
+
+  &__container__checkbox__field,
+  &__container__radio__field {
+    input[type='checkbox'],
+    input[type='radio'] {
+      flex-basis: 50px;
+      margin-top: 40px;
+      margin-left: 15px;
+    }
+
+    .helpbox {
+      position: absolute;
+      left: 45px;
+      top: 44px;
+    }
+  }
+
+  &__container__button {
+    margin: 15px 0;
+  }
+
+  &__button__show {
+    background-color: transparent;
+    color: $color-link;
+    font-weight: $weight-light;
+    text-decoration: underline;
+    font-size: 1rem;
+    padding: 0;
+    cursor: pointer;
+    margin: 0 14px;
+
+    &__icon {
+      @extend .fa;
+      @extend .fa-caret-square-o-down;
+      margin-right: 12px;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__button__add {
+    flex-basis: 100px !important;
+    margin-left: auto;
+  }
+
+  &__button__search {
+    flex-basis: 100px !important;
+  }
+
+  ::-webkit-input-placeholder {
+    /* Edge */
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+
+  :-ms-input-placeholder {
+    /* Internet Explorer */
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+
+  ::placeholder {
+    opacity: 0.5;
+    font-size: 0.8rem;
+  }
+}

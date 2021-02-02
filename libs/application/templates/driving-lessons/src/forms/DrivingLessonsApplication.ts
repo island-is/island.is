@@ -3,7 +3,7 @@ import {
   buildDateField,
   buildExternalDataProvider,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -21,51 +21,51 @@ const noOption = { value: 'no', label: m.noOptionLabel }
 
 export const DrivingLessonsApplication: Form = buildForm({
   id: 'DrivingLessonsApplicationDraftForm',
-  name: m.formName,
+  title: m.formName,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'student',
-      name: m.studentSection,
+      title: m.studentSection,
       children: [
         buildMultiField({
           id: 'student',
-          name: m.studentTitle,
+          title: m.studentTitle,
           children: [
             buildTextField({
               id: 'student.name',
-              name: m.studentName,
+              title: m.studentName,
               disabled: false,
             }),
             buildDateField({
               id: 'student.birthDate',
-              name: 'Date baby',
+              title: 'Date baby',
               placeholder: 'sick',
             }),
             buildTextField({
               id: 'student.parentEmail',
-              name: m.parentEmail,
+              title: m.parentEmail,
               disabled: false,
             }),
             buildTextField({
               id: 'student.nationalId',
-              name: m.nationalId,
+              title: m.nationalId,
               disabled: false,
               width: 'half',
             }),
             buildTextField({
               id: 'student.phoneNumber',
-              name: m.phoneNumber,
+              title: m.phoneNumber,
               width: 'half',
             }),
             buildTextField({
               id: 'student.address',
-              name: m.address,
+              title: m.address,
               width: 'half',
             }),
             buildTextField({
               id: 'student.zipCode',
-              name: m.zipCode,
+              title: m.zipCode,
               width: 'half',
             }),
           ],
@@ -74,15 +74,15 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'type',
-      name: m.typeSection,
+      title: m.typeSection,
       children: [
         buildSubSection({
           id: 'type',
-          name: 'Tegund',
+          title: 'Tegund',
           children: [
             buildRadioField({
               id: 'type',
-              name: m.type,
+              title: m.type,
               options: [
                 {
                   value: 'B',
@@ -120,11 +120,11 @@ export const DrivingLessonsApplication: Form = buildForm({
         }),
         buildSubSection({
           id: 'teacher',
-          name: 'Kennari',
+          title: 'Kennari',
           children: [
             buildSelectField({
               id: 'teacher',
-              name: m.teacher,
+              title: m.teacher,
               placeholder: 'Veldu ökukennara',
               options: [
                 {
@@ -149,11 +149,11 @@ export const DrivingLessonsApplication: Form = buildForm({
         }),
         buildSubSection({
           id: 'school',
-          name: m.school,
+          title: m.school,
           children: [
             buildSelectField({
               id: 'school',
-              name: m.school,
+              title: m.school,
               placeholder: 'Veldu ökuskóla',
               options: [
                 {
@@ -172,25 +172,25 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'health',
-      name: m.healthSection,
+      title: m.healthSection,
       children: [
         buildMultiField({
           id: 'eyeSight',
-          name: m.eyeSight,
+          title: m.eyeSight,
           children: [
             buildRadioField({
               id: 'useGlasses',
-              name: m.useGlasses,
+              title: m.useGlasses,
               options: [yesOption, noOption],
             }),
             buildRadioField({
               id: 'damagedEyeSight',
-              name: m.damagedEyeSight,
+              title: m.damagedEyeSight,
               options: [yesOption, noOption],
             }),
             buildRadioField({
               id: 'limitedFieldOfView',
-              name: m.limitedFieldOfView,
+              title: m.limitedFieldOfView,
               options: [yesOption, noOption],
             }),
           ],
@@ -199,10 +199,10 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'approveExternalData',
-      name: m.fetchDataSection,
+      title: m.fetchDataSection,
       children: [
         buildExternalDataProvider({
-          name: m.fetchData,
+          title: m.fetchData,
           id: 'fetchData',
           dataProviders: [
             buildDataProviderItem({
@@ -217,16 +217,16 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      name: m.confirmationSection,
+      title: m.confirmationSection,
       children: [
         buildMultiField({
           id: 'submit',
-          name: 'Takk fyrir að sækja um',
+          title: 'Takk fyrir að sækja um',
           children: [
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              name: 'submit',
+              title: 'submit',
               actions: [
                 {
                   event: 'SUBMIT',
@@ -235,17 +235,17 @@ export const DrivingLessonsApplication: Form = buildForm({
                 },
               ],
             }),
-            buildIntroductionField({
+            buildDescriptionField({
               id: 'overview',
-              name: '',
-              introduction: m.overviewIntro,
+              title: '',
+              description: m.overviewIntro,
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk',
-          introduction: 'Umsókn þín er komin í vinnslu',
+          title: 'Takk',
+          description: 'Umsókn þín er komin í vinnslu',
         }),
       ],
     }),

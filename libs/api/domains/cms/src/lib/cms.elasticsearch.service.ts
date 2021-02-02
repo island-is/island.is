@@ -12,7 +12,6 @@ import { GetArticlesInput } from './dto/getArticles.input'
 import { NewsList } from './models/newsList.model'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { AboutPage } from './models/aboutPage.model'
-import { SearchIndexes } from '@island.is/content-search-indexer/types'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
@@ -22,7 +21,7 @@ export class CmsElasticsearchService {
   constructor(private elasticService: ElasticService) {}
 
   async getArticleCategories(
-    index: SearchIndexes,
+    index: string,
     { size }: { size?: number },
   ): Promise<ArticleCategory[]> {
     const query = {
@@ -41,14 +40,22 @@ export class CmsElasticsearchService {
   }
 
   async getArticles(
-    index: SearchIndexes,
-    { category, size }: GetArticlesInput,
+    index: string,
+    input: GetArticlesInput,
   ): Promise<Article[]> {
     const query = {
       types: ['webArticle'],
-      tags: [{ type: 'category', key: category }],
+      tags: [],
       sort: { 'title.sort': 'asc' as sortDirection },
-      size,
+      size: input.size,
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
     }
 
     const articlesResponse = await this.elasticService.getDocumentsByMetaData(
@@ -61,7 +68,7 @@ export class CmsElasticsearchService {
   }
 
   async getNews(
-    index: SearchIndexes,
+    index: string,
     { size, page, order, month, year, tag }: GetNewsInput,
   ): Promise<NewsList> {
     let dateQuery
@@ -111,7 +118,7 @@ export class CmsElasticsearchService {
   }
 
   async getNewsDates(
-    index: SearchIndexes,
+    index: string,
     { order, tag }: GetNewsDatesInput,
   ): Promise<string[]> {
     let tagQuery
@@ -146,7 +153,7 @@ export class CmsElasticsearchService {
   }
 
   async getSingleDocumentTypeBySlug<RequestedType>(
-    index: SearchIndexes,
+    index: string,
     { type, slug }: { type: string; slug: string },
   ): Promise<RequestedType | null> {
     // return a single news item by slug
@@ -160,7 +167,7 @@ export class CmsElasticsearchService {
   }
 
   async getSingleMenuByName(
-    index: SearchIndexes,
+    index: string,
     { name }: GetMenuInput,
   ): Promise<Menu | null> {
     // return a single news item by slug
@@ -175,7 +182,7 @@ export class CmsElasticsearchService {
   }
 
   async getSingleMenu<RequestedMenuType>(
-    index: SearchIndexes,
+    index: string,
     { id }: GetSingleMenuInput,
   ): Promise<RequestedMenuType | null> {
     // return a single menu by id
@@ -184,10 +191,7 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleAboutPage(
-    index: SearchIndexes,
-    id: string,
-  ): Promise<AboutPage> {
+  async getSingleAboutPage(index: string, id: string): Promise<AboutPage> {
     const aboutPageDocument = await this.elasticService.findById(index, id)
     return JSON.parse(aboutPageDocument.body?._source?.response)
   }

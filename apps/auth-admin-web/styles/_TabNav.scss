@@ -1,0 +1,48 @@
+.resource-tab-nav,
+.client-tab-nav,
+.admin-tab-nav {
+  ul {
+    padding-inline-start: 0;
+
+    li {
+      padding: 10px;
+      display: inline-block;
+      border: solid 1px $color-border;
+      border-radius: $border-radius;
+
+      &.active {
+        background: $color-bg-content;
+      }
+
+      a,
+      button {
+        font-size: 0.8rem;
+        cursor: pointer;
+        padding: 0px;
+        color: $color-text-primary;
+        background: transparent;
+
+        &:focus {
+          outline: none;
+        }
+
+        &:hover {
+          color: $color-link;
+        }
+
+        &.active {
+          color: $color-link;
+          text-decoration: none;
+          border-bottom: none;
+          font-weight: $weight-semi-bold;
+        }
+      }
+    }
+  }
+
+  &__container__help {
+    &__selected {
+      font-weight: $weight-semi-bold;
+    }
+  }
+}

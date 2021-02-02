@@ -3,7 +3,7 @@ import { style } from 'treat'
 
 export const container = style({
   width: '100%',
-  minHeight: '100%',
+  height: '100%',
   background: theme.color.white,
   ...themeUtils.responsiveStyle({
     lg: {
@@ -13,15 +13,29 @@ export const container = style({
 })
 export const bg = style({
   display: 'none',
-  ...themeUtils.responsiveStyle({
-    xl: {
+  '@media': {
+    [`screen and (min-width: 1169px)`]: {
+      display: 'block',
+      position: 'absolute',
+      width: 384,
+      top: 571,
+      right: 0,
+    },
+    [`screen and (min-width: 1310px)`]: {
+      display: 'block',
+      position: 'absolute',
+      width: 444,
+      top: 552,
+      right: 0,
+    },
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
       display: 'block',
       position: 'absolute',
       width: 546,
       top: 579,
       right: theme.spacing[15],
     },
-  }),
+  },
 })
 
 export const mainContainer = style({
@@ -61,7 +75,7 @@ export const asideTop = style({
     },
   },
   ...themeUtils.responsiveStyle({
-    lg: {
+    md: {
       selectors: {
         '&:before': {
           left: 0,
@@ -91,7 +105,7 @@ export const asideBottom = style({
     },
   },
   ...themeUtils.responsiveStyle({
-    lg: {
+    md: {
       selectors: {
         '&:before': {
           left: 0,
@@ -105,7 +119,7 @@ export const asideBottom = style({
 
 export const mainLinkContainer = style({
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       columnCount: 2,
       columnGap: theme.spacing[2],
       height: 520,

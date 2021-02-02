@@ -76,7 +76,7 @@ export const size = styleMap({
     }),
   },
   small: {
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 1.25,
     minHeight: 40,
     ...themeUtils.responsiveStyle({
@@ -197,6 +197,7 @@ type UtilityColors = (
   borderHover: string,
   textDisabled: string,
   borderDisabled: string,
+  borderHoverWidth?: number,
 ) => Style
 
 const primaryColors: PrimaryColors = (
@@ -280,6 +281,7 @@ const utilityColors: UtilityColors = (
   borderHover,
   textDisabled,
   borderDisabled,
+  borderHoverWidth = 1,
 ) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${border}`,
@@ -293,7 +295,7 @@ const utilityColors: UtilityColors = (
   },
   ':hover': {
     backgroundColor: theme.color.transparent,
-    boxShadow: `inset 0 0 0 2px ${borderHover}`,
+    boxShadow: `inset 0 0 0 ${borderHoverWidth}px ${borderHover}`,
     color: textHover,
   },
   selectors: {
@@ -400,6 +402,7 @@ export const colors = {
       theme.color.white,
       theme.color.dark200,
       theme.color.blue100,
+      2,
     ),
     light: utilityColors(
       theme.color.dark400,
@@ -484,11 +487,7 @@ export const icon = style({
     [`${size.textSmall} &`]: {
       marginBottom: -3,
     },
-    ...utilityIconColor(
-      'default',
-      theme.color.blue400,
-      theme.color.blueberry400,
-    ),
+    ...utilityIconColor('default', theme.color.blue400, theme.color.blue400),
     ...utilityIconColor(
       'destructive',
       theme.color.red600,

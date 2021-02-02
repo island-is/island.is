@@ -153,10 +153,14 @@ export class UserProfileController {
     allowEmptyValue: false,
   })
   @ApiCreatedResponse({ type: EmailVerification })
-  async createVerification(
+  async recreateVerification(
     @Param('nationalId', UserProfileByNationalIdPipe)
     profile: UserProfile,
   ): Promise<EmailVerification | null> {
+    if (!profile.email) {
+      return null
+    }
+
     return await this.verificationService.createEmailVerification(
       profile.nationalId,
       profile.email,

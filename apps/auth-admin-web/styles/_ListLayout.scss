@@ -1,0 +1,132 @@
+.clients,
+.users,
+.identity-resources,
+.api-resources-list,
+.admin-users-list,
+.idp-providers-list {
+  &__wrapper {
+    max-width: 1024px;
+  }
+
+  &__container {
+    h1 {
+      font-style: normal;
+      font-weight: $weight-semi-bold;
+      font-size: 42px;
+      line-height: 52px;
+      color: $color-text-primary;
+    }
+
+    &__options {
+      display: flex;
+      padding: 10px 0;
+
+      &__button {
+        padding-top: 13px;
+        flex: 1;
+      }
+
+      &__search {
+        padding-top: 20px;
+        position: relative;
+        label {
+          position: absolute;
+          top: 0;
+          font-size: 0.8rem;
+        }
+        input {
+          height: 25px;
+          border-radius: $border-radius;
+        }
+        button {
+          border: 1px solid $color-border;
+          box-sizing: border-box;
+          border-radius: $border-radius;
+          background: $color-body-bg;
+          font-size: 0.9rem;
+          font-style: normal;
+          font-weight: $weight-semi-bold;
+          line-height: 25px;
+          letter-spacing: 0em;
+          text-align: center;
+          color: $color-text-primary;
+          width: 51px;
+          height: 25px;
+          padding: 0;
+          margin-left: 15px;
+          cursor: pointer;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+
+    &__export {
+      display: flex;
+      margin-top: 20px;
+
+      &__container__button {
+        flex: 1;
+        text-align: right;
+
+        button {
+          border: 1px solid $color-border;
+          box-sizing: border-box;
+          border-radius: $border-radius;
+          background: $color-body-bg;
+          font-size: 0.9rem;
+          font-style: normal;
+          font-weight: $weight-semi-bold;
+          line-height: 25px;
+          text-align: center;
+          color: $color-text-primary;
+          height: 30px;
+          padding: 0px 15px;
+          margin-left: 15px;
+          cursor: pointer;
+
+          &:focus {
+            outline: none;
+          }
+
+          span {
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  table {
+    thead {
+      tr {
+        th {
+          font-size: 0.9rem;
+        }
+      }
+    }
+    tbody {
+      tr {
+        th,
+        td {
+          font-size: 0.8rem;
+        }
+
+        &:hover {
+          td {
+            background-color: $color-bg-content;
+          }
+        }
+
+        &.archived {
+          td {
+            background: #eee;
+            color: #ccc;
+          }
+        }
+      }
+    }
+  }
+}

@@ -6,14 +6,14 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { MemoryRouter, Route } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import userEvent from '@testing-library/user-event'
 
 describe('Confirmation route', () => {
@@ -48,23 +48,17 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Staðfesta og hefja undirritun/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Staðfesta og hefja undirritun/i,
+      }),
     ).toBeDisabled()
 
-    userEvent.type(screen.getByLabelText('Þinghaldi lauk *'), '15:55')
+    userEvent.type(await screen.findByLabelText('Þinghaldi lauk *'), '15:55')
 
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Staðfesta og hefja undirritun/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Staðfesta og hefja undirritun/i,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -121,10 +115,11 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(() => screen.getByText('accusedAppealAnnouncement test')),
+      await screen.findByText('accusedAppealAnnouncement test'),
     ).toBeInTheDocument()
+
     expect(
-      screen.getByText('prosecutorAppealAnnouncement test'),
+      await screen.findByText('prosecutorAppealAnnouncement test'),
     ).toBeInTheDocument()
   })
 })

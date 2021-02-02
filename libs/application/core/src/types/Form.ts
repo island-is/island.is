@@ -2,11 +2,17 @@ import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
 import { MessageDescriptor } from 'react-intl'
+import { BoxProps } from '@island.is/island-ui/core'
 import { Application } from './Application'
 
 export type StaticText = (MessageDescriptor & { values?: object }) | string
 
-export type FormText = StaticText | ((application: Application) => StaticText)
+export type FormText =
+  | StaticText
+  | ((application: Application) => StaticText | null | undefined)
+export type FormTextArray =
+  | StaticText[]
+  | ((application: Application) => (StaticText | null | undefined)[])
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -30,10 +36,11 @@ export enum FormModes {
 
 export interface Form {
   id: string
-  name: StaticText
+  title: StaticText
   logo?: React.FC
   type: FormItemTypes.FORM
   mode?: FormModes
+  renderLastScreenButton?: boolean
   icon?: string
   children: FormChildren[]
 }
@@ -47,7 +54,7 @@ export interface FormItem {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly name: FormText
+  readonly title: FormText
 }
 
 export interface Section extends FormItem {
@@ -74,6 +81,7 @@ export interface MultiField extends FormItem {
   children: Field[]
   isPartOfRepeater?: boolean
   readonly description?: FormText
+  space?: BoxProps['paddingTop']
 }
 
 export interface ExternalDataProvider extends FormItem {
@@ -81,11 +89,13 @@ export interface ExternalDataProvider extends FormItem {
   readonly children: undefined
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
+  checkboxLabel?: MessageDescriptor | string
+  subTitle?: MessageDescriptor | string
 }
 
 export interface DataProviderItem {
   readonly id: string
-  readonly type: string
+  readonly type: string | undefined
   readonly title: StaticText
   readonly subTitle?: StaticText
   readonly source?: string
@@ -98,6 +108,7 @@ export interface FieldBaseProps {
   application: Application
   showFieldName?: boolean
   goToScreen?: (id: string) => void
+  refetch?: () => void
 }
 
 export type RepeaterProps = {

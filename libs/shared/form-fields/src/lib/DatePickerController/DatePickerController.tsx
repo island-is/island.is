@@ -2,7 +2,10 @@ import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { DatePicker } from '@island.is/island-ui/core'
+import {
+  DatePicker,
+  DatePickerBackgroundColor,
+} from '@island.is/island-ui/core'
 
 interface Props {
   defaultValue?: string
@@ -10,8 +13,10 @@ interface Props {
   id: string
   disabled?: boolean
   name?: string
+  locale?: 'en' | 'is'
   label: string
   placeholder?: string
+  backgroundColor?: DatePickerBackgroundColor
 }
 const df = 'yyyy-MM-dd'
 export const DatePickerController: FC<Props> = ({
@@ -20,8 +25,10 @@ export const DatePickerController: FC<Props> = ({
   disabled = false,
   id,
   name = id,
+  locale,
   label,
   placeholder,
+  backgroundColor,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   return (
@@ -34,8 +41,10 @@ export const DatePickerController: FC<Props> = ({
           disabled={disabled}
           id={id}
           errorMessage={error}
+          locale={locale}
           label={label}
           placeholderText={placeholder}
+          backgroundColor={backgroundColor}
           selected={value ? parseISO(value) : undefined}
           handleChange={(date) => {
             clearErrors(id)

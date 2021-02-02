@@ -53,6 +53,8 @@ export const deleteButtonContainer = style({
 })
 
 export const thButton = style({
+  outline: 'none',
+
   ':active': {
     color: theme.color.dark400,
   },
@@ -73,6 +75,18 @@ export const tableRowContainer = style({
       minWidth: 'calc(100% + 100px)',
     },
   },
+})
+
+export const largeColumn = style({
+  // The width needed to make sure a 33 character name doesn't wrap
+  minWidth: 334,
+  whiteSpace: 'nowrap',
+})
+
+export const accusedName = style({
+  display: 'block',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 })
 
 export const tr = style({
@@ -100,6 +114,8 @@ export const td = style({
       marginLeft: 'auto',
       height: '100%',
       padding: 0,
+      // This ensures that the table layout remains consistant on smaller screens.
+      minWidth: 77,
     },
     '&.flexDirectionCol': {
       flexDirection: 'column',
@@ -111,22 +127,24 @@ export const deleteButton = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100px',
-  height: '100px',
-  borderRadius: theme.border.radius.large,
+  marginRight: 32,
+  padding: 10,
+  minWidth: 36,
+  minHeight: 36,
+  borderRadius: theme.border.radius.circle,
   outline: 'none',
+  transition: 'all .4s ease-out',
 
   selectors: {
     '&:focus': {
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
     '&:hover': {
-      backgroundColor: theme.color.transparent,
       boxShadow: `inset 0 0 0 2px ${theme.color.blueberry400}`,
       color: theme.color.blueberry400,
     },
     '&:focus:active': {
-      backgroundColor: theme.color.transparent,
+      backgroundColor: theme.color.mint400,
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },
@@ -137,18 +155,24 @@ export const deleteButtonText = style({
 })
 
 export const sortIcon = style({
-  opacity: 0,
-  transition: 'opacity .5s ease-in-out, transform .5s ease-in-out .2s',
+  opacity: 0.4,
+  transition: 'opacity .2s ease-in-out',
+
+  selectors: {
+    [`${thButton}:hover &`]: {
+      opacity: 1,
+    },
+  },
 })
 
 export const sortCreatedAsc = style({
   opacity: 1,
-  transform: 'rotate(0deg)',
+  transform: 'rotate(180deg)',
 })
 
 export const sortCreatedDes = style({
   opacity: 1,
-  transform: 'rotate(180deg)',
+  transform: 'rotate(0deg)',
 })
 
 export const sortAccusedNameAsc = style({

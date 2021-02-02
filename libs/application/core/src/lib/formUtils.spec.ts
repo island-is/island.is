@@ -2,13 +2,15 @@ import {
   extractRepeaterIndexFromField,
   formatText,
   getFormNodeLeaves,
+  getValueViaPath,
+  mergeAnswers,
 } from './formUtils'
 import {
   Application,
   ApplicationTypes,
   buildCheckboxField,
   buildForm,
-  buildIntroductionField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -21,32 +23,32 @@ import {
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,
-  name: 'Atvinnuleysisbætur',
+  title: 'Atvinnuleysisbætur',
   children: [
     buildSection({
       id: 'intro',
-      name: 'name',
+      title: 'name',
       children: [
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'field',
-          name: 'name',
-          introduction: 'Þessi umsókn snýr að atvinnuleysisbótum',
+          title: 'name',
+          description: 'Þessi umsókn snýr að atvinnuleysisbótum',
         }),
         buildMultiField({
           id: 'about',
-          name: 'name',
+          title: 'name',
           children: [
             buildTextField({
               id: 'person.name',
-              name: 'name',
+              title: 'name',
             }),
             buildTextField({
               id: 'person.nationalId',
-              name: 'name',
+              title: 'name',
             }),
             buildTextField({
               id: 'person.phoneNumber',
-              name: 'name',
+              title: 'name',
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -60,11 +62,11 @@ const ExampleForm: Form = buildForm({
     }),
     buildSection({
       id: 'career',
-      name: 'name',
+      title: 'name',
       children: [
         buildRadioField({
           id: 'careerHistory',
-          name: 'name',
+          title: 'name',
           options: [
             { value: 'yes', label: 'name' },
             { value: 'no', label: 'name' },
@@ -72,7 +74,7 @@ const ExampleForm: Form = buildForm({
         }),
         buildCheckboxField({
           id: 'careerHistoryCompanies',
-          name: 'name',
+          title: 'name',
           options: [
             { value: 'government', label: 'name' },
             { value: 'aranja', label: 'Aranja' },
@@ -81,7 +83,7 @@ const ExampleForm: Form = buildForm({
         }),
         buildTextField({
           id: 'dreamJob',
-          name: 'name',
+          title: 'name',
         }),
       ],
     }),
@@ -157,30 +159,174 @@ describe('formatText', () => {
 describe('extractRepeaterIndexFromField', () => {
   it('should return the valid repeater index from a field inside a repeater', () => {
     const field = {
-      ...buildTextField({ id: 'periods[123].id', name: '' }),
+      ...buildTextField({ id: 'periods[123].id', title: '' }),
       isPartOfRepeater: true,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(123)
   })
   it('should return the first valid repeater index from a field inside a repeater', () => {
     const field = {
-      ...buildTextField({ id: 'periods[123].id[456].asIso[789]', name: '' }),
+      ...buildTextField({ id: 'periods[123].id[456].asIso[789]', title: '' }),
       isPartOfRepeater: true,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(123)
   })
   it('should return -1 if the field is not inside a repeater', () => {
     const field = {
-      ...buildTextField({ id: 'periods[123].id', name: '' }),
+      ...buildTextField({ id: 'periods[123].id', title: '' }),
       isPartOfRepeater: false,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(-1)
   })
   it('should return -1 if the field has invalid index', () => {
     const field = {
-      ...buildTextField({ id: 'periods[1a1].id', name: '' }),
+      ...buildTextField({ id: 'periods[1a1].id', title: '' }),
       isPartOfRepeater: true,
     } as TextField
     expect(extractRepeaterIndexFromField(field)).toBe(-1)
+  })
+})
+
+describe('mergeAnswers', () => {
+  it('should deep merge objects with new data', () => {
+    expect(
+      mergeAnswers(
+        {
+          periods: [{ startDate: '2021-01-29', endDate: '2021-02-19' }],
+          employer: { isSelfEmployed: 'yes' },
+          payments: { bank: '0000000000', union: 'id', pensionFund: 'id' },
+          applicant: { email: 'mockEmail@island.is', phoneNumber: '9999999' },
+          giveRights: { giveDays: 1, isGivingRights: 'no' },
+          otherParent: 'no',
+          singlePeriod: 'no',
+          requestRights: { requestDays: 18, isRequestingRights: 'no' },
+          firstPeriodStart: 'specificDate',
+          personalAllowance: { useAsMuchAsPossible: 'yes' },
+          confirmLeaveDuration: 'specificDate',
+          usePersonalAllowance: 'yes',
+          usePrivatePensionFund: 'no',
+          personalAllowanceFromSpouse: { useAsMuchAsPossible: 'yes' },
+          usePersonalAllowanceFromSpouse: 'yes',
+        },
+        {
+          periods: [
+            { startDate: '2021-01-29', endDate: '2021-02-25', ratio: '100' },
+            { startDate: '2021-02-20', endDate: '2021-03-15', ratio: '100' },
+          ],
+        },
+      ),
+    ).toStrictEqual({
+      periods: [
+        { startDate: '2021-01-29', endDate: '2021-02-25', ratio: '100' },
+        { startDate: '2021-02-20', endDate: '2021-03-15', ratio: '100' },
+      ],
+      employer: { isSelfEmployed: 'yes' },
+      payments: { bank: '0000000000', union: 'id', pensionFund: 'id' },
+      applicant: { email: 'mockEmail@island.is', phoneNumber: '9999999' },
+      giveRights: { giveDays: 1, isGivingRights: 'no' },
+      otherParent: 'no',
+      singlePeriod: 'no',
+      requestRights: { requestDays: 18, isRequestingRights: 'no' },
+      firstPeriodStart: 'specificDate',
+      personalAllowance: { useAsMuchAsPossible: 'yes' },
+      confirmLeaveDuration: 'specificDate',
+      usePersonalAllowance: 'yes',
+      usePrivatePensionFund: 'no',
+      personalAllowanceFromSpouse: { useAsMuchAsPossible: 'yes' },
+      usePersonalAllowanceFromSpouse: 'yes',
+    })
+  })
+
+  it('should return a merge object', () => {
+    expect(
+      mergeAnswers(
+        { id: 'periodStart', value: '2020-20-20' },
+        { id: 'periodStart', value: '2021-01-01' },
+      ),
+    ).toStrictEqual({ id: 'periodStart', value: '2021-01-01' })
+  })
+
+  it('should return a merge array of object with new answers to overwrite the current answers', () => {
+    expect(
+      mergeAnswers(
+        [
+          {
+            periods: [{ startDate: '2023-12-12', ratio: 100 }],
+          },
+        ],
+        [
+          {
+            periods: [{ startDate: '2021-01-01' }],
+          },
+        ],
+      ),
+    ).toStrictEqual([
+      {
+        periods: [{ startDate: '2021-01-01', ratio: 100 }],
+      },
+    ])
+  })
+
+  it('should return the deleted object from the array', () => {
+    expect(
+      mergeAnswers(
+        [
+          {
+            periods: [{ startDate: '2023-12-12', ratio: 100 }],
+          },
+        ],
+        [
+          {
+            periods: [], // They deleted the period
+          },
+        ],
+      ),
+    ).toStrictEqual([
+      {
+        periods: [],
+      },
+    ])
+  })
+})
+
+describe('getValueViaPath', () => {
+  it('should return error message from simple object', () => {
+    expect(
+      getValueViaPath(
+        {
+          personalAllowance: {
+            usePersonalAllowance: 'Error message',
+          },
+        },
+        'personalAllowance.usePersonalAllowance',
+        undefined,
+      ),
+    ).toBe('Error message')
+  })
+
+  it('should return error message from array of objects', () => {
+    expect(
+      getValueViaPath(
+        {
+          periods: [
+            {
+              startDate: 'Error message startDate',
+            },
+          ],
+        },
+        'periods[0].startDate',
+        undefined,
+      ),
+    ).toBe('Error message startDate')
+  })
+
+  it('should works', () => {
+    expect(
+      getValueViaPath(
+        { 'periods[1].startDate': 'Required' },
+        'periods[1].startDate',
+        undefined,
+      ),
+    ).toBe('Required')
   })
 })

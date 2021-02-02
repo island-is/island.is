@@ -1,8 +1,9 @@
+import get from 'lodash/get'
 import {
   UserManager,
   WebStorageStateStore,
-  InMemoryWebStorage,
   UserManagerSettings,
+  User,
 } from 'oidc-client'
 import { environment } from '../environments'
 
@@ -11,9 +12,9 @@ const settings: UserManagerSettings = {
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase
-  silent_redirect_uri: `${window.location.origin}/silent/signin-oidc`,
+  silent_redirect_uri: `${window.location.origin}/minarsidur/silent/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
-  redirect_uri: `${window.location.origin}/signin-oidc`,
+  redirect_uri: `${window.location.origin}/minarsidur/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
   post_logout_redirect_uri: `${window.location.origin}`,
   // eslint-disable-next-line @typescript-eslint/camelcase
@@ -25,4 +26,38 @@ const settings: UserManagerSettings = {
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 
-export const userManager = new UserManager(settings)
+const userTokenIsValid = (user: User) => {
+  const expiresAtSeconds = get(user, 'expires_at', null)
+
+  if (expiresAtSeconds === null) {
+    return false
+  } else if (typeof expiresAtSeconds !== 'number') {
+    return false
+  }
+
+  const msWhenExpired = expiresAtSeconds * 1000
+  const msNow = Date.now()
+
+  return msWhenExpired > msNow
+}
+
+export class ExtendedUserManager extends UserManager {
+  constructor(settings: UserManagerSettings) {
+    super(settings)
+  }
+
+  async verifyAuthentication() {
+    const user = await this.getUser()
+    try {
+      if (user === null || !userTokenIsValid(user)) {
+        this.signinRedirect()
+      }
+    } catch (e) {
+      throw new Error('Unauthorized')
+    }
+
+    return user
+  }
+}
+
+export const userManager = new ExtendedUserManager(settings)

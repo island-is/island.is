@@ -4,11 +4,8 @@ import {
   GridRow,
   GridColumn,
   CategoryCard,
-  LoadingIcon,
-  Box,
-  Button,
 } from '@island.is/island-ui/core'
-import { ApiService } from '@island.is/api/schema'
+import { Service } from '@island.is/api/schema'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { capitalize } from '@island.is/web/utils/capitalize'
 import { useNamespace } from '@island.is/web/hooks'
@@ -25,18 +22,19 @@ export type ErrorMessage = {
 }
 
 export interface ServiceListProps {
-  baseUrl?: string
-  services: ApiService[]
+  baseUrl: string
+  services: Service[]
   tagDisplayNames?: GetNamespaceQuery['getNamespace']
 }
 
 export const ServiceList: React.FC<ServiceListProps> = ({
-  baseUrl = './vorulisti/',
+  baseUrl,
   services = [],
   tagDisplayNames = {},
 }) => {
   const n = useNamespace(tagDisplayNames)
-  const CategoriesToTags = (service: ApiService) => {
+
+  const CategoriesToTags = (service: Service) => {
     const tags: Tag[] = []
     let value
 
@@ -75,9 +73,10 @@ export const ServiceList: React.FC<ServiceListProps> = ({
             >
               <CategoryCard
                 href={`${baseUrl}${item.id}`}
-                heading={item.name}
+                heading={item.title}
                 text={item.owner}
                 tags={CategoriesToTags(item)}
+                truncateHeading={true}
               />
             </GridColumn>
           )

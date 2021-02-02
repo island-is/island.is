@@ -1,3 +1,6 @@
-export { NationalRegistry } from './NationalRegistry'
-export { DirectorateOfLabor } from './DirectorateOfLabor'
-export { InternalRevenue } from './InternalRevenue'
+export { HealthInsuranceProvider } from './HealthInsuranceProvider'
+export { OldPendingApplications } from './OldPendingApplications'
+export {
+  UserProfileProvider,
+  NationalRegistryProvider,
+} from '@island.is/application/data-providers'

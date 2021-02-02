@@ -1,4 +1,8 @@
-import { extractAnswersToSubmitFromScreen } from './utils'
+import {
+  extractAnswersToSubmitFromScreen,
+  isJSONObject,
+  parseMessage,
+} from './utils'
 import {
   ExternalDataProviderScreen,
   FieldDef,
@@ -40,7 +44,7 @@ describe('ui-shell-utils', () => {
         const repeater = buildRepeater({
           id: 'arrayField',
           component: 'comp',
-          name: 'Repeater',
+          title: 'Repeater',
           children: [],
         })
         const screen: RepeaterScreen = {
@@ -57,7 +61,7 @@ describe('ui-shell-utils', () => {
       it('when the current screen is an external data provider', () => {
         const externalDataProvider = buildExternalDataProvider({
           id: 'arrayField',
-          name: 'Repeater',
+          title: 'Repeater',
           dataProviders: [],
         })
         const screen: ExternalDataProviderScreen = {
@@ -73,7 +77,7 @@ describe('ui-shell-utils', () => {
       it('when the current screen includes a question that is not part of the passed in form value', () => {
         const textField = buildTextField({
           id: 'notPartOfAnything',
-          name: 'Question?',
+          title: 'Question?',
         })
         const screen: FieldDef = buildFieldDef(textField)
 
@@ -84,7 +88,7 @@ describe('ui-shell-utils', () => {
     })
     describe('should only return the answers that are part of the screen', () => {
       it('when it is a single field', () => {
-        const textField = buildTextField({ id: 'theField', name: 'Question?' })
+        const textField = buildTextField({ id: 'theField', title: 'Question?' })
         const screen: FieldDef = buildFieldDef(textField)
 
         expect(
@@ -97,7 +101,7 @@ describe('ui-shell-utils', () => {
       it('when the screen id is part of a nested form value', () => {
         const textField = buildTextField({
           id: 'nestedField.someStuff',
-          name: 'Question?',
+          title: 'Question?',
         })
         const screen: FieldDef = buildFieldDef(textField)
 
@@ -110,11 +114,15 @@ describe('ui-shell-utils', () => {
       it('when the screen is a multifield', () => {
         const name = 'Question?'
         const children = [
-          buildTextField({ id: 'theField', name }),
-          buildTextField({ id: 'nestedField.someStuff', name }),
-          buildTextField({ id: 'nestedField.yetMore', name }),
+          buildTextField({ id: 'theField', title: name }),
+          buildTextField({ id: 'nestedField.someStuff', title: name }),
+          buildTextField({ id: 'nestedField.yetMore', title: name }),
         ]
-        const multiField = buildMultiField({ id: 'someId', name, children })
+        const multiField = buildMultiField({
+          id: 'someId',
+          title: name,
+          children,
+        })
         const screen: MultiFieldScreen = {
           sectionIndex: 0,
           subSectionIndex: 0,
@@ -137,13 +145,13 @@ describe('ui-shell-utils', () => {
         const screenA: FieldDef = buildFieldDef(
           buildTextField({
             id: 'arrayField[1].a',
-            name: 'Question?',
+            title: 'Question?',
           }),
         )
         const screen0B: FieldDef = buildFieldDef(
           buildTextField({
             id: 'arrayField[0].b',
-            name: 'Question?',
+            title: 'Question?',
           }),
         )
         expect(
@@ -161,16 +169,16 @@ describe('ui-shell-utils', () => {
         const children = [
           buildTextField({
             id: 'arrayField[0].a',
-            name: 'Question?',
+            title: 'Question?',
           }),
           buildTextField({
             id: 'arrayField[0].b',
-            name: 'Question b?',
+            title: 'Question b?',
           }),
         ]
         const multiField = buildMultiField({
           id: 'anyMultifieldId',
-          name: 'multi',
+          title: 'multi',
           children,
         })
         const screen: MultiFieldScreen = {
@@ -186,6 +194,44 @@ describe('ui-shell-utils', () => {
           arrayField: [{ a: 1, b: 2, c: 3 }, { a: 4 }],
         })
       })
+    })
+  })
+
+  describe('isJSONObject', () => {
+    it('return true if the message is a valid JSON object', () => {
+      expect(
+        isJSONObject('{"field":true,"otherField":"isAString"}'),
+      ).toBeTruthy()
+    })
+
+    it('return false if the message looks like a JSON but is not valid', () => {
+      expect(isJSONObject('{field:true,fake:"itsnot"}')).toBeFalsy()
+    })
+
+    it('return false if the message is a string', () => {
+      expect(isJSONObject('error message')).toBeFalsy()
+    })
+
+    it('return false if the message contains brackets in the middle of the message', () => {
+      expect(
+        isJSONObject('error message with {brackets} in the middle'),
+      ).toBeFalsy()
+    })
+  })
+
+  describe('parseMessage', () => {
+    it(`return an object if it's a stringified json object`, () => {
+      expect(parseMessage('{"field":"value"}')).toMatchObject({
+        field: 'value',
+      })
+    })
+
+    it(`return an object if it's a stringified json object`, () => {
+      expect(parseMessage('{field:value}')).toStrictEqual('{field:value}')
+    })
+
+    it('return a string if the message is only a string', () => {
+      expect(parseMessage('error message')).toStrictEqual('error message')
     })
   })
 })

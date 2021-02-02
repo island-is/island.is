@@ -1,12 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import NextLink from 'next/link'
 import {
   Box,
   ContentBlock,
   Text,
   Stack,
-  Breadcrumbs,
-  Link,
   GridColumn,
   Hidden,
   GridRow,
@@ -16,17 +15,17 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
-  AdgerdirArticles,
-  GroupedPages,
-  CardsSlider,
-  FeaturedNews,
   RichText,
   HeadWithSocialSharing,
   ChatPanel,
   Header,
   Main,
 } from '@island.is/web/components'
-import { ColorSchemeContext as CovidColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
+import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
+import GroupedPages from './components/GroupedPages/GroupedPages'
+import CardsSlider from './components/CardsSlider/CardsSlider'
+import FeaturedNews from './components/FeaturedNews/FeaturedNews'
+import { ColorSchemeContext as CovidColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -43,10 +42,9 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
   GET_CATEGORIES_QUERY,
 } from '../queries'
-import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
-import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
+import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
 import {
   GetArticleCategoriesQuery,
   GetGroupedMenuQuery,
@@ -58,6 +56,9 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
+import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
+
+import * as covidStyles from './components/UI/styles/styles.treat'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -76,7 +77,7 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -96,7 +97,7 @@ const Home: Screen<HomeProps> = ({
         imageWidth={frontpage.featuredImage?.width?.toString()}
         imageHeight={frontpage.featuredImage?.height?.toString()}
       />
-      <Box className={covidStyles.frontpageBg}>
+      <Box className={covidStyles.frontpageBg} id="main-content">
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
             <GridContainer>
@@ -110,17 +111,34 @@ const Home: Screen<HomeProps> = ({
                       >
                         <Stack space={2}>
                           <span className={covidStyles.white}>
-                            <Breadcrumbs color="white">
-                              <Link href={makePath()} as={makePath()}>
-                                <a>Ísland.is</a>
-                              </Link>
-                              <Link
-                                href={makePath('adgerdir')}
-                                as={makePath('adgerdir')}
-                              >
-                                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-                              </Link>
-                            </Breadcrumbs>
+                            <Breadcrumbs
+                              color="white"
+                              items={[
+                                {
+                                  title: 'Ísland.is',
+                                  typename: 'homepage',
+                                  href: '/',
+                                },
+                                {
+                                  title: n('covidAdgerdir', 'Covid aðgerðir'),
+                                  typename: 'adgerdirfrontpage',
+                                  href: '/',
+                                },
+                              ]}
+                              renderLink={(link, { typename, slug }) => {
+                                return (
+                                  <NextLink
+                                    {...linkResolver(
+                                      typename as LinkType,
+                                      slug,
+                                    )}
+                                    passHref
+                                  >
+                                    {link}
+                                  </NextLink>
+                                )
+                              }}
+                            />
                           </span>
                           <Text variant="h1" as="h1" color="white">
                             {frontpage.title}

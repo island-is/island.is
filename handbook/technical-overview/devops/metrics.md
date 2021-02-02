@@ -4,9 +4,9 @@ Metric is one of the foundational pieces of telemetry we need to understand issu
 
 ## Metrics infrastructure
 
-We are using [Prometheus](https://prometheus.io) for collecting, storing and querying metrics. To see the different metric types available please see [here](https://prometheus.io/docs/concepts/metric_types/). For more information on the naming of metrics, please see [here](https://prometheus.io/docs/practices/naming/).
+~~We are using [Prometheus](https://prometheus.io) for collecting, storing and querying metrics. To see the different metric types available please see [here](https://prometheus.io/docs/concepts/metric_types/). For more information on the naming of metrics, please see [here](https://prometheus.io/docs/practices/naming/).~~
 
-If you are using the `infra-express-server` or `infra-next-server` libraries you already have the metrics infrastructure setup for you. Additionally, we already provide metrics for the routes you are creating.
+~~If you are using the `infra-express-server` or `infra-next-server` libraries you already have the metrics infrastructure setup for you. Additionally, we already provide metrics for the routes you are creating.~~
 
 ## Types of metrics
 

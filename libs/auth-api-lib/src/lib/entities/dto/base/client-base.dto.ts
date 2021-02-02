@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsNotEmpty,
+  IsDate,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -233,8 +234,7 @@ export abstract class ClientBaseDTO {
   })
   readonly allowRememberConsent!: boolean
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     example: 'set_client_claims_prefix',
   })
@@ -274,4 +274,10 @@ export abstract class ClientBaseDTO {
     example: true,
   })
   readonly requireClientSecret!: boolean
+
+  @IsOptional()
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
 }

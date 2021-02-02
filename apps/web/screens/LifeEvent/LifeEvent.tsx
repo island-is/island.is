@@ -2,21 +2,18 @@ import React, { useMemo } from 'react'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
-import { Slice as SliceType } from '@island.is/island-ui/contentful'
+import NextLink from 'next/link'
+import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
   Breadcrumbs,
-  Link,
-  Tag,
   Text,
   Box,
   GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import pathNames from '@island.is/web/i18n/routes'
 import {
-  RichText,
   AnchorNavigation,
   BackgroundImage,
   HeadWithSocialSharing,
@@ -35,6 +32,7 @@ import {
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -47,6 +45,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 }) => {
   useContentfulId(id)
   const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
@@ -77,7 +76,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         </Box>
       </GridRow>
 
-      <GridContainer>
+      <GridContainer id="main-content">
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
             <GridRow>
@@ -86,12 +85,25 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                 span={['9/9', '9/9', '9/9', '9/9', '7/9']}
               >
                 <Box paddingBottom={[2, 2, 4]}>
-                  <Breadcrumbs>
-                    <Link href={pathNames().href}>Ísland.is</Link>
-                    <Tag variant="blue" outlined>
-                      {n('lifeEventTitle', 'Lífsviðburður')}
-                    </Tag>
-                  </Breadcrumbs>
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: 'Ísland.is',
+                        href: '/',
+                      },
+                      {
+                        isTag: true,
+                        title: n('lifeEventTitle', 'Lífsviðburður'),
+                      },
+                    ]}
+                    renderLink={(link) => {
+                      return (
+                        <NextLink {...linkResolver('homepage')} passHref>
+                          {link}
+                        </NextLink>
+                      )
+                    }}
+                  />
                 </Box>
                 <Text variant="h1" as="h1">
                   <span id={slugify(title)}>{title}</span>
@@ -114,10 +126,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Box paddingTop={[3, 3, 4]}>
-                  <RichText
-                    body={content as SliceType[]}
-                    config={{ defaultPadding: [2, 2, 4] }}
-                  />
+                  {richText(content as SliceType[])}
                 </Box>
               </GridColumn>
             </GridRow>

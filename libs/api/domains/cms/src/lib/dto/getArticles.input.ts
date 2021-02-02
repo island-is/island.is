@@ -1,15 +1,22 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @InputType()
 export class GetArticlesInput {
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang: ElasticsearchIndexLocale
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  category: string
+  @IsOptional()
+  category?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  organization?: string
 
   @Field(() => Int, { nullable: true })
   @IsInt()

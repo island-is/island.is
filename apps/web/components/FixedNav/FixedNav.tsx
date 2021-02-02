@@ -7,16 +7,17 @@ import {
   ButtonDeprecated as Button,
   FocusableBox,
   Logo,
+  Link,
 } from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { useI18n } from '@island.is/web/i18n'
-import routeNames from '@island.is/web/i18n/routeNames'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)
   const { activeLocale, t } = useI18n()
-  const { makePath } = routeNames(activeLocale)
+  const { linkResolver } = useLinkResolver()
 
   useScrollPosition(
     ({ prevPos, currPos }) => {
@@ -50,9 +51,12 @@ export const FixedNav: FC = () => {
           alignItems="center"
           justifyContent="spaceBetween"
         >
-          <FocusableBox href={makePath()} marginRight={2}>
-            <Logo iconOnly solid={true} />
-          </FocusableBox>
+          <Link {...linkResolver('homepage')}>
+            <FocusableBox marginRight={2}>
+              <Logo iconOnly solid={true} />
+            </FocusableBox>
+          </Link>
+
           <Box
             display="flex"
             height="full"

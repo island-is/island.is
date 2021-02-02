@@ -116,34 +116,18 @@ export class CaseService {
   getAll(): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    const sevenDaysFromNow = this.sevenDaysFromNow()
-
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
       where: {
-        [Op.or]: [
-          {
-            state: {
-              [Op.in]: [CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED],
-            },
-          },
-          {
-            [Op.and]: [
-              { state: CaseState.ACCEPTED },
-              { custodyEndDate: { [Op.gt]: sevenDaysFromNow } },
-            ],
-          },
-          {
-            [Op.and]: [
-              { state: CaseState.REJECTED },
-              { courtEndTime: { [Op.gt]: sevenDaysFromNow } },
-            ],
-          },
-        ],
+        state: {
+          [Op.not]: CaseState.DELETED,
+        },
       },
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: Case, as: 'parentCase' },
+        { model: Case, as: 'childCase' },
       ],
     })
   }
@@ -156,14 +140,19 @@ export class CaseService {
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: Case, as: 'parentCase' },
+        { model: Case, as: 'childCase' },
       ],
     })
   }
 
-  create(caseToCreate: CreateCaseDto): Promise<Case> {
+  create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    return this.caseModel.create(caseToCreate)
+    return this.caseModel.create({
+      ...caseToCreate,
+      prosecutorId: user.id,
+    })
   }
 
   async update(
@@ -256,5 +245,24 @@ export class CaseService {
     return {
       documentSigned: true,
     }
+  }
+
+  extend(existingCase: Case): Promise<Case> {
+    this.logger.debug(`Extending case ${existingCase.id}`)
+
+    return this.caseModel.create({
+      policeCaseNumber: existingCase.policeCaseNumber,
+      accusedNationalId: existingCase.accusedNationalId,
+      accusedName: existingCase.accusedName,
+      accusedAddress: existingCase.accusedAddress,
+      accusedGender: existingCase.accusedGender,
+      court: existingCase.court,
+      lawsBroken: existingCase.lawsBroken,
+      custodyProvisions: existingCase.custodyProvisions,
+      requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
+      caseFacts: existingCase.caseFacts,
+      legalArguments: existingCase.legalArguments,
+      parentCaseId: existingCase.id,
+    })
   }
 }

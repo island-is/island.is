@@ -26,9 +26,10 @@ const TextFormField: FC<Props> = ({
   const {
     id,
     disabled,
-    name,
+    title,
     description,
     placeholder,
+    backgroundColor,
     format,
     variant = 'text',
     suffix,
@@ -55,7 +56,7 @@ const TextFormField: FC<Props> = ({
           )}
           label={
             showFieldName
-              ? formatText(name, application, formatMessage)
+              ? formatText(title, application, formatMessage)
               : undefined
           }
           autoFocus={autoFocus}
@@ -73,6 +74,7 @@ const TextFormField: FC<Props> = ({
           format={format}
           suffix={suffix}
           defaultValue={useDefaultValue(field, application)}
+          backgroundColor={backgroundColor}
         />
       </Box>
     </div>

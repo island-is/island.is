@@ -1,23 +1,34 @@
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { Accordion, Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import {
   TIME_FORMAT,
   formatDate,
   getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseDecision, CaseState } from '@island.is/judicial-system/types'
-import React, { useEffect, useState } from 'react'
+import {
+  Case,
+  CaseCustodyRestrictions,
+  CaseDecision,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CaseQuery } from '../../../graphql'
-import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import InfoCard from '../../../shared-components/InfoCard/InfoCard'
-import { PageLayout } from '../../../shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '../../../shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
-import RulingAccordionItem from '../../../shared-components/RulingAccordionItem/RulingAccordionItem'
-import { getRestrictionTagVariant } from '../../../utils/stepHelper'
+import { CaseQuery } from '@island.is/judicial-system-web/src/graphql'
+import {
+  FormFooter,
+  PdfButton,
+  PageLayout,
+  InfoCard,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+  CourtRecordAccordionItem,
+} from '@island.is/judicial-system-web/src/shared-components'
+import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useHistory } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+
 interface CaseData {
   case?: Case
 }
@@ -27,11 +38,16 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const history = useHistory()
   const { id } = useParams<{ id: string }>()
+  const { user } = useContext(UserContext)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
+
+  const [extendCaseMutation, { loading: isCreatingExtension }] = useMutation(
+    ExtendCaseMutation,
+  )
 
   useEffect(() => {
     document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
@@ -43,12 +59,45 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }, [workingCase, setWorkingCase, data])
 
+  const handleNextButtonClick = async () => {
+    if (workingCase?.childCase) {
+      history.push(
+        `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${workingCase.childCase.id}`,
+      )
+    } else {
+      const { data } = await extendCaseMutation({
+        variables: {
+          input: {
+            id: workingCase?.id,
+          },
+        },
+      })
+
+      if (data) {
+        history.push(
+          `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${data.extendCase.id}`,
+        )
+      }
+    }
+  }
+
   /**
-   * The signed verdict page can be in one of three states
+   * We assume that the signed verdict page is only opened for
+   * cases in state REJECTED or ACCEPTED.
+   *
+   * Based on the judge's decision the signed verdict page can
+   * be in one of five states:
    *
    * 1. Rejected
-   * 2. Accepted or rejected and the custody end date is in the past
-   * 3. Accpted and the custody end date is not in the past
+   *    - state === REJECTED and decision === REJECTING
+   * 2. Alternative travel ban accepted and the travel ban end date is in the past
+   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and custodyEndDate < today
+   * 3. Accepted and the custody end date is in the past
+   *    - state === ACCEPTED and decision === ACCEPTING and custodyEndDate < today
+   * 5. Alternative travel ban accepted and the travel ban end date is not in the past
+   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and custodyEndDate > today
+   * 3. Accepted and the custody end date is not in the past
+   *    - state === ACCEPTED and decision === ACCEPTING and custodyEndDate > today
    */
   return (
     <PageLayout
@@ -56,7 +105,7 @@ export const SignedVerdictOverview: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       isCustodyEndDateInThePast={workingCase?.isCustodyEndDateInThePast}
-      rejectedCase={data?.case?.state === CaseState.REJECTED}
+      decision={data?.case?.decision}
     >
       {workingCase ? (
         <>
@@ -85,21 +134,23 @@ export const SignedVerdictOverview: React.FC = () => {
                      * decided only accept an alternative travel ban and finally we
                      * assume that the actual custody was accepted.
                      */}
-                    {workingCase.state === CaseState.REJECTED
-                      ? 'Kröfu hafnað'
-                      : workingCase.isCustodyEndDateInThePast
-                      ? workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                        ? 'Farbanni lokið'
-                        : 'Gæsluvarðhaldi lokið'
-                      : workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      ? 'Farbann virkt'
-                      : 'Gæsluvarðhald virkt'}
+                    {
+                      workingCase.decision === CaseDecision.REJECTING
+                        ? 'Kröfu hafnað'
+                        : workingCase.isCustodyEndDateInThePast
+                        ? workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                          ? 'Farbanni lokið'
+                          : 'Gæsluvarðhaldi lokið' // ACCEPTING
+                        : workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? 'Farbann virkt'
+                        : 'Gæsluvarðhald virkt' // ACCEPTING
+                    }
                   </Text>
                 </Box>
                 <Text as="h5" variant="h5">
-                  {workingCase.state === CaseState.REJECTED
+                  {workingCase.decision === CaseDecision.REJECTING
                     ? `Úrskurðað ${formatDate(
                         workingCase.courtEndTime,
                         'PPP',
@@ -112,7 +163,7 @@ export const SignedVerdictOverview: React.FC = () => {
                         workingCase.decision ===
                         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                           ? 'Farbann'
-                          : 'Gæsla'
+                          : 'Gæsla' // ACCEPTING
                       } rann út ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
@@ -124,7 +175,7 @@ export const SignedVerdictOverview: React.FC = () => {
                         workingCase.decision ===
                         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                           ? 'Farbann'
-                          : 'Gæsla'
+                          : 'Gæsla' // ACCEPTING
                       } til ${formatDate(
                         workingCase.custodyEndDate,
                         'PPP',
@@ -135,19 +186,57 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Text>
               </Box>
               <Box display="flex" flexDirection="column">
-                {workingCase.state === CaseState.ACCEPTED &&
-                  workingCase.custodyRestrictions?.map(
-                    (custodyRestriction, index) => (
-                      <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                        <Tag
-                          variant={getRestrictionTagVariant(custodyRestriction)}
-                          outlined
-                        >
-                          {getShortRestrictionByValue(custodyRestriction)}
-                        </Tag>
-                      </Box>
-                    ),
-                  )}
+                {
+                  // Custody restrictions
+                  workingCase.decision === CaseDecision.ACCEPTING &&
+                    workingCase.custodyRestrictions
+                      ?.filter((restriction) =>
+                        [
+                          CaseCustodyRestrictions.ISOLATION,
+                          CaseCustodyRestrictions.VISITAION,
+                          CaseCustodyRestrictions.COMMUNICATION,
+                          CaseCustodyRestrictions.MEDIA,
+                        ].includes(restriction),
+                      )
+                      ?.map((custodyRestriction, index) => (
+                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
+                          <Tag
+                            variant={getRestrictionTagVariant(
+                              custodyRestriction,
+                            )}
+                            outlined
+                            disabled
+                          >
+                            {getShortRestrictionByValue(custodyRestriction)}
+                          </Tag>
+                        </Box>
+                      ))
+                }
+                {
+                  // Alternative travel ban restrictions
+                  workingCase.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+                    workingCase.custodyRestrictions
+                      ?.filter((restriction) =>
+                        [
+                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+                        ].includes(restriction),
+                      )
+                      ?.map((custodyRestriction, index) => (
+                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
+                          <Tag
+                            variant={getRestrictionTagVariant(
+                              custodyRestriction,
+                            )}
+                            outlined
+                            disabled
+                          >
+                            {getShortRestrictionByValue(custodyRestriction)}
+                          </Tag>
+                        </Box>
+                      ))
+                }
               </Box>
             </Box>
           </Box>
@@ -168,19 +257,33 @@ export const SignedVerdictOverview: React.FC = () => {
                 { title: 'Dómari', value: workingCase.judge?.name },
               ]}
               accusedName={workingCase.accusedName}
-              accusedGender={workingCase.accusedGender}
               accusedNationalId={workingCase.accusedNationalId}
               accusedAddress={workingCase.accusedAddress}
+              defender={{
+                name: workingCase.defenderName || '',
+                email: workingCase.defenderEmail,
+              }}
             />
           </Box>
-          <Box marginBottom={15}>
+          <Box marginBottom={5}>
             <Accordion>
               <PoliceRequestAccordionItem workingCase={workingCase} />
               <CourtRecordAccordionItem workingCase={workingCase} />
               <RulingAccordionItem workingCase={workingCase} />
             </Accordion>
           </Box>
-          <FormFooter hideNextButton />
+          <Box marginBottom={15}>
+            <PdfButton caseId={workingCase.id} />
+          </Box>
+          <FormFooter
+            hideNextButton={
+              workingCase.decision === CaseDecision.REJECTING ||
+              user?.role !== UserRole.PROSECUTOR
+            }
+            nextButtonText="Framlengja gæslu"
+            onNextButtonClick={() => handleNextButtonClick()}
+            nextIsLoading={isCreatingExtension}
+          />
         </>
       ) : null}
     </PageLayout>

@@ -2,9 +2,8 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 import { ApolloError } from 'apollo-server-express'
+import { Union, PensionFund } from '@island.is/vmst-client'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
-import { Union } from './union.model'
-import { PensionFund } from './pensionFund.model'
 import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 
@@ -13,7 +12,6 @@ const handleError = (error: any) => {
   logger.error(error)
   throw new ApolloError('Failed to resolve request', error.response.message)
 }
-
 @Injectable()
 export class DirectorateOfLabourService {
   constructor(

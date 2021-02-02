@@ -71,7 +71,7 @@ const testApplicationTemplate: ApplicationTemplate<
                 Promise.resolve(
                   buildForm({
                     id: 'ParentalLeave',
-                    name: 'parentalLeave',
+                    title: 'parentalLeave',
                     children: [],
                   }),
                 ),

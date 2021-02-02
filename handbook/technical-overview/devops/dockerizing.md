@@ -12,26 +12,44 @@ You need to ask the [DevOps](technical-overview/devops/personas.md#devops) team 
   "docker-next": {}
 ```
 
-means your service will be packaged as a NextJS Docker container image. We have support the following types of Docker containers: `docker-next`: suitable for [NextJS](https://nextjs.org/) services. `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services. `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
+means your service will be packaged as a NextJS Docker container image. We have support the following types of Docker containers:
 
-If you need help just search for "docker" in that file and you should find plenty of examples on how to do it.
+- `docker-next`: suitable for [NextJS](https://nextjs.org/) services.
+- `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services.
+- `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
+
+If you would like to see some examples, simply search for "docker" in that file and you should find plenty.
 
 That's it.
 
 When you push this change to `main` your Docker image will get built and pushed to our private central Docker registry
 
+## Can I create a secret in the aws parameters store for services to consume?
+
+Yes you can!
+
+You can run the `yarn create-secret` or `./scripts/create-secret.sh` and you will be prompted for input.
+
+```bash
+./scripts/create-secret
+```
+
+You will be prompted for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-32 characters long. Only alphanumeric characters, `/` and `-` are allowed.
+
+Make sure your AWS credentials are set up in your shell before you create a secret.
+
 ## Troubleshooting
 
 _Prerequisite_: Local Docker support
 
-If you are having problems with your application running inside a Docker container you need to download the Docker container and run it locally.
+If you are having problems with your application running inside a Docker container, you can troubleshoot that by downloading the Docker container and running it locally on your workstation.
 
 To do that you need to follow this process:
 
 1. Login to our **AWS Shared account** and get command line access settings
 
-   ![Login](../../../.gitbook/assets/aws-login.png)
-   ![Env copy](../../../.gitbook/assets/aws-env-setup.png)
+   ![Login](./assets/aws-login.png)
+   ![Env copy](./assets/aws-env-setup.png)
 
 2. Open your terminal and paste the AWS creds from the clipboard
 3. Run this to authenticate to our private Docker registry

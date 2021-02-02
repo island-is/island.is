@@ -5,6 +5,10 @@ import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+/**
+ * TODO: zod has a way to overwrite the default errors messages e.g. "Field is required" etc..
+ * We might want to define it for all primitives and add localization to it
+ */
 const PersonalAllowance = z
   .object({
     usage: z
@@ -49,8 +53,14 @@ export const dataSchema = z.object({
     isSelfEmployed: z.enum([YES, NO]),
     email: z.string().email().nonempty(),
   }),
-  requestRights: z.enum([YES, NO]),
-  giveRights: z.enum([YES, NO]),
+  requestRights: z.object({
+    isRequestingRights: z.enum([YES, NO]),
+    requestDays: z.number().optional(),
+  }),
+  giveRights: z.object({
+    isGivingRights: z.enum([YES, NO]),
+    giveDays: z.number().optional(),
+  }),
   singlePeriod: z.enum([YES, NO]),
   firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),

@@ -18,7 +18,7 @@ Top three reasons:
 
 ## Process overview
 
-![cd-overview](../../../.gitbook/assets/cd-overview.svg)
+![cd-overview](./assets/cd-overview.svg)
 
 ## Continuous Integration(CI)
 
@@ -38,14 +38,17 @@ Our deployment platform is Kubernetes and our applications' deployment and confi
 
 ## Delivery pipeline
 
-We use [Spinnaker](https://spinnaker.io) as a deployment tool for Kubernetes. We have a few application pipelines that are identical for the most part. Each application defined as "emergency" has its own pipelines as well as the umbrella application containing the apps following the standard release cadence.
+We use [Spinnaker](https://spinnaker.io) as a deployment tool for Kubernetes. We have a few application pipelines that are identical for the most part.
 
 Each application has a pipeline per deployment environment. The pipeline prepares (aka `bakes`) the configuration for the concrete environment, waits for manual approval of the deployment and then performs the deployment with the freshly baked configuration.
 
-The pipelines are defined and versioned in [our Helm repo](https://github.com/island-is/helm). The input to the pipelines is a Docker image tag - specifies which revision of the code/assets to be deployed. For `Vidspyrna` we have an additional parameter - Helm chart revision number, describing which revision of the Helm setup and configuration to be used.
+The pipelines are defined and versioned in [our Helm repo](https://github.com/island-is/helm). The input to the pipelines is as follows:
 
-The [Helm](https://helm.sh) chart stored in our [Charmuseum] comes in as an asset as well as value files containing environmental specific values. Docker tag, value files and helm chart are baked together creating Kubernetes manifest, that can be deployed to a specific environment.
+- a Docker image tag - specifies which revision of the code/assets to be deployed.
+- a Helm config tag - specifies which revision of the configuration to be deployed.
 
-The CI process triggers the pipelines upon a successful build, which automatically deploys to our `Dev` and `Staging` environment. After manual approval, it is possible to deploy to `Prod` as well.
+The [Helm](https://helm.sh) chart stored in our [Chartmuseum](https://chartmuseum.com) comes in as an asset as well as value files containing environmental specific values. Docker tag, value files and helm chart are baked together creating Kubernetes manifest, that can be deployed to a specific environment.
+
+The CI process triggers the pipelines upon a successful build, which automatically deploys to our `Dev` environment. After manual approval, it is possible to deploy to `Staging` and then `Prod` as well.
 
 Our Spinnaker is accessible [here](https://spinnaker.shared.devland.is).

@@ -61,7 +61,7 @@ export class ApiScope extends Model<ApiScope> {
 
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()
-  public userClaims?: ApiScopeUserClaim[]
+  userClaims?: ApiScopeUserClaim[]
 
   // Common properties end
 
@@ -84,6 +84,16 @@ export class ApiScope extends Model<ApiScope> {
     example: false,
   })
   emphasize!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  archived!: Date
 
   @CreatedAt
   @ApiProperty()

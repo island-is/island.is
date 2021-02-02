@@ -7,7 +7,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { Link, Redirect } from 'react-router-dom'
+import { Link, Redirect, useHistory } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
@@ -15,6 +15,7 @@ import {
 } from '@island.is/service-portal/core'
 import {
   useCreateUserProfile,
+  useResendEmailVerification,
   useUpdateUserProfile,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
@@ -30,16 +31,40 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
   )
   const { formatMessage } = useLocale()
   const { createUserProfile } = useCreateUserProfile()
+  const { resendEmailVerification } = useResendEmailVerification()
   const { updateUserProfile } = useUpdateUserProfile()
+  const history = useHistory()
 
   useEffect(() => {
     if (!userProfile || !userProfile.email) return
     if (userProfile.email.length > 0) setEmail(userProfile.email)
   }, [userProfile])
 
+  const handleResendEmail = async () => {
+    if (userProfile && userProfile.email) {
+      try {
+        await resendEmailVerification()
+        toast.info(
+          formatMessage({
+            id: 'sp.settings:email-confirmation-resent',
+            defaultMessage: 'Þú hefur fengið sendan nýjan staðfestingarpóst',
+          }),
+        )
+        history.push(ServicePortalPath.UserProfileRoot)
+      } catch (err) {
+        toast.error(
+          formatMessage({
+            id: 'sp.settings:email-confirmation-resend-error',
+            defaultMessage:
+              'Ekki tókst að senda nýjan staðfestingarpóst, eitthvað fór úrskeiðis',
+          }),
+        )
+      }
+    }
+  }
+
   const submitFormData = async (formData: EmailFormData) => {
     if (status !== 'passive') setStatus('passive')
-
     try {
       // Update the profile if it exists, otherwise create one
       if (userProfile) {
@@ -96,6 +121,7 @@ export const EditEmail: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <EmailForm
         email={email}
+        onResendEmail={handleResendEmail}
         renderBackButton={() => (
           <Link to={ServicePortalPath.UserProfileRoot}>
             <Button variant="ghost">

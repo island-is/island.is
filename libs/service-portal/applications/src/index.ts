@@ -13,7 +13,7 @@ const rootName = defineMessage({
 export const applicationsModule: ServicePortalModule = {
   name: rootName,
   widgets: () => [],
-  routes: () => {
+  routes: async () => {
     const applicationRoutes = [
       {
         name: rootName,

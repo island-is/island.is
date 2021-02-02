@@ -1,25 +1,18 @@
 import { Colors } from '@island.is/island-ui/theme'
+import {
+  DatePickerBackgroundColor,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormItem } from './Form'
+import { FormText, FormTextArray, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 
-export interface Option {
-  value: string
-  label: FormText
-  tooltip?: FormText
-  excludeOthers?: boolean
-}
-
-interface SelectOption {
-  label: string
-  value: string | number
-}
-
+export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
-
+export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TextFieldVariant =
   | 'text'
@@ -34,10 +27,22 @@ export type Context = {
   apolloClient: ApolloClient<object>
 }
 
+export interface Option {
+  value: string
+  label: FormText
+  tooltip?: FormText
+  excludeOthers?: boolean
+}
+
+interface SelectOption {
+  label: string
+  value: string | number
+}
+
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly name: FormText
+  readonly title: FormText
   readonly description?: FormText
   readonly children: undefined
   disabled?: boolean
@@ -53,7 +58,7 @@ export enum FieldTypes {
   CHECKBOX = 'CHECKBOX',
   CUSTOM = 'CUSTOM',
   DATE = 'DATE',
-  INTRO = 'INTRO',
+  DESCRIPTION = 'DESCRIPTION',
   RADIO = 'RADIO',
   EMAIL = 'EMAIL',
   SELECT = 'SELECT',
@@ -61,6 +66,7 @@ export enum FieldTypes {
   FILEUPLOAD = 'FILEUPLOAD',
   SUBMIT = 'SUBMIT',
   DIVIDER = 'DIVIDER',
+  KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
 }
 
@@ -68,11 +74,12 @@ export enum FieldComponents {
   CHECKBOX = 'CheckboxFormField',
   DATE = 'DateFormField',
   TEXT = 'TextFormField',
-  INTRO = 'IntroductionFormField',
+  DESCRIPTION = 'DescriptionFormField',
   RADIO = 'RadioFormField',
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
   DIVIDER = 'DividerFormField',
+  KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
 }
@@ -81,6 +88,7 @@ export interface CheckboxField extends BaseField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
   options: MaybeWithApplication<Option[]>
+  large?: boolean
 }
 
 export interface DateField extends BaseField {
@@ -89,12 +97,13 @@ export interface DateField extends BaseField {
   component: FieldComponents.DATE
   maxDate?: Date
   minDate?: Date
+  backgroundColor?: DatePickerBackgroundColor
 }
 
-export interface IntroductionField extends BaseField {
-  readonly type: FieldTypes.INTRO
-  component: FieldComponents.INTRO
-  readonly introduction: FormText
+export interface DescriptionField extends BaseField {
+  readonly type: FieldTypes.DESCRIPTION
+  component: FieldComponents.DESCRIPTION
+  readonly description: FormText
 }
 
 export interface RadioField extends BaseField {
@@ -130,6 +139,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   placeholder?: FormText
   variant?: TextFieldVariant
+  backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
   suffix?: string
 }
@@ -143,6 +153,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadButtonLabel?: string
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
+  readonly maxSize?: number
 }
 
 export interface SubmitField extends BaseField {
@@ -158,6 +169,13 @@ export interface DividerField extends BaseField {
   component: FieldComponents.DIVIDER
 }
 
+export interface KeyValueField extends BaseField {
+  readonly type: FieldTypes.KEY_VALUE
+  label: FormText
+  value: FormText | FormTextArray
+  component: FieldComponents.KEY_VALUE
+}
+
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
@@ -168,11 +186,12 @@ export type Field =
   | CheckboxField
   | CustomField
   | DateField
-  | IntroductionField
+  | DescriptionField
   | RadioField
   | SelectField
   | TextField
   | FileUploadField
+  | KeyValueField
   | DividerField
   | SubmitField
   | AsyncSelectField
