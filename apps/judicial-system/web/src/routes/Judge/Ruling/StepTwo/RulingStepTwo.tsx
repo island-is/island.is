@@ -514,6 +514,7 @@ export const RulingStepTwo: React.FC = () => {
               <Text variant="h4" fontWeight="light">
                 {`Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd ${
+                  workingCase.type === CaseType.CUSTODY &&
                   workingCase.decision === CaseDecision.ACCEPTING
                     ? 'gæsluvarðhaldsins'
                     : 'farbannsins'

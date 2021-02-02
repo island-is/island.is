@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import useIsMounted from '@island.is/web/hooks/useIsMounted'
+import { useMountedState } from 'react-use'
 import * as styles from './BackgroundImage.treat'
 
 export type BackgroundImageProps = {
@@ -17,13 +17,13 @@ export type BackgroundImageProps = {
 }
 
 const useImageLoader = (url: string): boolean => {
-  const isMounted = useIsMounted()
+  const isMounted = useMountedState()
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     const img = new window.Image(100)
     img.onload = img.onerror = () => {
-      if (isMounted.current) {
+      if (isMounted) {
         setLoaded(true)
       }
     }

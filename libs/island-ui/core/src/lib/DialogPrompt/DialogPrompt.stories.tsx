@@ -8,10 +8,7 @@ export default {
   title: 'Components/DialogPrompt',
   component: DialogPrompt,
   decorators: [withDesign],
-  parameters: withFigma({
-    desktop:
-      'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=840%3A13',
-  }),
+  parameters: withFigma('DialogPrompt'),
 }
 
 export const Default = () => {

@@ -305,10 +305,10 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {workingCase.decision ===
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                    ? 'Farbann'
-                    : 'Gæsluvarðhald'}
+                  {workingCase.type === CaseType.CUSTODY &&
+                  workingCase.decision === CaseDecision.ACCEPTING
+                    ? 'Gæsluvarðhald'
+                    : 'Farbann'}
                 </Text>
               </Box>
               <GridRow>
@@ -316,6 +316,7 @@ export const RulingStepOne: React.FC = () => {
                   <DatePicker
                     id="custodyEndDate"
                     label={
+                      workingCase.type === CaseType.CUSTODY &&
                       workingCase.decision === CaseDecision.ACCEPTING
                         ? 'Gæsluvarðhald til'
                         : 'Farbann til'

@@ -287,7 +287,7 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await screen.findByText('11. nóv. 2020')).toBeInTheDocument()
+    expect(await screen.findByText('11.11.2020')).toBeInTheDocument()
   })
 
   test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
