@@ -448,7 +448,7 @@ export const StepThree: React.FC = () => {
               <Box marginBottom={3}>
                 <Box marginBottom={1}>
                   <Text as="h3" variant="h3">
-                    Takmarkanir á gæslu
+                    Takmarkanir og tilhögun gæslu
                   </Text>
                 </Box>
                 <Text>Ef ekkert er valið er gæsla án takmarkana</Text>

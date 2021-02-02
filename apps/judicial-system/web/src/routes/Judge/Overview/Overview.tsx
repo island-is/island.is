@@ -285,17 +285,16 @@ export const JudgeOverview: React.FC = () => {
               <Box marginBottom={1}>
                 <Text variant="h3" as="h3">
                   {`Takmarkanir og tilhögun ${
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'á gæslu'
-                      : 'farbanns'
+                    workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
                   }`}
                 </Text>
               </Box>
               <Text>
-                {formatRequestedCustodyRestrictions(
+                {`${formatRequestedCustodyRestrictions(
                   workingCase.type,
                   workingCase.requestedCustodyRestrictions,
-                )}
+                  workingCase.requestedOtherRestrictions,
+                )}`}
               </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (

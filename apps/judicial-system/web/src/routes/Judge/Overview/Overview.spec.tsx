@@ -87,7 +87,7 @@ describe('/domari-krafa with an ID', () => {
     // Assert
     expect(
       await waitFor(() =>
-        screen.getByText('Ekki er farið fram á takmarkanir á gæslu'),
+        screen.getByText('Ekki er farið fram á takmarkanir á gæslu.'),
       ),
     ).toBeTruthy()
   })
