@@ -99,8 +99,12 @@ export const Filter: FC<FilterProps> = ({
               flexDirection="column"
               className={styles.dialogContainer}
             >
-              <Stack space={2} dividers={false}>
-                <Box display="flex" justifyContent="spaceBetween">
+              <Box>
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  marginBottom={2}
+                >
                   <Text variant="h4" color="blue600">
                     {labelTitle}
                   </Text>
@@ -113,8 +117,11 @@ export const Filter: FC<FilterProps> = ({
                     title={labelClose}
                   ></Button>
                 </Box>
-                {children}
-              </Stack>
+
+                <Stack space={4} dividers={false}>
+                  {children}
+                </Stack>
+              </Box>
 
               <Box
                 background="blue100"
@@ -141,7 +148,7 @@ export const Filter: FC<FilterProps> = ({
         </>
       ) : (
         <>
-          <Stack space={2} dividers={false}>
+          <Stack space={3} dividers={false}>
             {children}
           </Stack>
 
