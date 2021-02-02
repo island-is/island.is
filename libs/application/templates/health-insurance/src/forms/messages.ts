@@ -183,8 +183,7 @@ export const m = defineMessages({
   confirmationOfStudiesTooltip: {
     id: 'hi.application:student.confirmationOfStudiesTooltip',
     defaultMessage:
-      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester.\n' +
-      'Admission or enrollement letters are not sufficient.',
+      'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. Admission or enrollement letters are not sufficient.',
     description: 'Confirmation of studies must be submitted, tooltip',
   },
   childrenDescription: {
@@ -271,7 +270,7 @@ export const m = defineMessages({
   },
   formerInsuranceAdditionalInformationPlaceholder: {
     id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
-    defaultMessage: 'I´m still entitled to health insurance because...',
+    defaultMessage: "I'm still entitled to health insurance because...",
     description: 'Additional information placeholder',
   },
   formerInsuranceNoOption: {
