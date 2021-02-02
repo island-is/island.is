@@ -201,7 +201,12 @@ export class CaseController {
     let update: UpdateCaseDto
 
     // Remove when client has started assigned a judge to each case
-    if (user.role === UserRole.JUDGE) {
+    if (
+      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
+        transition.transition,
+      ) &&
+      user.role === UserRole.JUDGE
+    ) {
       update = {
         state,
         judgeId: user.id,
