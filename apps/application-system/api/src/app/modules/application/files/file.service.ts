@@ -69,7 +69,7 @@ export class FileService {
 
     const id = uuid()
     const fileName = `${parentA.ssn}/${id}.pdf`
-    const bucket = environment.fsS3Bucket
+    const bucket = environment.fsS3Bucket || ''
 
     return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
   }
