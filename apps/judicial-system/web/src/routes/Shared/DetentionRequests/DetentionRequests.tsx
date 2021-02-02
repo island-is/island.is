@@ -25,6 +25,7 @@ import {
   CaseDecision,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
@@ -131,7 +132,6 @@ export const DetentionRequests: React.FC = () => {
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
-    decision?: CaseDecision,
     isCustodyEndDateInThePast?: boolean,
   ): { color: TagVariant; text: string } => {
     switch (state) {
@@ -146,18 +146,12 @@ export const DetentionRequests: React.FC = () => {
         if (isCustodyEndDateInThePast) {
           return {
             color: 'darkerBlue',
-            text:
-              decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? 'Farbanni lokið'
-                : 'Gæsluvarðhaldi lokið',
+            text: 'Lokið'
           }
         } else {
           return {
             color: 'blue',
-            text:
-              decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? 'Farbann virkt'
-                : 'Gæsluvarðhald virkt',
+            text: 'virkt'
           }
         }
       case CaseState.REJECTED:
@@ -341,6 +335,11 @@ export const DetentionRequests: React.FC = () => {
                 </th>
                 <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
+                    Tegund
+                  </Text>
+                </th>
+                <th className={styles.th}>
+                  <Text as="span" fontWeight="regular">
                     Staða
                   </Text>
                 </th>
@@ -399,9 +398,14 @@ export const DetentionRequests: React.FC = () => {
                   </td>
                   <td className={styles.td}>
                     <Text as="span">
-                      {format(parseISO(c.created), 'PP', {
+                      {format(parseISO(c.created), 'P', {
                         locale: localeIS,
                       })}
+                    </Text>
+                  </td>
+                  <td className={styles.td}>
+                    <Text as="span">
+                      {c.type === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'}
                     </Text>
                   </td>
                   <td className={styles.td}>
@@ -409,7 +413,6 @@ export const DetentionRequests: React.FC = () => {
                       variant={
                         mapCaseStateToTagVariant(
                           c.state,
-                          c.decision,
                           c.isCustodyEndDateInThePast,
                         ).color
                       }
@@ -419,7 +422,6 @@ export const DetentionRequests: React.FC = () => {
                       {
                         mapCaseStateToTagVariant(
                           c.state,
-                          c.decision,
                           c.isCustodyEndDateInThePast,
                         ).text
                       }
@@ -428,7 +430,7 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">
                       {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                        ? `${formatDate(c.custodyEndDate, 'PP')}`
+                        ? `${formatDate(c.custodyEndDate, 'P')}`
                         : null}
                     </Text>
                   </td>
