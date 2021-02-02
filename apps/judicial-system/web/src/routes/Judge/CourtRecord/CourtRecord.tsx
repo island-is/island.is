@@ -24,11 +24,7 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
-import {
-  Case,
-  CaseGender,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
