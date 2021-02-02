@@ -15,9 +15,11 @@ import {
   TagVariant,
   Box,
   Icon,
-  DropdownMenu,
 } from '@island.is/island-ui/core'
-import { Loading } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  DropdownMenu,
+  Loading,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseDecision,
