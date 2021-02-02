@@ -12,6 +12,9 @@ export class Organization {
   @Field()
   title: string
 
+  @Field()
+  shortTitle: string
+
   @Field({ nullable: true })
   description?: string
 
@@ -35,6 +38,7 @@ export const mapOrganization = ({
 }: IOrganization): Organization => ({
   id: sys.id,
   title: fields.title ?? '',
+  shortTitle: fields.shortTitle ?? '',
   description: fields.description ?? '',
   slug: fields.slug ?? '',
   tag: (fields.tag ?? []).map(mapOrganizationTag),

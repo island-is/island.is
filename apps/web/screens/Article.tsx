@@ -310,6 +310,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
 
+  console.log(article)
+
   return (
     <>
       <HeadWithSocialSharing
@@ -459,16 +461,23 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                   label: article.organization[0].title,
                   href: article.organization[0].link,
                 }}
-                relatedInstitution={article.relatedOrganization.map((x) => ({
-                  title: x.title,
-                  label: n('relatedOrganization'),
-                  href: x.link,
-                }))}
-                responsibleParty={article.responsibleParty.map((x) => ({
-                  title: x.title,
-                  label: n('responsibleParty'),
-                  href: x.link,
-                }))}
+                responsibleParty={article.responsibleParty.map(
+                  (responsibleParty) => ({
+                    title:
+                      responsibleParty.shortTitle || responsibleParty.title,
+                    label: n('responsibleParty'),
+                    href: responsibleParty.link,
+                  }),
+                )}
+                relatedInstitution={article.relatedOrganization.map(
+                  (relatedOrganization) => ({
+                    title:
+                      relatedOrganization.shortTitle ||
+                      relatedOrganization.title,
+                    label: n('relatedOrganization'),
+                    href: relatedOrganization.link,
+                  }),
+                )}
                 locale={activeLocale}
                 contactText="Hafa samband"
               />

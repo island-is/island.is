@@ -1654,6 +1654,9 @@ export interface IOrganizationFields {
   /** Title */
   title: string
 
+  /** Short Title */
+  shortTitle?: string | undefined
+
   /** Description */
   description?: string | undefined
 
