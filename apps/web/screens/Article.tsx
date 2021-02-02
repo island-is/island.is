@@ -310,8 +310,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
 
-  console.log(article)
-
   return (
     <>
       <HeadWithSocialSharing
