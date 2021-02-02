@@ -217,6 +217,8 @@ export const uploadS3DictionaryFiles = async (
     const exists = await checkIfS3Exists(s3Key)
     if (!exists) {
       await uploadFileToS3({ Key: s3Key, Body: file })
+    } else {
+      logger.info('S3 file found, skipping upload of file', { key: s3Key })
     }
 
     // the following processes just need a way to point correctly to the files
@@ -290,6 +292,10 @@ export const createAwsEsPackages = async (
 
       logger.info('Created AWS ES package', { esPackage })
       uploadedPackageId = esPackage.PackageDetails.PackageID
+    } else {
+      logger.info('AWS ES package found, skipping upload of package', {
+        packageId: foundPackageId,
+      })
     }
 
     return {
@@ -340,6 +346,13 @@ export const associatePackagesWithAwsEsSearchDomain = async (
       await waitForPackageStatus(
         esPackage.DomainPackageDetails.PackageID,
         'ACTIVE',
+      )
+    } else {
+      logger.info(
+        'AWS ES package already associated, skipping association of package',
+        {
+          packageId,
+        },
       )
     }
   }

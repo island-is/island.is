@@ -15,6 +15,7 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
+    await this.migrateAws()
     if (hasAwsAccess) {
       await this.migrateAws()
     }
@@ -37,7 +38,7 @@ class App {
     we want to get packages after a given version (github sha)
     this allows us to upload all versions since last sync
     */
-    const dictionaryVersions = dictionary.getDictionaryVersions() // returns versions of the dictionary in order with the newest version first
+    const dictionaryVersions = await dictionary.getDictionaryVersions() // returns versions of the dictionary in order with the newest version first
     logger.info('Found dictionary versions in dictionary repo', {
       version: dictionaryVersions,
     })

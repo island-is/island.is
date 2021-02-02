@@ -42,29 +42,24 @@ const getDictionaryFile = (
   })
 }
 
-const mockCommits: Commit[] = [
-  { sha: '7139c83db5e95e9f245ebd1265f0ddd8b4e25fcc' },
-  { sha: '9d3a04eee314d4940a23fe46092c0365d2493ff8' },
-  { sha: 'd4171f9c87909d269f6149c9fead5e51937b0709' },
-  { sha: '5d2c6703ea8de3115b39cd314c34f20c4f46e65d' },
-  { sha: '4cc984082460b81263b09124598f504d6e3f5db3' },
-]
-
 // get a list of all latest commits for this repo
-const getCommits = (): string[] => {
+const getCommits = async (): Promise<string[]> => {
   const commitsEndpoint = `https://api.github.com/repos/${environment.dictRepo}/commits`
-  const commits: Commit[] = mockCommits // await fetch(commitsEndpoint).then(response => response.json()) // this is rate limited to 60 requests an hour // TODO: Fix this b4 release
+  const commits: Commit[] = await fetch(commitsEndpoint).then((response) =>
+    response.json(),
+  ) // this is rate limited to 60 requests an hour // TODO: Fix this b4 release
   return commits.map((commit) => commit.sha)
 }
 
-export const getDictionaryVersions = () => {
-  return getCommits().map((commit) => commit.substring(0, 7))
+export const getDictionaryVersions = async () => {
+  const commits = await getCommits()
+  return commits.map((commit) => commit.substring(0, 7))
 }
 
 export const getDictionaryFilesAfterVersion = async (
   currentVersion: string,
 ): Promise<Dictionary[]> => {
-  const commits = getCommits()
+  const commits = await getCommits()
   let newCommits
   if (currentVersion) {
     // find what versions are missing given the current found version
