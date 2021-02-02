@@ -250,10 +250,6 @@ export async function generateRulingPdf(
       lineGap: 6,
       paragraphGap: 0,
     })
-  if (isFalsy(existingCase.defenderName)) {
-    doc.text('Verjandi sakbornings: Hefur ekki verið skráður.')
-  }
-  doc
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
