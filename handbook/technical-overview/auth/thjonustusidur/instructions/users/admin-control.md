@@ -20,8 +20,8 @@ hnappinn _+ Create new Admin UI User_.
 
 ![new-admin-user-details](images/new-admin-user-details.png)
 
-Fylla þarf út reitina _National Id (Kennitala)_ og User Email* en
-reiturinn \_Scope* er með sjálfgefið gildi sem ekki er hægt að
+Fylla þarf út reitina _National Id (Kennitala)_ og _User Email_ en
+reiturinn _Scope_ er með sjálfgefið gildi sem ekki er hægt að
 skipta um.
 
 - #### <a name="national-id"></a>National Id / Kennitala

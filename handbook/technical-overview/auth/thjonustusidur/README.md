@@ -1,6 +1,6 @@
 # Thjonustusidur
 
-Starfsmenn þjónustuborð island.is og þriðju aðilar geta notað þessar þjónustusíður til að vinna með gögn
+Starfsmenn þjónustuborðs island.is og þriðju aðilar geta notað þessar þjónustusíður til að vinna með gögn
 sem að keyra innskráningarþjónustu island.is.
 
 Yfirlitið um þjónustusíðurnar skiptist í þrjá parta
@@ -17,4 +17,5 @@ Yfirlitið um þjónustusíðurnar skiptist í þrjá parta
 
 3.  ### Upplýsingar
 
-    Hér er hægt að sjá upplýingar um þjónustusíðurnar fyrir [notendur](information/end-users.md) og [tæknimenn](information/technicians.md)
+    Hér er hægt að sjá upplýsingar um þjónustusíðurnar fyrir [notendur](information/end-users.md) og
+    [tæknimenn](information/technicians.md)

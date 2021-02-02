@@ -1,6 +1,8 @@
 # Client
 
-Það er hægt að velja á milli einfalds og flókins forms þegar búnir eru til nýir biðlarar / clients.
+Skrá þarf biðlara (e. Client) fyrir þjónustu en biðlari er forrit sem biður um auðkenni frá innskráningarkerfinu.
+Til þess að forrit geti haft aðgang að gögnum verndað af innskráningarkerfinu þarf að vera til biðlari sem hefur aðgang
+að þeim gögnum.
 
 ## Create new client - Simple form
 

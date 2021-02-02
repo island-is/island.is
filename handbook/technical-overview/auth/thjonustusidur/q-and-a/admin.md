@@ -18,12 +18,12 @@
 - ## Hvernig er hægt að breyta umsjónarmönnum / auðkennisveitum?
 
   Hér má finna upplýsingar um hvernig hægt er að
-  [breyta umsjónarmönnum / auðkennisveitum](../instructions/users/admin-control.md)
+  [breyta umsjónarmönnum / auðkennisveitum](../instructions/common-features.md)
 
 - ## Hvernig er hægt að eyða umsjónarmönnum / auðkennisveitum?
 
   Hér má finna upplýsingar um hvernig hægt er að
-  [eyða umsjónarmönnum / auðkennisveitum](../instructions/users/admin-control.md#admin-users).
+  [eyða umsjónarmönnum / auðkennisveitum](../instructions/common-features.md).
 
 - ## Er hægt að leita eftir umsjónarmönnum / auðkennisveitum?
-  Hér má finna upplýsingar um hvernig hægt er að [leita eftir umsjónarmönnum / auðkennisveitum](../instructions/users/admin-control.md).
+  Hér má finna upplýsingar um hvernig hægt er að [leita eftir umsjónarmönnum / auðkennisveitum](../instructions/users/system-users.md).
