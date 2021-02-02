@@ -10,7 +10,7 @@ import { Environment } from 'libs/api-catalogue/consts/src'
 
 interface ConfigValues {
   environment: Environment
-  indexName: string
+  aliasName: string
 }
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
@@ -23,9 +23,9 @@ export class RestServiceCollector implements ServiceCollector {
 
   getConfig(): ConfigValues {
     logger.debug('Checking config')
-    const indexName = this.configService.get<string>('indexName')
+    const aliasName = this.configService.get<string>('aliasName')
     const environmentValue = this.configService.get<string>('environment')
-    if (!indexName) {
+    if (!aliasName) {
       throw new Error('Environment variable XROAD_COLLECTOR_ALIAS is missing')
     }
     if (!environmentValue) {
@@ -46,7 +46,7 @@ export class RestServiceCollector implements ServiceCollector {
     }
 
     const ret: ConfigValues = {
-      indexName: indexName,
+      aliasName: aliasName,
       environment: environment,
     }
 
@@ -69,7 +69,7 @@ export class RestServiceCollector implements ServiceCollector {
     // with the latest state in X-Road in this environment
 
     const config = this.getConfig()
-    this.elasticService.initWorker(config.indexName, config.environment)
+    this.elasticService.initWorker(config.aliasName, config.environment)
 
     for (const provider of providers) {
       try {

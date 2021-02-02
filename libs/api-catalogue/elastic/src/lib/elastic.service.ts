@@ -260,8 +260,11 @@ export class ElasticService {
    */
   async bulk(
     services: Array<Service>,
-    indexName: string = this.getAliasName(),
+    indexName: string = this.getWorkerPrefix(),
   ): Promise<void> {
+    if (!indexName) {
+      throw new Error('Bulk index name missing.')
+    }
     logger.debug(`Inserting into index ${indexName}`)
     logger.info('Bulk insert', services)
 
@@ -327,7 +330,7 @@ export class ElasticService {
     logger.debug('Searching for', query)
     return await this.client.search<ResponseBody, RequestBody>({
       body: query,
-      index: this.getAliasName(),
+      index: this.getWorkerPrefix(),
     })
   }
 
@@ -338,7 +341,7 @@ export class ElasticService {
 
     logger.info('Deleting based on indexes', { ids })
     return await this.client.delete_by_query({
-      index: this.getAliasName(),
+      index: this.getWorkerPrefix(),
       body: {
         query: {
           bool: {
@@ -352,7 +355,7 @@ export class ElasticService {
   async deleteAllExcept(excludeIds: Array<string>) {
     logger.info('Deleting everything except', { excludeIds })
     return await this.client.delete_by_query({
-      index: this.getAliasName(),
+      index: this.getWorkerPrefix(),
       body: {
         query: {
           bool: {
