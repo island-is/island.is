@@ -14,53 +14,75 @@ const { elastic } = elasticEnvironment
 @Injectable()
 export class ElasticService {
   private client: Client
-  private indexName: string
-  private indexNameWorker: string
-  private environment: Environment = Environment.DEV
+  private aliasName: string | null = null
+  private workerIndexName: string | null = null
+  private environment: Environment | null = null
 
   constructor() {
     this.client = this.createEsClient()
-    const indexName = process.env.API_CATALOGUE_INDEX_NAME
-    if (!indexName) {
-      throw new Error(
-        `Environment variable "API_CATALOGUE_INDEX_NAME" not set.`,
-      )
-    }
-    this.indexName = indexName as string
-    this.indexNameWorker = `${this.indexName}_work`
-
-    const environment = process.env.ENVIRONMENT
-    if (!environment) {
-      throw new Error(`Environment variable "ENVIRONMENT" not set.`)
-    }
-
-    this.setEnvironment(environment)
   }
 
-  private setEnvironment(environment: string | undefined) {
-    console.log('setEnvironment -> ' + environment)
-    switch (environment) {
-      case Environment.PROD:
-        this.environment = Environment.PROD
-        break
-      case Environment.STAGING:
-        this.environment = Environment.STAGING
-        break
-      case Environment.DEV:
-        this.environment = Environment.DEV
-        break
-      default:
-        throw new Error(
-          `Invalid value in environment variable "ENVIRONMENT". Valid values:[${Environment.DEV}|${Environment.STAGING}|${Environment.PROD}]`,
-        )
+  initWorker(aliasName: string, environment: Environment) {
+    if (!aliasName) {
+      throw new Error('aliasName cannot be empty')
     }
+
+    this.environment = environment
+    this.aliasName = aliasName
+    this.workerIndexName = null
+    logger.debug(`Worker index name "${this.getIndexNameWorker()}"`)
+  }
+
+  /**
+   *
+   *
+   * @private
+   * @param {number} number - The value to be formatted
+   * @param {number} width - how many characters   should the returned string be
+   * @param {string} [prefix='0'] - the prefix character
+   * @returns {string}
+   * @example
+   *   Statement                    Returns
+   *   leadingZero(10, 4);          0010
+   *   leadingZero(9, 4);           0009
+   *   leadingZero(123, 4);         0123
+   *   leadingZero(10, 4, '-');     --10
+   * @memberof ElasticService
+   */
+  private leadingZero(
+    number: number,
+    width: number,
+    prefix: string = '0',
+  ): string {
+    const n: string = number.toString()
+    return n.length >= width
+      ? n
+      : new Array(width - n.length + 1).join(prefix) + n
+  }
+
+  // returns timestamp on the format 'yyyyMMddHHmmssSSS'
+  private GenerateTimestamp() {
+    const now = new Date()
+    return (
+      `${now.getFullYear()}${this.leadingZero(
+        now.getMonth() + 1,
+        2,
+      )}${this.leadingZero(now.getDate(), 2)}` +
+      `_${this.leadingZero(now.getHours(), 2)}${this.leadingZero(
+        now.getMinutes(),
+        2,
+      )}${this.leadingZero(now.getSeconds(), 2)}${this.leadingZero(
+        now.getMilliseconds(),
+        3,
+      )}`
+    )
   }
 
   /**
    * Tries to delete the index.
    * If the index does not exists it does nothing.
    */
-  async deleteIndex(indexName: string = this.indexName): Promise<void> {
+  async deleteIndex(indexName: string): Promise<void> {
     logger.info('Deleting index')
 
     const { body } = await this.client.indices.exists({
@@ -74,71 +96,162 @@ export class ElasticService {
     }
   }
 
-  async deleteWorkerIndex(): Promise<void> {
-    await this.deleteIndex(this.getIndexNameWorker())
-  }
+  /**
+   * returns all index names a specified alias points to.
+   *
+   * @param {string} aliasName - Name of the alias to query
+   * @returns  - array of string
+   * @memberof ElasticService
+   */
+  async getAliasIndexNames(aliasName: string) {
+    interface Item {
+      alias: string
+      index: string
+    }
 
-  getIndexName() {
-    return this.indexName
-  }
-  getIndexNameWorker() {
-    return this.indexNameWorker
-  }
-  getEnvironment(): Environment {
-    return this.environment
-  }
+    if (!aliasName) {
+      throw new Error('getIndexNamesFromAlias, alias name is missing')
+    }
 
-  private async getMapping(indexName: string = this.indexName) {
-    const response = await this.client.indices.getMapping({
-      index: indexName,
-    })
-    return response
+    const ret = await this.client.cat
+      .aliases({ h: 'alias,index', format: 'json' })
+      .then((result) => {
+        if (result && result.body) {
+          const indices: Array<string> = []
+          const list: Array<Item> = result.body as Array<Item>
+          list.forEach((item) => {
+            if (item.index && item.alias === aliasName) indices.push(item.index)
+          })
+          return indices
+        }
+      })
+
+    return ret
   }
+  async getAllAliasNames() {
+    interface Item {
+      alias: string
+      index: string
+    }
 
-  private async reIndex(src: string, dst: string) {
-    const opts: any = { body: { source: { index: src }, dest: { index: dst } } }
-
-    await this.client.reindex(opts)
-    logger.info(`Successfully reindexed [${src}] to [${dst}].`)
+    return await this.client.cat
+      .aliases({ h: 'alias', format: 'json' })
+      .then((result) => {
+        if (result && result.body) {
+          const aliasesNames: Array<string> = []
+          const list: Array<Item> = result.body as Array<Item>
+          list.forEach((item) => {
+            if (item.alias) aliasesNames.push(item.alias)
+          })
+          return aliasesNames
+        }
+      })
   }
 
   /**
-   * Moves all values from worker index to the destinationIndex.
-   * @param {string} destinationIndex - if not specified the default value is getIndexName()
+   * Deletes all indices with names, that start with current alias name
+   * + current environment, that do not belong to the associated alias.
+   *
+   * See: getWorkerPrefix() for more info on naming convention.
+   *
+   * @memberof ElasticService
    */
-  async moveWorkerValuesToIndex(destinationIndex: string = this.indexName) {
-    const res = await this.getMapping(this.getIndexNameWorker())
-    const mappingProperties =
-      res?.body[this.getIndexNameWorker()]?.mappings?.properties
+  async deleteDanglingIndices() {
+    const indices = await this.getAllIndexNames()
+    logger.debug('deleteIndicesWithoutAliases -> all indices ' + indices)
+    if (indices) {
+      const activeIndices = await this.getAliasIndexNames(
+        this.getWorkerPrefix(),
+      )
+      logger.debug(`activeIndices:${activeIndices}`)
 
-    await this.deleteIndex(destinationIndex)
-    await this.createIndexIfNotExists(
-      destinationIndex,
-      //copy mapping properties from worker index
-      mappingProperties,
-    )
-
-    await this.reIndex(this.getIndexNameWorker(), destinationIndex)
-    await this.deleteIndex(this.getIndexNameWorker())
+      // Get all indices associated with us in this environment except the ones
+      // which are being used in current environment alias.
+      const workers = indices.filter(
+        (e) =>
+          e.startsWith(`${this.getWorkerPrefix()}`) &&
+          !activeIndices?.includes(e),
+      )
+      if (workers.length) {
+        logger.debug(`deleting indices:  ${JSON.stringify(workers, null, 4)}`)
+        await this.client.indices.delete({ index: workers })
+      }
+    }
   }
 
-  async createIndexIfNotExists(indexName: string, mappingProperties: any) {
-    try {
-      await this.client.indices.get({
-        index: indexName,
-      })
-      logger.info(`index "${indexName}" already created`)
-    } catch (e) {
-      logger.warn(`index "${indexName}" is missing. creating...`)
-      await this.client.indices.create({
-        index: indexName,
-        body: {
-          mappings: {
-            properties: mappingProperties,
+  /**
+   * Before calling this function, initCollectionValues must have been set
+   */
+  getEnvironment(): Environment {
+    if (!this.environment) throw new Error('No environment set')
+
+    return this.environment as Environment
+  }
+
+  /**
+   * Before calling this function, initWorker must have been set
+   */
+  getAliasName() {
+    if (!this.aliasName) throw new Error('alias name not set')
+
+    return this.aliasName
+  }
+
+  private getWorkerPrefix() {
+    return `${this.getAliasName()}-${this.getEnvironment()}`
+  }
+
+  /**
+   * Before calling this function, initWorker must have been set
+   */
+  getIndexNameWorker(): string {
+    if (!this.workerIndexName) {
+      this.workerIndexName = `${this.getWorkerPrefix()}${this.GenerateTimestamp()}`
+    }
+    return this.workerIndexName as string
+  }
+
+  /**
+   *  Add the worker index to the alias,
+   *  removes the old index from the alias and finally deletes the old index.
+   */
+  async updateAlias() {
+    logger.info(`Updating alias: "${this.getWorkerPrefix()}"`)
+    logger.debug(`All aliases ${await this.getAllAliasNames()}`)
+
+    const oldIndices = await this.getAliasIndexNames(this.getWorkerPrefix())
+    logger.debug(`old indices: ${oldIndices}`)
+    const updateOptions: any = {
+      body: {
+        actions: [
+          {
+            add: {
+              index: this.getIndexNameWorker(),
+              alias: this.getWorkerPrefix(),
+            },
           },
+        ],
+      },
+    }
+
+    // Make updateAliases remove all older indices from this alias
+    oldIndices?.forEach((name) => {
+      updateOptions.body.actions.push({
+        remove: {
+          index: name,
+          alias: this.getWorkerPrefix(),
         },
       })
-      logger.info(`index "${indexName}" created`)
+    })
+
+    logger.debug(
+      `updateAliases updateOptions ${JSON.stringify(updateOptions, null, 4)}`,
+    )
+    await this.client.indices.updateAliases(updateOptions)
+
+    // Delete unused indices.
+    if (oldIndices && oldIndices.length) {
+      await this.client.indices.delete({ index: oldIndices })
     }
   }
 
@@ -147,8 +260,12 @@ export class ElasticService {
    */
   async bulk(
     services: Array<Service>,
-    indexName: string = this.indexName,
+    indexName: string = this.getWorkerPrefix(),
   ): Promise<void> {
+    if (!indexName) {
+      throw new Error('Bulk index name missing.')
+    }
+    logger.debug(`Inserting into index ${indexName}`)
     logger.info('Bulk insert', services)
 
     if (services.length) {
@@ -167,9 +284,9 @@ export class ElasticService {
         body: bulk,
         index: indexName,
       })
+    } else {
+      logger.debug('nothing to bulk insert')
     }
-
-    logger.debug('nothing to bulk insert')
   }
 
   async bulkWorker(services: Array<Service>) {
@@ -213,7 +330,7 @@ export class ElasticService {
     logger.debug('Searching for', query)
     return await this.client.search<ResponseBody, RequestBody>({
       body: query,
-      index: this.indexName,
+      index: this.getWorkerPrefix(),
     })
   }
 
@@ -224,7 +341,7 @@ export class ElasticService {
 
     logger.info('Deleting based on indexes', { ids })
     return await this.client.delete_by_query({
-      index: this.indexName,
+      index: this.getWorkerPrefix(),
       body: {
         query: {
           bool: {
@@ -238,7 +355,7 @@ export class ElasticService {
   async deleteAllExcept(excludeIds: Array<string>) {
     logger.info('Deleting everything except', { excludeIds })
     return await this.client.delete_by_query({
-      index: this.indexName,
+      index: this.getWorkerPrefix(),
       body: {
         query: {
           bool: {
@@ -255,6 +372,24 @@ export class ElasticService {
     })
     logger.info('Got elasticsearch ping response')
     return result
+  }
+  async getAllIndexNames() {
+    interface Item {
+      index: string
+    }
+
+    return await this.client.cat
+      .indices({ format: 'json', h: ['index'] })
+      .then((result) => {
+        if (result && result.body) {
+          const indices: Array<string> = []
+          const list: Array<Item> = result.body as Array<Item>
+          list.forEach((item) => {
+            if (item.index) indices.push(item.index)
+          })
+          return indices
+        }
+      })
   }
 
   private createEsClient(): Client {

@@ -18,13 +18,13 @@ environment variables to exist to configure connection to X-Road Security Server
 Two variables are available from AWS Parameter Store under the /k8s/xroad-collector/ path.
 The variable are named:
 
-- XROAD_BASE_PATH
-- XROAD_CLIENT_ID
+- `XROAD_BASE_PATH`
+- `XROAD_CLIENT_ID`
 
 The other two are set for the environment the service is executed in
 
-- API_CATALOGUE_INDEX_NAME - _Name of the index the service uses._
-- ENVIRONMENT - _Name of the environment. Valid values_: `dev`, `staging` and `prod`.
+- `XROAD_COLLECTOR_ALIAS` - _Name of the alias the service uses_.
+- `ENVIRONMENT` - _Name of the environment. Valid values_: `dev`, `staging` and `prod`.
 
 ## Developing
 

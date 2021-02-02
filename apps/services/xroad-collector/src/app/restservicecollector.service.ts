@@ -5,14 +5,54 @@ import { ServiceCollector } from './servicecollector.interface'
 import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
 import { Provider, providerToString } from '@island.is/api-catalogue/types'
+import { ConfigService } from '@nestjs/config'
+import { Environment } from 'libs/api-catalogue/consts/src'
 
+interface ConfigValues {
+  environment: Environment
+  aliasName: string
+}
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
   constructor(
+    private configService: ConfigService,
     private readonly providerService: ProviderService,
     private readonly restMetadataService: RestMetadataService,
     private readonly elasticService: ElasticService,
   ) {}
+
+  getConfig(): ConfigValues {
+    logger.debug('Checking config')
+    const aliasName = this.configService.get<string>('aliasName')
+    const environmentValue = this.configService.get<string>('environment')
+    if (!aliasName) {
+      throw new Error('Environment variable XROAD_COLLECTOR_ALIAS is missing')
+    }
+    if (!environmentValue) {
+      throw new Error('Environment variable ENVIRONMENT is missing')
+    }
+
+    const environment: Environment =
+      Environment[
+        Object.keys(Environment).find(
+          (key) => Environment[key] === environmentValue,
+        )
+      ]
+
+    if (!environment) {
+      throw new Error(
+        `Invalid value in environment variable "ENVIRONMENT". Valid values:[${Environment.DEV}|${Environment.STAGING}|${Environment.PROD}]`,
+      )
+    }
+
+    const ret: ConfigValues = {
+      aliasName: aliasName,
+      environment: environment,
+    }
+
+    logger.info('Config values:', ret)
+    return ret
+  }
 
   async indexServices(): Promise<void> {
     logger.info('Start indexing of REST services')
@@ -27,7 +67,9 @@ export class RestServiceCollector implements ServiceCollector {
   private async indexProviders(providers: Array<Provider>): Promise<void> {
     // Remove the worker index so we can re-create it
     // with the latest state in X-Road in this environment
-    await this.elasticService.deleteWorkerIndex()
+
+    const config = this.getConfig()
+    this.elasticService.initWorker(config.aliasName, config.environment)
 
     for (const provider of providers) {
       try {
@@ -35,7 +77,7 @@ export class RestServiceCollector implements ServiceCollector {
         // currently supporting those who were registered using OpenAPI
         const services = await this.restMetadataService.getServices(
           provider,
-          this.elasticService.getEnvironment(),
+          config.environment,
         )
 
         // Insert into Elastic worker index
@@ -51,12 +93,16 @@ export class RestServiceCollector implements ServiceCollector {
     }
 
     logger.debug(
-      `Added all services to index "${this.elasticService.getIndexNameWorker()}" , so lets copy them to to index "${this.elasticService.getIndexName()}". time is: ${new Date().toISOString()}`,
+      `Added all services to index "${this.elasticService.getIndexNameWorker()}"`,
     )
     logger.debug(
-      `Starting update for index "${this.elasticService.getIndexName()}" at: ${new Date().toISOString()}`,
+      `Adding index "${this.elasticService.getAliasName()}" to alias at: ${new Date().toISOString()}`,
     )
-    await this.elasticService.moveWorkerValuesToIndex()
+    await this.elasticService.updateAlias()
     logger.debug(`Done updating values at: ${new Date().toISOString()}`)
+
+    //TODO: if another instance of the collector is running in the same
+    //TODO: environment, the line below, will delete it's index.
+    await this.elasticService.deleteDanglingIndices()
   }
 }
