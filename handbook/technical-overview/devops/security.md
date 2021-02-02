@@ -2,11 +2,11 @@
 
 ## Access to GitHub and deployment environments
 
-All GitHub account with access to `island-is` need to be with two-factor authentication (2FA) enabled. This is enforced at the organization level.
+All GitHub accounts with access to `island-is` need to have two-factor authentication (2FA) enabled. This is enforced at the organization level.
 
 ### Gaining write access to the codebase and AWS
 
-To join one of the teams at the GitHub organization `island-is`, one of the Delivery Managers need to request that in the Slack channel #organizational-access-changes. After approval from a representative of Stafrænt Ísland, the GitHub account will be added.
+To join one of the teams at the GitHub organization `island-is`, one of the Delivery Managers needs to request that in the Slack channel #organizational-access-changes. After approval from a representative of Stafrænt Ísland, the GitHub account will be added.
 
 ### Team members leaving
 
