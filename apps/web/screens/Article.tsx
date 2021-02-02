@@ -451,8 +451,15 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
+          <Box display={['block', 'block', 'none']} marginTop={7} printHidden>
+            {!!processEntry && <ProcessEntry {...processEntry} />}
+          </Box>
           {article.organization.length > 0 && (
-            <Box marginTop={[7, 7, 7, 10]}>
+            <Box
+              marginTop={[3, 3, 3, 10, 20]}
+              marginBottom={[3, 3, 3, 10, 20]}
+              printHidden
+            >
               <InstitutionsPanel
                 institution={{
                   title: article.organization[0].title,
@@ -481,15 +488,13 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               />
             </Box>
           )}
-          <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
-            {!!processEntry && <ProcessEntry {...processEntry} />}
-            <Box marginTop={3}>
-              <ArticleSidebar
-                article={article}
-                n={n}
-                activeSlug={query.subSlug}
+          <Box display={['block', 'block', 'none']} printHidden>
+            {article.relatedArticles.length > 0 && (
+              <RelatedArticles
+                title={n('relatedMaterial')}
+                articles={article.relatedArticles}
               />
-            </Box>
+            )}
           </Box>
         </Box>
         {!!processEntry &&
