@@ -146,12 +146,12 @@ export const DetentionRequests: React.FC = () => {
         if (isCustodyEndDateInThePast) {
           return {
             color: 'darkerBlue',
-            text: 'Lokið'
+            text: 'Lokið',
           }
         } else {
           return {
             color: 'blue',
-            text: 'virkt'
+            text: 'virkt',
           }
         }
       case CaseState.REJECTED:
@@ -405,7 +405,9 @@ export const DetentionRequests: React.FC = () => {
                   </td>
                   <td className={styles.td}>
                     <Text as="span">
-                      {c.type === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'}
+                      {c.type === CaseType.CUSTODY
+                        ? 'Gæsluvarðhald'
+                        : 'Farbann'}
                     </Text>
                   </td>
                   <td className={styles.td}>

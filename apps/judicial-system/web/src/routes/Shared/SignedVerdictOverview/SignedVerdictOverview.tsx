@@ -190,7 +190,8 @@ export const SignedVerdictOverview: React.FC = () => {
               <Box display="flex" flexDirection="column">
                 {
                   // Custody restrictions
-                  workingCase.decision === CaseDecision.ACCEPTING && workingCase.type === CaseType.CUSTODY &&
+                  workingCase.decision === CaseDecision.ACCEPTING &&
+                    workingCase.type === CaseType.CUSTODY &&
                     workingCase.custodyRestrictions
                       ?.filter((restriction) =>
                         [
@@ -217,7 +218,9 @@ export const SignedVerdictOverview: React.FC = () => {
                 {
                   // Alternative travel ban restrictions
                   (workingCase.decision ===
-                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN || (CaseType.TRAVEL_BAN && workingCase.decision === CaseDecision.ACCEPTING)) &&
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                    (CaseType.TRAVEL_BAN &&
+                      workingCase.decision === CaseDecision.ACCEPTING)) &&
                     workingCase.custodyRestrictions
                       ?.filter((restriction) =>
                         [
