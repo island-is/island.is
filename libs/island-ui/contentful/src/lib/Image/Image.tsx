@@ -1,6 +1,7 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, useRef } from 'react'
 import cn from 'classnames'
 import * as styles from './Image.treat'
+import { useMountedState } from 'react-use'
 
 export interface ImageProps {
   url: string
@@ -13,11 +14,16 @@ export interface ImageProps {
 }
 
 const useImageLoader = (url: string): boolean => {
+  const isMounted = useMountedState()
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     const img = new window.Image(100)
-    img.onload = img.onerror = () => setLoaded(true)
+    img.onload = img.onerror = () => {
+      if (isMounted) {
+        setLoaded(true)
+      }
+    }
     img.src = url
   }, [url])
 

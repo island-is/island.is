@@ -125,9 +125,7 @@ export const constructConclusion = (workingCase: Case) => {
               á meðan á gæsluvarðhaldinu stendur.
             </Text>
           </>
-        ) : (
-          <Text />
-        )}
+        ) : null}
       </Text>
     )
   } else {

@@ -16,25 +16,31 @@ Here is a [sample chapter from the book Distributed Systems Observability by Cin
 
 ### Provide observability into the applications
 
-![Observability at SÍ](./assets/logging-metrics-traces.svg)
+![Monitoring at SÍ](./assets/logging-metrics-traces.svg)
 
 #### Logs
 
-All AWS services that we use send their logs to AWS CloudWatch. This is in addition to the copy of the logs stored in the AWS Logs account. Additionally, we have an AWS ElasticSearch instance running in our Shared AWS account where we store _all_ logs from _all_ applications running in _all_ our Kubernetes clusters. We have deployed FluentD which takes care of delivering automatically all logs to the central ElasticSearch.
+There is a clear separation of strategy where we keep the logs:
+
+- all AWS services send their logs to AWS CloudWatch
+- all services running in Kubernetes send their logs to DataDog
+
+There are a few reasons we keep the AWS services logs in CloudWatch - price, native integration, target audience (ops), etc.
+For developers is enough to have access to DataDog, since those logs are most relevant to their apps and services.
 
 #### Metrics
 
-For storing and querying metrics we use [Prometheus](https://prometheus.io) which is deployed in each Kubernetes cluster and collects metrics from all applications running there. AWS services send their metrics to AWS CloudWatch.
+For metrics we use DataDog. We collect metrics from both AWS services as well as our custom built Kubernets services. These metrics are useful for observability - runtime behaviour over longer periods of time, as well as for alerting about abnormal behaviour.
 
 #### Tracing
 
-TBD.
+We use DataDog for effortless Application Performance Monitoring (APM). With this capability, we get end-to-end visibility into our services - from the web browser, all the way to the database. In the context of a microservice architecture, this is an essential tool to undertand behaviour during interactions and troubleshoot individual issues.
+
+![DataDog APM](./assets/datadog-apm.png)
 
 #### Accessing logs, metrics and traces
 
-To search through the logs we use [Kibana](https://kibana.shared.devland.is). It is a web-based UI for ElasticSearch and a powerful way to search logs across different apps running in different environments. But keep in mind that in our current configuration ElasticSearch is storing logs from Kubernetes workloads _only_.
-
-Grafana - TBD.
+Every developer has access to logs, metrics and tracing (APM) information through the [DataDog portal](https://app.datadoghq.com).
 
 ### Define the boundaries of expected behaviour
 

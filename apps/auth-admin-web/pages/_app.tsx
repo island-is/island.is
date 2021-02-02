@@ -11,7 +11,7 @@ class AuthAdminWebApp extends App<Props> {
   render() {
     const { Component, pageProps } = this.props
     return (
-      <Provider session={pageProps.session}>
+      <Provider session={pageProps.session} options={{ clientMaxAge: 120 }}>
         <Component {...pageProps} />
       </Provider>
     )
