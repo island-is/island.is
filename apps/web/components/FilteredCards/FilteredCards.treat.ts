@@ -33,12 +33,12 @@ export const filtersToggler = style({
 export const filtersIcon = style({
   position: 'relative',
   display: 'inline-block',
-  transform: `rotate(90deg)`,
+  transform: `rotate(180deg)`,
   transition: `transform 300ms ease`,
 })
 
 export const filtersIconToggled = style({
-  transform: `rotate(-90deg)`,
+  transform: `rotate(0deg)`,
 })
 
 export const input = style({
@@ -74,4 +74,5 @@ export const inputIcon = style({
   height: '100%',
   right: 16,
   alignItems: 'center',
+  color: theme.color.blue600,
 })
