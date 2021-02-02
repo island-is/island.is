@@ -2,6 +2,10 @@ import next from 'next'
 import { logger } from '@island.is/logging'
 import { startMetricServer } from '@island.is/infra-metrics'
 import createExpressApp, { Express } from 'express'
+import { monkeyPatchServerLogging } from './logging'
+import { getNextConfig } from './config'
+import { setupProxy } from './proxy'
+import { Options } from 'http-proxy-middleware'
 
 type BootstrapOptions = {
   /**
@@ -10,15 +14,25 @@ type BootstrapOptions = {
   name: string
 
   /**
+   * Path to next app.
+   */
+  appDir: string
+
+  /**
    * Server port.
    */
   port?: number
+
+  /**
+   * Proxy configuration. Ignored in production (according to NODE_ENV).
+   */
+  proxyConfig?: { [context: string]: Options }
 }
 
-const startServer = async (app: Express, port = 4200) => {
+const startServer = (app: Express, port = 4200) => {
   const nextPort = parseInt(process.env.PORT || '') || port
   const metricsPort = nextPort + 1
-  await app.listen(nextPort, () => {
+  app.listen(nextPort, () => {
     logger.info(
       `Next custom server listening at http://localhost:${nextPort}`,
       {
@@ -26,29 +40,23 @@ const startServer = async (app: Express, port = 4200) => {
       },
     )
   })
-  await startMetricServer(metricsPort)
-}
-
-const monkeyPatchServerLogging = () => {
-  // NextJS internally uses console functions directly, eg on error. It's also
-  // rare to load a logging library in react code.
-  console.log = logger.info.bind(logger)
-  console.warn = logger.warn.bind(logger)
-  console.error = logger.error.bind(logger)
+  startMetricServer(metricsPort)
 }
 
 export const bootstrap = async (options: BootstrapOptions) => {
+  const dev = process.env.NODE_ENV !== 'production'
   monkeyPatchServerLogging()
-
-  const nextApp = next({ dev: false })
-  const handle = nextApp.getRequestHandler()
-  await nextApp.prepare()
 
   const expressApp = createExpressApp()
 
-  expressApp.use((req, res) => {
-    handle(req, res)
-  })
+  await setupProxy(expressApp, options.proxyConfig, dev)
+
+  const nextConfig = getNextConfig(options.appDir, dev)
+  const nextApp = next(nextConfig)
+  const handle = nextApp.getRequestHandler()
+  expressApp.all('*', (req, res) => handle(req, res))
 
   startServer(expressApp, options.port)
+
+  await nextApp.prepare()
 }

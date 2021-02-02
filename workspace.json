@@ -286,16 +286,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:server",
+          "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "air-discount-scheme-web:build-next",
-            "dev": true
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "air-discount-scheme-web:build-next:production",
-              "dev": false
-            }
+            "buildTarget": "air-discount-scheme-web:build-server"
           }
         },
         "export": {
@@ -1817,17 +1810,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:server",
+          "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "auth-admin-web:build-next",
-            "dev": true,
-            "proxyConfig": "apps/auth-admin-web/proxy.config.json"
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "auth-admin-web:build-next:production",
-              "dev": false
-            }
+            "buildTarget": "auth-admin-web:build-server"
           }
         },
         "export": {
@@ -2554,16 +2539,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:server",
+          "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "gjafakort-web:build-next",
-            "dev": true
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "gjafakort-web:build-next:production",
-              "dev": false
-            }
+            "buildTarget": "gjafakort-web:build-server"
           }
         },
         "export": {
@@ -3640,16 +3618,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:server",
+          "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "reference-next-app:build-next",
-            "dev": true
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "reference-next-app:build-next:production",
-              "dev": false
-            }
+            "buildTarget": "reference-next-app:build-server"
           }
         },
         "export": {
@@ -5044,17 +5015,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:server",
+          "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "skilavottord-web:build-next",
-            "dev": true,
-            "proxyConfig": "apps/skilavottord/web/proxy.conf.json"
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "skilavottord-web:build-next:production",
-              "dev": false
-            }
+            "buildTarget": "skilavottord-web:build-server"
           }
         },
         "export": {
@@ -5328,17 +5291,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:server",
+          "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "web:build-next",
-            "dev": true,
-            "proxyConfig": "apps/web/proxy.config.json"
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "web:build-next:production",
-              "dev": false
-            }
+            "buildTarget": "web:build-server"
           }
         },
         "export": {
