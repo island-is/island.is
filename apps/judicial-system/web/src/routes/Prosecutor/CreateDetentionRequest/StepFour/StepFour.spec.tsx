@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import StepFour from './StepFour'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -16,7 +16,6 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 describe('Create detention request, step four', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-
     render(
       <MockedProvider
         mocks={[
@@ -25,8 +24,7 @@ describe('Create detention request, step four', () => {
           ...mockUpdateCaseMutation([
             { caseFacts: 'Lorem ipsum dolor sit amet,' } as UpdateCase,
             {
-              legalArguments:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+              legalArguments: 'Lorem ipsum dolor sit amet,',
             } as UpdateCase,
           ]),
         ]}
@@ -46,27 +44,25 @@ describe('Create detention request, step four', () => {
 
     // Act and Assert
     userEvent.type(
-      await waitFor(
-        () => screen.getByLabelText('Málsatvik *') as HTMLInputElement,
-      ),
+      await screen.findByLabelText('Málsatvik *'),
       'Lorem ipsum dolor sit amet,',
     )
 
     expect(
-      screen.getByRole('button', {
+      (await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      })) as HTMLButtonElement,
     ).toBeDisabled()
 
     userEvent.type(
-      screen.getByLabelText('Lagarök *') as HTMLInputElement,
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
+      await screen.findByLabelText('Lagarök *'),
+      'Lorem ipsum dolor sit amet,',
     )
 
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -91,12 +87,9 @@ describe('Create detention request, step four', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Halda áfram/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
     ).not.toBeDisabled()
   })
 })
