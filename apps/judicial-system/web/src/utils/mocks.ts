@@ -151,6 +151,7 @@ const testCase3 = {
   courtStartTime: null,
   courtEndTime: '2020-09-16T19:51:00.000Z',
   courtAttendees: null,
+  courtRoom: '999',
   policeDemands: null,
   accusedPlea: null,
   litigationPresentations: null,
