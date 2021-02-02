@@ -2,48 +2,13 @@ import React, { FC } from 'react'
 import Markdown from 'markdown-to-jsx'
 import { styled } from '@storybook/theming'
 
-interface Links {
-  desktop?: string
-  mobile?: string
+const markdown = (name: string = 'this component') => {
+  return `See *${name}* in the [@islandis](https://www.figma.com/@islandis) community Figma. [Desktop](https://www.figma.com/community/file/901454156629060149) — [Mobile](https://www.figma.com/community/file/901454279005592118)`
 }
 
-const markdown = (links: Links) => {
-  const desktop = links.desktop
-    ? `[Desktop design in Figma](${links.desktop})`
-    : ''
-  const mobile = links.mobile ? `[Mobile design in Figma](${links.mobile})` : ''
-  const dash = links.desktop && links.mobile ? ' — ' : ''
-
-  if (!links.desktop && !links.mobile) {
-    return ``
-  }
-
-  return `${desktop}${dash}${mobile}`
-}
-
-export const withFigma = (links: Links) => {
-  const design = []
-  const component = markdown(links)
-
-  if (links.desktop) {
-    design.push({
-      name: 'Desktop',
-      type: 'figma',
-      url: links.desktop,
-    })
-  }
-
-  if (links.mobile) {
-    design.push({
-      name: 'Mobile',
-      type: 'figma',
-      url: links.mobile,
-    })
-  }
-
+export const withFigma = (name: string) => {
   return {
-    docs: { description: { component } },
-    design,
+    docs: { description: { component: markdown(name) } },
   }
 }
 
@@ -72,7 +37,7 @@ const A = styled.a(() => ({
   textDecoration: 'none',
 }))
 
-export const DescriptionFigma: FC<{ links: Links }> = ({ links }) => (
+export const DescriptionFigma: FC<{ name: string }> = ({ name }) => (
   <P>
     <Markdown
       options={{
@@ -85,7 +50,7 @@ export const DescriptionFigma: FC<{ links: Links }> = ({ links }) => (
         },
       }}
     >
-      {markdown(links)}
+      {markdown(name)}
     </Markdown>
   </P>
 )
