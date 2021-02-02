@@ -101,6 +101,8 @@ export class RestServiceCollector implements ServiceCollector {
     await this.elasticService.updateAlias()
     logger.debug(`Done updating values at: ${new Date().toISOString()}`)
 
+    //TODO: if another instance of the collector is running in the same 
+    //TODO: environment, the line below, will delete it's index.
     await this.elasticService.deleteDanglingIndices()
   }
 }
