@@ -468,17 +468,14 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                 }}
                 responsibleParty={article.responsibleParty.map(
                   (responsibleParty) => ({
-                    title:
-                      responsibleParty.shortTitle || responsibleParty.title,
+                    title: responsibleParty.title,
                     label: n('responsibleParty'),
                     href: responsibleParty.link,
                   }),
                 )}
                 relatedInstitution={article.relatedOrganization.map(
                   (relatedOrganization) => ({
-                    title:
-                      relatedOrganization.shortTitle ||
-                      relatedOrganization.title,
+                    title: relatedOrganization.title,
                     label: n('relatedOrganization'),
                     href: relatedOrganization.link,
                   }),
