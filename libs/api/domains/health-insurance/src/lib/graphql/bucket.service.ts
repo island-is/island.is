@@ -12,12 +12,10 @@ const s3 = new AWS.S3({
 
 @Injectable()
 export class BucketService {
-  constructor() {}
-
   /* TEST */
   async btest(): Promise<string | undefined> {
     this.getList()
-    let sm = await this.getFile('smasaga.txt')
+    const sm = await this.getFile('smasaga.txt')
     return sm.Body?.toString()
   }
 
