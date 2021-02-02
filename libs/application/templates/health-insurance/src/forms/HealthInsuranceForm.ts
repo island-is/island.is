@@ -16,11 +16,13 @@ import {
   Comparators,
   Application,
   FormValue,
+  ExternalData,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
 import { StatusTypes } from '../types'
 import Logo from '../assets/Logo'
+import { shouldShowModal } from '../healthInsuranceUtils'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -39,6 +41,12 @@ export const HealthInsuranceForm: Form = buildForm({
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'pendingApplications',
+              type: 'PendingApplicationsProvider',
               title: '',
               subTitle: '',
             }),
@@ -89,11 +97,10 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
             }),
           ],
-          condition: () => {return true}
+          condition: (formValue: FormValue, externalData: ExternalData) => {
+            return shouldShowModal(externalData)
+          }
         }),
-        // Add "copy" of external section
-        // Move modals to this multifield section
-        // Move conditions to util file
         buildMultiField({
           id: 'confirmationOfResidency',
           title: m.confirmationOfResidencyTitle,
