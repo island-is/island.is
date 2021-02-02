@@ -540,7 +540,11 @@ export const Confirmation: React.FC = () => {
                     workingCase.accusedGender,
                     workingCase.custodyRestrictions,
                     workingCase.otherRestrictions,
-                  )}
+                  )
+                    .split('\n')
+                    .map((str) => (
+                      <Text>{str}</Text>
+                    ))}
                 </Text>
               </Box>
               <Text>

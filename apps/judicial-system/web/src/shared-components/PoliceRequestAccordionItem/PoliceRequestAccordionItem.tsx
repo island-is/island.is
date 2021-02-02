@@ -74,11 +74,15 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </Box>
       <Box marginBottom={4}>
         <Text>
-          {`${formatRequestedCustodyRestrictions(
+          {formatRequestedCustodyRestrictions(
             workingCase.type,
             workingCase.requestedCustodyRestrictions,
             workingCase.requestedOtherRestrictions,
-          )}`}
+          )
+            .split('\n')
+            .map((str) => (
+              <Text>{str}</Text>
+            ))}
         </Text>
       </Box>
       <Box marginBottom={2}>

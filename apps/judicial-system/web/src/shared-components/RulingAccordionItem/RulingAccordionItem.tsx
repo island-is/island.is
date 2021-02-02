@@ -150,7 +150,11 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
                 workingCase.accusedGender,
                 workingCase.custodyRestrictions,
                 workingCase.otherRestrictions,
-              )}
+              )
+                .split('\n')
+                .map((str) => (
+                  <Text>{str}</Text>
+                ))}
             </Text>
           </Box>
           {workingCase.otherRestrictions && (
