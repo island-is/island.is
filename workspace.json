@@ -338,6 +338,7 @@
           "options": {
             "cypressConfig": "apps/air-discount-scheme/web-e2e/cypress.json",
             "tsConfig": "apps/air-discount-scheme/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "air-discount-scheme-web:serve"
           },
           "configurations": {
@@ -1852,6 +1853,7 @@
           "options": {
             "cypressConfig": "apps/auth-admin-web-e2e/cypress.json",
             "tsConfig": "apps/auth-admin-web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "auth-admin-web:serve"
           },
           "configurations": {
@@ -2581,6 +2583,7 @@
           "options": {
             "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
             "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "gjafakort-web:serve"
           },
           "configurations": {
@@ -5163,6 +5166,7 @@
           "options": {
             "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
             "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "skilavottord-web:serve"
           },
           "configurations": {
@@ -5339,6 +5343,7 @@
           "options": {
             "cypressConfig": "apps/web-e2e/cypress.json",
             "tsConfig": "apps/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "web:serve"
           },
           "configurations": {

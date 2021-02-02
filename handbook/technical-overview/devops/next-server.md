@@ -79,3 +79,22 @@ bootstrap({
   }
 },
 ```
+
+3. Also, in `workspace.json`, find your "{{projectName}}-e2e" definition and add a `baseUrl` to the `e2e` target so Cypress can find your server:
+
+```json
+"e2e": {
+  "builder": "@nrwl/cypress:cypress",
+  "options": {
+    "cypressConfig": "apps/{{pathToAppDir}}-e2e/cypress.json",
+    "tsConfig": "apps/{{pathToAppDir}}-e2e/tsconfig.e2e.json",
+    "baseUrl": "http://localhost:4200",
+    "devServerTarget": "{{projectName}}:serve"
+  },
+  "configurations": {
+    "production": {
+      "devServerTarget": "{{projectName}}:serve:production"
+    }
+  }
+},
+```
