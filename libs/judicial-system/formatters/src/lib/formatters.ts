@@ -1,6 +1,5 @@
-import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
-// Importing 'is' directly from date-fns/locale/is has caused unexpected problems
-import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import { format, parseISO, isValid } from 'date-fns'
+import { is } from 'date-fns/locale'
 
 import {
   CaseCustodyRestrictions,
@@ -52,6 +51,10 @@ export const formatNationalId = (nationalId: string): string => {
   } else {
     return nationalId
   }
+}
+
+export const isFalsy = (str?: string | null): boolean => {
+  return str === '' || str === undefined || str === null
 }
 
 export const laws = {
