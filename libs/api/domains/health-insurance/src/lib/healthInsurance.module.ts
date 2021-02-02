@@ -1,6 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
 
 import { HealthInsuranceResolver } from './graphql'
+import { BucketService } from './graphql/bucket.service'
 import { HealthInsuranceService } from './healthInsurance.service'
 import {
   HealthInsuranceAPI,
@@ -14,6 +15,7 @@ export class HealthInsuranceModule {
     return {
       module: HealthInsuranceModule,
       providers: [
+        BucketService,
         HealthInsuranceService,
         HealthInsuranceResolver,
         SoapClient,
