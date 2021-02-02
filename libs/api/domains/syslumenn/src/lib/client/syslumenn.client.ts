@@ -12,15 +12,13 @@ export interface SyslumennClientConfig {
 
 @Injectable()
 export class SyslumennClient {
-  private accessToken: string
+  private accessToken: string = ''
 
   constructor(
     private httpService: HttpService,
     @Inject(SYSLUMENN_CLIENT_CONFIG)
     private clientConfig: SyslumennClientConfig,
-  ) {
-    console.log(clientConfig)
-  }
+  ) {}
 
   private async getToken() {
     const config = {
@@ -35,13 +33,17 @@ export class SyslumennClient {
     this.accessToken = response.data.audkenni
   }
 
-  async getHomestays(year: number): Promise<IHomestay[] | null> {
+  async getHomestays(year?: number): Promise<IHomestay[] | null> {
     await this.getToken()
 
+    let url = `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}`
+
+    if (year) {
+      url = `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}/${year}`
+    }
+
     const response: { data: IHomestay[] } = await this.httpService
-      .get(
-        `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}/${year}`,
-      )
+      .get(url)
       .toPromise()
 
     return response.data
