@@ -4,6 +4,7 @@ import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 import { Box } from '../Box/Box'
 import { Stack } from '../Stack/Stack'
 import { Divider } from '../Divider/Divider'
+import { BoxProps } from '../Box/Box'
 
 interface AccordionContextValue {
   toggledId: string
@@ -17,6 +18,7 @@ export const AccordionContext = createContext<AccordionContextValue>({
 
 export interface AccordionProps {
   children: ReactNodeNoStrings
+  space?: BoxProps['paddingTop']
   dividers?: boolean
   dividerOnTop?: boolean
   dividerOnBottom?: boolean
@@ -25,6 +27,7 @@ export interface AccordionProps {
 
 export const Accordion = ({
   children,
+  space = 2,
   dividers = true,
   dividerOnTop = true,
   dividerOnBottom = true,
@@ -39,12 +42,12 @@ export const Accordion = ({
         setToggledId,
       }}
     >
-      <Stack space={2} dividers={dividers}>
+      <Stack space={space} dividers={dividers}>
         {children}
       </Stack>
     </AccordionContext.Provider>
   ) : (
-    <Stack space={2} dividers={dividers}>
+    <Stack space={space} dividers={dividers}>
       {children}
     </Stack>
   )

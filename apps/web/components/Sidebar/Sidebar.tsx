@@ -4,7 +4,6 @@ import cn from 'classnames'
 import {
   Box,
   Text,
-  IconDeprecated as Icon,
   Stack,
   Divider,
   FocusableBox,
@@ -106,8 +105,6 @@ const useHeadingLinks = ({
   }
 }
 
-type Bullet = 'none' | 'left' | 'right'
-
 type SidebarLinkItems = {
   title: string
   href: string
@@ -119,7 +116,6 @@ interface SidebarProps {
   title: string
   items?: SidebarLinkItems[]
   headingLinks?: boolean
-  bullet?: Bullet
 }
 
 export const Sidebar: FC<SidebarProps> = ({
@@ -127,7 +123,6 @@ export const Sidebar: FC<SidebarProps> = ({
   items,
   headingLinks,
   children,
-  bullet,
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const parentRef = useRef<HTMLElement | null>(null)
@@ -163,16 +158,6 @@ export const Sidebar: FC<SidebarProps> = ({
       borderRadius="large"
       padding={4}
     >
-      {top !== 0 && bullet && (
-        <span
-          className={cn(styles.bullet, {
-            [styles.bulletRight]: bullet === 'right',
-          })}
-          style={{ top }}
-        >
-          <Icon type="bullet" color="red400" />
-        </span>
-      )}
       <Stack space={[1, 1, 2]}>
         <Text variant="h4" as="h2">
           {title}
@@ -207,16 +192,6 @@ export const Sidebar: FC<SidebarProps> = ({
         {items && <Divider weight="alternate" />}
         {sortedItems.map(({ title, active, href, as }, index) => (
           <FocusableBox key={index} href={href} as={as}>
-            {active && (
-              <span
-                className={cn(styles.bullet, {
-                  [styles.bulletRight]: bullet === 'right',
-                  [styles.hidden]: bullet === 'none',
-                })}
-              >
-                <Icon type="bullet" color="red400" />
-              </span>
-            )}
             <Text as="span">{active ? <strong>{title}</strong> : title}</Text>
           </FocusableBox>
         ))}

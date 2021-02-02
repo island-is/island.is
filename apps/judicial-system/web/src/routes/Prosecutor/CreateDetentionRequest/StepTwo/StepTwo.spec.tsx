@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import StepTwo from './StepTwo'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
@@ -68,12 +68,9 @@ describe('Create detention request, step two', () => {
     // Act and Assert
     // Arrest date is optional
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Halda áfram/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
     ).toBeDisabled()
 
     const datePickerWrappers = screen.getAllByTestId('datepicker')
@@ -96,12 +93,15 @@ describe('Create detention request, step two', () => {
 
     userEvent.click(lastDayOfCurrentMonth)
 
-    userEvent.type(screen.getByLabelText('Ósk um tíma (kk:mm) *'), '13:37')
+    userEvent.type(
+      await screen.findByLabelText('Ósk um tíma (kk:mm) *'),
+      '13:37',
+    )
 
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -126,14 +126,11 @@ describe('Create detention request, step two', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Halda áfram/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
     ).not.toBeDisabled()
-  }, 10000)
+  })
 
   test('should have a disabled requestedCourtDate if judge has set a court date', async () => {
     // Arrange
@@ -157,10 +154,6 @@ describe('Create detention request, step two', () => {
     )
 
     // Assert
-    expect(
-      await waitFor(
-        () => screen.getByLabelText('Veldu dagsetningu *') as HTMLInputElement,
-      ),
-    ).toBeDisabled()
+    expect(await screen.findByLabelText('Veldu dagsetningu *')).toBeDisabled()
   })
 })

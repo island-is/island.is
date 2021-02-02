@@ -34,11 +34,9 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Kröfu hafnað', { selector: 'h1' }),
-        ),
+        await screen.findByText('Kröfu hafnað', { selector: 'h1' }),
       ).toBeInTheDocument()
-    }, 10000)
+    })
 
     test('should have the correct subtitle if case is not accepted', async () => {
       render(
@@ -59,9 +57,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Úrskurðað 16. september 2020 kl. 19:51'),
-        ),
+        await screen.findByText('Úrskurðað 16. september 2020 kl. 19:51'),
       ).toBeInTheDocument()
     })
 
@@ -136,9 +132,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Gæsluvarðhald virkt', { selector: 'h1' }),
-        ),
+        await screen.findByText('Gæsluvarðhald virkt', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -162,13 +156,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
-              date,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
+            date,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -192,9 +184,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Fjölmiðlabann', { selector: 'span' }),
-        ),
+        await screen.findByText('Fjölmiðlabann', { selector: 'span' }),
       ).toBeInTheDocument()
     })
 
@@ -244,9 +234,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
-        ),
+        await screen.findByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -271,13 +259,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-              dateInPast,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
+            dateInPast,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -301,9 +287,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Heimsóknarbann', { selector: 'span' }),
-        ),
+        await screen.findByText('Heimsóknarbann', { selector: 'span' }),
       ).toBeInTheDocument()
     })
 
@@ -353,9 +337,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Farbann virkt', { selector: 'h1' }),
-        ),
+        await screen.findByText('Farbann virkt', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -379,13 +361,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
-              date,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
+            date,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -436,9 +416,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Farbanni lokið', { selector: 'h1' }),
-        ),
+        await screen.findByText('Farbanni lokið', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -463,13 +441,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-              dateInPast,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
+            dateInPast,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -493,9 +469,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByRole('button', { name: 'Framlengja gæslu' }),
-        ),
+        await screen.findByRole('button', { name: 'Framlengja gæslu' }),
       ).toBeInTheDocument()
     })
   })

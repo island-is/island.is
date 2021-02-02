@@ -56,6 +56,7 @@
   - [Metrics](handbook/technical-overview/devops/metrics.md)
   - [Observability](handbook/technical-overview/devops/observability.md)
   - [Operations Base Principles](handbook/technical-overview/devops/operations-base-principles.md)
+  - [Security](handbook/technical-overview/devops/security.md)
 - [Monorepo](handbook/technical-overview/monorepo.md)
 - [Personas](handbook/technical-overview/personas.md)
 - [Teamwork](handbook/technical-overview/teamwork.md)
