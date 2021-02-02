@@ -75,7 +75,7 @@ const FormExternalDataProvider: FC<{
     },
   })
 
-  const { id, dataProviders } = externalDataProvider
+  const { id, dataProviders, subTitle, checkboxLabel } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
@@ -111,7 +111,6 @@ const FormExternalDataProvider: FC<{
     }
   }
 
-  const label = 'Ég samþykki'
   return (
     <Box>
       <Box
@@ -125,7 +124,7 @@ const FormExternalDataProvider: FC<{
           <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
         <Text variant="h4">
-          Eftirfarandi gögn verða sótt rafrænt með þínu samþykki
+          {subTitle || 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -161,7 +160,7 @@ const FormExternalDataProvider: FC<{
                   }}
                   checked={value}
                   name={`${id}`}
-                  label={label}
+                  label={checkboxLabel || 'Ég samþykki'}
                   value={id}
                 />
               </Box>

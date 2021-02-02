@@ -9,10 +9,7 @@ export default {
   title: 'Navigation/Navigation',
   component: Navigation,
   decorators: [withDesign],
-  parameters: withFigma({
-    desktop:
-      'https://www.figma.com/file/cl7qnkUWOFwgMQKt2FsiZn/H%C3%B6nnun?node-id=3494%3A1&viewport=-1795%2C983%2C0.47280967235565186',
-  }),
+  parameters: withFigma('Navigation'),
 }
 
 const Template = (args) => (

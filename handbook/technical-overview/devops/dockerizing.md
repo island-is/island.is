@@ -12,17 +12,19 @@ You need to ask the [DevOps](technical-overview/devops/personas.md#devops) team 
   "docker-next": {}
 ```
 
-means your service will be packaged as a NextJS Docker container image. We have support the following types of Docker containers: `docker-next`: suitable for [NextJS](https://nextjs.org/) services. `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services. `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
+means your service will be packaged as a NextJS Docker container image. We have support the following types of Docker containers:
 
-{% hint style="info" %}
-To dockerize NextJS projects, you additionally need to configure it to use [our custom server](./next-server.md#setup-in-new-project).
-{% endhint %}
+- `docker-next`: suitable for [NextJS](https://nextjs.org/) services.
+- `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services.
+- `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
 
-If you need help just search for "docker" in that file and you should find plenty of examples on how to do it.
-
-That's it.
+If you would like to see some examples, simply search for "docker" in that file and you should find plenty.
 
 When you push this change to `main` your Docker image will get built and pushed to our private central Docker registry
+
+{% hint style="info" %}
+To dockerize a NextJS project, you additionally need to configure it to use [our custom server](./next-server.md#setup-in-new-project).
+{% endhint %}
 
 ## Can I create a secret in the aws parameters store for services to consume?
 
@@ -42,7 +44,7 @@ Make sure your AWS credentials are set up in your shell before you create a secr
 
 _Prerequisite_: Local Docker support
 
-If you are having problems with your application running inside a Docker container you need to download the Docker container and run it locally.
+If you are having problems with your application running inside a Docker container, you can troubleshoot that by downloading the Docker container and running it locally on your workstation.
 
 To do that you need to follow this process:
 

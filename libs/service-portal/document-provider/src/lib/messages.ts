@@ -97,9 +97,318 @@ export const m = defineMessages({
       'Hér getur þú fundið alla þá skjalaveitendur sem nota pósthólf á island.is',
   },
   //DocumentProvidersSingle
-  documentProvidersSingleDescription: {
+  //DocumentProvidersSingleInstitution
+  SingleProviderDescription: {
     id: 'sp.document-provider:document-providers-single-description',
     defaultMessage: 'Ýtarlegar upplýsingar um skjalaveitu',
+  },
+  SingleProviderInstitutionHeading: {
+    id: 'sp.document-provider:document-providers-single-institution-name',
+    defaultMessage: 'Stofnun',
+  },
+  SingleProviderInstitutionNameLabel: {
+    id: 'sp.document-provider:document-providers-single-institution-name-label',
+    defaultMessage: 'Nafn stofnunar',
+  },
+  SingleProviderInstitutionNamePlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-institution-name-placeholder',
+    defaultMessage: 'Nafn stofnunar',
+  },
+  SingleProviderInstitutionNameError: {
+    id: 'sp.document-provider:document-providers-single-institution-name-error',
+    defaultMessage: 'Nafn er skilyrt',
+  },
+  SingleProviderInstitutionNationalIdLabel: {
+    id:
+      'sp.document-provider:document-providers-single-institution-nationalid-label',
+    defaultMessage: 'Kennitala stofnunar',
+  },
+  SingleProviderInstitutionNationalIdPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-institution-nationalid-placeholder',
+    defaultMessage: 'Kennitala stofnunar',
+  },
+  SingleProviderInstitutionNationalIdError: {
+    id:
+      'sp.document-provider:document-providers-single-institution-nationalid-error',
+    defaultMessage: 'Kennitala er skilyrt',
+  },
+  SingleProviderInstitutionNationalIdFormatError: {
+    id:
+      'sp.document-provider:document-providers-single-institution-nationalid-format-error',
+    defaultMessage: 'Kennitala verður að vera á réttu sniði',
+  },
+  SingleProviderInstitutionEmailLabel: {
+    id:
+      'sp.document-provider:document-providers-single-institution-email-label',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderInstitutionEmailPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-institution-email-placeholder',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderInstitutionEmailError: {
+    id:
+      'sp.document-provider:document-providers-single-institution-email-error',
+    defaultMessage: 'Netfang er skilyrt',
+  },
+  SingleProviderInstitutionEmailFormatError: {
+    id:
+      'sp.document-provider:document-providers-single-institution-email-format-error',
+    defaultMessage: 'Netfang verður að vera á réttu sniði',
+  },
+  SingleProviderInstitutionPhonenumberLabel: {
+    id:
+      'sp.document-provider:document-providers-single-institution-phonenumber-label',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderInstitutionPhonenumberPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-institution-phonenumber-placeholder',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderInstitutionPhonenumberError: {
+    id:
+      'sp.document-provider:document-providers-single-institution-phonenumber-error',
+    defaultMessage: 'Símanúmer er skilyrt',
+  },
+  SingleProviderInstitutionPhonenumberErrorOnlyNumbers: {
+    id:
+      'sp.document-provider:document-providers-single-institution-phonenumber-error-only-numbers',
+    defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+  },
+  SingleProviderInstitutionPhonenumberErrorLength: {
+    id:
+      'sp.document-provider:document-providers-single-institution-phonenumber-error-length',
+    defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+  },
+  SingleProviderInstitutionAddressLabel: {
+    id:
+      'sp.document-provider:document-providers-single-institution-address-label',
+    defaultMessage: 'Heimilisfang',
+  },
+  SingleProviderInstitutionAddressPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-institution-address-placeholder',
+    defaultMessage: 'Heimilisfang',
+  },
+  SingleProviderInstitutionAddressError: {
+    id:
+      'sp.document-provider:document-providers-single-institution-address-error',
+    defaultMessage: 'Heimilisfang er skilyrt',
+  },
+  SingleProviderInstitutionZipcodeLabel: {
+    id:
+      'sp.document-provider:document-providers-single-institution-zipcode-label',
+    defaultMessage: 'Póstnúmer',
+  },
+  SingleProviderInstitutionZipcodePlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-institution-zipcode-placeholder',
+    defaultMessage: 'Póstnúmer',
+  },
+  SingleProviderInstitutionZipcodeError: {
+    id:
+      'sp.document-provider:document-providers-single-institution-zipcode-error',
+    defaultMessage: 'Póstnúmer er skilyrt',
+  },
+
+  //DocumentProvidersSingleResponsibleContact
+  SingleProviderResponsibleContactHeading: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-heading',
+    defaultMessage: 'Ábyrgðarmaður',
+  },
+  SingleProviderResponsibleContactNameLabel: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-name-label',
+    defaultMessage: 'Nafn',
+  },
+  SingleProviderResponsibleContactNamePlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-name-placeholder',
+    defaultMessage: 'Nafn',
+  },
+  SingleProviderResponsibleContactNameError: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-name-error',
+    defaultMessage: 'Nafn er skilyrt',
+  },
+  SingleProviderResponsibleContactEmailLabel: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-email-label',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderResponsibleContactEmailPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-email-placeholder',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderResponsibleContactEmailError: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-email-error',
+    defaultMessage: 'Netfang er skilyrt',
+  },
+  SingleProviderResponsibleContactEmailFormatError: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-email-format-error',
+    defaultMessage: 'Netfang verður að vera á réttu sniði',
+  },
+  SingleProviderResponsibleContactPhoneNumberLabel: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-phoneNumber-label',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderResponsibleContactPhoneNumberPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-phoneNumber-placeholder',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderResponsibleContactPhonenumberError: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-phonenumber-error',
+    defaultMessage: 'Símanúmer er skilyrt',
+  },
+  SingleProviderResponsibleContactPhonenumberErrorOnlyNumbers: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-phonenumber-error-only-numbers',
+    defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+  },
+  SingleProviderResponsibleContactPhonenumberErrorLength: {
+    id:
+      'sp.document-provider:document-providers-single-responsible-contact-phonenumber-error-length',
+    defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+  },
+
+  //DocumentProvidersSingleTechnicalContact
+  SingleProviderTechnicalContactHeading: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-heading',
+    defaultMessage: 'Tæknilegur tengiliður',
+  },
+  SingleProviderTechnicalContactNameLabel: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-name-label',
+    defaultMessage: 'Nafn',
+  },
+  SingleProviderTechnicalContactNamePlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-name-placeholder',
+    defaultMessage: 'Nafn',
+  },
+  SingleProviderTechnicalContactNameError: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-name-error',
+    defaultMessage: 'Nafn er skilyrt',
+  },
+  SingleProviderTechnicalContactEmailLabel: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-email-label',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderTechnicalContactEmailPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-email-placeholder',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderTechnicalContactEmailError: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-email-error',
+    defaultMessage: 'Netfang er skilyrt',
+  },
+  SingleProviderTechnicalContactEmailErrorFormat: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-email-error-format',
+    defaultMessage: 'Netfang verður að vera á réttu sniði',
+  },
+  SingleProviderTechnicalContactPhoneNumberLabel: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-phoneNumber-label',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderTechnicalContactPhoneNumberPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-phoneNumber-placeholder',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderTechnicalContactPhonenumberError: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-phonenumber-error',
+    defaultMessage: 'Símanúmer er skilyrt',
+  },
+  SingleProviderTechnicalContactPhonenumberErrorOnlyNumbers: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-phonenumber-error-only-numbers',
+    defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+  },
+  SingleProviderTechnicalContactPhonenumberErrorLength: {
+    id:
+      'sp.document-provider:document-providers-single-technical-contact-phonenumber-error-length',
+    defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+  },
+
+  //DocumentProvidersSingleUserHelpContact
+  SingleProviderUserHelpContactHeading: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-heading',
+    defaultMessage: 'Notendaaðstoð',
+  },
+  SingleProviderUserHelpContactEmailLabel: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-email-label',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderUserHelpEmailError: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-email-error',
+    defaultMessage: 'Netfang er skilyrt',
+  },
+  SingleProviderUserHelpEmailErrorFormat: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-email-error-format',
+    defaultMessage: 'Netfang verður að vera á réttu sniði',
+  },
+  SingleProviderUserHelpContactEmailPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-email-placeholder',
+    defaultMessage: 'Netfang',
+  },
+  SingleProviderUserHelpContactPhoneNumberLabel: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-phoneNumber-label',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderUserHelpContactPhoneNumberPlaceholder: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-phoneNumber-placeholder',
+    defaultMessage: 'Símanúmer',
+  },
+  SingleProviderUserHelpPhonenumberError: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-phonenumber-error',
+    defaultMessage: 'Símanúmer er skilyrt',
+  },
+  SingleProviderUserHelpPhonenumberErrorOnlyNumbers: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-phonenumber-error-only-numbers',
+    defaultMessage: 'Eingöngu tölustafir eru leyfðir',
+  },
+  SingleProviderUserHelpPhonenumberErrorLength: {
+    id:
+      'sp.document-provider:document-providers-single-user-help-contact-phonenumber-error-length',
+    defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+  },
+
+  //DocumentProvidersSingleButtons
+  SingleProviderBackButton: {
+    id: 'sp.document-provider:document-providers-single-back-button',
+    defaultMessage: 'Til baka',
+  },
+  SingleProviderSaveButton: {
+    id: 'sp.document-provider:document-providers-single-save-button',
+    defaultMessage: 'Vista breytingar',
   },
 
   //MyCategories

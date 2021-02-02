@@ -301,7 +301,7 @@ const Search: Screen<CategoryProps> = ({
               </Sidebar>
             )}
             {!!sidebarDataTypes.length && (
-              <Sidebar bullet="none" title={n('otherCategories')}>
+              <Sidebar title={n('otherCategories')}>
                 <Stack space={[1, 1, 2]}>
                   {sidebarDataTypes.map(([key, { title, total }]) => (
                     <Filter
