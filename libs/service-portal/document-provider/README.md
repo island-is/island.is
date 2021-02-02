@@ -1,4 +1,4 @@
-# Document Provider - Work in progress!
+# Document Provider
 
 ## About
 
