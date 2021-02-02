@@ -512,8 +512,8 @@ export const Confirmation: React.FC = () => {
                 <Box marginBottom={2}>
                   <Text>
                     {formatCustodyRestrictions(
-                      workingCase.accusedGender || CaseGender.OTHER,
-                      workingCase.custodyRestrictions || [],
+                      workingCase.accusedGender,
+                      workingCase.custodyRestrictions,
                     )}
                   </Text>
                 </Box>
@@ -537,16 +537,16 @@ export const Confirmation: React.FC = () => {
               <Box marginBottom={2}>
                 <Text>
                   {formatAlternativeTravelBanRestrictions(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                    workingCase.custodyRestrictions || [],
-                  )}
+                    workingCase.accusedGender,
+                    workingCase.custodyRestrictions,
+                    workingCase.otherRestrictions,
+                  )
+                    .split('\n')
+                    .map((str) => (
+                      <Text>{str}</Text>
+                    ))}
                 </Text>
               </Box>
-              {workingCase.otherRestrictions && (
-                <Box marginBottom={2}>
-                  <Text>{workingCase.otherRestrictions}</Text>
-                </Box>
-              )}
               <Text>
                 Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
                 bera atriði er lúta að framkvæmd farbannsins undir dómara.

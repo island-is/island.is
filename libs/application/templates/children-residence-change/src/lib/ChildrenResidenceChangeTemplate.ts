@@ -26,6 +26,7 @@ const dataSchema = z.object({
   phoneNumber: z.string().min(7),
   confirmResidenceChangeInfo: z.array(z.string()).nonempty(),
   approveTerms: z.array(z.string()).nonempty(),
+  reason: z.string().nonempty(),
 })
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<

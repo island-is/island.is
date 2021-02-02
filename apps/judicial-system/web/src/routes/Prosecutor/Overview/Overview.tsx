@@ -263,14 +263,19 @@ export const Overview: React.FC = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_3"
-                label="Takmarkanir á gæslu"
+                label={`Takmarkanir og tilhögun ${
+                  workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+                }`}
               >
-                <Text>
-                  {formatRequestedCustodyRestrictions(
-                    workingCase.type,
-                    workingCase.requestedCustodyRestrictions,
-                  )}
-                </Text>
+                {formatRequestedCustodyRestrictions(
+                  workingCase.type,
+                  workingCase.requestedCustodyRestrictions,
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((str) => (
+                    <Text>{str}</Text>
+                  ))}
               </AccordionItem>
               <AccordionItem
                 labelVariant="h3"

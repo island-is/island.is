@@ -342,6 +342,7 @@ describe('formatCourtCaseNumber', () => {
 describe('formatConclusion', () => {
   test('should format conclusion for a rejected case', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -351,6 +352,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -369,6 +371,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for an accepted case without isolation', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -379,6 +382,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -397,6 +401,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for an accepted case with isolation', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -407,6 +412,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -425,6 +431,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for a case where custody is rejected, but alternative travel ban accepted', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -435,6 +442,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -453,6 +461,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for rejected extension', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -463,6 +472,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -481,6 +491,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for rejected extension when previous ruling was travel ban', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -491,6 +502,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -509,6 +521,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for accepted extension', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -520,6 +533,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -538,6 +552,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for accepted extension when previous ruling was travel ban', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -549,6 +564,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -567,6 +583,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for rejected extension when alternative travel ban accepted', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -578,6 +595,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -596,6 +614,7 @@ describe('formatConclusion', () => {
 
   test('should format conclusion for rejected extension when alternative travel ban accepted and previous ruling was travel ban', () => {
     // Arrange
+    const type = CaseType.CUSTODY
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const accusedGender = CaseGender.MALE
@@ -607,6 +626,7 @@ describe('formatConclusion', () => {
 
     // Act
     const res = formatConclusion(
+      type,
       accusedNationalId,
       accusedName,
       accusedGender,
@@ -620,6 +640,64 @@ describe('formatConclusion', () => {
     // Assert
     expect(res).toBe(
       'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta áframhaldandi farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
+    )
+  })
+  test('should format conclusion for a rejected travel ban', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.REJECTING
+    const isolation = false
+    const isExtension = false
+
+    // Act
+    const res = formatConclusion(
+      type,
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      undefined,
+      isolation,
+      isExtension,
+      undefined,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kröfu um að kærði, Glanni Glæpur, kt. 010101-0000, sæti farbanni er hafnað.',
+    )
+  })
+
+  test('should format conclusion for an accepted case without isolation', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.ACCEPTING
+    const custodyEndDate = new Date('2020-12-22T11:23')
+    const isolation = false
+    const isExtension = false
+
+    // Act
+    const res = formatConclusion(
+      type,
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      custodyEndDate,
+      isolation,
+      isExtension,
+      undefined,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta farbanni, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23.',
     )
   })
 })

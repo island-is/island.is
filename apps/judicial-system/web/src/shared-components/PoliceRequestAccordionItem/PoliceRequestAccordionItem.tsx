@@ -21,9 +21,9 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="id_1"
-      label={`Krafan um ${
+      label={`Krafa um ${
         workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-      } frá lögreglu`}
+      }`}
       labelVariant="h3"
     >
       <Box marginBottom={2}>
@@ -68,14 +68,21 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <Box marginBottom={1}>
-        <Text variant="h5">Takmarkanir á gæslu</Text>
+        <Text variant="h5">{`Takmarkanir og tilhögun ${
+          workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+        }`}</Text>
       </Box>
       <Box marginBottom={4}>
         <Text>
           {formatRequestedCustodyRestrictions(
             workingCase.type,
-            workingCase.custodyRestrictions,
-          )}
+            workingCase.requestedCustodyRestrictions,
+            workingCase.requestedOtherRestrictions,
+          )
+            .split('\n')
+            .map((str) => (
+              <Text>{str}</Text>
+            ))}
         </Text>
       </Box>
       <Box marginBottom={2}>
