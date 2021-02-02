@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect, useRef } from 'react'
 import cn from 'classnames'
 import * as styles from './Image.treat'
+import { useMountedState } from 'react-use'
 
 export interface ImageProps {
   url: string
@@ -12,24 +13,14 @@ export interface ImageProps {
   height: number
 }
 
-const useIsMounted = () => {
-  const isMounted = useRef(true)
-  useEffect(() => {
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
-  return isMounted
-}
-
 const useImageLoader = (url: string): boolean => {
-  const isMounted = useIsMounted()
+  const isMounted = useMountedState()
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     const img = new window.Image(100)
     img.onload = img.onerror = () => {
-      if (isMounted.current) {
+      if (isMounted) {
         setLoaded(true)
       }
     }
