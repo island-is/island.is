@@ -49,7 +49,7 @@ callbacks.jwt = async function jwt(token, user) {
   )
   const decoded = parseJwt(token.accessToken)
   const expires = new Date(decoded.exp * 1000)
-  const renewalTime = expires.setSeconds(expires.getSeconds() + 300)
+  const renewalTime = expires.setSeconds(expires.getSeconds() - 300)
 
   if (
     decoded?.exp &&
