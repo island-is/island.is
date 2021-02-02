@@ -11,7 +11,7 @@ export default {
       'https://3c45a55273774b91a897b85e0a1243d1@o406638.ingest.sentry.io/5501494',
   },
   featureFlags: {
-    applications: false,
+    applications: true,
     documents: true,
     settings: true,
     finance: true,
@@ -21,5 +21,6 @@ export default {
     delegation: false,
     assets: false,
     drivingLicense: false,
+    documentProvider: false,
   },
 }
