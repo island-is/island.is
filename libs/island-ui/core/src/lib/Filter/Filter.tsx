@@ -152,7 +152,7 @@ export const Filter: FC<FilterProps> = ({
             {children}
           </Stack>
 
-          <Box textAlign="right" paddingTop={3}>
+          <Box textAlign="right" paddingTop={2}>
             <Button
               icon="reload"
               size="small"
