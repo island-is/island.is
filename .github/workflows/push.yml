@@ -152,7 +152,10 @@ jobs:
           if [[ "$GITHUB_HEAD_REF" == "" ]]; then
             echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
           else
-            echo "HEAD=$(git rev-parse $GITHUB_HEAD_REF)" >> $GITHUB_ENV
+            git fetch origin $GITHUB_HEAD_REF
+            HEAD=$(git rev-parse origin/$GITHUB_HEAD_REF)
+            echo "Resolved HEAD as $HEAD for PR"
+            echo "HEAD=$HEAD" >> $GITHUB_ENV
           fi
         id: git_nx_head
         name: Preparing HEAD tag
