@@ -404,9 +404,7 @@ describe('Application system API', () => {
     const expectPresignedUrl = 'presignedurl'
     const type = 'CHILDREN_RESIDENCE_CHANGE'
 
-    let fileService: FileService = app.get<FileService>(
-      FileService,
-    )
+    let fileService: FileService = app.get<FileService>(FileService)
     jest
       .spyOn(fileService, 'createPdf')
       .mockImplementation(() => Promise.resolve(expectPresignedUrl))
@@ -425,7 +423,7 @@ describe('Application system API', () => {
     const newState = await server
       .put(`/application/${postResponse.body.id}/createPdf`)
       .send({
-        type: type
+        type: type,
       })
       .expect(200)
 
