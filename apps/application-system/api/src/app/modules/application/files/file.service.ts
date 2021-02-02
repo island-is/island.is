@@ -27,15 +27,23 @@ export class FileService {
 
     switch (type) {
       case PDF_TYPES.CHILDREN_RESIDENCE_CHANGE: {
-        return await this.createResidenceChangePdf(answers, externalData)
+        const {
+          parentA,
+          parentB,
+          childrenAppliedFor,
+          expiry,
+        } = this.variablesForResidenceChange(answers, externalData)
+        return await this.createResidenceChangePdf(
+          parentA,
+          parentB,
+          childrenAppliedFor,
+          expiry,
+        )
       }
     }
   }
 
-  private async createResidenceChangePdf(
-    answers: FormValue,
-    externalData: FormValue,
-  ): Promise<string> {
+  variablesForResidenceChange(answers: FormValue, externalData: FormValue) {
     const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
     const nationalRegistry = externalData.nationalRegistry as FormValue
     const nationalRegistryData = nationalRegistry.data as NationalRegistryUser
@@ -60,6 +68,15 @@ export class FileService {
 
     const expiry = answers.expiry as string
 
+    return { parentA, parentB, childrenAppliedFor, expiry }
+  }
+
+  private async createResidenceChangePdf(
+    parentA: ParentResidenceChange,
+    parentB: ParentResidenceChange,
+    childrenAppliedFor: Array<PersonResidenceChange>,
+    expiry: string,
+  ): Promise<string> {
     const pdfBuffer = await generateResidenceChangePdf(
       childrenAppliedFor,
       parentA,
