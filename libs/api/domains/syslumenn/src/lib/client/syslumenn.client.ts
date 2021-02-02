@@ -1,6 +1,6 @@
-import {HttpService, Inject, Injectable} from "@nestjs/common";
-import {IHomestay} from "./models/homestay";
-import {ILogin} from "./models/login";
+import { HttpService, Inject, Injectable } from '@nestjs/common'
+import { IHomestay } from './models/homestay'
+import { ILogin } from './models/login'
 
 export const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 
@@ -17,24 +17,32 @@ export class SyslumennClient {
   constructor(
     private httpService: HttpService,
     @Inject(SYSLUMENN_CLIENT_CONFIG)
-    private clientConfig: SyslumennClientConfig
-  ) { console.log(clientConfig) }
+    private clientConfig: SyslumennClientConfig,
+  ) {
+    console.log(clientConfig)
+  }
 
   private async getToken() {
     const config = {
-      "notandi": this.clientConfig.username,
-      "lykilord": this.clientConfig.password
+      notandi: this.clientConfig.username,
+      lykilord: this.clientConfig.password,
     }
 
-    const response: { data: ILogin } = await this.httpService.post(`${this.clientConfig.url}/dev/v1/Innskraning`, config).toPromise()
+    const response: { data: ILogin } = await this.httpService
+      .post(`${this.clientConfig.url}/dev/v1/Innskraning`, config)
+      .toPromise()
 
     this.accessToken = response.data.audkenni
   }
 
-  async getHomestays(year: number) : Promise<IHomestay[] | null> {
+  async getHomestays(year: number): Promise<IHomestay[] | null> {
     await this.getToken()
 
-    const response: { data: IHomestay[] } = await this.httpService.get(`${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}/${year}`).toPromise()
+    const response: { data: IHomestay[] } = await this.httpService
+      .get(
+        `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}/${year}`,
+      )
+      .toPromise()
 
     return response.data
   }
