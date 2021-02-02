@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import Markdown from 'markdown-to-jsx'
 import { styled } from '@storybook/theming'
 
-const markdown = (name: string = 'this component') => {
+const markdown = (name = 'this component') => {
   return `See *${name}* in the [@islandis](https://www.figma.com/@islandis) community Figma. [Desktop](https://www.figma.com/community/file/901454156629060149) — [Mobile](https://www.figma.com/community/file/901454279005592118)`
 }
 
