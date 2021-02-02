@@ -39,6 +39,13 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               checkboxLabel: 'Ég samþykki gagnaöflun',
               dataProviders: [
                 buildDataProviderItem({
+                  id: 'nationalRegistry',
+                  type: 'NationalRegistryProvider',
+                  title: 'Persónuupplýsingar úr Þjóðskrá',
+                  subTitle:
+                    'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+                }),
+                buildDataProviderItem({
                   id: 'childrenNationalRegistry',
                   type: 'ChildrenNationalRegistryProvider',
                   title: 'Grunnupplýsingar um börn',
@@ -105,6 +112,17 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       id: 'arrangement',
       title: 'Fyrirkomulag',
       children: [
+        buildSubSection({
+          id: 'confirmResidenceChangeInfo',
+          title: 'Tilefni',
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReason',
+              title: 'Hvert er tilefni breytingar á lögheimili?',
+              component: 'Reason',
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'confirmResidenceChangeInfo',
           title: 'Nýtt lögheimili',
