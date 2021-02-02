@@ -79,6 +79,65 @@ export const SignedVerdictOverview: React.FC = () => {
   }
 
   /**
+   * If the case is not rejected it must be accepted because
+   * this screen is only rendered if the case is either accepted
+   * or rejected. Here we are first handling the case where a case
+   * is rejected, then the case where a case is accepted and the
+   * custody end date is in the past and then we assume that
+   * the case is accepted and the custody end date has not come yet.
+   * For accepted cases, we first handle the case where the judge
+   * decided only accept an alternative travel ban and finally we
+   * assume that the actual custody was accepted.
+   */
+
+  const titleForCase = (theCase: Case) => {
+    if (theCase.decision === CaseDecision.REJECTING) {
+      return 'Kröfu hafnað'
+    }
+
+    const isTravelBan =
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      theCase.type == CaseType.TRAVEL_BAN
+
+    if (theCase.isCustodyEndDateInThePast) {
+      return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
+    }
+
+    return isTravelBan ? 'Farbann virkt' : 'Gæsluvarðhald virkt'
+  }
+
+  const subtitleForCase = (theCase: Case) => {
+    if (theCase.decision === CaseDecision.REJECTING) {
+      return `Úrskurðað ${formatDate(
+        theCase.courtEndTime,
+        'PPP',
+      )} kl. ${formatDate(theCase.courtEndTime, TIME_FORMAT)}`
+    }
+
+    const isTravelBan =
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      theCase.type == CaseType.TRAVEL_BAN
+
+    if (theCase.isCustodyEndDateInThePast) {
+      return `${
+        isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
+      } rann út ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
+        theCase.custodyEndDate,
+        TIME_FORMAT,
+      )}`
+    }
+
+    return `${
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+        ? 'Farbann'
+        : 'Gæsla' // ACCEPTING
+    } til ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
+      theCase.custodyEndDate,
+      TIME_FORMAT,
+    )}`
+  }
+
+  /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
    *
@@ -121,72 +180,17 @@ export const SignedVerdictOverview: React.FC = () => {
               <Box>
                 <Box marginBottom={1}>
                   <Text as="h1" variant="h1">
-                    {/**
-                     * If the case is not rejected it must be accepted because
-                     * this screen is only rendered if the case is either accepted
-                     * or rejected. Here we are first handling the case where a case
-                     * is rejected, then the case where a case is accepted and the
-                     * custody end date is in the past and then we assume that
-                     * the case is accepted and the custody end date has not come yet.
-                     * For accepted cases, we first handle the case where the judge
-                     * decided only accept an alternative travel ban and finally we
-                     * assume that the actual custody was accepted.
-                     */}
-                    {
-                      workingCase.decision === CaseDecision.REJECTING
-                        ? 'Kröfu hafnað'
-                        : workingCase.isCustodyEndDateInThePast
-                        ? workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? 'Farbanni lokið'
-                          : 'Gæsluvarðhaldi lokið' // ACCEPTING
-                        : workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                        ? 'Farbann virkt'
-                        : 'Gæsluvarðhald virkt' // ACCEPTING
-                    }
+                    {titleForCase(workingCase)}
                   </Text>
                 </Box>
                 <Text as="h5" variant="h5">
-                  {workingCase.decision === CaseDecision.REJECTING
-                    ? `Úrskurðað ${formatDate(
-                        workingCase.courtEndTime,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.courtEndTime,
-                        TIME_FORMAT,
-                      )}`
-                    : workingCase.isCustodyEndDateInThePast
-                    ? `${
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? 'Farbann'
-                          : 'Gæsla' // ACCEPTING
-                      } rann út ${formatDate(
-                        workingCase.custodyEndDate,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`
-                    : `${
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? 'Farbann'
-                          : 'Gæsla' // ACCEPTING
-                      } til ${formatDate(
-                        workingCase.custodyEndDate,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`}
+                  {subtitleForCase(workingCase)}
                 </Text>
               </Box>
               <Box display="flex" flexDirection="column">
                 {
                   // Custody restrictions
-                  workingCase.decision === CaseDecision.ACCEPTING &&
+                  workingCase.decision === CaseDecision.ACCEPTING && workingCase.type === CaseType.CUSTODY &&
                     workingCase.custodyRestrictions
                       ?.filter((restriction) =>
                         [
@@ -212,8 +216,8 @@ export const SignedVerdictOverview: React.FC = () => {
                 }
                 {
                   // Alternative travel ban restrictions
-                  workingCase.decision ===
-                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+                  (workingCase.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN || (CaseType.TRAVEL_BAN && workingCase.decision === CaseDecision.ACCEPTING)) &&
                     workingCase.custodyRestrictions
                       ?.filter((restriction) =>
                         [
