@@ -79,7 +79,7 @@ describe('Create detention request, step three', () => {
     )
 
     userEvent.type(
-      await screen.findByLabelText(/Gæsluvarðhald \/ farbann til */),
+      await screen.findByLabelText(/Gæsluvarðhald til */),
       `${formattedTodaysDate}.${formattedTodaysMonth}.${todaysDate.getFullYear()}`,
     )
 
