@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 describe('TimeInputField', () => {
-  test('should add a : character when the user enters two digits', () => {
+  test('should add a : character when the user enters two digits', async () => {
     // Arrange
     render(
       <TimeInputField>
@@ -13,11 +13,11 @@ describe('TimeInputField', () => {
     )
 
     // Act
-    userEvent.type(screen.getByRole('textbox'), '11')
+    userEvent.type(await screen.findByRole('textbox'), '11')
 
     // Assert
-    expect((screen.getByRole('textbox') as HTMLInputElement).value).toEqual(
-      '11:',
-    )
+    expect(
+      ((await screen.findByRole('textbox')) as HTMLInputElement).value,
+    ).toEqual('11:')
   })
 })

@@ -7,10 +7,14 @@ export const container = style({
   width: '100%',
 })
 
-export const iframe = style({
+export const content = style({
   height: '100%',
   width: '100%',
   position: 'absolute',
   top: 0,
   left: 0,
+})
+
+export const link = style({
+  textDecoration: 'underline',
 })
