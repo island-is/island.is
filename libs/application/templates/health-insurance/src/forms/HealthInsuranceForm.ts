@@ -75,15 +75,30 @@ export const HealthInsuranceForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'confirmationOfResidency',
-          title: m.confirmationOfResidencyTitle,
-          description: m.confirmationOfResidencyDescription,
+          id: 'informationRetrieval',
+          title: m.externalDataTitle,
           children: [
+            buildCustomField({
+              id: 'informationRetrieval',
+              component: 'InformationRetrieval',
+              title: '',
+            }),
             buildCustomField({
               id: 'errorModal',
               component: 'ErrorModal',
               title: '',
             }),
+          ],
+          condition: () => {return true}
+        }),
+        // Add "copy" of external section
+        // Move modals to this multifield section
+        // Move conditions to util file
+        buildMultiField({
+          id: 'confirmationOfResidency',
+          title: m.confirmationOfResidencyTitle,
+          description: m.confirmationOfResidencyDescription,
+          children: [
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
               title: '',
@@ -101,16 +116,6 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
           children: [
-            buildCustomField({
-              id: 'errorModal',
-              component: 'ErrorModal',
-              title: '',
-              condition: (formValue: FormValue, externalData) => {
-                // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
-                // It should return true if confirmation of residency condition is returned as false...
-                return false
-              },
-            }),
             buildTextField({
               id: 'applicant.name',
               title: m.name,

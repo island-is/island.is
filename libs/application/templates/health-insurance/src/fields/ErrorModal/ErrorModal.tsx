@@ -33,7 +33,6 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
 
-  const [shouldRender, setShouldRender] = useState<boolean>(true)
   const [content, setContent] = useState<ContentType>()
 
   const { data: applicationData, error: applicationsError } = useQuery(
@@ -55,7 +54,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
     const oldPendingApplications = externalData?.oldPendingApplications
       ?.data as string[]
 
-    if (isInsured) {
+    if (isInsured === true) {
       setContent({
         title: 'Already insured',
         description:
@@ -67,7 +66,6 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
       applicationData &&
       applicationData.getApplicationsByApplicant.length > 1
     ) {
-      setShouldRender(true)
       setContent({
         title: formatText(m.activeApplicationTitle, application, formatMessage),
         description: formatText(
@@ -82,7 +80,6 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
         ),
       })
     } else if (oldPendingApplications?.length > 0) {
-      setShouldRender(true)
       setContent({
         title: formatText(m.activeApplicationTitle, application, formatMessage),
         description: formatText(
@@ -105,7 +102,6 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
       !address ||
       (address && !(address.streetAddress && address.postalCode))
     ) {
-      setShouldRender(true)
       setContent({
         title: formatText(m.registerYourselfTitle, application, formatMessage),
         description: formatText(
@@ -119,12 +115,10 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
           formatMessage,
         ),
       })
-    } else {
-      setShouldRender(false)
     }
   }, [applicationData])
 
-  return shouldRender ? (
+  return (
     <ModalBase
       baseId="healthInsuranceErrorModal"
       initialVisibility={true}
@@ -187,8 +181,6 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
         </Box>
       )}
     </ModalBase>
-  ) : (
-    <Box />
   )
 }
 
