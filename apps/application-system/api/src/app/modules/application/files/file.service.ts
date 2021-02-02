@@ -10,6 +10,7 @@ import {
   PersonResidenceChange,
 } from '@island.is/application/templates/children-residence-change'
 import { NationalRegistryUser } from '@island.is/api/schema'
+import { environment } from '../../../../environments'
 
 @Injectable()
 export class FileService {
@@ -68,7 +69,7 @@ export class FileService {
 
     const id = uuid()
     const fileName = `${parentA.ssn}/${id}.pdf`
-    const bucket = `${process.env.NODE_ENV}-legal-residence-change`
+    const bucket = environment.fsS3Bucket
 
     return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
   }
