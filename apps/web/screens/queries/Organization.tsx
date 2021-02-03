@@ -93,19 +93,8 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
         text
         url
       }
-      menuItem {
-        url
-      }
       slices {
         ...AllSlices
-      }
-      sidebarCards {
-        intro
-        name
-        email
-        logo {
-          url
-        }
       }
       featuredImage {
         url

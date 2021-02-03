@@ -4,7 +4,6 @@ import { IOrganizationSubpage } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { mapOrganizationPage, OrganizationPage } from './organizationPage.model'
 import { Image, mapImage } from './image.model'
-import { mapStaffCard, StaffCard } from './staffCard.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
@@ -24,14 +23,8 @@ export class OrganizationSubpage {
   @Field(() => [Link], { nullable: true })
   links?: Array<Link>
 
-  @Field(() => [StaffCard], { nullable: true })
-  sidebarCards: Array<StaffCard>
-
   @Field(() => [SliceUnion], { nullable: true })
   slices: Array<typeof SliceUnion>
-
-  @Field(() => Link, { nullable: true })
-  menuItem?: Link
 
   @Field({ nullable: true })
   parentSubpage?: string
@@ -52,9 +45,7 @@ export const mapOrganizationSubpage = ({
   slug: fields.slug ?? '',
   description: fields.description ?? '',
   links: (fields.links ?? []).map(mapLink),
-  sidebarCards: (fields.sidebarCards ?? []).map(mapStaffCard),
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
-  menuItem: fields.menuItem ? mapLink(fields.menuItem) : null,
   parentSubpage: fields.parentSubpage?.fields.slug,
   organizationPage: fields.organizationPage
     ? mapOrganizationPage(fields.organizationPage)
