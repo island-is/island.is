@@ -1345,12 +1345,6 @@ export interface INamespaceJeremyDevFields {
 
   /** Strings */
   strings?: Record<string, any> | undefined
-
-  /** Defaults */
-  defaults?: Record<string, any> | undefined
-
-  /** Fallback */
-  fallback?: Record<string, any> | undefined
 }
 
 /** Namespace containing translations */
@@ -2485,11 +2479,14 @@ export interface IUrlFields {
 
   /** Page */
   page:
+    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ILifeEventPage
     | INews
+    | IPage
     | IVidspyrnaFrontpage
+    | IVidspyrnaPage
 
   /** Urls list */
   urlsList: string[]
