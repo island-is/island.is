@@ -141,12 +141,12 @@ export class CmsContentfulService {
       limit: 100,
     }
 
-    const r = await this.contentfulRepository
+    const result = await this.contentfulRepository
       .getLocalizedEntries<types.IVidspyrnaTagFields>(lang, params)
       .catch(errorHandler('getAdgerdirTags'))
 
     return {
-      items: r.items.map(mapAdgerdirTag),
+      items: result.items.map(mapAdgerdirTag),
     }
   }
 
@@ -157,12 +157,12 @@ export class CmsContentfulService {
       limit: 100,
     }
 
-    const r = await this.contentfulRepository
+    const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationTagFields>(lang, params)
       .catch(errorHandler('getOrganizationTags'))
 
     return {
-      items: r.items.map(mapOrganizationTag),
+      items: result.items.map(mapOrganizationTag),
     }
   }
 
