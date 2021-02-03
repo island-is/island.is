@@ -1,7 +1,12 @@
 import React from 'react'
 import * as Sentry from '@sentry/node'
-import { GetUrlQuery, QueryGetUrlArgs } from '@island.is/web/graphql/schema'
-import { GET_URL_QUERY } from '@island.is/web/screens/queries'
+import {
+  GetUrlQuery,
+  QueryGetUrlArgs,
+  ErrorPageQuery,
+  QueryGetErrorPageArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_URL_QUERY, GET_ERROR_PAGE } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
 import ErrorScreen from '../screens/Error/Error'
@@ -16,6 +21,7 @@ type ErrorPageProps = {
   statusCode: number
   locale: Locale
   layoutProps: LayoutProps
+  errorPage: ErrorPageQuery['getErrorPage']
 }
 
 type ErrorPageInitialProps = {
@@ -33,7 +39,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 
   render() {
-    const { layoutProps, locale, statusCode } = this.props
+    const { layoutProps, locale, statusCode, errorPage } = this.props
     const { renderError } = this.state
 
     if (layoutProps && !renderError) {
@@ -43,7 +49,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         return (
           <I18n locale={locale} translations={layoutProps.namespace}>
             <Layout {...layoutProps}>
-              <ErrorScreen statusCode={statusCode} />
+              <ErrorScreen errPage={errorPage} statusCode={statusCode} />
             </Layout>
           </I18n>
         )
@@ -52,7 +58,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     }
 
     // fallback to simpler version if we're unable to use the Layout for any reason
-    return <ErrorScreen statusCode={statusCode} />
+    return <ErrorScreen errPage={errorPage} statusCode={statusCode} />
   }
 
   static async getInitialProps(props: ErrorPageInitialProps) {
@@ -106,11 +112,17 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       res.statusCode = statusCode
     }
 
-    // we'll attempt to use the layout component, but if it goes wrong we'll
+    // we'll attempt to get the required data to display page, but if it goes wrong we'll
     // show a simplified error page without any header or footer
     let layoutProps: LayoutProps = null
+    let pageProps: any = null
     try {
       layoutProps = await Layout.getInitialProps({ ...props, locale })
+      pageProps = await getPageProps({
+        apolloClient: props.apolloClient,
+        locale,
+        statusCode,
+      })
       // eslint-disable-next-line no-empty
     } catch {}
 
@@ -120,7 +132,12 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
     await Sentry.flush(2000)
 
-    return { statusCode, locale, layoutProps }
+    return {
+      statusCode,
+      locale,
+      layoutProps,
+      errorPage: pageProps,
+    }
   }
 }
 
@@ -141,18 +158,44 @@ const getRedirectProps = async ({
   path,
   apolloClient,
   locale,
-}: GetRedirectPropsProps): Promise<RedirectProps | null> => {
-  const {
-    data: { getUrl },
-  } = await apolloClient.query<GetUrlQuery, QueryGetUrlArgs>({
-    query: GET_URL_QUERY,
-    variables: {
-      input: {
-        lang: locale as string,
-        slug: path,
+}: GetRedirectPropsProps) => {
+  const { getUrl } = await apolloClient
+    .query<GetUrlQuery, QueryGetUrlArgs>({
+      query: GET_URL_QUERY,
+      variables: {
+        input: {
+          slug: path,
+          lang: locale as string,
+        },
       },
-    },
-  })
+    })
+    .then((response) => response.data)
 
   return getUrl?.page ?? null
+}
+
+interface GetErrorPageProps {
+  statusCode: number
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+}
+
+const getPageProps = async ({
+  statusCode,
+  apolloClient,
+  locale,
+}: GetErrorPageProps) => {
+  const { getErrorPage } = await apolloClient
+    .query<ErrorPageQuery, QueryGetErrorPageArgs>({
+      query: GET_ERROR_PAGE,
+      variables: {
+        input: {
+          lang: locale as string,
+          errorCode: statusCode.toString(),
+        },
+      },
+    })
+    .then((response) => response.data)
+
+  return getErrorPage
 }
