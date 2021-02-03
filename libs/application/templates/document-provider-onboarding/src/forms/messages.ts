@@ -92,11 +92,6 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn kennitölu stofnunar',
     description: '',
   },
-  applicantNationalIdErrorMessage: {
-    id: 'dpo.application:applicant.nationalid-errorMessage',
-    defaultMessage: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
-    description: 'Invalid national ID',
-  },
   applicantName: {
     id: 'dpo.application:applicant.name',
     defaultMessage: 'Nafn stofnunar',

@@ -1,5 +1,6 @@
 import { assign } from 'xstate'
 import * as z from 'zod'
+import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   ApplicationContext,
@@ -28,32 +29,48 @@ enum Roles {
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
 const contact = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
-})
-
-const helpDeskContact = z.object({
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
-})
-
-//TODO: extend contact. Couldn't get it to work easily with contact.extend
-const applicant = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
-  email: z.string().email().nonempty(),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
   phoneNumber: z.string().refine(
     (p) => {
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
       return phoneNumber && phoneNumber.isValid()
     },
-    { message: 'Símanúmerið þarf að vera gilt.' },
+    { message: 'Símanúmerið þarf að vera gilt' },
   ),
-  nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false), {
-    message: 'blobb', //formatMessage(m.applicantNationalIdErrorMessage), //Question: how should error messages be translated?
+})
+
+const helpDeskContact = z.object({
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmer þarf að vera gilt' },
+  ),
+})
+
+//TODO: extend contact. Couldn't get it to work easily with contact.extend
+const applicant = z.object({
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmer þarf að vera gilt' },
+  ),
+  nationalId: z.string().refine((k) => kennitala.isValid(k), {
+    message: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
   }),
-  address: z.string().nonempty(),
-  zipCode: z.string().nonempty(),
+  address: z
+    .string()
+    .nonempty({ message: 'Heimilisfang þarf að vera útfyllt' }),
+  zipCode: z
+    .string()
+    .nonempty({ message: 'Póstnúmer og staður þarf að vera útfyllt' }),
 })
 
 const termsOfAgreement = z.object({
