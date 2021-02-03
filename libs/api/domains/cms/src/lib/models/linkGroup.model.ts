@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { ILinkGroup } from '../generated/contentfulTypes'
 
@@ -6,6 +6,9 @@ import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class LinkGroup {
+  @Field(() => ID)
+  id: string
+
   @Field()
   name: string
 
@@ -16,7 +19,8 @@ export class LinkGroup {
   childrenLinks?: Array<Link>
 }
 
-export const mapLinkGroup = ({ fields }: ILinkGroup): LinkGroup => ({
+export const mapLinkGroup = ({ fields, sys }: ILinkGroup): LinkGroup => ({
+  id: sys.id,
   name: fields.name ?? '',
   primaryLink: fields.primaryLink ? mapLink(fields.primaryLink) : null,
   childrenLinks: (fields.childrenLinks ?? []).map(mapLink),

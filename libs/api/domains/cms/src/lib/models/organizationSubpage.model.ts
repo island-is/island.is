@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IOrganizationSubpage } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
@@ -9,6 +9,9 @@ import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class OrganizationSubpage {
+  @Field(() => ID)
+  id: string
+
   @Field()
   title: string
 
@@ -42,7 +45,9 @@ export class OrganizationSubpage {
 
 export const mapOrganizationSubpage = ({
   fields,
+  sys,
 }: IOrganizationSubpage): OrganizationSubpage => ({
+  id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   description: fields.description ?? '',
