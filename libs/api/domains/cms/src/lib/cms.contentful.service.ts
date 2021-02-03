@@ -173,9 +173,9 @@ export class CmsContentfulService {
       limit: 1,
     }
 
-    const key = Object.values(params).reduce(
-      (str, cur) => (str ? `${str}-${cur}` : cur),
-      '',
+    let key = this.cacheManager.makeKey(
+      'getFrontpageSliderList',
+      Object.values(params),
     )
 
     const cache = await this.cacheManager.get(key)
@@ -260,7 +260,7 @@ export class CmsContentfulService {
   }
 
   async getNews(lang: string, slug: string): Promise<News | null> {
-    const key = `getNews-${lang}-${slug}`
+    const key = this.cacheManager.makeKey('getNews', [lang, slug])
 
     const cache = await this.cacheManager.get(key)
 
@@ -361,8 +361,9 @@ export class CmsContentfulService {
     namespace: string,
     lang: string,
   ): Promise<Namespace | null> {
-    const key = `${namespace}-${lang}`
-    let cache = await this.cacheManager.get(key)
+    const key = this.cacheManager.makeKey('getNamespace', [namespace, lang])
+
+    const cache = await this.cacheManager.get(key)
 
     if (!cache) {
       const result = await this.contentfulRepository

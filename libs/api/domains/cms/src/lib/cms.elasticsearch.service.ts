@@ -28,15 +28,7 @@ export class CmsElasticsearchService {
     index: string,
     { size }: { size?: number },
   ): Promise<ArticleCategory[]> {
-    const keyParts = [index, size]
-
-    const key = keyParts.reduce((str, cur) => {
-      if (cur) {
-        return str + '-' + cur
-      }
-
-      return str
-    }, 'getArticleCategories')
+    const key = this.cacheManager.makeKey('getArticleCategories', [index, size])
 
     const cache = await this.cacheManager.get(key)
 
@@ -65,45 +57,64 @@ export class CmsElasticsearchService {
 
   async getArticles(
     index: string,
-    input: GetArticlesInput,
+    { lang, category, organization, size }: GetArticlesInput,
   ): Promise<Article[]> {
-    const query = {
-      types: ['webArticle'],
-      tags: [],
-      sort: { 'title.sort': 'asc' as sortDirection },
-      size: input.size,
-    }
-
-    if (input.category) {
-      query.tags.push({ type: 'category', key: input.category })
-    }
-
-    if (input.organization) {
-      query.tags.push({ type: 'organization', key: input.organization })
-    }
-
-    const articlesResponse = await this.elasticService.getDocumentsByMetaData(
+    const key = this.cacheManager.makeKey('getArticles', [
       index,
-      query,
-    )
-    return articlesResponse.hits.hits.map<Article>((response) =>
-      JSON.parse(response._source.response),
-    )
+      lang,
+      category,
+      organization,
+      size,
+    ])
+
+    const cache = await this.cacheManager.get(key)
+
+    if (!cache) {
+      const query = {
+        types: ['webArticle'],
+        tags: [],
+        sort: { 'title.sort': 'asc' as sortDirection },
+        size,
+      }
+
+      if (category) {
+        query.tags.push({ type: 'category', key: category })
+      }
+
+      if (organization) {
+        query.tags.push({ type: 'organization', key: organization })
+      }
+
+      const articlesResponse = await this.elasticService.getDocumentsByMetaData(
+        index,
+        query,
+      )
+
+      const response = articlesResponse.hits.hits.map<Article>((response) =>
+        JSON.parse(response._source.response),
+      )
+
+      this.cacheManager.set(key, response)
+
+      return response
+    }
+
+    return cache
   }
 
   async getNews(
     index: string,
     { size, page, order, month, year, tag }: GetNewsInput,
   ): Promise<NewsList> {
-    const keyParts = [index, size, page, order, month, year, tag]
-
-    const key = keyParts.reduce((str, cur) => {
-      if (cur) {
-        return str + '-' + cur
-      }
-
-      return str
-    }, 'getNews')
+    const key = this.cacheManager.makeKey('getNews', [
+      index,
+      size,
+      page,
+      order,
+      month,
+      year,
+      tag,
+    ])
 
     const cache = await this.cacheManager.get(key)
 
@@ -200,14 +211,30 @@ export class CmsElasticsearchService {
     index: string,
     { type, slug }: { type: string; slug: string },
   ): Promise<RequestedType | null> {
-    // return a single news item by slug
-    const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
-    const newsResponse = await this.elasticService.getDocumentsByMetaData(
+    const key = this.cacheManager.makeKey('getSingleDocumentTypeBySlug', [
       index,
-      query,
-    )
-    const response = newsResponse.hits.hits?.[0]?._source?.response
-    return response ? JSON.parse(response) : null
+      type,
+      slug,
+    ])
+
+    const cache = await this.cacheManager.get(key)
+
+    if (!cache) {
+      // return a single item by slug
+      const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
+      const result = await this.elasticService.getDocumentsByMetaData(
+        index,
+        query,
+      )
+      const response = result.hits.hits?.[0]?._source?.response
+      const value = response ? JSON.parse(response) : null
+
+      this.cacheManager.set(key, value)
+
+      return value
+    }
+
+    return cache
   }
 
   async getSingleMenuByName(

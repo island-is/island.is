@@ -20,4 +20,13 @@ export class RedisCacheService {
   async del(key) {
     await this.cache.del(key)
   }
+
+  makeKey = (prefix: string, keyParts: Array<string | number>) =>
+    keyParts.reduce((str, cur) => {
+      if (cur) {
+        return str + '-' + cur
+      }
+
+      return str
+    }, prefix)
 }
