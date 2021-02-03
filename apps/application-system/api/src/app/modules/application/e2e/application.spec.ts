@@ -9,19 +9,17 @@ import * as tokenUtils from '../utils/tokenUtils'
 
 let app: INestApplication
 
-class MockEmailService {
-  private sendMail() {
-    return {
-      messageId: 'some id',
-    }
-  }
+const sendMail = () => ({
+  messageId: 'some id',
+})
 
+class MockEmailService {
   getTransport() {
-    return { sendMail: this.sendMail }
+    return { sendMail }
   }
 
   sendEmail() {
-    return this.sendMail()
+    return sendMail()
   }
 }
 
