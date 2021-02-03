@@ -4,11 +4,16 @@ type ConsoleFn = typeof console.log
 
 // Wrap console logs to convert multiple arguments to something winston supports.
 const consoleLogWrapper = (logFn: ConsoleFn) =>
-  function (message: string, extra: object) {
+  function (message: unknown, extra: unknown) {
     // hot paths.
-    if (arguments.length === 1) {
+    const hasMessage = typeof message === 'string'
+    if (arguments.length === 1 && hasMessage) {
       return logFn(message)
-    } else if (arguments.length === 2 && typeof extra === 'object') {
+    } else if (
+      arguments.length === 2 &&
+      hasMessage &&
+      typeof extra === 'object'
+    ) {
       return logFn(message, extra)
     }
 

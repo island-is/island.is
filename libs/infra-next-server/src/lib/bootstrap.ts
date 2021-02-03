@@ -5,7 +5,7 @@ import createExpressApp, { Express } from 'express'
 import { monkeyPatchServerLogging } from './logging'
 import { getNextConfig } from './config'
 import { setupProxy } from './proxy'
-import { Options } from 'http-proxy-middleware'
+import type { Config } from 'http-proxy-middleware'
 
 type BootstrapOptions = {
   /**
@@ -26,7 +26,7 @@ type BootstrapOptions = {
   /**
    * Proxy configuration. Ignored in production (according to NODE_ENV).
    */
-  proxyConfig?: { [context: string]: Options }
+  proxyConfig?: { [context: string]: Config }
 }
 
 const startServer = (app: Express, port = 4200) => {
@@ -59,4 +59,12 @@ export const bootstrap = async (options: BootstrapOptions) => {
   startServer(expressApp, options.port)
 
   await nextApp.prepare()
+
+  // Make sure server doesn't hang after parent process disconnects, eg when
+  // e2e tests are finished.
+  if (process.env.NX_INVOKED_BY_RUNNER === 'true') {
+    process.on('disconnect', () => {
+      process.exit(0)
+    })
+  }
 }

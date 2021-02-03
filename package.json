@@ -135,7 +135,7 @@
     "graphql-middleware-sentry": "3.2.1",
     "graphql-tag": "2.10.3",
     "graphql-type-json": "0.3.2",
-    "http-proxy-middleware": "1.0.6",
+    "http-proxy-middleware": "0.19.1",
     "hypher": "0.2.5",
     "intl": "1.2.5",
     "intl-locales-supported": "1.8.12",
