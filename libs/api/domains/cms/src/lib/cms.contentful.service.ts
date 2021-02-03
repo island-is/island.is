@@ -47,6 +47,8 @@ import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
+import { GetErrorPageInput } from './dto/getErrorPage.input'
+import { ErrorPage, mapErrorPage } from './models/errorPage.model'
 
 const makePage = (
   page: number,
@@ -219,6 +221,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getArticle'))
 
     return result.items.map(mapArticle)[0] ?? null
+  }
+
+  async getErrorPage({
+    lang,
+    errorCode,
+  }: GetErrorPageInput): Promise<ErrorPage> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IErrorPageFields>(lang, {
+        ['content_type']: 'errorPage',
+        'fields.errorCode': errorCode,
+        include: 10,
+      })
+      .catch(errorHandler('getErrorPage'))
+
+    return result.items.map(mapErrorPage)[0] ?? null
   }
 
   async getRelatedArticles(slug: string, lang: string): Promise<Article[]> {
