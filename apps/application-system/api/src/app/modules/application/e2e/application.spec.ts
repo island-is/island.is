@@ -1,14 +1,40 @@
-import { setup } from '../../../../../test/setup'
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import * as tokenUtils from '../utils/tokenUtils'
+
+import { EmailService } from '@island.is/email-service'
+
+import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
+import * as tokenUtils from '../utils/tokenUtils'
 
 let app: INestApplication
 
+class MockEmailService {
+  private sendMail() {
+    return {
+      messageId: 'some id',
+    }
+  }
+
+  getTransport() {
+    return { sendMail: this.sendMail }
+  }
+
+  sendEmail() {
+    return this.sendMail()
+  }
+}
+
 const nationalId = '123456-4321'
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) => {
+      builder
+        .overrideProvider(EmailService)
+        .useClass(MockEmailService)
+        .compile()
+    },
+  })
 })
 
 describe('Application system API', () => {
