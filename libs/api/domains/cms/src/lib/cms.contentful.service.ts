@@ -214,12 +214,14 @@ export class CmsContentfulService {
     slug: string,
     lang: string,
   ): Promise<OrganizationPage> {
+    const params = {
+      ['content_type']: 'organizationPage',
+      include: 10,
+      'fields.slug': slug,
+    }
+
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationPageFields>(lang, {
-        ['content_type']: 'organizationPage',
-        include: 10,
-        'fields.slug': slug,
-      })
+      .getLocalizedEntries<types.IOrganizationPageFields>(lang, params)
       .catch(errorHandler('getOrganizationPage'))
 
     return result.items.map(mapOrganizationPage)[0] ?? null
@@ -230,14 +232,15 @@ export class CmsContentfulService {
     slug: string,
     lang: string,
   ): Promise<OrganizationSubpage> {
+    const params = {
+      ['content_type']: 'organizationSubpage',
+      include: 10,
+      'fields.slug': slug,
+      'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
+      'fields.organizationPage.fields.slug': organizationSlug,
+    }
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, {
-        ['content_type']: 'organizationSubpage',
-        include: 10,
-        'fields.slug': slug,
-        'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
-        'fields.organizationPage.fields.slug': organizationSlug,
-      })
+      .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, params)
       .catch(errorHandler('getOrganizationSubpage'))
 
     return result.items.map(mapOrganizationSubpage)[0] ?? null
