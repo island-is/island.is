@@ -75,12 +75,14 @@ export const transformApplicationToParentalLeaveDTO = (
     paymentInfo: {
       bankAccount: extractAnswer(application.answers, 'payments.bank'),
       personalAllowance:
-        extractAnswer<number>(application.answers, 'personalAllowance.usage') ||
+        Number(extractAnswer(application.answers, 'personalAllowance.usage')) ||
         0,
       personalAllowanceFromSpouse:
-        extractAnswer<number>(
-          application.answers,
-          'personalAllowanceFromSpouse.usage',
+        Number(
+          extractAnswer(
+            application.answers,
+            'personalAllowanceFromSpouse.usage',
+          ),
         ) || 0,
       // TODO: get save union value from form
       union: extractAnswer(application.answers, 'union.todo'),
