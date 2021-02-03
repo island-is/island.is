@@ -1,3 +1,4 @@
-export interface PendingApplications {
+export interface Applications {
   id: string
+  state: string
 }

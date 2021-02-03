@@ -1,13 +1,6 @@
 import { ExternalData } from "@island.is/application/core"
 import { Address } from '@island.is/api/schema'
-import { useQuery } from '@apollo/client'
-import { APPLICANT_APPLICATIONS } from '@island.is/application/graphql'
-import { ApplicationTypes } from '@island.is/application/core'
-import { PendingApplications } from "./dataProviders/APIDataTypes"
-
-// Flytta ut alla conditions till separata util-funktioner
-// Returnera boolean
-// Hämta text i separat util-funktion / hook-funktion
+import { Applications } from "./dataProviders/APIDataTypes"
   
 export const hasHealthInsurance = (externalData: ExternalData) => {
   const isInsured = externalData?.healthInsurance?.data
@@ -15,8 +8,9 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
 }
 
 export const hasActiveApplication = (externalData: ExternalData) => {
-    const pendingApplications = externalData?.pendingApplications
-    ?.data as PendingApplications[]
+    const applications = externalData?.applications
+    ?.data as Applications[]
+    const pendingApplications = applications?.filter((application) => application.state === 'draft' || application.state === 'inReview' || application.state === 'missingInfo')
     return pendingApplications?.length > 1
 }
 

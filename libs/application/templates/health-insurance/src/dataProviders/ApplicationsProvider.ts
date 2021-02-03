@@ -6,13 +6,14 @@ import {
   ApplicationTypes,
 } from '@island.is/application/core'
 
-export class PendingApplicationsProvider extends BasicDataProvider {
-  type = 'PendingApplicationsProvider'
+export class ApplicationsProvider extends BasicDataProvider {
+  type = 'ApplicationsProvider'
 
   provide(application: Application): Promise<string> {
     const query = `query GetApplicantApplications {
       getApplicationsByApplicant(typeId: ${ApplicationTypes.HEALTH_INSURANCE}) {
         id
+        state
       }
     }`
 
