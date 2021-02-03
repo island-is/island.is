@@ -12,7 +12,7 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
     options: { locale },
   } = props
 
-  const applicantEmail = get(application.answers, 'person.email')
+  const employerEmail = get(application.answers, 'employer.email')
 
   // TODO translate using locale
   const subject =
@@ -46,7 +46,7 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
     to: [
       {
         name: '',
-        address: applicantEmail as string,
+        address: employerEmail as string,
       },
     ],
     subject,

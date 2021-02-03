@@ -11,7 +11,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
     options: { locale },
   } = props
 
-  const applicantEmail = get(application.answers, 'person.email')
+  const applicantEmail = get(application.answers, 'applicant.email')
 
   // TODO translate using locale
   const subject =
