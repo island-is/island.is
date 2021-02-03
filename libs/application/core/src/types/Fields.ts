@@ -30,6 +30,7 @@ export type Context = {
 export interface Option {
   value: string
   label: FormText
+  subLabel?: FormText
   tooltip?: FormText
   excludeOthers?: boolean
 }
