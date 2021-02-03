@@ -2,12 +2,6 @@ import { signIn, signOut } from 'next-auth/client'
 import { SessionInfo } from '../entities/common/SessionInfo'
 
 const isExpired = (session: SessionInfo): boolean => {
-  if (session) {
-    console.log(
-      'isExpired',
-      (new Date(session.expires).getTime() - new Date().getTime()) / 1000,
-    )
-  }
   return !session || new Date() > new Date(session.expires)
 }
 
