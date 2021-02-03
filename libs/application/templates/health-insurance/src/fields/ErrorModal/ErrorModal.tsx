@@ -85,7 +85,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   size="default"
                   onClick={() => {
                     closeModal()
-                    if (content?.buttonAction) content?.buttonAction()
+                    content?.buttonAction()
                   }}
                   fluid
                 >

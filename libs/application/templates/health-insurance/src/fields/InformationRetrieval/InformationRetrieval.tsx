@@ -5,6 +5,10 @@ import { m } from '../../forms/messages'
 import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
 import * as styles from './InformationRetrieval.treat'
 
+interface DataRetrievalContent {
+  title: string
+  description: string
+}
 const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
@@ -33,7 +37,7 @@ const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
         formatMessage,
       ),
     },
-  ] as any[]
+  ] as DataRetrievalContent[]
 
   return (
     <Box>
@@ -66,7 +70,7 @@ const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
       <Box background="blue100" padding={4} borderRadius="large" marginTop={5}>
         <Checkbox
           checked={true}
-          onChange={() => {}}
+          onChange={() => true}
           label={formatText(m.externalDataCheckbox, application, formatMessage)}
         />
       </Box>

@@ -25,8 +25,8 @@ export interface ReviewFieldProps extends FieldBaseProps {
 }
 
 export interface ContentType {
-  title?: FormText
-  description?: FormText | (() => void)
-  buttonText?: FormText
-  buttonAction?: () => void
+  title: FormText
+  description: FormText | (() => void)
+  buttonText: FormText
+  buttonAction: () => void
 }
