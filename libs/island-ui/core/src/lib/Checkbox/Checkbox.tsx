@@ -5,7 +5,7 @@ import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './Checkbox.treat'
 
-export interface CheckboxProps {
+export interface CheckboxProps  {
   name?: string
   id?: string
   label?: React.ReactNode
@@ -16,12 +16,15 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
-  large?: boolean
   filled?: boolean
+  large?: boolean
+  /** subLabel can only be used the the 'large' prop set to true */
+  subLabel?: string
 }
 
 export const Checkbox = ({
   label,
+  subLabel,
   name,
   id = name,
   checked,
@@ -79,7 +82,12 @@ export const Checkbox = ({
             color={checked ? 'white' : 'transparent'}
           />
         </div>
-        {label}
+        <span className={styles.labelText}>
+          {label}
+          {subLabel && large && (
+            <span className={styles.subLabel}>{subLabel}</span>
+          )}
+        </span>
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {
