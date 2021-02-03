@@ -36,11 +36,9 @@ export class SyslumennClient {
   async getHomestays(year?: number): Promise<IHomestay[] | null> {
     await this.getToken()
 
-    let url = `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}`
-
-    if (year) {
-      url = `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}/${year}`
-    }
+    const url = year
+      ? `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}/${year}`
+      : `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}`
 
     const response: { data: IHomestay[] } = await this.httpService
       .get(url)
