@@ -173,11 +173,26 @@ export class CmsContentfulService {
       limit: 1,
     }
 
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IFrontpageSliderListFields>(lang, params)
-      .catch(errorHandler('getFrontpageSliderList'))
+    const key = Object.values(params).reduce(
+      (str, cur) => (str ? `${str}-${cur}` : cur),
+      '',
+    )
 
-    return result.items.map(mapFrontpageSliderList)[0] ?? null
+    const cache = await this.cacheManager.get(key)
+
+    if (!cache) {
+      const result = await this.contentfulRepository
+        .getLocalizedEntries<types.IFrontpageSliderListFields>(lang, params)
+        .catch(errorHandler('getFrontpageSliderList'))
+
+      const value = result.items.map(mapFrontpageSliderList)[0] ?? null
+
+      this.cacheManager.set(key, value)
+
+      return value
+    }
+
+    return cache
   }
 
   async getAdgerdirPage(slug: string, lang: string): Promise<AdgerdirPage> {
@@ -245,15 +260,27 @@ export class CmsContentfulService {
   }
 
   async getNews(lang: string, slug: string): Promise<News | null> {
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.INewsFields>(lang, {
-        ['content_type']: 'news',
-        include: 10,
-        'fields.slug': slug,
-      })
-      .catch(errorHandler('getNews'))
+    const key = `getNews-${lang}-${slug}`
 
-    return result.items.map(mapNews)[0] ?? null
+    const cache = await this.cacheManager.get(key)
+
+    if (!cache) {
+      const result = await this.contentfulRepository
+        .getLocalizedEntries<types.INewsFields>(lang, {
+          ['content_type']: 'news',
+          include: 10,
+          'fields.slug': slug,
+        })
+        .catch(errorHandler('getNews'))
+
+      const value = result.items.map(mapNews)[0] ?? null
+
+      this.cacheManager.set(key, value)
+
+      return value
+    }
+
+    return cache
   }
 
   async getAboutPage({ lang }: GetAboutPageInput): Promise<AboutPage | null> {

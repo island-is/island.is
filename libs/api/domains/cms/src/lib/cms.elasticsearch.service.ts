@@ -15,28 +15,52 @@ import { AboutPage } from './models/aboutPage.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
+import { RedisCacheService } from './redis-cache.service'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) {}
+  constructor(
+    private elasticService: ElasticService,
+    private cacheManager: RedisCacheService,
+  ) {}
 
   async getArticleCategories(
     index: string,
     { size }: { size?: number },
   ): Promise<ArticleCategory[]> {
-    const query = {
-      types: ['webArticleCategory'],
-      sort: { 'title.sort': 'asc' as sortDirection },
-      size,
-    }
-    const categoryResponse = await this.elasticService.getDocumentsByMetaData(
-      index,
-      query,
-    )
+    const keyParts = [index, size]
 
-    return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
-      JSON.parse(response._source.response),
-    )
+    const key = keyParts.reduce((str, cur) => {
+      if (cur) {
+        return str + '-' + cur
+      }
+
+      return str
+    }, 'getArticleCategories')
+
+    const cache = await this.cacheManager.get(key)
+
+    if (!cache) {
+      const query = {
+        types: ['webArticleCategory'],
+        sort: { 'title.sort': 'asc' as sortDirection },
+        size,
+      }
+      const categoryResponse = await this.elasticService.getDocumentsByMetaData(
+        index,
+        query,
+      )
+
+      const response = categoryResponse.hits.hits.map<ArticleCategory>(
+        (response) => JSON.parse(response._source.response),
+      )
+
+      this.cacheManager.set(key, response)
+
+      return response
+    }
+
+    return cache
   }
 
   async getArticles(
@@ -71,50 +95,70 @@ export class CmsElasticsearchService {
     index: string,
     { size, page, order, month, year, tag }: GetNewsInput,
   ): Promise<NewsList> {
-    let dateQuery
-    if (year) {
-      dateQuery = {
-        date: {
-          from: `${year}-${month?.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD
-          to: `${year}-${month?.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD
-        },
-      }
-    } else {
-      dateQuery = {}
-    }
+    const keyParts = [index, size, page, order, month, year, tag]
 
-    let tagQuery
-    if (tag) {
-      tagQuery = {
-        tags: [
-          {
-            key: tag,
-            type: 'genericTag',
+    const key = keyParts.reduce((str, cur) => {
+      if (cur) {
+        return str + '-' + cur
+      }
+
+      return str
+    }, 'getNews')
+
+    const cache = await this.cacheManager.get(key)
+
+    if (!cache) {
+      let dateQuery
+      if (year) {
+        dateQuery = {
+          date: {
+            from: `${year}-${month?.toString().padStart(2, '0') ?? '01'}-01`, // create a date with the format YYYY-MM-DD
+            to: `${year}-${month?.toString().padStart(2, '0') ?? '12'}-31`, // create a date with the format YYYY-MM-DD
           },
-        ],
+        }
+      } else {
+        dateQuery = {}
       }
+
+      let tagQuery
+      if (tag) {
+        tagQuery = {
+          tags: [
+            {
+              key: tag,
+              type: 'genericTag',
+            },
+          ],
+        }
+      }
+
+      const query = {
+        types: ['webNews'],
+        sort: { dateCreated: order as sortDirection },
+        ...dateQuery,
+        ...tagQuery,
+        page,
+        size,
+      }
+
+      const articlesResponse = await this.elasticService.getDocumentsByMetaData(
+        index,
+        query,
+      )
+
+      const response = {
+        total: articlesResponse.hits.total.value,
+        items: articlesResponse.hits.hits.map<News>((response) =>
+          JSON.parse(response._source.response),
+        ),
+      }
+
+      this.cacheManager.set(key, response)
+
+      return response
     }
 
-    const query = {
-      types: ['webNews'],
-      sort: { dateCreated: order as sortDirection },
-      ...dateQuery,
-      ...tagQuery,
-      page,
-      size,
-    }
-
-    const articlesResponse = await this.elasticService.getDocumentsByMetaData(
-      index,
-      query,
-    )
-
-    return {
-      total: articlesResponse.hits.total.value,
-      items: articlesResponse.hits.hits.map<News>((response) =>
-        JSON.parse(response._source.response),
-      ),
-    }
+    return cache
   }
 
   async getNewsDates(
