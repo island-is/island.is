@@ -111,9 +111,7 @@ describe('Parental Leave Application Template', () => {
       })
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('employerWaitingToAssign')
-      // There should be no one assigned until employer accepts to be assigned
-      // TODO: fix that this is not an empty array
-      expect(finalApplication.assignees).toEqual([otherParentId])
+      expect(finalApplication.assignees).toEqual([])
     })
   })
 })
