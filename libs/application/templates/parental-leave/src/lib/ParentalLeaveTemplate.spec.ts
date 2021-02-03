@@ -7,10 +7,6 @@ import {
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 
-const mockApiTemplateUtils = {
-  performAction: () => Promise.resolve(''),
-}
-
 function buildApplication(data: {
   answers?: FormValue
   externalData?: ExternalData
@@ -46,12 +42,9 @@ describe('Parental Leave Application Template', () => {
         }),
         ParentalLeaveTemplate,
       )
-      const [hasChanged, newState, newApplication] = helper.changeState(
-        {
-          type: 'SUBMIT',
-        },
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: 'SUBMIT',
+      })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('otherParentApproval')
       expect(newApplication.assignees).toEqual([otherParentId])
@@ -73,12 +66,9 @@ describe('Parental Leave Application Template', () => {
         }),
         ParentalLeaveTemplate,
       )
-      const [hasChanged, newState, newApplication] = helper.changeState(
-        {
-          type: 'SUBMIT',
-        },
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: 'SUBMIT',
+      })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('employerWaitingToAssign')
       // There should be no one assigned until employer accepts to be assigned
@@ -101,12 +91,9 @@ describe('Parental Leave Application Template', () => {
         }),
         ParentalLeaveTemplate,
       )
-      const [hasChanged, newState, newApplication] = helper.changeState(
-        {
-          type: 'SUBMIT',
-        },
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: 'SUBMIT',
+      })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('otherParentApproval')
       expect(newApplication.assignees).toEqual([otherParentId])
@@ -119,12 +106,9 @@ describe('Parental Leave Application Template', () => {
         hasChangedAgain,
         finalState,
         finalApplication,
-      ] = finalHelper.changeState(
-        {
-          type: 'APPROVE',
-        },
-        mockApiTemplateUtils,
-      )
+      ] = finalHelper.changeState({
+        type: 'APPROVE',
+      })
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('employerWaitingToAssign')
       // There should be no one assigned until employer accepts to be assigned
