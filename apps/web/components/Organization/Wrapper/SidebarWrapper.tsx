@@ -31,9 +31,7 @@ export const SidebarWrapper: FC<SidebarWrapperProps> = ({
         <Box
           printHidden
           className={styles.sidebarWrapper}
-          display={
-            hideSidebarInMobile ? ['none', 'none', 'block'] : ['block', 'block']
-          }
+          display={hideSidebarInMobile ? ['none', 'none', 'block'] : 'block'}
         >
           {sidebarContent}
         </Box>
@@ -46,7 +44,7 @@ export const SidebarWrapper: FC<SidebarWrapperProps> = ({
                 '9/9',
                 '9/9',
                 '9/9',
-                fullWidthContent ? '9/9' : '7/9',
+                fullWidthContent ? '8/9' : '7/9',
               ]}
             >
               <Box

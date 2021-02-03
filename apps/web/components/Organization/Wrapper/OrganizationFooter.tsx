@@ -20,7 +20,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
 }) => {
   return (
     <footer aria-labelledby="organizationFooterTitle">
-      <Box background={'blueberry600'} color={'white'} paddingTop={5}>
+      <Box background="blueberry600" color="white" paddingTop={5}>
         <GridContainer>
           <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
             <Box
@@ -29,14 +29,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
               alignItems="center"
               paddingBottom={5}
               marginBottom={5}
-              borderColor={'blueberry300'}
-              borderBottomWidth={'standard'}
+              borderColor="blueberry300"
+              borderBottomWidth="standard"
             >
               <Box marginRight={4}>
                 <img
                   src={organizationPage.organization.logo.url}
                   alt=""
-                  width={'70'}
+                  width="70"
                 />
               </Box>
               <div id="organizationFooterTitle">
@@ -54,14 +54,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
                   <Box marginBottom={5}>
                     <Box marginBottom={1}>
                       <Text
-                        color={'white'}
+                        color="white"
                         fontWeight={index === 0 ? 'semiBold' : 'regular'}
                       >
                         {item.link ? (
                           <Link
                             href={item.link.url}
-                            underline={'normal'}
-                            underlineVisibility={'always'}
+                            underline="normal"
+                            underlineVisibility="always"
                           >
                             {item.title}
                           </Link>

@@ -26,7 +26,6 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './SubPage.treat'
 import {
   OrganizationSlice,
   OrganizationWrapper,
@@ -79,7 +78,6 @@ const SubPage: Screen<SubPageProps> = ({
       pageDescription={subpage.description}
       organizationPage={organizationPage}
       pageFeaturedImage={subpage.featuredImage}
-      fullWidthContent={true}
       breadcrumbItems={[
         {
           title: 'Ísland.is',

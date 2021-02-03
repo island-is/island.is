@@ -22,10 +22,10 @@ export const OfficeCard: React.FC<OfficeCardProps> = ({
       boxShadow="subtle"
       border="standard"
       borderColor="blue200"
-      marginBottom={[1, 1, 1]}
-      marginTop={[1, 1, 1]}
-      paddingX={[3, 3, 3]}
-      paddingY={[3, 3, 3]}
+      marginBottom={1}
+      marginTop={1}
+      paddingX={3}
+      paddingY={3}
     >
       <Text variant="h4" as="h3">
         {name}

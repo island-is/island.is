@@ -11,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './OrganizationWrapper.treat'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import NextLink from 'next/link'
 import {
   HeadWithSocialSharing,
@@ -51,7 +50,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   fullWidthContent = false,
   children,
 }) => {
-  const { linkResolver } = useLinkResolver()
   const isMobile = useWindowSize().width < theme.breakpoints.md
 
   return (
@@ -81,7 +79,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         </GridContainer>
         <Box className={styles.headerWrapper}>
           <SidebarWrapper sidebarContent="" hideSidebarInMobile={true}>
-            <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4, 4]}>
+            <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <img
                   src={organizationPage.organization.logo.url}
