@@ -78,30 +78,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'waitingToAssignApplication',
-          },
-        },
-      },
-      waitingToAssignApplication: {
-        meta: {
-          name: 'Waiting to be assigned',
-          progress: 0.5,
-          onEntry: {
-            apiModuleAction: API_MODULE.assignApplication,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/PendingReview').then((val) =>
-                  Promise.resolve(val.PendingReview),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          ASSIGN: {
             target: 'inReview',
           },
         },
