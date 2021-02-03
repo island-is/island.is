@@ -35,6 +35,7 @@ const MissingInfoRemarks: FC<ReviewFieldProps> = ({
         formatMessage,
       )}
       ref={register}
+      backgroundColor={'blue'}
       disabled={!isEditable}
       textarea
     />

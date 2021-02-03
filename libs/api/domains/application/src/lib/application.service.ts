@@ -11,13 +11,17 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 
-const handleError = (error: any) => {
+const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
+
   if (error.json) {
-    error.json().then((errorMessage: unknown) => {
-      logger.error(errorMessage)
-    })
+    const json = await error.json()
+
+    logger.error(json)
+
+    throw new ApolloError(JSON.stringify(json), error.status)
   }
+
   throw new ApolloError('Failed to resolve request', error.status)
 }
 

@@ -26,8 +26,8 @@ class BackendAPI extends RESTDataSource {
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
-  getUser(nationalId: string): Promise<User> {
-    return this.get(`user/${nationalId}`)
+  getUsers(): Promise<User[]> {
+    return this.get(`users`)
   }
 
   getCases(): Promise<Case[]> {

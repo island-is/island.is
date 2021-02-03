@@ -48,9 +48,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
         ]}
         renderLink={(link, { typename, slug }) => {
           return (
-            <Link {...linkResolver(typename as LinkType, slug)} passHref>
-              {link}
-            </Link>
+            <Link {...linkResolver(typename as LinkType, slug)}>{link}</Link>
           )
         }}
       />

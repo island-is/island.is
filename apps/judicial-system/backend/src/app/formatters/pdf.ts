@@ -16,6 +16,9 @@ import {
   formatNationalId,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
+  NounCases,
+  formatAccusedByGender,
+  isFalsy,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -33,10 +36,7 @@ export function writeFile(fileName: string, documentContent: string) {
   fs?.writeFileSync(`../${fileName}`, documentContent, { encoding: 'binary' })
 }
 
-export async function generateRequestPdf(
-  existingCase: Case,
-  user: User,
-): Promise<string> {
+export async function generateRequestPdf(existingCase: Case): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -58,7 +58,7 @@ export async function generateRequestPdf(
       align: 'center',
     })
     .fontSize(16)
-    .text(`Embætti: ${user.institution}`, {
+    .text(`Embætti: ${existingCase.prosecutor?.institution || 'Ekki skráð'}`, {
       align: 'center',
     })
     .lineGap(40)
@@ -74,6 +74,13 @@ export async function generateRequestPdf(
     .text(`Fullt nafn: ${existingCase.accusedName}`)
     .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
+    .text(
+      `Verjandi sakbornings: ${
+        isFalsy(existingCase.defenderName)
+          ? 'Hefur ekki verið skráður.'
+          : existingCase.defenderName
+      }`,
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -175,8 +182,8 @@ export async function generateRequestPdf(
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `F.h.l. ${existingCase.prosecutor?.name || user?.name} ${
-        existingCase.prosecutor?.title || user.title
+      `F.h.l. ${existingCase.prosecutor?.name || ''} ${
+        existingCase.prosecutor?.title || ''
       }`,
     )
     .end()
@@ -225,7 +232,7 @@ export async function generateRulingPdf(
     .lineGap(30)
     .text(`LÖKE málsnr. ${existingCase.policeCaseNumber}`, { align: 'center' })
     .text(
-      `Þinghald hófst þann ${formatDate(existingCase.courtStartTime, 'PPPp')}`,
+      `Þinghald hófst þann ${formatDate(existingCase.courtStartTime, 'PPPp')}.`,
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -282,11 +289,16 @@ export async function generateRulingPdf(
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Réttindi kærða')
+    .text(
+      `Réttindi ${formatAccusedByGender(
+        existingCase.accusedGender,
+        NounCases.GENITIVE,
+      )}`,
+    )
     .font('Helvetica')
     .fontSize(12)
     .text(
-      'Kærða er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
+      'Sakborningi er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -296,7 +308,12 @@ export async function generateRulingPdf(
     .font('Helvetica-Bold')
     .fontSize(14)
     .lineGap(8)
-    .text('Afstaða kærða')
+    .text(
+      `Afstaða ${formatAccusedByGender(
+        existingCase.accusedGender,
+        NounCases.GENITIVE,
+      )}`,
+    )
     .font('Helvetica')
     .fontSize(12)
     .text(existingCase.accusedPlea, {
@@ -444,7 +461,12 @@ export async function generateRulingPdf(
     )
     .font('Helvetica-Bold')
     .lineGap(6)
-    .text(formatAppeal(existingCase.accusedAppealDecision, 'Kærði'))
+    .text(
+      formatAppeal(
+        existingCase.accusedAppealDecision,
+        capitalize(formatAccusedByGender(existingCase.accusedGender)),
+      ),
+    )
     .text(formatAppeal(existingCase.prosecutorAppealDecision, 'Sækjandi'))
 
   if (existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL) {
@@ -453,7 +475,12 @@ export async function generateRulingPdf(
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
-      .text('Yfirlýsing um kæru kærða')
+      .text(
+        `Yfirlýsing um kæru ${formatAccusedByGender(
+          existingCase.accusedGender,
+          NounCases.GENITIVE,
+        )}`,
+      )
       .font('Helvetica')
       .fontSize(12)
       .text(existingCase.accusedAppealAnnouncement, {
@@ -548,7 +575,12 @@ export async function generateRulingPdf(
     .lineGap(20)
     .text(' ')
     .text(
-      `Þinghaldi lauk þann ${formatDate(existingCase.courtEndTime, 'PPPp')}`,
+      existingCase.courtEndTime
+        ? `Þinghaldi lauk þann ${formatDate(
+            existingCase.courtEndTime,
+            'PPPp',
+          )}.`
+        : 'Þinghaldi er ekki lokið.',
     )
     .end()
 

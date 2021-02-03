@@ -1,58 +1,64 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
+import {
+  UnionApi,
+  Union,
+  PensionApi,
+  PensionFund,
+} from '@island.is/vmst-client'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
-import { Union } from './union.model'
-import { PensionFund } from './pensionFund.model'
 import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 
-// const accessToken = process.env.DIRECTORATE_OF_LABOUR_ACCESS_TOKEN
-
-// TODO implement this class when the endpoints are ready, this is just mocks atm
+const isRunningInDevelopment = process.env.NODE_ENV === 'development'
 
 @Injectable()
 export class DirectorateOfLabourRepository {
-  //   private client: any
-
-  constructor() {
+  constructor(private unionApi: UnionApi, private pensionApi: PensionApi) {
     logger.debug('Created Directorate of labour repository')
   }
 
-  //   getClient(): any {
-  //     if (!accessToken) {
-  //       throw new Error(
-  //         'Missing environment variables: DIRECTORATE_OF_LABOUR_ACCESS_TOKEN',
-  //       )
-  //     }
-
-  //     if (this.client) {
-  //       return this.client
-  //     }
-
-  //     return 'new client'
-  //   }
-
   async getUnions(): Promise<Union[]> {
-    return [
-      {
-        id: 'id',
-        name: 'VR',
-      },
-    ]
+    if (isRunningInDevelopment) {
+      return [
+        {
+          id: 'id',
+          name: 'VR',
+        },
+      ]
+    }
+
+    const { unions } = await this.unionApi.unionGetUnions()
+
+    if (unions) {
+      return unions
+    }
+
+    throw new Error('Could not fetch unions')
   }
 
   async getPensionFunds(): Promise<PensionFund[]> {
-    return [
-      {
-        id: 'id',
-        name: 'Frjalsi',
-      },
-    ]
+    if (isRunningInDevelopment) {
+      return [
+        {
+          id: 'id',
+          name: 'Frjalsi',
+        },
+      ]
+    }
+
+    const { pensionFunds } = await this.pensionApi.pensionGetPensionFunds()
+
+    if (pensionFunds) {
+      return pensionFunds
+    }
+
+    throw new Error('Could not fetch pension funds')
   }
 
   async getParentalLeavesEntitlements(
-    dateOfBirth: string,
-    nationalId: string,
+    dateOfBirth: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+    nationalId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<ParentalLeaveEntitlement[]> {
     return [
       {
@@ -63,9 +69,9 @@ export class DirectorateOfLabourRepository {
   }
 
   async getParentalLeavesEstimatedPaymentPlan(
-    dateOfBirth: string,
+    dateOfBirth: string, // eslint-disable-line @typescript-eslint/no-unused-vars
     period: ParentalLeavePeriod[],
-    nationalId: string,
+    nationalId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<ParentalLeavePaymentPlan[]> {
     const paymentPlan: ParentalLeavePaymentPlan[] = period.map((p) => {
       return {
@@ -82,9 +88,9 @@ export class DirectorateOfLabourRepository {
   }
 
   async getParentalLeavesApplicationPaymentPlan(
-    dateOfBirth: string,
-    applicationId: string,
-    nationalId: string,
+    dateOfBirth: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+    applicationId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+    nationalId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<ParentalLeavePaymentPlan[]> {
     return [
       {

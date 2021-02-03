@@ -24,7 +24,7 @@ import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
-import { IdpRestriction } from '../entities/models/idp-restriction.model'
+import { IdpProvider } from '../entities/models/idp-provider.model'
 
 @Injectable()
 export class ClientsService {
@@ -45,8 +45,8 @@ export class ClientsService {
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
-    @InjectModel(IdpRestriction)
-    private idpRestriction: typeof IdpRestriction,
+    @InjectModel(IdpProvider)
+    private idpProvider: typeof IdpProvider,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
     @InjectModel(ApiScope)
@@ -281,7 +281,7 @@ export class ClientsService {
 
     if (!name || !clientId) {
       throw new BadRequestException(
-        'IdpRestriction and clientId must be provided',
+        'IdpRestriction name and clientId must be provided',
       )
     }
 
@@ -528,8 +528,8 @@ export class ClientsService {
   }
 
   /** Finds available idp restrictions */
-  async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
-    const idpRestrictions = await this.idpRestriction.findAll()
+  async findAllIdpRestrictions(): Promise<IdpProvider[] | null> {
+    const idpRestrictions = await this.idpProvider.findAll()
     return idpRestrictions
   }
 }

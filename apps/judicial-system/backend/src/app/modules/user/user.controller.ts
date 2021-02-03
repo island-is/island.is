@@ -22,9 +22,19 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
+  @Get('users')
+  @ApiOkResponse({
+    type: User,
+    isArray: true,
+    description: 'Gets all existing users',
+  })
+  getAll(): Promise<User[]> {
+    return this.userService.getAll()
+  }
+
   @Get('user/:nationalId')
-  @ApiOkResponse({ type: User })
-  async getCurrentUser(@Param('nationalId') nationalId: string) {
+  @ApiOkResponse({ type: User, description: 'Gets an existing user' })
+  async getByNationalId(@Param('nationalId') nationalId: string) {
     const user = await this.userService.findByNationalId(nationalId)
 
     if (!user) {

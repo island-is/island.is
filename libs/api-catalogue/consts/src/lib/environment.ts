@@ -1,5 +1,8 @@
+/**
+ * Enum to represent our infrastructure environments as constants.
+ */
 export enum Environment {
-  DEV = 'dev',
+  DEVELOPMENT = 'development',
   STAGING = 'staging',
-  PROD = 'prod',
+  PRODUCTION = 'production',
 }

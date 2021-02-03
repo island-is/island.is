@@ -34,7 +34,17 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             buildExternalDataProvider({
               title: 'Gagnaöflun',
               id: 'approveExternalData',
+              subTitle:
+                'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+              checkboxLabel: 'Ég samþykki gagnaöflun',
               dataProviders: [
+                buildDataProviderItem({
+                  id: 'nationalRegistry',
+                  type: 'NationalRegistryProvider',
+                  title: 'Persónuupplýsingar úr Þjóðskrá',
+                  subTitle:
+                    'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+                }),
                 buildDataProviderItem({
                   id: 'childrenNationalRegistry',
                   type: 'ChildrenNationalRegistryProvider',
@@ -60,7 +70,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               id: 'selectChild',
               title: 'Velja barn/börn til að flytja lögheimili fyrir',
               description:
-                'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða börn á að flytja lögheimili fyrir.',
+                'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða barn/börn á að flytja lögheimili fyrir.',
               large: true,
               options: (application) =>
                 extractChildrenFromApplication(application).map((c) => ({
@@ -72,7 +82,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'otherParent',
-          title: 'Hitt foreldri',
+          title: 'Staðfesta foreldri',
           children: [
             buildMultiField({
               id: 'informationAboutOtherParent',
@@ -102,6 +112,17 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       id: 'arrangement',
       title: 'Fyrirkomulag',
       children: [
+        buildSubSection({
+          id: 'confirmResidenceChangeInfo',
+          title: 'Tilefni',
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReason',
+              title: 'Hvert er tilefni breytingar á lögheimili?',
+              component: 'Reason',
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'confirmResidenceChangeInfo',
           title: 'Nýtt lögheimili',

@@ -157,14 +157,15 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
 
       fs.writeFileSync(filename, updatedFile)
 
-      const deep = filename.split('/')
+      const replaceWindowsBackslashes = filename.replace(/\\/g, '/')
+      const deep = replaceWindowsBackslashes.split('/')
       const { length } = deep
       const level = length - ROOT_LEVEL
 
       const fromRoot =
         level > 0
           ? readmeAsRoot
-            ? filename.includes('README.md')
+            ? replaceWindowsBackslashes.includes('README.md')
               ? level - 1
               : level
             : level
@@ -172,7 +173,7 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
 
       res.push({
         name: name.replace('# ', ''),
-        path: filename,
+        path: replaceWindowsBackslashes,
         fromRoot,
       })
     }

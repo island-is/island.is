@@ -73,9 +73,12 @@ export const RadioController: FC<Props> = ({
               />
             </GridColumn>
           ))}
-          <GridColumn span={['1/1', split]} paddingBottom={2}>
-            {error !== undefined && <InputError errorMessage={error} />}
-          </GridColumn>
+
+          {error && (
+            <GridColumn span={['1/1', split]} paddingBottom={2}>
+              <InputError errorMessage={error} />
+            </GridColumn>
+          )}
         </GridRow>
       )}
     />

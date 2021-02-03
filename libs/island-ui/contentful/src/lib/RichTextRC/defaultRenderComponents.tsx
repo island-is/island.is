@@ -51,9 +51,9 @@ export const defaultRenderComponent = {
     </Hidden>
   ),
 
-  EmbeddedVideo: (slice) => (
+  EmbeddedVideo: (slice, locale) => (
     <Hidden print={true}>
-      <EmbeddedVideo {...slice} />
+      <EmbeddedVideo locale={locale} {...slice} />
     </Hidden>
   ),
 

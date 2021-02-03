@@ -56,9 +56,9 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe('otherParentApproval')
       expect(newApplication.assignees).toEqual([otherParentId])
     })
+
     it('should transition from draft to employer approval if applicant is not asking for shared rights', () => {
       const otherParentId = '098765-4321'
-      const employerId = '1234543210'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -67,7 +67,7 @@ describe('Parental Leave Application Template', () => {
             },
             otherParentId,
             employer: {
-              nationalRegistryId: employerId,
+              isSelfEmployed: 'no',
             },
           },
         }),
@@ -84,9 +84,9 @@ describe('Parental Leave Application Template', () => {
       // There should be no one assigned until employer accepts to be assigned
       expect(newApplication.assignees).toEqual([])
     })
+
     it('should assign the application to the employer when transitioning to employer approval from other parent approval', () => {
       const otherParentId = '098765-4321'
-      const employerId = '1234543210'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -95,7 +95,7 @@ describe('Parental Leave Application Template', () => {
             },
             otherParentId,
             employer: {
-              nationalRegistryId: employerId,
+              isSelfEmployed: 'no',
             },
           },
         }),
@@ -127,6 +127,53 @@ describe('Parental Leave Application Template', () => {
       )
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('employerWaitingToAssign')
+      // There should be no one assigned until employer accepts to be assigned
+      // TODO: fix that this is not an empty array
+      expect(finalApplication.assignees).toEqual([otherParentId])
+    })
+
+    it('should assign the application to the other parent approval and then to VMST when the applicant is self employed', () => {
+      const otherParentId = '098765-4321'
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            requestRights: {
+              isRequestingRights: 'yes',
+            },
+            otherParentId,
+            employer: {
+              isSelfEmployed: 'yes',
+            },
+          },
+        }),
+        ParentalLeaveTemplate,
+      )
+      const [hasChanged, newState, newApplication] = helper.changeState(
+        {
+          type: 'SUBMIT',
+        },
+        mockApiTemplateUtils,
+      )
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('otherParentApproval')
+      expect(newApplication.assignees).toEqual([otherParentId])
+
+      const finalHelper = new ApplicationTemplateHelper(
+        newApplication,
+        ParentalLeaveTemplate,
+      )
+      const [
+        hasChangedAgain,
+        finalState,
+        finalApplication,
+      ] = finalHelper.changeState(
+        {
+          type: 'APPROVE',
+        },
+        mockApiTemplateUtils,
+      )
+      expect(hasChangedAgain).toBe(true)
+      expect(finalState).toBe('vinnumalastofnunApproval')
       // There should be no one assigned until employer accepts to be assigned
       // TODO: fix that this is not an empty array
       expect(finalApplication.assignees).toEqual([otherParentId])

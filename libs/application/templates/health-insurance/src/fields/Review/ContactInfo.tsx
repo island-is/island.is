@@ -127,7 +127,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
                 name={'applicant.email'}
                 label={formatText(m.email, application, formatMessage)}
                 ref={register}
-                disabled={!isEditable}
+                disabled
                 defaultValue={data?.email}
               />
             </GridColumn>
@@ -137,7 +137,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
                 name={'applicant.phoneNumber'}
                 label={formatText(m.phoneNumber, application, formatMessage)}
                 ref={register}
-                disabled={!isEditable}
+                disabled
                 defaultValue={data?.phoneNumber}
               />
             </GridColumn>

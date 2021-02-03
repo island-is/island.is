@@ -1,26 +1,5 @@
-import { getSession, signIn, signOut } from 'next-auth/client'
-import { NextPageContext } from 'next'
+import { signIn, signOut } from 'next-auth/client'
 import { SessionInfo } from '../entities/common/SessionInfo'
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const withAuthentication = (
-  next: (context: NextPageContext) => Promise<any>,
-) => async (context: NextPageContext) => {
-  const session = ((await getSession(context)) as unknown) as SessionInfo
-  if (isExpired(session)) {
-    const { res } = context
-    if (res) {
-      res.statusCode = 302
-      res.setHeader('Location', '/')
-      return {
-        props: {},
-      }
-    }
-    throw new Error('Missing response from context')
-  }
-
-  return next(context)
-}
 
 const isExpired = (session: SessionInfo): boolean => {
   return !session || new Date() > new Date(session.expires)

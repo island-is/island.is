@@ -10,6 +10,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { ClaimsModule } from './modules/claims/claims.module'
 import { environment } from '../environments/environment'
 import { AccessModule } from './modules/access/access.module'
+import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AccessModule } from './modules/access/access.module'
     GrantTypesModule,
     ClaimsModule,
     AccessModule,
+    IdpProviderModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.secret'],
     }),

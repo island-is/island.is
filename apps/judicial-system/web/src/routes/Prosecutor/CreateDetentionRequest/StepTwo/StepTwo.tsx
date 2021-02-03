@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import parseISO from 'date-fns/parseISO'
+import { ValueType } from 'react-select/src/types'
+import { useHistory, useParams } from 'react-router-dom'
+import { useMutation, useQuery } from '@apollo/client'
+
 import {
   Text,
   GridRow,
@@ -8,6 +13,7 @@ import {
   Input,
   Tooltip,
   Select,
+  Option,
 } from '@island.is/island-ui/core'
 import {
   Case,
@@ -15,10 +21,23 @@ import {
   CaseTransition,
   NotificationType,
   UpdateCase,
+  User,
+  UserRole,
 } from '@island.is/judicial-system/types'
+import {
+  ProsecutorSubsections,
+  ReactSelectOption,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  setAndSendDateToServer,
+  validateAndSendTimeToServer,
+  validateAndSetTime,
+  setAndSendToServer,
+  getTimeFromDate,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import parseISO from 'date-fns/parseISO'
 import {
   FormFooter,
   PageLayout,
@@ -27,27 +46,13 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useHistory, useParams } from 'react-router-dom'
-import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
-import {
-  ProsecutorSubsections,
-  ReactSelectOption,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
-  setAndSendDateToServer,
-  validateAndSendTimeToServer,
-  validateAndSetTime,
-  setAndSendToServer,
-  getTimeFromDate,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { ValueType } from 'react-select/src/types'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface CaseData {
   case?: Case
@@ -85,6 +90,11 @@ export const StepTwo: React.FC = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+
+  const { data: userData } = useQuery(UsersQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const [
@@ -136,8 +146,18 @@ export const StepTwo: React.FC = () => {
     },
   ]
 
+  const prosecutors = userData?.users
+    .filter((user: User, _: number) => user.role === UserRole.PROSECUTOR)
+    .map((prosecutor: User, _: number) => {
+      return { label: prosecutor.name, value: prosecutor.id }
+    })
+
   const defaultCourt = courts.filter(
     (court) => court.label === workingCase?.court,
+  )
+
+  const defaultProsecutor = prosecutors?.filter(
+    (prosecutor: Option) => prosecutor.label === workingCase?.prosecutor?.name,
   )
 
   const handleNextButtonClick = async () => {
@@ -279,6 +299,28 @@ export const StepTwo: React.FC = () => {
             <Text as="h1" variant="h1">
               Óskir um fyrirtöku
             </Text>
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Ákærandi
+              </Text>
+            </Box>
+            <Select
+              name="prosecutor"
+              label="Veldu saksóknara"
+              defaultValue={defaultProsecutor}
+              options={prosecutors}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setAndSendToServer(
+                  'prosecutorId',
+                  (selectedOption as ReactSelectOption).value.toString(),
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+            />
           </Box>
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>

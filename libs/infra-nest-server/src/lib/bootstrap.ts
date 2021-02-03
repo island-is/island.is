@@ -1,4 +1,3 @@
-import { initTracing } from '@island.is/infra-tracing'
 import { NestFactory } from '@nestjs/core'
 import cookieParser from 'cookie-parser'
 import {
@@ -95,7 +94,6 @@ export const bootstrap = async (options: RunServerOptions) => {
     type: 'string',
   }).argv
 
-  initTracing(options.name)
   collectDefaultMetrics()
 
   const app = await createApp(options)

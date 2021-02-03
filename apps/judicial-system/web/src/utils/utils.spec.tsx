@@ -145,13 +145,13 @@ ipsum`
   })
 
   describe('replaceTabsOnChange', () => {
-    test('should not call replaceTabs if called with a string that does not have a tab character', () => {
+    test('should not call replaceTabs if called with a string that does not have a tab character', async () => {
       // Arrange
       const spy = jest.spyOn(formatters, 'replaceTabs')
       render(<input onChange={(evt) => replaceTabsOnChange(evt)} />)
 
       // Act
-      userEvent.type(screen.getByRole('textbox'), 'Lorem ipsum')
+      userEvent.type(await screen.findByRole('textbox'), 'Lorem ipsum')
 
       // Assert
       expect(spy).not.toBeCalled()
@@ -324,7 +324,7 @@ describe('Step helper', () => {
   })
 
   describe('constructConclution', () => {
-    test('should return rejected message if the case is being rejected', () => {
+    test('should return rejected message if the case is being rejected', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.REJECTING,
@@ -334,11 +334,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructConclusion(wc as Case))
+      render(constructConclusion(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -354,7 +354,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should return the correct string if there is no isolation and the case is not being rejected', () => {
+    test('should return the correct string if there is no isolation and the case is not being rejected', async () => {
       // Arrange
       const wc = {
         id: 'testid',
@@ -371,11 +371,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructConclusion(wc as Case))
+      render(constructConclusion(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -391,7 +391,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should return the correct string if there is isolation and the case is not being rejected', () => {
+    test('should return the correct string if there is isolation and the case is not being rejected', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING,
@@ -403,11 +403,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructConclusion(wc as Case))
+      render(constructConclusion(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -423,7 +423,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should return the correct string if the case is accepted with travel ban', () => {
+    test('should return the correct string if the case is accepted with travel ban', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -434,11 +434,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructConclusion(wc as Case))
+      render(constructConclusion(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -454,7 +454,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should return the correct string if the case is an extension on alternative travel ban', () => {
+    test('should return the correct string if the case is an extension on alternative travel ban', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -469,11 +469,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructConclusion(wc as Case))
+      render(constructConclusion(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -489,7 +489,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should return the correct string if the case is an extension on accepted custody', () => {
+    test('should return the correct string if the case is an extension on accepted custody', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING,
@@ -504,11 +504,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructConclusion(wc as Case))
+      render(constructConclusion(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -526,7 +526,7 @@ describe('Step helper', () => {
   })
 
   describe('constructPoliceDemands', () => {
-    test('should render a message if requestedCustodyEndDate is not set', () => {
+    test('should render a message if requestedCustodyEndDate is not set', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING,
@@ -542,11 +542,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructProsecutorDemands(wc as Case))
+      render(constructProsecutorDemands(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
@@ -561,7 +561,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should render the corrent string if the case is an extension', () => {
+    test('should render the corrent string if the case is an extension', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING,
@@ -582,11 +582,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructProsecutorDemands(wc as Case))
+      render(constructProsecutorDemands(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -602,7 +602,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should render the corrent string there are other demands', () => {
+    test('should render the corrent string there are other demands', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING,
@@ -620,11 +620,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructProsecutorDemands(wc as Case))
+      render(constructProsecutorDemands(wc as Case))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -640,7 +640,7 @@ describe('Step helper', () => {
       ).toBeTruthy()
     })
 
-    test('should not render the other demands if skipOtherDemands parameter is set to true', () => {
+    test('should not render the other demands if skipOtherDemands parameter is set to true', async () => {
       // Arrange
       const wc = {
         decision: CaseDecision.ACCEPTING,
@@ -658,11 +658,11 @@ describe('Step helper', () => {
       }
 
       // Act
-      const { getByText } = render(constructProsecutorDemands(wc as Case, true))
+      render(constructProsecutorDemands(wc as Case, true))
 
       // Assert
       expect(
-        getByText((_, node) => {
+        await screen.findByText((_, node) => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
@@ -675,7 +675,7 @@ describe('Step helper', () => {
 
           return nodeHasText && childrenDontHaveText
         }),
-      ).toBeTruthy()
+      ).toBeInTheDocument()
     })
   })
 

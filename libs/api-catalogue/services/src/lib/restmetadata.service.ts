@@ -4,8 +4,6 @@ import {
   Service,
   OpenApi,
   XroadIdentifier,
-  ServiceDetail,
-  ServiceVersion,
 } from '@island.is/api-catalogue/types'
 import { Injectable } from '@nestjs/common'
 import { RestMetaservicesApi } from '../../gen/fetch/xrd-rest'
@@ -20,7 +18,12 @@ import {
   ProviderType,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { serviceIdSort, exceptionHandler } from './utils'
+import {
+  serviceIdSort,
+  exceptionHandler,
+  parseServiceCode,
+  parseVersionNumber,
+} from './utils'
 
 @Injectable()
 export class RestMetadataService {
@@ -50,8 +53,12 @@ export class RestMetadataService {
         data: [],
         access: [AccessCategory.XROAD],
         type: [TypeCategory.REST],
-        environments: [Environment.DEV],
-        versions: [],
+        environments: [
+          {
+            environment: Environment.DEVELOPMENT, // TODO: Needs to be environment aware
+            details: [],
+          },
+        ],
       }
 
       if (provider.type === ProviderType.PUBLIC) {
@@ -71,26 +78,23 @@ export class RestMetadataService {
           service.description = spec.info.description ?? ''
           service.data = union(service.data, spec.info['x-category'])
           service.pricing = union(service.pricing, spec.info['x-pricing'])
-          service.versions.push({
-            versionId: sorted[i].serviceCode!,
-            details: [
-              {
-                title: spec.info.title,
-                summary: '', // TODO: We should have a short summary
-                description: spec.info.description ?? '',
-                type: TypeCategory.REST,
-                data: spec.info['x-category'] ?? [],
-                pricing: spec.info['x-pricing'] ?? [],
-                links: {
-                  responsibleParty:
-                    spec.info['x-links']?.responsibleParty ?? '',
-                  bugReport: spec.info['x-links']?.bugReport ?? '',
-                  documentation: spec.info['x-links']?.documentation ?? '',
-                  featureRequest: spec.info['x-links']?.featureRequest ?? '',
-                },
-                xroadIdentifier: sorted[i],
-              },
-            ],
+
+          // TODO: This needs to be environment aware
+          service.environments[0].details.push({
+            version: parseVersionNumber(sorted[i].serviceCode!),
+            title: spec.info.title,
+            summary: '', // TODO: We should have a short summary
+            description: spec.info.description ?? '',
+            type: TypeCategory.REST,
+            data: spec.info['x-category'] ?? [],
+            pricing: spec.info['x-pricing'] ?? [],
+            links: {
+              responsibleParty: spec.info['x-links']?.responsibleParty ?? '',
+              bugReport: spec.info['x-links']?.bugReport ?? '',
+              documentation: spec.info['x-links']?.documentation ?? '',
+              featureRequest: spec.info['x-links']?.featureRequest ?? '',
+            },
+            xroadIdentifier: sorted[i],
           })
         } else {
           logger.error(
@@ -174,7 +178,7 @@ export class RestMetadataService {
         item.memberClass &&
         item.subsystemCode
       ) {
-        const serviceCode = item.serviceCode.split('-')[0]
+        const serviceCode = parseServiceCode(item.serviceCode)
         const mappedItem: XroadIdentifier = {
           instance: item.xroadInstance,
           memberClass: item.memberClass,
@@ -236,7 +240,7 @@ export class RestMetadataService {
    * @param xroadIdentifier
    */
   private createServiceId(xroadIdentifier: XroadIdentifier): string {
-    const serviceCode = xroadIdentifier.serviceCode?.split('-')[0]
+    const serviceCode = parseServiceCode(xroadIdentifier.serviceCode!)
     const serviceId = `${xroadIdentifier.instance}_${xroadIdentifier.memberClass}_${xroadIdentifier.memberCode}_${xroadIdentifier.subsystemCode}_${serviceCode}`
 
     //Remove tokens that interrupt URLs

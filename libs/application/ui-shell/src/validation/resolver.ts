@@ -1,5 +1,6 @@
 import { FormValue, validateAnswers } from '@island.is/application/core'
 import { Resolver } from 'react-hook-form'
+
 import { ResolverContext } from '../types'
 
 // TODO type this properly

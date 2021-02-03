@@ -39,9 +39,6 @@ export const StoryList: FC<StoryListProps> = ({
               pathname: linkResolver('newsoverview').href,
               query: { tag: PROJECT_STORIES_TAG_ID },
             }}
-            as={`${
-              linkResolver('newsoverview').as
-            }?tag=${PROJECT_STORIES_TAG_ID}`}
             pureChildren
           >
             <Button variant="ghost" colorScheme="negative">

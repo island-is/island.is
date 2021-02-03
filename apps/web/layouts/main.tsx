@@ -8,6 +8,9 @@ import {
   AlertBanner,
   AlertBannerVariants,
   Hidden,
+  ButtonTypes,
+  ColorSchemeContext,
+  ColorSchemes,
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
@@ -70,6 +73,8 @@ export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
+  headerColorScheme?: ColorSchemes
+  headerButtonColorScheme?: ButtonTypes['colorScheme']
   showFooter?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
@@ -107,6 +112,8 @@ const Layout: NextComponentType<
   showSearchInHeader = true,
   wrapContent = true,
   showHeader = true,
+  headerColorScheme,
+  headerButtonColorScheme,
   showFooter = true,
   categories,
   topMenuCustomLinks,
@@ -151,7 +158,7 @@ const Layout: NextComponentType<
       links: categories.map((x) => {
         return {
           title: x.title,
-          ...linkResolver(x.__typename as LinkType, [x.slug]),
+          href: linkResolver(x.__typename as LinkType, [x.slug]).href,
         }
       }),
     },
@@ -268,10 +275,15 @@ const Layout: NextComponentType<
           }}
         >
           {showHeader && (
-            <Header
-              showSearchInHeader={showSearchInHeader}
-              megaMenuData={megaMenuData}
-            />
+            <ColorSchemeContext.Provider
+              value={{ colorScheme: headerColorScheme }}
+            >
+              <Header
+                buttonColorScheme={headerButtonColorScheme}
+                showSearchInHeader={showSearchInHeader}
+                megaMenuData={megaMenuData}
+              />
+            </ColorSchemeContext.Provider>
           )}
           <Main>
             {wrapContent ? <Box width="full">{children}</Box> : children}

@@ -5,7 +5,7 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import Timeline from '../components/Timeline'
 import { Period } from '../../types'
-import { formatPeriods, getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { m, mm } from '../../lib/messages'
 

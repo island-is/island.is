@@ -6,9 +6,11 @@ import {
   extractChildrenFromApplication,
   extractAnswersFromApplication,
   constructParentAddressString,
+  extractApplicantFromApplication,
 } from '../../lib/utils'
 
 const Overview = ({ application }: FieldBaseProps) => {
+  const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
   const children = extractChildrenFromApplication(application)
@@ -35,14 +37,8 @@ const Overview = ({ application }: FieldBaseProps) => {
         <Text variant="h4">
           Núverandi lögheimili {usePluralForChildren ? 'barna' : 'barns'}:
         </Text>
-        <Text>
-          {/* // TODO: Get name of applicant */}
-          {application?.applicant}
-        </Text>
-        <Text>
-          {/* TODO: Get address from applicant */}
-          Missing address
-        </Text>
+        <Text>{applicant?.fullName}</Text>
+        <Text>{applicant?.legalResidence}</Text>
       </Box>
       <Box marginBottom={4}>
         <Text variant="h4">Nýtt lögheimili barna:</Text>
@@ -54,10 +50,6 @@ const Overview = ({ application }: FieldBaseProps) => {
         <Text>
           {answers.durationDate ? answers.durationDate : 'Til frambúðar'}
         </Text>
-      </Box>
-      <Box marginBottom={4}>
-        <Text variant="h4">Áhrif umsóknar:</Text>
-        <Text>Ég skil hvaða áhrif lögheimilisbreyting hefur</Text>
       </Box>
     </>
   )

@@ -14,6 +14,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
@@ -150,6 +151,7 @@ const testCase3 = {
   courtStartTime: null,
   courtEndTime: '2020-09-16T19:51:00.000Z',
   courtAttendees: null,
+  courtRoom: '999',
   policeDemands: null,
   accusedPlea: null,
   litigationPresentations: null,
@@ -431,6 +433,19 @@ export const mockProsecutorQuery = [
     result: {
       data: {
         user: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockUsersQuery = [
+  {
+    request: {
+      query: UsersQuery,
+    },
+    result: {
+      data: {
+        users: [mockProsecutor, mockJudge],
       },
     },
   },

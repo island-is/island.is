@@ -72,6 +72,7 @@ const prosecutorUpdateRule = {
     'caseFacts',
     'legalArguments',
     'comments',
+    'prosecutorId',
   ],
 } as RolesRule
 
@@ -152,10 +153,11 @@ export class CaseController {
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
+    @CurrentHttpUser() user: User,
     @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
   ): Promise<Case> {
-    return this.caseService.create(caseToCreate)
+    return this.caseService.create(caseToCreate, user)
   }
 
   @RolesRules(prosecutorUpdateRule, judgeUpdateRule)
@@ -196,8 +198,15 @@ export class CaseController {
       state: transitionCase(transition.transition, existingCase.state),
     } as UpdateCaseDto
 
-    update[user.role === UserRole.PROSECUTOR ? 'prosecutorId' : 'judgeId'] =
-      user.id
+    // Remove when client has started assigning a judge to each case
+    if (
+      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
+        transition.transition,
+      ) &&
+      user.role === UserRole.JUDGE
+    ) {
+      update['judgeId'] = user.id
+    }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,

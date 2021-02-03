@@ -59,7 +59,7 @@ To get started developing this project, go ahead and:
 1. Fetch the environment secrets:
 
 ```bash
-yarn env-secrets air-discount-scheme --reset
+yarn get-secrets air-discount-scheme --reset
 ```
 
 2. Start the resources with docker-compose:

@@ -21,7 +21,7 @@ const Header: React.FC<Props> = (props: Props) => {
         style={{ textDecoration: 'none' }}
         data-testid="link-to-home"
       >
-        <Box display="flex">
+        <Box display="flex" alignItems="center">
           <div className={styles.islandIsApplicationLogoWrapper}>
             <Logo width={146} />
           </div>

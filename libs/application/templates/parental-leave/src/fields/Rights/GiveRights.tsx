@@ -3,16 +3,16 @@ import {
   FieldBaseProps,
   formatText,
   getValueViaPath,
+  ValidAnswers,
 } from '@island.is/application/core'
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
+
+import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { m, mm } from '../../lib/messages'
 import { defaultMonths } from '../../config'
 import { YES, NO } from '../../constants'
-
-type ValidAnswers = 'yes' | 'no' | undefined
 
 const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   const currentAnswer = getValueViaPath(

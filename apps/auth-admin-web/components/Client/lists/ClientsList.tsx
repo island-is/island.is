@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { Client } from './../../../entities/models/client.model'
+import { downloadCSV } from '../../../utils/csv.utils'
 
 class ClientsList extends Component {
   state = {
@@ -82,6 +83,16 @@ class ClientsList extends Component {
     this.setState({ searchString: event.target.value })
   }
 
+  exportCsv = async () => {
+    const filename = `Clients, ${new Date().toISOString().split('T')[0]}.csv`
+
+    await downloadCSV(
+      filename,
+      ClientService.getClientsCsvHeaders(),
+      ClientService.getClientsCsv,
+    )
+  }
+
   render(): JSX.Element {
     return (
       <div>
@@ -120,7 +131,7 @@ class ClientsList extends Component {
                     <tr>
                       <th>Client Id</th>
                       <th>National Id</th>
-                      <th>Description</th>
+                      <th>Contact</th>
                       <th>Type</th>
                       <th colSpan={2}></th>
                     </tr>
@@ -134,7 +145,7 @@ class ClientsList extends Component {
                         >
                           <td>{client.clientId}</td>
                           <td>{client.nationalId}</td>
-                          <td>{client.description}</td>
+                          <td>{client.contactEmail}</td>
                           <td>{client.clientType}</td>
                           <td className="clients__table__button">
                             <Link
@@ -175,10 +186,20 @@ class ClientsList extends Component {
                   </tbody>
                 </table>
               </div>
-              <Paginator
-                lastPage={Math.ceil(this.state.rowCount / this.state.count)}
-                handlePageChange={this.handlePageChange}
-              />
+              <div>
+                <div className="clients__container__export">
+                  <div className="clients__container__export__container__button">
+                    <button type="button" onClick={() => this.exportCsv()}>
+                      <i className="icon__export__csv" aria-hidden="true"></i>
+                      <span>Export</span>
+                    </button>
+                  </div>
+                </div>
+                <Paginator
+                  lastPage={Math.ceil(this.state.rowCount / this.state.count)}
+                  handlePageChange={this.handlePageChange}
+                />
+              </div>
             </div>
           </div>
         </div>

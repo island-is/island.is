@@ -86,6 +86,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               )}
               ref={register}
               disabled={!isEditable}
+              backgroundColor={'blue'}
             />
           </GridColumn>
           <GridColumn span="6/12">
@@ -95,6 +96,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               label={formatText(m.formerPersonalId, application, formatMessage)}
               ref={register}
               disabled={!isEditable}
+              backgroundColor={'blue'}
             />
           </GridColumn>
         </GridRow>
@@ -109,6 +111,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             )}
             ref={register}
             disabled={!isEditable}
+            backgroundColor={'blue'}
           />
         </Box>
       </Stack>
@@ -163,6 +166,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             )}
             ref={register}
             disabled={!isEditable}
+            backgroundColor={'blue'}
             textarea={true}
           />
         </Box>

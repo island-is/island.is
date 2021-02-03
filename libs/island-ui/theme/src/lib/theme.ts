@@ -35,6 +35,11 @@ export const spacing = {
   gutter: UNIT * 2,
   containerGutter: UNIT * 6,
   auto: 'auto',
+  p1: 8,
+  p2: 12,
+  p3: 14,
+  p4: 16,
+  p5: 18,
 }
 
 export const theme = {

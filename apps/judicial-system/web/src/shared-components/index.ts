@@ -1,5 +1,4 @@
 export { default as AccordionListItem } from './AccordionListItem/AccordionListItem'
-export { default as App } from './App/App'
 export { default as CaseNumbers } from './CaseNumbers/CaseNumbers'
 export { default as BlueBox } from './BlueBox/BlueBox'
 export { default as CourtDocuments } from './CourtDocuments/CourtDocuments'

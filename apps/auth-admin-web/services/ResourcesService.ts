@@ -241,4 +241,37 @@ export class ResourcesService extends BaseService {
       )}/${encodeURIComponent(scopeName)}`,
     )
   }
+
+  static async getApiResourcesCsv(): Promise<any[] | null> {
+    const result = await BaseService.GET(
+      `api-resources?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
+    )
+    return result.rows.map((r) => ResourcesService.toApiResourceCsv(r))
+  }
+
+  static toApiResourceCsv = (apiResource: ApiResource): any[] => {
+    return [
+      apiResource.name,
+      apiResource.displayName,
+      apiResource.nationalId,
+      apiResource.contactEmail,
+      apiResource.created,
+      apiResource.modified,
+      apiResource.enabled,
+      apiResource.archived,
+    ]
+  }
+
+  static getApiResourcesCsvHeaders(): string[] {
+    return [
+      'Name',
+      'DisplayName',
+      'NationalId',
+      'Contact',
+      'Created',
+      'Modified',
+      'Enabled',
+      'Archived',
+    ]
+  }
 }

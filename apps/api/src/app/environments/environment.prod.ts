@@ -1,10 +1,13 @@
 export default {
   production: true,
+  xroad: {
+    baseUrl: process.env.XROAD_BASE_PATH,
+    clientId: process.env.XROAD_CLIENT_ID,
+  },
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
   },
   drivingLicense: {
-    baseApiUrl: process.env.DRIVING_LICENSE_REGISTRY_URL,
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   nationalRegistry: {

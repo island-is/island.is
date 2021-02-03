@@ -94,6 +94,28 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                   />
                 </div>
                 <div className="api-resource-form__container__field">
+                  <label className="client-basic__label">Contact email</label>
+                  <input
+                    type="text"
+                    ref={register({
+                      required: true,
+                      pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                    })}
+                    name="contactEmail"
+                    defaultValue={props.apiResource.contactEmail ?? ''}
+                    className="api-resource-form__input"
+                    title="The email of the person who can be contacted regarding this API Resource"
+                    placeholder="john@example.com"
+                  />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="contactEmail"
+                    message="Contact email must be set and must be a valid email address"
+                  />
+                  <HelpBox helpText="The email of the person who can be contacted regarding this API Resource" />
+                </div>
+                <div className="api-resource-form__container__field">
                   <label htmlFor="name" className="api-resource-form__label">
                     Name
                   </label>
@@ -161,24 +183,6 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__input"
                   />
                   <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
-                </div>
-                <div className="api-resource-form__container__field">
-                  <label
-                    htmlFor="contactEmail"
-                    className="api-resource-form__label"
-                  >
-                    Contact email
-                  </label>
-                  <input
-                    ref={register({ required: false })}
-                    id="contactEmail"
-                    name="contactEmail"
-                    type="text"
-                    defaultValue={props.apiResource.contactEmail}
-                    className="api-resource-form__input"
-                    placeholder="island@island.is"
-                  />
-                  <HelpBox helpText="Set the contact email for this api resource." />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">

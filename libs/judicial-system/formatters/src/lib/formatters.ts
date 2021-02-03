@@ -1,7 +1,6 @@
 import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
-
 import {
   CaseCustodyRestrictions,
   CaseGender,
@@ -54,6 +53,10 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
+export const isFalsy = (str?: string | null): boolean => {
+  return str === '' || str === undefined || str === null
+}
+
 export const laws = {
   _95_1_A: 'a-lið 1. mgr. 95. gr.',
   _95_1_B: 'b-lið 1. mgr. 95. gr.',
@@ -95,10 +98,10 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
 }
 
 export enum NounCases {
-  NOMINATIVE,
-  ACCUSATIVE,
-  DATIVE,
-  GENITIVE,
+  NOMINATIVE, // Nefnifall
+  ACCUSATIVE, // Þolfall
+  DATIVE, // Þágufall
+  GENITIVE, // Eignarfall
 }
 
 export function formatAccusedByGender(

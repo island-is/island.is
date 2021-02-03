@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+  IsUUID,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -105,6 +111,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly comments?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly prosecutorId?: string
 
   @IsOptional()
   @IsString()

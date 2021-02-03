@@ -135,6 +135,7 @@ export enum NotificationType {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
   RULING = 'RULING',
+  REVOKED = 'REVOKED',
 }
 
 export interface Notification {
@@ -176,6 +177,7 @@ export interface UpdateCase {
   caseFacts?: string
   legalArguments?: string
   comments?: string
+  prosecutorId?: string
   courtCaseNumber?: string
   courtDate?: string
   courtRoom?: string

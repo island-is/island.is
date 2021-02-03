@@ -4,6 +4,7 @@ import {
   RepeaterProps,
   getValueViaPath,
   Application,
+  RecordObject,
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 
@@ -12,7 +13,7 @@ type RepeaterItems = unknown[]
 const FormRepeater: FC<{
   application: Application
   repeater: RepeaterScreen
-  errors: object
+  errors: RecordObject
   expandRepeater: () => void
   onRemoveRepeaterItem: (newRepeaterItems: RepeaterItems) => Promise<unknown>
 }> = ({

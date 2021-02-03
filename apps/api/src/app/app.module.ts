@@ -50,7 +50,8 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      baseApiUrl: environment.drivingLicense.baseApiUrl,
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
     }),
     ApplicationModule.register({
