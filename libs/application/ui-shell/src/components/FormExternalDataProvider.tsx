@@ -125,7 +125,9 @@ const FormExternalDataProvider: FC<{
           <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
         <Text variant="h4">
-          {subTitle ? formatMessage(subTitle) : 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
+          {subTitle
+            ? formatMessage(subTitle)
+            : 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -161,7 +163,9 @@ const FormExternalDataProvider: FC<{
                   }}
                   checked={value}
                   name={`${id}`}
-                  label={checkboxLabel ? formatMessage(checkboxLabel) : 'Ég samþykki'}
+                  label={
+                    checkboxLabel ? formatMessage(checkboxLabel) : 'Ég samþykki'
+                  }
                   value={id}
                 />
               </Box>
