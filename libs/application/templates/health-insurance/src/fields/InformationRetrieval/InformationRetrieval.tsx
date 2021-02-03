@@ -1,12 +1,11 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { useFormContext } from 'react-hook-form'
 import { m } from '../../forms/messages'
-import { MissingInfoType, ReviewFieldProps } from '../../types'
 import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
+import * as styles from './InformationRetrieval.treat'
 
-const InformationRetrieval: FC<FieldBaseProps> = ({application}) => {
+const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const dataProviders = [
@@ -38,23 +37,24 @@ const InformationRetrieval: FC<FieldBaseProps> = ({application}) => {
 
   return (
     <Box>
-      <Box // todo fix margin top, or set title in here
+      <Box
         marginBottom={5}
         display="flex"
         alignItems="center"
         justifyContent="flexStart"
+        className={styles.marginFix}
       >
         <Box marginRight={1}>
           <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
         <Text variant="h4">
-          Eftirfarandi gögn verða sótt rafrænt með þínu samþykki
+          {formatText(m.externalDataSubtitle, application, formatMessage)}
         </Text>
       </Box>
       <Stack space={3}>
-        {dataProviders.map((providers) => {
+        {dataProviders.map((providers, index) => {
           return (
-            <Box>
+            <Box key={index}>
               <Text variant="h4" color="blue400">
                 {providers.title}
               </Text>
@@ -64,7 +64,11 @@ const InformationRetrieval: FC<FieldBaseProps> = ({application}) => {
         })}
       </Stack>
       <Box background="blue100" padding={4} borderRadius="large" marginTop={5}>
-        <Checkbox checked={true} label="Ég samþykki" />
+        <Checkbox
+          checked={true}
+          onChange={() => {}}
+          label={formatText(m.externalDataCheckbox, application, formatMessage)}
+        />
       </Box>
     </Box>
   )

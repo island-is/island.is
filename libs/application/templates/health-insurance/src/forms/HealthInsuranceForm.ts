@@ -37,6 +37,8 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
+          subTitle: m.externalDataSubtitle.defaultMessage,
+          checkboxLabel: m.externalDataCheckbox.defaultMessage,
           dataProviders: [
             buildDataProviderItem({
               id: 'userProfile',
@@ -99,7 +101,7 @@ export const HealthInsuranceForm: Form = buildForm({
           ],
           condition: (formValue: FormValue, externalData: ExternalData) => {
             return shouldShowModal(externalData)
-          }
+          },
         }),
         buildMultiField({
           id: 'confirmationOfResidency',

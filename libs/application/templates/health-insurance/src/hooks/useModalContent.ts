@@ -21,7 +21,7 @@ export const useModalContent = (externalData: ExternalData) => {
       description: m.alreadyInsuredDescription,
       buttonText: m.alreadyInsuredButtonText,
       buttonAction: () =>
-        history.push(`../umsoknir/${ApplicationTypes.HEALTH_INSURANCE}`), //TODO, check if we are keeping this
+        history.push(`../umsoknir/${ApplicationTypes.HEALTH_INSURANCE}`),
     },
     activeApplication: {
       title: m.activeApplicationTitle,
