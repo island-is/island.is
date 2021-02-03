@@ -1,6 +1,6 @@
 import { ApplicationUIState } from '../reducer/ReducerTypes'
 import useDocumentTitle from '@rehooks/document-title'
-import { useLocale } from '../../../../localization/src/lib/useLocale'
+import { useLocale } from '@island.is/localization'
 import {
   formatText,
   getSubSectionsInSection,
