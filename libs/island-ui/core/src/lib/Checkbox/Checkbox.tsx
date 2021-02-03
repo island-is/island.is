@@ -18,7 +18,7 @@ export interface CheckboxProps {
   value?: string
   filled?: boolean
   large?: boolean
-  /** subLabel can only be used the the 'large' prop set to true */
+  /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
 }
 
