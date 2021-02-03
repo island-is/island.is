@@ -72,6 +72,8 @@ export function buildSubSection(data: {
 
 export function buildExternalDataProvider(data: {
   title: MessageDescriptor | string
+  subTitle?: MessageDescriptor | string
+  checkboxLabel?: MessageDescriptor | string
   id: string
   condition?: Condition
   dataProviders: DataProviderItem[]

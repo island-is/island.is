@@ -68,10 +68,7 @@ export const DetentionRequests: React.FC = () => {
 
   const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
-  const [
-    sendNotificationMutation,
-    { loading: isSendingNotification },
-  ] = useMutation(SendNotificationMutation)
+  const [sendNotificationMutation] = useMutation(SendNotificationMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({

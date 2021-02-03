@@ -12,7 +12,7 @@ import {
 
 import { dataSchema, SchemaFormValues } from './dataSchema'
 import { answerValidators } from './answerValidators'
-import { YES, API_MODULE_ACTIONS } from '../constants'
+import { YES, NO, API_MODULE_ACTIONS } from '../constants'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -40,9 +40,17 @@ enum States {
   APPROVED = 'approved',
 }
 
+function hasEmployer(context: ApplicationContext) {
+  const currentApplicationAnswers = context.application
+    .answers as SchemaFormValues
+
+  return currentApplicationAnswers.employer.isSelfEmployed === NO
+}
+
 function needsOtherParentApproval(context: ApplicationContext) {
   const currentApplicationAnswers = context.application
     .answers as SchemaFormValues
+
   return currentApplicationAnswers.requestRights.isRequestingRights === YES
 }
 
@@ -126,9 +134,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.EMPLOYER_WAITING_TO_ASSIGN,
-          },
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.EMPLOYER_WAITING_TO_ASSIGN,
+              cond: hasEmployer,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+          ],
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
