@@ -217,9 +217,9 @@ export function formatProsecutorCourtDateEmailNotification(
   defenderName: string,
 ): string {
   const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const defenderText = defenderName
-    ? `Verjandi sakbornings: ${defenderName}`
-    : 'Verjandi sakbornings hefur ekki verið skráður'
+  const defenderText = isFalsy(defenderName)
+    ? 'Verjandi sakbornings hefur ekki verið skráður'
+    : `Verjandi sakbornings: ${defenderName}`
 
   return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
 }
@@ -251,9 +251,9 @@ export function formatPrisonCourtDateEmailNotification(
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
-  const defenderText = defenderName
-    ? `Verjandi sakbornings: ${defenderName}`
-    : 'Verjandi sakbornings hefur ekki verið skráður'
+  const defenderText = isFalsy(defenderName)
+    ? 'Verjandi sakbornings hefur ekki verið skráður'
+    : `Verjandi sakbornings: ${defenderName}`
 
   return `${prosecutorOffice} hefur sent kröfu um ${
     isExtension ? 'áframhaldandi ' : ''
@@ -296,8 +296,9 @@ export function formatPrisonRulingEmailNotification(
   accusedGender: CaseGender,
   court: string,
   prosecutorName: string,
-  courtDate: Date,
+  courtEndTime: Date,
   defenderName: string,
+  defenderEmail: string,
   decision: CaseDecision,
   custodyEndDate: Date,
   custodyRestrictions: CaseCustodyRestrictions[],
@@ -309,10 +310,19 @@ export function formatPrisonRulingEmailNotification(
   previousDecision: CaseDecision,
 ): string {
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
-    courtDate,
+    courtEndTime,
     'PPP',
+  )}.<br /><br />Þinghaldi lauk kl. ${formatDate(
+    courtEndTime,
+    'p',
   )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
-    isFalsy(defenderName) ? 'Hefur ekki verið skráður' : defenderName
+    isFalsy(defenderName)
+      ? isFalsy(defenderEmail)
+        ? 'Hefur ekki verið skráður'
+        : defenderEmail
+      : isFalsy(defenderEmail)
+      ? defenderName
+      : `${defenderName}, ${defenderEmail}`
   }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     accusedNationalId,
     accusedName,

@@ -110,7 +110,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       },
     )
 
-  if (existingCase.otherDemands) {
+  if (!isFalsy(existingCase.otherDemands)) {
     doc.text(' ').text(existingCase.otherDemands, {
       lineGap: 6,
       paragraphGap: 0,
@@ -361,7 +361,7 @@ export async function generateRulingPdf(
       },
     )
 
-  if (existingCase.otherDemands) {
+  if (!isFalsy(existingCase.otherDemands)) {
     doc.text(' ').text(existingCase.otherDemands, {
       lineGap: 6,
       paragraphGap: 0,
@@ -553,7 +553,7 @@ export async function generateRulingPdf(
         },
       )
 
-    if (existingCase.otherRestrictions) {
+    if (!isFalsy(existingCase.otherRestrictions)) {
       doc.text(' ').text(existingCase.otherRestrictions, {
         lineGap: 6,
         paragraphGap: 0,
