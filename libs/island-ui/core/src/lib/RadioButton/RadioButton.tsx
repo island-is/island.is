@@ -15,12 +15,15 @@ export interface RadioButtonProps {
   tooltip?: React.ReactNode
   hasError?: boolean
   errorMessage?: string
-  large?: boolean
   filled?: boolean
+  large?: boolean
+  /** subLabel can only be used the the 'large' prop set to true */
+  subLabel?: string
 }
 
 export const RadioButton = ({
   label,
+  subLabel,
   name,
   id = name,
   value,
@@ -74,7 +77,12 @@ export const RadioButton = ({
         >
           <div className={styles.checkMark} />
         </div>
-        {label}
+        <span className={styles.labelText}>
+          {label}
+          {subLabel && large && (
+            <span className={styles.subLabel}>{subLabel}</span>
+          )}
+        </span>
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {

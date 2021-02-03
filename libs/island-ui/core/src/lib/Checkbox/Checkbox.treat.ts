@@ -39,7 +39,7 @@ export const labelText = style({
   flexDirection: 'column',
 })
 export const subLabel = style({
-  marginTop: `${theme.spacing[1] / 2}px`,
+  marginTop: '2px',
   fontSize: '14px',
   fontWeight: theme.typography.regular,
 })
