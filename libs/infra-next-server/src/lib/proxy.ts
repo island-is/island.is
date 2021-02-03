@@ -9,7 +9,9 @@ export const setupProxy = async (
   if (!proxyConfig || !dev) {
     return
   }
-  const { default: createProxyMiddleware } = await import('http-proxy-middleware')
+  const { default: createProxyMiddleware } = await import(
+    'http-proxy-middleware'
+  )
   Object.keys(proxyConfig).forEach((context) => {
     app.use(createProxyMiddleware(context, proxyConfig[context]))
   })
