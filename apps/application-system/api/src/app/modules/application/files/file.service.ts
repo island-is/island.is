@@ -9,7 +9,7 @@ import {
   ParentResidenceChange,
   PersonResidenceChange,
 } from '@island.is/application/templates/children-residence-change'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { User } from '@island.is/api/domains/national-registry'
 import { environment } from '../../../../environments'
 
 @Injectable()
@@ -46,7 +46,7 @@ export class FileService {
   variablesForResidenceChange(answers: FormValue, externalData: FormValue) {
     const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
     const nationalRegistry = externalData.nationalRegistry as FormValue
-    const nationalRegistryData = nationalRegistry.data as NationalRegistryUser
+    const nationalRegistryData = (nationalRegistry.data as unknown) as User
     const childrenAppliedFor = (answers.selectChild as unknown) as Array<
       PersonResidenceChange
     >
