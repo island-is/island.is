@@ -5,7 +5,7 @@ import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './Checkbox.treat'
 
-export interface CheckboxProps  {
+export interface CheckboxProps {
   name?: string
   id?: string
   label?: React.ReactNode

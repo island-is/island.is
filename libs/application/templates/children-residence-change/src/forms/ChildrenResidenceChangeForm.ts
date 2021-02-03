@@ -74,13 +74,12 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               large: true,
               options: (application) => {
                 const otherParent = extractParentFromApplication(application)
-                return (extractChildrenFromApplication(application).map((c) => ({
+                return extractChildrenFromApplication(application).map((c) => ({
                   value: c.name,
                   label: c.name,
-                  subLabel: `Hitt forsjárforeldrið er ${otherParent.name}`
-                })))
+                  subLabel: `Hitt forsjárforeldrið er ${otherParent.name}`,
+                }))
               },
-                
             }),
           ],
         }),

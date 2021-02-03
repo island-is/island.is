@@ -53,7 +53,6 @@ export const largeLabel = style({
       padding: `26px ${theme.spacing[3]}px`,
     },
   },
-  
 })
 export const labelChecked = style({
   fontWeight: theme.typography.medium,

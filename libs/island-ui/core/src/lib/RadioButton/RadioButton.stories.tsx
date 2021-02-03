@@ -21,7 +21,11 @@ export const Large = Template.bind({})
 Large.args = { label: 'Large version', large: true }
 
 export const WithSubLabel = Template.bind({})
-WithSubLabel.args = { label: 'Large version', large: true, subLabel: 'Some sublabel' }
+WithSubLabel.args = {
+  label: 'Large version',
+  large: true,
+  subLabel: 'Some sublabel',
+}
 
 export const WithTooltip = Template.bind({})
 WithTooltip.args = { label: 'With a tooltip', tooltip: 'This is the tooltip' }
