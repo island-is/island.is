@@ -54,9 +54,7 @@ class App {
 
     // if we have packages we should add them (s3 -> AWS ES -> AWS ES search domain)
     if (newDictionaryFiles.length) {
-      logger.info('Found new dictionary packages, uploading to AWS', {
-        packages: newDictionaryFiles,
-      })
+      logger.info('Found new dictionary packages, uploading to AWS')
       const s3Files = await aws.uploadS3DictionaryFiles(newDictionaryFiles) // upload repo files to s3
       const newEsPackages = await aws.createAwsEsPackages(s3Files) // create the dictionary packages files in AWS ES
       await aws.associatePackagesWithAwsEsSearchDomain(newEsPackages) // attach the new packages to our AWS ES search domain
