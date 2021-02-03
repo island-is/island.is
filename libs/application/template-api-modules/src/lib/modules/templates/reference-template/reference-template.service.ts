@@ -3,10 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
-import {
-  generateApplicationApprovedEmail,
-  generateAssignApplicationEmail,
-} from './emailGenerators'
+import { generateApplicationApprovedEmail } from './emailGenerators'
 
 @Injectable()
 export class ReferenceTemplateService {
@@ -15,17 +12,13 @@ export class ReferenceTemplateService {
   ) {}
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    console.log('Running sendApplication from ReferenceTemplate api module')
-
-    console.log('\t-waiting for fake delay')
+    // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log('\t\tdone')
 
-    console.log('\t-sending application')
+    // Use the shared service to send an email using a custom email generator
     await this.sharedTemplateAPIService.sendEmail(
       generateApplicationApprovedEmail,
       application,
     )
-    console.log('\t\tdone')
   }
 }

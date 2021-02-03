@@ -25,7 +25,7 @@ export class TemplateAPIService {
     private readonly referenceTemplateService: ReferenceTemplateService,
   ) {}
 
-  async tryRunningActionOnService(
+  private async tryRunningActionOnService(
     service: ReferenceTemplateService | ParentalLeaveService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
