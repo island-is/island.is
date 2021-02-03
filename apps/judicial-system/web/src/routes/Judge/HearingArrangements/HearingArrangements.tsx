@@ -7,7 +7,7 @@ import {
   Input,
   Select,
   Text,
-  Option
+  Option,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -82,10 +82,13 @@ export const HearingArrangements: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const { data: userData, loading: userLoading } = useQuery<UserData>(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { data: userData, loading: userLoading } = useQuery<UserData>(
+    UsersQuery,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -178,24 +181,19 @@ export const HearingArrangements: React.FC = () => {
     ]
 
     if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
+      setIsStepIllegal(
+        isNextDisabled(requiredFields) || workingCase.judge === undefined,
+      )
     }
   }, [workingCase, isStepIllegal])
-  
 
   const setJudge = (id: string) => {
-    if(workingCase){
-      setAndSendToServer(
-        'judgeId',
-        id,
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
+    if (workingCase) {
+      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
 
-      const judge = userData?.users.find(j => j.id === id)
+      const judge = userData?.users.find((j) => j.id === id)
 
-      setWorkingCase({...workingCase, judge: judge })
+      setWorkingCase({ ...workingCase, judge: judge })
     }
   }
 
@@ -240,7 +238,7 @@ export const HearingArrangements: React.FC = () => {
               label="Veldu dómara"
               defaultValue={defaultJudge}
               options={judges}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>                
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
                 setJudge((selectedOption as ReactSelectOption).value.toString())
               }
               required
