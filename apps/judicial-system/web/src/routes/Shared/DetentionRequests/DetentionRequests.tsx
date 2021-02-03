@@ -277,7 +277,7 @@ export const DetentionRequests: React.FC = () => {
             aria-describedby="tableCation"
           >
             <thead className={styles.thead}>
-              <tr className={styles.tr}>
+              <tr>
                 <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     LÖKE málsnr.
@@ -370,13 +370,7 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">{c.policeCaseNumber || '-'}</Text>
                   </td>
-                  <td
-                    className={cn(
-                      styles.td,
-                      styles.largeColumn,
-                      'flexDirectionCol',
-                    )}
-                  >
+                  <td className={cn(styles.td, styles.largeColumn)}>
                     <Text>
                       <Box component="span" className={styles.accusedName}>
                         {c.accusedName || '-'}
@@ -460,6 +454,7 @@ export const DetentionRequests: React.FC = () => {
                   <td
                     className={cn(
                       styles.deleteButtonContainer,
+                      styles.td,
                       requestToRemoveIndex === i && 'open',
                     )}
                   >
