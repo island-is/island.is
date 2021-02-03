@@ -11,5 +11,5 @@ export class GetSingleNewsInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  lang?: ElasticsearchIndexLocale
+  lang?: ElasticsearchIndexLocale = 'is'
 }
