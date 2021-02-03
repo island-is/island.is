@@ -8,6 +8,10 @@ import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
 import { Environment } from 'libs/api-catalogue/consts/src/lib/environment'
+import {
+  CatAliases,
+  CatIndices,
+} from '@elastic/elasticsearch/api/requestParams'
 
 const { elastic } = elasticEnvironment
 
@@ -128,24 +132,45 @@ export class ElasticService {
 
     return ret
   }
+  async getAllAliases(options: CatAliases = { format: 'json' }) {
+    return await this.client.cat.aliases(options).then((result) => result?.body)
+  }
+
   async getAllAliasNames() {
     interface Item {
       alias: string
+    }
+
+    const aliasesNames: Array<string> = []
+    const body = await this.getAllAliases({ h: 'alias', format: 'json' })
+    if (body) {
+      const list = body as Array<Item>
+      list.forEach((item) => {
+        if (item.alias) aliasesNames.push(item.alias)
+      })
+    }
+
+    return aliasesNames
+  }
+
+  async getAllIndices(options: CatIndices = { format: 'json' }) {
+    return await this.client.cat.indices(options).then((result) => result?.body)
+  }
+  async getAllIndexNames() {
+    interface Item {
       index: string
     }
 
-    return await this.client.cat
-      .aliases({ h: 'alias', format: 'json' })
-      .then((result) => {
-        if (result && result.body) {
-          const aliasesNames: Array<string> = []
-          const list: Array<Item> = result.body as Array<Item>
-          list.forEach((item) => {
-            if (item.alias) aliasesNames.push(item.alias)
-          })
-          return aliasesNames
-        }
+    const indices: Array<string> = []
+    const body = await this.getAllIndices({ h: 'index', format: 'json' })
+    if (body) {
+      const list = body as Array<Item>
+      list.forEach((item) => {
+        if (item.index) indices.push(item.index)
       })
+    }
+
+    return indices
   }
 
   /**
@@ -216,11 +241,10 @@ export class ElasticService {
    *  removes the old index from the alias and finally deletes the old index.
    */
   async updateAlias() {
-
     //todo: we need delete index because we are changing it to a alias
     //todo: remove next line when this index has been deleted in all environments
-    this.deleteIndex(this.getAliasName()) 
-    
+    this.deleteIndex(this.getAliasName())
+
     logger.info(`Updating alias: "${this.getWorkerPrefix()}"`)
     logger.debug(`All aliases ${await this.getAllAliasNames()}`)
 
@@ -269,10 +293,7 @@ export class ElasticService {
   /**
    * Accepts array of Services to bulk insert into elastic search.
    */
-  async bulk(
-    services: Array<Service>,
-    indexName: string,
-  ): Promise<void> {
+  async bulk(services: Array<Service>, indexName: string): Promise<void> {
     if (!indexName) {
       throw new Error('Bulk index name missing.')
     }
@@ -383,24 +404,6 @@ export class ElasticService {
     })
     logger.info('Got elasticsearch ping response')
     return result
-  }
-  async getAllIndexNames() {
-    interface Item {
-      index: string
-    }
-
-    return await this.client.cat
-      .indices({ format: 'json', h: ['index'] })
-      .then((result) => {
-        if (result && result.body) {
-          const indices: Array<string> = []
-          const list: Array<Item> = result.body as Array<Item>
-          list.forEach((item) => {
-            if (item.index) indices.push(item.index)
-          })
-          return indices
-        }
-      })
   }
 
   private createEsClient(): Client {
