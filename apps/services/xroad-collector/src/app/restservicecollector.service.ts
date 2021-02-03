@@ -70,7 +70,6 @@ export class RestServiceCollector implements ServiceCollector {
 
     const config = this.getConfig()
     this.elasticService.initWorker(config.aliasName, config.environment)
-
     for (const provider of providers) {
       try {
         // For each provider get list af all REST services
@@ -93,7 +92,7 @@ export class RestServiceCollector implements ServiceCollector {
     }
 
     logger.debug(
-      `Added all services to index "${this.elasticService.getIndexNameWorker()}"`,
+      `Added all services to index "${this.elasticService.getWorkerIndexName()}"`,
     )
     logger.debug(
       `Adding index "${this.elasticService.getAliasName()}" to alias at: ${new Date().toISOString()}`,
