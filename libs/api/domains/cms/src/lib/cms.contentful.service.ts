@@ -47,10 +47,16 @@ import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
-import { mapOrganizationSubpage, OrganizationSubpage } from './models/organizationSubpage.model'
+import {
+  mapOrganizationSubpage,
+  OrganizationSubpage,
+} from './models/organizationSubpage.model'
 import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { ErrorPage, mapErrorPage } from './models/errorPage.model'
-import { OrganizationPage, mapOrganizationPage } from "./models/organizationPage.model";
+import {
+  OrganizationPage,
+  mapOrganizationPage,
+} from './models/organizationPage.model'
 
 const makePage = (
   page: number,

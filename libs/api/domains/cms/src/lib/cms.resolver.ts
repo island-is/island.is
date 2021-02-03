@@ -71,8 +71,8 @@ import { ErrorPage } from './models/errorPage.model'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
-import { OrganizationPage } from "./models/organizationPage.model";
-import { GetOrganizationPageInput } from "./dto/getOrganizationPage.input";
+import { OrganizationPage } from './models/organizationPage.model'
+import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
 
 const { cacheTime } = environment
 
