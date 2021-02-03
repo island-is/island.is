@@ -1,8 +1,6 @@
 import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
-import { GetServerSideProps, NextPageContext } from 'next'
-import { withAuthentication } from '../../../utils/auth.utils'
 import { AdminAccessService } from '../../../services/AdminAccessService'
 import { AdminAccessDTO } from '../../../entities/dtos/admin-acess.dto'
 import { AdminAccess } from '../../../entities/models/admin-access.model'
@@ -55,13 +53,5 @@ const Index: React.FC = () => {
     </ContentWrapper>
   )
 }
-
-export const getServerSideProps = withAuthentication(
-  async (context: NextPageContext) => {
-    return {
-      props: {},
-    }
-  },
-)
 
 export default Index
