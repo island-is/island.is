@@ -1,5 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import Markdown from 'markdown-to-jsx'
@@ -9,24 +8,17 @@ import {
   ModalBase,
   Text,
   Stack,
-  FocusableBox,
-  Icon,
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { APPLICANT_APPLICATIONS } from '@island.is/application/graphql'
-import { Address } from '@island.is/api/schema'
+import {
+  FieldBaseProps,
+  formatText,
+  FormText,
+} from '@island.is/application/core'
 import * as styles from './ErrorModal.treat'
 import { m } from '../../forms/messages'
 import useModalContent from '../../hooks/useModalContent'
-
-interface ContentType {
-  title?: string
-  description?: string
-  buttonText?: string
-  buttonAction?: () => void
-}
 
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
   const { typeId, externalData } = application
@@ -48,28 +40,25 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
           paddingY={[7, 7, 7, 12]}
           borderRadius="large"
         >
-          <FocusableBox
-            component="button"
-            onClick={closeModal}
-            className={styles.close}
-          >
-            <Icon icon="close" color="blue400" size="medium" />
-          </FocusableBox>
           <Stack space={[5, 5, 5, 7]}>
             <Stack space={2}>
-              <Text variant={'h1'}>{
-                formatText(
-                  content?.title,
+              <Text variant={'h1'}>
+                {formatText(
+                  content?.title as FormText,
                   application,
                   formatMessage,
-                )
-              }</Text>
+                )}
+              </Text>
               <Text variant={'intro'}>
-                <Markdown>{formatText(
-                  content?.description,
-                  application,
-                  formatMessage,
-                ) as string}</Markdown>
+                <Markdown>
+                  {
+                    formatText(
+                      content?.description as FormText,
+                      application,
+                      formatMessage,
+                    ) as string
+                  }
+                </Markdown>
               </Text>
             </Stack>
             <GridRow align="spaceBetween" className={styles.gridFix}>
@@ -80,7 +69,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   colorScheme="destructive"
                   onClick={() => {
                     closeModal()
-                    if (content?.buttonAction) content?.buttonAction()
+                    history.push(`../umsoknir/${typeId}`)
                   }}
                   fluid
                 >
@@ -96,17 +85,15 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   size="default"
                   onClick={() => {
                     closeModal()
-                    history.push(`../umsoknir/${typeId}`)
+                    if (content?.buttonAction) content?.buttonAction()
                   }}
                   fluid
                 >
-                  {
-                    formatText(
-                      content?.buttonText,
-                      application,
-                      formatMessage,
-                    )
-                  }
+                  {formatText(
+                    content?.buttonText as FormText,
+                    application,
+                    formatMessage,
+                  )}
                 </Button>
               </GridColumn>
             </GridRow>

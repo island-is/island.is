@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, FormText } from '@island.is/application/core'
 
 export enum StatusTypes {
   PENSIONER = 'pensioner',
@@ -25,8 +25,8 @@ export interface ReviewFieldProps extends FieldBaseProps {
 }
 
 export interface ContentType {
-  title?: string
-  description?: string
-  buttonText?: string
+  title?: FormText
+  description?: FormText | (() => void)
+  buttonText?: FormText
   buttonAction?: () => void
 }
