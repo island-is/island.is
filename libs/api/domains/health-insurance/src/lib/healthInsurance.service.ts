@@ -21,8 +21,11 @@ export class HealthInsuranceService {
 
   // return true or false when asked if person is health insured?
   async isHealthInsured(nationalId: string): Promise<boolean> {
-    const res = await this.healthInsuranceAPI.isHealthInsured(nationalId)
-    logger.info('--- Finished isHealthInsured api call ---')
-    return res['SjukratryggdurType']['sjukratryggdur'] == 1
+    return this.healthInsuranceAPI.isHealthInsured(nationalId)
+  }
+
+  // return caseIds array with Pending status
+  async getPendingApplication(nationalId: string): Promise<number[]> {
+    return this.healthInsuranceAPI.getPendingApplication(nationalId)
   }
 }

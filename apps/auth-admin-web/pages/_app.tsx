@@ -11,15 +11,7 @@ class AuthAdminWebApp extends App<Props> {
   render() {
     const { Component, pageProps } = this.props
     return (
-      <Provider
-        session={pageProps.session}
-        options={{
-          keepAlive: parseInt(
-            process.env.NEXT_PUBLIC_SESSION_KEEP_ALIVE_SECONDS || '300',
-            10,
-          ),
-        }}
-      >
+      <Provider session={pageProps.session} options={{ clientMaxAge: 120 }}>
         <Component {...pageProps} />
       </Provider>
     )

@@ -110,7 +110,7 @@ const NewsList: Screen<NewsListProps> = ({
     }, {})
 
     return {
-      pathname: linkResolver('newsoverview').as,
+      pathname: linkResolver('newsoverview').href,
       query,
     }
   }
@@ -272,9 +272,8 @@ const NewsList: Screen<NewsListProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              as={linkResolver('news', [newsItem.slug]).as}
               titleAs="h2"
-              url={linkResolver('news', [newsItem.slug]).href}
+              href={linkResolver('news', [newsItem.slug]).href}
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
@@ -288,7 +287,7 @@ const NewsList: Screen<NewsListProps> = ({
                 renderLink={(page, className, children) => (
                   <Link
                     href={{
-                      pathname: linkResolver('newsoverview').as,
+                      pathname: linkResolver('newsoverview').href,
                       query: { ...Router.query, page },
                     }}
                   >

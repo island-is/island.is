@@ -146,10 +146,13 @@ export class CaseService {
     })
   }
 
-  create(caseToCreate: CreateCaseDto): Promise<Case> {
+  create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    return this.caseModel.create(caseToCreate)
+    return this.caseModel.create({
+      ...caseToCreate,
+      prosecutorId: user.id,
+    })
   }
 
   async update(

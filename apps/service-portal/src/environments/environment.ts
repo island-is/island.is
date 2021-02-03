@@ -18,8 +18,9 @@ export default {
     family: true,
     health: false,
     education: true,
-    delegation: true,
+    delegation: false,
     assets: false,
     drivingLicense: false,
+    documentProvider: true,
   },
 }

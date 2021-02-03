@@ -9,7 +9,7 @@ import {
   Box,
   Breadcrumbs,
   AccordionCard,
-  LinkCard,
+  TopicCard,
   FocusableBox,
   Navigation,
 } from '@island.is/island-ui/core'
@@ -188,8 +188,10 @@ const Category: Screen<CategoryProps> = ({
 
     setHash(newHash)
 
-    const url = linkResolver(category.__typename as LinkType, [slug])
-    Router.replace(url.href, url.as + `#${newHash}`)
+    Router.replace(
+      linkResolver(category.__typename as LinkType, [slug]).href +
+        `#${newHash}`,
+    )
   }
 
   const sortArticles = (articles: Articles) => {
@@ -385,28 +387,22 @@ const Category: Screen<CategoryProps> = ({
                           <Stack space={2}>
                             {sortedArticles.map(
                               ({ __typename, title, slug, processEntry }) => {
-                                const url = linkResolver(
-                                  __typename.toLowerCase() as LinkType,
-                                  [slug],
-                                )
                                 return (
-                                  <FocusableBox
-                                    key={slug}
-                                    href={url.href}
-                                    as={url.as}
-                                    borderRadius="large"
-                                  >
-                                    {({ isFocused }) => (
-                                      <LinkCard
-                                        isFocused={isFocused}
-                                        tag={
-                                          !!processEntry &&
-                                          n('applicationProcess', 'Umsókn')
-                                        }
-                                      >
-                                        {title}
-                                      </LinkCard>
-                                    )}
+                                  <FocusableBox key={slug} borderRadius="large">
+                                    <TopicCard
+                                      href={
+                                        linkResolver(
+                                          __typename.toLowerCase() as LinkType,
+                                          [slug],
+                                        ).href
+                                      }
+                                      tag={
+                                        !!processEntry &&
+                                        n('applicationProcess', 'Umsókn')
+                                      }
+                                    >
+                                      {title}
+                                    </TopicCard>
                                   </FocusableBox>
                                 )
                               },
@@ -422,12 +418,10 @@ const Category: Screen<CategoryProps> = ({
           })}
           {lifeEvents.map(
             ({ __typename, title, slug, intro, thumbnail, image }, index) => {
-              const url = linkResolver(__typename as LinkType, [slug])
               return (
                 <Card
                   key={index}
-                  href={url.href}
-                  as={url.as}
+                  link={linkResolver(__typename as LinkType, [slug])}
                   description={intro}
                   title={title}
                   image={(thumbnail || image) as Image}
@@ -441,14 +435,12 @@ const Category: Screen<CategoryProps> = ({
             },
           )}
           {cards.map(({ __typename, title, content, slug }, index) => {
-            const url = linkResolver(__typename as LinkType, [slug])
             return (
               <Card
                 key={index}
                 title={title}
                 description={content}
-                href={url.href}
-                as={url.as}
+                link={linkResolver(__typename as LinkType, [slug])}
               />
             )
           })}

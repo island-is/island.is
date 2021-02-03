@@ -43,8 +43,14 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'sjukratryggingar',
-              type: 'SjukratryggingarProvider',
+              id: 'healthInsurance',
+              type: 'HealthInsuranceProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'oldPendingApplications',
+              type: 'OldPendingApplications',
               title: '',
               subTitle: '',
             }),

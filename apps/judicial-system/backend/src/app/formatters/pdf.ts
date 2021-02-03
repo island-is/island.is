@@ -18,6 +18,7 @@ import {
   formatAlternativeTravelBanRestrictions,
   NounCases,
   formatAccusedByGender,
+  isFalsy,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -35,10 +36,7 @@ export function writeFile(fileName: string, documentContent: string) {
   fs?.writeFileSync(`../${fileName}`, documentContent, { encoding: 'binary' })
 }
 
-export async function generateRequestPdf(
-  existingCase: Case,
-  user: User,
-): Promise<string> {
+export async function generateRequestPdf(existingCase: Case): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -60,7 +58,7 @@ export async function generateRequestPdf(
       align: 'center',
     })
     .fontSize(16)
-    .text(`Embætti: ${user.institution}`, {
+    .text(`Embætti: ${existingCase.prosecutor?.institution || 'Ekki skráð'}`, {
       align: 'center',
     })
     .lineGap(40)
@@ -76,6 +74,13 @@ export async function generateRequestPdf(
     .text(`Fullt nafn: ${existingCase.accusedName}`)
     .text(`Kyn: ${formatGender(existingCase.accusedGender)}`)
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
+    .text(
+      `Verjandi sakbornings: ${
+        isFalsy(existingCase.defenderName)
+          ? 'Hefur ekki verið skráður.'
+          : existingCase.defenderName
+      }`,
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
@@ -177,8 +182,8 @@ export async function generateRequestPdf(
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `F.h.l. ${existingCase.prosecutor?.name || user?.name} ${
-        existingCase.prosecutor?.title || user.title
+      `F.h.l. ${existingCase.prosecutor?.name || ''} ${
+        existingCase.prosecutor?.title || ''
       }`,
     )
     .end()

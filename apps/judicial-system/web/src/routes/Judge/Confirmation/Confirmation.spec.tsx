@@ -48,23 +48,17 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Staðfesta og hefja undirritun/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Staðfesta og hefja undirritun/i,
+      }),
     ).toBeDisabled()
 
-    userEvent.type(screen.getByLabelText('Þinghaldi lauk *'), '15:55')
+    userEvent.type(await screen.findByLabelText('Þinghaldi lauk *'), '15:55')
 
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Staðfesta og hefja undirritun/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Staðfesta og hefja undirritun/i,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -121,10 +115,11 @@ describe('Confirmation route', () => {
 
     // Assert
     expect(
-      await waitFor(() => screen.getByText('accusedAppealAnnouncement test')),
+      await screen.findByText('accusedAppealAnnouncement test'),
     ).toBeInTheDocument()
+
     expect(
-      screen.getByText('prosecutorAppealAnnouncement test'),
+      await screen.findByText('prosecutorAppealAnnouncement test'),
     ).toBeInTheDocument()
   })
 })

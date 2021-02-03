@@ -3,7 +3,6 @@ import { Locale, I18nContext } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
   href: string
-  as: string
 }
 
 interface LinkResolverInput {
@@ -13,8 +12,8 @@ interface LinkResolverInput {
 }
 
 interface TypeResolverResponse {
-  type: LinkType
   locale: Locale
+  type?: LinkType
   slug?: string[]
 }
 
@@ -103,11 +102,12 @@ export const replaceVariableInPath = (
 }
 
 // converts a path template to a regex query for matching
-export const convertToRegex = (routeTemplate: string) =>
-  routeTemplate
+export const convertToRegex = (routeTemplate: string) => {
+  const query = routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
-    .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
-    .concat('$') // to prevent partial matches
+    .replace(/\[\w+\]/g, '[-\\w]+') // make path variables be regex word matches
+  return `^${query}$` // to prevent partial matches
+}
 
 // extracts slugs from given path
 export const extractSlugsByRouteTemplate = (
@@ -140,7 +140,6 @@ export const linkResolver = (
   // special case for external url resolution
   if (type === 'linkurl') {
     return {
-      as: variables[0],
       href: variables[0],
     }
   }
@@ -152,23 +151,20 @@ export const linkResolver = (
     if (variables.length) {
       // populate path templates with variables
       return {
-        href: typePath,
-        as: variables.reduce(
-          (asPath, slug) => replaceVariableInPath(asPath, slug),
+        href: variables.reduce(
+          (path, slug) => replaceVariableInPath(path, slug),
           typePath,
         ),
       }
     } else {
       // there are no variables, return path template as path
       return {
-        as: typePath,
         href: typePath,
       }
     }
   } else {
     // we return to 404 page if no path is found, if this happens we have a bug
     return {
-      as: '/404',
       href: '/404',
     }
   }
@@ -210,6 +206,7 @@ export const typeResolver = (
       }
     }
   }
+
   return null
 }
 

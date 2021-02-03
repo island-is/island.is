@@ -34,7 +34,6 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
         </Markdown>
       </Text>
       <Box display="flex" justifyContent="center" paddingY={2} size={1}>
-        {/* TODO: When illustration is available in library, switch to that instead */}
         <ManOnBenchIllustration />
       </Box>
       <Box marginBottom={6}>

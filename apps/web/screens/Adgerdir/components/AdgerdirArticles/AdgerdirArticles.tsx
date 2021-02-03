@@ -315,7 +315,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
                       },
                     }
                   })}
-                  {...linkResolver('adgerdirpage', [slug])}
+                  href={linkResolver('adgerdirpage', [slug]).href}
                 />
               )
             },

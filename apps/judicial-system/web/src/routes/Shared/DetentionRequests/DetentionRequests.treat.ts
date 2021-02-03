@@ -84,6 +84,7 @@ export const largeColumn = style({
 })
 
 export const accusedName = style({
+  display: 'block',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 })
@@ -113,6 +114,8 @@ export const td = style({
       marginLeft: 'auto',
       height: '100%',
       padding: 0,
+      // This ensures that the table layout remains consistant on smaller screens.
+      minWidth: 77,
     },
     '&.flexDirectionCol': {
       flexDirection: 'column',

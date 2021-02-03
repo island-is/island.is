@@ -317,6 +317,11 @@ a {
   @extend .fa-trash-o;
 }
 
+.icon__export__csv {
+  @extend .fa;
+  @extend .fa-file-excel-o;
+}
+
 // Buttons
 .button__warning {
   background: $color-error;
@@ -358,4 +363,8 @@ footer {
   &:focus {
     outline: none;
   }
+}
+
+.temp-page {
+  padding: 30px 40px;
 }

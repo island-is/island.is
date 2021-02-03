@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { RulingStepOne } from './RulingStepOne'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -66,33 +66,28 @@ describe('/domari-krafa/urskurdur', () => {
     )
 
     userEvent.type(
-      await waitFor(
-        () =>
-          screen.getByLabelText('Niðurstaða úrskurðar *') as HTMLInputElement,
-      ),
+      await screen.findByLabelText('Niðurstaða úrskurðar *'),
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
     )
 
-    userEvent.tab()
-
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      }),
     ).toBeDisabled()
 
     userEvent.click(
-      screen.getByRole('radio', { name: 'Krafa um gæsluvarðhald samþykkt' }),
+      await screen.findByRole('radio', {
+        name: 'Krafa um gæsluvarðhald samþykkt',
+      }),
     )
 
-    userEvent.type(
-      screen.getByLabelText('Tímasetning *') as HTMLInputElement,
-      '12:31',
-    )
+    userEvent.type(await screen.findByLabelText('Tímasetning *'), '12:31')
+
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -135,12 +130,9 @@ describe('/domari-krafa/urskurdur', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Halda áfram/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -175,15 +167,17 @@ describe('/domari-krafa/urskurdur', () => {
     )
 
     userEvent.click(
-      await waitFor(() =>
-        screen.getByRole('radio', { name: 'Kröfu um gæsluvarðhald hafnað' }),
-      ),
+      await screen.findByRole('radio', {
+        name: 'Kröfu um gæsluvarðhald hafnað',
+      }),
     )
     // Assert
     expect(
-      screen.queryByRole('checkbox', {
-        name: 'Kærði skal sæta einangrun',
-      }),
+      await waitFor(() =>
+        screen.queryByRole('checkbox', {
+          name: 'Kærði skal sæta einangrun',
+        }),
+      ),
     ).not.toBeInTheDocument()
   })
 
@@ -218,17 +212,17 @@ describe('/domari-krafa/urskurdur', () => {
     )
 
     userEvent.click(
-      await waitFor(() =>
-        screen.getByRole('radio', {
-          name: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
-        }),
-      ),
+      await screen.findByRole('radio', {
+        name: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
+      }),
     )
     // Assert
     expect(
-      screen.queryByRole('checkbox', {
-        name: 'Kærði skal sæta einangrun',
-      }),
+      await waitFor(() =>
+        screen.queryByRole('checkbox', {
+          name: 'Kærði skal sæta einangrun',
+        }),
+      ),
     ).not.toBeInTheDocument()
   })
 })

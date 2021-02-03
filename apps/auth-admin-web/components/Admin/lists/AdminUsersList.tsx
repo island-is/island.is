@@ -82,7 +82,7 @@ class AdminUsersList extends Component {
               <h1>Admin UI users</h1>
               <div className="admin-users-list__container__options">
                 <div className="admin-users-list__container__options__button">
-                  <Link href={'/admin-user'}>
+                  <Link href={'/admin/admin-user'}>
                     <a className="admin-users-list__button__new">
                       <i className="icon__new"></i>Create new Admin UI User
                     </a>
@@ -127,7 +127,7 @@ class AdminUsersList extends Component {
                           <td>{admin.scope}</td>
                           <td className="admin-users-list__table__button">
                             <Link
-                              href={`admin-user/${encodeURIComponent(
+                              href={`/admin/admin-user/${encodeURIComponent(
                                 admin.nationalId,
                               )}`}
                             >

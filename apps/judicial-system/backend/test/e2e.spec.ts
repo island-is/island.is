@@ -298,6 +298,7 @@ describe('Case', () => {
           created: apiCase.created || 'FAILURE',
           modified: apiCase.modified || 'FAILURE',
           state: CaseState.NEW,
+          prosecutorId: prosecutor.id,
         })
 
         // Check the data in the database
@@ -329,6 +330,7 @@ describe('Case', () => {
           created: apiCase.created || 'FAILURE',
           modified: apiCase.modified || 'FAILURE',
           state: CaseState.NEW,
+          prosecutorId: prosecutor.id,
         })
 
         // Check the data in the database

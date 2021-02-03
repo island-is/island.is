@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('idp_restrictions', [
+    return queryInterface.bulkInsert('idp_providers', [
       {
         name: 'app',
         description: 'Mobile App',
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('idp_restrictions', {
+    return queryInterface.bulkDelete('idp_providers', {
       name: 'app',
     })
   },

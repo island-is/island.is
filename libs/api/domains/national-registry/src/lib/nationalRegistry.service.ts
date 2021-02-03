@@ -117,7 +117,7 @@ export class NationalRegistryService {
       case 'L':
         return MaritalStatus.ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON
       default:
-        return MaritalStatus.UNKNOWN
+        return MaritalStatus.UNMARRIED
     }
   }
 

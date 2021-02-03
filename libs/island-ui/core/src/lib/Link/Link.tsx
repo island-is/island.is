@@ -31,7 +31,6 @@ export const Link: React.FC<LinkProps> = ({
   replace,
   scroll,
   shallow,
-  passHref,
   prefetch,
   color,
   skipTab,
@@ -55,10 +54,6 @@ export const Link: React.FC<LinkProps> = ({
     },
   )
 
-  // In next 9.5.3 and later, this will be unnecessary, since the as parameter will be
-  // optiona - but as things stand, as is needed if you have a dynamic href
-  const prefetchDefault = !as ? false : prefetch
-
   if (!href) {
     return (
       <span className={classNames} {...linkProps}>
@@ -74,8 +69,8 @@ export const Link: React.FC<LinkProps> = ({
         as={as}
         shallow={shallow}
         scroll={scroll}
-        passHref={passHref}
-        prefetch={prefetchDefault}
+        passHref
+        prefetch={prefetch}
       >
         {pureChildren ? (
           children
