@@ -5,7 +5,9 @@ import {
   GridColumn,
   GridRow,
   Input,
+  Select,
   Text,
+  Option
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -27,6 +29,8 @@ import {
   CaseState,
   NotificationType,
   UpdateCase,
+  User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -37,6 +41,7 @@ import {
 import parseISO from 'date-fns/parseISO'
 import {
   JudgeSubsections,
+  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -45,10 +50,17 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   validateAndSetTime,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { ValueType } from 'react-select/src/types'
 
 interface CaseData {
   case?: Case
+}
+
+interface UserData {
+  users: User[]
 }
 
 export const HearingArrangements: React.FC = () => {
@@ -68,6 +80,11 @@ export const HearingArrangements: React.FC = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+
+  const { data: userData, loading: userLoading } = useQuery<UserData>(UsersQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -104,6 +121,16 @@ export const HearingArrangements: React.FC = () => {
 
     return data?.sendNotification?.notificationSent
   }
+
+  const judges = (userData?.users || [])
+    .filter((user: User) => user.role === UserRole.JUDGE)
+    .map((prosecutor: User) => {
+      return { label: prosecutor.name, value: prosecutor.id }
+    })
+
+  const defaultJudge = judges?.find(
+    (judge: Option) => judge.value === workingCase?.judge?.id,
+  )
 
   useEffect(() => {
     document.title = 'Fyrirtaka - Réttarvörslugátt'
@@ -144,12 +171,33 @@ export const HearingArrangements: React.FC = () => {
         value: workingCase?.defenderEmail || '',
         validations: ['email-format'],
       },
+      {
+        value: workingCase?.judge?.name || '',
+        validations: ['empty'],
+      },
     ]
 
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
   }, [workingCase, isStepIllegal])
+  
+
+  const setJudge = (id: string) => {
+    if(workingCase){
+      setAndSendToServer(
+        'judgeId',
+        id,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      const judge = userData?.users.find(j => j.id === id)
+
+      setWorkingCase({...workingCase, judge: judge })
+    }
+  }
 
   return (
     <PageLayout
@@ -157,7 +205,7 @@ export const HearingArrangements: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
-      isLoading={loading}
+      isLoading={loading || userLoading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
     >
@@ -180,6 +228,23 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
             <CaseNumbers workingCase={workingCase} />
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómari
+              </Text>
+            </Box>
+            <Select
+              name="judge"
+              label="Veldu dómara"
+              defaultValue={defaultJudge}
+              options={judges}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>                
+                setJudge((selectedOption as ReactSelectOption).value.toString())
+              }
+              required
+            />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
