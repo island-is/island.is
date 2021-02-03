@@ -6,7 +6,6 @@ import {
   formatCustodyRestrictions,
   laws,
   formatGender,
-  isFalsy,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -217,7 +216,7 @@ export function formatProsecutorCourtDateEmailNotification(
   defenderName: string,
 ): string {
   const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const defenderText = isFalsy(defenderName)
+  const defenderText = !defenderName
     ? 'Verjandi sakbornings hefur ekki verið skráður'
     : `Verjandi sakbornings: ${defenderName}`
 
@@ -251,7 +250,7 @@ export function formatPrisonCourtDateEmailNotification(
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
-  const defenderText = isFalsy(defenderName)
+  const defenderText = !defenderName
     ? 'Verjandi sakbornings hefur ekki verið skráður'
     : `Verjandi sakbornings: ${defenderName}`
 
@@ -316,11 +315,11 @@ export function formatPrisonRulingEmailNotification(
     courtEndTime,
     'p',
   )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
-    isFalsy(defenderName)
-      ? isFalsy(defenderEmail)
+    !defenderName
+      ? !defenderEmail
         ? 'Hefur ekki verið skráður'
         : defenderEmail
-      : isFalsy(defenderEmail)
+      : !defenderEmail
       ? defenderName
       : `${defenderName}, ${defenderEmail}`
   }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
