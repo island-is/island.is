@@ -1,7 +1,5 @@
 import React from 'react'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
-import { GetServerSideProps, NextPageContext } from 'next'
-import { withAuthentication } from './../../utils/auth.utils'
 import ClientBasicCreateForm from './../../components/Client/form/ClientBasicCreateForm'
 import { Client } from './../../entities/models/client.model'
 import { useRouter } from 'next/router'
@@ -36,13 +34,5 @@ const Index: React.FC = () => {
     </ContentWrapper>
   )
 }
-
-export const getServerSideProps = withAuthentication(
-  async (context: NextPageContext) => {
-    return {
-      props: {},
-    }
-  },
-)
 
 export default Index
