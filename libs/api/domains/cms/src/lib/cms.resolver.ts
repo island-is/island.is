@@ -182,7 +182,7 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
     return this.cmsContentfulService.getOrganizationPage(
-      input?.slug ?? '',
+      input.slug,
       input?.lang ?? 'is-IS',
     )
   }
@@ -193,8 +193,8 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
     return this.cmsContentfulService.getOrganizationSubpage(
-      input?.organizationSlug ?? '',
-      input?.slug ?? '',
+      input.organizationSlug,
+      input.slug,
       input?.lang ?? 'is-IS',
     )
   }
