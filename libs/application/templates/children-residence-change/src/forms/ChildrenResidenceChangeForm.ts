@@ -17,46 +17,44 @@ import {
   extractParentFromApplication,
   extractChildrenFromApplication,
 } from '../lib/utils'
+import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
-  title: 'Flutningur lögheimilis',
+  title: m.application.name,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'dataGathering',
-      title: 'Grunnupplýsingar',
+      id: 'backgroundInformation',
+      title: m.section.backgroundInformation,
       children: [
         buildSubSection({
           id: 'externalData',
-          title: 'Gagnaöflun',
+          title: m.externalData.general.sectionTitle,
           children: [
             buildExternalDataProvider({
-              title: 'Gagnaöflun',
+              title: m.externalData.general.pageTitle,
               id: 'approveExternalData',
-              subTitle:
-                'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
-              checkboxLabel: 'Ég samþykki gagnaöflun',
+              subTitle: m.externalData.general.subTitle,
+              checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
                   type: 'NationalRegistryProvider',
-                  title: 'Persónuupplýsingar úr Þjóðskrá',
-                  subTitle:
-                    'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+                  title: m.externalData.applicant.title,
+                  subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'childrenNationalRegistry',
                   type: 'ChildrenNationalRegistryProvider',
-                  title: 'Grunnupplýsingar um börn',
-                  subTitle:
-                    'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
+                  title: m.externalData.children.title,
+                  subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'parentNationalRegistry',
                   type: 'ParentNationalRegistryProvider',
-                  title: 'Grunnupplýsingar um foreldra',
-                  subTitle: 'Nöfn, kennitölur og lögheimili forelda barnanna.',
+                  title: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.title,
                 }),
               ],
             }),
@@ -64,13 +62,13 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'selectChildInCustody',
-          title: 'Velja barn/börn',
+          title: m.selectChildren.general.sectionTitle,
           children: [
+            // TODO: create custom field for this for better control
             buildCheckboxField({
               id: 'selectChild',
-              title: 'Velja barn/börn til að flytja lögheimili fyrir',
-              description:
-                'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða barn/börn á að flytja lögheimili fyrir.',
+              title: m.selectChildren.general.pageTitle,
+              description: m.selectChildren.general.subTitle,
               large: true,
               options: (application) =>
                 extractChildrenFromApplication(application).map((c) => ({
@@ -82,25 +80,28 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'otherParent',
-          title: 'Staðfesta foreldri',
+          title: m.otherParent.general.sectionTitle,
           children: [
+            // TODO: create custom field for this for better control 
             buildMultiField({
               id: 'informationAboutOtherParent',
-              title: 'Fylltu inn upplýsingar um hitt foreldrið',
+              title: m.otherParent.general.pageTitle,
               description: (application) => {
                 const parent = extractParentFromApplication(application)
+                // TODO: format this with m.otherParent.general.description
                 return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
               },
               children: [
                 buildTextField({
                   id: 'email',
-                  description:
-                    'Til að láta hitt foreldrið vita þurfum við að fá netfang og símanúmer viðkomandi.',
-                  title: 'Netfang',
+                  backgroundColor: 'blue',
+                  description: m.otherParent.inputs.description,
+                  title: m.otherParent.inputs.emailLabel,
                 }),
                 buildTextField({
                   id: 'phoneNumber',
-                  title: 'Símanúmer',
+                  backgroundColor: 'blue',
+                  title: m.otherParent.inputs.phoneNumberLabel,
                 }),
               ],
             }),
@@ -110,15 +111,15 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'arrangement',
-      title: 'Fyrirkomulag',
+      title: m.section.arrangement,
       children: [
         buildSubSection({
           id: 'confirmResidenceChangeInfo',
-          title: 'Tilefni',
+          title: m.reason.general.sectionTitle,
           children: [
             buildCustomField({
               id: 'residenceChangeReason',
-              title: 'Hvert er tilefni breytingar á lögheimili?',
+              title: m.reason.general.pageTitle,
               component: 'Reason',
             }),
           ],
@@ -178,7 +179,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'approveTerms',
-      title: 'Áhrif umsóknar',
+      title: m.section.effect,
       children: [
         buildCustomField({
           id: 'approveTerms',
@@ -189,7 +190,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'overview',
-      title: 'Yfirlit og undirritun',
+      title: m.section.overview,
       children: [
         buildCustomField({
           id: 'residenceChangeReview',
@@ -200,7 +201,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'submitted',
-      title: 'Umsókn móttekin',
+      title: m.section.received,
       children: [
         buildCustomField({
           id: 'residenceChangeConfirmation',

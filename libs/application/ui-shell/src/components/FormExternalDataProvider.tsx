@@ -69,6 +69,7 @@ const FormExternalDataProvider: FC<{
   formValue,
 }) => {
   const { setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
@@ -124,7 +125,7 @@ const FormExternalDataProvider: FC<{
           <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
         <Text variant="h4">
-          {subTitle || 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
+          {subTitle ? formatMessage(subTitle) : 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -160,7 +161,7 @@ const FormExternalDataProvider: FC<{
                   }}
                   checked={value}
                   name={`${id}`}
-                  label={checkboxLabel || 'Ég samþykki'}
+                  label={checkboxLabel ? formatMessage(checkboxLabel) : 'Ég samþykki'}
                   value={id}
                 />
               </Box>
