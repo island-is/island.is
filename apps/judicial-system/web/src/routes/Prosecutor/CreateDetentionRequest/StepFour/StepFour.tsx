@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import {
   constructProsecutorDemands,
   isNextDisabled,

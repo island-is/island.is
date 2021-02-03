@@ -25,7 +25,6 @@ import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
   CaseState,
-  CaseType,
   NotificationType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
