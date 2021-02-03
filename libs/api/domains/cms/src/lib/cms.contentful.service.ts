@@ -47,6 +47,7 @@ import { Homepage, mapHomepage } from './models/homepage.model'
 import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
+import { RedisCacheService } from './redis-cache.service'
 
 const makePage = (
   page: number,
@@ -83,7 +84,10 @@ const ArticleFields = [
 
 @Injectable()
 export class CmsContentfulService {
-  constructor(private contentfulRepository: ContentfulRepository) {}
+  constructor(
+    private contentfulRepository: ContentfulRepository,
+    private cacheManager: RedisCacheService,
+  ) {}
 
   async getAdgerdirFrontpage(lang = 'is-IS'): Promise<AdgerdirFrontpage> {
     const result = await this.contentfulRepository
@@ -330,14 +334,25 @@ export class CmsContentfulService {
     namespace: string,
     lang: string,
   ): Promise<Namespace | null> {
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IUiConfigurationFields>(lang, {
-        ['content_type']: 'uiConfiguration',
-        'fields.namespace': namespace,
-      })
-      .catch(errorHandler('getNamespace'))
+    const key = `${namespace}-${lang}`
+    let cache = await this.cacheManager.get(key)
 
-    return result.items.map(mapNamespace)[0] ?? null
+    if (!cache) {
+      const result = await this.contentfulRepository
+        .getLocalizedEntries<types.IUiConfigurationFields>(lang, {
+          ['content_type']: 'uiConfiguration',
+          'fields.namespace': namespace,
+        })
+        .catch(errorHandler('getNamespace'))
+
+      const value = result.items.map(mapNamespace)[0] ?? null
+
+      this.cacheManager.set(key, value)
+
+      return value
+    }
+
+    return cache
   }
 
   async getMenu(name: string, lang: string): Promise<Menu | null> {

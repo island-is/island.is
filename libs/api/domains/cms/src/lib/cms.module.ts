@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { RedisCacheModule } from './redis-cache.module'
 import { ElasticService } from '@island.is/content-search-toolkit'
 import { TerminusModule } from '@nestjs/terminus'
 import {
@@ -13,7 +14,7 @@ import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
 
 @Module({
-  imports: [TerminusModule],
+  imports: [TerminusModule, RedisCacheModule],
   providers: [
     CmsResolver,
     ArticleResolver,
