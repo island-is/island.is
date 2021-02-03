@@ -59,13 +59,10 @@ const StefnuvottarPage: Screen<StefnuvottarPageProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active:
-        subpage.menuItem.url === primaryLink.url ||
-        childrenLinks.some((link) => link.url === subpage.menuItem.url),
+      active: "/stofnanir/syslumenn/stefnuvottar" === primaryLink.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === subpage.menuItem.url,
       })),
     }),
   )
