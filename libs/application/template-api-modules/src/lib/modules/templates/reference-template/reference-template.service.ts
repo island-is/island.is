@@ -14,16 +14,6 @@ export class ReferenceTemplateService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async assignApplication({ application }: TemplateApiModuleActionProps) {
-    console.log('Running sendApplication from ReferenceTemplate api module')
-    console.log('\t-assigning application and sending email to notify assignee')
-    await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-      generateAssignApplicationEmail,
-      application,
-    )
-    console.log('\t\tdone')
-  }
-
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     console.log('Running sendApplication from ReferenceTemplate api module')
 

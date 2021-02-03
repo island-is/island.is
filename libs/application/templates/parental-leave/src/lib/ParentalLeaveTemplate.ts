@@ -1,4 +1,5 @@
 import { assign } from 'xstate'
+import set from 'lodash/set'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -90,6 +91,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
+        exit: 'clearAssignees',
         meta: {
           name: 'Needs other parent approval',
           progress: 0.4,
@@ -152,12 +154,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
+        exit: 'saveEmployerNationalRegistryId',
         meta: {
           name: 'Waiting to assign employer',
           progress: 0.4,
           onEntry: {
             apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
-            onErrorEvent: DefaultEvents.REJECT,
           },
           roles: [
             {
@@ -178,6 +180,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_APPROVAL]: {
+        exit: 'clearAssignees',
         meta: {
           name: 'Employer Approval',
           progress: 0.5,
@@ -323,6 +326,30 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         }
         return context
       }),
+      saveEmployerNationalRegistryId: assign((context, event) => {
+        // Only save if employer gets assigned
+        if (event.type !== DefaultEvents.ASSIGN) {
+          return context
+        }
+
+        const { application } = context
+
+        const { answers } = application
+
+        set(answers, 'employer.nationalRegistryId', application.assignees[0])
+
+        return {
+          ...context,
+          application,
+        }
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
     },
   },
   mapUserToRole(
