@@ -17,20 +17,20 @@ RESET=$'\x1b[0m'
 SSM_PREFIX="/k8s/"
 
 # Minimum length
-MIN_LENGTH="{6,32}"
+MIN_LENGTH="{6,128}"
 
 # Secret name can only be alphanumeric and dash
-ALPHANUMERIC_DASH="^[a-zA-Z0-9\/-]"
+ALPHANUMERIC_DASH="^[a-zA-Z0-9\/_-]"
 
 # Atleast one valid char
 ONE_OR_MORE="+$"
-
+END="$"
 # Exclude whitespaces
 ILLEGAL_CHARS="\s"
-HAS_SLASH_END="\/$"
+HAS_SLASH_END="[^\/]"
 
 # Complete pattern
-PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$ONE_OR_MORE
+PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$HAS_SLASH_END$END
 
 
 function test_func() {
@@ -39,11 +39,11 @@ function test_func() {
 
   for TEST_PATTERN in "${_TEST_ASSERT_PASS[@]}";
     do
-      [[ $TEST_PATTERN =~ $ALPHANUMERIC_DASH$PATTERN ]] && echo "TEST: FAILED -> "$TEST_PATTERN || echo "TEST: PASSED -> "$TEST_PATTERN
+      [[ $TEST_PATTERN =~ $PATTERN ]] && echo "TEST: FAILED -> "$TEST_PATTERN || echo "TEST: PASSED -> "$TEST_PATTERN
     done
   for TEST_PATTERN in "${_TEST_ASSERT_FAIL[@]}";
     do
-      [[ ! $TEST_PATTERN =~ $ALPHANUMERIC_DASH$PATTERN ]] && echo "TEST: PASSED -> "$TEST_PATTERN || echo "TEST: FAILED -> "$TEST_PATTERN
+      [[ ! $TEST_PATTERN =~ $PATTERN ]] && echo "TEST: PASSED -> "$TEST_PATTERN || echo "TEST: FAILED -> "$TEST_PATTERN
     done
   for TEST_PATTERN in "${_TEST_ASSERT_PASS[@]}";
     do
@@ -82,10 +82,10 @@ function validate_chars() {
   then
     echo $GREEN"Name: Ok!"$RESET
   else
-    echo $RED"Secret name can only contain letters, numbers and dash"$RESET
+    echo $RED"Secret name can only contain letters, numbers, hyphens and underscores"$RESET
     exit 0
   fi
-  if [[ $1 =~ $HAS_SLASH_END ]]
+  if [[ ! $1 =~ $HAS_SLASH_END ]]
   then
     echo $RED"Secret name cannot end with /"$RESET
     exit 0
@@ -106,7 +106,7 @@ function validate_length() {
   then
     echo $GREEN'Length: Ok!'$RESET
   else
-    echo $RED'To short, should be 6-32 characters long.'$RESET
+    echo $RED'To short, should be 6-256 characters long.'$RESET
     exit 0
   fi
 }
@@ -151,21 +151,22 @@ function create_secret () {
 if [ ${ISLANDIS_CREATE_SECRET_TEST+x} ]
 then
   TEST_ASSERT_PASS=(
+    "some/path/to/secretname01_"
     "some/path/to/secretname01"
-    "some/path/to/secret-name-01"
-    "some/path/to/secret-name-01--"
+    "some/path/to/secret-name-01-"
+    "some/path/to/secret-name-01-_"
   )
   TEST_ASSERT_FAIL=(
     "" # no empty
     " " # no whitespace
     "toshrt" # too short
-    "no/forward/slash/" # no forward slash suffix
-    "this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long" # too short
+    "no/forward/slash/suffix/" # no forward slash suffix
+    "this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long" # too long
     "some/path/to/}#!%" # no symbols
-    "some/path/to/secret-name-01.some-name_" # no dots or underscore
+    "some/path/to/secret-name-01.some-name" # no dots
   )
   test_func TEST_ASSERT_PASS TEST_ASSERT_FAIL
+else
+  #-------------------MAIN SCOPE--------------------------#
+  prepare_secret
 fi
-
-#-------------------MAIN SCOPE--------------------------#
-prepare_secret
