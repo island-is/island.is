@@ -156,12 +156,12 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                     {
                       value: 'permanent',
                       label: 'Til frambúðar',
-                      tooltip: 'Samningurinn gildir til 18 ára aldurs barns',
+                      subLabel: 'Samningurinn gildir til 18 ára aldurs barns',
                     },
                     {
                       value: 'temporary',
                       label: 'Tímabundið',
-                      tooltip: '6 mánuðir eða lengur',
+                      subLabel: '6 mánuðir eða lengur',
                     },
                   ],
                 }),
