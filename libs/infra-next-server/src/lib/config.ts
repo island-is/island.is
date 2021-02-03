@@ -1,7 +1,4 @@
-import { resolve } from 'path'
 import { prepareConfig } from '@nrwl/next/src/utils/config'
-
-export const workspaceRoot = resolve(__dirname, '../../../')
 
 export const getNextConfig = (appDir: string, dev: boolean) => {
   const config = { dev }
@@ -13,7 +10,7 @@ export const getNextConfig = (appDir: string, dev: boolean) => {
       fileReplacements: [],
     }
     const context = {
-      workspaceRoot,
+      workspaceRoot: process.cwd(),
     }
 
     // UPGRADE WARNING: Calling @nrwl/next internals. Be sure to test.
