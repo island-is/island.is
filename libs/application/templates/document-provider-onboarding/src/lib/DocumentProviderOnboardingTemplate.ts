@@ -65,6 +65,9 @@ const applicant = z.object({
   nationalId: z.string().refine((k) => kennitala.isValid(k), {
     message: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
   }),
+  // .refine((k) => kennitala.isCompany(k), {
+  //   message: 'Skrá þarf kennitölu fyrirtækis eða stofnunar',
+  // }), ATH þetta
   address: z
     .string()
     .nonempty({ message: 'Heimilisfang þarf að vera útfyllt' }),
@@ -76,11 +79,11 @@ const applicant = z.object({
 const termsOfAgreement = z.object({
   userTerms: z.boolean().refine((v) => v, {
     //When to show these ?
-    //message: 'Þú verður að samþykkja notendaskilmála  tessst',
+    //message: 'Þú verður að samþykkja notendaskilmála',
   }),
   securityTerms: z.boolean().refine((v) => v, {
     //When to show these ?
-    //message: 'Þú verður að samþykkja öryggisskilmála tesssst',
+    //message: 'Þú verður að samþykkja öryggisskilmála',
   }),
 })
 
@@ -160,7 +163,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             ...context,
             application: {
               ...context.application,
-              assignees: ['2311637949'],
+              assignees: ['2311637949', '2709932579'],
             },
           }
         }),
@@ -263,6 +266,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       process.env.NODE_ENV === 'development' &&
       application.state === 'inReview'
     ) {
+      console.log(process.env.ENVIROMENT)
       return Roles.ASSIGNEE
     }
     if (id === application.applicant) {

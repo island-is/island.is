@@ -20,7 +20,8 @@ export const m = defineMessages({
   },
   termsSubTitle: {
     id: 'dpo.application:terms.subTitle',
-    defaultMessage: 'Skilmálar vegna notkunar á pósthólfi Stafræns Íslands',
+    defaultMessage:
+      '<b>Skilmálar um notkun stafræns pósthólfs á Ísland.is</b> <br /> Um það að veita gögnum inn á stafrænt pósthólf á Ísland.is gilda ákveðnir skilmálar sem skjalaveitur skulu uppfylla.<br/> Til að sækja um að gerast skjalaveitandi þarf að samþykkja þessa skilmála. Aðeins með því að gera það hér, með því að haka í viðkomandi box kemst, umsækjandi áfram í næsta skref umsóknar.',
     description: 'Some description',
   },
   termsUserAgreementTitle: {
@@ -79,7 +80,8 @@ export const m = defineMessages({
   },
   applicantSubTitle: {
     id: 'dpo.application:applicant.subtitle',
-    defaultMessage: 'Stofnun sem sótt er um fyrir.',
+    defaultMessage:
+      '<b>Upplýsingar um þá stofnun sem óskar eftir því að nota stafrænt pósthólf</b> <br /> Hér þarf að skrá upplýsingar um ábyrgðaraðila skjalveitunnar. <br/> Um er að ræða kennitölu og nafn stofnunar, netfang, heimilisfang, póstnúmer og stað. <br />Mikilvægt er að gefa upp almennt netfang stofnunar sem er vaktað og tryggt að innsend erindi séu meðhöndluð og komið í viðeigandi farveg. ',
     description: '',
   },
   applicantNationalId: {
@@ -156,7 +158,8 @@ export const m = defineMessages({
   },
   administrativeContactSubTitle: {
     id: 'dpo.application:administrativeContact.subtitle',
-    defaultMessage: 'Stjórnandi / ábyrgðarmaður stofnunar gagnvart pósthólfi.',
+    defaultMessage:
+      '<b>Stjórnandi / ábyrgðarmaður stofnunar gagnvart pósthólfi.</b> <br /> Hér þarf að skrá upplýsingar um þann sem ber ábyrgð stofnunarinnar gagnvart stafræna pósthólfinu. <br />Vinsamlega athugið að æskilegt er að skrá netfang og símanúmer sem ekki breytist, helst tengt viðkomandi hlutverki. T.d. ef til er almennt netfang sem beinir erindum til stjórnanda hverju sinni.',
     description: '',
   },
   administrativeContactName: {
@@ -204,7 +207,7 @@ export const m = defineMessages({
   technicalContactSubTitle: {
     id: 'dpo.application:technicalContact.subtitle',
     defaultMessage:
-      'Starfsmaður stofnunar eða starfsmaður þjónustuaðila gagnvart stofnun sem tekur á móti tæknilegum vandamálum',
+      '<b>Starfsmaður stofnunar eða starfsmaður þjónustuaðila stofnunar sem tekur á móti tæknilegum vandamálum</b> <br /> Hér þarf að skrá upplýsingar um þann aðila sem ber ábyrgð á tæknilegum atriðum er varðar notkun skjalveitanda á stafræna pósthólfinu.<br /> Vinsamlega athugið að æskilegt er að skrá netfang og símanúmer sem ekki breytist, helst tengt viðkomandi hlutverki. T.d. ef til er almennt netfang sem beinir erindum til kerfisstjóra / tæknilegs tengiliðar hverju sinni. ',
     description: '',
   },
   technicalContactName: {
@@ -252,7 +255,7 @@ export const m = defineMessages({
   helpDeskSubTitle: {
     id: 'dpo.application:helpDesk.subtitle',
     defaultMessage:
-      'Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs',
+      '<b>Netfang og símanúmer sem tekur við athugasemdum frá notendum pósthólfs</b> <br />Upplýsingar um hvert notandi sem lendir í vandræðum með að nálgast gögn frá skjalaveitanda í stafræna pósthólfinu getur snúið sér með vandamál sem upp hefur komið. Þetta getur til dæmis átt við ef notanda tekst ekki að opna skjal frá viðkomandi skjalaveitanda í stafræna pósthólfinu. Mikilvægt er að tryggja notanda auðvelt aðgengi að aðstoð í slíkum tilfellum og því skal hér skrá símanúmer eða netfang sem tryggt er að svari erindi frá notanda fljótt og vel.',
     description: '',
   },
   helpDeskEmail: {
@@ -290,7 +293,7 @@ export const m = defineMessages({
   confirmationSubTitle: {
     id: 'dpo.application:confirmation.subTitle',
     defaultMessage:
-      'Þú ert að ljúka ferlinu. Vinsamlegast farðu yfir hvort allar upplýsingar séu réttar.',
+      '<b>Þú ert að ljúka ferlinu. Vinsamlegast farðu vel yfir öll atriði sem skrásett hafa verið og birt eru hér fyrir neðan.</b> <br /> Það er mjög mikilvægt að skoða vel hvort allar upplýsingar sem gefnar hafa verið séu réttar og tryggja þar með að réttar upplýsingar fari inn í umsóknarferlið.',
     description: '',
   },
   confirmationSubmitButton: {
