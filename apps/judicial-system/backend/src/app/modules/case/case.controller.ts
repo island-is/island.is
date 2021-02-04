@@ -244,7 +244,6 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
-  @RolesRules(judgeRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
