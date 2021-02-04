@@ -341,7 +341,7 @@ TLS lykil öryggisþjónsins er einnig að finna í umsýsluviðmótinu undir _K
 
 ![](./assets/32.png)
 
-Eftirfarandi er dæmi um beiðni frá upplýsingakerfi til öryggisþjóns, í formu _curl_ skipunar:
+Eftirfarandi er dæmi um beiðni frá upplýsingakerfi til öryggisþjóns, í formi _curl_ skipunar:
 
 ```python
 curl --cert dev-island-is_client.crt --key dev-island-is_client.key --cacert dev-island-is_ss.pem -H "X-Road-Client: IS-DEV/GOV/10000/island-is-client" https://ss_dev01:8443/r1/IS-DEV/COM/10002/Origo-Protected/APIS/company?name=nemur
@@ -496,6 +496,8 @@ curl ‘http://localhost:8080/listClients’
      </soapenv:Body>
   </soapenv:Envelope>
   ```
+
+  Nánari upplýsingar er að finna í:  [X-Road: Service Metadata Protocol - Annex B listMethods, allowedMethods, and getWsdl service descriptions](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-meta_x-road_service_metadata_protocol.md#annex-b-listmethods-allowedmethods-and-getwsdl-service-descriptions)
 
 - API Catalog  
   Þessar upplýsingar eru einnig aðgengilegar í vefviðmóti Viskuausunnar, _API Catalog_ Stafræns Íslands [TODO: hlekkur].
