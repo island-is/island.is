@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, {useContext} from 'react'
 import {
   Box,
   GridColumn,
@@ -10,36 +10,42 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  ContentLanguage,
+  ContentLanguage, GetNewsQuery,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
+import { GET_NAMESPACE_QUERY, GET_NEWS_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
+  LatestNewsSection,
   OrganizationSlice,
-  OrganizationWrapper,
+  OrganizationWrapper, Section,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
+import { QueryGetNewsArgs } from "@island.is/api/schema";
+import {GlobalContext} from "../../context/GlobalContext/GlobalContext";
 
 const { publicRuntimeConfig } = getConfig()
 
 interface HomeProps {
+  news: GetNewsQuery['getNews']['items']
   organizationPage: Query['getOrganizationPage']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
+const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
   }
+  const { globalNamespace } = useContext(GlobalContext)
 
   const n = useNamespace(namespace)
+  const gn = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
@@ -97,6 +103,16 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
+      <Section paddingTop={[8, 8, 6]} paddingBottom={[8, 8, 6]} background="purple100" aria-labelledby="latestNewsTitle">
+        <LatestNewsSection
+          label="Fréttir og tilkynningar"
+          labelId="latestNewsTitle"
+          items={news}
+          linkType="organizationnews"
+          overview="organizationnewsoverview"
+          parameters={['syslumenn']}
+        />
+      </Section>
     </OrganizationWrapper>
   )
 }
@@ -104,10 +120,24 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
+      data: {
+        getNews: { items: news },
+      },
+    },
+    {
       data: { getOrganizationPage },
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
+      query: GET_NEWS_QUERY,
+      variables: {
+        input: {
+          size: 3,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
@@ -139,6 +169,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 
   return {
+    news,
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
