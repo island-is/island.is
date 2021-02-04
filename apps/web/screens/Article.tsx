@@ -24,6 +24,7 @@ import {
 import {
   HeadWithSocialSharing,
   InstitutionPanel,
+  InstitutionsPanel,
   Sticky,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -450,15 +451,47 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
-          <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+          <Box display={['block', 'block', 'none']} marginTop={7} printHidden>
             {!!processEntry && <ProcessEntry {...processEntry} />}
-            <Box marginTop={3}>
-              <ArticleSidebar
-                article={article}
-                n={n}
-                activeSlug={query.subSlug}
+          </Box>
+          {article.organization.length > 0 && (
+            <Box
+              marginTop={[3, 3, 3, 10, 20]}
+              marginBottom={[3, 3, 3, 10, 20]}
+              printHidden
+            >
+              <InstitutionsPanel
+                institution={{
+                  title: article.organization[0].title,
+                  label: article.organization[0].title,
+                  href: article.organization[0].link,
+                }}
+                responsibleParty={article.responsibleParty.map(
+                  (responsibleParty) => ({
+                    title: responsibleParty.title,
+                    label: n('responsibleParty'),
+                    href: responsibleParty.link,
+                  }),
+                )}
+                relatedInstitution={article.relatedOrganization.map(
+                  (relatedOrganization) => ({
+                    title: relatedOrganization.title,
+                    label: n('relatedOrganization'),
+                    href: relatedOrganization.link,
+                  }),
+                )}
+                locale={activeLocale}
+                contactText="Hafa samband"
               />
             </Box>
+          )}
+          <Box display={['block', 'block', 'none']} printHidden>
+            {article.relatedArticles.length > 0 && (
+              <RelatedArticles
+                title={n('relatedMaterial')}
+                articles={article.relatedArticles}
+              />
+            )}
           </Box>
         </Box>
         {!!processEntry &&

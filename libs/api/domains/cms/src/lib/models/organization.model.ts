@@ -13,10 +13,13 @@ export class Organization {
   title: string
 
   @Field()
-  slug: string
+  shortTitle: string
 
   @Field({ nullable: true })
   description?: string
+
+  @Field()
+  slug: string
 
   @Field(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
@@ -34,8 +37,9 @@ export const mapOrganization = ({
 }: IOrganization): Organization => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  shortTitle: fields.shortTitle ?? '',
   description: fields.description ?? '',
+  slug: fields.slug ?? '',
   tag: (fields.tag ?? []).map(mapOrganizationTag),
   logo: fields.logo ? mapImage(fields.logo) : null,
   link: fields.link ?? '',
