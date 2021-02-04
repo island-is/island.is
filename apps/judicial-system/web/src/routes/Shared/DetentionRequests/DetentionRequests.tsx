@@ -16,18 +16,20 @@ import {
   Box,
   Icon,
 } from '@island.is/island-ui/core'
-import { Loading } from '@island.is/judicial-system-web/src/shared-components'
+import {
+  DropdownMenu,
+  Loading,
+} from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
-  CaseDecision,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { Link } from 'react-router-dom'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   insertAt,
@@ -129,7 +131,6 @@ export const DetentionRequests: React.FC = () => {
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
-    decision?: CaseDecision,
     isCustodyEndDateInThePast?: boolean,
   ): { color: TagVariant; text: string } => {
     switch (state) {
@@ -144,18 +145,12 @@ export const DetentionRequests: React.FC = () => {
         if (isCustodyEndDateInThePast) {
           return {
             color: 'darkerBlue',
-            text:
-              decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? 'Farbanni lokið'
-                : 'Gæsluvarðhaldi lokið',
+            text: 'Lokið',
           }
         } else {
           return {
             color: 'blue',
-            text:
-              decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? 'Farbann virkt'
-                : 'Gæsluvarðhald virkt',
+            text: 'virkt',
           }
         }
       case CaseState.REJECTED:
@@ -173,7 +168,7 @@ export const DetentionRequests: React.FC = () => {
     } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
       history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
-      history.push(`${Constants.SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
+      history.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
     }
   }
 
@@ -246,12 +241,20 @@ export const DetentionRequests: React.FC = () => {
         <div className={styles.logoContainer}>
           {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
           {!isJudge && (
-            <Link
-              to={Constants.SINGLE_REQUEST_BASE_ROUTE}
-              style={{ textDecoration: 'none' }}
-            >
-              <Button icon="add">Stofna nýja kröfu</Button>
-            </Link>
+            <DropdownMenu
+              icon="add"
+              items={[
+                {
+                  href: Constants.STEP_ONE_NEW_DETENTION_ROUTE,
+                  title: 'Gæsluvarðhald',
+                },
+                {
+                  href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                  title: 'Farbann',
+                },
+              ]}
+              title="Stofna nýja kröfu"
+            />
           )}
         </div>
       )}
@@ -273,7 +276,7 @@ export const DetentionRequests: React.FC = () => {
             aria-describedby="tableCation"
           >
             <thead className={styles.thead}>
-              <tr className={styles.tr}>
+              <tr>
                 <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
                     LÖKE málsnr.
@@ -331,6 +334,11 @@ export const DetentionRequests: React.FC = () => {
                 </th>
                 <th className={styles.th}>
                   <Text as="span" fontWeight="regular">
+                    Tegund
+                  </Text>
+                </th>
+                <th className={styles.th}>
+                  <Text as="span" fontWeight="regular">
                     Staða
                   </Text>
                 </th>
@@ -361,13 +369,7 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">{c.policeCaseNumber || '-'}</Text>
                   </td>
-                  <td
-                    className={cn(
-                      styles.td,
-                      styles.largeColumn,
-                      'flexDirectionCol',
-                    )}
-                  >
+                  <td className={cn(styles.td, styles.largeColumn)}>
                     <Text>
                       <Box component="span" className={styles.accusedName}>
                         {c.accusedName || '-'}
@@ -389,9 +391,16 @@ export const DetentionRequests: React.FC = () => {
                   </td>
                   <td className={styles.td}>
                     <Text as="span">
-                      {format(parseISO(c.created), 'PP', {
+                      {format(parseISO(c.created), 'P', {
                         locale: localeIS,
                       })}
+                    </Text>
+                  </td>
+                  <td className={styles.td}>
+                    <Text as="span">
+                      {c.type === CaseType.CUSTODY
+                        ? 'Gæsluvarðhald'
+                        : 'Farbann'}
                     </Text>
                   </td>
                   <td className={styles.td}>
@@ -399,7 +408,6 @@ export const DetentionRequests: React.FC = () => {
                       variant={
                         mapCaseStateToTagVariant(
                           c.state,
-                          c.decision,
                           c.isCustodyEndDateInThePast,
                         ).color
                       }
@@ -409,7 +417,6 @@ export const DetentionRequests: React.FC = () => {
                       {
                         mapCaseStateToTagVariant(
                           c.state,
-                          c.decision,
                           c.isCustodyEndDateInThePast,
                         ).text
                       }
@@ -418,7 +425,7 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">
                       {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                        ? `${formatDate(c.custodyEndDate, 'PP')}`
+                        ? `${formatDate(c.custodyEndDate, 'P')}`
                         : null}
                     </Text>
                   </td>
@@ -446,6 +453,7 @@ export const DetentionRequests: React.FC = () => {
                   <td
                     className={cn(
                       styles.deleteButtonContainer,
+                      styles.td,
                       requestToRemoveIndex === i && 'open',
                     )}
                   >
