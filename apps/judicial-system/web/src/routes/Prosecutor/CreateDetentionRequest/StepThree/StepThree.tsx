@@ -114,7 +114,6 @@ export const StepThree: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
     ]
-    console.log(workingCase?.lawsBroken)
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
