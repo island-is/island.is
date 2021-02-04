@@ -55,10 +55,10 @@ export class HealthInsuranceResolver {
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
 
-  /* TEST */
-  @Query(() => String)
-  async healthInsuranceBtest(): Promise<string> {
-    console.log('graphql get file base64...')
-    return await this.bucketService.getFileContentAsBase64('tux.png')
-  }
+  // /* TEST */
+  // @Query(() => String)
+  // async healthInsuranceBtest(): Promise<string> {
+  //   console.log('graphql get file base64...')
+  //   return await this.bucketService.getFileContentAsBase64('tux.png')
+  // }
 }

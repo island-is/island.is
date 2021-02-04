@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
-import { ListObjectsOutput } from 'aws-sdk/clients/s3'
 import * as S3 from 'aws-sdk/clients/s3'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -11,39 +10,25 @@ const s3 = new AWS.S3({
   region: REGION,
 })
 
-export interface Base64FileType {
-  body: string
-  fileName: string
-  contentType: string
-}
-
 @Injectable()
 export class BucketService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
-  /* TEST */
+  /* */
   async getFileContentAsBase64(filename: string): Promise<string> {
     this.logger.info('getFileContent base64...')
     try {
       const sm = await this.getFile(filename)
-      this.logger.debug(JSON.stringify(sm))
       if (sm.Body) {
+        this.logger.info('found file:' + filename)
         return sm.Body.toString('base64')
       } else {
-        throw new Error('error getting file')
+        throw new Error('error getting file:' + filename)
       }
     } catch (error) {
-      this.logger.error('error getting file:' + filename)
       this.logger.error(error.message)
       throw new Error(error.message)
     }
-  }
-
-  /* TEST */
-  async getList(): Promise<ListObjectsOutput> {
-    this.logger.info('get bucket list...')
-    const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
-    return list
   }
 
   /* */
