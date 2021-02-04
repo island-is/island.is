@@ -6,7 +6,6 @@ import {
   formatCustodyRestrictions,
   laws,
   formatGender,
-  isFalsy,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
@@ -309,8 +308,9 @@ export function formatPrisonRulingEmailNotification(
   accusedGender: CaseGender,
   court: string,
   prosecutorName: string,
-  courtDate: Date,
+  courtEndTime: Date,
   defenderName: string,
+  defenderEmail: string,
   decision: CaseDecision,
   custodyEndDate: Date,
   custodyRestrictions: CaseCustodyRestrictions[],
@@ -322,10 +322,19 @@ export function formatPrisonRulingEmailNotification(
   previousDecision: CaseDecision,
 ): string {
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
-    courtDate,
+    courtEndTime,
     'PPP',
+  )}.<br /><br />Þinghaldi lauk kl. ${formatDate(
+    courtEndTime,
+    'p',
   )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
-    isFalsy(defenderName) ? 'Hefur ekki verið skráður' : defenderName
+    defenderName
+      ? defenderEmail
+        ? `${defenderName}, ${defenderEmail}`
+        : defenderName
+      : defenderEmail
+      ? defenderEmail
+      : 'Hefur ekki verið skráður'
   }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     CaseType.CUSTODY,
     accusedNationalId,
