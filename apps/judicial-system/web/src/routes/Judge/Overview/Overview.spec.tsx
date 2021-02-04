@@ -84,7 +84,7 @@ describe('/domari-krafa with an ID', () => {
 
     // Assert
     expect(
-      await screen.findByText('Ekki er farið fram á takmarkanir á gæslu'),
+      await screen.findByText('Ekki er farið fram á takmarkanir á gæslu.'),
     ).toBeInTheDocument()
   })
 

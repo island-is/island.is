@@ -13,7 +13,11 @@ import { EmailService } from '@island.is/email-service'
 import { CaseState, User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
-import { generateRulingPdf, writeFile } from '../../formatters'
+import {
+  generateRequestPdf,
+  generateRulingPdf,
+  writeFile,
+} from '../../formatters'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -97,20 +101,13 @@ export class CaseService {
         existingCase.courtCaseNumber,
         signedRulingPdf,
       ),
+      this.sendEmail(
+        'Fangelsismálastofnun',
+        environment.notifications.prisonAdminEmail,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
     ])
-  }
-
-  private sevenDaysFromNow(): string {
-    const now = new Date()
-    const sevenDaysFromNow = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    )
-
-    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() - 7)
-
-    return sevenDaysFromNow.toISOString()
   }
 
   getAll(): Promise<Case[]> {
@@ -178,6 +175,14 @@ export class CaseService {
     )
 
     return generateRulingPdf(existingCase, user)
+  }
+
+  getRequestPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the request for case ${existingCase.id} as a pdf document`,
+    )
+
+    return generateRequestPdf(existingCase)
   }
 
   async requestSignature(
@@ -251,6 +256,7 @@ export class CaseService {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
+      type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
       accusedNationalId: existingCase.accusedNationalId,
       accusedName: existingCase.accusedName,

@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system/types'
 import * as style from './RulingAccordionItem.treat'
 import {
-  constructConclusion,
+  getConclusion,
   getAppealDecisionText,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { AppealDecisionRole } from '@island.is/judicial-system-web/src/types'
@@ -52,7 +52,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             Úrskurðarorð
           </Text>
         </Box>
-        <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
+        <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
         <Box marginBottom={1}>
           <Text variant="h3">
             {workingCase?.judge
@@ -125,8 +125,8 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <Box marginBottom={2}>
             <Text>
               {formatCustodyRestrictions(
-                workingCase.accusedGender || CaseGender.OTHER,
-                workingCase.custodyRestrictions || [],
+                workingCase.accusedGender,
+                workingCase.custodyRestrictions,
               )}
             </Text>
           </Box>
@@ -147,9 +147,14 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           <Box marginBottom={2}>
             <Text>
               {formatAlternativeTravelBanRestrictions(
-                workingCase.accusedGender || CaseGender.OTHER,
-                workingCase.custodyRestrictions || [],
-              )}
+                workingCase.accusedGender,
+                workingCase.custodyRestrictions,
+                workingCase.otherRestrictions,
+              )
+                .split('\n')
+                .map((str) => (
+                  <Text>{str}</Text>
+                ))}
             </Text>
           </Box>
           {workingCase.otherRestrictions && (
