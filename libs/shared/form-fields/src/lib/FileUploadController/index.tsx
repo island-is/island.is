@@ -87,7 +87,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   maxSize,
 }) => {
   const { clearErrors, setValue } = useFormContext()
-  const [uploadError, setUploadError] = useState<string | undefined>(undefined)
+  const [uploadError, setUploadError] = useState<string | undefined>(error)
   const val = getValueViaPath(application.answers, id, []) as UploadFile[]
 
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
@@ -142,9 +142,10 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
 
       // Done!
       return Promise.resolve({ url: response.url, key: fields.key })
-    } catch (e) {
-      error = e
-      return Promise.reject(e)
+    } catch {
+      // TODO: Translate
+      setUploadError('An error occurred uploading one or more files')
+      return Promise.reject()
     }
   }
 
@@ -190,7 +191,8 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
             url: res.url,
           },
         })
-      } catch (e) {
+      } catch {
+        // TODO: Translate
         setUploadError('An error occurred uploading one or more files')
       }
     })
@@ -208,7 +210,8 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
             },
           },
         })
-      } catch (e) {
+      } catch {
+        // TODO: Translate
         setUploadError('An error occurred removing the file.')
         return
       }
@@ -240,7 +243,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
             buttonLabel={buttonLabel}
             onChange={onFileChange}
             onRemove={onRemoveFile}
-            errorMessage={error || uploadError}
+            errorMessage={uploadError}
             multiple={multiple}
             accept={accept}
             maxSize={maxSize}
