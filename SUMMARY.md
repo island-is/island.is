@@ -21,6 +21,8 @@
   - [CMS](handbook/technical-overview/adr/0010-cms.md)
   - [Open Source License](handbook/technical-overview/adr/0011-open-source-license.md)
   - [What Chart Library Should We Use Across Island.is?](handbook/technical-overview/adr/0012-chart-library.md)
+  - [What Feature Flag Service/application Should We Use at Island.is?](handbook/technical-overview/adr/0013-feature-flags.md)
+  - [Logging, Monitoring and APM Platform](handbook/technical-overview/adr/0014-logging-apm-monitoring.md)
   - [ADR Template](handbook/technical-overview/adr/template.md)
 - [API Design Guide](handbook/technical-overview/api-design-guide/README.md)
   - [Data Definitions and Standards](handbook/technical-overview/api-design-guide/data-definitions.md)
@@ -55,6 +57,8 @@
   - [Metrics](handbook/technical-overview/devops/metrics.md)
   - [Observability](handbook/technical-overview/devops/observability.md)
   - [Operations Base Principles](handbook/technical-overview/devops/operations-base-principles.md)
+  - [Security](handbook/technical-overview/devops/security.md)
+- [Feature Flags](handbook/technical-overview/feature-flags.md)
 - [Monorepo](handbook/technical-overview/monorepo.md)
 - [Personas](handbook/technical-overview/personas.md)
 - [Teamwork](handbook/technical-overview/teamwork.md)
@@ -62,6 +66,7 @@
 - [X-Road / Straumurinn](handbook/technical-overview/x-road/README.md)
   - [Straumurinn – Notkun Og Umsýsla](handbook/technical-overview/x-road/straumurinn-usage-and-operation.md)
   - [Architecture Guidelines for Service Providers and Consumers](handbook/technical-overview/x-road/x-road-architecture-guidelines-for-service-providers-and-consumers.md)
+  - [Straumurinn - Security Server Installation and Registration Steps](handbook/technical-overview/x-road/x-road-security-server-installation-and-registration-steps.md)
   - [X-Road - Kerfisuppsetning](handbook/technical-overview/x-road/x-road-system-requirements.md)
 
 ## Repository
@@ -123,6 +128,7 @@
 - [Content Search Toolkit](libs/content-search-toolkit/README.md)
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
+- [Feature Flags](libs/feature-flags/README.md)
 - [Island UI](libs/island-ui/README.md)
 - [Localization](libs/localization/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)

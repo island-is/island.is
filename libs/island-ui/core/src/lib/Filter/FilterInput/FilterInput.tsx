@@ -24,6 +24,7 @@ export const FilterInput: React.FC<FilterInputProps> = ({
       backgroundColor={['blue', 'blue', 'white']}
       size="sm"
       icon="search"
+      iconType="outline"
       value={value}
       onChange={(event) => onChange(event.target.value)}
     />

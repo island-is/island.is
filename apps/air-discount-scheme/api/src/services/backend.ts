@@ -17,11 +17,13 @@ class BackendAPI extends RESTDataSource {
   }
 
   getFlightLegs(body: {}): Promise<Flight[]> {
-    return this.post('flightLegs', body)
+    return this.post('flightLegs', body, { cacheOptions: { ttl: -1 } })
   }
 
   confirmInvoice(body: {}): Promise<Flight[]> {
-    return this.post('flightLegs/confirmInvoice', body)
+    return this.post('flightLegs/confirmInvoice', body, {
+      cacheOptions: { ttl: -1 },
+    })
   }
 
   getDiscount(nationalId: string): Promise<Discount | null> {

@@ -50,7 +50,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
             <Text variant="h5" as="p" paddingBottom={2}>
-              <Link {...linkResolver('newsoverview')}>
+              <Link {...linkResolver('newsoverview')} skipTab>
                 <Button
                   icon="arrowForward"
                   iconType="filled"

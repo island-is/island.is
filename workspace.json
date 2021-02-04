@@ -395,7 +395,7 @@
             "passWithNoTests": true
           }
         },
-        "env-secrets": {
+        "get-secrets": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "./scripts/secrets.sh api --reset"
@@ -2132,6 +2132,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/email-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "feature-flags": {
+      "root": "libs/feature-flags",
+      "sourceRoot": "libs/feature-flags/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/feature-flags/tsconfig.lib.json",
+              "libs/feature-flags/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/feature-flags/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/feature-flags/jest.config.js",
             "passWithNoTests": true
           }
         }

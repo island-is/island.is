@@ -12,8 +12,8 @@ interface LinkResolverInput {
 }
 
 interface TypeResolverResponse {
-  type: LinkType
   locale: Locale
+  type?: LinkType
   slug?: string[]
 }
 
@@ -50,6 +50,14 @@ export const routesTemplate = {
   newsoverview: {
     is: '/frett',
     en: '/en/news',
+  },
+  organizations: {
+    is: '/stofnanir',
+    en: '/en/organizations',
+  },
+  organizationpage: {
+    is: '/stofnanir/[slug]',
+    en: '/en/organizations/[slug]',
   },
   lifeeventpage: {
     is: '/lifsvidburdur/[slug]',
@@ -102,11 +110,12 @@ export const replaceVariableInPath = (
 }
 
 // converts a path template to a regex query for matching
-export const convertToRegex = (routeTemplate: string) =>
-  routeTemplate
+export const convertToRegex = (routeTemplate: string) => {
+  const query = routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
-    .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
-    .concat('$') // to prevent partial matches
+    .replace(/\[\w+\]/g, '[-\\w]+') // make path variables be regex word matches
+  return `^${query}$` // to prevent partial matches
+}
 
 // extracts slugs from given path
 export const extractSlugsByRouteTemplate = (
@@ -205,6 +214,7 @@ export const typeResolver = (
       }
     }
   }
+
   return null
 }
 

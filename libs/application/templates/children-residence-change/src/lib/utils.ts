@@ -1,5 +1,12 @@
 import { Application } from '@island.is/application/core'
+import { NationalRegistryUser } from '@island.is/api/schema'
 import { Parent, RegisteredChildren } from '../dataProviders/APIDataTypes'
+
+export const extractApplicantFromApplication = (application: Application) => {
+  return (application.externalData.nationalRegistry?.data as {
+    parent?: object
+  }) as NationalRegistryUser
+}
 
 export const extractParentFromApplication = (application: Application) => {
   return (application.externalData.parentNationalRegistry?.data as {

@@ -21,7 +21,7 @@ We provision all AWS resources in three Availability Zones so that failure in on
 
 ### Structure
 
-![Typical request handling](./assets/account_structure.png)
+![Typical request handling](./assets/account_structure.svg)
 
 This structure is based on the guidance coming from a service that helps us plan and control the AWS cloud structure - [AWS Control Tower](https://aws.amazon.com/controltower/).
 
@@ -48,12 +48,13 @@ A few notes here:
 
 - Networking
   - public subnet - an Internet-facing network. There is very little that we provision here since this is a harsh place to be. Notably Load balancers and NAT Gateways are provisioned here.
-  - private subnet - only accessible from the public subnet. This is where we run our Kubernetes cluster. Workloads running here have access to the Internet by means of a NAT Gateway.
+  - private subnet - only accessible from the public subnet. This is where we run our Kubernetes cluster. Workloads running here have outbound access to the Internet by means of a NAT Gateway.
   - database subnet - only accessible from the private subnet. No Internet access in or out.
 - Security
   - AWS WAF
     - protection against [common web-based attacks](https://owasp.org/www-project-top-ten/)
     - IP-based filtering
+  - Security groups - each Kubernetes pod can be granted identity and permission set to access only the AWS resources it needs
 
 ## Databases
 
@@ -69,7 +70,7 @@ We use the following databases as of this writing:
 
 ## Queues
 
-We use [AWS SQS](https://aws.amazon.com/sqs/) which is a fully managed queue service. This is a proprietary service and protocol so it is not suitable for `critical` applications.
+We use [AWS SQS](https://aws.amazon.com/sqs/), which is a fully managed queue service. This is a proprietary service and protocol so it is not suitable for `critical` applications.
 
 ## Applications
 
