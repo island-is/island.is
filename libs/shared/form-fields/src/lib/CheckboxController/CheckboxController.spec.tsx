@@ -56,4 +56,39 @@ describe('CheckboxController', () => {
     )
     expect(getByText('nice tooltip')).toBeInTheDocument()
   })
+
+  it('should render a sublabel below an option if wished and when large set to true', () => {
+    const options = [
+      { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
+      { label: 'another checkbox', value: 'on' },
+    ]
+    const { getByText } = render(
+      <Wrapper>
+        <CheckboxController
+          id="values"
+          error="error indeed"
+          large={true}
+          options={options}
+        />
+      </Wrapper>,
+    )
+    expect(getByText('nice sublabel')).toBeInTheDocument()
+  })
+
+  it('should NOT render a sublabel below an option if wished and when large is set to false or undefined', () => {
+    const options = [
+      { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
+      { label: 'another checkbox', value: 'on' },
+    ]
+    const { getByText } = render(
+      <Wrapper>
+        <CheckboxController
+          id="values"
+          error="error indeed"
+          options={options}
+        />
+      </Wrapper>,
+    )
+    expect(getByText('nice sublabel')).not.toBeInTheDocument()
+  })
 })
