@@ -197,7 +197,7 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, existingCase.state)
 
-    let update = { state } as UpdateCaseDto
+    const update = { state } as UpdateCaseDto
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -286,7 +286,7 @@ export class CaseController {
   ) {
     const existingCase = await this.findCaseById(id)
 
-    if (user.role !== UserRole.JUDGE && user.id !== existingCase.judge.id) {
+    if (user.role !== UserRole.JUDGE && user.id !== existingCase.judgeId) {
       throw new ForbiddenException('A ruling must be signed by the cases judge')
     }
 
