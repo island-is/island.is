@@ -173,6 +173,12 @@ export interface IArticleFields {
   /** Organization */
   organization?: IOrganization[] | undefined
 
+  /** Related organization */
+  relatedOrganization?: IOrganization[] | undefined
+
+  /** Responsible party */
+  responsibleParty?: IOrganization[] | undefined
+
   /** Related Articles */
   relatedArticles?: IArticle[] | undefined
 
@@ -1455,14 +1461,18 @@ export interface INamespace extends Entry<INamespaceFields> {
 }
 
 export interface INamespaceJeremyDevFields {
-  /** Namespace */
+  /** namespace */
   namespace?: string | undefined
 
-  /** Strings */
+  /** strings */
   strings?: Record<string, any> | undefined
-}
 
-/** Namespace containing translations */
+  /** defaults */
+  defaults?: Record<string, any> | undefined
+
+  /** fallback */
+  fallback?: Record<string, any> | undefined
+}
 
 export interface INamespaceJeremyDev extends Entry<INamespaceJeremyDevFields> {
   sys: {
@@ -1643,6 +1653,9 @@ export interface IOneColumnText extends Entry<IOneColumnTextFields> {
 export interface IOrganizationFields {
   /** Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Description */
   description?: string | undefined
