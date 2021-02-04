@@ -101,7 +101,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
       sidebarContent={
-        <Box paddingTop={8}>
+        <Box marginTop={[3, 3, 8]}>
           <Filter
             labelClear={n('filterClear', 'Hreinsa')}
             labelOpen={'openFilterButton'}
@@ -121,52 +121,41 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 setParameters({ ...parameters, query: value })
               }
             />
-            <FilterMultiChoice
-              labelClear={n('filterClear', 'Hreinsa')}
-              onChange={({ categoryId, selected }) => {
-                setParameters({
-                  ...parameters,
-                  [categoryId]: selected,
-                })
-              }}
-              onClear={(categoryId) =>
-                setParameters({
-                  ...parameters,
-                  [categoryId]: [],
-                })
-              }
-              categories={[
-                {
-                  id: 'categories',
-                  label: n('filterCategories', 'Þjónustuflokkar'),
-                  selected: parameters.categories,
-                  filters: categories,
-                },
-              ]}
-            />
-            <FilterMultiChoice
-              labelClear={n('filterClear', 'Hreinsa')}
-              onChange={({ categoryId, selected }) => {
-                setParameters({
-                  ...parameters,
-                  [categoryId]: selected,
-                })
-              }}
-              onClear={(categoryId) =>
-                setParameters({
-                  ...parameters,
-                  [categoryId]: [],
-                })
-              }
-              categories={[
-                {
-                  id: 'groups',
-                  label: n('filterGroups', 'Málefni'),
-                  selected: parameters.groups,
-                  filters: groups,
-                },
-              ]}
-            />
+            <Box
+              borderRadius="large"
+              borderColor="blue200"
+              borderWidth="standard"
+            >
+              <FilterMultiChoice
+                labelClear={n('filterClear', 'Hreinsa')}
+                onChange={({ categoryId, selected }) => {
+                  setParameters({
+                    ...parameters,
+                    [categoryId]: selected,
+                  })
+                }}
+                onClear={(categoryId) =>
+                  setParameters({
+                    ...parameters,
+                    [categoryId]: [],
+                  })
+                }
+                categories={[
+                  {
+                    id: 'categories',
+                    label: n('filterCategories', 'Þjónustuflokkar'),
+                    selected: parameters.categories,
+                    filters: categories,
+                  },
+                  {
+                    id: 'groups',
+                    label: n('filterGroups', 'Málefni'),
+                    selected: parameters.groups,
+                    filters: groups,
+                  },
+                ]}
+              />
+            </Box>
           </Filter>
         </Box>
       }
