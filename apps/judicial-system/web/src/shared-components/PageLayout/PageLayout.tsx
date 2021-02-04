@@ -13,7 +13,11 @@ import { ProsecutorLogo } from '../Logos'
 import { JudgeLogo } from '../Logos'
 import Loading from '../Loading/Loading'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../UserProvider/UserProvider'
 import { Sections } from '@island.is/judicial-system-web/src/types'
@@ -23,6 +27,7 @@ interface PageProps {
   activeSection: number
   isLoading: boolean
   notFound: boolean
+  caseType?: CaseType
   activeSubSection?: number
   decision?: CaseDecision
   parentCaseDecision?: CaseDecision
@@ -36,6 +41,7 @@ const PageLayout: FC<PageProps> = ({
   activeSubSection,
   isLoading,
   notFound,
+  caseType,
   decision,
   parentCaseDecision,
   isCustodyEndDateInThePast,
@@ -67,7 +73,10 @@ const PageLayout: FC<PageProps> = ({
 
   const sections = [
     {
-      name: 'Krafa um gæsluvarðhald',
+      name:
+        caseType === CaseType.CUSTODY
+          ? 'Krafa um gæsluvarðhald'
+          : 'Krafa um farbann',
       children: [
         { type: 'SUB_SECTION', name: 'Sakborningur' },
         { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
@@ -174,7 +183,9 @@ const PageLayout: FC<PageProps> = ({
                     ? sections
                     : sections.filter((_, index) => index <= 2)
                 }
-                formName="Gæsluvarðhald"
+                formName={
+                  caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+                }
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}
               />
@@ -203,7 +214,7 @@ const PageLayout: FC<PageProps> = ({
           description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
           variant="error"
           link={{
-            href: Constants.DETENTION_REQUESTS_ROUTE,
+            href: Constants.REQUEST_LIST_ROUTE,
             title: 'Fara á yfirlitssíðu',
           }}
         />

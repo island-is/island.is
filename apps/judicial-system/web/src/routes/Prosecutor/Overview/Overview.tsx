@@ -9,6 +9,7 @@ import {
   NotificationType,
   TransitionCase,
   CaseState,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -147,14 +148,17 @@ export const Overview: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              {workingCase.parentCase
-                ? 'Yfirlit kröfu um framlengingu á gæslu'
-                : 'Krafa um gæsluvarðhald'}
+              {`Yfirlit kröfu um ${
+                workingCase.parentCase ? 'framlengingu' : ''
+              } á ${
+                workingCase.type === workingCase.type ? 'gæslu' : 'farbann'
+              }`}
             </Text>
           </Box>
           <Box component="section" marginBottom={5}>
@@ -259,13 +263,19 @@ export const Overview: React.FC = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_3"
-                label="Takmarkanir á gæslu"
+                label={`Takmarkanir og tilhögun ${
+                  workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+                }`}
               >
-                <Text>
-                  {formatRequestedCustodyRestrictions(
-                    workingCase.requestedCustodyRestrictions,
-                  )}
-                </Text>
+                {formatRequestedCustodyRestrictions(
+                  workingCase.type,
+                  workingCase.requestedCustodyRestrictions,
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((str) => (
+                    <Text>{str}</Text>
+                  ))}
               </AccordionItem>
               <AccordionItem
                 labelVariant="h3"
@@ -336,16 +346,18 @@ export const Overview: React.FC = () => {
 
           {modalVisible && (
             <Modal
-              title="Krafa um gæsluvarðhald hefur verið staðfest"
+              title={`Krafa um ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhald'
+                  : 'Farbann'
+              }  hefur verið staðfest`}
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
-              handleClose={() =>
-                history.push(Constants.DETENTION_REQUESTS_ROUTE)
-              }
+              handleClose={() => history.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
                 history.push(Constants.FEEDBACK_FORM_ROUTE)
               }}
               handleSecondaryButtonClick={() => {
-                history.push(Constants.DETENTION_REQUESTS_ROUTE)
+                history.push(Constants.REQUEST_LIST_ROUTE)
               }}
               primaryButtonText="Gefa endurgjöf á gáttina"
               secondaryButtonText="Loka glugga"

@@ -103,6 +103,7 @@ export const StepFour: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>

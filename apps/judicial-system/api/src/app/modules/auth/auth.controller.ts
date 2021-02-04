@@ -105,7 +105,7 @@ export class AuthController {
         name: user.fullname,
         mobile: user.mobile,
       },
-      returnUrl ?? '/gaesluvardhaldskrofur',
+      returnUrl ?? '/krofur',
       res,
       new Entropy({ bits: 128 }).string(),
     )
@@ -132,7 +132,7 @@ export class AuthController {
           name: '',
           mobile: '',
         },
-        returnUrl ?? '/gaesluvardhaldskrofur',
+        returnUrl ?? '/krofur',
         res,
       )
     }

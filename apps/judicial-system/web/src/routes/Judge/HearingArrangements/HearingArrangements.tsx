@@ -160,6 +160,7 @@ export const HearingArrangements: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>

@@ -39,14 +39,13 @@ export const thead = style({
 export const deleteButtonContainer = style({
   display: 'flex',
   alignItems: 'center',
-  width: 0,
-  overflow: 'hidden',
+  width: '0',
+  height: '100%',
   visibility: 'hidden',
   transition: 'all .5s ease-in-out',
 
   selectors: {
     '&.open': {
-      width: '150px',
       visibility: 'visible',
     },
   },
@@ -61,26 +60,25 @@ export const thButton = style({
 })
 
 export const tableRowContainer = style({
-  display: 'flex',
-  flex: 1,
-  alignItems: 'center',
-  minWidth: '100%',
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
-  float: 'right',
   transition: 'all .5s ease-in-out',
 
   selectors: {
     '&.isDeleting': {
-      minWidth: 'calc(100% + 100px)',
+      transform: 'translateX(-150px)',
     },
   },
 })
 
 export const largeColumn = style({
-  // The width needed to make sure a 33 character name doesn't wrap
-  minWidth: 334,
-  whiteSpace: 'nowrap',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+      // The width needed to make sure a 33 character name doesn't wrap
+      maxWidth: 334,
+      whiteSpace: 'nowrap',
+    },
+  },
 })
 
 export const accusedName = style({
@@ -89,36 +87,19 @@ export const accusedName = style({
   textOverflow: 'ellipsis',
 })
 
-export const tr = style({
-  display: 'flex',
-  flex: 1,
-})
-
 export const th = style({
-  display: 'flex',
-  flex: 1,
-  padding: '12px 24px',
-  width: 'auto',
+  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
 })
 
 export const td = style({
-  display: 'flex',
-  flex: 1,
-  padding: theme.spacing[3],
-  width: 'auto',
-
   selectors: {
+    [`&:not(${deleteButtonContainer})`]: {
+      padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+    },
     '&.secondLast': {
-      flex: 0,
-      justifyContent: 'flex-end',
       marginLeft: 'auto',
       height: '100%',
       padding: 0,
-      // This ensures that the table layout remains consistant on smaller screens.
-      minWidth: 77,
-    },
-    '&.flexDirectionCol': {
-      flexDirection: 'column',
     },
   },
 })
@@ -127,7 +108,7 @@ export const deleteButton = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  marginRight: 32,
+  marginRight: 24,
   padding: 10,
   minWidth: 36,
   minHeight: 36,
