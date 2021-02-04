@@ -460,14 +460,12 @@ describe('Case', () => {
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-          ],
+          include: [{ model: User, as: 'prosecutor' }],
         })
       })
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), {
-          ...apiCase
+          ...apiCase,
         })
       })
   })
