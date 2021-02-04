@@ -95,6 +95,7 @@ const Home: Screen<HomeProps> = ({
         </Box>
         <Inline space={2}>
           {page.featuredThings.map(({ title, attention, thing }) => {
+            console.log('thing', thing)
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
             return cardUrl?.href && cardUrl?.href.length > 0 ? (
               <Link key={title} {...cardUrl} skipTab>
