@@ -37,7 +37,6 @@ export const CreateCaseMutation = gql`
       court
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken
@@ -131,7 +130,6 @@ export const ExtendCaseMutation = gql`
       court
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken

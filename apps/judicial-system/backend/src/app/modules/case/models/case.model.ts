@@ -133,13 +133,6 @@ export class Case extends Model<Case> {
   requestedCourtDate: Date
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  alternativeTravelBan: boolean
-
-  @Column({
     type: DataType.DATE,
     allowNull: true,
   })

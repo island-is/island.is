@@ -72,7 +72,6 @@ function remainingProsecutorCaseData() {
   return {
     arrestDate: '2020-09-08T08:00:00.000Z',
     requestedCourtDate: '2020-09-08T11:30:00.000Z',
-    alternativeTravelBan: false,
     requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
     otherDemands: 'Other Demands',
     lawsBroken: 'Broken Laws',
@@ -188,9 +187,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
   expect(caseOne.requestedCourtDate || null).toBe(
     caseTwo.requestedCourtDate || null,
-  )
-  expect(parseBoolean(caseOne.alternativeTravelBan)).toBe(
-    parseBoolean(caseTwo.alternativeTravelBan),
   )
   expect(caseOne.requestedCustodyEndDate || null).toBe(
     caseTwo.requestedCustodyEndDate || null,

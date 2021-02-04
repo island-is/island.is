@@ -31,7 +31,6 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '010101-0000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = true
     const isExtension = false
@@ -42,7 +41,6 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
       isExtension,
@@ -61,7 +59,6 @@ describe('formatProsecutorDemands', () => {
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = false
@@ -72,7 +69,6 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
       isExtension,
@@ -85,43 +81,12 @@ describe('formatProsecutorDemands', () => {
     )
   })
 
-  test('should format prosecutor demands with alternative travel ban', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '010101-0000'
-    const accusedName = 'Glanni Glæpur'
-    const court = 'Héraðsdómur Reykjavíkur'
-    const alternativeTravelBan = true
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = true
-    const isExtension = false
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      alternativeTravelBan,
-      requestedCustodyEndDate,
-      isolation,
-      isExtension,
-      undefined,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Glanni Glæpur, kt. 010101-0000, sæti gæsluvarðhaldi, farbanni til vara, með úrskurði Héraðsdóms Reykjavíkur, til mánudagsins 16. nóvember 2020, kl. 19:30, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    )
-  })
-
   test('should format extended prosecutor demands', () => {
     // Arrange
     const type = CaseType.CUSTODY
     const accusedNationalId = '011101-0000'
     const accusedName = 'Siggi Sýra'
     const court = 'Héraðsdómur Kjósarskarðs'
-    const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = true
@@ -133,7 +98,6 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
       isExtension,
@@ -146,44 +110,12 @@ describe('formatProsecutorDemands', () => {
     )
   })
 
-  test('should format extended prosecutor demands when alternative travel ban requested', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '011101-0000'
-    const accusedName = 'Siggi Sýra'
-    const court = 'Héraðsdómur Kjósarskarðs'
-    const alternativeTravelBan = true
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      alternativeTravelBan,
-      requestedCustodyEndDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti áframhaldandi gæsluvarðhaldi, farbanni til vara, með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
-    )
-  })
-
   test('should format extended prosecutor demands when previous travel ban', () => {
     // Arrange
     const type = CaseType.CUSTODY
     const accusedNationalId = '011101-0000'
     const accusedName = 'Siggi Sýra'
     const court = 'Héraðsdómur Kjósarskarðs'
-    const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = true
@@ -195,7 +127,6 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
       isExtension,
@@ -208,44 +139,12 @@ describe('formatProsecutorDemands', () => {
     )
   })
 
-  test('should format extended prosecutor demands when previous travel ban and alternative travel ban requested', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '011101-0000'
-    const accusedName = 'Siggi Sýra'
-    const court = 'Héraðsdómur Kjósarskarðs'
-    const alternativeTravelBan = true
-    const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
-    const isolation = false
-    const isExtension = true
-    const previousDecision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
-    // Act
-    const res = formatProsecutorDemands(
-      type,
-      accusedNationalId,
-      accusedName,
-      court,
-      alternativeTravelBan,
-      requestedCustodyEndDate,
-      isolation,
-      isExtension,
-      previousDecision,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Þess er krafist að Siggi Sýra, kt. 011101-0000, sæti gæsluvarðhaldi, áframhaldandi farbanni til vara, með úrskurði Héraðsdóms Kjósarskarðs, til mánudagsins 16. nóvember 2020, kl. 19:30.',
-    )
-  })
-
   test('should format prosecutor demands for travel ban', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN
     const accusedNationalId = '0101010000'
     const accusedName = 'Glanni Glæpur'
     const court = 'Héraðsdómur Reykjavíkur'
-    const alternativeTravelBan = false
     const requestedCustodyEndDate = new Date('2020-11-16T19:30:08.000Z')
     const isolation = false
     const isExtension = false
@@ -256,7 +155,6 @@ describe('formatProsecutorDemands', () => {
       accusedNationalId,
       accusedName,
       court,
-      alternativeTravelBan,
       requestedCustodyEndDate,
       isolation,
       isExtension,
