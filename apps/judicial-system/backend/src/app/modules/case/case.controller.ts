@@ -245,7 +245,6 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
-  @RolesRules(judgeRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -260,6 +259,28 @@ export class CaseController {
     const existingCase = await this.findCaseById(id)
 
     const pdf = await this.caseService.getRulingPdf(existingCase, user)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @Get('case/:id/request')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the request for an existing case as a pdf document',
+  })
+  async getRequestPdf(@Param('id') id: string, @Res() res: Response) {
+    const existingCase = await this.findCaseById(id)
+
+    const pdf = await this.caseService.getRequestPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
