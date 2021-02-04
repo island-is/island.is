@@ -21,7 +21,6 @@ export function formatProsecutorDemands(
   accusedNationalId: string,
   accusedName: string,
   court: string,
-  alternativeTravelBan: boolean,
   requestedCustodyEndDate: Date,
   isolation: boolean,
   isExtension: boolean,
@@ -33,15 +32,8 @@ export function formatProsecutorDemands(
     isExtension && previousDecision === CaseDecision.ACCEPTING
       ? ' áframhaldandi'
       : ''
-  } ${type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'}${
-    alternativeTravelBan
-      ? `,${
-          isExtension &&
-          previousDecision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? ' áframhaldandi'
-            : ''
-        } farbanni til vara,`
-      : ''
+  } ${
+    type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
   } með úrskurði ${court?.replace(
     'Héraðsdómur',
     'Héraðsdóms',

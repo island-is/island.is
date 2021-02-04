@@ -97,7 +97,6 @@ export interface Case {
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
-  alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
   otherDemands?: string
   lawsBroken?: string
@@ -177,7 +176,6 @@ export interface UpdateCase {
   court?: string
   arrestDate?: string
   requestedCourtDate?: string
-  alternativeTravelBan?: boolean
   requestedCustodyEndDate?: string
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]

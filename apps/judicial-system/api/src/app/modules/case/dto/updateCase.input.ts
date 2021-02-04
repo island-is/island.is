@@ -59,10 +59,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly alternativeTravelBan?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
   readonly requestedCustodyEndDate?: string
 
   @Allow()
