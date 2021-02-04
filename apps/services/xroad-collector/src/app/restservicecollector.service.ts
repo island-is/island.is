@@ -10,7 +10,7 @@ import { Environment } from 'libs/api-catalogue/consts/src'
 
 interface ConfigValues {
   environment: Environment
-  aliasName: string
+  //aliasName: string
 }
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
@@ -23,11 +23,11 @@ export class RestServiceCollector implements ServiceCollector {
 
   getConfig(): ConfigValues {
     logger.debug('Checking config')
-    const aliasName = this.configService.get<string>('aliasName')
+    //const aliasName = this.configService.get<string>('aliasName')
     const environmentValue = this.configService.get<string>('environment')
-    if (!aliasName) {
-      throw new Error('Environment variable XROAD_COLLECTOR_ALIAS is missing')
-    }
+    // if (!aliasName) {
+    //   throw new Error('Environment variable XROAD_COLLECTOR_ALIAS is missing')
+    // }
     if (!environmentValue) {
       throw new Error('Environment variable ENVIRONMENT is missing')
     }
@@ -46,7 +46,7 @@ export class RestServiceCollector implements ServiceCollector {
     }
 
     const ret: ConfigValues = {
-      aliasName: aliasName,
+      //aliasName: aliasName,
       environment: environment,
     }
 
@@ -65,11 +65,9 @@ export class RestServiceCollector implements ServiceCollector {
   }
 
   private async indexProviders(providers: Array<Provider>): Promise<void> {
-    // Remove the worker index so we can re-create it
-    // with the latest state in X-Road in this environment
+    // Get latest state in X-Road in this environment
+    this.elasticService.initWorker(this.getConfig().environment)
 
-    const config = this.getConfig()
-    this.elasticService.initWorker(config.aliasName, config.environment)
     for (const provider of providers) {
       try {
         // For each provider get list af all REST services
@@ -100,8 +98,12 @@ export class RestServiceCollector implements ServiceCollector {
     await this.elasticService.updateAlias()
     logger.debug(`Done updating values at: ${new Date().toISOString()}`)
 
+    await this.elasticService.copyValuesFromOtherEnvironments()
+
     //TODO: if another instance of the collector is running in the same
     //TODO: environment, the line below, will delete it's index.
     await this.elasticService.deleteDanglingIndices()
+
+    logger.info(`Collecting done on ${this.elasticService.getEnvironment()}`)
   }
 }
