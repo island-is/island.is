@@ -24,6 +24,7 @@ import {
   CaseCustodyProvisions,
   CaseState,
   CaseTransition,
+  CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as styles from './Overview.treat'
@@ -130,12 +131,17 @@ export const JudgeOverview: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              Yfirlit kröfu
+              {`Yfirlit ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'kröfu'
+                  : 'farbannskröfu'
+              }`}
             </Text>
           </Box>
           <Box component="section" marginBottom={7}>
@@ -278,13 +284,21 @@ export const JudgeOverview: React.FC = () => {
             <div className={styles.infoSection}>
               <Box marginBottom={1}>
                 <Text variant="h3" as="h3">
-                  Takmarkanir og tilhögun á gæslu
+                  {`Takmarkanir og tilhögun ${
+                    workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+                  }`}
                 </Text>
               </Box>
               <Text>
                 {formatRequestedCustodyRestrictions(
+                  workingCase.type,
                   workingCase.requestedCustodyRestrictions,
-                )}
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((str) => (
+                    <Text>{str}</Text>
+                  ))}
               </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (

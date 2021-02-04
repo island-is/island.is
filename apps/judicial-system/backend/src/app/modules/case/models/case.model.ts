@@ -19,6 +19,7 @@ import {
   CaseCustodyRestrictions,
   CaseGender,
   CaseDecision,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
@@ -44,6 +45,13 @@ export class Case extends Model<Case> {
   @UpdatedAt
   @ApiProperty()
   modified: Date
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseType),
+  })
+  type: CaseType
 
   @Column({
     type: DataType.ENUM,
@@ -167,6 +175,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
   requestedCustodyRestrictions: CaseCustodyRestrictions[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requestedOtherRestrictions: string
 
   @Column({
     type: DataType.STRING,

@@ -18,6 +18,11 @@ export interface User {
   active: boolean
 }
 
+export enum CaseType {
+  CUSTODY = 'CUSTODY',
+  TRAVEL_BAN = 'TRAVEL_BAN',
+}
+
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
@@ -80,6 +85,7 @@ export interface Case {
   id: string
   created: string
   modified: string
+  type: CaseType
   state: CaseState
   policeCaseNumber: string
   accusedNationalId: string
@@ -97,6 +103,7 @@ export interface Case {
   lawsBroken?: string
   custodyProvisions?: CaseCustodyProvisions[]
   requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  requestedOtherRestrictions?: string
   caseFacts?: string
   witnessAccounts?: string
   investigationProgress?: string
@@ -148,6 +155,7 @@ export interface Notification {
 }
 
 export interface CreateCase {
+  type: CaseType
   policeCaseNumber: string
   accusedNationalId: string
   accusedName?: string

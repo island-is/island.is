@@ -10,7 +10,7 @@ import {
 } from './formatters'
 import * as formatters from './formatters'
 import {
-  constructConclusion,
+  getConclusion,
   constructProsecutorDemands,
   getShortGender,
   isDirty,
@@ -23,6 +23,7 @@ import {
   Case,
   CaseGender,
   CaseDecision,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
 import { render, screen } from '@testing-library/react'
@@ -323,7 +324,7 @@ describe('Step helper', () => {
     })
   })
 
-  describe('constructConclution', () => {
+  describe('getConclution', () => {
     test('should return rejected message if the case is being rejected', async () => {
       // Arrange
       const wc = {
@@ -334,7 +335,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -360,6 +361,7 @@ describe('Step helper', () => {
         id: 'testid',
         created: 'test',
         modified: 'test',
+        type: CaseType.CUSTODY,
         state: 'DRAFT',
         policeCaseNumber: 'test',
         decision: CaseDecision.ACCEPTING,
@@ -371,7 +373,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -400,10 +402,11 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
+        type: CaseType.CUSTODY,
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -434,7 +437,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -469,7 +472,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -504,7 +507,7 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
@@ -564,6 +567,7 @@ describe('Step helper', () => {
     test('should render the corrent string if the case is an extension', async () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -590,7 +594,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+            'Þess er krafist að Doe, kt. 012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -605,6 +609,7 @@ describe('Step helper', () => {
     test('should render the corrent string there are other demands', async () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -628,7 +633,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
+            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
@@ -643,6 +648,7 @@ describe('Step helper', () => {
     test('should not render the other demands if skipOtherDemands parameter is set to true', async () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -666,7 +672,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(

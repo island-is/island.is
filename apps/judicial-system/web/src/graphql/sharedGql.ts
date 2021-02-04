@@ -6,6 +6,7 @@ export const CaseQuery = gql`
       id
       created
       modified
+      type
       state
       policeCaseNumber
       accusedNationalId
@@ -23,6 +24,7 @@ export const CaseQuery = gql`
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
+      requestedOtherRestrictions
       caseFacts
       witnessAccounts
       investigationProgress

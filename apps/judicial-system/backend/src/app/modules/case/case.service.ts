@@ -97,20 +97,13 @@ export class CaseService {
         existingCase.courtCaseNumber,
         signedRulingPdf,
       ),
+      this.sendEmail(
+        'Fangelsismálastofnun',
+        environment.notifications.prisonAdminEmail,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
     ])
-  }
-
-  private sevenDaysFromNow(): string {
-    const now = new Date()
-    const sevenDaysFromNow = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    )
-
-    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() - 7)
-
-    return sevenDaysFromNow.toISOString()
   }
 
   getAll(): Promise<Case[]> {
@@ -251,6 +244,7 @@ export class CaseService {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
+      type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
       accusedNationalId: existingCase.accusedNationalId,
       accusedName: existingCase.accusedName,
