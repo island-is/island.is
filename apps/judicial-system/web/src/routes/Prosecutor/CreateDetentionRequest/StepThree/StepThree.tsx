@@ -114,7 +114,7 @@ export const StepThree: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
     ]
-
+    console.log(workingCase?.lawsBroken)
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
@@ -482,7 +482,9 @@ export const StepThree: React.FC = () => {
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              isStepIllegal || workingCase.custodyProvisions?.length === 0
+              isStepIllegal ||
+              !workingCase.custodyProvisions ||
+              workingCase.custodyProvisions?.length === 0
             }
           />
         </>
