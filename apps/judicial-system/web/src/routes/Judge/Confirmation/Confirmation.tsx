@@ -604,7 +604,11 @@ export const Confirmation: React.FC = () => {
             </GridContainer>
           </Box>
           <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF þingbók og úrskurð"
+              pdfType="ruling"
+            />
           </Box>
           <FormFooter
             nextUrl={Constants.REQUEST_LIST_ROUTE}

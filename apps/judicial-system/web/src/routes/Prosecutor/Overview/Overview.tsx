@@ -23,6 +23,7 @@ import {
   Modal,
   InfoCard,
   PageLayout,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -320,7 +321,7 @@ export const Overview: React.FC = () => {
               </AccordionItem>
             </Accordion>
           </Box>
-          <Box marginBottom={15}>
+          <Box className={styles.prosecutorContainer}>
             <Box marginBottom={1}>
               <Text>F.h.l</Text>
             </Box>
@@ -329,6 +330,13 @@ export const Overview: React.FC = () => {
                 ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`
                 : `${user?.name} ${user?.title}`}
             </Text>
+          </Box>
+          <Box marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF kröfu"
+              pdfType="request"
+            />
           </Box>
           <FormFooter
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
