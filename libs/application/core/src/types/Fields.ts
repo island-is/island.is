@@ -4,7 +4,7 @@ import {
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormTextArray, FormItem } from './Form'
+import { FormText, FormTextArray, FormItem, StaticText } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
@@ -30,7 +30,7 @@ export type Context = {
 export interface Option {
   value: string
   label: FormText
-  subLabel?: FormText
+  subLabel?: string
   tooltip?: FormText
   excludeOthers?: boolean
 }
