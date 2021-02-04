@@ -197,6 +197,7 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  judgeId?: string
 }
 
 export interface TransitionCase {

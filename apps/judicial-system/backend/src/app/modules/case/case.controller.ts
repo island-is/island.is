@@ -102,6 +102,7 @@ const judgeUpdateRule = {
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
     'prosecutorAppealAnnouncement',
+    'judgeId',
   ],
 } as RolesRule
 
@@ -187,7 +188,6 @@ export class CaseController {
   })
   async transition(
     @Param('id') id: string,
-    @CurrentHttpUser() user: User,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
@@ -197,16 +197,6 @@ export class CaseController {
     const update = {
       state: transitionCase(transition.transition, existingCase.state),
     } as UpdateCaseDto
-
-    // Remove when client has started assigning a judge to each case
-    if (
-      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
-        transition.transition,
-      ) &&
-      user.role === UserRole.JUDGE
-    ) {
-      update['judgeId'] = user.id
-    }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -247,12 +237,11 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('id') id: string,
-    @CurrentHttpUser() user: User,
     @Res() res,
   ) {
     const existingCase = await this.findCaseById(id)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase, user)
+    const pdf = await this.caseService.getRulingPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -278,14 +267,13 @@ export class CaseController {
   ): Promise<SigningServiceResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException('A ruling must be signed by a judge')
+    if (user.role !== UserRole.JUDGE && user.id !== existingCase.judge.id) {
+      throw new ForbiddenException('A ruling must be signed by the cases judge')
     }
 
     try {
       const response = await this.caseService.requestSignature(
-        existingCase,
-        user,
+        existingCase
       )
       return res.status(201).send(response)
     } catch (error) {
