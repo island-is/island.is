@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import {
   Text,
-  GridContainer,
   GridRow,
   GridColumn,
   Box,
   Input,
-  Checkbox,
   DatePicker,
   RadioButton,
   Tooltip,
 } from '@island.is/island-ui/core'
-import {
-  Case,
-  CaseCustodyProvisions,
-  CaseCustodyRestrictions,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -48,6 +41,15 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import {
+  custodyProvisions,
+  travelBanProvisions,
+} from '@island.is/judicial-system-web/src/utils/laws'
+import {
+  alternativeTravelBanRestrictions,
+  restrictions,
+} from '@island.is/judicial-system-web/src/utils/Restrictions'
 
 interface CaseData {
   case?: Case
@@ -82,78 +84,6 @@ export const StepThree: React.FC = () => {
   })
 
   const resCase = data?.case
-
-  const caseCustodyProvisions = [
-    {
-      brokenLaw: 'a-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_A,
-      explination:
-        'Að ætla megi að sakborningur muni torvelda rannsókn málsins, svo sem með því að afmá merki eftir brot, skjóta undan munum ellegar hafa áhrif á samseka eða vitni.',
-    },
-    {
-      brokenLaw: 'b-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_B,
-      explination:
-        'Að ætla megi að hann muni reyna að komast úr landi eða leynast ellegar koma sér með öðrum hætti undan málsókn eða fullnustu refsingar.',
-    },
-    {
-      brokenLaw: 'c-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_C,
-      explination:
-        'Að ætla megi að hann muni halda áfram brotum meðan máli hans er ekki lokið eða rökstuddur grunur leiki á að hann hafi rofið í verulegum atriðum skilyrði sem honum hafa verið sett í skilorðsbundnum dómi.',
-    },
-    {
-      brokenLaw: 'd-lið 1. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_1_D,
-      explination:
-        'Að telja megi gæsluvarðhald nauðsynlegt til að verja aðra fyrir árásum sakbornings ellegar hann sjálfan fyrir árásum eða áhrifum annarra manna.',
-    },
-    {
-      brokenLaw: '2. mgr. 95. gr.',
-      value: CaseCustodyProvisions._95_2,
-      explination:
-        'Einnig má úrskurða sakborning í gæsluvarðhald þótt skilyrði a–d-liðar 1. mgr. séu ekki fyrir hendi ef sterkur grunur leikur á að hann hafi framið afbrot sem að lögum getur varðað 10 ára fangelsi, enda sé brotið þess eðlis að ætla megi varðhald nauðsynlegt með tilliti til almannahagsmuna.',
-    },
-    {
-      brokenLaw: 'b-lið 1. mgr. 99. gr.',
-      value: CaseCustodyProvisions._99_1_B,
-      explination:
-        'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
-    },
-    {
-      brokenLaw: '1. mgr. 100. gr. sml.',
-      value: CaseCustodyProvisions._100_1,
-      explination:
-        'Nú eru skilyrði gæsluvarðhalds skv. 1. eða 2. mgr. 95. gr. fyrir hendi og getur dómari þá, í stað þess að úrskurða sakborning í gæsluvarðhald, mælt fyrir um vistun hans á sjúkrahúsi eða viðeigandi stofnun, bannað honum brottför af landinu ellegar lagt fyrir hann að halda sig á ákveðnum stað eða innan ákveðins svæðis.',
-    },
-  ]
-
-  const restrictions = [
-    {
-      restriction: 'B - Einangrun',
-      value: CaseCustodyRestrictions.ISOLATION,
-      explination:
-        'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
-    },
-    {
-      restriction: 'C - Heimsóknarbann',
-      value: CaseCustodyRestrictions.VISITAION,
-      explination:
-        'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
-    },
-    {
-      restriction: 'D - Bréfskoðun, símabann',
-      value: CaseCustodyRestrictions.COMMUNICATION,
-      explination:
-        'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
-    },
-    {
-      restriction: 'E - Fjölmiðlabann',
-      value: CaseCustodyRestrictions.MEDIA,
-      explination:
-        'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
-    },
-  ]
 
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
@@ -219,6 +149,7 @@ export const StepThree: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -230,8 +161,7 @@ export const StepThree: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Dómkröfur{' '}
-                <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
+                Dómkröfur
               </Text>
               {workingCase.parentCase && (
                 <Box marginTop={1}>
@@ -247,54 +177,88 @@ export const StepThree: React.FC = () => {
                 </Box>
               )}
             </Box>
-            <BlueBox>
-              <Box marginBottom={2}>
+            {workingCase.type === CaseType.CUSTODY ? (
+              <BlueBox>
                 <GridRow>
-                  <GridColumn span="5/12">
-                    <RadioButton
-                      name="alternativeTravelBan"
-                      id="alternativeTravelBanOff"
-                      label="Gæsluvarðhald"
-                      checked={!workingCase.alternativeTravelBan}
-                      onChange={() =>
-                        setAndSendToServer(
-                          'alternativeTravelBan',
-                          false,
+                  <GridColumn span="5/8">
+                    <DatePicker
+                      id="reqCustodyEndDate"
+                      label="Gæsluvarðhald til"
+                      placeholderText="Veldu dagsetningu"
+                      selected={
+                        workingCase.requestedCustodyEndDate
+                          ? parseISO(
+                              workingCase.requestedCustodyEndDate?.toString(),
+                            )
+                          : null
+                      }
+                      locale="is"
+                      minDate={new Date()}
+                      hasError={requestedCustodyEndDateErrorMessage !== ''}
+                      errorMessage={requestedCustodyEndDateErrorMessage}
+                      handleCloseCalendar={(date) =>
+                        setAndSendDateToServer(
+                          'requestedCustodyEndDate',
+                          workingCase.requestedCustodyEndDate,
+                          date,
                           workingCase,
+                          true,
                           setWorkingCase,
                           updateCase,
+                          setRequestedCustodyEndDateErrorMessage,
                         )
                       }
-                      large
-                      filled
+                      required
                     />
                   </GridColumn>
-                  <GridColumn span="7/12">
-                    <RadioButton
-                      name="alternativeTravelBan"
-                      id="alternativeTravelBanOn"
-                      label="Gæsluvarðhald, farbann til vara"
-                      checked={workingCase.alternativeTravelBan}
-                      onChange={() =>
-                        setAndSendToServer(
-                          'alternativeTravelBan',
-                          true,
+                  <GridColumn span="3/8">
+                    <TimeInputField
+                      disabled={!workingCase?.requestedCustodyEndDate}
+                      onChange={(evt) =>
+                        validateAndSetTime(
+                          'requestedCustodyEndDate',
+                          workingCase.requestedCustodyEndDate,
+                          evt.target.value,
+                          ['empty', 'time-format'],
                           workingCase,
                           setWorkingCase,
-                          updateCase,
+                          requestedCustodyEndTimeErrorMessage,
+                          setRequestedCustodyEndTimeErrorMessage,
+                          setRequestedCustodyEndTime,
                         )
                       }
-                      large
-                      filled
-                    />
+                      onBlur={(evt) =>
+                        validateAndSendTimeToServer(
+                          'requestedCustodyEndDate',
+                          workingCase.requestedCustodyEndDate,
+                          evt.target.value,
+                          ['empty', 'time-format'],
+                          workingCase,
+                          updateCase,
+                          setRequestedCustodyEndTimeErrorMessage,
+                        )
+                      }
+                    >
+                      <Input
+                        data-testid="requestedCustodyEndTime"
+                        name="requestedCustodyEndTime"
+                        label="Tímasetning (kk:mm)"
+                        placeholder="Settu inn tíma"
+                        defaultValue={requestedCustodyEndTime}
+                        errorMessage={requestedCustodyEndTimeErrorMessage}
+                        hasError={requestedCustodyEndTimeErrorMessage !== ''}
+                        required
+                      />
+                    </TimeInputField>
                   </GridColumn>
                 </GridRow>
-              </Box>
+              </BlueBox>
+            ) : (
               <GridRow>
                 <GridColumn span="5/8">
                   <DatePicker
                     id="reqCustodyEndDate"
-                    label="Gæsluvarðhald / farbann til"
+                    label="Farbann til"
                     placeholderText="Veldu dagsetningu"
                     selected={
                       workingCase.requestedCustodyEndDate
@@ -363,7 +327,7 @@ export const StepThree: React.FC = () => {
                   </TimeInputField>
                 </GridColumn>
               </GridRow>
-            </BlueBox>
+            )}
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={3}>
@@ -415,96 +379,106 @@ export const StepThree: React.FC = () => {
               </Text>
             </Box>
             <BlueBox>
-              <GridContainer>
-                <GridRow>
-                  {caseCustodyProvisions.map((provision, index) => {
-                    return (
-                      <GridColumn span="6/12" key={index}>
-                        <Box
-                          marginBottom={
-                            // Do not add margins to the last two items
-                            index < caseCustodyProvisions.length - 2 ? 3 : 0
-                          }
-                        >
-                          <Checkbox
-                            name={provision.brokenLaw}
-                            label={provision.brokenLaw}
-                            value={provision.value}
-                            checked={
-                              workingCase.custodyProvisions &&
-                              workingCase.custodyProvisions.indexOf(
-                                provision.value,
-                              ) > -1
-                            }
-                            tooltip={provision.explination}
-                            onChange={({ target }) =>
-                              setCheckboxAndSendToServer(
-                                'custodyProvisions',
-                                target.value,
-                                workingCase,
-                                setWorkingCase,
-                                updateCase,
-                              )
-                            }
-                            large
-                            filled
-                          />
-                        </Box>
-                      </GridColumn>
-                    )
-                  })}
-                </GridRow>
-              </GridContainer>
+              <CheckboxList
+                checkboxes={
+                  workingCase.type === CaseType.CUSTODY
+                    ? custodyProvisions
+                    : travelBanProvisions
+                }
+                selected={workingCase.custodyProvisions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'custodyProvisions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
             </BlueBox>
           </Box>
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={3}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Takmarkanir á gæslu
-                </Text>
+          {workingCase.type === CaseType.CUSTODY && (
+            <Box component="section" marginBottom={10}>
+              <Box marginBottom={3}>
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Takmarkanir og tilhögun gæslu
+                  </Text>
+                </Box>
+                <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
               </Box>
-              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+              <BlueBox>
+                <CheckboxList
+                  checkboxes={restrictions}
+                  selected={workingCase.requestedCustodyRestrictions}
+                  onChange={(id) =>
+                    setCheckboxAndSendToServer(
+                      'requestedCustodyRestrictions',
+                      id,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                />
+              </BlueBox>
             </Box>
-            <BlueBox>
-              <GridContainer>
-                <GridRow>
-                  {restrictions.map((restriction, index) => (
-                    <GridColumn span="6/12" key={index}>
-                      <Box
-                        // Do not add margins to the last two checkboxes
-                        marginBottom={index < restrictions.length - 2 ? 3 : 0}
-                      >
-                        <Checkbox
-                          name={restriction.restriction}
-                          label={restriction.restriction}
-                          value={restriction.value}
-                          checked={
-                            workingCase.requestedCustodyRestrictions &&
-                            workingCase.requestedCustodyRestrictions.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
-                          tooltip={restriction.explination}
-                          onChange={({ target }) =>
-                            setCheckboxAndSendToServer(
-                              'requestedCustodyRestrictions',
-                              target.value,
-                              workingCase,
-                              setWorkingCase,
-                              updateCase,
-                            )
-                          }
-                          large
-                          filled
-                        />
-                      </Box>
-                    </GridColumn>
-                  ))}
-                </GridRow>
-              </GridContainer>
-            </BlueBox>
-          </Box>
+          )}
+          {workingCase.type === CaseType.TRAVEL_BAN && (
+            <Box component="section" marginBottom={4}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Takmarkanir og tilhögun farbanns
+                </Text>
+                <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
+              </Box>
+              <BlueBox>
+                <Box marginBottom={3}>
+                  <CheckboxList
+                    checkboxes={alternativeTravelBanRestrictions}
+                    selected={workingCase.requestedCustodyRestrictions}
+                    onChange={(id) =>
+                      setCheckboxAndSendToServer(
+                        'requestedCustodyRestrictions',
+                        id,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                  />
+                </Box>
+                <Input
+                  name="requestedOtherRestrictions"
+                  data-testid="requestedOtherRestrictions"
+                  label="Nánari útlistun eða aðrar takmarkanir"
+                  defaultValue={workingCase.requestedOtherRestrictions}
+                  placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'requestedOtherRestrictions',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'requestedOtherRestrictions',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  rows={10}
+                  textarea
+                />
+              </BlueBox>
+            </Box>
+          )}
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={

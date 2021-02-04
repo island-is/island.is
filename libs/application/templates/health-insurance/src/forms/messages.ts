@@ -467,4 +467,33 @@ export const m = defineMessages({
     defaultMessage: 'Hafa samband',
     description: 'Contact info',
   },
+  alreadyInsuredTitle: {
+    id: 'hi.application:alreadyInsured.title',
+    defaultMessage: 'Already insured',
+    description: 'Already insured',
+  },
+  alreadyInsuredDescription: {
+    id: 'hi.application:alreadyInsured.description',
+    defaultMessage:
+      'It seems like you already have a health insurance in Iceland',
+    description: 'already insured',
+  },
+  alreadyInsuredButtonText: {
+    id: 'hi.application:alreadyInsured.buttonText',
+    defaultMessage: 'OK',
+    description: 'ok',
+  },
+  externalDataCheckbox: {
+    id: 'hi.application:externalDataCheckbox',
+    defaultMessage:
+      'Ég samþykki að gögn séu sótt, notkunarskilmálana og persónuverndarstefnuna',
+    description:
+      'I confirm that I have read the Terms of use and the Privacy policy',
+  },
+  externalDataSubtitle: {
+    id: 'hi.application:externalDataSubtitle',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    description:
+      'Data from the following sources will be retrieved with your consent',
+  },
 })

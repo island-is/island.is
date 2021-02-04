@@ -17,8 +17,6 @@ import ClientGrantTypesForm from '../../components/Client/form/ClientGrantTypesF
 import ContentWrapper from './../../components/Layout/ContentWrapper'
 import StepEnd from './../../components/common/StepEnd'
 import { ClientService } from './../../services/ClientService'
-import { GetServerSideProps, NextPageContext } from 'next'
-import { withAuthentication } from './../../utils/auth.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -235,13 +233,5 @@ const Index: React.FC = () => {
     }
   }
 }
-
-export const getServerSideProps = withAuthentication(
-  async (context: NextPageContext) => {
-    return {
-      props: {},
-    }
-  },
-)
 
 export default Index
