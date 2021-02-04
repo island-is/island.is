@@ -197,7 +197,7 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, existingCase.state)
 
-    let update = { state } as UpdateCaseDto
+    const update = { state } as UpdateCaseDto
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
