@@ -161,10 +161,7 @@ export const StepThree: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Dómkröfur{' '}
-                {workingCase.type === CaseType.CUSTODY ? (
-                  <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
-                ) : null}
+                Dómkröfur
               </Text>
               {workingCase.parentCase && (
                 <Box marginTop={1}>
@@ -182,48 +179,6 @@ export const StepThree: React.FC = () => {
             </Box>
             {workingCase.type === CaseType.CUSTODY ? (
               <BlueBox>
-                <Box marginBottom={2}>
-                  <GridRow>
-                    <GridColumn span="5/12">
-                      <RadioButton
-                        name="alternativeTravelBan"
-                        id="alternativeTravelBanOff"
-                        label="Gæsluvarðhald"
-                        checked={!workingCase.alternativeTravelBan}
-                        onChange={() =>
-                          setAndSendToServer(
-                            'alternativeTravelBan',
-                            false,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        large
-                        filled
-                      />
-                    </GridColumn>
-                    <GridColumn span="7/12">
-                      <RadioButton
-                        name="alternativeTravelBan"
-                        id="alternativeTravelBanOn"
-                        label="Gæsluvarðhald, farbann til vara"
-                        checked={workingCase.alternativeTravelBan}
-                        onChange={() =>
-                          setAndSendToServer(
-                            'alternativeTravelBan',
-                            true,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        large
-                        filled
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
                 <GridRow>
                   <GridColumn span="5/8">
                     <DatePicker
