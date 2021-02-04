@@ -29,6 +29,9 @@ import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
+import getConfig from 'next/config'
+
+const { publicRuntimeConfig } = getConfig()
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -50,6 +53,11 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   groups,
   namespace,
 }) => {
+  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
+  if (disablePage === 'true') {
+    throw new CustomNextError(404, 'Not found')
+  }
+
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
