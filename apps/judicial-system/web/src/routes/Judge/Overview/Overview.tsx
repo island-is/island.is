@@ -15,6 +15,7 @@ import {
   PageLayout,
   CaseNumbers,
   InfoCard,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -352,6 +353,11 @@ export const JudgeOverview: React.FC = () => {
                 </Text>
               </div>
             )}
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF kröfu"
+              pdfType="request"
+            />
           </Box>
           <FormFooter
             nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
