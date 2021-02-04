@@ -11,6 +11,10 @@ import {
   Box,
   Text,
   Checkbox,
+  Button,
+  Link,
+  TopicCard,
+  Icon,
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -44,7 +48,35 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
         />
       </Box>
       <Box marginBottom={3}>
-        <Accordion singleExpand={false}>
+        <Box>
+          <TopicCard href={'https://island.is/postholf'}>
+            <Box display="flex">
+              {formatText(
+                m.termsUserAgreementTitle,
+                application,
+                formatMessage,
+              )}
+              <Box paddingLeft={1}>
+                <Icon icon="open" type="outline" />
+              </Box>
+            </Box>
+          </TopicCard>
+        </Box>
+        <Box marginTop={2}>
+          <TopicCard href="https://island.is/postholf">
+            <Box display="flex">
+              {formatText(
+                m.termsSafetyAgreementTitle,
+                application,
+                formatMessage,
+              )}
+              <Box paddingLeft={1}>
+                <Icon icon="open" type="outline" />
+              </Box>
+            </Box>
+          </TopicCard>
+        </Box>
+        {/* <Accordion singleExpand={false}>
           <AccordionItem
             id="id_1"
             label={formatText(
@@ -81,7 +113,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
               </Text>
             </Box>
           </AccordionItem>
-        </Accordion>
+        </Accordion> */}
       </Box>
       <Box marginBottom={1}>
         <Controller
