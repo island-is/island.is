@@ -56,7 +56,7 @@ export const getDictionaryVersions = async () => {
   return commits.map((commit) => commit.substring(0, 7))
 }
 
-export const getDictionaryFilesAfterVersion = async (
+export const getDictionaryFilesForVersion = async (
   currentVersion: string,
 ): Promise<Dictionary[]> => {
   const commits = await getCommits()
@@ -66,8 +66,8 @@ export const getDictionaryFilesAfterVersion = async (
     const currentVersionIndex = commits.findIndex((commit) =>
       commit.startsWith(currentVersion),
     )
-    // we just want to import commits between last commit and current HEAD
-    newCommits = commits.slice(0, currentVersionIndex)
+    // we want files from HEAD including current version, to handle partial file uploads
+    newCommits = commits.slice(0, currentVersionIndex + 1)
   } else {
     // if we don't have a version we will import all commits
     newCommits = commits

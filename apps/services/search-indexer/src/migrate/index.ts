@@ -51,7 +51,7 @@ class App {
     logger.info('Requesting files for dictionary version', {
       version: requestedDictionaryVersion,
     })
-    const newDictionaryFiles = await dictionary.getDictionaryFilesAfterVersion(
+    const newDictionaryFiles = await dictionary.getDictionaryFilesForVersion(
       requestedDictionaryVersion,
     )
 
