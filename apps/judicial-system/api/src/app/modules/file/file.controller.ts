@@ -54,4 +54,34 @@ export class FileController {
 
     return stream.pipe(res)
   }
+
+  @Get('case/:id/request')
+  @Header('Content-Type', 'application/pdf')
+  async getRequestPdf(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.logger.debug(`Getting the request for case ${id} as a pdf document`)
+
+    const headers = new Headers()
+    headers.set('Content-Type', 'application/pdf')
+    headers.set('authorization', req.headers.authorization as string)
+    headers.set('cookie', req.headers.cookie as string)
+
+    const result = await fetch(
+      `${environment.backendUrl}/api/case/${id}/request`,
+      { headers },
+    )
+
+    if (!result.ok) {
+      return res.status(result.status).json(result.statusText)
+    }
+
+    const stream = result.body
+
+    res.header('Content-length', result.headers.get('Content-Length') as string)
+
+    return stream.pipe(res)
+  }
 }

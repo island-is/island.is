@@ -5,36 +5,13 @@ import { GraphQLContext, User, Credentials } from '../../types'
 import { Permissions } from './types'
 import { environment } from '../../environments'
 
-const DEVELOPERS = [
-  '1501933119', // Darri
-  '2101932009', // David
-  '2501893469', // Brian
-]
+const {
+  accessGroups: { developers = '', admins = '', testers = '' },
+} = environment
 
-const ADMINS = [
-  /* Stafrænt Ísland */
-  '2607862299', // Þórhildur
-  '1903795829', // Örvar
-  '0412824449', // Andri
-
-  /* Ferðamálastofa */
-  '2501625379', // Elías
-  '1802653849', // Halldór
-  '2605694739', // Alda
-  '1908862479', // Guðný
-]
-
-const TESTERS = [
-  /* Stafrænt Ísland */
-  '2607862299', // Þórhildur
-  '1903795829', // Örvar
-  '0412824449', // Andri
-
-  /* Yay */
-  '1008763619', // Ari
-  '2001764999', // Ragnar
-  '0709902539', // Björn
-]
+const DEVELOPERS = developers.split(',')
+const ADMINS = admins.split(',')
+const TESTERS = testers.split(',')
 
 export const verifyToken = (token: string): Promise<Credentials | null> => {
   const { jwtSecret } = environment.auth

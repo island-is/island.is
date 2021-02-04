@@ -1,4 +1,5 @@
 import { ReadableStreamBuffer } from 'stream-buffers'
+import { Response } from 'express'
 
 import {
   Body,
@@ -63,12 +64,12 @@ const prosecutorUpdateRule = {
     'court',
     'arrestDate',
     'requestedCourtDate',
-    'alternativeTravelBan',
     'requestedCustodyEndDate',
     'otherDemands',
     'lawsBroken',
     'custodyProvisions',
     'requestedCustodyRestrictions',
+    'requestedOtherRestrictions',
     'caseFacts',
     'legalArguments',
     'comments',
@@ -194,18 +195,23 @@ export class CaseController {
 
     const existingCase = await this.findCaseById(id)
 
-    const update = {
-      state: transitionCase(transition.transition, existingCase.state),
-    } as UpdateCaseDto
+    const state = transitionCase(transition.transition, existingCase.state)
 
-    // Remove when client has started assigning a judge to each case
+    let update: UpdateCaseDto
+
+    // Remove when client has started assigned a judge to each case
     if (
       [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
         transition.transition,
       ) &&
       user.role === UserRole.JUDGE
     ) {
-      update['judgeId'] = user.id
+      update = {
+        state,
+        judgeId: user.id,
+      } as UpdateCaseDto
+    } else {
+      update = { state } as UpdateCaseDto
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
@@ -238,7 +244,6 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
-  @RolesRules(judgeRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -248,7 +253,7 @@ export class CaseController {
   async getRulingPdf(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
-    @Res() res,
+    @Res() res: Response,
   ) {
     const existingCase = await this.findCaseById(id)
 
@@ -260,7 +265,29 @@ export class CaseController {
     })
     stream.put(pdf, 'binary')
 
-    res.header('Content-length', pdf.length)
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @Get('case/:id/request')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the request for an existing case as a pdf document',
+  })
+  async getRequestPdf(@Param('id') id: string, @Res() res: Response) {
+    const existingCase = await this.findCaseById(id)
+
+    const pdf = await this.caseService.getRequestPdf(existingCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
 
     return stream.pipe(res)
   }
@@ -274,8 +301,8 @@ export class CaseController {
   async requestSignature(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
-    @Res() res,
-  ): Promise<SigningServiceResponse> {
+    @Res() res: Response,
+  ) {
     const existingCase = await this.findCaseById(id)
 
     if (user.role !== UserRole.JUDGE) {

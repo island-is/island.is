@@ -1,6 +1,7 @@
 import {
   CaseCustodyRestrictions,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 import * as Constants from './constants'
@@ -11,7 +12,6 @@ import {
   formatGender,
   formatCustodyRestrictions,
   formatAlternativeTravelBanRestrictions,
-  isFalsy,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -55,27 +55,88 @@ describe('formatDate', () => {
 describe('formatRequestedCustodyRestrictions', () => {
   test('should return a comma separated list of restrictions', () => {
     // Arrange
-    const restrictions: CaseCustodyRestrictions[] = [
+    const type = CaseType.CUSTODY
+    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = [
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.COMMUNICATION,
     ]
 
     // Act
-    const r = formatRequestedCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(
+      type,
+      requestedCustodyRestrictions,
+    )
 
     // Assert
     expect(r).toEqual('B - Einangrun, D - Bréfskoðun, símabann')
   })
 
-  test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplyed', () => {
+  test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplied', () => {
     // Arrange
-    const restrictions: CaseCustodyRestrictions[] = []
+    const type = CaseType.CUSTODY
+    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
 
     // Act
-    const r = formatRequestedCustodyRestrictions(restrictions)
+    const r = formatRequestedCustodyRestrictions(
+      type,
+      requestedCustodyRestrictions,
+    )
 
     // Assert
-    expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu')
+    expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu.')
+  })
+
+  test('should return "Ekki er farið fram á takmarkanir á farbanni" if no custody restriction is supplied', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
+
+    // Act
+    const r = formatRequestedCustodyRestrictions(
+      type,
+      requestedCustodyRestrictions,
+    )
+
+    // Assert
+    expect(r).toEqual('Ekki er farið fram á takmarkanir á farbanni.')
+  })
+
+  test('should return additional other restrictions', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = [
+      CaseCustodyRestrictions.ISOLATION,
+      CaseCustodyRestrictions.COMMUNICATION,
+    ]
+    const requestedOtherRestrictions = 'The accused should stay home.'
+
+    // Act
+    const r = formatRequestedCustodyRestrictions(
+      type,
+      requestedCustodyRestrictions,
+      requestedOtherRestrictions,
+    )
+
+    // Assert
+    expect(r).toEqual(
+      'B - Einangrun, D - Bréfskoðun, símabann\nThe accused should stay home.',
+    )
+  })
+
+  test('should return additional other restrictions only', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const requestedOtherRestrictions = 'The accused should stay home.'
+
+    // Act
+    const r = formatRequestedCustodyRestrictions(
+      type,
+      undefined,
+      requestedOtherRestrictions,
+    )
+
+    // Assert
+    expect(r).toEqual('The accused should stay home.')
   })
 })
 
@@ -214,6 +275,44 @@ describe('formatAlternativeTravelBanRestrictions', () => {
       'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærða verði gert að tilkynna sig. Að kærða verði gert að afhenda vegabréfið sitt.',
     )
   })
+
+  test('should return formatted restrictions with other restrictions', () => {
+    // Arrange
+    const accusedGender = CaseGender.OTHER
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+    ]
+    const otherRestrictions = 'Stay in town.'
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      custodyRestrictions,
+      otherRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að farbannið verði með takmörkunum. Að kærða verði gert að tilkynna sig. Að kærða verði gert að afhenda vegabréfið sitt.\nStay in town.',
+    )
+  })
+
+  test('should return formatted restrictions with other restrictions only', () => {
+    // Arrange
+    const accusedGender = CaseGender.OTHER
+    const otherRestrictions = 'Stay in town.'
+
+    // Act
+    const res = formatAlternativeTravelBanRestrictions(
+      accusedGender,
+      undefined,
+      otherRestrictions,
+    )
+
+    // Assert
+    expect(res).toBe('Stay in town.')
+  })
 })
 
 describe('capitalize', () => {
@@ -261,27 +360,5 @@ describe('formatGender', () => {
 
     // Assert
     expect(r).toBe('Kynsegin/Annað')
-  })
-})
-
-describe('isFalsy', () => {
-  test('should return true if given an empty string, undefined or null and false otherwise', () => {
-    // Arrange
-    const e = ''
-    const u = undefined
-    const n = null
-    const v = 'Lorem'
-
-    // Act
-    const r = isFalsy(e)
-    const s = isFalsy(u)
-    const t = isFalsy(n)
-    const z = isFalsy(v)
-
-    // Assert
-    expect(r).toBe(true)
-    expect(s).toBe(true)
-    expect(t).toBe(true)
-    expect(z).toBe(false)
   })
 })

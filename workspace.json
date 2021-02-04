@@ -1581,6 +1581,12 @@
             "jestConfig": "libs/application/templates/health-insurance/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/health-insurance/src/forms/messages.ts"
+          }
         }
       }
     },

@@ -54,7 +54,8 @@ export class EmailService {
   }
 
   async sendEmail(message: nodemailer.SendMailOptions): Promise<string> {
-    this.logger.debug(`Sending email to ${message?.to}.`)
+    this.logger.debug(`Sending email.`)
+
     let messageId = ''
 
     try {

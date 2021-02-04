@@ -3,8 +3,6 @@ import ClientCreateForm from '../../components/Client/form/ClientCreateForm'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
-import { NextPageContext } from 'next'
-import { withAuthentication } from './../../utils/auth.utils'
 import ClientTabNav from './../../components/Client/nav/ClientTabNav'
 import { ClientTab } from './../../entities/common/ClientTab'
 import ClientBasicCreateForm from './../../components/Client/form/ClientBasicCreateForm'
@@ -67,11 +65,3 @@ const Index: React.FC = () => {
   }
 }
 export default Index
-
-export const getServerSideProps = withAuthentication(
-  async (context: NextPageContext) => {
-    return {
-      props: {},
-    }
-  },
-)

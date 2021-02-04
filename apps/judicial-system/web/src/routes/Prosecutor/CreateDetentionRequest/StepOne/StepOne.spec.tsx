@@ -10,7 +10,11 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  CaseGender,
+  CaseType,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
 describe('/krafa with an id', () => {
@@ -23,9 +27,11 @@ describe('/krafa with an id', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={['/krafa/test_id_2']}>
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_ONE_ROUTE}/test_id_2`]}
+        >
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -79,9 +85,11 @@ describe('/krafa with an id', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={['/krafa/test_id_3']}>
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_ONE_ROUTE}/test_id_3`]}
+        >
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -109,10 +117,10 @@ describe('/krafa without ID', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
-              <StepOne />
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
+              <StepOne type={CaseType.CUSTODY} />
             </Route>
           </UserProvider>
         </MemoryRouter>
@@ -132,10 +140,10 @@ describe('/krafa without ID', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
-              <StepOne />
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
+              <StepOne type={CaseType.CUSTODY} />
             </Route>
           </UserProvider>
         </MemoryRouter>
@@ -192,10 +200,10 @@ describe('/krafa without ID', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={['/krafa']}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
-              <StepOne />
+            <Route path={Constants.STEP_ONE_ROUTE}>
+              <StepOne type={CaseType.CUSTODY} />
             </Route>
           </UserProvider>
         </MemoryRouter>
