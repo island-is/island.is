@@ -48,7 +48,7 @@ class App {
     const requestedDictionaryVersion =
       latestAwsDictionaryVersion ?? minimumDictionaryVersion
 
-    logger.info('Latest aws dictionary version', {
+    logger.info('Requesting files for dictionary version', {
       version: requestedDictionaryVersion,
     })
     const newDictionaryFiles = await dictionary.getDictionaryFilesAfterVersion(
