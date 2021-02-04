@@ -99,12 +99,12 @@ export const InstitutionsPanel = ({
           textAlign={['center', 'center', 'center', 'left']}
         >
           {responsibleParty.map((institution, index) => (
-            <Box marginRight={[0, 0, 0, 6]} marginBottom={3}>
+            <Box marginRight={[0, 0, 0, 6]} marginBottom={5}>
               <LabeledLink key={index} {...institution} locale={locale} />
             </Box>
           ))}
           {relatedInstitution.map((institution, index) => (
-            <Box marginRight={[0, 0, 0, 6]} marginBottom={3}>
+            <Box marginRight={[0, 0, 0, 6]} marginBottom={5}>
               <LabeledLink key={index} {...institution} locale={locale} />
             </Box>
           ))}
