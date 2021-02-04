@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # api-domains-syslumenn
 
 This library was generated with [Nx](https://nx.dev).
