@@ -22,20 +22,15 @@ export class BucketService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   /* TEST */
-  async getFileContent(filename: string): Promise<Base64FileType | undefined> {
-    this.logger.info('getFileContent...')
+  async getFileContentAsBase64(filename: string): Promise<string> {
+    this.logger.info('getFileContent base64...')
     try {
-      //todo ath með undefined
       const sm = await this.getFile(filename)
       this.logger.debug(JSON.stringify(sm))
-      if (sm.Body && sm.ContentType) {
-        return {
-          fileName: filename,
-          contentType: sm.ContentType,
-          body: sm.Body.toString('base64'),
-        }
+      if (sm.Body) {
+        return sm.Body.toString('base64')
       } else {
-        throw new Error('file not found')
+        throw new Error('error getting file')
       }
     } catch (error) {
       this.logger.error('error getting file:' + filename)
@@ -51,7 +46,7 @@ export class BucketService {
     return list
   }
 
-  /* TEST */
+  /* */
   async getFile(fileToGet: string): Promise<S3.GetObjectOutput> {
     this.logger.info('get bucket file:' + fileToGet)
     return new Promise((resolve, reject) => {

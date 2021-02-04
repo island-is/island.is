@@ -12,8 +12,8 @@ import { HealthTest } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
 import { BucketService } from './bucket.service'
 
-@UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
-@Resolver(() => HealthTest) // @UseGuards(IdsAuthGuard, Sco// @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/propesGuard) // TODO: enable when go to dev/pro
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@Resolver(() => HealthTest)
 export class HealthInsuranceResolver {
   constructor(
     private readonly healthInsuranceService: HealthInsuranceService,
@@ -57,10 +57,8 @@ export class HealthInsuranceResolver {
 
   /* TEST */
   @Query(() => String)
-  async healthInsuranceBtest(): Promise<string | undefined> {
-    console.log('testing...')
-    // return this.bucketService.getFileContent('smasaga.txtx')
-    const res = await this.bucketService.getFileContent('tux.png')
-    return res?.body
+  async healthInsuranceBtest(): Promise<string> {
+    console.log('graphql get file base64...')
+    return await this.bucketService.getFileContentAsBase64('tux.png')
   }
 }
