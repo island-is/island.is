@@ -59,10 +59,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly alternativeTravelBan?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
   readonly requestedCustodyEndDate?: string
 
   @Allow()
@@ -80,6 +76,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field(() => [String], { nullable: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestedOtherRestrictions?: string
 
   @Allow()
   @Field({ nullable: true })

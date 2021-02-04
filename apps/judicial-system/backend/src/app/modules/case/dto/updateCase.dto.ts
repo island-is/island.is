@@ -68,11 +68,6 @@ export class UpdateCaseDto {
   readonly requestedCourtDate?: Date
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly alternativeTravelBan?: boolean
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly requestedCustodyEndDate?: Date
@@ -96,6 +91,11 @@ export class UpdateCaseDto {
   @IsEnum(CaseCustodyRestrictions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly requestedOtherRestrictions?: string
 
   @IsOptional()
   @IsString()

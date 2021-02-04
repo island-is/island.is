@@ -39,7 +39,7 @@ function test_func() {
 
   for TEST_PATTERN in "${_TEST_ASSERT_PASS[@]}";
     do
-      [[ $TEST_PATTERN =~ $PATTERN ]] && echo "TEST: FAILED -> "$TEST_PATTERN || echo "TEST: PASSED -> "$TEST_PATTERN
+      [[ $TEST_PATTERN =~ $PATTERN ]] && echo "TEST: PASSED -> "$TEST_PATTERN || echo "TEST: FAILED -> "$TEST_PATTERN
     done
   for TEST_PATTERN in "${_TEST_ASSERT_FAIL[@]}";
     do
@@ -56,7 +56,7 @@ function test_func() {
 }
 
 function error_empty() {
-  echo $RED'No empty values'
+  echo $RED'No empty values'$RESET
   exit 0
 }
 function validate_whitespace() {
@@ -115,7 +115,6 @@ function validate_length() {
 function prepare_secret () {
   # Prompt user for secret name
   read -p $BLUE"Secret name: $RESET$SSM_PREFIX" SECRET_NAME
-  echo $SECRET_NAME
   validate_whitespace "$SECRET_NAME"
   validate_chars "$SECRET_NAME"
   validate_length "$SECRET_NAME"
@@ -155,6 +154,7 @@ then
     "some/path/to/secretname01"
     "some/path/to/secret-name-01-"
     "some/path/to/secret-name-01-_"
+    "/k8s/judicial-system/PRISON_ADMIN_EMAIL"
   )
   TEST_ASSERT_FAIL=(
     "" # no empty
@@ -163,7 +163,7 @@ then
     "no/forward/slash/suffix/" # no forward slash suffix
     "this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-longthis-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long-this-secret-name-is-too-long" # too long
     "some/path/to/}#!%" # no symbols
-    "some/path/to/secret-name-01.some-name" # no dots
+    "some/path/to/secret-.name-with-dot." # no dots
   )
   test_func TEST_ASSERT_PASS TEST_ASSERT_FAIL
 else

@@ -19,6 +19,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   UpdateCase,
   User,
@@ -292,6 +293,7 @@ export const StepTwo: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -534,7 +536,11 @@ export const StepTwo: React.FC = () => {
           {modalVisible && (
             <Modal
               title="Viltu senda tilkynningu?"
-              text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+              text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhald'
+                  : 'farbann'
+              } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
