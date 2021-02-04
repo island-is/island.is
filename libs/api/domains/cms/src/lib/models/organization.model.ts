@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { IsOptional } from 'class-validator'
+
 import { IOrganization } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
@@ -12,21 +12,20 @@ export class Organization {
   @Field()
   title: string
 
-  @Field({ nullable: true })
-  description?: string
-
   @Field()
   slug: string
 
-  @Field(() => [OrganizationTag], { nullable: true })
-  @IsOptional()
+  @Field({ nullable: true })
+  description?: string
+
+  @Field(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
 
   @Field({ nullable: true })
-  link?: string
-
-  @Field(() => Image, { nullable: true })
   logo?: Image
+
+  @Field({ nullable: true })
+  link?: string
 }
 
 export const mapOrganization = ({
@@ -35,9 +34,9 @@ export const mapOrganization = ({
 }: IOrganization): Organization => ({
   id: sys.id,
   title: fields.title ?? '',
-  description: fields.description ?? '',
   slug: fields.slug ?? '',
+  description: fields.description ?? '',
   tag: (fields.tag ?? []).map(mapOrganizationTag),
+  logo: fields.logo ? mapImage(fields.logo) : null,
   link: fields.link ?? '',
-  logo: mapImage(fields.logo),
 })

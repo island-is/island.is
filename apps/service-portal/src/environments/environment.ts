@@ -21,5 +21,6 @@ export default {
     delegation: false,
     assets: false,
     drivingLicense: false,
+    documentProvider: true,
   },
 }
