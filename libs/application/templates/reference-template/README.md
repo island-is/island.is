@@ -70,3 +70,7 @@ Each application template is an extension of the `ApplicationTemplate` interface
 ## Running unit tests
 
 Run `ng test application-templates-reference-template` to execute the unit tests via [Jest](https://jestjs.io).
+
+## Custom API functionality
+
+Should your template require custom API actions, like calling an external API or sending an email you should head over to `libs/application/template-api-modules/README.md`
