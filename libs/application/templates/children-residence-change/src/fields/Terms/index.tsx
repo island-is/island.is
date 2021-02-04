@@ -46,8 +46,16 @@ const Terms = ({ field, error }: FieldBaseProps) => {
         large={true}
         options={[
           {
-            value: 'yes',
+            value: 'effect',
             label: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
+          },
+          {
+            value: 'childSupport',
+            label: 'Ég skil að réttur til meðlagsgreiðslna flyst með barninu',
+          },
+          {
+            value: 'childBenefit',
+            label: 'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
           },
         ]}
       />
