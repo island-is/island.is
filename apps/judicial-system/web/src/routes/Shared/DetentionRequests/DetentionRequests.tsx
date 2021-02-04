@@ -150,7 +150,7 @@ export const DetentionRequests: React.FC = () => {
         } else {
           return {
             color: 'blue',
-            text: 'virkt',
+            text: 'Virkt',
           }
         }
       case CaseState.REJECTED:
