@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, Input, ActionCard } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { DocumentProvidersSearch } from '../../components/DocumentProviders/DocumentProviders'
 
@@ -21,7 +21,6 @@ const DocumentProviders: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const handleFetch = () => {
     //TODO: Set up real data
-    //How do we translate this ?
     setData([
       {
         name: 'Þjóðskrá Íslands',
@@ -37,7 +36,7 @@ const DocumentProviders: ServicePortalModuleComponent = ({ userInfo }) => {
       },
     ])
   }
-  console.log('in top compoennt', data)
+
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={[2, 3]}>

@@ -10,7 +10,7 @@ import {
 } from './formatters'
 import * as formatters from './formatters'
 import {
-  constructConclusion,
+  getConclusion,
   constructProsecutorDemands,
   getShortGender,
   isDirty,
@@ -23,9 +23,10 @@ import {
   Case,
   CaseGender,
   CaseDecision,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 import userEvent from '@testing-library/user-event'
 
@@ -145,13 +146,13 @@ ipsum`
   })
 
   describe('replaceTabsOnChange', () => {
-    test('should not call replaceTabs if called with a string that does not have a tab character', () => {
+    test('should not call replaceTabs if called with a string that does not have a tab character', async () => {
       // Arrange
       const spy = jest.spyOn(formatters, 'replaceTabs')
       render(<input onChange={(evt) => replaceTabsOnChange(evt)} />)
 
       // Act
-      userEvent.type(screen.getByRole('textbox'), 'Lorem ipsum')
+      userEvent.type(await screen.findByRole('textbox'), 'Lorem ipsum')
 
       // Assert
       expect(spy).not.toBeCalled()
@@ -323,7 +324,7 @@ describe('Step helper', () => {
     })
   })
 
-  describe('constructConclution', () => {
+  describe('getConclution', () => {
     test('should return rejected message if the case is being rejected', async () => {
       // Arrange
       const wc = {
@@ -334,25 +335,23 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
@@ -362,6 +361,7 @@ describe('Step helper', () => {
         id: 'testid',
         created: 'test',
         modified: 'test',
+        type: CaseType.CUSTODY,
         state: 'DRAFT',
         policeCaseNumber: 'test',
         decision: CaseDecision.ACCEPTING,
@@ -373,25 +373,23 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
@@ -404,28 +402,27 @@ describe('Step helper', () => {
         accusedNationalId: '0123456789',
         accusedGender: CaseGender.MALE,
         custodyEndDate: '2020-10-22T12:31:00.000Z',
+        type: CaseType.CUSTODY,
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
@@ -440,25 +437,23 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
@@ -477,25 +472,23 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
@@ -514,25 +507,23 @@ describe('Step helper', () => {
       }
 
       // Act
-      render(constructConclusion(wc as Case))
+      render(getConclusion(wc as Case))
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
   })
@@ -558,26 +549,25 @@ describe('Step helper', () => {
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
     test('should render the corrent string if the case is an extension', async () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -600,27 +590,26 @@ describe('Step helper', () => {
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Þess er krafist að Doe, kt.012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Þess er krafist að Doe, kt. 012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
     test('should render the corrent string there are other demands', async () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -640,27 +629,26 @@ describe('Step helper', () => {
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
+          return nodeHasText && childrenDontHaveText
+        }),
       ).toBeTruthy()
     })
 
     test('should not render the other demands if skipOtherDemands parameter is set to true', async () => {
       // Arrange
       const wc = {
+        type: CaseType.CUSTODY,
         decision: CaseDecision.ACCEPTING,
         custodyRestrictions: [
           CaseCustodyRestrictions.MEDIA,
@@ -680,22 +668,20 @@ describe('Step helper', () => {
 
       // Assert
       expect(
-        await waitFor(() =>
-          screen.getByText((_, node) => {
-            // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
-            const hasText = (node: Element) =>
-              node.textContent ===
-              'Þess er krafist að Doe, kt.012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
+        await screen.findByText((_, node) => {
+          // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
+          const hasText = (node: Element) =>
+            node.textContent ===
+            'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
-            const nodeHasText = hasText(node)
-            const childrenDontHaveText = Array.from(node.children).every(
-              (child) => !hasText(child),
-            )
+          const nodeHasText = hasText(node)
+          const childrenDontHaveText = Array.from(node.children).every(
+            (child) => !hasText(child),
+          )
 
-            return nodeHasText && childrenDontHaveText
-          }),
-        ),
-      ).toBeTruthy()
+          return nodeHasText && childrenDontHaveText
+        }),
+      ).toBeInTheDocument()
     })
   })
 

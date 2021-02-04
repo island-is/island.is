@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react'
-import { IconDeprecated as Icon } from '@island.is/island-ui/core'
+import { Icon } from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import * as styles from './Select.treat'
 
@@ -36,7 +36,7 @@ export const Select = forwardRef(
         <label htmlFor={id} className={styles.label}>
           {selected !== undefined && selected.label}
           <div className={styles.icon}>
-            <Icon type="cheveron" width={16} height={9} color={color} />
+            <Icon icon="chevronDown" size="small" color={color} />
           </div>
           <select
             ref={ref}

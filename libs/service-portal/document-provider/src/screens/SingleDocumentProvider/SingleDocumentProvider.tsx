@@ -60,7 +60,7 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
       applicant: {
         name: 'Þjóðskrá Íslands',
         email: 'thjodskra@thjodskra.is',
-        phoneNumber: '1234-567',
+        phoneNumber: '1234567',
         nationalId: '123456-1234',
         address: 'Guðrúnartún 10',
         zipCode: '105',
@@ -68,16 +68,16 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
       administrativeContact: {
         name: 'Hákon Jónsson',
         email: 'hakon@hakon.is',
-        phoneNumber: '1234-567',
+        phoneNumber: '1234567',
       },
       technicalContact: {
         name: 'Hinrik Steinar Vilhjálmsson',
         email: 'hsv@advania.is',
-        phoneNumber: '1234-123',
+        phoneNumber: '1234123',
       },
       helpDeskContact: {
         email: 'advania@advania.is',
-        phoneNumber: '1234-123',
+        phoneNumber: '1234123',
       },
       id: 'dsadg232-dsadsa12-dsadas56',
     })
@@ -123,16 +123,10 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
         </Text>
       </Box>
       <Box marginBottom={[2, 3]}>
-        <Text as="p">
-          {formatMessage(m.documentProvidersSingleDescription)}
-        </Text>
+        <Text as="p">{formatMessage(m.SingleProviderDescription)}</Text>
       </Box>
       <Box>
-        <Tabs
-          label="This is used as the aria-label as well"
-          tabs={tabs}
-          contentBackground="white"
-        />
+        <Tabs label="Flipar" tabs={tabs} contentBackground="white" />
       </Box>
     </Box>
   )

@@ -105,11 +105,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -122,7 +120,7 @@ describe('Detention requests route', () => {
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
     ).toEqual(5)
-  }, 10000)
+  })
 
   test('should display the judge logo if you are a judge', async () => {
     render(
@@ -130,11 +128,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -142,9 +138,7 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(
-      await waitFor(() => screen.getByTestId('judge-logo')),
-    ).toBeInTheDocument()
+    expect(await screen.findByTestId('judge-logo')).toBeInTheDocument()
   })
 
   test('should not display a button to create a request if the user is a judge', async () => {
@@ -153,11 +147,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -178,11 +170,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -201,11 +191,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -226,11 +214,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -251,11 +237,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -263,9 +247,7 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(
-      await waitFor(() => screen.getByTestId('prosecutor-logo')),
-    ).toBeInTheDocument()
+    expect(await screen.findByTestId('prosecutor-logo')).toBeInTheDocument()
   })
 
   test('should list all cases in a list if you are a prosecutor', async () => {
@@ -274,11 +256,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -287,9 +267,7 @@ describe('Detention requests route', () => {
     )
 
     expect(
-      await waitFor(
-        () => screen.getAllByTestId('detention-requests-table-row').length,
-      ),
+      (await screen.findAllByTestId('detention-requests-table-row')).length,
     ).toEqual(6)
   })
 
@@ -299,11 +277,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -311,9 +287,7 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(
-      await waitFor(() => screen.getByText('11. nóv. 2020')),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('11.11.2020')).toBeInTheDocument()
   })
 
   test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
@@ -322,11 +296,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -334,10 +306,10 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(await waitFor(() => screen.getByText('Sakborningur')))
+    userEvent.click(await screen.findByText('Sakborningur'))
 
-    const tableRows = await waitFor(() =>
-      screen.getAllByTestId('detention-requests-table-row'),
+    const tableRows = await screen.findAllByTestId(
+      'detention-requests-table-row',
     )
 
     expect(tableRows[0]).toHaveTextContent('D. M. Kil')
@@ -354,11 +326,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -366,10 +336,10 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    userEvent.dblClick(await waitFor(() => screen.getByText('Sakborningur')))
+    userEvent.dblClick(await screen.findByText('Sakborningur'))
 
-    const tableRows = await waitFor(() =>
-      screen.getAllByTestId('detention-requests-table-row'),
+    const tableRows = await screen.findAllByTestId(
+      'detention-requests-table-row',
     )
 
     expect(tableRows[5]).toHaveTextContent('D. M. Kil')
@@ -386,11 +356,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -398,10 +366,10 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(await waitFor(() => screen.getByText('Krafa stofnuð')))
+    userEvent.click(await screen.findByText('Krafa stofnuð'))
 
-    const tableRows = await waitFor(() =>
-      screen.getAllByTestId('detention-requests-table-row'),
+    const tableRows = await screen.findAllByTestId(
+      'detention-requests-table-row',
     )
 
     expect(tableRows[0]).toHaveTextContent('Mikki Refur')
@@ -418,11 +386,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -430,10 +396,10 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    userEvent.dblClick(await waitFor(() => screen.getByText('Krafa stofnuð')))
+    userEvent.dblClick(await screen.findByText('Krafa stofnuð'))
 
-    const tableRows = await waitFor(() =>
-      screen.getAllByTestId('detention-requests-table-row'),
+    const tableRows = await screen.findAllByTestId(
+      'detention-requests-table-row',
     )
 
     expect(tableRows[5]).toHaveTextContent('Mikki Refur')
@@ -458,11 +424,9 @@ describe('Detention requests route', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -472,10 +436,8 @@ describe('Detention requests route', () => {
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(
-      await waitFor(() =>
-        screen.getByText(
-          'Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar.',
-        ),
+      await screen.findByText(
+        'Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar.',
       ),
     ).toBeInTheDocument()
   })

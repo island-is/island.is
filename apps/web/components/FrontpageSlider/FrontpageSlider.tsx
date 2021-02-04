@@ -32,11 +32,6 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
 
-export const LEFT = 'Left'
-export const RIGHT = 'Right'
-export const UP = 'Up'
-export const DOWN = 'Down'
-
 export interface FrontpageSliderProps {
   slides: FrontpageSliderType[]
   searchContent: ReactNode
@@ -68,6 +63,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   const itemRefs = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const [animationData, setAnimationData] = useState([])
+  const timerRef = useRef(null)
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
@@ -143,9 +139,12 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   }, [width, itemRefs])
 
   useIsomorphicLayoutEffect(() => {
-    setTimeout(onResize, 0)
+    timerRef.current = setTimeout(onResize, 5000)
     window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+    return () => {
+      clearTimeout(timerRef.current)
+      window.removeEventListener('resize', onResize)
+    }
   }, [onResize])
 
   useIsomorphicLayoutEffect(() => {

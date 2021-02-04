@@ -149,7 +149,14 @@ jobs:
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
       - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          if [[ "$GITHUB_HEAD_REF" == "" ]]; then
+            echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          else
+            git fetch origin $GITHUB_HEAD_REF
+            HEAD=$(git rev-parse origin/$GITHUB_HEAD_REF)
+            echo "Resolved HEAD as $HEAD for PR"
+            echo "HEAD=$HEAD" >> $GITHUB_ENV
+          fi
         id: git_nx_head
         name: Preparing HEAD tag
 
@@ -373,7 +380,7 @@ jobs:
             "branch": "$GIT_BRANCH_DEPLOY",
             "parameters": {
               "docker_tag": "$DOCKER_TAG",
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]._-')",
+              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]._-' | tr '[:upper:]' '[:lower:]')",
               "images": "$(echo $BUILD_CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"
             }
           }

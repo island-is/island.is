@@ -89,6 +89,8 @@ export interface ExternalDataProvider extends FormItem {
   readonly children: undefined
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
+  checkboxLabel?: StaticText
+  subTitle?: StaticText
 }
 
 export interface DataProviderItem {

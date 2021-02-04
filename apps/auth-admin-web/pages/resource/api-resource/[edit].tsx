@@ -12,8 +12,6 @@ import ApiResourceSecretForm from '../../../components/Resource/forms/ApiResourc
 import ApiResourceScopeForm from '../../../components/Resource/forms/ApiResourceScopeForm'
 import ApiResourceUserClaimForm from '../../../components/Resource/forms/ApiResourceUserClaimForm'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
-import { GetServerSideProps, NextPageContext } from 'next'
-import { withAuthentication } from './../../../utils/auth.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -170,11 +168,3 @@ const Index: React.FC = () => {
   }
 }
 export default Index
-
-export const getServerSideProps = withAuthentication(
-  async (context: NextPageContext) => {
-    return {
-      props: {},
-    }
-  },
-)

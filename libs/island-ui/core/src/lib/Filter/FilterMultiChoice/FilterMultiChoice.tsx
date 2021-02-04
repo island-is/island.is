@@ -79,7 +79,7 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
               label={category.label}
               iconVariant="small"
             >
-              <Stack space={1}>
+              <Stack space={2}>
                 {category.filters.map((filter) => (
                   <Checkbox
                     key={`${category.id}-${filter.value}`}
@@ -110,6 +110,7 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
       ) : (
         <Box paddingX={3} paddingY={1} borderRadius="large" background="white">
           <Accordion
+            space={3}
             dividerOnBottom={false}
             dividerOnTop={false}
             singleExpand={false}
@@ -126,7 +127,7 @@ export const FilterMultiChoice: React.FC<FilterMultiChoiceProps> = ({
                 }
                 iconVariant="small"
               >
-                <Stack space={1}>
+                <Stack space={2}>
                   {category.filters.map((filter) => (
                     <Checkbox
                       key={`${category.id}-${filter.value}`}
