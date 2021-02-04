@@ -130,12 +130,9 @@ describe('Parental Leave Application Template', () => {
         }),
         ParentalLeaveTemplate,
       )
-      const [hasChanged, newState, newApplication] = helper.changeState(
-        {
-          type: 'SUBMIT',
-        },
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: 'SUBMIT',
+      })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('otherParentApproval')
       expect(newApplication.assignees).toEqual([otherParentId])
@@ -148,17 +145,12 @@ describe('Parental Leave Application Template', () => {
         hasChangedAgain,
         finalState,
         finalApplication,
-      ] = finalHelper.changeState(
-        {
-          type: 'APPROVE',
-        },
-        mockApiTemplateUtils,
-      )
+      ] = finalHelper.changeState({
+        type: 'APPROVE',
+      })
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('vinnumalastofnunApproval')
-      // There should be no one assigned until employer accepts to be assigned
-      // TODO: fix that this is not an empty array
-      expect(finalApplication.assignees).toEqual([otherParentId])
+      expect(finalApplication.assignees).toEqual([])
     })
   })
 })
