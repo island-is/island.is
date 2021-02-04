@@ -13,6 +13,7 @@ import {
   User as TUser,
   CaseDecision,
   NotificationType,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -83,6 +84,7 @@ function remainingProsecutorCaseData() {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ],
+    requestedOtherRestrictions: 'Requested Other Restrictions',
     caseFacts: 'Case Facts',
     legalArguments: 'Legal Arguments',
     comments: 'Comments',
@@ -173,6 +175,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.id).toBe(caseTwo.id)
   expect(caseOne.created).toBe(caseTwo.created)
   expect(caseOne.modified).toBe(caseTwo.modified)
+  expect(caseOne.type).toBe(caseTwo.type)
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
@@ -199,6 +202,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.requestedCustodyRestrictions || null).toStrictEqual(
     caseTwo.requestedCustodyRestrictions || null,
+  )
+  expect(caseOne.requestedOtherRestrictions || null).toBe(
+    caseTwo.requestedOtherRestrictions || null,
   )
   expect(caseOne.caseFacts || null).toBe(caseTwo.caseFacts || null)
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
@@ -280,7 +286,10 @@ describe('User', () => {
 
 describe('Case', () => {
   it('POST /api/case should create a case', async () => {
-    const data = getCaseData(true)
+    const data = {
+      ...getCaseData(true),
+      type: CaseType.CUSTODY,
+    }
     let apiCase: CCase
 
     await request(app.getHttpServer())
@@ -312,7 +321,10 @@ describe('Case', () => {
   })
 
   it('POST /api/case with required fields should create a case', async () => {
-    const data = getCaseData()
+    const data = {
+      ...getCaseData(),
+      type: CaseType.CUSTODY,
+    }
     let apiCase: CCase
 
     await request(app.getHttpServer())
@@ -368,6 +380,7 @@ describe('Case', () => {
           id: dbCase.id || 'FAILURE',
           created: dbCase.created || 'FAILURE',
           modified: apiCase.modified,
+          type: CaseType.CUSTODY,
           state: dbCase.state || 'FAILURE',
         } as CCase)
 
@@ -567,6 +580,7 @@ describe('Case', () => {
           id: apiCase.id || 'FAILURE',
           created: apiCase.created || 'FAILURE',
           modified: apiCase.modified || 'FAILURE',
+          type: dbCase.type,
           state: CaseState.NEW,
           policeCaseNumber: dbCase.policeCaseNumber,
           accusedNationalId: dbCase.accusedNationalId,
@@ -600,6 +614,7 @@ describe('Notification', () => {
     let apiSendNotificationResponse: SendNotificationResponse
 
     await Case.create({
+      type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
     })
@@ -653,6 +668,7 @@ describe('Notification', () => {
     let dbNotification: Notification
 
     await Case.create({
+      type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
       accusedNationalId: '0101010000',
     })
