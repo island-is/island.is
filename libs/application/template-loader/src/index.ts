@@ -85,7 +85,3 @@ export async function getApplicationStateInformation(
   const helper = new ApplicationTemplateHelper(application, template)
   return helper.getApplicationStateInformation() || null
 }
-
-// Object [Module] {
-//   default: { performSomeAPIAction: [Function: performSomeAPIAction] }
-// }

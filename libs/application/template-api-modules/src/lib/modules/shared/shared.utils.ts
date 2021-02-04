@@ -6,7 +6,6 @@ import { Application } from '@island.is/application/core'
 import { BaseTemplateAPIModuleConfig } from '../../types'
 
 export const createAssignToken = (application: Application, secret: string) => {
-  console.log('creating assign token, shh:', secret)
   const token = jwt.sign(
     {
       applicationId: application.id,

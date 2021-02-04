@@ -14,7 +14,7 @@ const extractAnswer = <T>(object: unknown, key: string): T | null => {
 }
 
 export const transformApplicationToParentalLeaveDTO = (
-  application: Application, // eslint-disable-line @typescript-eslint/no-unused-vars
+  application: Application,
 ): ParentalLeave => {
   const privatePensionFundRatioAnswer = extractAnswer(
     application.answers,

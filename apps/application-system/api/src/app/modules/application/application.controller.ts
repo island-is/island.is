@@ -468,7 +468,6 @@ export class ApplicationController {
         }
 
         if (!success) {
-          console.log(response)
           return [false]
         }
       }
