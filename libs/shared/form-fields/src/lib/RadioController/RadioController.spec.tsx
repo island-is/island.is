@@ -56,7 +56,12 @@ describe('RadioController', () => {
     ]
     const { getByText } = render(
       <Wrapper>
-        <RadioController id="values" error="error indeed" largeButtons={true} options={options} />
+        <RadioController
+          id="values"
+          error="error indeed"
+          largeButtons={true}
+          options={options}
+        />
       </Wrapper>,
     )
     expect(getByText('nice sublabel')).toBeInTheDocument()
@@ -69,7 +74,12 @@ describe('RadioController', () => {
     ]
     const { getByText } = render(
       <Wrapper>
-        <RadioController id="values" error="error indeed" largeButtons={true} options={options} />
+        <RadioController
+          id="values"
+          error="error indeed"
+          largeButtons={true}
+          options={options}
+        />
       </Wrapper>,
     )
     expect(getByText('nice sublabel')).not.toBeInTheDocument()

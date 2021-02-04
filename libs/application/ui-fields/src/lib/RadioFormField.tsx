@@ -76,7 +76,9 @@ const RadioFormField: FC<Props> = ({
           options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
-            ...(subLabel && { subLabel: formatText(subLabel, application, formatMessage)}),
+            ...(subLabel && {
+              subLabel: formatText(subLabel, application, formatMessage),
+            }),
             ...(tooltip && {
               tooltip: HtmlParser(
                 formatText(tooltip, application, formatMessage),
