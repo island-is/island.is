@@ -438,7 +438,7 @@ export const Confirmation: React.FC = () => {
               <Text variant="h3">
                 {workingCase.judge
                   ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                  : `${user?.name} ${user?.title}`}
+                  : `Enginn dómari skráður`}
               </Text>
             </Box>
             <Text>
@@ -612,8 +612,8 @@ export const Confirmation: React.FC = () => {
           </Box>
           <FormFooter
             nextUrl={Constants.REQUEST_LIST_ROUTE}
-            nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={isStepIllegal}
+            nextButtonText={workingCase.judge?.id === user?.id ? "Staðfesta og hefja undirritun" : "Einungis dómarinn getur undirritað"}
+            nextIsDisabled={isStepIllegal || workingCase.judge?.id !== user?.id}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
           />
