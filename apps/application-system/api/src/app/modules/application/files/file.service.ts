@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
-import { uuid } from 'uuidv4'
-import { PDF_TYPES } from '@island.is/application/api-template-utils'
+import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
 import { FormValue } from '@island.is/application/core'
 import {
@@ -21,12 +20,12 @@ export class FileService {
     this.s3 = new AWS.S3()
   }
 
-  async createPdf(application: Application, type: PDF_TYPES): Promise<string> {
+  async createPdf(application: Application, type: PdfTypes): Promise<string | undefined> {
     const answers = application.answers as FormValue
     const externalData = application.externalData as FormValue
 
     switch (type) {
-      case PDF_TYPES.CHILDREN_RESIDENCE_CHANGE: {
+      case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         const {
           parentA,
           parentB,
@@ -38,6 +37,7 @@ export class FileService {
           parentB,
           childrenAppliedFor,
           expiry,
+          application.id
         )
       }
     }
@@ -76,6 +76,7 @@ export class FileService {
     parentB: ParentResidenceChange,
     childrenAppliedFor: Array<PersonResidenceChange>,
     expiry: string,
+    applicationId: string,
   ): Promise<string> {
     const pdfBuffer = await generateResidenceChangePdf(
       childrenAppliedFor,
@@ -84,8 +85,7 @@ export class FileService {
       expiry,
     )
 
-    const id = uuid()
-    const fileName = `${parentA.ssn}/${id}.pdf`
+    const fileName = `children-residence-change/${parentA.ssn}/${applicationId}.pdf`
     const bucket = environment.fsS3Bucket || ''
 
     return await this.getPresignedUrl(pdfBuffer, bucket, fileName)

@@ -19,7 +19,3 @@ export type SendEmail = { type: 'sendEmail'; template: SendMailOptions }
 export type ApplicationAPITemplateAction =
   | SendEmail
   | AssignApplicationThroughEmail
-
-export enum PDF_TYPES {
-  CHILDREN_RESIDENCE_CHANGE = 'CHILDREN_RESIDENCE_CHANGE',
-}

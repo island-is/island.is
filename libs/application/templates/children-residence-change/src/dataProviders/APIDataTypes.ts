@@ -8,6 +8,6 @@ export interface PersonResidenceChange {
 }
 
 export interface ParentResidenceChange extends PersonResidenceChange {
-  phoneNumber: string | undefined
-  email: string | undefined
+  phoneNumber?: string
+  email?: string
 }
