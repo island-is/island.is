@@ -75,9 +75,9 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(`Lögheimili: ${existingCase.accusedAddress}`)
     .text(
       `Verjandi sakbornings: ${
-        !existingCase.defenderName
-          ? 'Hefur ekki verið skráður.'
-          : existingCase.defenderName
+        existingCase.defenderName
+          ? existingCase.defenderName
+          : 'Hefur ekki verið skráður.'
       }`,
     )
     .text(' ')
@@ -109,7 +109,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       },
     )
 
-  if (!existingCase.otherDemands) {
+  if (existingCase.otherDemands) {
     doc.text(' ').text(existingCase.otherDemands, {
       lineGap: 6,
       paragraphGap: 0,
@@ -360,7 +360,7 @@ export async function generateRulingPdf(
       },
     )
 
-  if (!existingCase.otherDemands) {
+  if (existingCase.otherDemands) {
     doc.text(' ').text(existingCase.otherDemands, {
       lineGap: 6,
       paragraphGap: 0,
@@ -552,7 +552,7 @@ export async function generateRulingPdf(
         },
       )
 
-    if (!existingCase.otherRestrictions) {
+    if (existingCase.otherRestrictions) {
       doc.text(' ').text(existingCase.otherRestrictions, {
         lineGap: 6,
         paragraphGap: 0,

@@ -216,9 +216,9 @@ export function formatProsecutorCourtDateEmailNotification(
   defenderName: string,
 ): string {
   const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const defenderText = !defenderName
-    ? 'Verjandi sakbornings hefur ekki verið skráður'
-    : `Verjandi sakbornings: ${defenderName}`
+  const defenderText = defenderName
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
 
   return `${court} hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />${defenderText}.`
 }
@@ -250,9 +250,9 @@ export function formatPrisonCourtDateEmailNotification(
   const isolationText = isolation
     ? 'Farið er fram á einangrun.'
     : 'Ekki er farið fram á einangrun.'
-  const defenderText = !defenderName
-    ? 'Verjandi sakbornings hefur ekki verið skráður'
-    : `Verjandi sakbornings: ${defenderName}`
+  const defenderText = defenderName
+    ? `Verjandi sakbornings: ${defenderName}`
+    : 'Verjandi sakbornings hefur ekki verið skráður'
 
   return `${prosecutorOffice} hefur sent kröfu um ${
     isExtension ? 'áframhaldandi ' : ''
@@ -315,13 +315,13 @@ export function formatPrisonRulingEmailNotification(
     courtEndTime,
     'p',
   )}.<br /><br />Ákærandi: ${prosecutorName}.<br />Verjandi: ${
-    !defenderName
-      ? !defenderEmail
-        ? 'Hefur ekki verið skráður'
-        : defenderEmail
-      : !defenderEmail
-      ? defenderName
-      : `${defenderName}, ${defenderEmail}`
+    defenderName
+      ? defenderEmail
+        ? `${defenderName}, ${defenderEmail}`
+        : defenderName
+      : defenderEmail
+      ? defenderEmail
+      : 'Hefur ekki verið skráður'
   }.<br /><br /><strong>Úrskurðarorð</strong><br /><br />${formatConclusion(
     accusedNationalId,
     accusedName,
