@@ -101,24 +101,26 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           <SidebarWrapper
             fullWidthContent={fullWidthContent}
             sidebarContent={
-              <Box className={styles.navigation}>
-                <Navigation
-                  baseId="pageNav"
-                  isMenuDialog={isMobile}
-                  items={navigationData.items}
-                  title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
-                  titleLink={navigationData.titleLink}
-                  renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                />
+              <>
+                <Box className={styles.navigation}>
+                  <Navigation
+                    baseId="pageNav"
+                    isMenuDialog={isMobile}
+                    items={navigationData.items}
+                    title={navigationData.title}
+                    activeItemTitle={navigationData.activeItemTitle}
+                    titleLink={navigationData.titleLink}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                </Box>
                 {sidebarContent}
-              </Box>
+              </>
             }
           >
             {mainContent ?? children}
