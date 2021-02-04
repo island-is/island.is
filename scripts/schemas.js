@@ -28,7 +28,9 @@ const fileExists = async (path) =>
   !!(await promisify(stat)(path).catch((_) => false))
 
 const main = async () => {
-  if (!fileExists(SCHEMA_PATH)) {
+  const schemaExists = await fileExists(SCHEMA_PATH)
+
+  if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
   }
 
@@ -42,7 +44,9 @@ const main = async () => {
         }`,
       )
         .then((res) => console.log(res.stdout))
-        .catch((err) => console.error(err.stdout))
+        .catch((err) => {
+          throw new Error(err.stdout)
+        })
     } catch (err) {
       console.error(`Error while running generate-schemas: ${err}`)
       process.exit(err.code)

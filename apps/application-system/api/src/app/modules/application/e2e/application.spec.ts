@@ -6,6 +6,7 @@ import { EmailService } from '@island.is/email-service'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import * as tokenUtils from '../utils/tokenUtils'
+import { FileService } from '../files/file.service'
 
 let app: INestApplication
 
@@ -421,5 +422,39 @@ describe('Application system API', () => {
         expect.objectContaining({ assignees: ['123456-1234'] }),
       ]),
     )
+  })
+
+  it('PUT application/:id/createPdf should return a presigned url', async () => {
+    const server = request(app.getHttpServer())
+    const expectPresignedUrl = 'presignedurl'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'createPdf')
+      .mockImplementation(() => Promise.resolve(expectPresignedUrl))
+
+    const postResponse = await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'draft',
+      attachments: {},
+      typeId: 'ChildrenResidenceChange',
+      assignees: [],
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const newState = await server
+      .put(`/application/${postResponse.body.id}/createPdf`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(newState.body.attachments).toEqual({
+      ChildrenResidenceChange: 'presignedurl',
+    })
   })
 })

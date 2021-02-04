@@ -8,6 +8,7 @@ import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
+import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 
@@ -53,6 +54,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     BullModule,
   ],
   controllers: [ApplicationController],
-  providers: [ApplicationService, UploadProcessor],
+  providers: [ApplicationService, UploadProcessor, FileService],
 })
 export class ApplicationModule {}
