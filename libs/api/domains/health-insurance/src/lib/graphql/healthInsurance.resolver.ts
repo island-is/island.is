@@ -12,8 +12,8 @@ import { HealthTest } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
 import { BucketService } from './bucket.service'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
-@Resolver(() => HealthTest)
+@UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
+@Resolver(() => HealthTest) // @UseGuards(IdsAuthGuard, Sco// @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/propesGuard) // TODO: enable when go to dev/pro
 export class HealthInsuranceResolver {
   constructor(
     private readonly healthInsuranceService: HealthInsuranceService,
@@ -55,10 +55,12 @@ export class HealthInsuranceResolver {
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
 
-  /* TESTING */
+  /* TEST */
   @Query(() => String)
   async healthInsuranceBtest(): Promise<string | undefined> {
     console.log('testing...')
-    return this.bucketService.btest()
+    // return this.bucketService.getFileContent('smasaga.txtx')
+    const res = await this.bucketService.getFileContent('tux.png')
+    return res?.body
   }
 }
