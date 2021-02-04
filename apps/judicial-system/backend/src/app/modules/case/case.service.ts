@@ -185,9 +185,7 @@ export class CaseService {
     return generateRequestPdf(existingCase)
   }
 
-  async requestSignature(
-    existingCase: Case,
-  ): Promise<SigningServiceResponse> {
+  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case ${existingCase.id}`,
     )

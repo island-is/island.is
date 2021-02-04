@@ -218,9 +218,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
   return pdf
 }
 
-export async function generateRulingPdf(
-  existingCase: Case
-): Promise<string> {
+export async function generateRulingPdf(existingCase: Case): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -447,8 +445,8 @@ export async function generateRulingPdf(
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.judge?.name || "Dómari hefur ekki verið skráður"} ${
-        existingCase.judge?.title || ""
+      `${existingCase.judge?.name || 'Dómari hefur ekki verið skráður'} ${
+        existingCase.judge?.title || ''
       }`,
       {
         align: 'center',

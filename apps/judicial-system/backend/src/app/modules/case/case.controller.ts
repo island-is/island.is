@@ -235,10 +235,7 @@ export class CaseController {
     content: { 'application/pdf': {} },
     description: 'Gets the ruling for an existing case as a pdf document',
   })
-  async getRulingPdf(
-    @Param('id') id: string,
-    @Res() res: Response,
-  ) {
+  async getRulingPdf(@Param('id') id: string, @Res() res: Response) {
     const existingCase = await this.findCaseById(id)
 
     const pdf = await this.caseService.getRulingPdf(existingCase)
@@ -294,9 +291,7 @@ export class CaseController {
     }
 
     try {
-      const response = await this.caseService.requestSignature(
-        existingCase
-      )
+      const response = await this.caseService.requestSignature(existingCase)
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
