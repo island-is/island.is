@@ -29,6 +29,8 @@ import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 
 const { publicRuntimeConfig } = getConfig()
@@ -88,6 +90,9 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       (parameters.groups.length === 0 ||
         parameters.groups.includes(x.group?.slug)),
   )
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   return (
     <OrganizationWrapper
@@ -198,6 +203,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <FocusableBox
               key={article.slug}
               href={url.href}
+              target={isMobile ? '' : '_blank'}
               borderRadius="large"
             >
               {({ isFocused }) => (
