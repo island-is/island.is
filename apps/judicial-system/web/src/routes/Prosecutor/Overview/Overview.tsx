@@ -156,9 +156,11 @@ export const Overview: React.FC = () => {
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
               {`Yfirlit kröfu um ${
-                workingCase.parentCase ? 'framlengingu' : ''
-              } á ${
-                workingCase.type === workingCase.type ? 'gæslu' : 'farbann'
+                workingCase.parentCase ? 'framlengingu á' : ''
+              } ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæslu'
+                  : `farbann${workingCase.parentCase ? 'i' : ''}`
               }`}
             </Text>
           </Box>
