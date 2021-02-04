@@ -1,1 +1,1 @@
-export * from './lib/api-domains-education'
+export * from './lib/education.module'

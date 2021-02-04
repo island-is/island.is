@@ -1,4 +1,4 @@
-# api-domains-education
+# API Domains Education
 
 This library was generated with [Nx](https://nx.dev).
 
