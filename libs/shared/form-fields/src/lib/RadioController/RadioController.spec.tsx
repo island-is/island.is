@@ -43,7 +43,7 @@ describe('RadioController', () => {
     ]
     const { getByText } = render(
       <Wrapper>
-        <RadioController id="values" error="error indeed" options={options} />
+        <RadioController id="values" options={options} />
       </Wrapper>,
     )
     expect(getByText('nice tooltip')).toBeInTheDocument()
@@ -56,12 +56,7 @@ describe('RadioController', () => {
     ]
     const { getByText } = render(
       <Wrapper>
-        <RadioController
-          id="values"
-          error="error indeed"
-          largeButtons={true}
-          options={options}
-        />
+        <RadioController id="values" largeButtons={true} options={options} />
       </Wrapper>,
     )
     expect(getByText('nice sublabel')).toBeInTheDocument()
@@ -72,16 +67,11 @@ describe('RadioController', () => {
       { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
       { label: 'another checkbox', value: 'on' },
     ]
-    const { getByText } = render(
+    const { queryByText } = render(
       <Wrapper>
-        <RadioController
-          id="values"
-          error="error indeed"
-          largeButtons={true}
-          options={options}
-        />
+        <RadioController id="values" options={options} />
       </Wrapper>,
     )
-    expect(getByText('nice sublabel')).not.toBeInTheDocument()
+    expect(queryByText('nice sublabel')).not.toBeInTheDocument()
   })
 })
