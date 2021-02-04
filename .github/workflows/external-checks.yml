@@ -68,3 +68,15 @@ jobs:
       - name: Exit if repo is dirty
         if: steps.changes.outputs.changed == 1
         run: exit 1
+
+  create-secrets-test:
+    env:
+      ISLANDIS_CREATE_SECRET_TEST: '1'
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: yarn create-secret
