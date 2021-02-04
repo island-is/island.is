@@ -32,6 +32,26 @@ export const GET_ARTICLE_QUERY = gql`
           height
         }
       }
+      relatedOrganization {
+        title
+        slug
+        link
+        logo {
+          url
+          width
+          height
+        }
+      }
+      responsibleParty {
+        title
+        slug
+        link
+        logo {
+          url
+          width
+          height
+        }
+      }
       group {
         title
         slug

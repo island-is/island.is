@@ -57,6 +57,12 @@ export class Article {
   @Field(() => [Organization], { nullable: true })
   organization?: Array<Organization>
 
+  @Field(() => [Organization], { nullable: true })
+  relatedOrganization?: Array<Organization>
+
+  @Field(() => [Organization], { nullable: true })
+  responsibleParty?: Array<Organization>
+
   @Field(() => [SubArticle])
   subArticles: Array<SubArticle>
 
@@ -94,6 +100,18 @@ export const mapArticle = ({
   organization: (fields.organization ?? [])
     .filter(
       (organization) => organization.fields?.title && organization.fields?.slug,
+    )
+    .map(mapOrganization),
+  relatedOrganization: (fields.relatedOrganization ?? [])
+    .filter(
+      (relatedOrganization) =>
+        relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
+    )
+    .map(mapOrganization),
+  responsibleParty: (fields.responsibleParty ?? [])
+    .filter(
+      (responsibleParty) =>
+        responsibleParty.fields?.title && responsibleParty.fields?.slug,
     )
     .map(mapOrganization),
   subArticles: (fields.subArticles ?? [])
