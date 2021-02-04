@@ -157,7 +157,7 @@ export const StepTwo: React.FC = () => {
   )
 
   const defaultProsecutor = prosecutors?.filter(
-    (prosecutor: Option) => prosecutor.label === workingCase?.prosecutor?.name,
+    (prosecutor: Option) => prosecutor.value === workingCase?.prosecutor?.id,
   )
 
   const handleNextButtonClick = async () => {
