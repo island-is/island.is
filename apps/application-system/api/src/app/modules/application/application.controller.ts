@@ -442,16 +442,14 @@ export class ApplicationController {
           onErrorEvent,
         } = newStateOnEntry
 
-        const [success, response] = await this.templateAPIService.performAction(
-          {
-            templateId: template.type,
-            type: apiModuleAction,
-            props: {
-              application: updatedApplication as BaseApplication,
-              authorization,
-            },
+        const [success] = await this.templateAPIService.performAction({
+          templateId: template.type,
+          type: apiModuleAction,
+          props: {
+            application: updatedApplication as BaseApplication,
+            authorization,
           },
-        )
+        })
 
         if (success && onSuccessEvent) {
           return this.changeState(
