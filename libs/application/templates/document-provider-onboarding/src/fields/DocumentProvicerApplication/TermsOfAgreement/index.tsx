@@ -49,7 +49,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <Box marginBottom={3}>
         <Box>
-          <TopicCard href={'https://island.is/postholf'}>
+          <TopicCard href={'https://island.is'}>
             <Box display="flex">
               {formatText(
                 m.termsUserAgreementTitle,
@@ -63,7 +63,7 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
           </TopicCard>
         </Box>
         <Box marginTop={2}>
-          <TopicCard href="https://island.is/postholf">
+          <TopicCard href="https://island.is">
             <Box display="flex">
               {formatText(
                 m.termsSafetyAgreementTitle,
@@ -76,44 +76,6 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
             </Box>
           </TopicCard>
         </Box>
-        {/* <Accordion singleExpand={false}>
-          <AccordionItem
-            id="id_1"
-            label={formatText(
-              m.termsUserAgreementTitle,
-              application,
-              formatMessage,
-            )}
-          >
-            <Box paddingY={2} className={styles.maximumHeight}>
-              <Text>
-                {formatText(
-                  m.termsUserAgreementMessage,
-                  application,
-                  formatMessage,
-                )}
-              </Text>
-            </Box>
-          </AccordionItem>
-          <AccordionItem
-            id="id_2"
-            label={formatText(
-              m.termsSafetyAgreementTitle,
-              application,
-              formatMessage,
-            )}
-          >
-            <Box paddingY={2} className={styles.maximumHeight}>
-              <Text>
-                {formatText(
-                  m.termsSafetyAgreementMessage,
-                  application,
-                  formatMessage,
-                )}
-              </Text>
-            </Box>
-          </AccordionItem>
-        </Accordion> */}
       </Box>
       <Box marginBottom={1}>
         <Controller
