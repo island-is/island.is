@@ -497,7 +497,7 @@ curl ‘http://localhost:8080/listClients’
   </soapenv:Envelope>
   ```
 
-  Nánari upplýsingar er að finna í:  [X-Road: Service Metadata Protocol - Annex B listMethods, allowedMethods, and getWsdl service descriptions](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-meta_x-road_service_metadata_protocol.md#annex-b-listmethods-allowedmethods-and-getwsdl-service-descriptions)
+  Nánari upplýsingar er að finna í: [X-Road: Service Metadata Protocol - Annex B listMethods, allowedMethods, and getWsdl service descriptions](https://github.com/nordic-institute/X-Road/blob/develop/doc/Protocols/pr-meta_x-road_service_metadata_protocol.md#annex-b-listmethods-allowedmethods-and-getwsdl-service-descriptions)
 
 - API Catalog  
   Þessar upplýsingar eru einnig aðgengilegar í vefviðmóti Viskuausunnar, _API Catalog_ Stafræns Íslands [TODO: hlekkur].
