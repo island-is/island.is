@@ -160,7 +160,7 @@ async performAction(
 ### 5. Invoke your new module actions from the template state machine
 
 ```typescript
-/* In a consant file */
+/* In a constant file */
 enum TEMPLATE_API_ACTIONS {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
