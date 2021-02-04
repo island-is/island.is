@@ -18,7 +18,8 @@ const { elastic } = elasticEnvironment
 @Injectable()
 export class ElasticService {
   private client: Client
-  private aliasName: string = 'apicatalogue'
+  private aliasName: string =
+    process.env.XROAD_COLLECTOR_ALIAS || 'apicatalogue'
   private workerIndexName: string | null = null
   private environment: Environment | null = null
 
@@ -26,11 +27,10 @@ export class ElasticService {
     this.client = this.createEsClient()
   }
 
-  initWorker(aliasName: string, environment: Environment) {
-    if (!aliasName) {
-      throw new Error('aliasName cannot be empty')
-    }
-
+  initWorker(
+    environment: Environment,
+    aliasName: string = this.getAliasName(),
+  ) {
     this.environment = environment
     this.aliasName = aliasName
     this.workerIndexName = null
@@ -107,7 +107,7 @@ export class ElasticService {
    * @returns  - array of string
    * @memberof ElasticService
    */
-  async getAliasIndexNames(aliasName: string) {
+  async getAliasIndexNames(aliasName: string): Promise<string[] | undefined> {
     interface Item {
       alias: string
       index: string
@@ -121,7 +121,7 @@ export class ElasticService {
       .aliases({ h: 'alias,index', format: 'json' })
       .then((result) => {
         if (result && result.body) {
-          const indices: Array<string> = []
+          const indices: string[] = []
           const list: Array<Item> = result.body as Array<Item>
           list.forEach((item) => {
             if (item.index && item.alias === aliasName) indices.push(item.index)
@@ -136,7 +136,7 @@ export class ElasticService {
     return await this.client.cat.aliases(options).then((result) => result?.body)
   }
 
-  async getAllAliasNames() {
+  async getAllAliasNames(): Promise<string[]> {
     interface Item {
       alias: string
     }
@@ -358,11 +358,34 @@ export class ElasticService {
     return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }
 
-  async search<ResponseBody, RequestBody>(query: RequestBody) {
+  async fetchAllIds(
+    index: string = this.getAliasName(),
+  ): Promise<Array<string>> {
+    logger.info('Fetch all Ids')
+    const requestBody = {
+      _source: false,
+      query: {
+        match_all: {},
+      },
+    }
+
+    return await this.search<SearchResponse<any>, typeof requestBody>(
+      requestBody,
+    ).then((res) => {
+      let arr: Array<string> = []
+      arr = res?.body?.hits?.hits?.map((item) => item._id)
+      return arr
+    })
+  }
+
+  async search<ResponseBody, RequestBody>(
+    query: RequestBody,
+    index: string = this.getAliasName(),
+  ) {
     logger.debug('Searching for', query)
     return await this.client.search<ResponseBody, RequestBody>({
       body: query,
-      index: this.getAliasName(),
+      index: index,
     })
   }
 
@@ -421,5 +444,130 @@ export class ElasticService {
       ...AwsConnector(AWS.config),
       node: elastic.node,
     })
+  }
+
+  /**
+   * Gets environments other than current environment
+   *
+   * @private
+   * @returns {Environment[]}
+   */
+  private getOtherEnvironments(): Environment[] {
+    return Object.values(Environment).filter((value) => {
+      if (value !== this.getEnvironment()) {
+        return value as Environment
+      }
+    })
+  }
+
+  /**
+   * Checks if a collector is currently running in the given environment
+   *
+   * @private
+   * @param {Environment} environment
+   * @returns {boolean}
+   */
+  private isCollectorRunning(environment: Environment): boolean {
+    // todo: check if alias "xroadcollector_working" exists on given environment
+    // if "xroadcollector_working" exits return true
+    // if "xroadcollector_working" exits return false
+    if (environment === Environment.STAGING) return false
+    return true
+  }
+
+  /**
+   * Waits until a collector finishes running one of the given environments.
+   *
+   * @param {Environment[]} environments
+   * @param {number} [checkIntervalMilliseconds=1000]
+   * @param {number} [maxWaitTimeMilliseconds=10000]
+   * @returns {Environment|null} - Returns Environment if collector is not running in that environment.
+                                 - null: If collector is still running in all given environments and max wait time is reached.
+   */
+  private waitForCollectorEnvironment(
+    environments: Environment[],
+    checkIntervalMilliseconds: number = 1000,
+    maxWaitTimeMilliseconds: number = 10000,
+  ): Environment | null {
+    if (!environments || !environments.length) {
+      return null
+    }
+
+    let now = Date.now()
+    let checkDate = now + checkIntervalMilliseconds
+    const maxWait = now + maxWaitTimeMilliseconds
+
+    while (now < maxWait && now < checkDate) {
+      for (let i = 0; i < environments.length; i++) {
+        if (!this.isCollectorRunning(environments[i])) return environments[i]
+      }
+
+      while (now < checkDate) {
+        now = Date.now()
+      }
+      checkDate = now + checkIntervalMilliseconds
+    }
+
+    return null
+  }
+
+  /**
+   * Copies values from a environment located on a different cluster
+   * into the worker index.
+   *
+   * @private
+   * @param {Environment} environment
+   */
+  private async copyValuesFromEnvironment(environment: Environment) {
+    //todo: copy values from other environment cluster
+
+    // get id of all services in worker index
+    //const localIds = await this.fetchAllIds()
+    const localIds = ['one', 'two', 'three', 'four', 'five']
+
+    // get ids of all services stored on the other cluster
+    const externalIds = ['two', 'three', 'six', 'seven']
+
+    //find out which services we will need to create in worker index
+    const commonIds = externalIds.filter((id) => localIds.includes(id))
+
+    //find out which services we will need to merge from external to worker index
+    const externalUnique = externalIds.filter((id) => !commonIds.includes(id))
+    logger.debug(`localIds   : ${localIds}`)
+    logger.debug(`externalIds   : ${externalIds}`)
+    logger.debug(`externalUnique   : ${externalUnique}`)
+    logger.debug(`commonIds   : ${commonIds}`)
+    // get id of all services on other environment
+    // localIds = get all ids that only exist locally
+    // externalIds = get all ids exist in other
+    // onlyExternal = get all ids that only exist in other
+    //
+
+    // if id exists locally and in other
+    //  merge values from other to local object
+
+    // if id exits only in other create service in local local
+
+    logger.warning('todo: copyValuesFromEnvironment  ' + environment)
+  }
+
+  /**
+   *  Copies values from other environments into worker index
+   *
+   */
+  copyValuesFromOtherEnvironments() {
+    logger.info(
+      `Copying values from other environments to :${this.environment}`,
+    )
+
+    let environments = this.getOtherEnvironments()
+    logger.info(`Environments to copy from: ${environments}`)
+
+    let environment = this.waitForCollectorEnvironment(environments)
+    while (environment) {
+      this.copyValuesFromEnvironment(environment)
+      environments = environments.filter((e) => e !== environment)
+      environment = this.waitForCollectorEnvironment(environments)
+    }
   }
 }
