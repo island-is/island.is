@@ -20,7 +20,10 @@ export class FileService {
     this.s3 = new AWS.S3()
   }
 
-  async createPdf(application: Application, type: PdfTypes): Promise<string | undefined> {
+  async createPdf(
+    application: Application,
+    type: PdfTypes,
+  ): Promise<string | undefined> {
     const answers = application.answers as FormValue
     const externalData = application.externalData as FormValue
 
@@ -37,7 +40,7 @@ export class FileService {
           parentB,
           childrenAppliedFor,
           expiry,
-          application.id
+          application.id,
         )
       }
     }
