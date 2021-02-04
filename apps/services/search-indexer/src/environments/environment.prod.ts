@@ -9,4 +9,5 @@ export const environment: Environment = {
   s3Folder: '',
   locales: ['is', 'en'],
   configPath: './config',
+  minimumDictionaryVersion: '9d3a04e',
 }

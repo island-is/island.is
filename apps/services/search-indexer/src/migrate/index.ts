@@ -7,7 +7,7 @@ import * as elastic from './elastic'
 import * as kibana from './kibana'
 import * as indexManager from '@island.is/content-search-index-manager'
 
-const { locales } = environment
+const { locales, minimumDictionaryVersion } = environment
 
 class App {
   async run() {
@@ -15,7 +15,6 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
-    await this.migrateAws()
     if (hasAwsAccess) {
       await this.migrateAws()
     }
@@ -45,11 +44,15 @@ class App {
     const latestAwsDictionaryVersion = await aws.getFirstFoundAwsEsPackageVersion(
       dictionaryVersions,
     )
+
+    const requestedDictionaryVersion =
+      latestAwsDictionaryVersion ?? minimumDictionaryVersion
+
     logger.info('Latest aws dictionary version', {
-      version: latestAwsDictionaryVersion,
+      version: requestedDictionaryVersion,
     })
     const newDictionaryFiles = await dictionary.getDictionaryFilesAfterVersion(
-      latestAwsDictionaryVersion,
+      requestedDictionaryVersion,
     )
 
     // if we have packages we should add them (s3 -> AWS ES -> AWS ES search domain)
