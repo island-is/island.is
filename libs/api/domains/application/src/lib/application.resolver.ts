@@ -10,6 +10,7 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
+import { CreatePdfInput } from './dto/createPdf.input'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -129,5 +130,16 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.assignApplication(input, user.authorization)
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  async createPdfPresignedUrl(
+    @Args('input') input: CreatePdfInput,
+    @CurrentUser() user: User,
+  ): Promise<Application> {
+    return this.applicationService.createPdfPresignedUrl(
+      input,
+      user.authorization,
+    )
   }
 }
