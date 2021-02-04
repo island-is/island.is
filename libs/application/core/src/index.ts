@@ -6,7 +6,6 @@ export * from './types/Fields'
 export * from './types/Form'
 export * from './types/Application'
 export * from './types/ApplicationTemplate'
-export * from './types/ApplicationTemplateAPIModule'
 export * from './types/StateMachine'
 export * from './types/PdfTypes'
 
