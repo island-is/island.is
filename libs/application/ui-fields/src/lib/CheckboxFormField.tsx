@@ -58,9 +58,10 @@ const CheckboxFormField: FC<Props> = ({
             useDefaultValue(field, application)
           }
           error={error}
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
+            ...(subLabel && { subLabel: formatText(subLabel, application, formatMessage)}),
             ...(tooltip && {
               tooltip: HtmlParser(
                 formatText(tooltip, application, formatMessage) as string,
