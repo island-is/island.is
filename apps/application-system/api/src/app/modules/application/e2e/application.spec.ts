@@ -402,7 +402,7 @@ describe('Application system API', () => {
   it('PUT application/:id/createPdf should return a presigned url', async () => {
     const server = request(app.getHttpServer())
     const expectPresignedUrl = 'presignedurl'
-    const type = 'CHILDREN_RESIDENCE_CHANGE'
+    const type = 'ChildrenResidenceChange'
 
     const fileService: FileService = app.get<FileService>(FileService)
     jest
@@ -429,7 +429,7 @@ describe('Application system API', () => {
 
     // Assert
     expect(newState.body.attachments).toEqual({
-      CHILDREN_RESIDENCE_CHANGE: 'presignedurl',
+      ChildrenResidenceChange: 'presignedurl',
     })
   })
 })
