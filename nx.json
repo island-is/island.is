@@ -417,6 +417,9 @@
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
     },
+    "system-e2e": {
+      "tags": []
+    },
     "utils-api": {
       "tags": []
     },
