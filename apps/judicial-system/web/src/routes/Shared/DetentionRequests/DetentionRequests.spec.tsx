@@ -138,7 +138,9 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await screen.findByTestId('judge-logo')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Héraðsdómur Reykjavíkur'),
+    ).toBeInTheDocument()
   })
 
   test('should not display a button to create a request if the user is a judge', async () => {
@@ -247,7 +249,9 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await screen.findByTestId('prosecutor-logo')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Lögreglustjórinn á höfuðborgarsvæðinu'),
+    ).toBeInTheDocument()
   })
 
   test('should list all cases in a list if you are a prosecutor', async () => {

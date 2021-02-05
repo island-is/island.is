@@ -114,9 +114,7 @@ export const RulingStepTwo: React.FC = () => {
                   Úrskurðarorð
                 </Text>
               </Box>
-              <Box marginBottom={3}>
-                <Text>{getConclusion(workingCase)}</Text>
-              </Box>
+              <Box marginBottom={3}>getConclusion(workingCase)</Box>
               <Text variant="h4" fontWeight="light">
                 Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
               </Text>
