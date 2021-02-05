@@ -3,14 +3,18 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  ApplicationTypes,
 } from '@island.is/application/core'
 
-export class HealthInsuranceProvider extends BasicDataProvider {
-  type = 'HealthInsuranceProvider'
+export class ApplicationsProvider extends BasicDataProvider {
+  type = 'ApplicationsProvider'
 
   provide(application: Application): Promise<string> {
-    const query = `query HealthInsuranceIsHealthInsured {
-      healthInsuranceIsHealthInsured 
+    const query = `query GetApplicantApplications {
+      getApplicationsByApplicant(typeId: ${ApplicationTypes.HEALTH_INSURANCE}) {
+        id
+        state
+      }
     }`
 
     return this.useGraphqlGateway(query)
@@ -20,7 +24,7 @@ export class HealthInsuranceProvider extends BasicDataProvider {
           return this.handleError('An error occured. Please try again.')
         }
 
-        return Promise.resolve(response.data?.healthInsuranceIsHealthInsured)
+        return Promise.resolve(response.data?.getApplicationsByApplicant)
       })
       .catch(() => {
         return this.handleError('An error occured. Please try again.')

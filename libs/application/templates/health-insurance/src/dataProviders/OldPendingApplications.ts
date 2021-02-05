@@ -17,7 +17,7 @@ export class OldPendingApplications extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError()
+          return this.handleError('An error occured. Please try again.')
         }
 
         return Promise.resolve(
@@ -25,12 +25,12 @@ export class OldPendingApplications extends BasicDataProvider {
         )
       })
       .catch(() => {
-        return this.handleError()
+        return this.handleError('An error occured. Please try again.')
       })
   }
 
-  handleError() {
-    return Promise.resolve({})
+  handleError(message: string) {
+    return Promise.reject(message)
   }
 
   onProvideError(result: string): FailedDataProviderResult {

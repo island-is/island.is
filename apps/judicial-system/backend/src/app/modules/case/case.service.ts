@@ -13,7 +13,11 @@ import { EmailService } from '@island.is/email-service'
 import { CaseState, User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
-import { generateRulingPdf, writeFile } from '../../formatters'
+import {
+  generateRequestPdf,
+  generateRulingPdf,
+  writeFile,
+} from '../../formatters'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -171,6 +175,14 @@ export class CaseService {
     )
 
     return generateRulingPdf(existingCase, user)
+  }
+
+  getRequestPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the request for case ${existingCase.id} as a pdf document`,
+    )
+
+    return generateRequestPdf(existingCase)
   }
 
   async requestSignature(

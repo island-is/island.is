@@ -16,11 +16,13 @@ import {
   Comparators,
   Application,
   FormValue,
+  ExternalData,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO } from '../constants'
 import { StatusTypes } from '../types'
 import Logo from '../assets/Logo'
+import { shouldShowModal } from '../healthInsuranceUtils'
 
 export const HealthInsuranceForm: Form = buildForm({
   id: 'HealthInsuranceDraft',
@@ -35,25 +37,9 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
+          subTitle: m.externalDataSubtitle.defaultMessage,
+          checkboxLabel: m.externalDataCheckbox.defaultMessage,
           dataProviders: [
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'healthInsurance',
-              type: 'HealthInsuranceProvider',
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'oldPendingApplications',
-              type: 'OldPendingApplications',
-              title: '',
-              subTitle: '',
-            }),
             buildDataProviderItem({
               id: 'nationalRegistry',
               type: 'NationalRegistryProvider',
@@ -72,18 +58,56 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.internalRevenueTitle,
               subTitle: m.internalRevenueSubTitle,
             }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'applications',
+              type: 'ApplicationsProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'healthInsurance',
+              type: 'HealthInsuranceProvider',
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              id: 'oldPendingApplications',
+              type: 'OldPendingApplications',
+              title: '',
+              subTitle: '',
+            }),
           ],
+        }),
+        buildMultiField({
+          id: 'informationRetrieval',
+          title: m.externalDataTitle,
+          children: [
+            buildCustomField({
+              id: 'informationRetrieval',
+              component: 'InformationRetrieval',
+              title: '',
+            }),
+            buildCustomField({
+              id: 'errorModal',
+              component: 'ErrorModal',
+              title: '',
+            }),
+          ],
+          condition: (formValue: FormValue, externalData: ExternalData) => {
+            return shouldShowModal(externalData)
+          },
         }),
         buildMultiField({
           id: 'confirmationOfResidency',
           title: m.confirmationOfResidencyTitle,
           description: m.confirmationOfResidencyDescription,
           children: [
-            buildCustomField({
-              id: 'errorModal',
-              component: 'ErrorModal',
-              title: '',
-            }),
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
               title: '',
@@ -101,16 +125,6 @@ export const HealthInsuranceForm: Form = buildForm({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
           children: [
-            buildCustomField({
-              id: 'errorModal',
-              component: 'ErrorModal',
-              title: '',
-              condition: (formValue: FormValue, externalData) => {
-                // TODO: when it is possible in NationalRegistry api, check if country is Greenland or Faroe Islands
-                // It should return true if confirmation of residency condition is returned as false...
-                return false
-              },
-            }),
             buildTextField({
               id: 'applicant.name',
               title: m.name,

@@ -37,9 +37,7 @@ export const thead = style({
 })
 
 export const deleteButtonContainer = style({
-  display: 'flex',
-  alignItems: 'center',
-  width: '0',
+  maxWidth: '0',
   height: '100%',
   visibility: 'hidden',
   transition: 'all .5s ease-in-out',
