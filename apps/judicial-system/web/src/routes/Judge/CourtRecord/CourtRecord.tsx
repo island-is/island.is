@@ -14,7 +14,10 @@ import {
   TimeInputField,
   CaseNumbers,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  constructProsecutorDemandsAsString,
+  isNextDisabled,
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatAccusedByGender,
@@ -106,6 +109,7 @@ export const CourtRecord: React.FC = () => {
 
       return attendees
     }
+
     if (!workingCase && data?.case) {
       let theCase = data.case
 
@@ -117,6 +121,13 @@ export const CourtRecord: React.FC = () => {
             theCase.id,
             parseString('courtAttendees', theCase.courtAttendees),
           )
+        }
+      }
+
+      if (!theCase.policeDemands) {
+        theCase = {
+          ...theCase,
+          policeDemands: constructProsecutorDemandsAsString(theCase),
         }
       }
 

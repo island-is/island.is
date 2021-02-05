@@ -190,6 +190,43 @@ const getAcceptingAlternativeTravelBanConclusion = (wc: Case): JSX.Element => {
   )
 }
 
+export const constructProsecutorDemandsAsString = (
+  workingCase: Case,
+  skipOtherDemands?: boolean,
+): string => {
+  return workingCase.requestedCustodyEndDate
+    ? `Þess er krafist að ${workingCase.accusedName}, kt. ${formatNationalId(
+        workingCase.accusedNationalId,
+      )}, sæti${
+        workingCase.parentCase &&
+        workingCase.parentCase?.decision === CaseDecision.ACCEPTING
+          ? ' áframhaldandi'
+          : ''
+      } ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
+      } með úrskurði ${workingCase.court?.replace(
+        'Héraðsdómur',
+        'Héraðsdóms',
+      )}, til ${formatDate(
+        workingCase.requestedCustodyEndDate,
+        'EEEE',
+      )?.replace('dagur', 'dagsins')} ${formatDate(
+        workingCase.requestedCustodyEndDate,
+        'PPP',
+      )}, kl. ${formatDate(workingCase.requestedCustodyEndDate, TIME_FORMAT)}${
+        workingCase.requestedCustodyRestrictions?.includes(
+          CaseCustodyRestrictions.ISOLATION,
+        )
+          ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur.'
+          : '.'
+      } ${
+        workingCase.otherDemands &&
+        !skipOtherDemands &&
+        capitalize(workingCase.otherDemands || '')
+      }`
+    : 'Saksóknari hefur ekki fyllt út dómkröfur.'
+}
+
 export const constructProsecutorDemands = (
   workingCase: Case,
   skipOtherDemands?: boolean,
