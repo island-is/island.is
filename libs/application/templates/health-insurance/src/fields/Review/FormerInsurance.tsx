@@ -152,8 +152,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
       {entitlement === YES && (
         <Box marginBottom={[2, 2, 4]}>
           <Input
-            id={'formerInsurance.additionalInformation'}
-            name={'formerInsurance.additionalInformation'}
+            id={'formerInsurance.entitlementReason'}
+            name={'formerInsurance.entitlementReason'}
             label={formatText(
               m.formerInsuranceAdditionalInformation,
               application,
