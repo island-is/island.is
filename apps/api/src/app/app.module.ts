@@ -20,6 +20,7 @@ import { HealthController } from './health.controller'
 import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -109,6 +110,11 @@ const autoSchemaFile = environment.production
       audience: environment.identityServer.audience,
       issuer: environment.identityServer.issuer,
       jwksUri: `${environment.identityServer.jwksUri}`,
+    }),
+    SyslumennModule.register({
+      url: environment.syslumennService.url,
+      username: environment.syslumennService.username,
+      password: environment.syslumennService.password,
     }),
   ],
 })
