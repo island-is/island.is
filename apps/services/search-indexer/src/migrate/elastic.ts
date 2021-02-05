@@ -95,7 +95,7 @@ export const updateEsTemplate = async (
   templateBody: string,
 ) => {
   const templateName = getTemplateName(locale)
-  logger.info('Updating template', { templateName })
+  logger.info('Updating template', { templateName, templateBody })
   const client = await esService.getClient()
   return client.indices.putTemplate({
     name: templateName,
