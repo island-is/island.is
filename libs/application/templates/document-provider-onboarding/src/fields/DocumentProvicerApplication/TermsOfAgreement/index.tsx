@@ -5,21 +5,10 @@ import {
   getValueViaPath,
   formatText,
 } from '@island.is/application/core'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Text,
-  Checkbox,
-  Button,
-  Link,
-  TopicCard,
-  Icon,
-} from '@island.is/island-ui/core'
+import { Box, Checkbox, Button, Link } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
-import * as styles from './TermsOfAgreement.treat'
 import { m } from '../../../forms/messages'
 
 //TODO: Finish error messages.
@@ -77,20 +66,6 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
             </Link>
           </Box>
         </Box>
-        {/* <Box marginTop={2}>
-          <TopicCard href="https://island.is">
-            <Box display="flex">
-              {formatText(
-                m.termsSafetyAgreementTitle,
-                application,
-                formatMessage,
-              )}
-              <Box paddingLeft={1}>
-                <Icon icon="open" type="outline" />
-              </Box>
-            </Box>
-          </TopicCard>
-        </Box> */}
       </Box>
       <Box marginBottom={1}>
         <Controller

@@ -10,10 +10,6 @@ import {
   ApplicationTemplate,
   Application,
 } from '@island.is/application/core'
-import { m } from '../forms/messages'
-import { useLocale } from '@island.is/localization'
-
-//const { formatMessage } = useLocale()
 
 type Events =
   | { type: 'APPROVE' }
@@ -25,8 +21,6 @@ enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
 const contact = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
@@ -67,7 +61,7 @@ const applicant = z.object({
   }),
   // .refine((k) => kennitala.isCompany(k), {
   //   message: 'Skrá þarf kennitölu fyrirtækis eða stofnunar',
-  // }), ATH þetta
+  // }),
   address: z
     .string()
     .nonempty({ message: 'Heimilisfang þarf að vera útfyllt' }),
@@ -77,14 +71,8 @@ const applicant = z.object({
 })
 
 const termsOfAgreement = z.object({
-  userTerms: z.boolean().refine((v) => v, {
-    //When to show these ?
-    //message: 'Þú verður að samþykkja notendaskilmála',
-  }),
-  securityTerms: z.boolean().refine((v) => v, {
-    //When to show these ?
-    //message: 'Þú verður að samþykkja öryggisskilmála',
-  }),
+  userTerms: z.boolean().refine((v) => v, {}),
+  securityTerms: z.boolean().refine((v) => v, {}),
 })
 
 const endPoint = z.object({
@@ -163,7 +151,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             ...context,
             application: {
               ...context.application,
-              assignees: ['2311637949', '2709932579'],
+              assignees: ['2311637949'],
             },
           }
         }),
@@ -266,7 +254,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       process.env.NODE_ENV === 'development' &&
       application.state === 'inReview'
     ) {
-      console.log(process.env.ENVIROMENT)
       return Roles.ASSIGNEE
     }
     if (id === application.applicant) {
