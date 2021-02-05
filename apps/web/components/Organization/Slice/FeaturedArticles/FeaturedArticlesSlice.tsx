@@ -2,10 +2,12 @@ import React from 'react'
 import { FeaturedArticles } from '@island.is/web/graphql/schema'
 import {
   Box,
+  Button,
   FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   LinkCard,
   Stack,
   Text,
@@ -77,6 +79,25 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
               </Stack>
             </GridColumn>
           </GridRow>
+          {!!slice.link && (
+            <Box
+              display="flex"
+              justifyContent="flexEnd"
+              paddingTop={4}
+              paddingBottom={1}
+            >
+              <Link href={slice.link.url}>
+                <Button
+                  icon="arrowForward"
+                  iconType="filled"
+                  type="button"
+                  variant="text"
+                >
+                  {n('seeAllServices', 'Sjá allt efni')}
+                </Button>
+              </Link>
+            </Box>
+          )}
         </Box>
       </GridContainer>
     </section>
