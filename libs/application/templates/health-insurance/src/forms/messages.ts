@@ -456,14 +456,14 @@ export const m = defineMessages({
     description: 'See status',
   },
   oldPendingApplicationDescription: {
-    id: 'hi.application:activeApplication.description',
+    id: 'hi.application:oldPendingApplication.description',
     defaultMessage:
       'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er **{applicationNumber}**. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
     description:
       'You have already submitted an application for health insurance. Your application number is **{applicationNumber}**. Please contact the Icelandic Health Insurance if you have any questions.',
   },
   oldPendingApplicationButtonText: {
-    id: 'hi.application:activeApplication.buttonText',
+    id: 'hi.application:oldPendingApplication.buttonText',
     defaultMessage: 'Hafa samband',
     description: 'Contact info',
   },

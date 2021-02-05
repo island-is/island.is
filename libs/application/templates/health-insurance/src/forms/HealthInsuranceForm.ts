@@ -41,6 +41,24 @@ export const HealthInsuranceForm: Form = buildForm({
           checkboxLabel: m.externalDataCheckbox.defaultMessage,
           dataProviders: [
             buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.nationalRegistryTitle,
+              subTitle: m.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'directorateOfLabor',
+              type: undefined,
+              title: m.directorateOfLaborTitle,
+              subTitle: m.directorateOfLaborSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'internalRevenue',
+              type: undefined,
+              title: m.internalRevenueTitle,
+              subTitle: m.internalRevenueSubTitle,
+            }),
+            buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
               title: '',
@@ -63,24 +81,6 @@ export const HealthInsuranceForm: Form = buildForm({
               type: 'OldPendingApplications',
               title: '',
               subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'directorateOfLabor',
-              type: undefined,
-              title: m.directorateOfLaborTitle,
-              subTitle: m.directorateOfLaborSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'internalRevenue',
-              type: undefined,
-              title: m.internalRevenueTitle,
-              subTitle: m.internalRevenueSubTitle,
             }),
           ],
         }),
