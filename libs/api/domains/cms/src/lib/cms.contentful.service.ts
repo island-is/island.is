@@ -277,6 +277,19 @@ export class CmsContentfulService {
     return result.items.map(mapAuction)
   }
 
+  async getAuction(id: string, lang: string): Promise<Auction> {
+    const params = {
+      ['content_type']: 'auction',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAuctionFields>(lang, params)
+      .catch(errorHandler('getAuction'))
+
+    return result.items.map(mapAuction)[0]
+  }
+
   async getArticle(slug: string, lang: string): Promise<Article | null> {
     const params = {
       ['content_type']: 'article',
