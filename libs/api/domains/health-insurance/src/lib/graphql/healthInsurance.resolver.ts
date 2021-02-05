@@ -10,14 +10,12 @@ import {
 
 import { HealthTest } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
-import { BucketService } from './bucket.service'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver(() => HealthTest)
 export class HealthInsuranceResolver {
   constructor(
     private readonly healthInsuranceService: HealthInsuranceService,
-    private readonly bucketService: BucketService,
   ) {}
 
   @Query(() => HealthTest, {
@@ -54,11 +52,4 @@ export class HealthInsuranceResolver {
     return this.healthInsuranceService.getPendingApplication(user.nationalId)
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
-
-  // /* TEST */
-  // @Query(() => String)
-  // async healthInsuranceBtest(): Promise<string> {
-  //   console.log('graphql get file base64...')
-  //   return await this.bucketService.getFileContentAsBase64('tux.png')
-  // }
 }

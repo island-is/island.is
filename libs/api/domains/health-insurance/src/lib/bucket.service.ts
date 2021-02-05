@@ -55,4 +55,15 @@ export class BucketService {
       )
     })
   }
+
+  /* for test */
+  async getNumberOfFiles(): Promise<number> {
+    console.log('getNumberOfFiles in bucket,  ...')
+    const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
+    let num = 0
+    for (let x of list.Contents!) {
+      num++
+    }
+    return num
+  }
 }
