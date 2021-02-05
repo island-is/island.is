@@ -58,6 +58,18 @@ export class BucketService {
 
   /* for test */
   async getNumberOfFiles(): Promise<number> {
+    AWS.config.getCredentials(function (err) {
+      if (err) {
+        console.log('......................credentials not loaded')
+        console.log(err.stack)
+      } else {
+        console.log('.......................credentials')
+        console.log(
+          '......................Access key:',
+          AWS.config.credentials?.accessKeyId,
+        )
+      }
+    })
     this.logger.info('getNumberOfFiles in bucket,  ...')
     const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
     let num = 0
