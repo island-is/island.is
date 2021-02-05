@@ -26,7 +26,7 @@ const expectedNumberReceivedString = 'Expected number, received string'
 const expectedStringReceivedNumber = "Expected string, received number"
 
 describe('validateAnswers', () => {
-  it('should pick non-nested types from the schema', () => {
+  it('should return no errors for non-nested types from a valid schema', () => {
     expect(
       validateAnswers(schema, {
         requiredString: 'asdf',
@@ -39,7 +39,7 @@ describe('validateAnswers', () => {
       }),
     ).toBeUndefined()
   })
-  it('should return undefined for valid nested object', () => {
+  it('should return no errors for valid nested object', () => {
     const formValue = {
       nested: { name: 'asdf', numeric: '22' },
     }

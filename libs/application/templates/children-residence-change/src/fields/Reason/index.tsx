@@ -4,7 +4,7 @@ import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 
 const Reason = ({ error, application, field }: FieldBaseProps) => {
-  const { id, disabled } = field
+  const { id } = field
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
@@ -22,11 +22,8 @@ const Reason = ({ error, application, field }: FieldBaseProps) => {
               id={id}
               name={`${id}`}
               label="Tilefni"
-              required={true}
               value={value}
               placeholder="Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra"
-              hasError={!!error}
-              errorMessage="Required"
               textarea={true}
               rows={6}
               onChange={(e) => {

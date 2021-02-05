@@ -118,7 +118,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       title: 'Fyrirkomulag',
       children: [
         buildSubSection({
-          id: 'confirmResidenceChangeInfo',
+          id: 'residenceChangeReason',
           title: 'Tilefni',
           children: [
             buildCustomField({

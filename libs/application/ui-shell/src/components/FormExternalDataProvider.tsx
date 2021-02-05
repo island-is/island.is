@@ -60,6 +60,7 @@ const FormExternalDataProvider: FC<{
   externalData: ExternalData
   externalDataProvider: ExternalDataProviderScreen
   formValue: FormValue
+  errors: any
 }> = ({
   addExternalData,
   setBeforeSubmitCallback,
@@ -67,6 +68,7 @@ const FormExternalDataProvider: FC<{
   externalData,
   externalDataProvider,
   formValue,
+  errors,
 }) => {
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -78,6 +80,11 @@ const FormExternalDataProvider: FC<{
 
   const { id, dataProviders, subTitle, checkboxLabel } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
+
+  // If id is undefined then the error won't be attached to the field with id
+  const error = getValueViaPath(errors, id ?? '', undefined) as
+    | string
+    | undefined
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
     if (checked) {
@@ -162,6 +169,7 @@ const FormExternalDataProvider: FC<{
                     activateBeforeSubmitCallback(isChecked)
                   }}
                   checked={value}
+                  hasError={error !== undefined}
                   name={`${id}`}
                   label={
                     checkboxLabel ? formatMessage(checkboxLabel) : 'Ég samþykki'
@@ -169,6 +177,7 @@ const FormExternalDataProvider: FC<{
                   value={id}
                 />
               </Box>
+              {error !== undefined && <InputError errorMessage={error} />}
             </>
           )
         }}

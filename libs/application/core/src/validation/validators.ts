@@ -50,22 +50,21 @@ function partialSchemaValidation(
       error = populateError(error, e, newPath)
 
       if (Array.isArray(answer)) {
-        // handle array
         const arrayElements = answer as Answer[]
         arrayElements.forEach((el, index) => {
-          const elementPath = `${newPath}[${index}]`
-          if (el !== null && typeof el === 'object') {
-            error = partialSchemaValidation(
-              el as FormValue,
-              trimmedSchema?.shape[key]?._def?.type,
-              error,
-              elementPath,
-            )
-          }
           try {
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
+            const elementPath = `${newPath}[${index}]`
             error = populateError(error, e, elementPath)
+            if (el !== null && typeof el === 'object') {
+              error = partialSchemaValidation(
+                el as FormValue,
+                trimmedSchema?.shape[key]?._def?.type,
+                error,
+                elementPath,
+              )
+            }
           }
         })
       }
