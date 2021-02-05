@@ -10,6 +10,9 @@ export default {
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
+  education: {
+    secret: process.env.EDUCATION_SECRET,
+  },
   nationalRegistry: {
     baseSoapUrl: 'https://localhost:8443',
     user: process.env.SOFFIA_USER ?? '',
