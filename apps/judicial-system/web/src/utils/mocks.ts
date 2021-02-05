@@ -27,6 +27,7 @@ export const mockJudge = {
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
+  institution: 'Héraðsdómur Reykjavíkur',
 } as User
 
 const testCase1 = {

@@ -4,7 +4,6 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
-  CaseGender,
 } from '@island.is/judicial-system/types'
 import * as style from './RulingAccordionItem.treat'
 import {
