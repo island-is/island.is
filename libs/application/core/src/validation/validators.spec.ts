@@ -23,7 +23,7 @@ const invalidValue = 'Invalid value.'
 const invalidEmail = 'Invalid email'
 const invalidInput = 'Invalid input'
 const expectedNumberReceivedString = 'Expected number, received string'
-const expectedStringReceivedNumber = "Expected string, received number"
+const expectedStringReceivedNumber = 'Expected string, received number'
 
 describe('validateAnswers', () => {
   it('should return no errors for non-nested types from a valid schema', () => {
@@ -46,7 +46,7 @@ describe('validateAnswers', () => {
 
     expect(validateAnswers(schema, formValue)).toBeUndefined()
   })
-  it('should pick partial nested object and non-nested values as well from the schema', () => {
+  it('should pick partial nested object and non-nested values as well from the schema and return no errors', () => {
     const formValue = {
       nested: { name: 'asdf', numeric: '22' },
       requiredString: 'yes',
@@ -142,7 +142,7 @@ describe('validateAnswers', () => {
       anotherBadFormValue,
     )
     expect(secondSchemaValidationError).toEqual({
-      nested: expectedNumberReceivedString,
+      'nested': expectedNumberReceivedString,
       'nested.deep': expectedNumberReceivedString,
       'nested.deep.soDeep': expectedNumberReceivedString,
       'nested.deep.soDeep.id': expectedNumberReceivedString,
@@ -312,6 +312,24 @@ describe('validateAnswers', () => {
         'person': invalidInput,
         'person[1]': invalidInput,
         'person[1].age': invalidInput
+      })
+    })
+
+    it('should validate boolean refined as valid input', () => {
+      const schema = z.object({value: z.boolean().refine((v) => v)})
+
+      const value = {value: true} as FormValue
+
+      expect(validateAnswers(schema, value)).toBeUndefined()
+    })
+
+    it('should return invalid value for refined boolean', () => {
+      const schema = z.object({value: z.boolean().refine((v) => v)})
+
+      const value = {value: false} as FormValue
+
+      expect(validateAnswers(schema, value)).toEqual({
+        'value': invalidValue
       })
     })
   })
