@@ -5,6 +5,7 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
+import { EducationModule } from '@island.is/api/domains/education'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
@@ -53,6 +54,11 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
+    }),
+    EducationModule.register({
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
+      secret: environment.education.secret,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,

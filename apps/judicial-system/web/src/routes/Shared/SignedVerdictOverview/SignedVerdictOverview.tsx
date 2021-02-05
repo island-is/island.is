@@ -97,7 +97,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const isTravelBan =
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
+      theCase.type === CaseType.TRAVEL_BAN
 
     if (theCase.isCustodyEndDateInThePast) {
       return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
@@ -116,7 +116,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const isTravelBan =
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
+      theCase.type === CaseType.TRAVEL_BAN
 
     if (theCase.isCustodyEndDateInThePast) {
       return `${
