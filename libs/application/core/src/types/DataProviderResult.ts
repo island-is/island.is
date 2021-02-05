@@ -1,18 +1,16 @@
-export type SuccessfulDataProviderResult = {
-  date: Date
-  data: object | string | boolean | number
-  status: 'success'
-  statusCode?: number
-}
-
-export type FailedDataProviderResult = {
+export interface DataProviderResult {
   data?: object | string | boolean | number
   date: Date
-  reason: string
-  status: 'failure'
+  reason?: string
+  status: 'failure' | 'success'
   statusCode?: number
 }
 
-export type DataProviderResult =
-  | SuccessfulDataProviderResult
-  | FailedDataProviderResult
+export interface FailedDataProviderResult extends DataProviderResult {
+  reason: string
+  status: 'failure'
+}
+
+export interface SuccessfulDataProviderResult extends DataProviderResult {
+  status: 'success'
+}
