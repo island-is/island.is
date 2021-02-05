@@ -6,6 +6,7 @@ import {
   FieldBaseProps,
   getValueViaPath,
   RecordObject,
+  ExternalData,
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 
@@ -17,6 +18,7 @@ const FormField: FC<{
   errors: RecordObject
   goToScreen: (id: string) => void
   refetch: () => void
+  addExternalData: (data: ExternalData) => void
 }> = ({
   application,
   autoFocus,
@@ -25,6 +27,7 @@ const FormField: FC<{
   goToScreen,
   showFieldName,
   refetch,
+  addExternalData,
 }) => {
   const [allFields] = useFields()
 
@@ -44,6 +47,7 @@ const FormField: FC<{
     goToScreen,
     showFieldName,
     refetch,
+    addExternalData,
   }
 
   const Component = allFields[field.component]

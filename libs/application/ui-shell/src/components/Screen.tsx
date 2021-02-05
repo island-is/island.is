@@ -275,6 +275,7 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                addExternalData={addExternalData}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -293,6 +294,7 @@ const Screen: FC<ScreenProps> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                addExternalData={addExternalData}
               />
             )}
           </Box>

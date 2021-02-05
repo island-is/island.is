@@ -3,7 +3,7 @@ import { Condition } from './Condition'
 import { Field } from './Fields'
 import { MessageDescriptor } from 'react-intl'
 import { BoxProps } from '@island.is/island-ui/core'
-import { Application } from './Application'
+import { Application, ExternalData } from './Application'
 
 export type StaticText = (MessageDescriptor & { values?: object }) | string
 
@@ -109,6 +109,7 @@ export interface FieldBaseProps {
   showFieldName?: boolean
   goToScreen?: (id: string) => void
   refetch?: () => void
+  addExternalData?: (data: ExternalData) => void
 }
 
 export type RepeaterProps = {

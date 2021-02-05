@@ -7,6 +7,7 @@ import {
   FormValue,
   FieldTypes,
   RecordObject,
+  ExternalData,
 } from '@island.is/application/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -24,6 +25,7 @@ const FormMultiField: FC<{
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void
   refetch: () => void
+  addExternalData: (data: ExternalData) => void
 }> = ({
   application,
   answerQuestions,
@@ -31,6 +33,7 @@ const FormMultiField: FC<{
   goToScreen,
   multiField,
   refetch,
+  addExternalData,
 }) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
@@ -80,6 +83,7 @@ const FormMultiField: FC<{
                 errors={errors}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                addExternalData={addExternalData}
               />
             </Box>
           </GridColumn>
