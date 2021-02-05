@@ -61,7 +61,7 @@ export class BucketService {
     this.logger.info('getNumberOfFiles in bucket,  ...')
     const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
     let num = 0
-    for (let x of list.Contents!) {
+    for (const x of list.Contents!) {
       num++
     }
     return num
