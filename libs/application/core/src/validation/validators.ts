@@ -33,7 +33,6 @@ function partialSchemaValidation(
   answers: FormValue,
   originalSchema: Schema,
   error: SchemaValidationError | undefined,
-  isStrict?: boolean,
   currentPath = '',
 ): SchemaValidationError | undefined {
   Object.keys(answers).forEach((key) => {
@@ -45,49 +44,40 @@ function partialSchemaValidation(
       ? originalSchema.pick({ [key]: true })
       : originalSchema
 
-    const answerIsArray = Array.isArray(answer)
-    const answerIsEmptyArray = Array.isArray(answer) && answer.length === 0
-    const answerIsObject = typeof answer === 'object' && !answerIsArray
-    const answerIsPrimitive = !answerIsArray && !answerIsObject
+    try {
+      trimmedSchema.parse({ [key]: answer })
+    } catch (e) {
+      error = populateError(error, e, newPath)
 
-    if (answerIsPrimitive || answerIsEmptyArray) {
-      try {
-        trimmedSchema.parse({ [key]: answer })
-      } catch (e) {
-        error = populateError(error, e, newPath)
-      }
-    } else if (answerIsArray) {
-      const arrayElements = answer as Answer[]
-
-      arrayElements.forEach((el, index) => {
-        const elementPath = `${newPath}[${index}]`
-
-        if (typeof el === 'object') {
-          if (!isStrict && el !== null) {
+      if (Array.isArray(answer)) {
+        // handle array
+        const arrayElements = answer as Answer[]
+        arrayElements.forEach((el, index) => {
+          const elementPath = `${newPath}[${index}]`
+          if (el !== null && typeof el === 'object') {
             error = partialSchemaValidation(
               el as FormValue,
               trimmedSchema?.shape[key]?._def?.type,
               error,
-              isStrict,
               elementPath,
             )
           }
-        } else {
           try {
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
             error = populateError(error, e, elementPath)
           }
-        }
-      })
-    } else if (answerIsObject) {
-      error = partialSchemaValidation(
-        answer as FormValue,
-        originalSchema.shape[key],
-        error,
-        isStrict,
-        newPath,
-      )
+        })
+      }
+
+      else if (typeof answer === 'object') {
+        error = partialSchemaValidation(
+          answer as FormValue,
+          originalSchema.shape[key],
+          error,
+          newPath,
+        )
+      }
     }
   })
 
@@ -100,7 +90,7 @@ export function validateAnswers(
   isFullSchemaValidation?: boolean,
 ): SchemaValidationError | undefined {
   if (!isFullSchemaValidation) {
-    return partialSchemaValidation(answers, dataSchema, undefined, false, '')
+    return partialSchemaValidation(answers, dataSchema, undefined)
   }
 
   try {
