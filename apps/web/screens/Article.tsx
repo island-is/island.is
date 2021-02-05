@@ -50,6 +50,7 @@ import {
   useLinkResolver,
 } from '../hooks/useLinkResolver'
 import { Locale } from '../i18n/I18n'
+import { useScrollPosition } from '../hooks/useScrollPosition'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -270,15 +271,41 @@ export interface ArticleProps {
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
+  const processEntryRef = useRef(null)
   const [mounted, setMounted] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
   useEffect(() => {
     portalRef.current = document.querySelector('#__next')
+    processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
   }, [])
   useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { linkResolver } = useLinkResolver()
+
+  useScrollPosition(
+    ({ currPos }) => {
+      let px = -600
+
+      if (typeof window !== `undefined`) {
+        px = window.innerHeight * -1
+      }
+
+      const elementPosition =
+        processEntryRef && processEntryRef.current
+          ? processEntryRef?.current.getBoundingClientRect().bottom +
+            (px - currPos.y)
+          : 0
+
+      const canShow = elementPosition + currPos.y >= 0
+      setIsVisible(canShow)
+    },
+    [setIsVisible],
+    null,
+    false,
+    150,
+  )
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug
@@ -451,7 +478,12 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
-          <Box display={['block', 'block', 'none']} marginTop={7} printHidden>
+          <Box
+            id="processRef"
+            display={['block', 'block', 'none']}
+            marginTop={7}
+            printHidden
+          >
             {!!processEntry && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
@@ -496,6 +528,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </Box>
         {!!processEntry &&
           mounted &&
+          isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
               <ProcessEntry fixed {...processEntry} />

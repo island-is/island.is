@@ -78,7 +78,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
       <div className={styles.addCourtDocumentContainer}>
         <Input
           name="add-court-document"
-          label="Heiti dómsskjals"
+          label="Heiti dómskjals"
           placeholder="Skrá inn heiti á skjali hér"
           size="sm"
           value={nextDocumentToUpload}
