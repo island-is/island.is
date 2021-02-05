@@ -360,30 +360,3 @@ export const associatePackagesWithAwsEsSearchDomain = async (
   logger.info('Successfully associated all packages with AWS ES instance')
   return true
 }
-
-export const getFirstFoundAwsEsPackageVersion = async (
-  dictionaryVersions: string[],
-) => {
-  const domainPackageList = await awsEs
-    .listPackagesForDomain({
-      DomainName: environment.esDomain,
-    })
-    .promise()
-
-  // create an array containing all found es package versions
-  const domainPackageVersions = domainPackageList.DomainPackageDetailsList.map(
-    (esPackage) => {
-      const { version } = parsePackageName(esPackage.PackageName)
-      return version
-    },
-  )
-
-  // find the highest version in AWS ES search domain if any exists
-  for (const dictionaryVersion of dictionaryVersions) {
-    if (domainPackageVersions.includes(dictionaryVersion)) {
-      return dictionaryVersion
-    }
-  }
-
-  return null // we found no version
-}

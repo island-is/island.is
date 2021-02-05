@@ -15,6 +15,7 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
+    await this.migrateAws()
     if (hasAwsAccess) {
       await this.migrateAws()
     }
@@ -33,35 +34,21 @@ class App {
   private async migrateAws(): Promise<boolean> {
     logger.info('Starting aws migration')
 
-    /*
-    we want to get packages after a given version (github sha)
-    this allows us to upload all versions since last sync
-    */
-    const dictionaryVersions = await dictionary.getDictionaryVersions() // returns versions of the dictionary in order with the newest version first
-    logger.info('Found dictionary versions in dictionary repo', {
-      version: dictionaryVersions,
-    })
-    const latestAwsDictionaryVersion = await aws.getFirstFoundAwsEsPackageVersion(
-      dictionaryVersions,
-    )
-
-    const requestedDictionaryVersion =
-      latestAwsDictionaryVersion ?? minimumDictionaryVersion
+    const dictionaryVersion = indexManager.getDictionaryVersion() // returns versions of the dictionary in order with the newest version first
 
     logger.info('Requesting files for dictionary version', {
-      version: requestedDictionaryVersion,
+      version: dictionaryVersion,
     })
-    const newDictionaryFiles = await dictionary.getDictionaryFilesForVersion(
-      requestedDictionaryVersion,
+
+    const versionsDictionaryFiles = await dictionary.getDictionaryFilesForVersion(
+      dictionaryVersion,
     )
 
-    // if we have packages we should add them (s3 -> AWS ES -> AWS ES search domain)
-    if (newDictionaryFiles.length) {
-      logger.info('Found new dictionary packages, uploading to AWS')
-      const s3Files = await aws.uploadS3DictionaryFiles(newDictionaryFiles) // upload repo files to s3
-      const newEsPackages = await aws.createAwsEsPackages(s3Files) // create the dictionary packages files in AWS ES
-      await aws.associatePackagesWithAwsEsSearchDomain(newEsPackages) // attach the new packages to our AWS ES search domain
-    }
+    // we will always validate packages against (s3 -> AWS ES -> AWS ES search domain) to ensure we don't have partial updates
+    logger.info('Found new dictionary packages, uploading to AWS')
+    const s3Files = await aws.uploadS3DictionaryFiles(versionsDictionaryFiles) // upload repo files to s3
+    const newEsPackages = await aws.createAwsEsPackages(s3Files) // create the dictionary packages files in AWS ES
+    await aws.associatePackagesWithAwsEsSearchDomain(newEsPackages) // attach the new packages to our AWS ES search domain
 
     logger.info('Aws migration completed')
     return true

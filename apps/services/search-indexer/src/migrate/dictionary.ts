@@ -47,52 +47,35 @@ const getCommits = async (): Promise<string[]> => {
   const commitsEndpoint = `https://api.github.com/repos/${environment.dictRepo}/commits`
   const commits: Commit[] = await fetch(commitsEndpoint).then((response) =>
     response.json(),
-  ) // this is rate limited to 60 requests an hour // TODO: Fix this b4 release
+  ) // this is rate limited to 60 requests an hour
   return commits.map((commit) => commit.sha)
-}
-
-export const getDictionaryVersions = async () => {
-  const commits = await getCommits()
-  return commits.map((commit) => commit.substring(0, 7))
 }
 
 export const getDictionaryFilesForVersion = async (
   currentVersion: string,
 ): Promise<Dictionary[]> => {
   const commits = await getCommits()
-  let newCommits
-  if (currentVersion) {
-    // find what versions are missing given the current found version
-    const currentVersionIndex = commits.findIndex((commit) =>
-      commit.startsWith(currentVersion),
-    )
-    // we want files from HEAD including current version, to handle partial file uploads
-    newCommits = commits.slice(0, currentVersionIndex + 1)
-  } else {
-    // if we don't have a version we will import all commits
-    newCommits = commits
-  }
 
-  logger.info('Trying to get dictionary files from dictionary repo', {
-    commits: newCommits,
+  // find the whole commit sha for this version
+  const commit = commits.find((commit) => commit.startsWith(currentVersion))
+
+  logger.info('Getting dictionary files from dictionary repo', {
+    commit,
   })
 
   // fetch all missing dictionary files for each version
   const dictionaryFiles: Dictionary[] = []
-  for (const commit of newCommits) {
-    for (const locale of environment.locales) {
-      for (const analyzer of analyzers) {
-        const version = commit.substring(0, 7)
-        const file = await getDictionaryFile(commit, locale, analyzer)
-        // all versions don't have all files
-        if (file) {
-          dictionaryFiles.push({
-            analyzerType: analyzer,
-            version,
-            file,
-            locale,
-          })
-        }
+  for (const locale of environment.locales) {
+    for (const analyzer of analyzers) {
+      const file = await getDictionaryFile(commit, locale, analyzer)
+      // all versions don't have all files
+      if (file) {
+        dictionaryFiles.push({
+          analyzerType: analyzer,
+          version: currentVersion,
+          file,
+          locale,
+        })
       }
     }
   }
