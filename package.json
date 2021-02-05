@@ -127,6 +127,8 @@
     "crypto-js": "4.0.0",
     "csv-stringify": "5.5.1",
     "curry": "1.2.0",
+    "cypress-promise": "1.1.0",
+    "cypress-social-logins": "1.10.0",
     "date-fns": "2.14.0",
     "dd-trace": "0.24.0",
     "deepmerge": "4.2.2",
