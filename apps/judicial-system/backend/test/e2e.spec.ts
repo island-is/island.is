@@ -35,7 +35,6 @@ let judge: TUser
 let judgeAuthCookie: string
 
 interface CCase extends TCase {
-  state: CaseState
   prosecutorId: string
   judgeId: string
   parentCaseId: string
@@ -91,26 +90,29 @@ function remainingProsecutorCaseData() {
   }
 }
 
-const remainingJudgeCaseData = {
-  courtCaseNumber: 'Court Case Number',
-  courtDate: '2020-09-29T13:00:00.000Z',
-  courtRoom: '201',
-  courtStartTime: '2020-09-29T13:00:00.000Z',
-  courtEndTime: '2020-09-29T14:00:00.000Z',
-  courtAttendees: 'Court Attendees',
-  policeDemands: 'Police Demands',
-  courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-  accusedPlea: 'Accused Plea',
-  litigationPresentations: 'Litigation Presentations',
-  ruling: 'Ruling',
-  decision: CaseDecision.ACCEPTING,
-  custodyEndDate: '2020-09-28T12:00:00.000Z',
-  custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-  otherRestrictions: 'Other Restrictions',
-  accusedAppealDecision: CaseAppealDecision.APPEAL,
-  accusedAppealAnnouncement: 'Accused Appeal Announcement',
-  prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-  prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
+function remainingJudgeCaseData() {
+  return {
+    courtCaseNumber: 'Court Case Number',
+    courtDate: '2020-09-29T13:00:00.000Z',
+    courtRoom: '201',
+    courtStartTime: '2020-09-29T13:00:00.000Z',
+    courtEndTime: '2020-09-29T14:00:00.000Z',
+    courtAttendees: 'Court Attendees',
+    policeDemands: 'Police Demands',
+    courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
+    accusedPlea: 'Accused Plea',
+    litigationPresentations: 'Litigation Presentations',
+    ruling: 'Ruling',
+    decision: CaseDecision.ACCEPTING,
+    custodyEndDate: '2020-09-28T12:00:00.000Z',
+    custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+    otherRestrictions: 'Other Restrictions',
+    accusedAppealDecision: CaseAppealDecision.APPEAL,
+    accusedAppealAnnouncement: 'Accused Appeal Announcement',
+    prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+    prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
+    judgeId: judge.id,
+  }
 }
 
 function getProsecutorCaseData(
@@ -128,7 +130,7 @@ function getProsecutorCaseData(
 }
 
 function getJudgeCaseData() {
-  return remainingJudgeCaseData
+  return remainingJudgeCaseData()
 }
 
 function getCaseData(
@@ -144,6 +146,14 @@ function getCaseData(
   return data as CCase
 }
 
+function userToTUser(user: User) {
+  return ({
+    ...user,
+    created: user.created && user.created.toISOString(),
+    modified: user.modified && user.modified.toISOString(),
+  } as unknown) as TUser
+}
+
 function caseToCCase(dbCase: Case) {
   const theCase = dbCase.toJSON() as Case
 
@@ -157,17 +167,29 @@ function caseToCCase(dbCase: Case) {
     requestedCustodyEndDate:
       theCase.requestedCustodyEndDate &&
       theCase.requestedCustodyEndDate.toISOString(),
+    prosecutor: theCase.prosecutor && userToTUser(theCase.prosecutor),
     courtDate: theCase.courtDate && theCase.courtDate.toISOString(),
     courtStartTime:
       theCase.courtStartTime && theCase.courtStartTime.toISOString(),
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
+    judge: theCase.judge && userToTUser(theCase.judge),
   } as unknown) as CCase
 }
 
-function parseBoolean(value: string | boolean) {
-  return value === 'false' ? false : value === 'true' ? true : value || false
+function expectUsersToMatch(userOne: TUser, userTwo: TUser) {
+  expect(userOne?.id).toBe(userTwo?.id)
+  expect(userOne?.created).toBe(userTwo?.created)
+  expect(userOne?.modified).toBe(userTwo?.modified)
+  expect(userOne?.nationalId).toBe(userTwo?.nationalId)
+  expect(userOne?.name).toBe(userTwo?.name)
+  expect(userOne?.title).toBe(userTwo?.title)
+  expect(userOne?.mobileNumber).toBe(userTwo?.mobileNumber)
+  expect(userOne?.email).toBe(userTwo?.email)
+  expect(userOne?.role).toBe(userTwo?.role)
+  expect(userOne?.institution).toBe(userTwo?.institution)
+  expect(userOne?.active).toBe(userTwo?.active)
 }
 
 function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
@@ -206,7 +228,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
-  expect(caseOne.prosecutor || null).toStrictEqual(caseTwo.prosecutor || null)
+  expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
@@ -243,7 +265,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.prosecutorAppealAnnouncement || null,
   )
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
-  expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
+  expectUsersToMatch(caseOne.judge, caseTwo.judge)
   expect(caseOne.parentCaseId || null).toBe(caseTwo.parentCaseId || null)
   expect(caseOne.parentCase || null).toStrictEqual(caseTwo.parentCase || null)
 }
@@ -251,13 +273,13 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 describe('User', () => {
   it('GET /api/user/:nationalId should get the  user', async () => {
     const nationalId = '1112902539'
-    let dbUser: User
+    let dbUser: TUser
 
     await User.findOne({
       where: { nationalId },
     })
       .then((value) => {
-        dbUser = value
+        dbUser = userToTUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
           .get(`/api/user/${nationalId}`)
@@ -267,15 +289,7 @@ describe('User', () => {
       .then((response) => {
         const apiUser = response.body
 
-        expect(apiUser.id).toBe(dbUser.id)
-        expect(apiUser.nationalId).toBe(dbUser.nationalId)
-        expect(apiUser.name).toBe(dbUser.name)
-        expect(apiUser.title).toBe(dbUser.title)
-        expect(apiUser.mobileNumber).toBe(dbUser.mobileNumber)
-        expect(apiUser.email).toBe(dbUser.email)
-        expect(apiUser.role).toBe(dbUser.role)
-        expect(apiUser.institution).toBe(dbUser.institution)
-        expect(apiUser.active).toBe(dbUser.active)
+        expectUsersToMatch(apiUser, dbUser)
       })
   })
 })
@@ -430,7 +444,10 @@ describe('Case', () => {
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create({ ...getCaseData(), state: CaseState.RECEIVED })
+    await Case.create({
+      ...getCaseData(true, true, true),
+      state: CaseState.RECEIVED,
+    })
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -470,11 +487,8 @@ describe('Case', () => {
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), {
           ...apiCase,
-          judge: ({
-            ...judge,
-            created: value.judge.created,
-            modified: value.judge.modified,
-          } as unknown) as TUser,
+          prosecutor,
+          judge,
         })
       })
   })
@@ -510,7 +524,11 @@ describe('Case', () => {
       })
       .then((response) => {
         // Check the response
-        expectCasesToMatch(response.body, { ...dbCase, prosecutor: prosecutor })
+        expectCasesToMatch(response.body, {
+          ...dbCase,
+          prosecutor,
+          judge,
+        })
       })
   })
 
@@ -518,7 +536,6 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.REJECTED,
-      judgeId: judge.id,
     })
       .then(async (value) =>
         request(app.getHttpServer())
