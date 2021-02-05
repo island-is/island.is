@@ -1,1 +1,7 @@
-{ "extends": "../../../../.eslintrc", "rules": {}, "ignorePatterns": ["!**/*"] }
+{
+  "extends": "../../../../.eslintrc",
+  "rules": {
+    "@typescript-eslint/interface-name-prefix": "off"
+  },
+  "ignorePatterns": ["!**/*"]
+}

@@ -12,7 +12,7 @@ export interface SyslumennClientConfig {
 
 @Injectable()
 export class SyslumennClient {
-  private accessToken: string = ''
+  private accessToken = ''
 
   constructor(
     private httpService: HttpService,
