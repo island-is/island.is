@@ -278,7 +278,18 @@ export const SignedVerdictOverview: React.FC = () => {
             </Accordion>
           </Box>
           <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Opna PDF kröfu"
+                pdfType="request"
+              />
+            </Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF þingbók og úrskurð"
+              pdfType="ruling"
+            />
           </Box>
           <FormFooter
             hideNextButton={
