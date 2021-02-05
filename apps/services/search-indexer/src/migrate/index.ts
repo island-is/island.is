@@ -7,7 +7,7 @@ import * as elastic from './elastic'
 import * as kibana from './kibana'
 import * as indexManager from '@island.is/content-search-index-manager'
 
-const { locales, minimumDictionaryVersion } = environment
+const { locales } = environment
 
 class App {
   async run() {

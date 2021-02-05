@@ -10,7 +10,6 @@ export interface Environment {
   dictRepo: string
   locales: ElasticsearchIndexLocale[]
   configPath: string
-  minimumDictionaryVersion: string
 }
 
 export const environment: Environment = {
@@ -22,5 +21,4 @@ export const environment: Environment = {
   dictRepo: 'island-is/elasticsearch-dictionaries',
   locales: ['is', 'en'],
   configPath: path.resolve(__dirname, '../../config'),
-  minimumDictionaryVersion: '9d3a04e',
 }
