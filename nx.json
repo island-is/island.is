@@ -88,6 +88,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-education": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
