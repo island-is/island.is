@@ -216,6 +216,7 @@ export const uploadS3DictionaryFiles = async (
 
     const exists = await checkIfS3Exists(s3Key)
     if (!exists) {
+      logger.info('S3 file not found, uploading file', { key: s3Key })
       await uploadFileToS3({ Key: s3Key, Body: file })
     } else {
       logger.info('S3 file found, skipping upload of file', { key: s3Key })

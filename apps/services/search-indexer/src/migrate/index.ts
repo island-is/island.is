@@ -15,7 +15,6 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
-    await this.migrateAws()
     if (hasAwsAccess) {
       await this.migrateAws()
     }
@@ -45,12 +44,11 @@ class App {
     )
 
     // we will always validate packages against (s3 -> AWS ES -> AWS ES search domain) to ensure we don't have partial updates
-    logger.info('Found new dictionary packages, uploading to AWS')
+    logger.info('Starting validation of S3 and AWS packages')
     const s3Files = await aws.uploadS3DictionaryFiles(versionsDictionaryFiles) // upload repo files to s3
     const newEsPackages = await aws.createAwsEsPackages(s3Files) // create the dictionary packages files in AWS ES
     await aws.associatePackagesWithAwsEsSearchDomain(newEsPackages) // attach the new packages to our AWS ES search domain
-
-    logger.info('Aws migration completed')
+    logger.info('All S3 and AWS packages up to date, AWS migration complete')
     return true
   }
 
