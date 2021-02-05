@@ -78,6 +78,8 @@ class App {
       esPackages = dictionary.getFakeEsPackages()
     }
 
+    logger.log('Found es packages', { esPackages })
+
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we don't continue
 
     const results = await Promise.all(

@@ -82,7 +82,16 @@ export const getAssociatedEsPackages = async (
     domainPackageList.DomainPackageDetailsList
       // we only want to return packages for current version
       .filter((esPackage) => {
-        const { version } = parsePackageName(esPackage.PackageName)
+        const { version, locale, analyzerType } = parsePackageName(
+          esPackage.PackageName,
+        )
+        logger.info('Found associated package for domain', {
+          version,
+          locale,
+          analyzerType,
+          requestedVersion,
+          willBeUsed: requestedVersion === version,
+        })
         return requestedVersion === version
       })
       .map((esPackage) => {
