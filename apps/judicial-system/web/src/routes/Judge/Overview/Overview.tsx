@@ -290,17 +290,15 @@ export const JudgeOverview: React.FC = () => {
                   }`}
                 </Text>
               </Box>
-              <Text>
                 {formatRequestedCustodyRestrictions(
                   workingCase.type,
                   workingCase.requestedCustodyRestrictions,
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((str) => (
-                    <Text>{str}</Text>
+                  .map((str, index) => (
+                    <Text key={index}>{str}</Text>
                   ))}
-              </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (
               <div className={styles.infoSection}>

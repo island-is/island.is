@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { findByText, fireEvent, getByTestId, getByText, render, screen, wait, waitFor, waitForElement } from '@testing-library/react'
 import { HearingArrangements } from './HearingArrangements'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -7,20 +7,33 @@ import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
+  mockUsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 
+const keyDownEvent = {
+  key: 'ArrowDown',
+};
+
+export async function selectOption(container: HTMLElement, optionText: string) {
+  const placeholder = getByText(container, 'Veldu dómara,');
+  fireEvent.keyDown(placeholder, keyDownEvent);
+  await findByText(container, optionText);
+  userEvent.click(getByText(container, optionText));
+}
+
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
-    // Arrange
-    render(
+        
+    const { container, getByText } = render(
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_2',
@@ -42,6 +55,10 @@ describe('/domari-krafa/fyrirtokutimi', () => {
               id: 'test_id_2',
               defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
+            {
+              id: 'test_id_2',
+              judgeId: 'judge_1',
+            } as UpdateCase,
           ]),
         ]}
         addTypename={false}
@@ -61,6 +78,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     // Act
     userEvent.type(await screen.findByLabelText('Dómsalur *'), '999')
 
+    userEvent.click(await screen.findByText("Veldu dómara"))
+    userEvent.click(await screen.findByText("Wonder Woman"))
+
     // Assert
     expect(
       (await screen.findByRole('button', {
@@ -76,6 +96,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -128,6 +149,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -182,6 +204,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',

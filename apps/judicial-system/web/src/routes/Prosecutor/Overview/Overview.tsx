@@ -274,8 +274,8 @@ export const Overview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((str) => (
-                    <Text>{str}</Text>
+                  .map((str, index) => (
+                    <Text key={index}>{str}</Text>
                   ))}
               </AccordionItem>
               <AccordionItem

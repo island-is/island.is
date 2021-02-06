@@ -612,14 +612,12 @@ export const Confirmation: React.FC = () => {
           </Box>
           <FormFooter
             nextUrl={Constants.REQUEST_LIST_ROUTE}
-            nextButtonText={
-              workingCase.judge?.id === user?.id
-                ? 'Staðfesta og hefja undirritun'
-                : 'Einungis dómarinn getur undirritað'
-            }
-            nextIsDisabled={isStepIllegal || workingCase.judge?.id !== user?.id}
+            nextButtonText={'Staðfesta og hefja undirritun'}
+            nextIsDisabled={isStepIllegal}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
+            hideNextButton={workingCase.judge?.id !== user?.id}
+            noNextButtonText={workingCase.judge?.id !== user?.id ? 'Einungis skráður dómari getur undirritað úrskurð' : undefined}
           />
           {modalVisible && (
             <SigningModal

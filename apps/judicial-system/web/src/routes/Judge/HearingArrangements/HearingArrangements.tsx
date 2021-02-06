@@ -245,6 +245,7 @@ export const HearingArrangements: React.FC = () => {
               required
             />
           </Box>
+          <div data-testid="blabla">Judge: {judges[0].label}</div>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">

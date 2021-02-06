@@ -62,6 +62,40 @@ describe('Confirmation route', () => {
     ).not.toBeDisabled()
   })
 
+  test(`should not allow users to continue if the user is not the assigned judge`, async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              courtStartTime: '2020-09-16T15:55:000Z',
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_6`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
+              <Confirmation />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    expect(
+      await screen.findByText('Einungis skráður dómari getur undirritað úrskurð'),
+    ).toBeInTheDocument()
+  })
+
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
 
