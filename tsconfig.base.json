@@ -65,6 +65,9 @@
       "@island.is/api/domains/driving-license": [
         "libs/api/domains/driving-license/src/index.ts"
       ],
+      "@island.is/api/domains/education": [
+        "libs/api/domains/education/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -76,6 +79,9 @@
       ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/syslumenn": [
+        "libs/api/domains/syslumenn/src/index.ts"
       ],
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
