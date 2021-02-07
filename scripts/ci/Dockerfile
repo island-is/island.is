@@ -56,6 +56,8 @@ CMD [ "main.js" ]
 FROM output-base as output-next
 # image with build of an Next.js app
 
+ENV PORT=4200
+
 COPY --from=builder /build/${APP_HOME}/next.config.js /webapp
 COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder /build/${APP_HOME}/public /webapp/public
