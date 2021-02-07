@@ -80,6 +80,16 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
       .details.find((e) => e.version === selectedVersionOption.value)
     setServiceDetail(tempServiceDetail)
     setSelectedEnviromentOption(enviromentOption)
+    setVersionOptions(
+      service.environments
+        .find((e) => e.environment === enviromentOption.value)
+        .details.map((x) => {
+          return {
+            label: x.version,
+            value: x.version,
+          }
+        }),
+    )
     onSelectChange(tempServiceDetail)
   }
 
