@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euxo pipefail
 
-yarn e2e-ci $1
+yarn nx run $1:e2e-ci -c

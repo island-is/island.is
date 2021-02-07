@@ -36,4 +36,6 @@ module.exports = function (config) {
 
   // Add the Treat plugin
   config.plugins.push(new TreatPlugin())
+
+  return config
 }

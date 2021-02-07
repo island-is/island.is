@@ -3,18 +3,19 @@
 Various project settings can be controlled from the `workspace.json`
 file, located in the root of the repository.
 
-## E2E Testing configuration for timeouts
+## E2E Testing configuration
 
-We are experiencing timeouts during some of our `Cypress` end-to-end
-tests. This is due to long build and compile time of `NextJS` apps.
-So we have a seperate `e2e-ci` task setup in the `workspace.json`
-configuration of each `e2e` app. With this configuration we can let
-`Cypress` wait until the server is ready before starting it's test
-execution.
+The default Nx setup for E2E tests is experiencing timeouts during some of our tests. This is due to long build and compile time of `NextJS` apps.
+In effort to optimize this process we have created an `e2e-ci.js` script
+in the `scripts/` directory. It starts by creating a production build
+of the app under testing, before starting the Cypress tests. Following
+is a documentation of the configuration needed to enable the `e2e-ci` task.
 
-### NextJS apps pre-requisites
+### Pre-requisites
 
-#### Setting API_MOCKS
+#### NextJS Apps
+
+##### Setting API_MOCKS
 
 We need to make sure that the `API_MOCKS` environment variable is set in
 the `next.config.js`
@@ -32,52 +33,27 @@ env: {
 },
 ```
 
-### React apps pre-requisites
+#### React Apps
 
-For React apps we first need to add a task `static-serve`
-in the target web app. For example for the `service-portal-e2e`
-it is `service-portal`
+##### devServerTarget
 
-```json
-"static-serve": {
-  "builder": "@nrwl/workspace:run-commands",
-  "options": {
-    "commands": [
-      {
-        "command": "yarn serve -l 4200 -s dist/apps/service-portal",
-        "forwardAllArgs": false
-      }
-    ],
-    "readyWhen": "Accepting connections"
-  }
-},
-```
-
-Here you need to change the path that follows the `-s`
-parameter for the corresponding `dist` folder of your
-built app.
-
-_Additionally_ you can change the `port` parameter by
-changing the value that comes after `-l` option.
-
-> :information*source: \_React* apps need additional cleanup
-> in their `e2e-ci` task. See [e2e-ci for React](#React)
-
-Next we change the `devServerTarget` for the `production` config of
-the `e2e` task in the `e2e` project to use this new `static-serve` task.
+For React apps our `e2e-ci.js` script uses the `static-serve.js`
+script to serve the production built app. We need to set the
+`devServerTarget` for the `production` config of the `e2e` task
+for the corresponding `e2e` project.
 
 ```json
 "e2e": {
   ...
   "configurations": {
     "production": {
-      "devServerTarget": "service-portal:static-serve"
+      "devServerTarget": ""
     }
   }
 },
 ```
 
-#### Setting API_MOCKS
+##### Setting API_MOCKS
 
 For React apps we have a common webpack config in `libs/share/webpack`
 which we use to make sure the `API_MOCKS` environment variable is set,
@@ -95,13 +71,7 @@ module.exports = (config, context) => {
 
   // Here you can add app specific config
 
-  return {
-    ...config,
-    node: {
-      process: true,
-      global: true,
-    },
-  }
+  return config
 }
 ```
 
@@ -116,12 +86,7 @@ of the corrensponding `e2e` project.
 "e2e-ci": {
   "builder": "@nrwl/workspace:run-commands",
   "options": {
-    "args": "--targetName=web",
-    "commands": [
-      "yarn nx run {args.targetName}:build:production",
-      "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e"
-    ],
-    "parallel": false
+    "command": "yarn e2e-ci -n web-e2e"
   }
 },
 ```
@@ -132,49 +97,44 @@ of the corrensponding `e2e` project.
 "e2e-ci": {
   "builder": "@nrwl/workspace:run-commands",
   "options": {
-    "args": "--targetName=web",
-    "commands": [
-      "yarn nx run {args.targetName}:build:production",
-      "yarn nx run {args.targetName}-e2e:e2e:production --headless --production --base-url http://localhost:4200 --record --group={args.targetName}-e2e || pkill -f 'serve -l'"
-    ],
-    "parallel": false
+    "command": "yarn e2e-ci -n service-portal-e2e -t react -f dist/apps/service-portal -b /minarsidur"
   }
 },
 ```
 
 #### Configure
 
-> :information*source: `pkill -f 'serve -l'` is only needed for \_React*
-> apps as they use the `serve` npm package to serve from the production
-> build, and on failure it leaves the process dangling.
+The `e2e-ci.js` script requires few parameters:
 
-We need to configure the `targetName` in the `args` property for each project:
+- `-n` - The name of the e2e project. The script uses this name to find
+  the name of the target app (by stripping of the `-e2e` ending).
+- `-t` - Only for React. Sets the app type to `react`.
+- `-f` - Only for React. Sets the output directory for the production build.
+- `-b` - Optional for React. If the app is deployed to a sub-directory,
+  that is the `base` in `index.html` this option is needed to
+  set that path.
 
-- `targetName`: The name of the web app that this `e2e` app is
-  testing. Usually this is the same name as the `e2e` app name
-  with the `-e2e` postfix stripped.
+Further details can be found be using the `-h` parameter for the script:
 
-Additionally we can change the `base-url` parameter if the apps starts on another `host:port`.
-
-### E2E in CI
-
-This task is executed as part of our GitHub CI pipeline via the `40_e2e.sh`  
-For example to run for `web-e2e`:
-
-```shell
-./scripts/ci/40_e2e.sh web-e2e
+```
+node scripts/e2e-ci.js -h
 ```
 
 ### E2E test locally
 
-As before we use the `e2e` task to test locally
+To test e2e locally it can either be done like before using the `e2e`task
 
-```shell
+```bash
 yarn e2e web-e2e
 ```
 
-> :information_source: Currently the `e2e-ci` task only works in the
-> CI environment as we are using `--record` and `--group` parameters
-> for Cypress. To test the task locally you can temporarily remove
-> those parameters in `workspace.json` for the corresponding
-> `e2e-ci` task you want to test.
+or using the `e2e-ci` task
+
+```bash
+yarn nx run web-e2e:e2e-ci
+```
+
+### E2E in CI
+
+This task is executed as part of our GitHub CI pipeline via the `40_e2e.sh`.
+This script adds the `-c` option to enable Cypress recording.
