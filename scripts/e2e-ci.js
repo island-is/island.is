@@ -48,8 +48,6 @@ const argv = yargs
   .alias('help', 'h')
   .argv
 
-console.log(argv)
-
 // Validate that the folder option is set when type=react
 if (argv.type === 'react' && !argv.folder) {
   throw new Error('Missing required option: folder')
