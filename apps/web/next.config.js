@@ -17,7 +17,7 @@ const transpileModules = [
 const withTM = require('next-transpile-modules')(transpileModules)
 const { API_URL = 'http://localhost:4444', SENTRY_DSN } = process.env
 const graphqlPath = '/api/graphql'
-const { DISABLE_API_CATALOGUE } = process.env
+const { DISABLE_API_CATALOGUE, DISABLE_SYSLUMENN_PAGE } = process.env
 
 module.exports = withTreat(
   withTM(
@@ -88,6 +88,7 @@ module.exports = withTreat(
         graphqlEndpoint: graphqlPath,
         SENTRY_DSN,
         disableApiCatalog: DISABLE_API_CATALOGUE,
+        disableSyslumennPage: DISABLE_SYSLUMENN_PAGE,
       },
 
       env: {

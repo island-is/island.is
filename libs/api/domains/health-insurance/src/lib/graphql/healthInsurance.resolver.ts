@@ -10,14 +10,12 @@ import {
 
 import { HealthTest } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
-import { BucketService } from './bucket.service'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver(() => HealthTest)
 export class HealthInsuranceResolver {
   constructor(
     private readonly healthInsuranceService: HealthInsuranceService,
-    private readonly bucketService: BucketService,
   ) {}
 
   @Query(() => HealthTest, {
@@ -53,12 +51,5 @@ export class HealthInsuranceResolver {
   ): Promise<number[]> {
     return this.healthInsuranceService.getPendingApplication(user.nationalId)
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
-  }
-
-  /* TESTING */
-  @Query(() => String)
-  async healthInsuranceBtest(): Promise<string | undefined> {
-    console.log('testing...')
-    return this.bucketService.btest()
   }
 }

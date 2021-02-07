@@ -12,7 +12,6 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
-  UseGuards,
   Req,
 } from '@nestjs/common'
 
@@ -44,11 +43,13 @@ import {
 } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
+import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
+import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import {
   buildDataProviders,
@@ -86,6 +87,7 @@ export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly emailService: EmailService,
+    private readonly fileService: FileService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
@@ -494,6 +496,38 @@ export class ApplicationController {
       existingApplication.id,
       {
         attachments: omit(existingApplication.attachments, key),
+      },
+    )
+
+    return updatedApplication
+  }
+
+  @Put('application/:id/createPdf')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async createPdf(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: CreatePdfDto,
+  ): Promise<ApplicationResponseDto> {
+    const { type } = input
+
+    const url = await this.fileService.createPdf(application, type)
+
+    const { updatedApplication } = await this.applicationService.update(
+      application.id,
+      {
+        attachments: {
+          ...application.attachments,
+          [type]: url,
+        },
       },
     )
 
