@@ -64,12 +64,15 @@ export class FileService {
 
     switch (type) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const {phoneNumber, name, ssn} = this.parentAData(answers, externalData)
+        const { phoneNumber, name, ssn } = this.parentAData(
+          answers,
+          externalData,
+        )
         let bucket = environment.fsS3Bucket ?? ''
         let s3FileName = `${this.childrenResidenceChangeS3Prefix}/${ssn}/${application.id}.pdf`
         const s3File = await this.getFile(bucket, s3FileName) // TODO: Test this logic and add content to fileContent variable below
-        const fileContent = 'blabla'
-        console.log(s3File)
+        console.log({ s3File })
+        const fileContent = s3File.Body as string
 
         return await this.signingService.requestSignature(
           phoneNumber as string,
@@ -77,7 +80,7 @@ export class FileService {
           name,
           'Ísland',
           `${ssn}.pdf`,
-          fileContent
+          fileContent,
         )
       }
     }
@@ -120,7 +123,10 @@ export class FileService {
     return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
   }
 
-  private parentAData(answers: FormValue, externalData: FormValue): ParentResidenceChange {
+  private parentAData(
+    answers: FormValue,
+    externalData: FormValue,
+  ): ParentResidenceChange {
     const nationalRegistry = externalData.nationalRegistry as FormValue
     const nationalRegistryData = (nationalRegistry.data as unknown) as User
 
@@ -136,14 +142,17 @@ export class FileService {
     }
   }
 
-  private async getFile(bucket: string, fileName: string): Promise<AWS.S3.GetObjectOutput> {
+  private async getFile(
+    bucket: string,
+    fileName: string,
+  ): Promise<AWS.S3.GetObjectOutput> {
     const downloadParams = {
       Bucket: bucket,
       Key: fileName,
     }
     return await new Promise((resolve, reject) => {
       this.s3.getObject(downloadParams, (err, res) => {
-        err? reject(err): resolve(res)
+        err ? reject(err) : resolve(res)
       })
     })
   }

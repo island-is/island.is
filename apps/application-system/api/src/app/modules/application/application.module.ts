@@ -11,6 +11,7 @@ import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
+import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
 
@@ -55,6 +56,15 @@ if (process.env.INIT_SCHEMA === 'true') {
     BullModule,
   ],
   controllers: [ApplicationController],
-  providers: [ApplicationService, UploadProcessor, FileService],
+  providers: [
+    ApplicationService,
+    FileService,
+    UploadProcessor,
+    {
+      provide: SIGNING_OPTIONS,
+      useValue: environment.signingOptions,
+    },
+    SigningService,
+  ],
 })
 export class ApplicationModule {}

@@ -1,8 +1,8 @@
 import { InputType, Field, registerEnumType } from '@nestjs/graphql'
-import { CreatePdfDtoTypeEnum } from '../../../gen/fetch'
+import { RequestFileSignatureDtoTypeEnum } from '../../../gen/fetch'
 
-registerEnumType(CreatePdfDtoTypeEnum, {
-  name: 'CreatePdfDtoTypeEnum',
+registerEnumType(RequestFileSignatureDtoTypeEnum, {
+  name: 'RequestFileSignatureDtoTypeEnum',
 })
 
 @InputType()
@@ -10,6 +10,6 @@ export class RequestFileSignatureInput {
   @Field((type) => String)
   id!: string
 
-  @Field((type) => CreatePdfDtoTypeEnum)
-  type!: CreatePdfDtoTypeEnum
+  @Field((type) => RequestFileSignatureDtoTypeEnum)
+  type!: RequestFileSignatureDtoTypeEnum
 }

@@ -26,4 +26,8 @@ export default {
     jwtSecret: 'supersecret',
   },
   fsS3Bucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+  signingOptions: {
+    url: 'https://developers.dokobit.com',
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
 }

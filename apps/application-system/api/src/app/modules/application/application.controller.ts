@@ -604,7 +604,10 @@ export class ApplicationController {
       {
         attachments: {
           ...application.attachments,
-          [type]: controlCode,
+          fileSignature: {
+            controlCode: controlCode,
+            documentToken: documentToken,
+          },
         },
       },
     )

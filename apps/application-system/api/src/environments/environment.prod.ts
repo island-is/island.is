@@ -21,4 +21,8 @@ export default {
     jwtSecret: process.env.AUTH_JWT_SECRET,
   },
   fsS3Bucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+  signingOptions: {
+    url: process.env.DOKOBIT_URL,
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
 }

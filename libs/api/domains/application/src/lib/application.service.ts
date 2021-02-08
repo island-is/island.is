@@ -170,10 +170,10 @@ export class ApplicationService {
     input: RequestFileSignatureInput,
     authorization: string,
   ) {
-    const { id, ...requestFileSignature } = input
+    const { id, ...requestFileSignatureDto } = input
     return await this.applicationApi.applicationControllerRequestFileSignature({
       id,
-      requestFileSignature,
+      requestFileSignatureDto,
       authorization,
     })
   }
