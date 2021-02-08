@@ -75,37 +75,53 @@ const CMD = {
     : ''}`,
 }
 
-const main = async () => {
+const build = async () => {
   console.log(`Building ${target}...`)
-  await pexec(CMD.BUILD)
-    .then((res) => console.log(res.stdout))
-    .catch((err) => {
-      console.log(err.stdout)
-      console.log(err.stderr)
-    })
-  console.log('Build complete...')
 
-  let serveChild = undefined
+  try {
+    const buildResult = await pexec(CMD.BUILD)
+    console.log(buildResult.stdout)
+  } catch (err) {
+    console.log(err.stdout)
+    console.log(err.stderr)
+
+    process.exit(1)
+  }
+
+  console.log('Build complete...')
+}
+
+const serve = () => {
+  let child = undefined
+
   if (argv.type === 'react') {
     console.log('Starting static serve for React app in a child process...')
     // Start static-serve
-    serveChild = spawn(CMD.SERVE[0], CMD.SERVE[1])
+    child = spawn(CMD.SERVE[0], CMD.SERVE[1])
     console.log(`Serving target project in a child process: ${serveChild.pid}`)
   }
 
+  return child
+}
+
+const main = async () => {
+  await build()
+  let serveChild = serve()
+
   console.log(`Starting test command \n${CMD.TEST}`)
 
-  await pexec(CMD.TEST)
-    .then((res) => console.log(res.stdout))
-    .catch((err) => {
-      console.log(err.stdout)
-      console.log(err.stderr)
+  try {
+    const testResult = await pexec(CMD.TEST)
+    console.log(testResult.stdout)
+  } catch (err) {
+    console.log(err.stdout)
+    console.log(err.stderr)
+  }
 
-      if (serveChild) {
-        console.log('Clean up serve process...')
-        serveChild.kill()
-      }
-    })
+  if (serveChild) {
+    console.log('Clean up serve process...')
+    serveChild.kill()
+  }
 
   process.exit()
 }
