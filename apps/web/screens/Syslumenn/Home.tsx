@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {useContext} from 'react'
+import React, { useContext } from 'react'
 import {
   Box,
   GridColumn,
@@ -10,24 +10,30 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  ContentLanguage, GetNewsQuery,
+  ContentLanguage,
+  GetNewsQuery,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_NEWS_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_NEWS_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+} from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   LatestNewsSection,
   OrganizationSlice,
-  OrganizationWrapper, Section,
+  OrganizationWrapper,
+  Section,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
-import { QueryGetNewsArgs } from "@island.is/api/schema";
-import {GlobalContext} from "../../context/GlobalContext/GlobalContext";
+import { QueryGetNewsArgs } from '@island.is/api/schema'
+import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 
 const { publicRuntimeConfig } = getConfig()
 

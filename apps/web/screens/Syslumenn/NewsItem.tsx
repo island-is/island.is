@@ -34,7 +34,11 @@ interface NewsItemProps {
   organizationPage: Query['getOrganizationPage']
 }
 
-const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace, organizationPage }) => {
+const NewsItem: Screen<NewsItemProps> = ({
+  newsItem,
+  namespace,
+  organizationPage,
+}) => {
   useContentfulId(newsItem?.id)
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
@@ -57,7 +61,8 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace, organizationPage
     },
     {
       title: n('newsTitle', 'Fréttir og tilkynningar'),
-      href: linkResolver('organizationnewsoverview', [organizationPage.slug]).href,
+      href: linkResolver('organizationnewsoverview', [organizationPage.slug])
+        .href,
       typename: 'organizationnewsoverview',
     },
   ]
@@ -77,8 +82,8 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace, organizationPage
         logoAtl={organizationPage.organization.logo.title}
         breadcrumbItems={breadCrumbs}
       />
-      <NewsArticle newsItem={newsItem} namespace={namespace}/>
-      <OrganizationFooter organizationPage={organizationPage}/>
+      <NewsArticle newsItem={newsItem} namespace={namespace} />
+      <OrganizationFooter organizationPage={organizationPage} />
     </>
   )
 }

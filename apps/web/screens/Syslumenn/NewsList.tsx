@@ -7,7 +7,8 @@ import { Screen } from '../../types'
 import {
   Select as NativeSelect,
   Bullet,
-  OrganizationHeader, OrganizationFooter,
+  OrganizationHeader,
+  OrganizationFooter,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -291,7 +292,7 @@ const NewsList: Screen<NewsListProps> = ({
           )}
         </Stack>
       </SidebarLayout>
-      <OrganizationFooter organizationPage={organizationPage}/>
+      <OrganizationFooter organizationPage={organizationPage} />
     </>
   )
 }
