@@ -177,9 +177,7 @@ export const HearingArrangements: React.FC = () => {
     ]
 
     if (workingCase) {
-      setIsStepIllegal(
-        isNextDisabled(requiredFields) || !workingCase.judge,
-      )
+      setIsStepIllegal(isNextDisabled(requiredFields) || !workingCase.judge)
     }
   }, [workingCase, isStepIllegal])
 
