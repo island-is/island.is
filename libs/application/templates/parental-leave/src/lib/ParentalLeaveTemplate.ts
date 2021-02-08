@@ -101,6 +101,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
 
       [States.EDIT_OR_ADD_PERIODS]: {
+        // TODO:
+        // exit: merge the edit state answers here? ...
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           progress: 1,
