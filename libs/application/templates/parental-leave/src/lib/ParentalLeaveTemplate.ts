@@ -29,6 +29,7 @@ enum Roles {
 
 enum States {
   DRAFT = 'draft',
+  EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
   OTHER_PARENT_APPROVAL = 'otherParentApproval',
   OTHER_PARENT_ACTION = 'otherParentRequiresAction',
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
@@ -98,6 +99,40 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
       },
+
+      [States.EDIT_OR_ADD_PERIODS]: {
+        meta: {
+          name: States.EDIT_OR_ADD_PERIODS,
+          progress: 1,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/EditOrAddPeriods').then((val) =>
+                  Promise.resolve(val.EditOrAddPeriods),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: [
+            {
+              target: States.EMPLOYER_WAITING_TO_ASSIGN,
+              cond: hasEmployer,
+            },
+            { target: States.VINNUMALASTOFNUN_APPROVAL },
+          ],
+        },
+      },
+
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
         exit: 'clearAssignees',
@@ -145,7 +180,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.OTHER_PARENT_ACTION]: {
@@ -165,7 +200,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
@@ -191,7 +226,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.DRAFT },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -230,7 +265,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.APPROVE]: { target: States.VINNUMALASTOFNUN_APPROVAL },
           ABORT: { target: States.EMPLOYER_ACTION },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -250,7 +285,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
@@ -275,7 +310,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -295,7 +330,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
       [States.APPROVED]: {
@@ -316,7 +351,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         type: 'final' as const,
         on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
       },
     },

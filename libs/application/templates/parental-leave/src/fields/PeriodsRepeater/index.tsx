@@ -35,7 +35,9 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
     },
   ]
 
-  const editable = application.state === 'draft'
+  // TODO: Can we get the states from the enum in ParentalLeaveTemplate.ts?
+  const editable =
+    application.state === 'draft' || application.state === 'editOrAddPeriods'
   return (
     <Box>
       <FieldDescription
