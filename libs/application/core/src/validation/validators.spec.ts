@@ -26,7 +26,7 @@ const expectedNumberReceivedString = 'Expected number, received string'
 const expectedStringReceivedNumber = 'Expected string, received number'
 
 describe('validateAnswers', () => {
-  it('should return no errors for non-nested types from a valid schema', () => {
+  it('should return no errors for non-nested types from valid values', () => {
     expect(
       validateAnswers(schema, {
         requiredString: 'asdf',
@@ -39,7 +39,7 @@ describe('validateAnswers', () => {
       }),
     ).toBeUndefined()
   })
-  it('should return no errors for valid nested object', () => {
+  it('should return no errors for valid nested value', () => {
     const formValue = {
       nested: { name: 'asdf', numeric: '22' },
     }
@@ -142,7 +142,7 @@ describe('validateAnswers', () => {
       anotherBadFormValue,
     )
     expect(secondSchemaValidationError).toEqual({
-      'nested': expectedNumberReceivedString,
+      nested: expectedNumberReceivedString,
       'nested.deep': expectedNumberReceivedString,
       'nested.deep.soDeep': expectedNumberReceivedString,
       'nested.deep.soDeep.id': expectedNumberReceivedString,
@@ -197,7 +197,7 @@ describe('validateAnswers', () => {
         badFormValue,
       )
       expect(schemaValidationError).toEqual({
-        "anArray": expectedStringReceivedNumber,
+        anArray: expectedStringReceivedNumber,
         'anArray[1]': expectedStringReceivedNumber,
         'anArray[2]': expectedStringReceivedNumber,
       })
@@ -207,13 +207,16 @@ describe('validateAnswers', () => {
         person: z
           .array(
             z.object({
-              age: z.string().refine((x) => {
-                const asNumber = parseInt(x)
-                if (isNaN(asNumber)) {
-                  return false
-                }
-                return asNumber > 15
-              }).optional(),
+              age: z
+                .string()
+                .refine((x) => {
+                  const asNumber = parseInt(x)
+                  if (isNaN(asNumber)) {
+                    return false
+                  }
+                  return asNumber > 15
+                })
+                .optional(),
               name: z.string().nonempty().max(256),
             }),
           )
@@ -252,7 +255,7 @@ describe('validateAnswers', () => {
       }
       const secondError = validateAnswers(schemaWithArray, anotherBadFormValue)
       expect(secondError).toEqual({
-        'person': invalidInput,
+        person: invalidInput,
         'person[0]': invalidInput,
         'person[0].age': invalidInput,
       })
@@ -262,16 +265,21 @@ describe('validateAnswers', () => {
       const schemaWithArray = z.object({
         person: z
           .array(
-            z.object({
-              age: z.string().refine((x) => {
-                const asNumber = parseInt(x)
-                if (isNaN(asNumber)) {
-                  return false
-                }
-                return asNumber > 15
-              }).optional(),
-              name: z.string().max(256).optional(),
-            }).nullable(),
+            z
+              .object({
+                age: z
+                  .string()
+                  .refine((x) => {
+                    const asNumber = parseInt(x)
+                    if (isNaN(asNumber)) {
+                      return false
+                    }
+                    return asNumber > 15
+                  })
+                  .optional(),
+                name: z.string().max(256).optional(),
+              })
+              .nullable(),
           )
           .max(5)
           .nonempty(),
@@ -308,28 +316,31 @@ describe('validateAnswers', () => {
         person: [null, { name: 'bam', age: 1 }],
       } as FormValue
       const secondError = validateAnswers(schemaWithArray, anotherBadFormValue)
-      expect(secondError).toEqual({ 
-        'person': invalidInput,
+      expect(secondError).toEqual({
+        person: invalidInput,
         'person[1]': invalidInput,
-        'person[1].age': invalidInput
+        'person[1].age': invalidInput,
       })
     })
 
-    it('should validate boolean refined as valid input', () => {
-      const schema = z.object({value: z.boolean().refine((v) => v)})
+    it('should return default error message for invalid value', () => {
+      const schema = z.object({ value: z.boolean().refine((v) => v) })
 
-      const value = {value: true} as FormValue
+      const value = { value: false } as FormValue
 
-      expect(validateAnswers(schema, value)).toBeUndefined()
+      expect(validateAnswers(schema, value)).toEqual({ value: invalidValue })
     })
 
-    it('should return invalid value for refined boolean', () => {
-      const schema = z.object({value: z.boolean().refine((v) => v)})
+    it('should return custom error message for invalid value', () => {
+      const expectedMessage = 'this is my message'
+      const schema = z.object({
+        value: z.boolean().refine((v) => v, { message: expectedMessage }),
+      })
 
-      const value = {value: false} as FormValue
+      const value = { value: false } as FormValue
 
       expect(validateAnswers(schema, value)).toEqual({
-        'value': invalidValue
+        value: expectedMessage,
       })
     })
   })

@@ -13,6 +13,7 @@ import {
   ExternalData,
   FormValue,
   getValueViaPath,
+  RecordObject,
 } from '@island.is/application/core'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
@@ -60,7 +61,7 @@ const FormExternalDataProvider: FC<{
   externalData: ExternalData
   externalDataProvider: ExternalDataProviderScreen
   formValue: FormValue
-  errors: any
+  errors: RecordObject
 }> = ({
   addExternalData,
   setBeforeSubmitCallback,

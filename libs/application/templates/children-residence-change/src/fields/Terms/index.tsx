@@ -44,6 +44,7 @@ const Terms = ({ field, error }: FieldBaseProps) => {
         name={`${id}`}
         error={error}
         large={true}
+        defaultValue={[]}
         options={[
           {
             value: 'effect',

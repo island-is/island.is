@@ -43,6 +43,7 @@ const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
         name={`${id}`}
         error={error}
         large={true}
+        defaultValue={[]}
         options={[
           {
             value: 'yes',

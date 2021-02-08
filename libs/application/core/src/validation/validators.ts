@@ -67,9 +67,7 @@ function partialSchemaValidation(
             }
           }
         })
-      }
-
-      else if (typeof answer === 'object') {
+      } else if (typeof answer === 'object') {
         error = partialSchemaValidation(
           answer as FormValue,
           originalSchema.shape[key],

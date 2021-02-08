@@ -19,13 +19,30 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
 }
+
 const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  selectChild: z.array(z.string()).nonempty(),
-  email: z.string().email(),
-  phoneNumber: z.string().min(7),
-  confirmResidenceChangeInfo: z.array(z.string()).nonempty(),
-  approveTerms: z.array(z.string()).length(3),
+  approveExternalData: z.boolean().refine((v) => v, {
+    message: 'Samþykkja þarf gagnaöflun til að halda áfram',
+  }),
+  selectChild: z
+    .array(z.string())
+    .min(1, { message: 'Velja þarf að lágmarki eitt barn' }),
+  email: z
+    .string()
+    .email('Netfang þarf að vera löglegt, t.d. netfang@netfang.is'),
+  phoneNumber: z
+    .string()
+    .length(7, { message: 'Símanúmer þarf að vera 7 tölustafir' }),
+  confirmResidenceChangeInfo: z
+    .array(z.string())
+    .length(1, 'Samþykkja þarf breytingu'),
+  selectDuration: z
+    .enum(['temporary', 'permanent'])
+    .optional()
+    .refine((v) => v, {
+      message: 'Velja þarf valmöguleika',
+    }),
+  approveTerms: z.array(z.string()).length(3, 'Samþykkja þarf alla skilmála'),
 })
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
