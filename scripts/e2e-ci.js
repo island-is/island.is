@@ -98,7 +98,7 @@ const serve = () => {
     console.log('Starting static serve for React app in a child process...')
     // Start static-serve
     child = spawn(CMD.SERVE[0], CMD.SERVE[1])
-    console.log(`Serving target project in a child process: ${serveChild.pid}`)
+    console.log(`Serving target project in a child process: ${child.pid}`)
   }
 
   return child
