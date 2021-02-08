@@ -615,6 +615,9 @@ export interface IFeaturedArticlesFields {
 
   /** Articles */
   articles?: IArticle[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
