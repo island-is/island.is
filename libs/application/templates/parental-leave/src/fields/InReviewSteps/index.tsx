@@ -142,35 +142,16 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
             </Button>
           </Box>
           <Box display="inlineBlock">
-            <DialogPrompt
-              baseId="editApplicationDialog"
-              title={formatMessage(
-                parentalLeaveFormMessages.reviewScreen
-                  .editApplicationModalTitle,
-              )}
-              description={formatMessage(
-                parentalLeaveFormMessages.reviewScreen.editApplicationModalDesc,
-              )}
-              ariaLabel={formatMessage(
-                parentalLeaveFormMessages.reviewScreen.editApplicationModalAria,
-              )}
-              disclosureElement={
-                <Button
-                  colorScheme="default"
-                  iconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                  icon="pencil"
-                  loading={loadingSubmit}
-                  disabled={loadingSubmit}
-                >
-                  {formatMessage(
-                    parentalLeaveFormMessages.reviewScreen.buttonsEdit,
-                  )}
-                </Button>
-              }
-              onConfirm={async () => {
+            <Button
+              colorScheme="default"
+              iconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+              icon="pencil"
+              loading={loadingSubmit}
+              disabled={loadingSubmit}
+              onClick={async () => {
                 const res = await submitApplication({
                   variables: {
                     input: {
@@ -182,19 +163,15 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
                 })
 
                 if (res?.data) {
-                  // Takes them back to the editable Review screen
+                  // Takes them to the next state (which loads the relevant form)
                   refetch?.()
                 }
               }}
-              buttonTextConfirm={formatMessage(
-                parentalLeaveFormMessages.reviewScreen
-                  .editApplicationModalConfirmButton,
+            >
+              {formatMessage(
+                parentalLeaveFormMessages.reviewScreen.buttonsEdit,
               )}
-              buttonTextCancel={formatMessage(
-                parentalLeaveFormMessages.reviewScreen
-                  .editApplicationModalCancelButton,
-              )}
-            />
+            </Button>
           </Box>
         </Box>
       </Box>
