@@ -100,6 +100,7 @@ export const updateEsTemplate = async (
   return client.indices.putTemplate({
     name: templateName,
     body: templateBody,
+    // eslint-disable-next-line @typescript-eslint/camelcase
     error_trace: true,
   })
 }
