@@ -22,6 +22,7 @@ export const GET_AUCTION_QUERY = gql`
       title
       type
       date
+      updatedAt
       content
       organization {
         title

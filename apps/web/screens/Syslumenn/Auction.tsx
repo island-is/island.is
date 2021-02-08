@@ -70,6 +70,8 @@ const Auction: Screen<AuctionProps> = ({
       })),
     }),
   )
+  const date = new Date(auction.date)
+  const updatedAt = new Date(auction.updatedAt)
 
   return (
     <OrganizationWrapper
@@ -99,14 +101,17 @@ const Auction: Screen<AuctionProps> = ({
       }}
     >
       <Box marginBottom={6}>
-        <Text variant="h1" as="h2">
+        <Text variant="h1" as="h2" marginBottom={2}>
           {auction.title}
         </Text>
-        <Text variant="h3" as="h3">
+        <Text variant="h3" as="h3" marginBottom={2}>
           {auction.organization.title}
         </Text>
-        <Text marginBottom={2}>{auction.date}</Text>
+        <Text marginBottom={4}>{format(date, 'dd. MMMM yyyy')}</Text>
         <MarkdownText>{auction.content}</MarkdownText>
+        <Text paddingTop={4}>
+          Uppfært {format(updatedAt, 'd. MMMM')} kl. {format(updatedAt, 'H:m')}
+        </Text>
       </Box>
     </OrganizationWrapper>
   )
