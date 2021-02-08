@@ -331,6 +331,7 @@ export const HealthInsuranceForm: Form = buildForm({
               introduction: m.confirmationOfResidencyFileUpload,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
+              uploadButtonLabel: m.fileUploadButton.defaultMessage,
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }

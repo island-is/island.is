@@ -31,7 +31,6 @@ const FileSchema = z.object({
 
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   applicant: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
@@ -63,6 +62,7 @@ const HealthInsuranceSchema = z.object({
     entitlement: z.enum([YES, NO]),
     entitlementReason: z.string().nonempty(),
   }),
+  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   additionalInfo: z.object({
     hasAdditionalInfo: z.enum([YES, NO]),
     files: z.array(FileSchema),

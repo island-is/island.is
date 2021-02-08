@@ -1,9 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import {
-  CustomField,
-  FieldBaseProps,
-  formatText,
-} from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import { Option, Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,
@@ -76,6 +72,7 @@ const CountrySelectField: FC<Props> = ({
         label={formatText(m.formerInsuranceCountry, application, formatMessage)}
         placeholder="Select the country that you are moving from"
         options={options}
+        disabled={isReviewField}
       />
     </Box>
   )

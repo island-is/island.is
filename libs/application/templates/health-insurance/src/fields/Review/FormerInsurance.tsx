@@ -12,6 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
+  FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
@@ -20,11 +21,13 @@ import { YES, NO } from '../../constants'
 import { m } from '../../forms/messages'
 import { ReviewFieldProps } from '../../types'
 import CountrySelectField from '../CountrySelectField/CountrySelectField'
+import { requireConfirmationOfResidency } from '../../healthInsuranceUtils'
 
 const FormerInsurance: FC<ReviewFieldProps> = ({
   application,
   isEditable,
   field,
+  error,
 }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
@@ -35,6 +38,11 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
       'formerInsurance.entitlement',
     ) as string,
   )
+
+  const country = getValueViaPath(
+    application.answers,
+    'formerInsurance.country',
+  ) as string
 
   return (
     <Box>
@@ -108,6 +116,37 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             disabled={!isEditable}
             backgroundColor={'blue'}
           />
+          {requireConfirmationOfResidency(country) && (
+            <>
+              <FieldDescription
+                description={formatText(
+                  m.confirmationOfResidencyFileUpload,
+                  application,
+                  formatMessage,
+                )}
+              />
+              <FileUploadController
+                id={'confirmationOfResidency'}
+                application={application}
+                error={error}
+                header={formatText(
+                  m.fileUploadHeader,
+                  application,
+                  formatMessage,
+                )}
+                description={formatText(
+                  m.fileUploadDescription,
+                  application,
+                  formatMessage,
+                )}
+                buttonLabel={formatText(
+                  m.fileUploadButton,
+                  application,
+                  formatMessage,
+                )}
+              />
+            </>
+          )}
         </Box>
       </Stack>
       <Box marginBottom={4}>
