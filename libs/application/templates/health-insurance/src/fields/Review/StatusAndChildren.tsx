@@ -1,15 +1,10 @@
 import React, { FC, useState } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
-import {
-  Box,
-  InputFileUpload,
-  Stack,
-  UploadFile,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
+  FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
 import { YES, NO } from '../../constants'
@@ -32,10 +27,6 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
 
   const [children, setChildren] = useState(
     getValueViaPath(application.answers, 'children') as string,
-  )
-
-  const [fileList, setFileList] = useState(
-    getValueViaPath(application.answers, 'confirmationOfStudies') || [],
   )
 
   return (
@@ -113,9 +104,10 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
                   formatMessage,
                 )}
               />
-              <InputFileUpload
+              <FileUploadController
+                application={application}
                 id="confirmationOfStudies"
-                disabled={!isEditable}
+                maxSize={10000000}
                 header={formatText(
                   m.fileUploadHeader,
                   application,
@@ -131,12 +123,6 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
                   application,
                   formatMessage,
                 )}
-                fileList={fileList as UploadFile[]}
-                /* TODO!! implement file upload/removal logic */
-                onRemove={(fileToRemove) => console.log(fileToRemove)}
-                onChange={(newFiles) =>
-                  setFileList([...(fileList as UploadFile[]), ...newFiles])
-                }
               />
             </Stack>
           </Box>
