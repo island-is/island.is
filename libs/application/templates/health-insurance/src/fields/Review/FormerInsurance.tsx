@@ -19,6 +19,7 @@ import { YES, NO } from '../../constants'
 
 import { m } from '../../forms/messages'
 import { ReviewFieldProps } from '../../types'
+import CountrySelectField from '../CountrySelectField/CountrySelectField'
 
 const FormerInsurance: FC<ReviewFieldProps> = ({
   application,
@@ -76,17 +77,11 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
         />
         <GridRow>
           <GridColumn span="6/12">
-            <Input
-              id={'formerInsurance.country'}
-              name={'formerInsurance.country'}
-              label={formatText(
-                m.formerInsuranceCountry,
-                application,
-                formatMessage,
-              )}
-              ref={register}
-              disabled={!isEditable}
-              backgroundColor={'blue'}
+            <CountrySelectField
+              field={{ ...field, id: 'formerInsurance.country' }}
+              application={application}
+              isEditable={true}
+              isReviewField={true}
             />
           </GridColumn>
           <GridColumn span="6/12">

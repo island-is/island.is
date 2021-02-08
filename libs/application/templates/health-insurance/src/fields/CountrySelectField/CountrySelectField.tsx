@@ -4,50 +4,50 @@ import {
   FieldBaseProps,
   formatText,
 } from '@island.is/application/core'
-import {
-  AsyncSearchOption,
-  Option,
-  Box,
-  Select,
-} from '@island.is/island-ui/core'
+import { Option, Box } from '@island.is/island-ui/core'
 import {
   FieldDescription,
   SelectController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from 'libs/localization/src'
 import { m } from '../../forms/messages'
-import { Controller, useFormContext } from 'react-hook-form'
-import { HiddenDateField } from '..'
+import { ReviewFieldProps } from '../../types'
 
-interface Props extends FieldBaseProps {
-  field: CustomField
-}
-// TODO handle regionalBlocs
 type Country = {
   name: string
   alpha2Code: string
   region: string
-  regionalBlocs: object[]
+  regionalBlocs: Blocs[]
 }
 
-const CountrySelectField: FC<Props> = ({ field, application }) => {
+type Blocs = {
+  acronym: string
+}
+
+interface Props extends ReviewFieldProps {
+  isReviewField?: boolean
+}
+
+const CountrySelectField: FC<Props> = ({
+  field,
+  application,
+  isReviewField,
+}) => {
   const { id } = field
   const [options, setOptions] = useState<Option[]>([])
-
   const { formatMessage } = useLocale()
 
-  //TODO handle pending
-  // Move this?
-  function fetchCountries() {
+  function getCountryOptions() {
     fetch(`https://restcountries.eu/rest/v2/all`)
       .then((res) => res.json())
       .then((data: Country[]) => {
         if (data.length) {
           setOptions(
-            data.map(({ name }) => {
+            data.map(({ name, alpha2Code, regionalBlocs }) => {
+              const regions = regionalBlocs.map((blocs) => `"${blocs.acronym}"`)
               return {
                 label: name,
-                value: name,
+                value: `{"name": "${name}", "countryCode": "${alpha2Code}", "regions": [${regions}]}`,
               }
             }),
           )
@@ -56,18 +56,20 @@ const CountrySelectField: FC<Props> = ({ field, application }) => {
   }
 
   useEffect(() => {
-    fetchCountries()
+    getCountryOptions()
   }, [])
 
   return (
     <Box>
-      <FieldDescription
-        description={formatText(
-          m.formerInsuranceDetails,
-          application,
-          formatMessage,
-        )}
-      />
+      {!isReviewField && (
+        <FieldDescription
+          description={formatText(
+            m.formerInsuranceDetails,
+            application,
+            formatMessage,
+          )}
+        />
+      )}
       <SelectController
         id={id}
         name={id}

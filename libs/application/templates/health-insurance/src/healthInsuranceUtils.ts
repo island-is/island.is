@@ -1,6 +1,7 @@
 import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
+import { FAROE_ISLANDS, GREENLAND } from './constants'
 
 export const hasHealthInsurance = (externalData: ExternalData) => {
   const isInsured = externalData?.healthInsurance?.data
@@ -48,4 +49,24 @@ export const shouldShowModal = (externalData: ExternalData) => {
     hasOldPendingApplications(externalData) ||
     hasIcelandicAddress(externalData)
   ) // || isFormerCountryOutsideEu(externalData)
+}
+
+export const isEUCountry = (formerCountry: string) => {
+  try {
+    const countryData = JSON.parse(formerCountry)
+    const { regions } = countryData
+    return regions.includes('EU') || regions.includes('EFTA')
+  } catch (error) {
+    return false
+  }
+}
+
+export const requireConfirmationOfResidency = (formerCountry: string) => {
+  try {
+    const countryData = JSON.parse(formerCountry)
+    const { name } = countryData
+    return name === FAROE_ISLANDS || name === GREENLAND
+  } catch (error) {
+    return false
+  }
 }

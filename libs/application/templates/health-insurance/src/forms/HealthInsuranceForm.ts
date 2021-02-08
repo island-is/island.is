@@ -19,10 +19,11 @@ import {
   ExternalData,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO, FILE_SIZE_LIMIT, GREENLAND, FAROE_ISLANDS } from '../constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
 import { StatusTypes } from '../types'
 import Logo from '../assets/Logo'
 import {
+  isEUCountry,
   requireConfirmationOfResidency,
   shouldShowModal,
 } from '../healthInsuranceUtils'
@@ -310,6 +311,21 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               disabled: false, // TODO if not in EU
             }),
+            buildCustomField({
+              id: 'outsideEU',
+              title: '',
+              component: 'InfoMessage',
+              condition: (answers: FormValue) => {
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                return (
+                  !!formerCountry &&
+                  !isEUCountry(formerCountry) &&
+                  !requireConfirmationOfResidency(formerCountry)
+                )
+              },
+            }),
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
               title: '',
@@ -321,7 +337,7 @@ export const HealthInsuranceForm: Form = buildForm({
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
-                return formerCountry === FAROE_ISLANDS || formerCountry === GREENLAND
+                return requireConfirmationOfResidency(formerCountry)
               },
             }),
             buildCustomField({
@@ -329,6 +345,15 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceEntitlement,
               description: m.formerInsuranceEntitlementTooltip,
               component: 'TextWithTooltip',
+              condition: (answers: FormValue) => {
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                return (
+                  isEUCountry(formerCountry) ||
+                  requireConfirmationOfResidency(formerCountry)
+                )
+              },
             }),
             buildRadioField({
               id: 'formerInsurance.entitlement',
@@ -339,9 +364,14 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.noOptionLabel, value: NO },
                 { label: m.yesOptionLabel, value: YES },
               ],
-              condition: (formValue: FormValue, externalData) => {
-                // Show below EU country
-                return true
+              condition: (answers: FormValue) => {
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                return (
+                  isEUCountry(formerCountry) ||
+                  requireConfirmationOfResidency(formerCountry)
+                )
               },
             }),
             buildTextField({
