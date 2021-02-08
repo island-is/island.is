@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
-  Button,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  Link,
   NavigationItem,
   Option,
   Select,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -196,12 +196,12 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
               options={organizations}
               value={organizations.find((x) => x.value === organization)}
               onChange={({ value }: Option) => {
-                setOrganization(value)
+                setOrganization(String(value))
                 Router.replace(
-                  location.protocol +
+                  window.location.protocol +
                     '//' +
-                    location.host +
-                    location.pathname +
+                    window.location.host +
+                    window.location.pathname +
                     `#${value}`,
                 )
               }}
@@ -221,7 +221,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
               name="periodSelect"
               options={months}
               value={months.find((x) => x.value === month)}
-              onChange={({ value }: Option) => setMonth(value)}
+              onChange={({ value }: Option) => setMonth(String(value))}
             />
           </GridColumn>
         </GridRow>
@@ -240,21 +240,39 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
           const updatedAt = new Date(auction.updatedAt)
 
           return (
-            <Box
+            <FocusableBox
+              href={`/stofnanir/syslumenn/uppbod/${auction.id}`}
               borderWidth="standard"
               borderColor="standard"
               borderRadius="standard"
-              padding={6}
+              paddingX={4}
+              paddingY={3}
               marginBottom={4}
             >
-              <Text>{auction.title}</Text>
-              <Text>{format(date, 'd. MMMM yyyy')}</Text>
-              <Text>{auction.type}</Text>
-              <Text>Síðast uppfært {format(updatedAt, 'd. MMMM H:m')}</Text>
-              <Link href={`/stofnanir/syslumenn/uppbod/${auction.id}`}>
-                <Button variant="text">Nánar</Button>
-              </Link>
-            </Box>
+              <Box>
+                <Text variant="eyebrow" color="purple400">
+                  {n('auctionType-' + auction.type)}
+                </Text>
+                <Text variant="h3">
+                  {format(date, 'd. MMMM yyyy')} | {auction.title}
+                </Text>
+
+                <Text paddingTop={1}>
+                  Uppfært {format(updatedAt, 'd. MMMM')} kl.{' '}
+                  {format(updatedAt, 'H:m')}
+                </Text>
+              </Box>
+              <Box
+                alignItems="flexEnd"
+                display="flex"
+                flexDirection="column"
+                justifyContent="spaceBetween"
+                marginLeft="auto"
+              >
+                <Tag>{auction.organization.title}</Tag>
+                <Text variant="small">{format(date, 'dd.MM.yyyy')}</Text>
+              </Box>
+            </FocusableBox>
           )
         })}
       </Box>

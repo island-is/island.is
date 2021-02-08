@@ -8,6 +8,9 @@ export const GET_AUCTIONS_QUERY = gql`
       type
       date
       updatedAt
+      organization {
+        title
+      }
     }
   }
 `
