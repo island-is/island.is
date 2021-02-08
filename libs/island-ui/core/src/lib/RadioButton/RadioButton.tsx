@@ -1,5 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
+import { Text } from '@island.is/island-ui/core'
 
 import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
@@ -80,7 +81,14 @@ export const RadioButton = ({
         <span className={styles.labelText}>
           {label}
           {subLabel && large && (
-            <span className={styles.subLabel}>{subLabel}</span>
+            <Text
+              as="span"
+              marginTop="smallGutter"
+              fontWeight="medium"
+              variant="small"
+            >
+              {subLabel}
+            </Text>
           )}
         </span>
         {tooltip && (

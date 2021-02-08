@@ -40,17 +40,12 @@ export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
 })
-export const subLabel = style({
-  marginTop: '2px',
-  fontSize: '14px',
-  fontWeight: theme.typography.regular,
-})
 export const largeLabel = style({
   alignItems: 'center',
   padding: `${theme.spacing[3]}px ${theme.spacing[2]}px`,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      padding: `26px ${theme.spacing[3]}px`,
+      padding: `${theme.spacing[3]}px`,
     },
   },
 })
