@@ -38,11 +38,6 @@ export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
 })
-export const subLabel = style({
-  marginTop: '2px',
-  fontSize: '14px',
-  fontWeight: theme.typography.regular,
-})
 export const labelChecked = style({
   fontWeight: theme.typography.medium,
 })

@@ -1,5 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
+import { Text } from '@island.is/island-ui/core'
 
 import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
@@ -85,7 +86,14 @@ export const Checkbox = ({
         <span className={styles.labelText}>
           {label}
           {subLabel && large && (
-            <span className={styles.subLabel}>{subLabel}</span>
+            <Text
+              as="span"
+              marginTop="smallGutter"
+              fontWeight="medium"
+              variant="small"
+            >
+              {subLabel}
+            </Text>
           )}
         </span>
         {tooltip && (
