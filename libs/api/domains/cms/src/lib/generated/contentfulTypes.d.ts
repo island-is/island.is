@@ -1823,14 +1823,8 @@ export interface IOrganizationSubpageFields {
   /** Links */
   links?: ILink[] | undefined
 
-  /** Sidebar Cards */
-  sidebarCards?: IStaffCard[] | undefined
-
   /** Slices */
   slices?: (IOffices | IOneColumnText | ITwoColumnText)[] | undefined
-
-  /** Menu Item */
-  menuItem?: ILink | undefined
 
   /** Parent Subpage */
   parentSubpage?: IOrganizationSubpage | undefined
