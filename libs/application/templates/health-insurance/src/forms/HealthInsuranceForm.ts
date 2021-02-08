@@ -176,16 +176,6 @@ export const HealthInsuranceForm: Form = buildForm({
                   city?: string
                 })?.city,
             }),
-            buildTextField({
-              id: 'applicant.nationality',
-              title: m.nationality,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  citizenship?: string
-                })?.citizenship,
-            }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
               title: '',
