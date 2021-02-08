@@ -93,7 +93,7 @@ export const Footer = ({
                     const isInternalLink = href.indexOf('/') === 0
                     return (
                       <Box marginBottom={isLast ? 0 : 3} key={index}>
-                        <Link href={href}>
+                        <Link href={href} skipTab>
                           <Button
                             colorScheme="default"
                             icon={isInternalLink ? 'arrowForward' : undefined}
@@ -200,9 +200,11 @@ export const Footer = ({
                   <Inline space={2}>
                     {tagLinks.map(({ title, href }, index) => {
                       return (
-                        <Tag key={index} href={href} variant="white">
-                          {title}
-                        </Tag>
+                        <Link href={href} skipTab>
+                          <Tag key={index} variant="white">
+                            {title}
+                          </Tag>
+                        </Link>
                       )
                     })}
                   </Inline>
@@ -231,16 +233,16 @@ export const Footer = ({
                       key={href}
                       span={['12/12', '6/12', '4/12', '3/12']}
                     >
-                      <Link href={href} underline="normal">
-                        <Text
-                          variant="h5"
-                          fontWeight="light"
-                          color="blue600"
-                          paddingBottom={2}
-                        >
+                      <Text
+                        variant="h5"
+                        fontWeight="light"
+                        color="blue600"
+                        paddingBottom={2}
+                      >
+                        <Link href={href} underline="normal">
                           {title}
-                        </Text>
-                      </Link>
+                        </Link>
+                      </Text>
                     </GridColumn>
                   )
                 }),
