@@ -8,3 +8,4 @@ export { default as ConfirmationScreen } from './ConfirmationScreen/Confirmation
 export { default as TextWithTooltip } from './TextWithTooltip/TextWithTooltip'
 export { default as ErrorModal } from './ErrorModal/ErrorModal'
 export { default as InformationRetrieval } from './InformationRetrieval/InformationRetrieval'
+export { default as CountrySelectField } from './CountrySelectField/CountrySelectField'

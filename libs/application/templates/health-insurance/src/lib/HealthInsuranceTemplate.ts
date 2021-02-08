@@ -46,8 +46,8 @@ const HealthInsuranceSchema = z.object({
   confirmationOfStudies: z.array(FileSchema).nonempty(),
   children: z.string().nonempty(),
   formerInsurance: z.object({
+    registration: z.enum([YES, NO]),
     country: z.string().nonempty(),
-    registration: z.string().nonempty(),
     personalId: z.string().nonempty(),
     institution: z.string(),
     entitlement: z.enum([YES, NO]),
