@@ -68,6 +68,10 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
 
   const organizations = [
     {
+      label: 'Öll embætti',
+      value: '',
+    },
+    {
       label: 'Austurland',
       value: 'syslumadurinn-a-austurlandi',
     },
@@ -101,7 +105,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
     },
     {
       label: 'Höfuðborgarsvæðið',
-      value: 'syslumadurinn-a-hofudborgarsvaedinu',
+      value: 'syslumadurinn-a-hoefudborgarsvaedinu',
     },
   ]
   const months = []
