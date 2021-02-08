@@ -122,7 +122,6 @@ export const CourtRecord: React.FC = () => {
           )
         }
       }
-
       if (!theCase.policeDemands) {
         theCase = {
           ...theCase,

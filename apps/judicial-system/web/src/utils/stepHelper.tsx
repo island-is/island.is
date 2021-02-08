@@ -220,9 +220,9 @@ export const constructProsecutorDemandsAsString = (
           ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur.'
           : '.'
       } ${
-        workingCase.otherDemands &&
-        !skipOtherDemands &&
-        capitalize(workingCase.otherDemands || '')
+        workingCase.otherDemands && !skipOtherDemands
+          ? capitalize(workingCase.otherDemands || '')
+          : ''
       }`
     : 'Saksóknari hefur ekki fyllt út dómkröfur.'
 }
