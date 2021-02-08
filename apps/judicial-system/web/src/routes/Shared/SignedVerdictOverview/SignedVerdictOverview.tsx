@@ -97,7 +97,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const isTravelBan =
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
+      theCase.type === CaseType.TRAVEL_BAN
 
     if (theCase.isCustodyEndDateInThePast) {
       return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
@@ -116,7 +116,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const isTravelBan =
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
+      theCase.type === CaseType.TRAVEL_BAN
 
     if (theCase.isCustodyEndDateInThePast) {
       return `${
@@ -293,10 +293,15 @@ export const SignedVerdictOverview: React.FC = () => {
           </Box>
           <FormFooter
             hideNextButton={
+              user?.role !== UserRole.PROSECUTOR ||
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
               workingCase.decision === CaseDecision.REJECTING ||
-              user?.role !== UserRole.PROSECUTOR
+              workingCase.isCustodyEndDateInThePast
             }
-            nextButtonText="Framlengja gæslu"
+            nextButtonText={`Framlengja ${
+              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+            }`}
             onNextButtonClick={() => handleNextButtonClick()}
             nextIsLoading={isCreatingExtension}
           />

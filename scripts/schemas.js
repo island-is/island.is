@@ -18,6 +18,7 @@ const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.d.ts'
  * See SCHEMAS.md to setup your project with auto-generated schemas files
  */
 const TARGETS = [
+  'schemas/external-openapi-generator', // If we depend on external services that comes with theirs own .yaml file (RC and not documented yet)
   'schemas/build-openapi', // Output openapi.yaml
   'schemas/openapi-generator', // Output gen/fetch/* based on openapi.yaml to run openapi-generator
   'schemas/build-graphql-schema', // Output api.graphql based on graphql app modules
