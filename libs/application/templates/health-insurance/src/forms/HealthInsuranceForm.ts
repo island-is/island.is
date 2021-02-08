@@ -310,7 +310,7 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
             }),
             buildCustomField({
-              id: 'outsideEU',
+              id: 'waitingPeriodInfo',
               title: '',
               component: 'FormerCountryErrorMessage',
               condition: (answers: FormValue) => {

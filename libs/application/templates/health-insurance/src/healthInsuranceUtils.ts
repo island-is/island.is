@@ -35,20 +35,13 @@ export const hasIcelandicAddress = (externalData: ExternalData) => {
   return !address || (address && !(address.streetAddress && address.postalCode))
 }
 
-export const isFormerCountryOutsideEu = (externalData: ExternalData) => {
-  // TODO:
-  // Get EU countries
-  // Get FormerCountry
-  // Return if FormerCountry is not in EU list
-}
-
 export const shouldShowModal = (externalData: ExternalData) => {
   return (
     hasHealthInsurance(externalData) ||
     hasActiveApplication(externalData) ||
     hasOldPendingApplications(externalData) ||
     hasIcelandicAddress(externalData)
-  ) // || isFormerCountryOutsideEu(externalData)
+  )
 }
 
 export const isEUCountry = (formerCountry: string) => {

@@ -5,14 +5,13 @@ import {
   FieldDescription,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { useLocale } from 'libs/localization/src'
+import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
 import { ReviewFieldProps } from '../../types'
 
 type Country = {
   name: string
   alpha2Code: string
-  region: string
   regionalBlocs: Blocs[]
 }
 
@@ -39,11 +38,12 @@ const CountrySelectField: FC<Props> = ({
       .then((data: Country[]) => {
         if (data.length) {
           setOptions(
-            data.map(({ name, alpha2Code, regionalBlocs }) => {
-              const regions = regionalBlocs.map((blocs) => `"${blocs.acronym}"`)
+            data.map(({ name, alpha2Code: countryCode, regionalBlocs }) => {
+              const regions = regionalBlocs.map((blocs) => blocs.acronym)
+              const option = { name, countryCode, regions }
               return {
                 label: name,
-                value: `{"name": "${name}", "countryCode": "${alpha2Code}", "regions": [${regions}]}`,
+                value: JSON.stringify(option),
               }
             }),
           )

@@ -16,7 +16,7 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
-import { YES, NO } from '../../constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
 
 import { m } from '../../forms/messages'
 import { ReviewFieldProps } from '../../types'
@@ -88,7 +88,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             <CountrySelectField
               field={{ ...field, id: 'formerInsurance.country' }}
               application={application}
-              isEditable={true}
+              isEditable={false}
               isReviewField={true}
             />
           </GridColumn>
@@ -129,6 +129,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                 id={'confirmationOfResidency'}
                 application={application}
                 error={error}
+                maxSize={FILE_SIZE_LIMIT}
                 header={formatText(
                   m.fileUploadHeader,
                   application,
