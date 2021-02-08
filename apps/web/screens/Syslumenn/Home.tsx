@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Box, NavigationItem, Text } from '@island.is/island-ui/core'
+import { NavigationItem, Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -74,12 +74,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       mainContent={<Text variant="intro">{organizationPage.description}</Text>}
     >
       {organizationPage.slices.map((slice) => (
-        <OrganizationSlice
-          key={slice.id}
-          slice={slice}
-          organization={organizationPage.organization}
-          namespace={namespace}
-        />
+        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
       ))}
     </OrganizationWrapper>
   )
