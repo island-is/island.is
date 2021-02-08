@@ -9,7 +9,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
 import { ReviewFieldProps, StatusTypes } from '../../types'
-import InfoMessage from '../InfoMessage/InfoMessage'
+import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
 import { m } from '../../forms/messages'
@@ -158,7 +158,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
           />
           {children === YES && (
             <Box marginBottom={[2, 2, 4]}>
-              <InfoMessage application={application} field={field} />
+              <ChildrenInfoMessage application={application} field={field} />
             </Box>
           )}
         </Stack>

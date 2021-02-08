@@ -267,7 +267,7 @@ export const HealthInsuranceForm: Form = buildForm({
             buildCustomField({
               id: 'childrenInfo',
               title: '',
-              component: 'InfoMessage',
+              component: 'ChildrenInfoMessage',
               condition: (answers) => answers.children === YES,
             }),
           ],
@@ -314,15 +314,13 @@ export const HealthInsuranceForm: Form = buildForm({
             buildCustomField({
               id: 'outsideEU',
               title: '',
-              component: 'InfoMessage',
+              component: 'FormerCountryErrorMessage',
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 return (
-                  !!formerCountry &&
-                  !isEUCountry(formerCountry) &&
-                  !requireConfirmationOfResidency(formerCountry)
+                  !!formerCountry && !isEUCountry(formerCountry) && !requireConfirmationOfResidency(formerCountry)
                 )
               },
             }),
