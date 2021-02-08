@@ -83,8 +83,6 @@ const build = async () => {
     console.log(buildResult.stdout)
   } catch (err) {
     console.log(err.stdout)
-    console.log(err.stderr)
-
     process.exit(1)
   }
 
@@ -105,6 +103,7 @@ const serve = () => {
 }
 
 const main = async () => {
+  let exitCode = 0
   await build()
   let serveChild = serve()
 
@@ -114,8 +113,8 @@ const main = async () => {
     const testResult = await pexec(CMD.TEST)
     console.log(testResult.stdout)
   } catch (err) {
+    exitCode = 1
     console.log(err.stdout)
-    console.log(err.stderr)
   }
 
   if (serveChild) {
@@ -123,7 +122,7 @@ const main = async () => {
     serveChild.kill()
   }
 
-  process.exit()
+  process.exit(exitCode)
 }
 
 // Entry point
