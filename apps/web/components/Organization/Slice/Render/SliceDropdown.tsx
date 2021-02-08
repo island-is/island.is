@@ -66,10 +66,10 @@ export const SliceDropdown: React.FC<SliceProps> = ({
                 const slug = options.find((x) => x.value === value).slug
                 setSelectedId(String(value))
                 Router.replace(
-                  location.protocol +
+                  window.location.protocol +
                     '//' +
-                    location.host +
-                    location.pathname +
+                    window.location.host +
+                    window.location.pathname +
                     `#${slug}`,
                 )
               }}

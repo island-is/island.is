@@ -1,9 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Districts,
-  FeaturedArticles,
-  Slice,
-} from '@island.is/web/graphql/schema'
+import { Slice } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
 
