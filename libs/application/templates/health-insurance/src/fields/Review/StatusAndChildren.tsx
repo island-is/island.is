@@ -7,7 +7,7 @@ import {
   FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { YES, NO } from '../../constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
 import { ReviewFieldProps, StatusTypes } from '../../types'
 import InfoMessage from '../InfoMessage/InfoMessage'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
@@ -107,7 +107,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
               <FileUploadController
                 application={application}
                 id="confirmationOfStudies"
-                maxSize={10000000}
+                maxSize={FILE_SIZE_LIMIT}
                 header={formatText(
                   m.fileUploadHeader,
                   application,
