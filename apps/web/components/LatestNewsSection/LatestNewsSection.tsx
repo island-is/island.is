@@ -16,7 +16,7 @@ import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContex
 import { useNamespace } from '@island.is/web/hooks'
 
 import { NewsCard } from '../NewsCard'
-import {LinkType, useLinkResolver} from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -36,7 +36,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   labelId = '',
   linkType = 'news',
   overview = 'newsoverview',
-  parameters = []
+  parameters = [],
 }) => {
   const newsItems = items.slice(0, 3)
   const { t } = useI18n()
@@ -86,7 +86,9 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                   readMoreText={t.readMore}
                   image={newsItem.image}
                   tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-                  href={linkResolver(linkType, [...parameters, newsItem.slug]).href}
+                  href={
+                    linkResolver(linkType, [...parameters, newsItem.slug]).href
+                  }
                 />
               </GridColumn>
             )
