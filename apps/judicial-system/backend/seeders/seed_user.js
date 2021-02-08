@@ -5,7 +5,7 @@ const localEnv = {
   gudjon: `[
   {
     "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
-    "national_id": "2510654469",
+    "national_id": "0000000000",
     "name": "Guðjón Guðjónsson",
     "title": "aðstoðarsaksóknari",
     "mobile_number": "8589030",
@@ -18,7 +18,7 @@ const localEnv = {
   baldur: `[
   {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
-    "national_id": "2408783999",
+    "national_id": "1111111111",
     "name": "Baldur Kristjánsson",
     "title": "dómritari",
     "mobile_number": "8949946",
@@ -31,7 +31,7 @@ const localEnv = {
   ivar: `[
   {
     "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
-    "national_id": "1112902539",
+    "national_id": "2222222222",
     "name": "Ívar Oddsson",
     "title": "héraðsdómari",
     "mobile_number": "6904031",

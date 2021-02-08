@@ -2,6 +2,7 @@ export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
   REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
+  ADMIN = 'ADMIN',
 }
 
 export interface User {
