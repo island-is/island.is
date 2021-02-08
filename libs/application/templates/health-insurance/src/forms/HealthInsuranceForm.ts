@@ -302,14 +302,12 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerPersonalId,
               width: 'half',
               backgroundColor: 'blue',
-              disabled: false, // TODO if not in EU
             }),
             buildTextField({
               id: 'formerInsurance.institution',
               title: m.formerInsuranceInstitution,
               width: 'half',
               backgroundColor: 'blue',
-              disabled: false, // TODO if not in EU
             }),
             buildCustomField({
               id: 'outsideEU',
@@ -320,7 +318,9 @@ export const HealthInsuranceForm: Form = buildForm({
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 return (
-                  !!formerCountry && !isEUCountry(formerCountry) && !requireConfirmationOfResidency(formerCountry)
+                  !!formerCountry &&
+                  !isEUCountry(formerCountry) &&
+                  !requireConfirmationOfResidency(formerCountry)
                 )
               },
             }),

@@ -8,6 +8,10 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
+import {
+  isEUCountry,
+  requireConfirmationOfResidency,
+} from '../healthInsuranceUtils'
 import { StatusTypes } from '../types'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
@@ -47,7 +51,13 @@ const HealthInsuranceSchema = z.object({
   children: z.string().nonempty(),
   formerInsurance: z.object({
     registration: z.enum([YES, NO]),
-    country: z.string().nonempty(),
+    country: z
+      .string()
+      .refine((value) =>
+        value
+          ? isEUCountry(value) || requireConfirmationOfResidency(value)
+          : false,
+      ),
     personalId: z.string().nonempty(),
     institution: z.string(),
     entitlement: z.enum([YES, NO]),
