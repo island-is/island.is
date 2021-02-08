@@ -71,12 +71,40 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
 
   const organizations = [
     {
-      label: 'Höfuðborgarsvæðið',
-      value: 'syslumadurinn-a-hofudborgarsvaedinu',
+      label: 'Austurland',
+      value: 'syslumadurinn-a-austurlandi',
     },
     {
       label: 'Norðurland eystra',
       value: 'syslumadurinn-a-nordurlandi-eystra',
+    },
+    {
+      label: 'Norðurland vestra',
+      value: 'syslumadurinn-a-nordurlandi-vestra',
+    },
+    {
+      label: 'Vesturland',
+      value: 'syslumadurinn-a-vesturlandi',
+    },
+    {
+      label: 'Vestfirðir',
+      value: 'syslumadurinn-a-vestfjordum',
+    },
+    {
+      label: 'Vestmannaeyjar',
+      value: 'syslumadurinn-i-vestmannaeyjum',
+    },
+    {
+      label: 'Suðurland',
+      value: 'syslumadurinn-a-sudurlandi',
+    },
+    {
+      label: 'Suðurnes',
+      value: 'syslumadurinn-a-sudurnesjum',
+    },
+    {
+      label: 'Höfuðborgarsvæðið',
+      value: 'syslumadurinn-a-hofudborgarsvaedinu',
     },
   ]
   const months = []
