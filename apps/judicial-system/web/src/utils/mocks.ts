@@ -21,12 +21,14 @@ export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
+  institution: 'Lögreglustjórinn á höfuðborgarsvæðinu',
 } as User
 
 export const mockJudge = {
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
+  institution: 'Héraðsdómur Reykjavíkur',
 } as User
 
 const testCase1 = {

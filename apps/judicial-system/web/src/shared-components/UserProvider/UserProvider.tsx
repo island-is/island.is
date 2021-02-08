@@ -19,6 +19,7 @@ export const UserQuery = gql`
       name
       title
       role
+      institution
     }
   }
 `

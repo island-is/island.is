@@ -35,14 +35,17 @@ export const DropdownMenu = ({
   title,
   icon,
 }: DropdownMenuProps) => {
-  const menu = useMenuState({ placement: 'bottom-start' })
+  const menu = useMenuState({
+    placement: 'bottom-start',
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    unstable_offset: [0, 8],
+  })
   const menuBoxStyle = useBoxStyles({
     component: 'div',
     background: 'white',
     display: 'flex',
     flexDirection: 'column',
     borderRadius: 'large',
-    marginTop: 1,
   })
   const menuItemBoxStyle = useBoxStyles({
     component: 'button',
