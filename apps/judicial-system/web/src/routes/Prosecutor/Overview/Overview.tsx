@@ -156,9 +156,11 @@ export const Overview: React.FC = () => {
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
               {`Yfirlit kröfu um ${
-                workingCase.parentCase ? 'framlengingu' : ''
-              } á ${
-                workingCase.type === workingCase.type ? 'gæslu' : 'farbann'
+                workingCase.parentCase ? 'framlengingu á' : ''
+              } ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæslu'
+                  : `farbann${workingCase.parentCase ? 'i' : ''}`
               }`}
             </Text>
           </Box>
@@ -274,8 +276,10 @@ export const Overview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((str, index) => (
-                    <Text key={index}>{str}</Text>
+                  .map((requestedCustodyRestriction, index) => (
+                    <Text key={index} as="span">
+                      {requestedCustodyRestriction}
+                    </Text>
                   ))}
               </AccordionItem>
               <AccordionItem
@@ -357,7 +361,7 @@ export const Overview: React.FC = () => {
               title={`Krafa um ${
                 workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhald'
-                  : 'Farbann'
+                  : 'farbann'
               }  hefur verið staðfest`}
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
               handleClose={() => history.push(Constants.REQUEST_LIST_ROUTE)}

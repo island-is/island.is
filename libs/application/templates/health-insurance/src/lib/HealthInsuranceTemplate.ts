@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
+import { StatusTypes } from '../types'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -18,9 +19,15 @@ type Events =
   | { type: 'ABORT' }
   | { type: 'MISSING_INFO' }
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string(),
+})
+
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  confirmationOfResidencyDocument: z.array(z.string()).optional(),
+  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   applicant: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
@@ -31,32 +38,37 @@ const HealthInsuranceSchema = z.object({
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
-  status: z.string().nonempty(),
-  confirmationOfStudies: z.string().optional(),
+  status: z.enum([
+    StatusTypes.EMPLOYED,
+    StatusTypes.STUDENT,
+    StatusTypes.PENSIONER,
+    StatusTypes.OTHER,
+  ]),
+  confirmationOfStudies: z.array(FileSchema).nonempty(),
   children: z.string().nonempty(),
-  additionalInfo: z.object({
-    hasAdditionalInfo: z.enum([YES, NO]),
-    files: z.array(z.string()),
-    remarks: z.string(),
-  }),
-  confirmCorrectInfo: z.boolean().refine((v) => v),
-  confirmMissingInfo: z.boolean().refine((y) => y),
-  agentComments: z.array(z.string().nonempty()),
   formerInsurance: z.object({
     country: z.string().nonempty(),
     registration: z.string().nonempty(),
     personalId: z.string().nonempty(),
-    institution: z.string().nonempty(),
+    institution: z.string(),
     entitlement: z.enum([YES, NO]),
-    additionalInformation: z.string().nonempty(),
+    entitlementReason: z.string().nonempty(),
   }),
+  additionalInfo: z.object({
+    hasAdditionalInfo: z.enum([YES, NO]),
+    files: z.array(FileSchema),
+    remarks: z.string(),
+  }),
+  confirmCorrectInfo: z.boolean().refine((v) => v),
   missingInfo: z.array(
     z.object({
       date: z.string(),
       remarks: z.string().nonempty(),
-      files: z.array(z.string()),
+      files: z.array(FileSchema),
     }),
   ),
+  confirmMissingInfo: z.boolean().refine((y) => y),
+  agentComments: z.array(z.string().nonempty()),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<

@@ -500,7 +500,7 @@ export const Confirmation: React.FC = () => {
             )}
           </Box>
           {workingCase.decision === CaseDecision.ACCEPTING &&
-            workingCase.type == CaseType.CUSTODY && (
+            workingCase.type === CaseType.CUSTODY && (
               <Box marginBottom={7}>
                 <Box marginBottom={1}>
                   <Text as="h3" variant="h3">
@@ -524,7 +524,7 @@ export const Confirmation: React.FC = () => {
             )}
           {(workingCase.decision ===
             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-            (workingCase.type == CaseType.TRAVEL_BAN &&
+            (workingCase.type === CaseType.TRAVEL_BAN &&
               workingCase.decision === CaseDecision.ACCEPTING)) && (
             <Box marginBottom={7}>
               <Box marginBottom={1}>

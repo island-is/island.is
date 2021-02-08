@@ -269,17 +269,21 @@ export function formatDefenderCourtDateEmailNotification(
   accusedNationalId: string,
   accusedName: string,
   court: string,
+  courtCaseNumber: string,
   courtDate: Date,
   courtRoom: string,
 ): string {
   return `${court} hefur staðfest fyrirtökutíma fyrir ${
     type === CaseType.CUSTODY ? 'gæsluvarðhaldskröfu' : 'farbannskröfu'
-  }.<br /><br />Fyrirtaka mun fara fram ${formatDate(courtDate, 'PPPPp')
+  } (sjá viðhengi).<br /><br />Fyrirtaka mun fara fram ${formatDate(
+    courtDate,
+    'PPPPp',
+  )
     ?.replace('dagur', 'daginn')
     ?.replace(
       ' kl.',
       ', kl.',
-    )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
+    )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
 }

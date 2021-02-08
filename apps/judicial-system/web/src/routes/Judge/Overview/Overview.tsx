@@ -296,8 +296,10 @@ export const JudgeOverview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((str, index) => (
-                    <Text key={index}>{str}</Text>
+                  .map((requestedCustodyRestriction, index) => (
+                    <Text key={index} as="span">
+                      {requestedCustodyRestriction}
+                    </Text>
                   ))}
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (

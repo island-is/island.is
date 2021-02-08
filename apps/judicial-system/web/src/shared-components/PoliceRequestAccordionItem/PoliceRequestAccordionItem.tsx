@@ -79,8 +79,10 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
             workingCase.requestedOtherRestrictions,
           )
             .split('\n')
-            .map((str, index) => (
-              <Text key={index}>{str}</Text>
+            .map((requestedCustodyRestriction, index) => (
+              <Text as="span" key={index}>
+                {requestedCustodyRestriction}
+              </Text>
             ))}
       </Box>
       <Box marginBottom={2}>
