@@ -19,7 +19,7 @@ import {
   ExternalData,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO } from '../constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
 import { StatusTypes } from '../types'
 import Logo from '../assets/Logo'
 import { shouldShowModal } from '../healthInsuranceUtils'
@@ -111,7 +111,7 @@ export const HealthInsuranceForm: Form = buildForm({
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
               title: '',
-              maxSize: 10000000,
+              maxSize: FILE_SIZE_LIMIT,
               introduction: m.confirmationOfResidencyFileUpload,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
@@ -273,7 +273,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'confirmationOfStudies',
               title: '',
               introduction: '',
-              maxSize: 10000000,
+              maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: (answers) => answers.status === StatusTypes.STUDENT,
@@ -411,7 +411,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalInfo.files',
               title: '',
               introduction: '',
-              maxSize: 10000000,
+              maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: {
