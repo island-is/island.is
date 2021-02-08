@@ -10,6 +10,8 @@ import {
   ApplicationTemplate,
   Application,
 } from '@island.is/application/core'
+import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
+import { generateNotifyReviewerTemplate } from '../emailTemplateGenerators'
 
 type Events =
   | { type: 'APPROVE' }
@@ -20,6 +22,15 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+}
+interface ApiTemplateUtilActions {
+  [key: string]: ApplicationAPITemplateAction
+}
+const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
+  notifyReviewerThroughEmail: {
+    type: 'assignThroughEmail',
+    generateTemplate: generateNotifyReviewerTemplate,
+  },
 }
 
 const contact = z.object({
@@ -155,6 +166,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             },
           }
         }),
+        invoke: {
+          src: {
+            type: 'apiTemplateUtils',
+            action: TEMPLATE_API_ACTIONS.generateNotifyReviewerTemplate,
+          },
+        },
         meta: {
           name: 'In Review',
           progress: 0.5,
