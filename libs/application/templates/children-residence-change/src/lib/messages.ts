@@ -42,12 +42,14 @@ export const section = defineMessages({
 export const externalData = {
   general: defineMessages({
     sectionTitle: {
-      id: 'crc.application:section.backgroundInformation.externalData.sectionTitle',
+      id:
+        'crc.application:section.backgroundInformation.externalData.sectionTitle',
       defaultMessage: 'Gagnaöflun',
       description: 'External information retrieval section title',
     },
     pageTitle: {
-      id: 'crc.application:section.backgroundInformation.externalData.pageTitle',
+      id:
+        'crc.application:section.backgroundInformation.externalData.pageTitle',
       defaultMessage: 'Gagnaöflun',
       description: 'External information retrieval page title',
     },
@@ -64,72 +66,92 @@ export const externalData = {
   }),
   applicant: defineMessages({
     title: {
-      id: 'crc.application:section.backgroundInformation.externalData.applicant.title',
+      id:
+        'crc.application:section.backgroundInformation.externalData.applicant.title',
       defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
-      description: 'Title: External Info about applicant from the National Registry',
+      description:
+        'Title: External Info about applicant from the National Registry',
     },
     subTitle: {
-      id: 'crc.application:section.backgroundInformation.externalData.applicant.subTitle',
-      defaultMessage: 'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
-      description: 'Subtitle: External Info about applicant from the National Registry',
-    }
+      id:
+        'crc.application:section.backgroundInformation.externalData.applicant.subTitle',
+      defaultMessage:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+      description:
+        'Subtitle: External Info about applicant from the National Registry',
+    },
   }),
   children: defineMessages({
     title: {
-      id: 'crc.application:section.backgroundInformation.externalData.children.title',
+      id:
+        'crc.application:section.backgroundInformation.externalData.children.title',
       defaultMessage: 'Grunnupplýsingar um börn',
-      description: 'Title: External Info about applicants children from the National Registry',
+      description:
+        'Title: External Info about applicants children from the National Registry',
     },
     subTitle: {
-      id: 'crc.application:section.backgroundInformation.externalData.children.subTitle',
-      defaultMessage: 'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
-      description: 'Subtitle: External Info about applicants children from the National Registry',
-    }
+      id:
+        'crc.application:section.backgroundInformation.externalData.children.subTitle',
+      defaultMessage:
+        'Nöfn, kennitölur og núverandi lögheimili barna í þinni forsjá.',
+      description:
+        'Subtitle: External Info about applicants children from the National Registry',
+    },
   }),
   otherParents: defineMessages({
     title: {
-      id: 'crc.application:section.backgroundInformation.externalData.otherParents.title',
+      id:
+        'crc.application:section.backgroundInformation.externalData.otherParents.title',
       defaultMessage: 'Grunnupplýsingar um foreldra',
-      description: 'Title: External Info about other parents from the National Registry',
+      description:
+        'Title: External Info about other parents from the National Registry',
     },
     subTitle: {
-      id: 'crc.application:section.backgroundInformation.externalData.otherParents.subTitle',
+      id:
+        'crc.application:section.backgroundInformation.externalData.otherParents.subTitle',
       defaultMessage: 'Nöfn, kennitölur og lögheimili forelda barnanna.',
-      description: 'Subtitle: External Info about other parents from the National Registry',
-    }
-  })
+      description:
+        'Subtitle: External Info about other parents from the National Registry',
+    },
+  }),
 }
 
 // Select children
 export const selectChildren = {
   general: defineMessages({
     sectionTitle: {
-      id: 'crc.application:section.backgroundInformation.selectChildren.sectionTitle',
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.sectionTitle',
       defaultMessage: 'Velja barn/börn',
       description: 'Select children section title',
     },
     pageTitle: {
-      id: 'crc.application:section.backgroundInformation.selectChildren.pageTitle',
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.pageTitle',
       defaultMessage: 'Veldu barn/börn',
       description: 'Select children page title',
     },
     subTitle: {
-      id: 'crc.application:section.backgroundInformation.selectChildren.subTitle',
-      defaultMessage: 'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.',
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.subTitle',
+      defaultMessage:
+        'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.',
       description: 'Select children subtitle',
     },
   }),
   checkboxes: defineMessages({
     title: {
-      id: 'crc.application:section.backgroundInformation.selectChildren.checkboxes.title',
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.checkboxes.title',
       defaultMessage: 'Börn í þinni forsjá',
       description: 'Title: displayed above checkboxes',
     },
     subLabel: {
-      id: 'crc.application:section.backgroundInformation.selectChildren.checkboxes.sublabel',
+      id:
+        'crc.application:section.backgroundInformation.selectChildren.checkboxes.sublabel',
       defaultMessage: 'Hitt forsjárforeldrið er {parentName}',
       description: 'Sublabel: displayed below a childs name',
-    }
+    },
   }),
 }
 
@@ -137,7 +159,8 @@ export const selectChildren = {
 export const otherParent = {
   general: defineMessages({
     sectionTitle: {
-      id: 'crc.application:section.backgroundInformation.otherParent.sectionTitle',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.sectionTitle',
       defaultMessage: 'Staðfesta foreldri',
       description: 'Other parent section title',
     },
@@ -147,24 +170,29 @@ export const otherParent = {
       description: 'Other parent page title',
     },
     description: {
-      id: 'crc.application:section.backgroundInformation.otherParent.description',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.description',
       defaultMessage: 'Hitt foreldrið er ${parentName} (${parentSSN})',
       description: 'Other parent page description',
     },
   }),
   inputs: defineMessages({
     description: {
-      id: 'crc.application:section.backgroundInformation.otherParent.inputs.description',
-      defaultMessage: 'Til að afla samþykkis hins foreldrisins þurfum við að fá netfang og símanúmer viðkomandi.',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.inputs.description',
+      defaultMessage:
+        'Til að afla samþykkis hins foreldrisins þurfum við að fá netfang og símanúmer viðkomandi.',
       description: 'Description for inputs',
     },
     emailLabel: {
-      id: 'crc.application:section.backgroundInformation.otherParent.inputs.emailLabel',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.inputs.emailLabel',
       defaultMessage: 'Netfang',
       description: 'Email label',
     },
     phoneNumberLabel: {
-      id: 'crc.application:section.backgroundInformation.otherParent.inputs.phoneNumberLabel',
+      id:
+        'crc.application:section.backgroundInformation.otherParent.inputs.phoneNumberLabel',
       defaultMessage: 'Símanúmer',
       description: 'Phone number label',
     },
@@ -193,7 +221,8 @@ export const reason = {
     },
     placeholder: {
       id: 'crc.application:section.arrangement.reason.input.placeholder',
-      defaultMessage: 'Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra',
+      defaultMessage:
+        'Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra',
       description: 'Placeholder for reason for change input',
     },
   }),
@@ -212,14 +241,32 @@ export const newResidence = {
       defaultMessage: 'Hvert á að flytja lögheimilið?',
       description: 'New legal residence page title',
     },
+    description: {
+      id: 'crc.application:section.arrangement.newResidence.description',
+      defaultMessage:
+        '<p>Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að lögheimili barns færist frá þér til hins foreldrisins, eða öfugt.</p><p>Vinsamlegast staðfestu að lögheimilisflutningur sé eins og fram kemur hér fyrir neðan:</p>',
+      description: 'Ne legal residence page descrption',
+    },
   }),
-  // input: defineMessages({
-  //   label: {
-  //     id: 'crc.application:section.arrangement.newResidence.input.label',
-  //     defaultMessage: 'Tilefni',
-  //     description: 'Label for reason for change input',
-  //   },
-  // }),
+  information: defineMessages({
+    currentResidenceLabel: {
+      id:
+        'crc.application:section.arrangement.newResidence.information.currentResidenceLabel',
+      defaultMessage: 'Núverandi lögheimili barna: ',
+      description: 'Label for current residence',
+    },
+    newResidenceLabel: {
+      id:
+        'crc.application:section.arrangement.newResidence.information.newResidenceLabel',
+      defaultMessage: 'Nýtt lögheimili barna: ',
+      description: 'Label for new residence',
+    },
+  }),
+  checkbox: defineMessages({
+    label: {
+      id: 'crc.application:section.arrangement.newResidence.checkbox.label',
+      defaultMessage: 'Ég staðfesti að ofangreindar upplýsingar séu réttar',
+      description: 'Confirm new residence label',
+    },
+  }),
 }
-
-

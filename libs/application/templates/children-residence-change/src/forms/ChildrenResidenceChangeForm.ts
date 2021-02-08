@@ -75,6 +75,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 return extractChildrenFromApplication(application).map((c) => ({
                   value: c.name,
                   label: c.name,
+                  // TODO: format this with m.selectChildren.checkboxes.subLabel
                   subLabel: `Hitt forsjárforeldrið er ${otherParent.name}`,
                 }))
               },
@@ -85,7 +86,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'otherParent',
           title: m.otherParent.general.sectionTitle,
           children: [
-            // TODO: create custom field for this for better control 
+            // TODO: create custom field for this for better control
             buildMultiField({
               id: 'informationAboutOtherParent',
               title: m.otherParent.general.pageTitle,
@@ -117,7 +118,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       title: m.section.arrangement,
       children: [
         buildSubSection({
-          id: 'confirmResidenceChangeInfo',
+          id: 'residenceChangeReason',
           title: m.reason.general.sectionTitle,
           children: [
             buildCustomField({
@@ -129,11 +130,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'confirmResidenceChangeInfo',
-          title: 'Nýtt lögheimili',
+          title: m.newResidence.general.sectionTitle,
           children: [
             buildCustomField({
               id: 'confirmResidenceChangeInfo',
-              title: 'Hvert á að flytja lögheimilið?',
+              title: m.newResidence.general.pageTitle,
               component: 'ChangeInformation',
             }),
           ],
