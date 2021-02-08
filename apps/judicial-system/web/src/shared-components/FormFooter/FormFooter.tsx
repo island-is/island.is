@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Box,
-  Button,
-  AlertMessage,
-  Icon,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 
 interface Props {

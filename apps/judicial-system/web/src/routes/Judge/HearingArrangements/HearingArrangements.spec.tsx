@@ -1,15 +1,5 @@
 import React from 'react'
-import {
-  findByText,
-  fireEvent,
-  getByTestId,
-  getByText,
-  render,
-  screen,
-  wait,
-  waitFor,
-  waitForElement,
-} from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { HearingArrangements } from './HearingArrangements'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -23,17 +13,6 @@ import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-
-const keyDownEvent = {
-  key: 'ArrowDown',
-}
-
-export async function selectOption(container: HTMLElement, optionText: string) {
-  const placeholder = getByText(container, 'Veldu dómara,')
-  fireEvent.keyDown(placeholder, keyDownEvent)
-  await findByText(container, optionText)
-  userEvent.click(getByText(container, optionText))
-}
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

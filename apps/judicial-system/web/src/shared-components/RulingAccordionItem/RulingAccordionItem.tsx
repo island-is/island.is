@@ -144,17 +144,19 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             </Text>
           </Box>
           <Box marginBottom={2}>
-            {formatAlternativeTravelBanRestrictions(
-              workingCase.accusedGender,
-              workingCase.custodyRestrictions,
-              workingCase.otherRestrictions,
-            )
-              .split('\n')
-              .map((alternativeTravelBanRestriction, index) => (
-                <Text key={index} as="span">
-                  {alternativeTravelBanRestriction}
-                </Text>
-              ))}
+            <Text>
+              {formatAlternativeTravelBanRestrictions(
+                workingCase.accusedGender,
+                workingCase.custodyRestrictions,
+                workingCase.otherRestrictions,
+              )
+                .split('\n')
+                .map((alternativeTravelBanRestriction, index) => (
+                  <Text key={index} as="span">
+                    {alternativeTravelBanRestriction}
+                  </Text>
+                ))}
+            </Text>
           </Box>
           {workingCase.otherRestrictions && (
             <Box marginBottom={2}>
