@@ -300,7 +300,7 @@ export const SignedVerdictOverview: React.FC = () => {
               workingCase.isCustodyEndDateInThePast
             }
             nextButtonText={`Framlengja ${
-              workingCase.type ? 'gæslu' : 'farbann'
+              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
             }`}
             onNextButtonClick={() => handleNextButtonClick()}
             nextIsLoading={isCreatingExtension}
