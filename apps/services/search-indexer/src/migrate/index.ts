@@ -96,6 +96,7 @@ class App {
 
             try {
               await elastic.updateIndexTemplate(locale, esPackages)
+              logger.info('updated template', { newIndexName })
               await elastic.importContentToIndex(locale, newIndexName, 'full')
             } catch (error) {
               logger.error('Failed to migrate to new index', {
