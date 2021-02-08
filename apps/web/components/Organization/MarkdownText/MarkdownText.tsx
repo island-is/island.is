@@ -46,7 +46,7 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
                 variant,
                 lineHeight: 'lg',
                 paddingBottom: '2',
-                paddingTop: '2',
+                paddingTop: '6',
               },
             },
             ul: {

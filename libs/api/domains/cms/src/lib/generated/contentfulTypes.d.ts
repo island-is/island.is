@@ -1826,6 +1826,12 @@ export interface IOrganizationSubpageFields {
   /** Slices */
   slices?: (IOffices | IOneColumnText | ITwoColumnText)[] | undefined
 
+  /** Slice Custom Renderer */
+  sliceCustomRenderer?: 'SliceDropdown' | undefined
+
+  /** Slice Extra Text */
+  sliceExtraText?: string | undefined
+
   /** Parent Subpage */
   parentSubpage?: IOrganizationSubpage | undefined
 
