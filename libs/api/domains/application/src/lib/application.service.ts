@@ -11,6 +11,7 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { CreatePdfInput } from './dto/createPdf.input'
+import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -161,6 +162,18 @@ export class ApplicationService {
     return await this.applicationApi.applicationControllerCreatePdf({
       id,
       createPdfDto,
+      authorization,
+    })
+  }
+
+  async requestFileSignature(
+    input: RequestFileSignatureInput,
+    authorization: string,
+  ) {
+    const { id, ...requestFileSignature } = input
+    return await this.applicationApi.applicationControllerRequestFileSignature({
+      id,
+      requestFileSignature,
       authorization,
     })
   }

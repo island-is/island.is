@@ -53,6 +53,7 @@ import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
+import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -566,6 +567,44 @@ export class ApplicationController {
         attachments: {
           ...application.attachments,
           [type]: url,
+        },
+      },
+    )
+
+    return updatedApplication
+  }
+
+  @Put('application/:id/requestFileSignature')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async requestFileSignature(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: RequestFileSignatureDto,
+  ): Promise<ApplicationResponseDto> {
+    const { type } = input
+
+    const {
+      controlCode,
+      documentToken,
+    } = await this.fileService.requestFileSignature(application, type)
+
+    console.log({ controlCode })
+    console.log({ documentToken })
+
+    const { updatedApplication } = await this.applicationService.update(
+      application.id,
+      {
+        attachments: {
+          ...application.attachments,
+          [type]: controlCode,
         },
       },
     )
