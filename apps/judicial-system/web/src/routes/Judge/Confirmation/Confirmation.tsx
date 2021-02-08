@@ -612,7 +612,7 @@ export const Confirmation: React.FC = () => {
           </Box>
           <FormFooter
             nextUrl={Constants.REQUEST_LIST_ROUTE}
-            nextButtonText={'Staðfesta og hefja undirritun'}
+            nextButtonText="Staðfesta og hefja undirritun"
             nextIsDisabled={isStepIllegal}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
