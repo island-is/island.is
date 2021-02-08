@@ -73,17 +73,17 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         }`}</Text>
       </Box>
       <Box marginBottom={4}>
-          {formatRequestedCustodyRestrictions(
-            workingCase.type,
-            workingCase.requestedCustodyRestrictions,
-            workingCase.requestedOtherRestrictions,
-          )
-            .split('\n')
-            .map((requestedCustodyRestriction, index) => (
-              <Text as="span" key={index}>
-                {requestedCustodyRestriction}
-              </Text>
-            ))}
+        {formatRequestedCustodyRestrictions(
+          workingCase.type,
+          workingCase.requestedCustodyRestrictions,
+          workingCase.requestedOtherRestrictions,
+        )
+          .split('\n')
+          .map((requestedCustodyRestriction, index) => (
+            <Text as="span" key={index}>
+              {requestedCustodyRestriction}
+            </Text>
+          ))}
       </Box>
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">

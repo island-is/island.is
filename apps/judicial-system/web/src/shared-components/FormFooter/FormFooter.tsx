@@ -1,5 +1,12 @@
 import React from 'react'
-import { Box, Button, AlertMessage, Icon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  AlertMessage,
+  Icon,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 
 interface Props {
@@ -46,12 +53,12 @@ const FormFooter: React.FC<Props> = (props: Props) => {
       )}
       {props.noNextButtonText && (
         <Box
-        padding={2}
-        borderRadius="large"
-        background="blue100"
-        borderColor="blue200"
-        borderWidth="standard"
-      >
+          padding={2}
+          borderRadius="large"
+          background="blue100"
+          borderColor="blue200"
+          borderWidth="standard"
+        >
           <Box display="flex" alignItems="center">
             <Box
               display="flex"
@@ -61,11 +68,9 @@ const FormFooter: React.FC<Props> = (props: Props) => {
             >
               <Icon type="filled" color="blue400" icon="informationCircle" />
             </Box>
-            <Text>
-              {props.noNextButtonText}
-            </Text>
-          </Box>  
-      </Box>
+            <Text>{props.noNextButtonText}</Text>
+          </Box>
+        </Box>
       )}
     </Box>
   )

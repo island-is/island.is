@@ -290,17 +290,17 @@ export const JudgeOverview: React.FC = () => {
                   }`}
                 </Text>
               </Box>
-                {formatRequestedCustodyRestrictions(
-                  workingCase.type,
-                  workingCase.requestedCustodyRestrictions,
-                  workingCase.requestedOtherRestrictions,
-                )
-                  .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+              {formatRequestedCustodyRestrictions(
+                workingCase.type,
+                workingCase.requestedCustodyRestrictions,
+                workingCase.requestedOtherRestrictions,
+              )
+                .split('\n')
+                .map((requestedCustodyRestriction, index) => (
+                  <Text key={index} as="span">
+                    {requestedCustodyRestriction}
+                  </Text>
+                ))}
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (
               <div className={styles.infoSection}>

@@ -1,5 +1,15 @@
 import React from 'react'
-import { findByText, fireEvent, getByTestId, getByText, render, screen, wait, waitFor, waitForElement } from '@testing-library/react'
+import {
+  findByText,
+  fireEvent,
+  getByTestId,
+  getByText,
+  render,
+  screen,
+  wait,
+  waitFor,
+  waitForElement,
+} from '@testing-library/react'
 import { HearingArrangements } from './HearingArrangements'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -16,18 +26,17 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 
 const keyDownEvent = {
   key: 'ArrowDown',
-};
+}
 
 export async function selectOption(container: HTMLElement, optionText: string) {
-  const placeholder = getByText(container, 'Veldu dómara,');
-  fireEvent.keyDown(placeholder, keyDownEvent);
-  await findByText(container, optionText);
-  userEvent.click(getByText(container, optionText));
+  const placeholder = getByText(container, 'Veldu dómara,')
+  fireEvent.keyDown(placeholder, keyDownEvent)
+  await findByText(container, optionText)
+  userEvent.click(getByText(container, optionText))
 }
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
-        
     const { container, getByText } = render(
       <MockedProvider
         mocks={[
@@ -78,8 +87,8 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     // Act
     userEvent.type(await screen.findByLabelText('Dómsalur *'), '999')
 
-    userEvent.click(await screen.findByText("Veldu dómara"))
-    userEvent.click(await screen.findByText("Wonder Woman"))
+    userEvent.click(await screen.findByText('Veldu dómara'))
+    userEvent.click(await screen.findByText('Wonder Woman'))
 
     // Assert
     expect(

@@ -617,7 +617,11 @@ export const Confirmation: React.FC = () => {
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
             hideNextButton={workingCase.judge?.id !== user?.id}
-            noNextButtonText={workingCase.judge?.id !== user?.id ? 'Einungis skráður dómari getur undirritað úrskurð' : undefined}
+            noNextButtonText={
+              workingCase.judge?.id !== user?.id
+                ? 'Einungis skráður dómari getur undirritað úrskurð'
+                : undefined
+            }
           />
           {modalVisible && (
             <SigningModal

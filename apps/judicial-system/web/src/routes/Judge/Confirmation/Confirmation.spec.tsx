@@ -92,7 +92,9 @@ describe('Confirmation route', () => {
     )
 
     expect(
-      await screen.findByText('Einungis skráður dómari getur undirritað úrskurð'),
+      await screen.findByText(
+        'Einungis skráður dómari getur undirritað úrskurð',
+      ),
     ).toBeInTheDocument()
   })
 
