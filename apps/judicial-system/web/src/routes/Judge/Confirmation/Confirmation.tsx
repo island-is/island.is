@@ -617,7 +617,7 @@ export const Confirmation: React.FC = () => {
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
             hideNextButton={workingCase.judge?.id !== user?.id}
-            noNextButtonText={
+            infoBoxText={
               workingCase.judge?.id !== user?.id
                 ? 'Einungis skráður dómari getur undirritað úrskurð'
                 : undefined

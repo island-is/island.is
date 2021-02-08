@@ -10,7 +10,7 @@ interface Props {
   onNextButtonClick?: () => void
   previousIsDisabled?: boolean
   hideNextButton?: boolean
-  noNextButtonText?: string
+  infoBoxText?: string
 }
 
 const FormFooter: React.FC<Props> = (props: Props) => {
@@ -44,7 +44,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           {props.nextButtonText ?? 'Halda áfram'}
         </Button>
       )}
-      {props.noNextButtonText && (
+      {props.infoBoxText && (
         <Box
           padding={2}
           borderRadius="large"
@@ -61,7 +61,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
             >
               <Icon type="filled" color="blue400" icon="informationCircle" />
             </Box>
-            <Text>{props.noNextButtonText}</Text>
+            <Text>{props.infoBoxText}</Text>
           </Box>
         </Box>
       )}
