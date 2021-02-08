@@ -13,6 +13,7 @@ const analyzers = [
   'stopwords',
   'hyphenpatterns',
   'hyphenwhitelist',
+  'autocompletestop',
 ]
 
 const getDictUrl = (type: string, lang: string): string => {
