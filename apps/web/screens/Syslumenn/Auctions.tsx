@@ -64,10 +64,12 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
 
   const date = new Date()
 
-  const [organization, setOrganization] = useState(
+  const [organization, setOrganization] = useState<string>(
     'syslumadurinn-a-hofudborgarsvaedinu',
   )
-  const [month, setMonth] = useState(`${date.getFullYear()}-${date.getMonth()}`)
+  const [month, setMonth] = useState<string>(
+    `${date.getFullYear()}-${date.getMonth()}`,
+  )
 
   const organizations = [
     {
@@ -214,18 +216,25 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
         {!data?.getAuctions.length && (
           <Text>{n('noAuctionsFound', 'Engin uppboð fundust')}</Text>
         )}
-        {data?.getAuctions.map((auction) => (
-          <Box
-            borderWidth="standard"
-            borderColor="standard"
-            borderRadius="standard"
-            padding={6}
-          >
-            <Text>{auction.title}</Text>
-            <Text>{auction.date}</Text>
-            <Text>{auction.type}</Text>
-          </Box>
-        ))}
+        {data?.getAuctions.map((auction) => {
+          const date = new Date(auction.date)
+          const updatedAt = new Date(auction.updatedAt)
+
+          return (
+            <Box
+              borderWidth="standard"
+              borderColor="standard"
+              borderRadius="standard"
+              padding={6}
+              marginBottom={4}
+            >
+              <Text>{auction.title}</Text>
+              <Text>{format(date, 'd. MMMM yyyy')}</Text>
+              <Text>{auction.type}</Text>
+              <Text>Síðast uppfært {format(updatedAt, 'd. MMMM H:m')}</Text>
+            </Box>
+          )
+        })}
       </Box>
     </OrganizationWrapper>
   )

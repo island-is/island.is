@@ -12,6 +12,9 @@ export class Auction {
   title: string
 
   @Field()
+  updatedAt: string
+
+  @Field()
   date: string
 
   @Field()
@@ -26,6 +29,7 @@ export class Auction {
 
 export const mapAuction = ({ fields, sys }: IAuction): Auction => ({
   id: sys.id,
+  updatedAt: sys.updatedAt,
   title: fields.title ?? '',
   date: fields.date ?? '',
   type: fields.type ?? '',

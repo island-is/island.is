@@ -7,6 +7,7 @@ export const GET_AUCTIONS_QUERY = gql`
       title
       type
       date
+      updatedAt
     }
   }
 `
