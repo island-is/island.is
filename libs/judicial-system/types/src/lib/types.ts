@@ -18,6 +18,27 @@ export interface User {
   active: boolean
 }
 
+export interface CreateUser {
+  nationalId: string
+  name: string
+  title: string
+  mobileNumber: string
+  email: string
+  role: UserRole
+  institution: string
+  active: boolean
+}
+
+export interface UpdateUser {
+  name?: string
+  title?: string
+  mobileNumber?: string
+  email?: string
+  role?: UserRole
+  institution?: string
+  active?: boolean
+}
+
 export enum CaseType {
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',

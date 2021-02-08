@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { CreateUserDto, UpdateUserDto } from './dto'
 import { User } from './user.model'
 
 @Injectable()
@@ -31,5 +32,30 @@ export class UserService {
     return this.userModel.findOne({
       where: { nationalId },
     })
+  }
+
+  create(userToCreate: CreateUserDto): Promise<User> {
+    this.logger.debug(
+      `Creating a new user with national id ${userToCreate.nationalId}`,
+    )
+
+    return this.userModel.create(userToCreate)
+  }
+
+  async update(
+    id: string,
+    update: UpdateUserDto,
+  ): Promise<{ numberOfAffectedRows: number; updatedUser: User }> {
+    this.logger.debug(`Updating user ${id}`)
+
+    const [numberOfAffectedRows, [updatedUser]] = await this.userModel.update(
+      update,
+      {
+        where: { id },
+        returning: true,
+      },
+    )
+
+    return { numberOfAffectedRows, updatedUser }
   }
 }
