@@ -30,9 +30,9 @@ export const sectionOffset = style({
   marginLeft: 0,
   ...themeUtils.responsiveStyle({
     xl: {
+      // span extra column left and right on XL screen
       marginLeft: theme.grid.gutter.desktop * -4,
       marginRight: theme.grid.gutter.desktop * -4,
     },
   }),
-
 })
