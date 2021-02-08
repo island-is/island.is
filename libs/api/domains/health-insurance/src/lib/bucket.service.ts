@@ -32,9 +32,9 @@ export class BucketService {
   }
   /* */
   async getFileFromUrl(urlToFile: string): Promise<S3.GetObjectOutput> {
-    var spurl = urlToFile.split('/')
-    var fn = spurl[spurl.length - 1]
-    console.log(fn)
+    const spurl = urlToFile.split('/')
+    const fn = spurl[spurl.length - 1]
+    // console.log(fn)
     return this.getFile(fn)
   }
 
