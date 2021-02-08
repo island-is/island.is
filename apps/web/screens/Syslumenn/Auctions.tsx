@@ -30,6 +30,7 @@ import getConfig from 'next/config'
 import { GET_AUCTIONS_QUERY } from '@island.is/web/screens/queries/Auction'
 import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -47,6 +48,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
+  const Router = useRouter()
 
   const pageUrl = `/stofnanir/syslumenn/uppbod`
 
@@ -62,15 +64,6 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
         href: url,
       })),
     }),
-  )
-
-  const date = new Date()
-
-  const [organization, setOrganization] = useState<string>(
-    'syslumadurinn-a-hofudborgarsvaedinu',
-  )
-  const [month, setMonth] = useState<string>(
-    `${date.getFullYear()}-${date.getMonth()}`,
   )
 
   const organizations = [
@@ -113,6 +106,16 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
   ]
   const months = []
 
+  const date = new Date()
+
+  const [organization, setOrganization] = useState<string>(
+    organizations[0].value,
+  )
+
+  const [month, setMonth] = useState<string>(
+    `${date.getFullYear()}-${date.getMonth()}`,
+  )
+
   for (let i = 0; i <= 2; i++) {
     months.push({
       label: format(date, 'MMMM yyyy'),
@@ -138,6 +141,11 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
   useEffect(() => {
     refetch()
   }, [organization, month])
+
+  useEffect(() => {
+    const hashString = window.location.hash.replace('#', '')
+    setOrganization(hashString ?? organizations[0].value)
+  }, [Router])
 
   return (
     <OrganizationWrapper
@@ -187,7 +195,16 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
               name="officeSelect"
               options={organizations}
               value={organizations.find((x) => x.value === organization)}
-              onChange={({ value }: Option) => setOrganization(value)}
+              onChange={({ value }: Option) => {
+                setOrganization(value)
+                Router.replace(
+                  location.protocol +
+                    '//' +
+                    location.host +
+                    location.pathname +
+                    `#${value}`,
+                )
+              }}
             />
           </GridColumn>
           <GridColumn
