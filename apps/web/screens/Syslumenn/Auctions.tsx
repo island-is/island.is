@@ -109,7 +109,7 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
 
   return (
     <OrganizationWrapper
-      pageTitle="Uppboð"
+      pageTitle={n('auction', 'Uppboð')}
       organizationPage={organizationPage}
       breadcrumbItems={[
         {
@@ -136,7 +136,7 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
     >
       <Box marginBottom={6}>
         <Text variant="h1" as="h2">
-          Uppboð
+          {n('auction', 'Uppboð')}
         </Text>
       </Box>
       <GridContainer>
@@ -151,13 +151,11 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
               icon="chevronDown"
               size="sm"
               isSearchable
-              label="Embætti"
-              name="select1"
-              noOptionsMessage="Enginn valmöguleiki"
+              label={n('office', 'Embætti')}
+              name="officeSelect"
               options={organizations}
               value={organizations.find((x) => x.value === organization)}
               onChange={({ value }: Option) => setOrganization(value)}
-              placeholder="Veldu embætti"
             />
           </GridColumn>
           <GridColumn
@@ -170,13 +168,11 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
               icon="chevronDown"
               size="sm"
               isSearchable
-              label="Tímabil"
-              name="select1"
-              noOptionsMessage="Enginn valmöguleiki"
+              label={n('period', 'Tímabil')}
+              name="periodSelect"
               options={months}
               value={months.find((x) => x.value === month)}
               onChange={({ value }: Option) => setMonth(value)}
-              placeholder="Veldu tímabil"
             />
           </GridColumn>
         </GridRow>
@@ -188,7 +184,7 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
         paddingBottom={[4, 5, 10]}
       >
         {!data?.getAuctions.length && (
-          <Text>Engin uppboð eru skráð fyrir þetta tímabil</Text>
+          <Text>{n('noAuctionsFound', 'Engin uppboð fundust')}</Text>
         )}
         {data?.getAuctions.map((auction) => (
           <Box
