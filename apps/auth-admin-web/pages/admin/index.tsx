@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from './../../components/Layout/ContentWrapper'
-import { NextPageContext } from 'next'
-import { withAuthentication } from './../../utils/auth.utils'
 import AdminTabNav from './../../components/Admin/nav/AdminTabNav'
 import { AdminTab } from './../../entities/common/AdminTab'
 import AdminUsersList from './../../components/Admin/lists/AdminUsersList'
@@ -89,11 +87,3 @@ const Index: React.FC = () => {
   }
 }
 export default Index
-
-export const getServerSideProps = withAuthentication(
-  async (context: NextPageContext) => {
-    return {
-      props: {},
-    }
-  },
-)

@@ -1,7 +1,6 @@
 import {
   Accordion,
   Box,
-  Checkbox,
   DatePicker,
   GridColumn,
   GridRow,
@@ -9,11 +8,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  formatAccusedByGender,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   FormFooter,
@@ -25,9 +20,8 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
-  CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
+  CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -55,8 +49,11 @@ import {
   removeTabsValidateAndSet,
   validateAndSetTime,
   setAndSendToServer,
+  setCheckboxAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
+import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
+import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 
 interface CaseData {
   case?: Case
@@ -66,7 +63,6 @@ export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [, setIsolationCheckbox] = useState<boolean>()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
   const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
     '',
@@ -163,6 +159,7 @@ export const RulingStepOne: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -195,7 +192,11 @@ export const RulingStepOne: React.FC = () => {
                   <RadioButton
                     name="case-decision"
                     id="case-decision-accepting"
-                    label="Krafa um gæsluvarðhald samþykkt"
+                    label={`Krafa um ${
+                      workingCase.type === CaseType.CUSTODY
+                        ? 'gæsluvarðhald'
+                        : 'farbann'
+                    } samþykkt`}
                     checked={workingCase.decision === CaseDecision.ACCEPTING}
                     onChange={() => {
                       setAndSendToServer(
@@ -210,11 +211,17 @@ export const RulingStepOne: React.FC = () => {
                     filled
                   />
                 </Box>
-                <Box marginBottom={2}>
+                <Box
+                  marginBottom={workingCase.type === CaseType.CUSTODY ? 2 : 0}
+                >
                   <RadioButton
                     name="case-decision"
                     id="case-decision-rejecting"
-                    label="Kröfu um gæsluvarðhald hafnað"
+                    label={`Kröfu um ${
+                      workingCase.type === CaseType.CUSTODY
+                        ? 'gæsluvarðhald'
+                        : 'farbann'
+                    } hafnað`}
                     checked={workingCase.decision === CaseDecision.REJECTING}
                     onChange={() => {
                       setAndSendToServer(
@@ -229,26 +236,28 @@ export const RulingStepOne: React.FC = () => {
                     filled
                   />
                 </Box>
-                <RadioButton
-                  name="case-decision"
-                  id="case-decision-accepting-alternative-travel-ban"
-                  label="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
-                  checked={
-                    workingCase.decision ===
-                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  }
-                  onChange={() => {
-                    setAndSendToServer(
-                      'decision',
-                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }}
-                  large
-                  filled
-                />
+                {workingCase.type === CaseType.CUSTODY && (
+                  <RadioButton
+                    name="case-decision"
+                    id="case-decision-accepting-alternative-travel-ban"
+                    label="Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann"
+                    checked={
+                      workingCase.decision ===
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                    }
+                    onChange={() => {
+                      setAndSendToServer(
+                        'decision',
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }}
+                    large
+                    filled
+                  />
+                )}
               </BlueBox>
             </Box>
           </Box>
@@ -296,10 +305,10 @@ export const RulingStepOne: React.FC = () => {
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {workingCase.decision ===
-                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                    ? 'Farbann'
-                    : 'Gæsluvarðhald'}
+                  {workingCase.type === CaseType.CUSTODY &&
+                  workingCase.decision === CaseDecision.ACCEPTING
+                    ? 'Gæsluvarðhald'
+                    : 'Farbann'}
                 </Text>
               </Box>
               <GridRow>
@@ -307,6 +316,7 @@ export const RulingStepOne: React.FC = () => {
                   <DatePicker
                     id="custodyEndDate"
                     label={
+                      workingCase.type === CaseType.CUSTODY &&
                       workingCase.decision === CaseDecision.ACCEPTING
                         ? 'Gæsluvarðhald til'
                         : 'Farbann til'
@@ -385,82 +395,31 @@ export const RulingStepOne: React.FC = () => {
               </GridRow>
             </Box>
           )}
-          {workingCase.decision === CaseDecision.ACCEPTING && (
-            <Box component="section" marginBottom={8}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Takmarkanir á gæslu
-                </Text>
+          {workingCase.type === CaseType.CUSTODY &&
+            workingCase.decision === CaseDecision.ACCEPTING && (
+              <Box component="section" marginBottom={8}>
+                <Box marginBottom={2}>
+                  <Text as="h3" variant="h3">
+                    Takmarkanir á gæslu
+                  </Text>
+                </Box>
+                <Box marginBottom={1}>
+                  <CheckboxList
+                    checkboxes={isolation}
+                    selected={workingCase.custodyRestrictions}
+                    onChange={(id) =>
+                      setCheckboxAndSendToServer(
+                        'custodyRestrictions',
+                        id,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                  />
+                </Box>
               </Box>
-              <Box marginBottom={1}>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    <Checkbox
-                      name="B - Einangrun"
-                      label={`${capitalize(
-                        formatAccusedByGender(
-                          workingCase.accusedGender || CaseGender.OTHER,
-                        ),
-                      )} skal sæta einangrun`}
-                      tooltip="Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum."
-                      value={CaseCustodyRestrictions.ISOLATION}
-                      checked={workingCase.custodyRestrictions?.includes(
-                        CaseCustodyRestrictions.ISOLATION,
-                      )}
-                      onChange={({ target }) => {
-                        // Create a copy of the state
-                        const copyOfState = Object.assign(workingCase, {})
-
-                        const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                          target.value as CaseCustodyRestrictions,
-                        )
-
-                        // Toggle the checkbox on or off
-                        setIsolationCheckbox(!restrictionIsSelected)
-
-                        // If the user is checking the box, add the restriction to the state
-                        if (!restrictionIsSelected) {
-                          if (copyOfState.custodyRestrictions === null) {
-                            copyOfState.custodyRestrictions = []
-                          }
-
-                          copyOfState.custodyRestrictions &&
-                            copyOfState.custodyRestrictions.push(
-                              target.value as CaseCustodyRestrictions,
-                            )
-                        }
-                        // If the user is unchecking the box, remove the restriction from the state
-                        else {
-                          copyOfState.custodyRestrictions &&
-                            copyOfState.custodyRestrictions.splice(
-                              copyOfState.custodyRestrictions.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ),
-                              1,
-                            )
-                        }
-
-                        setWorkingCase({
-                          ...workingCase,
-                          custodyRestrictions: copyOfState.custodyRestrictions,
-                        })
-
-                        // Save case
-                        updateCase(
-                          workingCase.id,
-                          parseArray(
-                            'custodyRestrictions',
-                            copyOfState.custodyRestrictions || [],
-                          ),
-                        )
-                      }}
-                      large
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-            </Box>
-          )}
+            )}
           <FormFooter
             nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}

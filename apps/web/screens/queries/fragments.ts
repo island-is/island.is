@@ -316,6 +316,82 @@ export const slices = gql`
     }
   }
 
+  fragment DistrictsFields on Districts {
+    __typename
+    id
+    title
+    description
+    image {
+      ...ImageFields
+    }
+    links {
+      text
+      url
+    }
+  }
+
+  fragment FeaturedArticlesFields on FeaturedArticles {
+    __typename
+    id
+    title
+    image {
+      ...ImageFields
+    }
+    articles {
+      id
+      slug
+      title
+      processEntry {
+        id
+      }
+    }
+    link {
+      text
+      url
+    }
+  }
+
+  fragment TwoColumnTextFields on TwoColumnText {
+    __typename
+    id
+    rightTitle
+    rightContent
+    rightLink {
+      text
+      url
+    }
+    leftTitle
+    leftContent
+    leftLink {
+      text
+      url
+    }
+  }
+
+  fragment OfficesSlice on Offices {
+    __typename
+    id
+    title
+    offices {
+      name
+      city
+      address
+      email
+      openingHours
+    }
+  }
+
+  fragment OneColumnTextFields on OneColumnText {
+    __typename
+    id
+    title
+    content
+    link {
+      text
+      url
+    }
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -339,5 +415,10 @@ export const slices = gql`
     ...LocationFields
     ...TellUsAStoryFields
     ...ConnectedComponentFields
+    ...DistrictsFields
+    ...FeaturedArticlesFields
+    ...TwoColumnTextFields
+    ...OfficesSlice
+    ...OneColumnTextFields
   }
 `

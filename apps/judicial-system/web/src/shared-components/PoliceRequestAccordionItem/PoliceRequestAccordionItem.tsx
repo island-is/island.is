@@ -8,7 +8,7 @@ import {
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseType } from '@island.is/judicial-system/types'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
@@ -21,7 +21,9 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
   return (
     <AccordionItem
       id="id_1"
-      label="Krafan um gæsluvarðhald frá lögreglu"
+      label={`Krafa um ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      }`}
       labelVariant="h3"
     >
       <Box marginBottom={2}>
@@ -66,11 +68,23 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         <Text>{workingCase.lawsBroken}</Text>
       </AccordionListItem>
       <Box marginBottom={1}>
-        <Text variant="h5">Takmarkanir á gæslu</Text>
+        <Text variant="h5">{`Takmarkanir og tilhögun ${
+          workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+        }`}</Text>
       </Box>
       <Box marginBottom={4}>
         <Text>
-          {formatRequestedCustodyRestrictions(workingCase.custodyRestrictions)}
+          {formatRequestedCustodyRestrictions(
+            workingCase.type,
+            workingCase.requestedCustodyRestrictions,
+            workingCase.requestedOtherRestrictions,
+          )
+            .split('\n')
+            .map((requestedCustodyRestriction, index) => (
+              <Text as="span" key={index}>
+                {requestedCustodyRestriction}
+              </Text>
+            ))}
         </Text>
       </Box>
       <Box marginBottom={2}>

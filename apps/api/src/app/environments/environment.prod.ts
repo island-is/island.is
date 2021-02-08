@@ -10,6 +10,9 @@ export default {
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
+  education: {
+    secret: process.env.EDUCATION_SECRET,
+  },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL,
     user: process.env.SOFFIA_USER,
@@ -49,5 +52,11 @@ export default {
       clientSecret: process.env.DOCUMENT_PROVIDER_CLIENT_SECRET ?? '',
       tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
     },
+    documentsServiceBasePath: process.env.SERVICE_DOCUMENTS_BASEPATH,
+  },
+  syslumennService: {
+    url: process.env.SYSLUMENN_HOST,
+    username: process.env.SYSLUMENN_USERNAME,
+    password: process.env.SYSLUMENN_PASSWORD,
   },
 }

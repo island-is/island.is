@@ -41,22 +41,30 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
   }
 
   return (
-    <GridRow>
-      {!!image && (
-        <GridColumn span={['12/12', '12/12', '12/12', '3/9']}>
-          <Box marginBottom={3} className={styles.imageContainer}>
-            <img className={styles.image} src={image.url + '?w=600'} alt="" />
-          </Box>
-        </GridColumn>
-      )}
-      <GridColumn span={['12/12', '12/12', '12/12', '6/9']}>
-        {title && (
-          <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={3}>
-            {title}
-          </Text>
+    <Box
+      className={styles.sectionOffset}
+      marginBottom={[3, 3, 12]}
+      marginTop={[3, 3, 12]}
+    >
+      <GridRow>
+        {!!image && (
+          <GridColumn span={['12/12', '12/12', '12/12', '3/9']}>
+            <Box className={styles.imageContainer}>
+              <img className={styles.image} src={image.url + '?w=600'} alt="" />
+            </Box>
+          </GridColumn>
         )}
-        {!!htmlDocument && <StaticHtml>{renderHtml(htmlDocument)}</StaticHtml>}
-      </GridColumn>
-    </GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/9']}>
+          {title && (
+            <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={2}>
+              {title}
+            </Text>
+          )}
+          {!!htmlDocument && (
+            <StaticHtml>{renderHtml(htmlDocument)}</StaticHtml>
+          )}
+        </GridColumn>
+      </GridRow>
+    </Box>
   )
 }
