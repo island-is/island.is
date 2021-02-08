@@ -127,8 +127,8 @@ export const HearingArrangements: React.FC = () => {
 
   const judges = (userData?.users || [])
     .filter((user: User) => user.role === UserRole.JUDGE)
-    .map((prosecutor: User) => {
-      return { label: prosecutor.name, value: prosecutor.id }
+    .map((judge: User) => {
+      return { label: judge.name, value: judge.id }
     })
 
   const defaultJudge = judges?.find(
@@ -178,7 +178,7 @@ export const HearingArrangements: React.FC = () => {
 
     if (workingCase) {
       setIsStepIllegal(
-        isNextDisabled(requiredFields) || workingCase.judge === null,
+        isNextDisabled(requiredFields) || !workingCase.judge,
       )
     }
   }, [workingCase, isStepIllegal])
