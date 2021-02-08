@@ -52,6 +52,7 @@ export default {
       clientSecret: process.env.DOCUMENT_PROVIDER_CLIENT_SECRET ?? '',
       tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
     },
+    documentsServiceBasePath: process.env.SERVICE_DOCUMENTS_BASEPATH,
   },
   syslumennService: {
     url: process.env.SYSLUMENN_HOST,
