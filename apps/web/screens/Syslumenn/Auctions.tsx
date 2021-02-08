@@ -2,9 +2,11 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   NavigationItem,
   Option,
   Select,
@@ -31,12 +33,12 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 const { publicRuntimeConfig } = getConfig()
 
-interface SubPageProps {
+interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
   namespace: Query['getNamespace']
 }
 
-const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
+const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
     throw new CustomNextError(404, 'Not found')
@@ -232,6 +234,9 @@ const Auctions: Screen<SubPageProps> = ({ organizationPage, namespace }) => {
               <Text>{format(date, 'd. MMMM yyyy')}</Text>
               <Text>{auction.type}</Text>
               <Text>Síðast uppfært {format(updatedAt, 'd. MMMM H:m')}</Text>
+              <Link href={`/stofnanir/syslumenn/uppbod/${auction.id}`}>
+                <Button variant="text">Nánar</Button>
+              </Link>
             </Box>
           )
         })}
