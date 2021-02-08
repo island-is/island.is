@@ -326,13 +326,29 @@ const getDomainPackages = () => {
     .promise()
 }
 
-const checkIfPackageAssociationExists = async (packageId): Promise<boolean> => {
+const getPackageAssociationStatus = async (
+  packageId,
+): Promise<'missing' | 'active' | 'broken'> => {
   const domainPackageList = await getDomainPackages()
-  return Boolean(
-    domainPackageList.DomainPackageDetailsList.find(
-      (domainPackage) => domainPackage.PackageID === packageId,
-    ),
+  const domainPackage = domainPackageList.DomainPackageDetailsList.find(
+    (domainPackageEntry) => domainPackageEntry.PackageID === packageId,
   )
+  if (!domainPackage) {
+    return 'missing'
+  }
+  return domainPackage.DomainPackageStatus === 'ACTIVE' ? 'active' : 'broken'
+}
+
+const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
+  const params = {
+    DomainName: environment.esDomain,
+    PackageID: packageId,
+  }
+
+  logger.info('Associating package with AWS ES domain', params)
+  const result = await awsEs.dissociatePackage(params).promise()
+  await waitForPackageStatus(packageId, 'DISSOCIATED')
+  return result
 }
 
 export const associatePackagesWithAwsEsSearchDomain = async (
@@ -341,9 +357,15 @@ export const associatePackagesWithAwsEsSearchDomain = async (
   // we have to do one at a time due to limitations in AWS API
   for (const awsEsPackage of packages) {
     const packageId = awsEsPackage.packageId
-    const exists = await checkIfPackageAssociationExists(packageId)
+    const packageStatus = await getPackageAssociationStatus(packageId)
 
-    if (!exists) {
+    if (packageStatus === 'broken') {
+      logger.error('Package failed to associate correctly attempting to remove')
+      await dissociatePackageWithAwsEsSearchDomain(packageId)
+      logger.error('Dissociation successful, continuing')
+    }
+
+    if (packageStatus === 'missing' || packageStatus === 'broken') {
       const params = {
         DomainName: environment.esDomain,
         PackageID: packageId,
