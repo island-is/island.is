@@ -2,7 +2,7 @@ import { assign } from 'xstate'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { gql } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -13,33 +13,6 @@ import {
 } from '@island.is/application/core'
 import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
 import { generateNotifyReviewerTemplate } from '../emailTemplateGenerators'
-
-type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
-
-enum Roles {
-  APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
-}
-interface ApiTemplateUtilActions {
-  [key: string]: ApplicationAPITemplateAction
-}
-const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
-  notifyReviewerThroughEmail: {
-    type: 'assignThroughEmail',
-    generateTemplate: generateNotifyReviewerTemplate,
-  },
-}
-
-const p = () => {
-  return new Promise((resolve, reject) => {
-    console.log('HÆHÆ hér er ég!')
-    resolve('Sucess')
-  })
-}
 
 const createOrganisationMutation = gql`
   mutation {
@@ -72,6 +45,40 @@ const createOrganisationMutation = gql`
     }
   }
 `
+const [createOrganisationTest] = useMutation(createOrganisationMutation)
+
+const createOrganisation = async () => {
+  const results = await createOrganisationTest()
+
+  console.log('ÞETTA ER KOMIÐ ')
+}
+
+type Events =
+  | { type: 'APPROVE' }
+  | { type: 'REJECT' }
+  | { type: 'SUBMIT' }
+  | { type: 'ABORT' }
+
+enum Roles {
+  APPLICANT = 'applicant',
+  ASSIGNEE = 'assignee',
+}
+interface ApiTemplateUtilActions {
+  [key: string]: ApplicationAPITemplateAction
+}
+const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
+  notifyReviewerThroughEmail: {
+    type: 'assignThroughEmail',
+    generateTemplate: generateNotifyReviewerTemplate,
+  },
+}
+
+const p = () => {
+  return new Promise((resolve, reject) => {
+    console.log('HÆHÆ hér er ég!')
+    resolve('Sucess')
+  })
+}
 
 const contact = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
@@ -213,10 +220,10 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
               action: TEMPLATE_API_ACTIONS.notifyReviewerThroughEmail,
             },
           },
-          {
-            id: 'test',
-            src: () => p,
-          },
+          // {
+          //   id: 'test',
+          //   src: () => createOrganisation,
+          // },
         ],
         meta: {
           name: 'In Review',
