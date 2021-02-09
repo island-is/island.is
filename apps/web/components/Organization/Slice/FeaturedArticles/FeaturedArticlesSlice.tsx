@@ -2,10 +2,12 @@ import React from 'react'
 import { FeaturedArticles } from '@island.is/web/graphql/schema'
 import {
   Box,
+  Button,
   FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   LinkCard,
   Stack,
   Text,
@@ -14,6 +16,8 @@ import * as styles from './FeaturedArticlesSlice.treat'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
 import { Namespace } from '@island.is/api/schema'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface SliceProps {
   slice: FeaturedArticles
@@ -26,6 +30,8 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>
@@ -38,7 +44,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
           <GridRow>
             <GridColumn span={['12/12', '12/12', '5/12']}>
               <Box className={styles.popularTitleWrap}>
-                <Text variant="h2" as="h2">
+                <Text variant="h2" as="h2" marginBottom={4}>
                   {slice.title}
                 </Text>
                 <Box display={['none', 'none', 'block']}>
@@ -54,6 +60,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
                     <FocusableBox
                       key={slug}
                       href={url.href}
+                      target={isMobile ? '' : '_blank'}
                       borderRadius="large"
                     >
                       {({ isFocused }) => (
@@ -72,6 +79,25 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
               </Stack>
             </GridColumn>
           </GridRow>
+          {!!slice.link && (
+            <Box
+              display="flex"
+              justifyContent="flexEnd"
+              paddingTop={4}
+              paddingBottom={1}
+            >
+              <Link href={slice.link.url}>
+                <Button
+                  icon="arrowForward"
+                  iconType="filled"
+                  type="button"
+                  variant="text"
+                >
+                  {n('seeAllServices', 'Sjá allt efni')}
+                </Button>
+              </Link>
+            </Box>
+          )}
         </Box>
       </GridContainer>
     </section>

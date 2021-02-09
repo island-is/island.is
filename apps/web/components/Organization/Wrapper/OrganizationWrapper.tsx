@@ -35,6 +35,7 @@ interface WrapperProps {
   organizationPage?: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
+  sidebarContent?: ReactNode
   navigationData: NavigationData
   fullWidthContent?: boolean
 }
@@ -46,6 +47,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   organizationPage,
   breadcrumbItems,
   mainContent,
+  sidebarContent,
   navigationData,
   fullWidthContent = false,
   children,
@@ -78,7 +80,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </Box>
         </GridContainer>
         <Box className={styles.headerWrapper}>
-          <SidebarWrapper sidebarContent="" hideSidebarInMobile={true}>
+          <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
             <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <img
@@ -99,23 +101,26 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           <SidebarWrapper
             fullWidthContent={fullWidthContent}
             sidebarContent={
-              <Box className={styles.navigation}>
-                <Navigation
-                  baseId="pageNav"
-                  isMenuDialog={isMobile}
-                  items={navigationData.items}
-                  title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
-                  titleLink={navigationData.titleLink}
-                  renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                />
-              </Box>
+              <>
+                <Box className={styles.navigation}>
+                  <Navigation
+                    baseId="pageNav"
+                    isMenuDialog={isMobile}
+                    items={navigationData.items}
+                    title={navigationData.title}
+                    activeItemTitle={navigationData.activeItemTitle}
+                    titleLink={navigationData.titleLink}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                </Box>
+                {sidebarContent}
+              </>
             }
           >
             {mainContent ?? children}

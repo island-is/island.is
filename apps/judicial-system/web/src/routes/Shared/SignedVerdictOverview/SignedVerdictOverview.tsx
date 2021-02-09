@@ -293,10 +293,15 @@ export const SignedVerdictOverview: React.FC = () => {
           </Box>
           <FormFooter
             hideNextButton={
+              user?.role !== UserRole.PROSECUTOR ||
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
               workingCase.decision === CaseDecision.REJECTING ||
-              user?.role !== UserRole.PROSECUTOR
+              workingCase.isCustodyEndDateInThePast
             }
-            nextButtonText="Framlengja gæslu"
+            nextButtonText={`Framlengja ${
+              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+            }`}
             onNextButtonClick={() => handleNextButtonClick()}
             nextIsLoading={isCreatingExtension}
           />

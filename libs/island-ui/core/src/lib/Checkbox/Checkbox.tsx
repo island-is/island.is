@@ -1,5 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
+import { Text } from '@island.is/island-ui/core'
 
 import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
@@ -16,12 +17,15 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
-  large?: boolean
   filled?: boolean
+  large?: boolean
+  /** subLabel can only be used if the 'large' prop set to true */
+  subLabel?: string
 }
 
 export const Checkbox = ({
   label,
+  subLabel,
   name,
   id = name,
   checked,
@@ -79,7 +83,19 @@ export const Checkbox = ({
             color={checked ? 'white' : 'transparent'}
           />
         </div>
-        {label}
+        <span className={styles.labelText}>
+          {label}
+          {subLabel && large && (
+            <Text
+              as="span"
+              marginTop="smallGutter"
+              fontWeight="medium"
+              variant="small"
+            >
+              {subLabel}
+            </Text>
+          )}
+        </span>
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {
