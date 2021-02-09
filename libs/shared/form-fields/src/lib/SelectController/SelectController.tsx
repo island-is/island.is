@@ -27,7 +27,6 @@ export const SelectController: FC<Props> = ({
   backgroundColor,
 }) => {
   const { clearErrors } = useFormContext()
-  console.log('selectController', backgroundColor)
   return (
     <Controller
       {...(defaultValue !== undefined && { defaultValue })}
