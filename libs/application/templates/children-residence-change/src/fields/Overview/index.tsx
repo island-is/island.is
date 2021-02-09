@@ -36,7 +36,11 @@ const Overview = ({ application }: FieldBaseProps) => {
         />
       </Box>
       <Box marginTop={5}>
-        <Text variant="h4" marginBottom={1}>{formatMessage(m.contract.labels.childName, { count: children.length})}</Text>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.contract.labels.childName, {
+            count: children.length,
+          })}
+        </Text>
         {children.map((child) => (
           <Text key={child.name}>{child.name}</Text>
         ))}
@@ -46,35 +50,48 @@ const Overview = ({ application }: FieldBaseProps) => {
           {formatMessage(m.contract.labels.otherParentContactInformation)}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
-        <Text fontWeight="medium" marginBottom={2}>{answers.contactInformation.email}</Text>
+        <Text fontWeight="medium" marginBottom={2}>
+          {answers.contactInformation.email}
+        </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers.contactInformation.phoneNumber}</Text>
+        <Text fontWeight="medium">
+          {answers.contactInformation.phoneNumber}
+        </Text>
       </Box>
       {answers.reason && (
-
-      <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.reason.input.label)}
-        </Text>
-        <Text>{answers.reason}</Text>
-      </Box>
+        <Box marginTop={4}>
+          <Text variant="h4" marginBottom={1}>
+            {formatMessage(m.reason.input.label)}
+          </Text>
+          <Text>{answers.reason}</Text>
+        </Box>
       )}
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
-          {formatMessage(m.contract.labels.currentResidence, { count: children.length })}
+          {formatMessage(m.contract.labels.currentResidence, {
+            count: children.length,
+          })}
         </Text>
         <Text>{applicant?.fullName}</Text>
         <Text>{applicant?.legalResidence}</Text>
       </Box>
       <Box marginTop={4}>
-        <Text variant="h4" marginBottom={1}>{formatMessage(m.contract.labels.newResidence, { count: children.length })}</Text>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.contract.labels.newResidence, {
+            count: children.length,
+          })}
+        </Text>
         <Text>{parent?.name}</Text>
         <Text fontWeight="light">{parentAddress}</Text>
       </Box>
       <Box marginTop={4} marginBottom={6}>
-        <Text variant="h4" marginBottom={1}>{formatMessage(m.duration.general.sectionTitle)}</Text>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.duration.general.sectionTitle)}
+        </Text>
         <Text>
-          {answers.durationDate ? answers.durationDate : formatMessage(m.duration.permanentInput.label)}
+          {answers.durationDate
+            ? answers.durationDate
+            : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>
     </>
