@@ -2,6 +2,7 @@ import { assign } from 'xstate'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { gql } from '@apollo/client'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -33,9 +34,44 @@ const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
   },
 }
 
-const p = new Promise((resolve, reject) => {
-  console.log('HÆHÆ ég er HÉRNA')
-})
+const p = () => {
+  return new Promise((resolve, reject) => {
+    console.log('HÆHÆ hér er ég!')
+    resolve('Sucess')
+  })
+}
+
+const createOrganisationMutation = gql`
+  mutation {
+    createOrganisation(
+      input: {
+        nationalId: "0606801239"
+        name: "API Corp 3"
+        address: "From API 3"
+        email: "api3@apicorp.com"
+        phoneNumber: "5885522"
+        administrativeContact: {
+          name: "test"
+          email: "test"
+          phoneNumber: "8620450"
+        }
+        technicalContact: {
+          name: "test-tech"
+          email: "tech@test.is"
+          phoneNumber: "5554567"
+        }
+        helpdesk: { email: "help@desk.is", phoneNumber: "5555555" }
+      }
+    ) {
+      id
+      nationalId
+      name
+      address
+      email
+      phoneNumber
+    }
+  }
+`
 
 const contact = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
