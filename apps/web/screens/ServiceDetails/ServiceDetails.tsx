@@ -3,7 +3,7 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
-
+import { useI18n } from '@island.is/web/i18n'
 import {
   GetNamespaceQuery,
   GetOpenApiInput,
@@ -13,12 +13,14 @@ import {
   Service,
   ServiceDetail,
   XroadIdentifier,
+  Environment,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import {
   SubpageMainContent,
   ServiceInformation,
   OpenApiView,
+  InstitutionPanel,
 } from '@island.is/web/components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
@@ -29,6 +31,7 @@ import {
   Link,
   Navigation,
   Text,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '../../hooks'
 import { useScript } from '../../hooks/useScript'
@@ -76,7 +79,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 
   const setApiContent = (serviceDetail: ServiceDetail) => {
     setselectedServiceDetail(serviceDetail)
-
     setSelectedGetOpenApiInput(
       xroadIdentifierToOpenApiInput(serviceDetail.xroadIdentifier),
     )
@@ -115,20 +117,35 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       title: n('linkContentPolicyText'),
     },
   ]
+  const { activeLocale } = useI18n()
   return (
     <SubpageLayout
       main={
         <SidebarLayout
           sidebarContent={
-            <Navigation
-              baseId="service-details-navigation"
-              colorScheme="blue"
-              items={navigationItems}
-              title={n('linkThrounText')}
-              titleLink={{
-                href: linkResolver('developerspage').href,
-              }}
-            />
+            <Stack space={2}>
+              <Navigation
+                baseId="service-details-navigation"
+                colorScheme="blue"
+                items={navigationItems}
+                title={n('linkThrounText')}
+                titleLink={{
+                  href: linkResolver('developerspage').href,
+                }}
+              />
+              {service.owner && (
+                <InstitutionPanel
+                  institutionTitle={nfc('institution')}
+                  institution={service.owner}
+                  imgContainerDisplay={['block', 'block', 'none', 'block']}
+                  locale={activeLocale}
+                  linkProps={{
+                    href: selectedServiceDetail.links.responsibleParty,
+                  }}
+                  //logo = {}
+                ></InstitutionPanel>
+              )}
+            </Stack>
           }
         >
           <SubpageMainContent
@@ -264,7 +281,6 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
   ])
-
   return {
     serviceId: serviceId,
     strings: linkStrings,
