@@ -78,7 +78,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   >(xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier))
 
   const setApiContent = (serviceDetail: ServiceDetail) => {
-    console.log('ServiceDetail: ', serviceDetail)
     setselectedServiceDetail(serviceDetail)
     setSelectedGetOpenApiInput(
       xroadIdentifierToOpenApiInput(serviceDetail.xroadIdentifier),
@@ -282,19 +281,12 @@ ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
   ])
-  let service: Service = null
-  if (data) {
-    service = JSON.parse(JSON.stringify(data?.getApiServiceById))
-    const envCopy = JSON.parse(JSON.stringify(service.environments[0]))
-    envCopy.environment = Environment.Staging.toUpperCase()
-    service.environments.push(envCopy)
-  }
   return {
     serviceId: serviceId,
     strings: linkStrings,
     filterContent: filterContent,
     openApiContent: openApiContent,
-    service: service as Service, //data?.getApiServiceById
+    service: data?.getApiServiceById,
   }
 }
 
