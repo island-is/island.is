@@ -18,6 +18,7 @@ import { Link } from '../Link/Link'
 import * as styles from './Footer.treat'
 import { Button } from '../Button/Button'
 import Hyphen from '../Hyphen/Hyphen'
+import { LinkContext } from '../context/LinkContext/LinkContext'
 
 export interface FooterLinkProps {
   title: string
@@ -72,28 +73,38 @@ export const Footer = ({
               className={styles.withDecorator}
             >
               <Box paddingRight={[0, 0, 1]}>
-                {topLinks.map(({ title, href }, index) => {
-                  const isLast = index + 1 === topLinks.length
-                  return (
-                    <Text
-                      key={index}
-                      variant="intro"
-                      paddingBottom={isLast ? 4 : 2}
-                      color={'blue600'}
-                    >
+                <LinkContext.Provider
+                  value={{
+                    linkRenderer: (href, children) => (
                       <Link href={href} color="blue600" underline="normal">
-                        <Hyphen>{title}</Hyphen>
+                        {children}
                       </Link>
-                    </Text>
-                  )
-                })}
+                    ),
+                  }}
+                >
+                  {topLinks.map(({ title, href }, index) => {
+                    const isLast = index + 1 === topLinks.length
+                    return (
+                      <Text
+                        key={index}
+                        variant="intro"
+                        paddingBottom={isLast ? 4 : 2}
+                        color={'blue600'}
+                      >
+                        <a href={href}>
+                          <Hyphen>{title}</Hyphen>
+                        </a>
+                      </Text>
+                    )
+                  })}
+                </LinkContext.Provider>
                 <Box display="flex" flexDirection={'column'} paddingBottom={4}>
                   {topLinksContact.map(({ title, href }, index) => {
                     const isLast = index + 1 === topLinksContact.length
                     const isInternalLink = href.indexOf('/') === 0
                     return (
                       <Box marginBottom={isLast ? 0 : 3} key={index}>
-                        <Link href={href}>
+                        <Link href={href} skipTab>
                           <Button
                             colorScheme="default"
                             icon={isInternalLink ? 'arrowForward' : undefined}
@@ -167,22 +178,30 @@ export const Footer = ({
                       {middleLinksTitle}
                     </Text>
                   ) : null}
-                  <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
-                    {middleLinks.map(({ title, href }, index) => {
-                      return (
-                        <Text
-                          key={index}
-                          variant="h5"
-                          color="blue600"
-                          fontWeight="light"
-                        >
-                          <Link href={href} color="blue400" underline="normal">
-                            {title}
-                          </Link>
-                        </Text>
-                      )
-                    })}
-                  </Tiles>
+                  <LinkContext.Provider
+                    value={{
+                      linkRenderer: (href, children) => (
+                        <Link href={href} color="blue400" underline="normal">
+                          {children}
+                        </Link>
+                      ),
+                    }}
+                  >
+                    <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
+                      {middleLinks.map(({ title, href }, index) => {
+                        return (
+                          <Text
+                            key={index}
+                            variant="h5"
+                            color="blue600"
+                            fontWeight="light"
+                          >
+                            <a href={href}>{title}</a>
+                          </Text>
+                        )
+                      })}
+                    </Tiles>
+                  </LinkContext.Provider>
                 </Box>
               </GridColumn>
             ) : null}
@@ -200,9 +219,9 @@ export const Footer = ({
                   <Inline space={2}>
                     {tagLinks.map(({ title, href }, index) => {
                       return (
-                        <Tag key={index} href={href} variant="white">
-                          {title}
-                        </Tag>
+                        <Link key={index} href={href} skipTab>
+                          <Tag variant="white">{title}</Tag>
+                        </Link>
                       )
                     })}
                   </Inline>
@@ -223,28 +242,36 @@ export const Footer = ({
             </GridColumn>
           </GridRow>
           <GridRow>
-            {chunk(bottomLinks, Math.ceil(bottomLinks.length / 4)).map(
-              (group) =>
-                group.map(({ title, href }) => {
-                  return (
-                    <GridColumn
-                      key={href}
-                      span={['12/12', '6/12', '4/12', '3/12']}
-                    >
-                      <Link href={href} underline="normal">
+            <LinkContext.Provider
+              value={{
+                linkRenderer: (href, children) => (
+                  <Link href={href} underline="normal">
+                    {children}
+                  </Link>
+                ),
+              }}
+            >
+              {chunk(bottomLinks, Math.ceil(bottomLinks.length / 4)).map(
+                (group) =>
+                  group.map(({ title, href }) => {
+                    return (
+                      <GridColumn
+                        key={href}
+                        span={['12/12', '6/12', '4/12', '3/12']}
+                      >
                         <Text
                           variant="h5"
                           fontWeight="light"
                           color="blue600"
                           paddingBottom={2}
                         >
-                          {title}
+                          <a href={href}>{title}</a>
                         </Text>
-                      </Link>
-                    </GridColumn>
-                  )
-                }),
-            )}
+                      </GridColumn>
+                    )
+                  }),
+              )}
+            </LinkContext.Provider>
           </GridRow>
         </GridContainer>
       </Box>

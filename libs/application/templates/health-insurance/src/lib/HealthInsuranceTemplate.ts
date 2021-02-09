@@ -34,7 +34,6 @@ const HealthInsuranceSchema = z.object({
     address: z.string().nonempty(),
     postalCode: z.string().min(3).max(3),
     city: z.string().nonempty(),
-    nationality: z.string().nonempty(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
