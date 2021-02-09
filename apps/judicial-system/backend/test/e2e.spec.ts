@@ -455,26 +455,17 @@ describe('Case', () => {
           ...dbCase,
           modified: apiCase.modified,
           state: CaseState.ACCEPTED,
-          judgeId: judge.id,
         })
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
+          include: [{ model: User, as: 'prosecutor' }],
         })
       })
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), {
           ...apiCase,
-          judge: ({
-            ...judge,
-            created: value.judge.created,
-            modified: value.judge.modified,
-          } as unknown) as TUser,
         })
       })
   })
