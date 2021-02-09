@@ -35,8 +35,13 @@ console.log(argv)
 // Set the path for static file serve
 app.use(argv['base-path'], express.static(path.join(process.cwd(), argv.dist)))
 
+// Create base path to contain * to return index.html for all sub-paths
+// to let client handle routing.
+const basePath =
+  argv['base-path'] + (argv['base-path'].endsWith('/') ? '*' : '/*')
+
 // Set the root path of the app to serve index.html
-app.get(argv['base-path'], function (req, res) {
+app.get(basePath, function (req, res) {
   res.sendFile(path.join(process.cwd(), argv.dist, 'index.html'))
 })
 
