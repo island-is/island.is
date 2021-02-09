@@ -1,17 +1,17 @@
 'use strict'
 
 const localEnv = {
-  userSeeds: 'gudjon,baldur,ivar',
+  userSeeds: 'gudjon,baldur,ivar,addi',
   gudjon: `[
   {
     "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
     "national_id": "0000000000",
     "name": "Guðjón Guðjónsson",
-    "title": "aðstoðarsaksóknari",
+    "title": "ákærandi",
     "mobile_number": "8589030",
     "email": "gudjon@kolibri.is",
     "role": "PROSECUTOR",
-    "institution": "Lögreglustjórinn á höfuðborgarsvæðinu"
+    "institution": "Lögreglustjórinn"
   }
 ]`,
 
@@ -24,7 +24,7 @@ const localEnv = {
     "mobile_number": "8949946",
     "email": "baldur@kolibri.is",
     "role": "REGISTRAR",
-    "institution": "Héraðsdómur Reykjavíkur"
+    "institution": "Héraðsdómurinn"
   }
 ]`,
 
@@ -33,12 +33,25 @@ const localEnv = {
     "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
     "national_id": "2222222222",
     "name": "Ívar Oddsson",
-    "title": "héraðsdómari",
+    "title": "dómari",
     "mobile_number": "6904031",
     "email": "ivaro@kolibri.is",
     "role": "JUDGE",
-    "institution": "Héraðsdómur Reykjavíkur"
+    "institution": "Héraðsdómurinn"
   }
+]`,
+
+  addi: `[
+{
+  "id": "df1cf415-97e9-425c-a210-da8ece71f55b",
+  "national_id": "3333333333",
+  "name": "Árni Jónsson",
+  "title": "sýslari",
+  "mobile_number": "8689361",
+  "email": "addi@kolibri.is",
+  "role": "ADMIN",
+  "institution": "Ráðuneytið"
+}
 ]`,
 }
 
@@ -66,8 +79,11 @@ module.exports = {
       updated: Sequelize.DATE,
       national_id: Sequelize.STRING,
       name: Sequelize.STRING,
+      title: Sequelize.STRING,
       mobile_number: Sequelize.STRING,
+      email: Sequelize.STRING,
       role: Sequelize.STRING,
+      institution: Sequelize.STRING,
     })
 
     return queryInterface.sequelize.transaction((t) =>
