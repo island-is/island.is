@@ -339,6 +339,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const processEntry = article.processEntry
   const categoryHref = linkResolver('articlecategory', [article.category.slug])
     .href
+  const organizationTitle = article.organization[0].title
+  const organizationShortTitle = article.organization[0].shortTitle
 
   return (
     <>
@@ -436,11 +438,17 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
           {article.organization.length > 0 && (
             <Box minWidth={0}>
-              <Link href={article.organization[0].link} skipTab>
-                <Tag variant="purple" truncate>
-                  {article.organization[0].title}
+              {article.organization[0].link ? (
+                <Link href={article.organization[0].link} skipTab>
+                  <Tag variant="purple" truncate>
+                    {organizationShortTitle || organizationTitle}
+                  </Tag>
+                </Link>
+              ) : (
+                <Tag variant="purple" truncate disabled>
+                  {organizationShortTitle || organizationTitle}
                 </Tag>
-              </Link>
+              )}
             </Box>
           )}
         </Box>
