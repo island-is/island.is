@@ -304,7 +304,8 @@ export const duration = {
     },
     tooltip: {
       id: 'crc.application:section.arrangement.duration.permanent.tooltip',
-      defaultMessage: 'Varanlegur samningur gildir þar til barnið hefur náð 18 ára aldri. Til að breyta fyrirkomulaginu til baka þarf að útbúa og undirrita nýjan samning.',
+      defaultMessage:
+        'Varanlegur samningur gildir þar til barnið hefur náð 18 ára aldri. Til að breyta fyrirkomulaginu til baka þarf að útbúa og undirrita nýjan samning.',
       description: 'Tooltip for permanent change',
     },
   }),
@@ -321,7 +322,8 @@ export const duration = {
     },
     tooltip: {
       id: 'crc.application:section.arrangement.duration.temporary.tooltip',
-      defaultMessage: 'Tímabundinn samningur getur minnst verið til 6 mánaða. Að tímabili loknu þurfa foreldrar að óska eftir því við Þjóðskrá að lögheimilisskráning fari til fyrra horfs.',
+      defaultMessage:
+        'Tímabundinn samningur getur minnst verið til 6 mánaða. Að tímabili loknu þurfa foreldrar að óska eftir því við Þjóðskrá að lögheimilisskráning fari til fyrra horfs.',
       description: 'Tooltip for temporary change',
     },
   }),

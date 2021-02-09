@@ -1,17 +1,13 @@
 import React, { useState } from 'react'
 import { duration } from '../../lib/messages'
 import { DescriptionText } from '../components'
-import {
-  FieldBaseProps,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   DatePickerController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { useFormContext } from 'react-hook-form'
 
 export type ValidAnswers = 'permanent' | 'temporary' | undefined
 const Duration = ({ field, application, error }: FieldBaseProps) => {
@@ -30,30 +26,28 @@ const Duration = ({ field, application, error }: FieldBaseProps) => {
     <>
       <DescriptionText textNode={description} />
       <Box marginTop={3} marginBottom={2}>
-          <RadioController
-            id="selectDuration[0]"
-            defaultValue={
-              statefulAnswer !== undefined ? [statefulAnswer] : undefined
-            }
-            options={[
-              {
-                value: 'permanent',
-                label: formatMessage(duration.permanentInput.label),
-                subLabel: formatMessage(duration.permanentInput.subLabel),
-                tooltip: formatMessage(duration.permanentInput.tooltip),
-              },
-              {
-                value: 'temporary',
-                label: formatMessage(duration.temporaryInput.label),
-                subLabel: formatMessage(duration.temporaryInput.subLabel),
-                tooltip: formatMessage(duration.temporaryInput.tooltip),
-              },
-            ]}
-            onSelect={(newAnswer) =>
-              setStatefulAnswer(newAnswer as ValidAnswers)
-            }
-            largeButtons
-          />
+        <RadioController
+          id="selectDuration[0]"
+          defaultValue={
+            statefulAnswer !== undefined ? [statefulAnswer] : undefined
+          }
+          options={[
+            {
+              value: 'permanent',
+              label: formatMessage(duration.permanentInput.label),
+              subLabel: formatMessage(duration.permanentInput.subLabel),
+              tooltip: formatMessage(duration.permanentInput.tooltip),
+            },
+            {
+              value: 'temporary',
+              label: formatMessage(duration.temporaryInput.label),
+              subLabel: formatMessage(duration.temporaryInput.subLabel),
+              tooltip: formatMessage(duration.temporaryInput.tooltip),
+            },
+          ]}
+          onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
+          largeButtons
+        />
 
         {statefulAnswer === 'temporary' && (
           <Box>
