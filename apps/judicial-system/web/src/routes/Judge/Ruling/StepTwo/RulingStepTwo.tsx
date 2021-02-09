@@ -48,7 +48,7 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
-import { getConclusion } from 'apps/judicial-system/web/src/utils/stepHelper'
+import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()

@@ -16,7 +16,7 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
-    const { container, getByText } = render(
+    render(
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
