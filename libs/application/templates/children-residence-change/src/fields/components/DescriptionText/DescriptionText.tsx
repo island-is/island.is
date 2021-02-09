@@ -9,12 +9,14 @@ interface Props {
   format?: { [key: string]: string }
 }
 
+type formattedTextTypes = string | ReactElement | ReactElement[]
+
 const isHeading = (type: string) => {
-const headingTags = ['h1', 'h2', 'h3', 'h4']
-return headingTags.includes(type)
+  const headingTags = ['h1', 'h2', 'h3', 'h4']
+  return headingTags.includes(type)
 }
 
-const InnerDescription = ({
+const InnerText = ({
   item,
   lastItem,
 }: {
@@ -22,9 +24,12 @@ const InnerDescription = ({
   lastItem: boolean
 }) => {
   const heading = isHeading(item.type as string)
-  const marginBottom = heading ? 1 : 2;
+  const marginBottom = heading ? 1 : 2
   return (
-    <Text variant={heading ? 'h4' : 'default'} marginBottom={lastItem ? 0 : marginBottom}>
+    <Text
+      variant={heading ? 'h4' : 'default'}
+      marginBottom={lastItem ? 0 : marginBottom}
+    >
       {item.props.children.map((element: string | ReactElement, i: number) => {
         return <Fragment key={i}>{element}</Fragment>
       })}
@@ -34,51 +39,41 @@ const InnerDescription = ({
 
 const DescriptionText = ({ text, format }: Props) => {
   const { formatMessage } = useLocale()
-  const description: string | ReactElement | ReactElement[] = (formatMessage(
-    text,
-    {
-      h1: (str: string) => <h1>{str}</h1>,
-      h2: (str: string) => <h2>{str}</h2>,
-      h3: (str: string) => <h3>{str}</h3>,
-      h4: (str: string) => <h4>{str}</h4>,
-      p: (str: string) => <p>{str}</p>,
-      span: (str: string) => <span>{str}</span>,
-      strong: (str: string) => <strong>{str}</strong>,
-      em: (str: string) => <em>{str}</em>,
-      ...format,
-    },
-  ) as unknown) as string | ReactElement | ReactElement[]
+  const formattedText = (formatMessage(text, {
+    h1: (str: string) => <h1>{str}</h1>,
+    h2: (str: string) => <h2>{str}</h2>,
+    h3: (str: string) => <h3>{str}</h3>,
+    h4: (str: string) => <h4>{str}</h4>,
+    p: (str: string) => <p>{str}</p>,
+    span: (str: string) => <span>{str}</span>,
+    strong: (str: string) => <strong>{str}</strong>,
+    em: (str: string) => <em>{str}</em>,
+    ...format,
+  }) as unknown) as formattedTextTypes
 
   // When formatting fails in 'formatMessage' it returns a string rather than a ReactElement.
   // Then we use the HtmlParser to parse the outputted string that contains markup
-  const descriptionType = typeof description
-  const parsedDescription: string | ReactElement | ReactElement[] =
-    descriptionType === 'string'
-      ? HtmlParser(description as string)
-      : description
-  if (Array.isArray(parsedDescription)) {
+  const formattedTextType = typeof formattedText
+  const parsedText: formattedTextTypes =
+    formattedTextType === 'string'
+      ? HtmlParser(formattedText as string)
+      : formattedText
+  if (Array.isArray(parsedText)) {
     return (
       <>
-        {(parsedDescription as ReactElement[]).map((item, i) => {
+        {(parsedText as ReactElement[]).map((item, i) => {
           return (
-            <InnerDescription
+            <InnerText
               key={i}
               item={item}
-              lastItem={
-                i + 1 === (parsedDescription as ReactElement[]).length
-              }
+              lastItem={i + 1 === (parsedText as ReactElement[]).length}
             />
           )
         })}
       </>
     )
   }
-  return (
-    <InnerDescription
-      item={parsedDescription as ReactElement}
-      lastItem={true}
-    />
-  )
+  return <InnerText item={parsedText as ReactElement} lastItem={true} />
 }
 
 export default DescriptionText
