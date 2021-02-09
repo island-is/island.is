@@ -58,6 +58,7 @@ export const DetentionRequests: React.FC = () => {
   const { user } = useContext(UserContext)
   const history = useHistory()
 
+  const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
 
   const { data, error, loading } = useQuery(CasesQuery, {
@@ -113,7 +114,9 @@ export const DetentionRequests: React.FC = () => {
         return c.state !== CaseState.DELETED
       })
 
-      if (isJudge) {
+      if (isProsecutor) {
+        setCases(casesWithoutDeleted)
+      } else if (isJudge) {
         const judgeCases = casesWithoutDeleted.filter((c: Case) => {
           // Judges should see all cases except cases with status code NEW.
           return c.state !== CaseState.NEW
@@ -121,10 +124,10 @@ export const DetentionRequests: React.FC = () => {
 
         setCases(judgeCases)
       } else {
-        setCases(casesWithoutDeleted)
+        setCases([])
       }
     }
-  }, [cases, isJudge, resCases, setCases])
+  }, [cases, isProsecutor, isJudge, resCases, setCases])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
@@ -237,7 +240,7 @@ export const DetentionRequests: React.FC = () => {
       {user && (
         <div className={styles.logoContainer}>
           <Logo />
-          {!isJudge && (
+          {isProsecutor && (
             <DropdownMenu
               menuLabel="Tegund kröfu"
               icon="add"
@@ -346,7 +349,7 @@ export const DetentionRequests: React.FC = () => {
                   </Text>
                 </th>
                 <th></th>
-                {!isJudge && <th></th>}
+                {isProsecutor && <th></th>}
               </tr>
             </thead>
             <tbody>
@@ -435,7 +438,7 @@ export const DetentionRequests: React.FC = () => {
                     </Text>
                   </td>
                   <td className={cn(styles.td, 'secondLast')}>
-                    {!isJudge &&
+                    {isProsecutor &&
                       (c.state === CaseState.NEW ||
                         c.state === CaseState.DRAFT ||
                         c.state === CaseState.SUBMITTED ||

@@ -46,11 +46,11 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  prosecutor = (await request(app.getHttpServer()).get(`/api/user/2510654469`))
+  prosecutor = (await request(app.getHttpServer()).get(`/api/user/0000000000`))
     .body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (await request(app.getHttpServer()).get(`/api/user/1112902539`)).body
+  judge = (await request(app.getHttpServer()).get(`/api/user/2222222222`)).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 })
 
@@ -249,8 +249,8 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 describe('User', () => {
-  it('GET /api/user/:nationalId should get the  user', async () => {
-    const nationalId = '1112902539'
+  it('GET /api/user/:nationalId should get the user', async () => {
+    const nationalId = '2222222222'
     let dbUser: User
 
     await User.findOne({
