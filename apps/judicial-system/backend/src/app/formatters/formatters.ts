@@ -16,36 +16,6 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
-export function formatProsecutorDemands(
-  type: CaseType,
-  accusedNationalId: string,
-  accusedName: string,
-  court: string,
-  requestedCustodyEndDate: Date,
-  isolation: boolean,
-  isExtension: boolean,
-  previousDecision: CaseDecision,
-): string {
-  return `Þess er krafist að ${accusedName}, kt. ${formatNationalId(
-    accusedNationalId,
-  )}, sæti${
-    isExtension && previousDecision === CaseDecision.ACCEPTING
-      ? ' áframhaldandi'
-      : ''
-  } ${
-    type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-  } með úrskurði ${court?.replace(
-    'Héraðsdómur',
-    'Héraðsdóms',
-  )}, til ${formatDate(requestedCustodyEndDate, 'PPPPp')
-    ?.replace('dagur,', 'dagsins')
-    ?.replace(' kl.', ', kl.')}${
-    type === CaseType.CUSTODY && isolation
-      ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-      : ''
-  }.`
-}
-
 function custodyProvisionsOrder(p: CaseCustodyProvisions) {
   switch (p) {
     case CaseCustodyProvisions._95_1_A:
@@ -269,17 +239,21 @@ export function formatDefenderCourtDateEmailNotification(
   accusedNationalId: string,
   accusedName: string,
   court: string,
+  courtCaseNumber: string,
   courtDate: Date,
   courtRoom: string,
 ): string {
   return `${court} hefur staðfest fyrirtökutíma fyrir ${
     type === CaseType.CUSTODY ? 'gæsluvarðhaldskröfu' : 'farbannskröfu'
-  }.<br /><br />Fyrirtaka mun fara fram ${formatDate(courtDate, 'PPPPp')
+  } (sjá viðhengi).<br /><br />Fyrirtaka mun fara fram ${formatDate(
+    courtDate,
+    'PPPPp',
+  )
     ?.replace('dagur', 'daginn')
     ?.replace(
       ' kl.',
       ', kl.',
-    )}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
+    )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur: ${courtRoom}.<br /><br />Sakborningur: ${accusedName}, kt. ${formatNationalId(
     accusedNationalId,
   )}.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.`
 }

@@ -438,7 +438,7 @@ export const Confirmation: React.FC = () => {
               <Text variant="h3">
                 {workingCase.judge
                   ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                  : `${user?.name} ${user?.title}`}
+                  : `Enginn dómari skráður`}
               </Text>
             </Box>
             <Text>
@@ -616,6 +616,12 @@ export const Confirmation: React.FC = () => {
             nextIsDisabled={isStepIllegal}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
+            hideNextButton={workingCase.judge?.id !== user?.id}
+            infoBoxText={
+              workingCase.judge?.id !== user?.id
+                ? 'Einungis skráður dómari getur undirritað úrskurð'
+                : undefined
+            }
           />
           {modalVisible && (
             <SigningModal

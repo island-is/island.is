@@ -79,7 +79,7 @@ export class Organisation extends Model<Organisation> {
 
   @HasOne(() => Helpdesk)
   @ApiProperty()
-  helpDesk?: Helpdesk
+  helpdesk?: Helpdesk
 
   @CreatedAt
   @ApiProperty()
