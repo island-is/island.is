@@ -38,6 +38,9 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
+  MenuLink,
+  Menu,
+  MenuLinkWithChildren,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -50,7 +53,11 @@ import {
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
 import { Locale } from '../i18n/I18n'
-import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import {
+  LinkType,
+  useLinkResolver,
+  linkResolver as LinkResolver,
+} from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
 
 const absoluteUrl = (req, setLocalhost) => {
@@ -369,13 +376,9 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const [
     categories,
     alertBanner,
-    upperMenuInfo,
-    upperMenuContact,
-    lowerMenu,
-    middleMenu,
-    tagsMenu,
     namespace,
     megaMenuData,
+    footerMenuData,
   ] = await Promise.all([
     apolloClient
       .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
@@ -395,46 +398,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getAlertBanner),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer upper info', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer upper contact', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer lower', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer middle', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer tags', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -457,9 +420,33 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getGroupedMenu),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
   ])
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+
+  const mapLinks = (item: Menu) =>
+    item.menuLinks.map((x) => {
+      const href = LinkResolver(
+        x.link.type as LinkType,
+        [x.link.slug],
+        lang as Locale,
+      ).href.trim()
+
+      // If a link type is an url string and the url has the same origin, strip the origin part out
+      // so that the Link component does not treat it as an external url.
+      return {
+        title: x.title,
+        href: href.startsWith(origin) ? href.replace(origin, '') : href,
+      }
+    })
 
   return {
     categories,
@@ -470,26 +457,43 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
-    footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerUpperContact: (upperMenuContact.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
+    ...footerMenuData.menus.reduce(
+      (menus, menu) => {
+        switch (menu.id) {
+          // Footer lower
+          case '6vTuiadpCKOBhAlSjYY8td':
+            menus.footerLowerMenu = mapLinks(menu as Menu)
+            break
+          // Footer middle
+          case '7hSbSQm5F5EBc0KxPTFVAS':
+            menus.footerMiddleMenu = mapLinks(menu as Menu)
+            break
+          // Footer tags
+          case '6oGQDyWos4xcKX9BdMHd5R':
+            menus.footerTagsMenu = mapLinks(menu as Menu)
+            break
+          // Footer upper
+          case '62Zh6hUc3bi0JwNRnqV8Nm':
+            menus.footerUpperInfo = mapLinks(menu as Menu)
+            break
+          // Footer upper contact
+          case '5yUCZ4U6aZ8rZ9Jigme7GI':
+            menus.footerUpperContact = mapLinks(menu as Menu)
+            break
+          default:
+            break
+        }
+
+        return menus
+      },
+      {
+        footerUpperInfo: null,
+        footerUpperContact: null,
+        footerLowerMenu: null,
+        footerTagsMenu: null,
+        footerMiddleMenu: null,
+      },
+    ),
     namespace,
     respOrigin,
     megaMenuData: {

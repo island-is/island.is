@@ -18,13 +18,19 @@ import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHel
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatAccusedByGender,
+  formatProsecutorDemands,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
-import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseCustodyRestrictions,
+  CaseGender,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -121,6 +127,29 @@ export const CourtRecord: React.FC = () => {
             theCase.id,
             parseString('courtAttendees', theCase.courtAttendees),
           )
+        }
+      }
+      if (
+        !theCase.policeDemands &&
+        theCase.accusedName &&
+        theCase.court &&
+        theCase.requestedCustodyEndDate &&
+        theCase.requestedCustodyRestrictions
+      ) {
+        theCase = {
+          ...theCase,
+          policeDemands: formatProsecutorDemands(
+            theCase.type,
+            theCase.accusedNationalId,
+            theCase.accusedName,
+            theCase.court,
+            theCase.requestedCustodyEndDate,
+            theCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            ),
+            theCase.parentCase !== undefined,
+            theCase.parentCase?.decision,
+          ),
         }
       }
 
