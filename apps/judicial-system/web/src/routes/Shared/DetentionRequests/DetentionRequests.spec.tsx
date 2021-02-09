@@ -31,6 +31,9 @@ const mockCasesQuery = [
             accusedNationalId: 'string',
             accusedName: 'Jon Harring Sr.',
             custodyEndDate: null,
+            parentCase: {
+              id: '1337',
+            },
           },
           {
             id: 'test_id_2',
@@ -444,5 +447,28 @@ describe('Detention requests route', () => {
         'Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar.',
       ),
     ).toBeInTheDocument()
+  })
+
+  test('should display a reload icon next to the case type in extended cases', async () => {
+    /**
+     * This test could be better since it doesn't actually check if the icon is
+     * displayed next to the case type, but I figure this is good enough.
+     */
+    render(
+      <MockedProvider
+        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+        addTypename={false}
+      >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
+          <UserProvider>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
+              <DetentionRequests />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    expect(await screen.findByTitle('A reload icon')).toBeInTheDocument()
   })
 })

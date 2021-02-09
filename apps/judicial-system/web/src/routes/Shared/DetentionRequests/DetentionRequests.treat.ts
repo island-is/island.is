@@ -99,6 +99,9 @@ export const td = style({
       height: '100%',
       padding: 0,
     },
+    '&.noWrap': {
+      whiteSpace: 'nowrap',
+    },
   },
 })
 

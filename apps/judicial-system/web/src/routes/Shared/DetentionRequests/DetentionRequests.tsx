@@ -394,12 +394,24 @@ export const DetentionRequests: React.FC = () => {
                       })}
                     </Text>
                   </td>
-                  <td className={styles.td}>
-                    <Text as="span">
-                      {c.type === CaseType.CUSTODY
-                        ? 'Gæsluvarðhald'
-                        : 'Farbann'}
-                    </Text>
+                  <td className={cn(styles.td, 'noWrap')}>
+                    <Box component="span" display="flex" alignItems="flexEnd">
+                      <Text as="span">
+                        {c.type === CaseType.CUSTODY
+                          ? 'Gæsluvarðhald'
+                          : 'Farbann'}
+                      </Text>
+                      {c.parentCase && (
+                        <Box component="span" marginLeft={1}>
+                          <Icon
+                            icon="reload"
+                            size="small"
+                            color="blue400"
+                            title="A reload icon"
+                          />
+                        </Box>
+                      )}
+                    </Box>
                   </td>
                   <td className={styles.td}>
                     <Tag
