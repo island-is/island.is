@@ -19,6 +19,7 @@ import {
   formatAlternativeTravelBanRestrictions,
   NounCases,
   formatAccusedByGender,
+  formatProsecutorDemands,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -28,7 +29,6 @@ import {
   formatConclusion,
   formatCourtCaseNumber,
   formatCustodyProvisions,
-  formatProsecutorDemands,
 } from './formatters'
 
 export function writeFile(fileName: string, documentContent: string) {
