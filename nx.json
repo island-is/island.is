@@ -271,7 +271,8 @@
       "tags": []
     },
     "island-ui-storybook": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["island-ui-core"]
     },
     "island-ui-theme": {
       "tags": []
