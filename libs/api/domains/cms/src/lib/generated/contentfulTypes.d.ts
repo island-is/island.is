@@ -301,6 +301,42 @@ export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
   }
 }
 
+export interface IAuctionFields {
+  /** Title */
+  title: string
+
+  /** Date */
+  date?: string | undefined
+
+  /** Type */
+  type: 'first' | 'continued' | 'vehicles'
+
+  /** Content */
+  content?: string | undefined
+
+  /** Organization */
+  organization: IOrganization
+}
+
+/** Used for syslumenn auctions */
+
+export interface IAuction extends Entry<IAuctionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'auction'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAuthorFields {
   /** Name */
   name: string
@@ -1826,14 +1862,14 @@ export interface IOrganizationSubpageFields {
   /** Links */
   links?: ILink[] | undefined
 
-  /** Sidebar Cards */
-  sidebarCards?: IStaffCard[] | undefined
-
   /** Slices */
   slices?: (IOffices | IOneColumnText | ITwoColumnText)[] | undefined
 
-  /** Menu Item */
-  menuItem?: ILink | undefined
+  /** Slice Custom Renderer */
+  sliceCustomRenderer?: 'SliceDropdown' | undefined
+
+  /** Slice Extra Text */
+  sliceExtraText?: string | undefined
 
   /** Parent Subpage */
   parentSubpage?: IOrganizationSubpage | undefined
@@ -3190,6 +3226,7 @@ export type CONTENT_TYPE =
   | 'articleCategory'
   | 'articleGroup'
   | 'articleSubgroup'
+  | 'auction'
   | 'author'
   | 'bigBulletList'
   | 'card'
