@@ -9,30 +9,30 @@ import {
 } from '@island.is/auth-nest-tools'
 
 import { EducationService } from '../education.service'
-import { TeachingLicense } from './teachingLicense.model'
-import { SendTeachingLicense } from './sendTeachingLicense.model'
-import { SendTeachingLicenseInput } from './sendTeachingLicense.input'
+import { License } from './license.model'
+import { SendLicense } from './sendLicense.model'
+import { SendLicenseInput } from './sendLicense.input'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
   constructor(private readonly educationService: EducationService) {}
 
-  @Query(() => [TeachingLicense])
-  educationTeachingLicense(@CurrentUser() user: User) {
-    return this.educationService.getTeachingLicenses(user.nationalId)
+  @Query(() => [License])
+  educationLicense(@CurrentUser() user: User) {
+    return this.educationService.getLicenses(user.nationalId)
   }
 
-  @Mutation(() => SendTeachingLicense, { nullable: true })
-  sendEducationTeachingLicense(
+  @Mutation(() => SendLicense, { nullable: true })
+  sendEducationLicense(
     @CurrentUser() user: User,
-    @Args('input', { type: () => SendTeachingLicenseInput })
-    input: SendTeachingLicenseInput,
+    @Args('input', { type: () => SendLicenseInput })
+    input: SendLicenseInput,
   ) {
-    return this.educationService.sendTeachingLicense(
+    return this.educationService.sendLicense(
       user.nationalId,
       input.email,
-      input.teachingLicenseId,
+      input.licenseId,
     )
   }
 }

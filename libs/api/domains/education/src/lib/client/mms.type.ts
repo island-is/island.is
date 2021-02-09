@@ -1,8 +1,11 @@
-export interface TeachingLicenseResponse {
+export interface LicenseResponse {
   id: string
+  school: string
+  programme: string
+  date: string
 }
 
-export interface TeachingLicensePDFResponse {
+export interface LicensePDFResponse {
   id: string
   content: string
   filename: string
