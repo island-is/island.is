@@ -169,12 +169,12 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  getRulingPdf(existingCase: Case, user: TUser): Promise<string> {
+  getRulingPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
-    return generateRulingPdf(existingCase, user)
+    return generateRulingPdf(existingCase)
   }
 
   getRequestPdf(existingCase: Case): Promise<string> {
@@ -185,22 +185,19 @@ export class CaseService {
     return generateRequestPdf(existingCase)
   }
 
-  async requestSignature(
-    existingCase: Case,
-    user: TUser,
-  ): Promise<SigningServiceResponse> {
+  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    const pdf = await generateRulingPdf(existingCase, user)
+    const pdf = await generateRulingPdf(existingCase)
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
-        user.mobileNumber,
+        existingCase.judge?.mobileNumber,
         'Undirrita dóm - Öryggistala',
-        user.name,
+        existingCase.judge?.name,
         'Ísland',
         'ruling.pdf',
         pdf,

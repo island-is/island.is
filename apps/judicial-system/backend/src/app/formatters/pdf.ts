@@ -19,6 +19,7 @@ import {
   formatAlternativeTravelBanRestrictions,
   NounCases,
   formatAccusedByGender,
+  formatProsecutorDemands,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
@@ -28,7 +29,6 @@ import {
   formatConclusion,
   formatCourtCaseNumber,
   formatCustodyProvisions,
-  formatProsecutorDemands,
 } from './formatters'
 
 export function writeFile(fileName: string, documentContent: string) {
@@ -218,10 +218,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
   return pdf
 }
 
-export async function generateRulingPdf(
-  existingCase: Case,
-  user: User,
-): Promise<string> {
+export async function generateRulingPdf(existingCase: Case): Promise<string> {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -448,8 +445,8 @@ export async function generateRulingPdf(
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `${existingCase.judge?.name || user?.name} ${
-        existingCase.judge?.title || user?.title
+      `${existingCase.judge?.name || 'Dómari hefur ekki verið skráður'} ${
+        existingCase.judge?.title || ''
       }`,
       {
         align: 'center',
