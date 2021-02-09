@@ -32,7 +32,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  return (
+  return !!slice.articles.length && (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <Box
         borderTopWidth="standard"
@@ -46,9 +46,11 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
               <Text variant="h2" as="h2" marginBottom={4} id={'sliceTitle-' + slice.id}>
                 {slice.title}
               </Text>
-              <Box display={['none', 'none', 'block']}>
-                <img src={slice.image.url} alt="" />
-              </Box>
+              {!!slice.image && (
+                <Box display={['none', 'none', 'block']}>
+                  <img src={slice.image.url} alt="" />
+                </Box>
+              )}
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '7/11']}>

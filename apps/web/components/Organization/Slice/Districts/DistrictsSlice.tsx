@@ -16,7 +16,7 @@ interface SliceProps {
 }
 
 export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
-  return (
+  return !!slice.links.length && (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <Box
         borderTopWidth="standard"

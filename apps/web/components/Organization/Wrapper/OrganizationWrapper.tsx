@@ -87,11 +87,13 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
             <Box paddingTop={2}>
               <Box display="flex" flexDirection="row" alignItems="center">
-                <img
-                  src={organizationPage.organization.logo.url}
-                  className={styles.headerLogo}
-                  alt=""
-                />
+                {!!organizationPage.organization.logo.url && (
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                )}
                 <Text variant="h1" as="h1" color="white" marginTop={[0, 0, 3]}>
                   {organizationPage.title}
                 </Text>
