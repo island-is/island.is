@@ -28,6 +28,8 @@ export const extractAnswersFromApplication = (application: Application) => {
     selectedChildren: application.answers.selectChild as string[],
     selectedDuration: application.answers.selectDuration as string,
     durationDate: application.answers.durationDate as string,
+    reason: application.answers.residenceChangeReason as string,
+    contactInformation: { email: application.answers.email as string, phoneNumber: application.answers.phoneNumber as string }
   }
 }
 

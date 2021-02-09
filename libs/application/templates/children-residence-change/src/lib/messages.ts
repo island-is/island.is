@@ -402,15 +402,30 @@ export const contract = {
     description: {
       id: 'crc.application:section.contract.overview.description',
       defaultMessage:
-        'Hér er yfirlit yfir samning um breytt lögheimili. Þú og {otherParent} þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.',
+        '<p>Hér er yfirlit yfir samning um breytt lögheimili. <strong>Þú og {otherParent}</strong> þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.</p>',
       description: 'Contract page description',
     },
   }),
-  // residenceChangeCheckbox: defineMessages({
-  //   label: {
-  //     id: 'crc.application:section.arrangement.terms.residenceChange.label',
-  //     defaultMessage: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
-  //     description: 'Label for residence change checkbox',
-  //   },
-  // }),
+  labels: defineMessages({
+    childName: {
+      id: 'crc.application:section.contract.overview.labels.childName',
+      defaultMessage: '{count, plural, =0 {Nafn barns} one {Nafn barns} other {Nöfn barna}}',
+      description: 'Label for a child names',
+    },
+    otherParentContactInformation: {
+      id: 'crc.application:section.contract.overview.labels.otherParentContactInformation',
+      defaultMessage: 'Tengiliðaupplýsingar hins foreldrisins',
+      description: 'Label for other parent contact information',
+    },
+    currentResidence: {
+      id: 'crc.application:section.contract.overview.labels.currentResidence',
+      defaultMessage: 'Núverandi lögheimili {count, plural, =0 {barns} one {barns} other {barna}}:',
+      description: 'Label for current residence',
+    },
+    newResidence: {
+      id: 'crc.application:section.contract.overview.labels.newResidence',
+      defaultMessage: 'Nýtt lögheimili {count, plural, =0 {barns} one {barns} other {barna}}:',
+      description: 'Label for new residence',
+    },
+  }),
 }
