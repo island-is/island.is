@@ -1,1 +1,1 @@
-export { default as generateAssignReviewerTemplate } from './notifyReviewer'
+export { default as generateNotifyReviewerTemplate } from './notifyReviewer'

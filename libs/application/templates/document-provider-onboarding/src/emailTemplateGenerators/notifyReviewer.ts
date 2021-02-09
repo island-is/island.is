@@ -1,8 +1,6 @@
 import { SendMailOptions } from 'nodemailer'
 import { dedent } from 'ts-dedent'
-import { Application } from '@island.is/application/core'
-import get from 'lodash/get'
-
+import { Application, getValueViaPath } from '@island.is/application/core'
 export default (
   {
     application,
@@ -10,24 +8,22 @@ export default (
   }: { application: Application; clientLocationOrigin: string },
   token: string,
 ): SendMailOptions => {
-  console.log('booom')
-  const email = 'saeunn9@gmail.com'
-
-  if (email === null) {
-    throw new Error('Cannot create email template, missing employer email')
-  }
-
+  const email = 'island@island.is'
   const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
-
+  const applicantNationalId = getValueViaPath(
+    application.answers,
+    'applicant.nationalId',
+    undefined,
+  ) as string
+  const applicantName = getValueViaPath(
+    application.answers,
+    'applicant.name',
+    undefined,
+  ) as string
   return {
-    // TODO: place strings in translation file
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
-    },
-    replyTo: {
-      name: 'Sæunn Sif Heiðarsdóttir',
-      address: 'saeunnsh@advania.is',
+      name: 'island.is',
+      address: 'island@island.is',
     },
     to: [
       {
@@ -35,24 +31,23 @@ export default (
         address: email as string,
       },
     ],
-    subject: ``,
+    subject: `Umsókn um að gerast skjalaveita`,
     text: dedent(`
       Góðan dag.
-
-      Umsækjandi með kennitölu hefur skráð þig sem atvinnuveitanda í umsókn sinni.
-
-      Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina:
-
+      ${applicantName} (kt. ${applicantNationalId}) hefur óskað eftir að gerast skjalaveita í pósthólfinu.
+      Umsóknin var framkvæmd af ${application.applicant}.
+      Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina: ${assignLink}
       Með kveðju.
-      Starfsfólk fæðingarorlofssjóðs
+      Starfsfólk island.is
     `),
     html: `
       <p>
         Góðan dag<br/><br/>
-        Umsækjandi með kennitöluhefur skráð þig sem <strong>atvinnuveitanda</strong> í umsókn sinni.<br/><br/>
-        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.<br/><br/>
+        <strong>${applicantName}</strong> (kt. ${applicantNationalId}) hefur óskað eftir að gerast skjalaveita í pósthólfinu.<br/>
+        Umsóknin var framkvæmd af ${application.applicant}.<br/><br/>
+        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${assignLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.<br/><br/>
         Með kveðju.<br/>
-        Starfsfólk fæðingarorlofssjóðs</br>
+        Starfsfólk island.is</br>
       </p>
     `,
   }

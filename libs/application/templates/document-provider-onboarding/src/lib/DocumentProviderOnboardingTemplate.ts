@@ -11,7 +11,7 @@ import {
   Application,
 } from '@island.is/application/core'
 import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
-import { generateAssignReviewerTemplate } from '../emailTemplateGenerators'
+import { generateNotifyReviewerTemplate } from '../emailTemplateGenerators'
 
 type Events =
   | { type: 'APPROVE' }
@@ -29,7 +29,7 @@ interface ApiTemplateUtilActions {
 const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
   notifyReviewerThroughEmail: {
     type: 'assignThroughEmail',
-    generateTemplate: generateAssignReviewerTemplate,
+    generateTemplate: generateNotifyReviewerTemplate,
   },
 }
 
@@ -166,12 +166,14 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             },
           }
         }),
-        invoke: {
-          src: {
-            type: 'apiTemplateUtils',
-            action: TEMPLATE_API_ACTIONS.notifyReviewerThroughEmail,
+        invoke: [
+          {
+            src: {
+              type: 'apiTemplateUtils',
+              action: TEMPLATE_API_ACTIONS.notifyReviewerThroughEmail,
+            },
           },
-        },
+        ],
         meta: {
           name: 'In Review',
           progress: 0.5,
