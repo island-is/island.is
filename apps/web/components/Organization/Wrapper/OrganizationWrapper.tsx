@@ -112,7 +112,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 <Box
                   className={cn(
                     styles.navigation,
-                    !!organizationPage.organization.logo.url
+                    organizationPage.organization.logo.url
                       ? styles.navigationWithLogo
                       : styles.navigationWithoutLogo,
                   )}
