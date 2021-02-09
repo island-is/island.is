@@ -43,7 +43,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '4/11']}>
             <Box className={styles.popularTitleWrap}>
-              <Text variant="h2" as="h2" marginBottom={4}>
+              <Text variant="h2" as="h2" marginBottom={4} id={'sliceTitle-' + slice.id}>
                 {slice.title}
               </Text>
               <Box display={['none', 'none', 'block']}>

@@ -29,7 +29,7 @@ export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
             span={['12/12', '12/12', '10/11']}
             offset={['0', '0', '0', '0', '1/11']}
           >
-            <Text variant="h3" as="h2">
+            <Text variant="h3" as="h2" id={'sliceTitle-' + slice.id}>
               {slice.title}
             </Text>
           </GridColumn>
