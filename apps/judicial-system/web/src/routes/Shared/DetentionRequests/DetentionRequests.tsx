@@ -376,13 +376,13 @@ export const DetentionRequests: React.FC = () => {
                     <Text>
                       {c.accusedNationalId && (
                         <Text as="span" variant="small" color="dark400">
-                          {`(${
+                          {`kt: ${
                             insertAt(
                               c.accusedNationalId.replace('-', ''),
                               '-',
                               6,
                             ) || '-'
-                          })`}
+                          }`}
                         </Text>
                       )}
                     </Text>
@@ -394,22 +394,17 @@ export const DetentionRequests: React.FC = () => {
                       })}
                     </Text>
                   </td>
-                  <td className={cn(styles.td, 'noWrap')}>
-                    <Box component="span" display="flex" alignItems="flexEnd">
+                  <td className={styles.td}>
+                    <Box component="span" display="flex" flexDirection="column">
                       <Text as="span">
                         {c.type === CaseType.CUSTODY
                           ? 'Gæsluvarðhald'
                           : 'Farbann'}
                       </Text>
                       {c.parentCase && (
-                        <Box component="span" marginLeft={1}>
-                          <Icon
-                            icon="reload"
-                            size="small"
-                            color="blue400"
-                            title="A reload icon"
-                          />
-                        </Box>
+                        <Text as="span" variant="small" color="dark400">
+                          Framlenging
+                        </Text>
                       )}
                     </Box>
                   </td>
