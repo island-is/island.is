@@ -38,7 +38,7 @@ export default (
     text: dedent(`
       Góðan dag.
 
-      Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.
+      Umsækjandi með kennitölu hefur skráð þig sem atvinnuveitanda í umsókn sinni.
 
       Ef þú áttir von á þessum tölvupósti þá getur þú haldið áfram hingað til þess að fara yfir umsóknina:
 
@@ -48,7 +48,7 @@ export default (
     html: `
       <p>
         Góðan dag<br/><br/>
-        Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem <strong>atvinnuveitanda</strong> í umsókn sinni.<br/><br/>
+        Umsækjandi með kennitöluhefur skráð þig sem <strong>atvinnuveitanda</strong> í umsókn sinni.<br/><br/>
         Ef þú áttir von á þessum tölvupósti þá getur þú <a href="" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.<br/><br/>
         Með kveðju.<br/>
         Starfsfólk fæðingarorlofssjóðs</br>
