@@ -245,7 +245,7 @@ export const newResidence = {
       id: 'crc.application:section.arrangement.newResidence.description',
       defaultMessage:
         '<p>Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að lögheimili barns færist frá þér til hins foreldrisins, eða öfugt.</p><p>Vinsamlegast staðfestu að lögheimilisflutningur sé eins og fram kemur hér fyrir neðan:</p>',
-      description: 'Ne legal residence page descrption',
+      description: 'New legal residence page description',
     },
   }),
   information: defineMessages({
@@ -267,6 +267,74 @@ export const newResidence = {
       id: 'crc.application:section.arrangement.newResidence.checkbox.label',
       defaultMessage: 'Ég staðfesti að ofangreindar upplýsingar séu réttar',
       description: 'Confirm new residence label',
+    },
+  }),
+}
+
+// Transfer duration
+export const duration = {
+  general: defineMessages({
+    sectionTitle: {
+      id: 'crc.application:section.arrangement.duration.sectionTitle',
+      defaultMessage: 'Gildistími samnings',
+      description: 'Duration section title',
+    },
+    pageTitle: {
+      id: 'crc.application:section.arrangement.duration.pageTitle',
+      defaultMessage: 'Í hve langan tíma á samningurinn að gilda?',
+      description: 'Duration page title',
+    },
+    description: {
+      id: 'crc.application:section.arrangement.duration.description',
+      defaultMessage:
+        '<p>Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilsbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.</p><p>Ekki er hægt að gera nýjan samning innan 6 mánaða frá gildistöku breytingar.</p><p>Athugið að samningurinn tekur gildi þann dag sem sýslumaður staðfestir samninginn og getur þar af leiðandi ekki verið afturvirkur.</p><p>Samningurinn verður staðfestur innan 14 daga.</p>',
+      description: 'Duration page descrption',
+    },
+  }),
+  permanentInput: defineMessages({
+    label: {
+      id: 'crc.application:section.arrangement.duration.permanent.label',
+      defaultMessage: 'Til frambúðar',
+      description: 'Label for permanent change',
+    },
+    subLabel: {
+      id: 'crc.application:section.arrangement.duration.permanent.subLabel',
+      defaultMessage: 'Samningurinn gildir til 18 ára aldurs barns',
+      description: 'Sub label for permanent change',
+    },
+    tooltip: {
+      id: 'crc.application:section.arrangement.duration.permanent.tooltip',
+      defaultMessage: 'Varanlegur samningur gildir þar til barnið hefur náð 18 ára aldri. Til að breyta fyrirkomulaginu til baka þarf að útbúa og undirrita nýjan samning.',
+      description: 'Tooltip for permanent change',
+    },
+  }),
+  temporaryInput: defineMessages({
+    label: {
+      id: 'crc.application:section.arrangement.duration.temporary.label',
+      defaultMessage: 'Tímabundið',
+      description: 'Label for temporary change',
+    },
+    subLabel: {
+      id: 'crc.application:section.arrangement.duration.temporary.subLabel',
+      defaultMessage: '6 mánuðir eða lengur',
+      description: 'Sub label for temporary change',
+    },
+    tooltip: {
+      id: 'crc.application:section.arrangement.duration.temporary.tooltip',
+      defaultMessage: 'Tímabundinn samningur getur minnst verið til 6 mánaða. Að tímabili loknu þurfa foreldrar að óska eftir því við Þjóðskrá að lögheimilisskráning fari til fyrra horfs.',
+      description: 'Tooltip for temporary change',
+    },
+  }),
+  dateInput: defineMessages({
+    label: {
+      id: 'crc.application:section.arrangement.duration.dateInput.label',
+      defaultMessage: 'Gildir til',
+      description: 'Label for date input',
+    },
+    placeholder: {
+      id: 'crc.application:section.arrangement.duration.dateInput.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Sub label for date input',
     },
   }),
 }
