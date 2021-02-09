@@ -340,3 +340,46 @@ export const duration = {
     },
   }),
 }
+
+// Terms
+export const terms = {
+  general: defineMessages({
+    sectionTitle: {
+      id: 'crc.application:section.arrangement.terms.sectionTitle',
+      defaultMessage: 'Áhrif umsóknar',
+      description: 'Terms section title',
+    },
+    pageTitle: {
+      id: 'crc.application:section.arrangement.terms.pageTitle',
+      defaultMessage: 'Hvaða áhrif hefur breytingin?',
+      description: 'Terms page title',
+    },
+    description: {
+      id: 'crc.application:section.arrangement.terms.description',
+      defaultMessage:
+        '<h4>Meiri heimildir lögheimilisforeldris</h4><p>Barn getur aðeins átt eitt lögheimili og hefur skráning þess margvísleg áhrif. Réttarstaða lögheimilisforeldris er önnur en réttarstaða umgengnisforeldris. Það hefur ríkari heimildir til ákvarðanatöku um málefni barns en umgengnisforeldri. </p><h4>Samráð foreldra um ákvarðanir</h4><p>Foreldrar sem fara sameiginlega með forsjá barns eiga alltaf að leitast við að hafa samráð áður en teknar eru afgerandi ákvarðanir um málefni barns er varða daglegt líf þess, til dæmis um hvar barnið skuli eiga lögheimili og um val á leik- og grunnskóla, um venjulega eða nauðsynlega heilbrigðisþjónustu og reglubundið tómstundastarf.</p><h4>Ef samráð foreldra skilar ekki árangri</h4><p>Lögheimilisforeldrið hefur á hinn bóginn heimild til þess að taka þessar ákvarðanir, ef samráðið skilar ekki árangri. Lögheimilisforeldri hefur því heimild til þess að flytja með barn innanlands og ákveða í hvaða skóla barn skuli ganga. Þá á foreldrið sem barn er með lögheimili hjá, rétt á að fá meðlag með barninu frá hinu foreldrinu og barnabætur falla til lögheimilisforeldrisins. Jafnframt getur lögheimili barns haft áhrif í ýmsu öðru tilliti, svo sem á húsaleigubætur, námslán, greiðslur vegna örorku, umönnunarbætur og fleira sem þarf að skoða í hverju tilviki. Það er því mjög þýðingarmikið atriði að ákveða hjá hvoru foreldri barn skuli eiga lögheimili.</p><h4>Réttur barns til umgengni við hitt foreldrið</h4><p>Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.</p>',
+      description: 'Duration page descrption',
+    },
+  }),
+  residenceChangeCheckbox: defineMessages({
+    label: {
+      id: 'crc.application:section.arrangement.terms.residenceChange.label',
+      defaultMessage: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
+      description: 'Label for residence change checkbox',
+    },
+  }),
+  childBenefitCheckbox: defineMessages({
+    label: {
+      id: 'crc.application:section.arrangement.terms.childBenefit.label',
+      defaultMessage: 'Ég skil að réttur til meðlagsgreiðslna flyst með barninu',
+      description: 'Label for child benefit checkbox',
+    },
+  }),
+  familySupportCheckbox: defineMessages({
+    label: {
+      id: 'crc.application:section.arrangement.terms.familySupport.label',
+      defaultMessage: 'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
+      description: 'Label for family support checkbox',
+    },
+  }),
+}
