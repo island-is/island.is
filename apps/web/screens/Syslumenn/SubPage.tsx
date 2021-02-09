@@ -39,6 +39,7 @@ const OrganizationSlice = dynamic(() =>
 const SliceDropdown = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.SliceDropdown),
 )
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -60,6 +61,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id)
 
   const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
   const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`

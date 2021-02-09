@@ -25,6 +25,7 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -41,6 +42,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
