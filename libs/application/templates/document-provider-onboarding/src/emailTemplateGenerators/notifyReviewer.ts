@@ -10,13 +10,14 @@ export default (
   }: { application: Application; clientLocationOrigin: string },
   token: string,
 ): SendMailOptions => {
-  // const email = get(application.answers, 'employer.email', null)
+  console.log('booom')
+  const email = 'saeunn9@gmail.com'
 
-  // if (email === null) {
-  //   throw new Error('Cannot create email template, missing employer email')
-  // }
+  if (email === null) {
+    throw new Error('Cannot create email template, missing employer email')
+  }
 
-  // const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
+  const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
   return {
     // TODO: place strings in translation file
@@ -25,13 +26,13 @@ export default (
       address: 'development@island.is',
     },
     replyTo: {
-      name: 'Bæring Gunnar Steinþórsson',
-      address: 'baering@aranja.com',
+      name: 'Sæunn Sif Heiðarsdóttir',
+      address: 'saeunnsh@advania.is',
     },
     to: [
       {
         name: '',
-        address: 'saeunn9@gmail.com',
+        address: email as string,
       },
     ],
     subject: ``,
