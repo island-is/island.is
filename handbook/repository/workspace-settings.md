@@ -108,6 +108,7 @@ The `e2e-ci.js` script requires few parameters:
 
 - `-n` - The name of the e2e project. The script uses this name to find
   the name of the target app (by stripping of the `-e2e` ending).
+- `-s` - Boolean to indicate if to use `--skip-nx-cache`
 - `-t` - Only for React. Sets the app type to `react`.
 - `-f` - Only for React. Sets the output directory for the production build.
 - `-b` - Optional for React. If the app is deployed to a sub-directory,

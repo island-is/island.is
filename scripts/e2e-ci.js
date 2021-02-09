@@ -44,6 +44,11 @@ const argv = yargs
     description: 'Flag to indicate if the script is being run from CI platform.',
     type: 'boolean',
   })
+  .option('skip-cache', {
+    alias: 's',
+    description: 'Add Nx arguments to skip Nx cache',
+    type: 'boolean',
+  })
   .help()
   .alias('help', 'h')
   .argv
@@ -59,7 +64,7 @@ const target = argv.name.replace('-e2e', '')
 // We run the e2e tests on production built application
 // prettier-ignore
 const CMD = {
-  BUILD: `yarn nx run ${target}:build:production --skip-nx-cache`,
+  BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
   SERVE: [
     'node',
     [
@@ -70,9 +75,14 @@ const CMD = {
     ]
   ],
   TEST: `yarn nx run ${argv.name}:e2e:production --headless --production --base-url http://localhost:${argv.port}${
-    argv.ci ? 
-      ` --record --group=${argv.name}` 
-    : ''}`,
+      argv.ci ? 
+        ` --record --group=${argv.name}` :
+        ''
+    }${
+      argv['skip-cache'] ?
+        ' --skip-nx-cache' :
+        ''
+    }`,
 }
 
 const build = async () => {
@@ -97,6 +107,18 @@ const serve = () => {
     // Start static-serve
     child = spawn(CMD.SERVE[0], CMD.SERVE[1])
     console.log(`Serving target project in a child process: ${child.pid}`)
+
+    child.stdout.on('data', (data) => {
+      console.log(`Child process ${child.pid} output: ${data}`)
+    })
+
+    child.stderr.on('data', (data) => {
+      console.log(`Child process ${child.pid} error: ${data}`)
+    })
+
+    child.on('close', (code) => {
+      console.log(`Child process exited with code ${code}`)
+    })
   }
 
   return child
@@ -122,7 +144,7 @@ const main = async () => {
     serveChild.kill()
   }
 
-  process.exit(exitCode)
+  //process.exit(exitCode)
 }
 
 // Entry point

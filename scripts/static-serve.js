@@ -30,8 +30,6 @@ const argv = yargs
   .alias('help', 'h')
   .argv
 
-console.log(argv)
-
 // Set the path for static file serve
 app.use(argv['base-path'], express.static(path.join(process.cwd(), argv.dist)))
 
@@ -45,5 +43,12 @@ app.get(basePath, function (req, res) {
   res.sendFile(path.join(process.cwd(), argv.dist, 'index.html'))
 })
 
-app.listen(argv.port)
+const server = app.listen(argv.port)
 console.log(`App listening on port ${argv.port}...`)
+
+process.on('SIGTERM', () => {
+  console.log('Shutting down server...')
+  server.close()
+  console.log('Exiting process...')
+  process.exit()
+})
