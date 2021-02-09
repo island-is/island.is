@@ -2,8 +2,8 @@ export interface GetSjukratryggdurTypeDto {
   SjukratryggdurType: SjukratryggdurType
 }
 interface SjukratryggdurType {
-  radnumer_si: number
+  radnumer_si:    number
   sjukratryggdur: number
-  dags?: Date
-  a_bidtima?: number
+  dags?:          string
+  a_bidtima?:     number
 }

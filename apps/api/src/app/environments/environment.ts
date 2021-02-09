@@ -21,8 +21,8 @@ export default {
       process.env.HEALTH_INSURANCE_XROAD_WSDLURL ??
       'https://test-huld.sjukra.is/islandrg?wsdl',
     baseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-    username: process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? '',
-    password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? '',
+    username: process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? 'deloittetest',
+    password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? 'xroadtest123',
   },
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',
