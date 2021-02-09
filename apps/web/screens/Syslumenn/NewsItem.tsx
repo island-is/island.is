@@ -1,5 +1,5 @@
 import React from 'react'
-import { BreadCrumbItem } from '@island.is/island-ui/core'
+import { BreadCrumbItem, NavigationItem } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import {
   GET_NAMESPACE_QUERY,
@@ -22,6 +22,7 @@ import {
   OrganizationHeader,
   OrganizationFooter,
   NewsArticle,
+  OrganizationWrapper,
 } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
@@ -67,6 +68,18 @@ const NewsItem: Screen<NewsItemProps> = ({
     },
   ]
 
+  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: primaryLink.url.includes('/stofnanir/syslumenn/frett'),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
+    }),
+  )
+
   return (
     <>
       <HeadWithSocialSharing
@@ -76,14 +89,22 @@ const NewsItem: Screen<NewsItemProps> = ({
         imageWidth={newsItem.image?.width.toString()}
         imageHeight={newsItem.image?.height.toString()}
       />
-      <OrganizationHeader
-        title={organizationPage.title}
-        logoUrl={organizationPage.organization.logo.url}
-        logoAtl={organizationPage.organization.logo.title}
+      <OrganizationWrapper
+        pageTitle={organizationPage.title}
+        organizationPage={organizationPage}
         breadcrumbItems={breadCrumbs}
-      />
-      <NewsArticle newsItem={newsItem} namespace={namespace} />
-      <OrganizationFooter organizationPage={organizationPage} />
+        navigationData={{
+          title: n('navigationTitle', 'Efnisyfirlit'),
+          items: navList,
+          titleLink: {
+            href: linkResolver('organizationpage', [organizationPage.slug])
+              .href,
+            active: false,
+          },
+        }}
+      >
+        <NewsArticle newsItem={newsItem} namespace={namespace} />
+      </OrganizationWrapper>
     </>
   )
 }

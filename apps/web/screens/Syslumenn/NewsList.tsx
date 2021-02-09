@@ -9,6 +9,7 @@ import {
   Bullet,
   OrganizationHeader,
   OrganizationFooter,
+  OrganizationWrapper,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -23,6 +24,7 @@ import {
   Option,
   Link,
   GridColumn,
+  NavigationItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -140,56 +142,71 @@ const NewsList: Screen<NewsListProps> = ({
       href: linkResolver('organizationpage', [organizationPage.slug]).href,
       typename: 'organizationpage',
     },
-    {
-      title: n('newsTitle', 'Fréttir og tilkynningar'),
-      href: linkResolver('organizationnewsoverview', [organizationPage.slug])
-        .href,
-      typename: 'organizationnewsoverview',
-    },
   ]
 
   const sidebar = (
     <Stack space={3}>
-      <Box background="purple100" borderRadius="large" padding={4}>
-        <Stack space={3}>
-          <Text variant="h4" as="h1" color="purple600">
-            {n('newsTitle', 'Fréttir og tilkynningar')}
-          </Text>
-          <Divider weight="purple200" />
-          <NativeSelect
-            name="year"
-            value={selectedYear ? selectedYear.toString() : allYearsString}
-            options={yearOptions}
-            onChange={(e) => {
-              const selectedValue =
-                e.target.value !== allYearsString ? e.target.value : null
-              Router.push(makeHref(selectedValue))
-            }}
-            color="purple400"
-          />
-          {selectedYear && (
-            <div>
-              <Link href={makeHref(selectedYear)}>
-                <Text as="span">{allMonthsString}</Text>
-              </Link>
-              <Text as="span">
-                {selectedMonth === undefined && <Bullet align="right" />}
-              </Text>
-            </div>
-          )}
-          {months.map((month) => (
-            <div key={month}>
-              <Link href={makeHref(selectedYear, month)}>
-                <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
-              </Link>
-              <Text as="span">
-                {selectedMonth === month && <Bullet align="right" />}
-              </Text>
-            </div>
-          ))}
-        </Stack>
-      </Box>
+      <Hidden below="md">
+        <Box
+          background="purple100"
+          borderRadius="large"
+          padding={4}
+          marginTop={4}
+        >
+          <Stack space={3}>
+            <Text variant="h4" as="h1" color="purple600">
+              {n('newsTitle', 'Fréttir og tilkynningar')}
+            </Text>
+            <Divider weight="purple200" />
+            <NativeSelect
+              name="year"
+              value={selectedYear ? selectedYear.toString() : allYearsString}
+              options={yearOptions}
+              onChange={(e) => {
+                const selectedValue =
+                  e.target.value !== allYearsString ? e.target.value : null
+                Router.push(makeHref(selectedValue))
+              }}
+              color="purple400"
+            />
+            {selectedYear && (
+              <div>
+                <Link href={makeHref(selectedYear)}>
+                  <Text as="span">{allMonthsString}</Text>
+                </Link>
+                <Text as="span">
+                  {selectedMonth === undefined && <Bullet align="right" />}
+                </Text>
+              </div>
+            )}
+            {months.map((month) => (
+              <div key={month}>
+                <Link href={makeHref(selectedYear, month)}>
+                  <Text as="span">
+                    {capitalize(getMonthByIndex(month - 1))}
+                  </Text>
+                </Link>
+                <Text as="span">
+                  {selectedMonth === month && <Bullet align="right" />}
+                </Text>
+              </div>
+            ))}
+          </Stack>
+        </Box>
+      </Hidden>
     </Stack>
+  )
+
+  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: primaryLink.url.includes('/stofnanir/syslumenn/frett'),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
+    }),
   )
 
   return (
@@ -197,14 +214,25 @@ const NewsList: Screen<NewsListProps> = ({
       <Head>
         <title>{n('pageTitle')} | Ísland.is</title>
       </Head>
-      <OrganizationHeader
-        title={organizationPage.title}
-        logoUrl={organizationPage.organization.logo.url}
-        logoAtl={organizationPage.organization.logo.title}
+      <OrganizationWrapper
+        pageTitle={organizationPage.title}
+        organizationPage={organizationPage}
         breadcrumbItems={breadCrumbs}
-      />
-      <SidebarLayout sidebarContent={sidebar}>
+        sidebarContent={sidebar}
+        navigationData={{
+          title: n('navigationTitle', 'Efnisyfirlit'),
+          items: navList,
+          titleLink: {
+            href: linkResolver('organizationpage', [organizationPage.slug])
+              .href,
+            active: false,
+          },
+        }}
+      >
         <Stack space={[3, 3, 4]}>
+          <Text variant="h1" as="h1" marginBottom={2}>
+            {n('newsTitle', 'Fréttir og tilkynningar')}
+          </Text>
           {selectedYear && (
             <Hidden below="lg">
               <Text variant="h2" as="h2">
@@ -212,7 +240,7 @@ const NewsList: Screen<NewsListProps> = ({
               </Text>
             </Hidden>
           )}
-          <GridColumn hiddenAbove="sm" paddingBottom={1}>
+          <GridColumn hiddenAbove="sm" paddingTop={4} paddingBottom={1}>
             <Select
               label={yearString}
               placeholder={yearString}
@@ -291,8 +319,7 @@ const NewsList: Screen<NewsListProps> = ({
             </Box>
           )}
         </Stack>
-      </SidebarLayout>
-      <OrganizationFooter organizationPage={organizationPage} />
+      </OrganizationWrapper>
     </>
   )
 }
