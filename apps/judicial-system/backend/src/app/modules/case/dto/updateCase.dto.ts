@@ -211,4 +211,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly prosecutorAppealAnnouncement?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly judgeId?: string
 }
