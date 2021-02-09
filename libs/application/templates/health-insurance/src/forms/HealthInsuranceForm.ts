@@ -21,7 +21,7 @@ import {
 import { m } from './messages'
 import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
 import { StatusTypes } from '../types'
-import { Address } from 'libs/api/schema/src/lib/schema'
+import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
   isEUCountry,
@@ -138,11 +138,9 @@ export const HealthInsuranceForm: Form = buildForm({
               width: 'half',
               disabled: true,
               defaultValue: (application: Application) =>
-                ((application.externalData.nationalRegistry?.data as {
+                (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address as {
-                  streetAddress?: string
-                })?.streetAddress,
+                }).address?.streetAddress,
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -150,11 +148,9 @@ export const HealthInsuranceForm: Form = buildForm({
               width: 'half',
               disabled: true,
               defaultValue: (application: Application) =>
-                ((application.externalData.nationalRegistry?.data as {
+                (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address as {
-                  postalCode?: string
-                })?.postalCode || '',
+                }).address?.postalCode || '', //Todo remove || '' before pushing to production
             }),
             buildTextField({
               id: 'applicant.city',
@@ -162,11 +158,9 @@ export const HealthInsuranceForm: Form = buildForm({
               width: 'half',
               disabled: true,
               defaultValue: (application: Application) =>
-                ((application.externalData.nationalRegistry?.data as {
+                (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address as {
-                  city?: string
-                })?.city,
+                }).address?.city,
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
