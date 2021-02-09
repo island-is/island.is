@@ -89,8 +89,8 @@ const Overview = ({ application }: FieldBaseProps) => {
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
         <Text>
-          {answers.durationDate
-            ? answers.durationDate
+          {answers.selectedDuration.length > 1
+            ? answers.selectedDuration[1]
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>

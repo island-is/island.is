@@ -26,8 +26,7 @@ export const extractChildrenFromApplication = (application: Application) => {
 export const extractAnswersFromApplication = (application: Application) => {
   return {
     selectedChildren: application.answers.selectChild as string[],
-    selectedDuration: application.answers.selectDuration as string,
-    durationDate: application.answers.durationDate as string,
+    selectedDuration: application.answers.selectDuration as string[],
     reason: application.answers.residenceChangeReason as string,
     contactInformation: {
       email: application.answers.email as string,

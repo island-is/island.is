@@ -28,7 +28,7 @@ const Duration = ({ field, application, error }: FieldBaseProps) => {
       </Box>
       <Box marginTop={3} marginBottom={2}>
         <RadioController
-          id="selectDuration[0]"
+          id={`${field.id}[0]`}
           defaultValue={
             statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
@@ -53,7 +53,7 @@ const Duration = ({ field, application, error }: FieldBaseProps) => {
         {statefulAnswer === 'temporary' && (
           <Box>
             <DatePickerController
-              id="selectDuration[1]"
+              id={`${field.id}[1]`}
               backgroundColor="blue"
               label={formatMessage(duration.dateInput.label)}
               placeholder={formatMessage(duration.dateInput.placeholder)}
