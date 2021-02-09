@@ -306,9 +306,7 @@ export class CaseController {
     const existingCase = await this.findCaseById(id)
 
     if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
+      throw new ForbiddenException('A ruling must be signed by a judge')
     }
 
     try {
@@ -344,9 +342,7 @@ export class CaseController {
     const existingCase = await this.findCaseById(id)
 
     if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
+      throw new ForbiddenException('A ruling must be signed by a judge')
     }
 
     return this.caseService.getSignatureConfirmation(
