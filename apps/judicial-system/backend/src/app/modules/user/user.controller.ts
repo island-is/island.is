@@ -13,6 +13,7 @@ import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 
 import { UserRole } from '@island.is/judicial-system/types'
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRule,
@@ -75,8 +76,8 @@ export class UserController {
     isArray: true,
     description: 'Gets all existing users',
   })
-  getAll(): Promise<User[]> {
-    return this.userService.getAll()
+  getAll(@CurrentHttpUser() user: User): Promise<User[]> {
+    return this.userService.getAll(user)
   }
 
   /*

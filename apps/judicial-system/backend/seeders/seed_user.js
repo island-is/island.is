@@ -1,15 +1,15 @@
 'use strict'
 
 const localEnv = {
-  userSeeds: 'gudjon,baldur,ivar,addi',
+  userSeeds: 'gudjon,baldur,ivar',
   gudjon: `[
   {
     "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
     "national_id": "0000000000",
-    "name": "Guðjón Guðjónsson",
+    "name": "Áki Ákærandi",
     "title": "ákærandi",
-    "mobile_number": "8589030",
-    "email": "gudjon@kolibri.is",
+    "mobile_number": "0000000",
+    "email": "aki@dmr.is",
     "role": "PROSECUTOR",
     "institution": "Lögreglustjórinn"
   }
@@ -19,10 +19,10 @@ const localEnv = {
   {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
     "national_id": "1111111111",
-    "name": "Baldur Kristjánsson",
+    "name": "Dalli Dómritari",
     "title": "dómritari",
-    "mobile_number": "8949946",
-    "email": "baldur@kolibri.is",
+    "mobile_number": "1111111",
+    "email": "dalli@dmr.is",
     "role": "REGISTRAR",
     "institution": "Héraðsdómurinn"
   }
@@ -32,26 +32,13 @@ const localEnv = {
   {
     "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
     "national_id": "2222222222",
-    "name": "Ívar Oddsson",
+    "name": "Dóra Dómari",
     "title": "dómari",
-    "mobile_number": "6904031",
-    "email": "ivaro@kolibri.is",
+    "mobile_number": "2222222",
+    "email": "dora@dmr.is",
     "role": "JUDGE",
     "institution": "Héraðsdómurinn"
   }
-]`,
-
-  addi: `[
-{
-  "id": "df1cf415-97e9-425c-a210-da8ece71f55b",
-  "national_id": "3333333333",
-  "name": "Árni Jónsson",
-  "title": "sýslari",
-  "mobile_number": "8689361",
-  "email": "addi@kolibri.is",
-  "role": "ADMIN",
-  "institution": "Ráðuneytið"
-}
 ]`,
 }
 
