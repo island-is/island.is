@@ -23,7 +23,6 @@ import {
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
