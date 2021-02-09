@@ -458,7 +458,7 @@ export class ApplicationController {
             onSuccessEvent,
             authorization,
           )
-        } else if (onErrorEvent) {
+        } else if (!success && onErrorEvent) {
           return this.changeState(
             updatedApplication as BaseApplication,
             template,
