@@ -1,6 +1,8 @@
 import React from 'react'
+import HtmlParser from 'react-html-parser'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
@@ -8,6 +10,7 @@ import {
   constructParentAddressString,
   extractApplicantFromApplication,
 } from '../../lib/utils'
+import { contract } from '../../lib/messages'
 
 const Overview = ({ application }: FieldBaseProps) => {
   const applicant = extractApplicantFromApplication(application)
@@ -16,12 +19,21 @@ const Overview = ({ application }: FieldBaseProps) => {
   const children = extractChildrenFromApplication(application)
   const usePluralForChildren = children.length > 1
   const answers = extractAnswersFromApplication(application)
+  const { formatMessage } = useLocale()
+  const description = formatMessage(contract.general.description, {
+    otherParent: parent.name,
+  })
   return (
     <>
+      <Box marginTop={2}>
+        <AlertMessage
+          type="info"
+          title="Upphafsdagur samnings"
+          message="Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur afgreitt hana."
+        />
+      </Box>
       <Text marginBottom={4} marginTop={2}>
-        Hér er yfirlit yfir samning um breytt lögheimili.{' '}
-        <strong>Þú og {parent.name}</strong> þurfa að staðfesta og undirrita
-        áður en málið fer í afgreiðslu hjá sýslumanni.
+        {description}
       </Text>
       <Box marginBottom={4}>
         {usePluralForChildren ? (
@@ -30,7 +42,7 @@ const Overview = ({ application }: FieldBaseProps) => {
           <Text variant="h4">Nafn barns</Text>
         )}
         {children.map((child) => (
-          <Text>{child.name}</Text>
+          <Text key={child.name}>{child.name}</Text>
         ))}
       </Box>
       <Box marginBottom={4}>

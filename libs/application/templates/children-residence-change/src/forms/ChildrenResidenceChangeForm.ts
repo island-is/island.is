@@ -163,11 +163,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'overview',
-      title: m.section.overview,
+      title: m.contract.general.sectionTitle,
       children: [
         buildCustomField({
           id: 'residenceChangeReview',
-          title: 'Yfirlit umsóknar',
+          title: m.contract.general.pageTitle,
           component: 'Overview',
         }),
       ],

@@ -17,10 +17,11 @@ const ChangeInformation = ({ field, application, error }: FieldBaseProps) => {
   const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
-  const description = newResidence.general.description.defaultMessage
   return (
     <>
-      <DescriptionText textNode={description} />
+      <Box marginTop={3} marginBottom={5}>
+        <DescriptionText text={newResidence.general.description} />
+      </Box>
       <Box marginBottom={4}>
         <Text variant="h4">
           {formatMessage(newResidence.information.currentResidenceLabel)}

@@ -252,13 +252,13 @@ export const newResidence = {
     currentResidenceLabel: {
       id:
         'crc.application:section.arrangement.newResidence.information.currentResidenceLabel',
-      defaultMessage: 'Núverandi lögheimili barna: ',
+      defaultMessage: 'Núverandi lögheimili barna:',
       description: 'Label for current residence',
     },
     newResidenceLabel: {
       id:
         'crc.application:section.arrangement.newResidence.information.newResidenceLabel',
-      defaultMessage: 'Nýtt lögheimili barna: ',
+      defaultMessage: 'Nýtt lögheimili barna:',
       description: 'Label for new residence',
     },
   }),
@@ -288,7 +288,7 @@ export const duration = {
       id: 'crc.application:section.arrangement.duration.description',
       defaultMessage:
         '<p>Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilsbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.</p><p>Ekki er hægt að gera nýjan samning innan 6 mánaða frá gildistöku breytingar.</p><p>Athugið að samningurinn tekur gildi þann dag sem sýslumaður staðfestir samninginn og getur þar af leiðandi ekki verið afturvirkur.</p><p>Samningurinn verður staðfestur innan 14 daga.</p>',
-      description: 'Duration page descrption',
+      description: 'Duration page description',
     },
   }),
   permanentInput: defineMessages({
@@ -345,41 +345,72 @@ export const duration = {
 export const terms = {
   general: defineMessages({
     sectionTitle: {
-      id: 'crc.application:section.arrangement.terms.sectionTitle',
+      id: 'crc.application:section.effect.terms.sectionTitle',
       defaultMessage: 'Áhrif umsóknar',
       description: 'Terms section title',
     },
     pageTitle: {
-      id: 'crc.application:section.arrangement.terms.pageTitle',
+      id: 'crc.application:section.effect.terms.pageTitle',
       defaultMessage: 'Hvaða áhrif hefur breytingin?',
       description: 'Terms page title',
     },
     description: {
-      id: 'crc.application:section.arrangement.terms.description',
+      id: 'crc.application:section.effect.terms.description',
       defaultMessage:
         '<h4>Meiri heimildir lögheimilisforeldris</h4><p>Barn getur aðeins átt eitt lögheimili og hefur skráning þess margvísleg áhrif. Réttarstaða lögheimilisforeldris er önnur en réttarstaða umgengnisforeldris. Það hefur ríkari heimildir til ákvarðanatöku um málefni barns en umgengnisforeldri. </p><h4>Samráð foreldra um ákvarðanir</h4><p>Foreldrar sem fara sameiginlega með forsjá barns eiga alltaf að leitast við að hafa samráð áður en teknar eru afgerandi ákvarðanir um málefni barns er varða daglegt líf þess, til dæmis um hvar barnið skuli eiga lögheimili og um val á leik- og grunnskóla, um venjulega eða nauðsynlega heilbrigðisþjónustu og reglubundið tómstundastarf.</p><h4>Ef samráð foreldra skilar ekki árangri</h4><p>Lögheimilisforeldrið hefur á hinn bóginn heimild til þess að taka þessar ákvarðanir, ef samráðið skilar ekki árangri. Lögheimilisforeldri hefur því heimild til þess að flytja með barn innanlands og ákveða í hvaða skóla barn skuli ganga. Þá á foreldrið sem barn er með lögheimili hjá, rétt á að fá meðlag með barninu frá hinu foreldrinu og barnabætur falla til lögheimilisforeldrisins. Jafnframt getur lögheimili barns haft áhrif í ýmsu öðru tilliti, svo sem á húsaleigubætur, námslán, greiðslur vegna örorku, umönnunarbætur og fleira sem þarf að skoða í hverju tilviki. Það er því mjög þýðingarmikið atriði að ákveða hjá hvoru foreldri barn skuli eiga lögheimili.</p><h4>Réttur barns til umgengni við hitt foreldrið</h4><p>Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.</p>',
-      description: 'Duration page descrption',
+      description: 'Duration page description',
     },
   }),
   residenceChangeCheckbox: defineMessages({
     label: {
-      id: 'crc.application:section.arrangement.terms.residenceChange.label',
+      id: 'crc.application:section.effect.terms.residenceChange.label',
       defaultMessage: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
       description: 'Label for residence change checkbox',
     },
   }),
   childBenefitCheckbox: defineMessages({
     label: {
-      id: 'crc.application:section.arrangement.terms.childBenefit.label',
-      defaultMessage: 'Ég skil að réttur til meðlagsgreiðslna flyst með barninu',
+      id: 'crc.application:section.effect.terms.childBenefit.label',
+      defaultMessage:
+        'Ég skil að réttur til meðlagsgreiðslna flyst með barninu',
       description: 'Label for child benefit checkbox',
     },
   }),
   familySupportCheckbox: defineMessages({
     label: {
-      id: 'crc.application:section.arrangement.terms.familySupport.label',
-      defaultMessage: 'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
+      id: 'crc.application:section.effect.terms.familySupport.label',
+      defaultMessage:
+        'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
       description: 'Label for family support checkbox',
     },
   }),
+}
+
+// Contract
+export const contract = {
+  general: defineMessages({
+    sectionTitle: {
+      id: 'crc.application:section.contract.overview.sectionTitle',
+      defaultMessage: 'Yfirlit og undirritun',
+      description: 'Contract section title',
+    },
+    pageTitle: {
+      id: 'crc.application:section.contract.overview.pageTitle',
+      defaultMessage: 'Samningur',
+      description: 'Contract page title',
+    },
+    description: {
+      id: 'crc.application:section.contract.overview.description',
+      defaultMessage:
+        'Hér er yfirlit yfir samning um breytt lögheimili. Þú og {otherParent} þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.',
+      description: 'Contract page description',
+    },
+  }),
+  // residenceChangeCheckbox: defineMessages({
+  //   label: {
+  //     id: 'crc.application:section.arrangement.terms.residenceChange.label',
+  //     defaultMessage: 'Ég skil hvaða áhrif lögheimilisbreyting hefur',
+  //     description: 'Label for residence change checkbox',
+  //   },
+  // }),
 }

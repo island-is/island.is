@@ -21,10 +21,11 @@ const Duration = ({ field, application, error }: FieldBaseProps) => {
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
     currentAnswer,
   )
-  const description = duration.general.description.defaultMessage
   return (
     <>
-      <DescriptionText textNode={description} />
+      <Box marginTop={3} marginBottom={5}>
+        <DescriptionText text={duration.general.description} />
+      </Box>
       <Box marginTop={3} marginBottom={2}>
         <RadioController
           id="selectDuration[0]"
