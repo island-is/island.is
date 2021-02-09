@@ -55,6 +55,25 @@ export class FileService {
     }
   }
 
+  async getSignedDocument(application: Application) {
+    const answers = application.answers as FormValue
+    const externalData = application.externalData as FormValue
+    const attachments = application.attachments as FormValue
+    const fileSignature = attachments.fileSignature as SigningServiceResponse
+
+    const { ssn } = this.applicantData(answers, externalData)
+    console.log({ fileSignature })
+
+    const signedFile = await this.signingService.getSignedDocument(
+      `${ssn}.pdf`,
+      fileSignature.documentToken as string,
+    )
+
+    console.log({ signedFile })
+
+    // TODO: Send file to sýslumenn
+  }
+
   async requestFileSignature(
     application: Application,
     type: PdfTypes,
@@ -64,7 +83,7 @@ export class FileService {
 
     switch (type) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const { phoneNumber, name, ssn } = this.parentAData(
+        const { phoneNumber, name, ssn } = this.applicantData(
           answers,
           externalData,
         )
@@ -96,7 +115,7 @@ export class FileService {
     parentB.email = answers.parentBEmail as string
     parentB.phoneNumber = answers.parentBPhoneNumber as string
 
-    const parentA = this.parentAData(answers, externalData)
+    const parentA = this.applicantData(answers, externalData)
 
     const expiry = answers.expiry as string
 
@@ -120,10 +139,12 @@ export class FileService {
     const fileName = `${this.childrenResidenceChangeS3Prefix}/${parentA.ssn}/${applicationId}.pdf`
     const bucket = environment.fsS3Bucket ?? ''
 
-    return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
+    await this.uploadFileToS3(pdfBuffer, bucket, fileName)
+
+    return await this.getPresignedUrl(bucket, fileName)
   }
 
-  private parentAData(
+  private applicantData(
     answers: FormValue,
     externalData: FormValue,
   ): ParentResidenceChange {
@@ -157,11 +178,10 @@ export class FileService {
     })
   }
 
-  private async getPresignedUrl(
+  private async uploadFileToS3(    
     buffer: Buffer,
     bucket: string,
-    fileName: string,
-  ): Promise<string> {
+    fileName: string): Promise<void>{
     const uploadParams = {
       Bucket: bucket,
       Key: fileName,
@@ -177,7 +197,12 @@ export class FileService {
       .catch(() => {
         return null
       })
+  }
 
+  private async getPresignedUrl(
+    bucket: string,
+    fileName: string,
+  ): Promise<string> {
     const presignedUrlParams = {
       Bucket: bucket,
       Key: fileName,
