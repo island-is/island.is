@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 
 import { User } from '@island.is/auth-nest-tools'
 
-import { TeachingLicenseResponse } from './mms.type'
+import { TeachingLicenseResponse, TeachingLicensePDFResponse } from './mms.type'
 
 export class MMSApi {
   private readonly xroadApiUrl: string
@@ -32,5 +32,16 @@ export class MMSApi {
   ): Promise<TeachingLicenseResponse[]> {
     //return this.requestApi(`api/teachingLicense/${nationalId}`) // TODO fix
     return Promise.resolve([{ id: 'unique-id' }, { id: 'another-unique-id' }])
+  }
+
+  getTeachingLicensePDF(
+    teachingLicenseId: string,
+  ): Promise<TeachingLicensePDFResponse> {
+    //return this.requestApi(`api/teachingLicense/export/${teachingLicenseID}`) // TODO fix
+    return Promise.resolve({
+      id: teachingLicenseId,
+      content: 'PDF CONTENT',
+      filename: `nationalID-${teachingLicenseId}`,
+    })
   }
 }
