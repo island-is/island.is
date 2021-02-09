@@ -48,6 +48,7 @@ import {
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
+import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -113,7 +114,7 @@ export const RulingStepTwo: React.FC = () => {
                   Úrskurðarorð
                 </Text>
               </Box>
-              <Box marginBottom={3}>getConclusion(workingCase)</Box>
+              <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
               <Text variant="h4" fontWeight="light">
                 Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
               </Text>

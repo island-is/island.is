@@ -16,6 +16,7 @@ export const UserContext = createContext<UserProvider>({})
 export const UserQuery = gql`
   query UserQuery {
     user {
+      id
       name
       title
       role

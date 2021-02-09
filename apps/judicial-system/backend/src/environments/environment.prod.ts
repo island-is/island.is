@@ -26,4 +26,7 @@ export default {
       region: process.env.EMAIL_REGION,
     },
   },
+  admin: {
+    users: process.env.ADMIN_USERS,
+  },
 }

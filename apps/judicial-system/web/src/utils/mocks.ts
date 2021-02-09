@@ -25,6 +25,7 @@ export const mockProsecutor = {
 } as User
 
 export const mockJudge = {
+  id: 'judge_1',
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
@@ -262,7 +263,7 @@ const testCase5 = {
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
-  judge: null,
+  judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
 }

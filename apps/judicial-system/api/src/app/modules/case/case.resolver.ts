@@ -18,8 +18,8 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { BackendAPI } from '../../../services'
+import { AuditService } from '../audit'
 import { CaseInterceptor, CasesInterceptor } from './interceptors'
-import { CaseAuditService } from './case.audit'
 import {
   CreateCaseInput,
   UpdateCaseInput,
@@ -42,8 +42,8 @@ import {
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
-    @Inject(CaseAuditService)
-    private readonly caseAuditService: CaseAuditService,
+    @Inject(AuditService)
+    private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -56,7 +56,7 @@ export class CaseResolver {
   ): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.OVERVIEW,
       backendApi.getCases(),
@@ -74,7 +74,7 @@ export class CaseResolver {
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.VIEW_DETAILS,
       backendApi.getCase(input.id),
@@ -92,7 +92,7 @@ export class CaseResolver {
   ): Promise<Case> {
     this.logger.debug('Creating case')
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.CREATE,
       backendApi.createCase(input),
@@ -112,7 +112,7 @@ export class CaseResolver {
 
     this.logger.debug(`Updating case ${id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.UPDATE,
       backendApi.updateCase(id, updateCase),
@@ -132,7 +132,7 @@ export class CaseResolver {
 
     this.logger.debug(`Transitioning case ${id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.TRANSITION,
       backendApi.transitionCase(id, transitionCase),
@@ -149,7 +149,7 @@ export class CaseResolver {
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(`Requesting signature of ruling for case ${input.caseId}`)
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.REQUEST_SIGNATURE,
       backendApi.requestSignature(input.caseId),
@@ -168,7 +168,7 @@ export class CaseResolver {
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.CONFIRM_SIGNATURE,
       backendApi.getSignatureConfirmation(caseId, documentToken),
@@ -187,7 +187,7 @@ export class CaseResolver {
 
     this.logger.debug(`Sending notification for case ${caseId}`)
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.SEND_NOTIFICATION,
       backendApi.sendNotification(caseId, sendNotification),
@@ -204,7 +204,7 @@ export class CaseResolver {
   ): Promise<Case> {
     this.logger.debug(`Extending case ${input.id}`)
 
-    return this.caseAuditService.audit(
+    return this.auditService.audit(
       user.id,
       AuditedAction.EXTEND,
       backendApi.extendCase(input.id),
