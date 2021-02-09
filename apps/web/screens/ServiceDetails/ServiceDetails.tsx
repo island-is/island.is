@@ -140,7 +140,9 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   institution={service.owner}
                   imgContainerDisplay={['block', 'block', 'none', 'block']}
                   locale={activeLocale}
-                  //linkProps={{ href: '#' }}
+                  linkProps={{
+                    href: selectedServiceDetail.links.responsibleParty,
+                  }}
                   //logo = {}
                 ></InstitutionPanel>
               )}
