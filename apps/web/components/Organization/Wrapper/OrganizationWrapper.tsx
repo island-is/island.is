@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './OrganizationWrapper.treat'
+import cn from 'classnames'
 import NextLink from 'next/link'
 import {
   HeadWithSocialSharing,
@@ -108,7 +109,14 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             fullWidthContent={fullWidthContent}
             sidebarContent={
               <>
-                <Box className={styles.navigation}>
+                <Box
+                  className={cn(
+                    styles.navigation,
+                    !!organizationPage.organization.logo.url
+                      ? styles.navigationWithLogo
+                      : styles.navigationWithoutLogo,
+                  )}
+                >
                   <Navigation
                     baseId="pageNav"
                     isMenuDialog={isMobile}
