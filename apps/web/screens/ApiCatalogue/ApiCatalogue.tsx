@@ -12,9 +12,6 @@ import {
   Button,
   GridContainer,
   LoadingIcon,
-  Filter,
-  FilterInput,
-  FilterMultiChoice,
   Navigation,
   Link,
 } from '@island.is/island-ui/core'
@@ -24,6 +21,7 @@ import {
   SubpageDetailsContent,
   SubpageMainContent,
   RichText,
+  ApiCatalogueFilter
 } from '@island.is/web/components'
 
 import getConfig from 'next/config'
@@ -209,50 +207,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
     },
   ]
 
-  const ApiCatalogueFilter = ({ isDialog = false }) => (
-    <Filter
-      labelClear={fn('clear')}
-      labelOpen={fn('openFilterButton')}
-      labelClose={fn('closeFilter')}
-      labelResult={fn('mobileResult')}
-      labelTitle={fn('mobileTitle')}
-      isDialog={isDialog}
-      resultCount={data?.getApiCatalogue?.services?.length ?? 0}
-      onFilterClear={() =>
-        setParameters({
-          query: '',
-          pricing: [],
-          data: [],
-          type: [],
-          access: [],
-        })
-      }
-    >
-      <FilterInput
-        placeholder={fn('search')}
-        name="filterInput"
-        value={parameters.query}
-        onChange={(value) => setParameters({ ...parameters, query: value })}
-      ></FilterInput>
-      <FilterMultiChoice
-        labelClear={fn('clearCategory')}
-        onChange={({ categoryId, selected }) => {
-          setParameters({
-            ...parameters,
-            [categoryId]: selected,
-          })
-        }}
-        onClear={(categoryId) =>
-          setParameters({
-            ...parameters,
-            [categoryId]: [],
-          })
-        }
-        categories={filterCategories}
-      ></FilterMultiChoice>
-    </Filter>
-  )
-
   const navigationItems = [
     {
       active: true,
@@ -278,157 +232,226 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   ]
 
   return (
-    <>
-      <SubpageLayout
-        main={
-          <SidebarLayout
-            sidebarContent={
-              <Navigation
-                baseId="service-list-navigation"
-                colorScheme="blue"
-                items={navigationItems}
-                title={nn('linkThrounText')}
-                titleLink={{
-                  href: linkResolver('developerspage').href,
-                }}
-              />
-            }
-          >
-            <SubpageMainContent
-              main={
-                <Box>
-                  <Box display={['inline', 'inline', 'none']}>
-                    {/* Show when a device */}
-                    <Box paddingBottom="gutter">
-                      <Button
-                        colorScheme="default"
-                        preTextIcon="arrowBack"
-                        size="small"
-                        variant="text"
-                      >
-                        <Link {...linkResolver('developerspage')}>
-                          {nn('linkThrounText')}
-                        </Link>
-                      </Button>
-                    </Box>
-                    <Box marginBottom="gutter">
-                      <Navigation
-                        baseId="service-list-navigation"
-                        colorScheme="blue"
-                        isMenuDialog
-                        items={navigationItems}
-                        title={nn('linkThrounText')}
-                        titleLink={{
-                          href: linkResolver('developerspage').href,
-                        }}
-                      />
-                    </Box>
+    <SubpageLayout
+      main={
+        <SidebarLayout
+          sidebarContent={
+            <Navigation
+              baseId="service-list-navigation"
+              colorScheme="blue"
+              items={navigationItems}
+              title={nn('linkThrounText')}
+              titleLink={{
+                href: linkResolver('developerspage').href,
+              }}
+            />
+          }
+        >
+          <SubpageMainContent
+            main={
+              <Box>
+                <Box display={['inline', 'inline', 'none']}>
+                  {/* Show when a device */}
+                  <Box paddingBottom="gutter">
+                    <Button
+                      colorScheme="default"
+                      preTextIcon="arrowBack"
+                      size="small"
+                      variant="text"
+                    >
+                      <Link {...linkResolver('developerspage')}>
+                        {nn('linkThrounText')}
+                      </Link>
+                    </Button>
                   </Box>
-                  <Box marginBottom={2} display={['none', 'none', 'inline']}>
-                    {/* Show when NOT a device */}
-                    <Breadcrumbs
-                      items={[
-                        {
-                          title: nn('linkIslandIsText'),
-                          href: linkResolver('homepage').href,
-                        },
-
-                        {
-                          title: nn('linkThrounText'),
-                          href: linkResolver('developerspage').href,
-                        },
-                      ]}
+                  <Box marginBottom="gutter">
+                    <Navigation
+                      baseId="service-list-navigation"
+                      colorScheme="blue"
+                      isMenuDialog
+                      items={navigationItems}
+                      title={nn('linkThrounText')}
+                      titleLink={{
+                        href: linkResolver('developerspage').href,
+                      }}
                     />
                   </Box>
-                  <Stack space={1}>
-                    <Text variant="h1">{subpageHeader.title}</Text>
-                    <Text variant="intro">{subpageHeader.summary}</Text>
-                    <Stack space={2}>
-                      {subpageHeader.body ? (
-                        <RichText
-                          body={subpageHeader.body as SliceType[]}
-                          config={{ defaultPadding: [2, 2, 4] }}
-                          locale={activeLocale}
-                        />
-                      ) : null}
-                    </Stack>
-                  </Stack>
                 </Box>
-              }
-              image={
-                <Box
-                  width="full"
-                  height="full"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <img
-                    src={subpageHeader.featuredImage.url}
-                    alt={subpageHeader.featuredImage.title}
-                    width={subpageHeader.featuredImage.width}
-                    height={subpageHeader.featuredImage.height}
+                <Box marginBottom={2} display={['none', 'none', 'inline']}>
+                  {/* Show when NOT a device */}
+                  <Breadcrumbs
+                    items={[
+                      {
+                        title: nn('linkIslandIsText'),
+                        href: linkResolver('homepage').href,
+                      },
+
+                      {
+                        title: nn('linkThrounText'),
+                        href: linkResolver('developerspage').href,
+                      },
+                    ]}
+                  />
+                </Box>
+                <Stack space={1}>
+                  <Text variant="h1">{subpageHeader.title}</Text>
+                  <Text variant="intro">{subpageHeader.summary}</Text>
+                  <Stack space={2}>
+                    {subpageHeader.body ? (
+                      <RichText
+                        body={subpageHeader.body as SliceType[]}
+                        config={{ defaultPadding: [2, 2, 4] }}
+                        locale={activeLocale}
+                      />
+                    ) : null}
+                  </Stack>
+                </Stack>
+              </Box>
+            }
+            image={
+              <Box
+                width="full"
+                height="full"
+                display="flex"
+                alignItems="center"
+              >
+                <img
+                  src={subpageHeader.featuredImage.url}
+                  alt={subpageHeader.featuredImage.title}
+                  width={subpageHeader.featuredImage.width}
+                  height={subpageHeader.featuredImage.height}
+                />
+              </Box>
+            }
+          />
+        </SidebarLayout>
+      }
+      details={
+        <SubpageDetailsContent
+          header={
+            <Text variant="h4" color="blue600">
+              {sn('title')}
+            </Text>
+          }
+          content={
+            <SidebarLayout
+              sidebarContent={
+                <Box paddingRight={[0, 0, 3]}>
+                  <ApiCatalogueFilter
+                    labelClear={fn('clear')}
+                    labelOpen={fn('openFilterButton')}
+                    labelClose={fn('closeFilter')}
+                    labelResult={fn('mobileResult')}
+                    labelTitle={fn('mobileTitle')}
+                    resultCount={data?.getApiCatalogue?.services?.length ?? 0}
+                    onFilterClear={() =>
+                      setParameters({
+                        query: '',
+                        pricing: [],
+                        data: [],
+                        type: [],
+                        access: [],
+                      })
+                    }
+                    inputPlaceholder={fn('search')}
+                    inputValue={parameters.query}
+                    onInputChange={(value) =>
+                        setParameters({ ...parameters, query: value })}
+                    labelCategoryClear={fn('clearCategory')}
+                    onCategoryChange={({ categoryId, selected }) => {
+                      setParameters({
+                        ...parameters,
+                        [categoryId]: selected,
+                      })
+                    }}
+                    onCategoryClear={(categoryId) =>
+                      setParameters({
+                        ...parameters,
+                        [categoryId]: [],
+                      })
+                    }
+                    categories={filterCategories} 
                   />
                 </Box>
               }
-            />
-          </SidebarLayout>
-        }
-        details={
-          <SubpageDetailsContent
-            header={
-              <Text variant="h4" color="blue600">
-                {sn('title')}
-              </Text>
-            }
-            content={
-              <SidebarLayout
-                sidebarContent={
-                  <Box paddingRight={[0, 0, 3]}>
-                    <ApiCatalogueFilter />
-                  </Box>
-                }
-              >
-                <Box display={['block', 'block', 'none']} paddingBottom={4}>
-                  <ApiCatalogueFilter isDialog={true} />
-                </Box>
+            >
 
-                {(error || data?.getApiCatalogue?.services.length < 1) && (
-                  <GridContainer>
-                    {error ? (
-                      <Text>{sn('errorHeading')}</Text>
-                    ) : loading ? (
-                      <LoadingIcon animate color="blue400" size={32} />
-                    ) : (
-                      <Text>{sn('notFound')}</Text>
-                    )}
-                  </GridContainer>
-                )}
-                {data?.getApiCatalogue?.services.length > 0 && (
-                  <GridContainer>
-                    <ServiceList
-                      baseUrl={linkResolver('webservicespage').href + '/'}
-                      services={data?.getApiCatalogue?.services}
-                      tagDisplayNames={filterContent}
-                    />
-                    {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
-                      <Box display="flex" justifyContent="center">
-                        <Button onClick={() => onLoadMore()} variant="ghost">
-                          {!loading ? (
-                            sn('fmButton')
-                          ) : (
-                            <LoadingIcon animate color="blue400" size={16} />
-                          )}
-                        </Button>
-                      </Box>
-                    )}
-                  </GridContainer>
-                )}
-              </SidebarLayout>
-            }
-          />
-        }
-      />
-    </>
+              <Box display={['block', 'block', 'none']} paddingBottom={4}>
+                {/* <ApiCatalogueFilter isDialog={true} /> */}
+                <ApiCatalogueFilter
+                  isDialog={true}
+                  labelClear={fn('clear')}
+                  labelOpen={fn('openFilterButton')}
+                  labelClose={fn('closeFilter')}
+                  labelResult={fn('mobileResult')}
+                  labelTitle={fn('mobileTitle')}
+                  resultCount={data?.getApiCatalogue?.services?.length ?? 0}
+                  onFilterClear={() =>
+                    setParameters({
+                      query: '',
+                      pricing: [],
+                      data: [],
+                      type: [],
+                      access: [],
+                    })
+                  }
+                  inputPlaceholder={fn('search')}
+                  inputValue={parameters.query}
+                  onInputChange={(value) =>
+                      setParameters({ ...parameters, query: value })}
+                  labelCategoryClear={fn('clearCategory')}
+                  onCategoryChange={({ categoryId, selected }) => {
+                    setParameters({
+                      ...parameters,
+                      [categoryId]: selected,
+                    })
+                  }}
+                  onCategoryClear={(categoryId) =>
+                    setParameters({
+                      ...parameters,
+                      [categoryId]: [],
+                    })
+                  }
+                  categories={filterCategories} 
+                />
+              </Box>
+
+              {(error || data?.getApiCatalogue?.services.length < 1) && (
+                <GridContainer>
+                  {error ? (
+                    <Text>{sn('errorHeading')}</Text>
+                  ) : loading ? (
+                    <LoadingIcon animate color="blue400" size={32} />
+                  ) : (
+                    <Text>{sn('notFound')}</Text>
+                  )}
+                </GridContainer>
+              )}
+              {data?.getApiCatalogue?.services.length > 0 && (
+                <GridContainer>
+                  <ServiceList
+                    baseUrl={linkResolver('webservicespage').href + '/'}
+                    services={data?.getApiCatalogue?.services}
+                    tagDisplayNames={filterContent}
+                  />
+                  {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
+                    <Box display="flex" justifyContent="center">
+                      <Button onClick={() => onLoadMore()} variant="ghost">
+                        {!loading ? (
+                          sn('fmButton')
+                        ) : (
+                          <LoadingIcon animate color="blue400" size={16} />
+                        )}
+                      </Button>
+                    </Box>
+                  )}
+                </GridContainer>
+              )}
+            </SidebarLayout>
+          }
+        />
+      }
+    />
   )
 }
 
