@@ -20,12 +20,13 @@ export const OidcSignIn: FC = () => {
         })
 
         setClientAuthToken(user.access_token)
-        const isRootState =
-          user.state === '/minarsidur' || user.state === '/minarsidur/'
 
-        history.push(
-          typeof user.state === 'string' && !isRootState ? user.state : '/',
-        )
+        const url =
+          typeof user.state === 'string'
+            ? user.state.replace(/\/minarsidur\/?/i, '/')
+            : '/'
+
+        history.push(url)
       })
       .catch(function (error) {
         console.error(error)
