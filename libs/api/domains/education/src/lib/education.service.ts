@@ -5,7 +5,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { EmailService } from '@island.is/email-service'
 
 import { Config } from './education.module'
-import { TeachingLicense, SendTeachingLicense } from './education.type'
+import { License, SendLicense } from './education.type'
 import { MMSApi } from './client'
 
 @Injectable()
@@ -20,22 +20,23 @@ export class EducationService {
     private readonly config: Config,
   ) {}
 
-  async getTeachingLicenses(
-    nationalId: User['nationalId'],
-  ): Promise<TeachingLicense[]> {
-    const teachingLicenses = await this.mmsApi.getTeachingLicenses(nationalId)
+  async getLicenses(nationalId: User['nationalId']): Promise<License[]> {
+    const licenses = await this.mmsApi.getLicenses(nationalId)
 
-    return teachingLicenses.map((teachingLicense) => ({
-      id: teachingLicense.id,
+    return licenses.map((license) => ({
+      id: license.id,
+      school: license.school,
+      programme: license.programme,
+      date: license.date,
     }))
   }
 
-  async sendTeachingLicense(
+  async sendLicense(
     nationalId: string,
     email: string,
-    teachingLicenseId: string,
-  ): Promise<SendTeachingLicense> {
-    const pdf = await this.mmsApi.getTeachingLicensePDF(teachingLicenseId)
+    licenseId: string,
+  ): Promise<SendLicense> {
+    const pdf = await this.mmsApi.getLicensePDF(licenseId)
     const text = `Leyfisbréf hefur verið deilt af mínum síðum frá notanda ${nationalId}, sjá viðhengi.`
 
     try {
