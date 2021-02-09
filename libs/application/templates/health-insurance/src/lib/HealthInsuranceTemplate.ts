@@ -34,7 +34,6 @@ const HealthInsuranceSchema = z.object({
     address: z.string().nonempty(),
     postalCode: z.string().min(3).max(3),
     city: z.string().nonempty(),
-    nationality: z.string().nonempty(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
@@ -60,15 +59,6 @@ const HealthInsuranceSchema = z.object({
     remarks: z.string(),
   }),
   confirmCorrectInfo: z.boolean().refine((v) => v),
-  missingInfo: z.array(
-    z.object({
-      date: z.string(),
-      remarks: z.string().nonempty(),
-      files: z.array(FileSchema),
-    }),
-  ),
-  confirmMissingInfo: z.boolean().refine((y) => y),
-  agentComments: z.array(z.string().nonempty()),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -104,7 +94,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           },
         },
       },
-      // TODO: Remove inReview section (and related files) when adding agent comments feature is implemented in backend/other system
       inReview: {
         meta: {
           name: 'In Review',
@@ -113,51 +102,12 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             {
               id: 'reviewer',
               formLoader: () =>
-                import('../forms/ReviewApplication').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/ConfirmationScreen').then((val) =>
+                  Promise.resolve(val.HealthInsuranceConfirmation),
                 ),
-              actions: [
-                {
-                  event: 'MISSING_INFO',
-                  name: 'Missing information',
-                  type: 'primary',
-                },
-              ],
-              write: { answers: ['agentComments'] },
               read: 'all',
             },
           ],
-        },
-        on: {
-          MISSING_INFO: {
-            target: 'missingInfo',
-          },
-        },
-      },
-      missingInfo: {
-        meta: {
-          name: 'Missing information',
-          progress: 0.75,
-          roles: [
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/MissingInfoForm').then((val) =>
-                  Promise.resolve(val.MissingInfoForm),
-                ),
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
-              write: { answers: ['missingInfo'] },
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          REJECT: {
-            target: 'inReview',
-          },
-          SUBMIT: {
-            target: 'inReview',
-          },
         },
       },
     },
