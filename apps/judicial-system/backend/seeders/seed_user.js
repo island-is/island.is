@@ -43,13 +43,13 @@ const localEnv = {
 }
 
 const userSeed = () => {
-  const seedVars = process.env.USER_SEEDS || localEnv.userSeeds
+  const seedVars = localEnv.userSeeds
 
   return seedVars
     .split(',')
     .reduce(
       (seeds, seed) =>
-        seeds.concat(JSON.parse(process.env[seed] || localEnv[seed])),
+        seeds.concat(JSON.parse(localEnv[seed])),
       [],
     )
 }
