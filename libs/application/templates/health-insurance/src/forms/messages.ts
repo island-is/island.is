@@ -413,8 +413,7 @@ export const m = defineMessages({
     id: 'hi.application:waitingPeriod.description',
     defaultMessage:
       'Samkvæmt Þjóðskrá ert þú ekki að flytja til Íslands frá EES landi, Sviss, Grænlandi eða Færeyjum. Það er sex mánaða biðtími áður en sjúkratrygging tekur gildi. Ráðlegt er að kaupa einkatryggingu þangað til opinber sjúkratrygging tekur gildi. Þaðeru nokkrar læknisfræðilegar undanþágur frá þessu ákvæði.',
-    description:
-      'According to Registers Iceland data it seems like you are not moving to Iceland from an EU/EEA country, Switzerland, Greenland or the Faroe Islands. There is a six-month waiting period before qualifying. We advise you to buy private health insurance until you are covered by the national health insurance. There are some Medical exceptions.',
+    description: 'Error message for user if selecting a country outside of EU',
   },
   waitingPeriodButtonText: {
     id: 'hi.application:waitingPeriod.buttonText',

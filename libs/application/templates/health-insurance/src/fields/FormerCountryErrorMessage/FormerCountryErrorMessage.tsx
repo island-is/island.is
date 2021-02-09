@@ -2,23 +2,18 @@ import React, { FC } from 'react'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './InfoMessage.treat'
 import { m } from '../../forms/messages'
 
-const InfoMessage: FC<FieldBaseProps> = ({ application }) => {
+const FormerCountryErrorMessage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box className={styles.marginFix}>
+    <Box marginTop={2}>
       <AlertMessage
-        type="info"
-        title={formatText(
-          m.childrenInfoMessageTitle,
-          application,
-          formatMessage,
-        )}
+        type="error"
+        title={formatText(m.waitingPeriodTitle, application, formatMessage)}
         message={formatText(
-          m.childrenInfoMessageText,
+          m.waitingPeriodDescription,
           application,
           formatMessage,
         )}
@@ -27,4 +22,4 @@ const InfoMessage: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export default InfoMessage
+export default FormerCountryErrorMessage
