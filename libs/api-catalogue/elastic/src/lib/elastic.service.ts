@@ -11,6 +11,8 @@ import { Environment } from 'libs/api-catalogue/consts/src/lib/environment'
 import {
   CatAliases,
   CatIndices,
+  DeleteByQuery,
+  Reindex,
 } from '@elastic/elasticsearch/api/requestParams'
 
 const { elastic } = elasticEnvironment
@@ -87,12 +89,15 @@ export class ElasticService {
    * If the index does not exists it does nothing.
    */
   async deleteIndex(indexName: string): Promise<void> {
-    logger.info('Deleting index')
+    logger.info(`deleteIndex`)
 
+    if (!indexName) throw new Error('Index name missing')
     const { body } = await this.client.indices.exists({
       index: indexName,
     })
+    logger.debug(`body: ${JSON.stringify(body, null, 4)}`)
     if (body) {
+      logger.info(`deleting ${indexName}`)
       await this.client.indices.delete({ index: indexName })
       logger.info(`Index ${indexName} deleted`)
     } else {
@@ -107,7 +112,7 @@ export class ElasticService {
    * @returns  - array of string
    * @memberof ElasticService
    */
-  async getAliasIndexNames(aliasName: string): Promise<string[] | undefined> {
+  async fetchAliasIndexNames(aliasName: string): Promise<string[] | undefined> {
     interface Item {
       alias: string
       index: string
@@ -132,45 +137,37 @@ export class ElasticService {
 
     return ret
   }
-  async getAllAliases(options: CatAliases = { format: 'json' }) {
+  async fetchAllAliases(options: CatAliases = { format: 'json' }) {
     return await this.client.cat.aliases(options).then((result) => result?.body)
   }
 
-  async getAllAliasNames(): Promise<string[]> {
+  async fetchAllAliasNames(): Promise<string[]> {
     interface Item {
       alias: string
     }
 
-    const aliasesNames: Array<string> = []
-    const body = await this.getAllAliases({ h: 'alias', format: 'json' })
-    if (body) {
-      const list = body as Array<Item>
-      list.forEach((item) => {
-        if (item.alias) aliasesNames.push(item.alias)
-      })
-    }
+    let aliasesNames: Array<string> = []
+    const body = await this.fetchAllAliases({ h: 'alias', format: 'json' })
+    aliasesNames = body?.map((item: Item) => item.alias)
 
     return aliasesNames
   }
 
-  async getAllIndices(options: CatIndices = { format: 'json' }) {
+  async fetchAllIndices(options: CatIndices = { format: 'json' }) {
     return await this.client.cat.indices(options).then((result) => result?.body)
   }
-  async getAllIndexNames() {
+  async fetchAllIndexNames(): Promise<string[]> {
     interface Item {
       index: string
     }
 
-    const indices: Array<string> = []
-    const body = await this.getAllIndices({ h: 'index', format: 'json' })
-    if (body) {
-      const list = body as Array<Item>
-      list.forEach((item) => {
-        if (item.index) indices.push(item.index)
-      })
-    }
-
-    return indices
+    return await this.fetchAllIndices({ h: 'index', format: 'json' }).then(
+      (resultBody) => {
+        let arr: Array<string> = []
+        arr = resultBody?.map((item: Item) => item.index)
+        return arr
+      },
+    )
   }
 
   /**
@@ -179,16 +176,15 @@ export class ElasticService {
    *
    * See: getWorkerPrefix() for more info on naming convention.
    *
-   * @memberof ElasticService
    */
   async deleteDanglingIndices() {
-    const indices = await this.getAllIndexNames()
-    logger.debug('deleteIndicesWithoutAliases -> all indices ' + indices)
+    logger.debug('Delete dangling indices started')
+    const indices = await this.fetchAllIndexNames()
     if (indices) {
-      const activeIndices = await this.getAliasIndexNames(
+      const activeIndices = await this.fetchAliasIndexNames(
         this.getWorkerPrefix(),
       )
-      logger.debug(`activeIndices:${activeIndices}`)
+      logger.debug('activeIndices', activeIndices)
 
       // Get all indices associated with us in this environment except the ones
       // which are being used in current environment alias.
@@ -200,8 +196,11 @@ export class ElasticService {
       if (workers.length) {
         logger.debug(`deleting indices:  ${JSON.stringify(workers, null, 4)}`)
         await this.client.indices.delete({ index: workers })
+      } else {
+        logger.debug(`No dangling indices to delete.`)
       }
     }
+    logger.debug('Delete dangling indices finished')
   }
 
   /**
@@ -243,12 +242,28 @@ export class ElasticService {
   async updateAlias() {
     //todo: we need delete index because we are changing it to a alias
     //todo: remove next line when this index has been deleted in all environments
-    this.deleteIndex(this.getAliasName())
 
     logger.info(`Updating alias: "${this.getWorkerPrefix()}"`)
-    logger.debug(`All aliases ${await this.getAllAliasNames()}`)
 
-    const oldIndices = await this.getAliasIndexNames(this.getWorkerPrefix())
+    const allAliases = await this.fetchAllAliasNames()
+    logger.debug(`All aliases ${allAliases}`)
+
+    if (!allAliases.indexOf(this.getAliasName())) {
+      //todo: We are on a old environment where a index with current alias name exists.
+      logger.info(
+        'Todo: Remove this after it has been run on all environments.',
+      )
+      logger.info(
+        `Deleting index "${this.getAliasName()}" so we can use that name as an alias.`,
+      )
+      await this.deleteIndex(this.getAliasName()).catch((err) => {
+        logger.debug(
+          `Index name does not exist, it is an alias and thats how we like it.${err}.`,
+        )
+      })
+    }
+
+    const oldIndices = await this.fetchAliasIndexNames(this.getWorkerPrefix())
     logger.debug(`old indices: ${oldIndices}`)
     const updateOptions: any = {
       body: {
@@ -350,12 +365,18 @@ export class ElasticService {
     return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
   }
 
-  async fetchById(id: string): Promise<ApiResponse<SearchResponse<Service>>> {
+  async fetchById(
+    id: string,
+    index: string = this.getAliasName(),
+  ): Promise<ApiResponse<SearchResponse<Service>>> {
     logger.info('Fetch by id')
     const requestBody = {
       query: { bool: { must: { term: { _id: id } } } },
     }
-    return this.search<SearchResponse<Service>, typeof requestBody>(requestBody)
+    return this.search<SearchResponse<Service>, typeof requestBody>(
+      requestBody,
+      index,
+    )
   }
 
   async fetchAllIds(
@@ -371,6 +392,7 @@ export class ElasticService {
 
     return await this.search<SearchResponse<any>, typeof requestBody>(
       requestBody,
+      index,
     ).then((res) => {
       let arr: Array<string> = []
       arr = res?.body?.hits?.hits?.map((item) => item._id)
@@ -382,35 +404,50 @@ export class ElasticService {
     query: RequestBody,
     index: string = this.getAliasName(),
   ) {
-    logger.debug('Searching for', query)
+    logger.debug(`Searching "${index}" for `, query)
     return await this.client.search<ResponseBody, RequestBody>({
       body: query,
       index: index,
     })
   }
 
-  async deleteByIds(ids: Array<string>) {
+  async deleteByIds(
+    ids: Array<string>,
+    indexName: string = this.getAliasName(),
+  ) {
     if (!ids.length) {
       return
     }
 
-    logger.info('Deleting based on indexes', { ids })
-    return await this.client.delete_by_query({
-      index: this.getAliasName(),
+    if (!indexName) {
+      throw new Error('deleteByIds, index name missing')
+    }
+
+    const params: DeleteByQuery = {
+      index: indexName,
       body: {
         query: {
-          bool: {
-            must: ids.map((id) => ({ match: { _id: id } })),
+          ids: {
+            values: ids,
           },
         },
       },
-    })
+    }
+
+    logger.info('Deleting based on ids', { ids })
+    return await this.client.delete_by_query(params)
   }
 
-  async deleteAllExcept(excludeIds: Array<string>) {
+  async deleteAllExcept(
+    excludeIds: Array<string>,
+    indexName: string = this.getAliasName(),
+  ) {
+    if (!indexName) {
+      throw new Error('deleteAllExcept, index name missing')
+    }
     logger.info('Deleting everything except', { excludeIds })
     return await this.client.delete_by_query({
-      index: this.getAliasName(),
+      index: indexName,
       body: {
         query: {
           bool: {
@@ -472,7 +509,7 @@ export class ElasticService {
     // if "xroadcollector_working" exits return true
     // if "xroadcollector_working" exits return false
     if (environment === Environment.STAGING) return false
-    return true
+    return false
   }
 
   /**
@@ -484,90 +521,236 @@ export class ElasticService {
    * @returns {Environment|null} - Returns Environment if collector is not running in that environment.
                                  - null: If collector is still running in all given environments and max wait time is reached.
    */
-  private waitForCollectorEnvironment(
+  private async waitForCollectorToFinishOnOtherCluster(
     environments: Environment[],
     checkIntervalMilliseconds: number = 1000,
     maxWaitTimeMilliseconds: number = 10000,
-  ): Environment | null {
+  ): Promise<Environment | null> {
     if (!environments || !environments.length) {
       return null
     }
 
-    let now = Date.now()
-    let checkDate = now + checkIntervalMilliseconds
-    const maxWait = now + maxWaitTimeMilliseconds
-
-    while (now < maxWait && now < checkDate) {
-      for (let i = 0; i < environments.length; i++) {
-        if (!this.isCollectorRunning(environments[i])) return environments[i]
-      }
-
-      while (now < checkDate) {
-        now = Date.now()
-      }
-      checkDate = now + checkIntervalMilliseconds
+    const pause = (delay: number) => {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, delay)
+      })
     }
 
+    let now = Date.now()
+    const maxWait = now + maxWaitTimeMilliseconds
+
+    while (now < maxWait) {
+      for (let i = 0; i < environments.length; i++) {
+        if (!this.isCollectorRunning(environments[i])) {
+          return environments[i]
+        }
+      }
+      await pause(checkIntervalMilliseconds)
+      now = Date.now()
+    }
+
+    logger.debug(
+      'waitForCollectorToFinishOnOtherClusters timed out, that is, MaxWait reached!',
+    )
     return null
   }
 
   /**
    * Copies values from a environment located on a different cluster
-   * into the worker index.
    *
    * @private
    * @param {Environment} environment
    */
-  private async copyValuesFromEnvironment(environment: Environment) {
+  private async copyRemoteValues(environment: Environment) {
     //todo: copy values from other environment cluster
+    logger.info(`Copying values from ${environment}`)
+    const externalIndex = `${this.getAliasName()}_${environment}`
+    const externalIds = await this.fetchAllIds(externalIndex)
 
-    // get id of all services in worker index
-    //const localIds = await this.fetchAllIds()
-    const localIds = ['one', 'two', 'three', 'four', 'five']
+    if (!externalIds || !externalIds.length) {
+      return //nothing to do
+    }
 
-    // get ids of all services stored on the other cluster
-    const externalIds = ['two', 'three', 'six', 'seven']
-
-    //find out which services we will need to create in worker index
+    // get id of all services in current environment
+    const localIds = await this.fetchAllIds(this.getWorkerIndexName())
+    //Find services that will need to be merged from external to current environment
     const commonIds = externalIds.filter((id) => localIds.includes(id))
 
-    //find out which services we will need to merge from external to worker index
-    const externalUnique = externalIds.filter((id) => !commonIds.includes(id))
+    //find services that will need to be created in current environment
+    const externalUnique = externalIds.filter((id) => !localIds.includes(id))
+
     logger.debug(`localIds   : ${localIds}`)
     logger.debug(`externalIds   : ${externalIds}`)
-    logger.debug(`externalUnique   : ${externalUnique}`)
     logger.debug(`commonIds   : ${commonIds}`)
-    // get id of all services on other environment
-    // localIds = get all ids that only exist locally
-    // externalIds = get all ids exist in other
-    // onlyExternal = get all ids that only exist in other
-    //
+    logger.debug(`externalUnique   : ${externalUnique}`)
 
-    // if id exists locally and in other
-    //  merge values from other to local object
+    logger.debug(
+      `todo: add merge services with following ids to "${environment}"`,
+      commonIds,
+    )
+    logger.debug(
+      `todo: add services with following ids to "${environment}"`,
+      externalUnique,
+    )
 
-    // if id exits only in other create service in local local
-
-    logger.warning('todo: copyValuesFromEnvironment  ' + environment)
+    return
   }
 
   /**
    *  Copies values from other environments into worker index
    *
    */
-  copyValuesFromOtherEnvironments() {
+  async copyValuesFromOtherEnvironments() {
+    logger.info('`Copying values from other environments')
+    const otherEnvironments = this.getOtherEnvironments()
+    logger.debug(
+      `Copying values from other environments to`,
+      this.getEnvironment(),
+    )
     logger.info(
-      `Copying values from other environments to :${this.environment}`,
+      `Environments to copy from: ${JSON.stringify(
+        otherEnvironments,
+        null,
+        4,
+      )}`,
     )
 
-    let environments = this.getOtherEnvironments()
-    logger.info(`Environments to copy from: ${environments}`)
-
-    let environment = this.waitForCollectorEnvironment(environments)
+    let environment = await this.waitForCollectorToFinishOnOtherCluster(
+      otherEnvironments,
+    )
     while (environment) {
-      this.copyValuesFromEnvironment(environment)
-      environments = environments.filter((e) => e !== environment)
-      environment = this.waitForCollectorEnvironment(environments)
+      logger.debug(
+        `processing "${environment}", environments:"${otherEnvironments}"`,
+      )
+      await this.copyRemoteValues(environment)
+
+      otherEnvironments.splice(otherEnvironments.indexOf(environment), 1)
+
+      environment = await this.waitForCollectorToFinishOnOtherCluster(
+        otherEnvironments,
+      )
     }
+
+    logger.info(`Copying values from other environments finished`)
+  }
+
+  async reIndex(
+    sourceIndexName: string,
+    destIndexName: string,
+    scriptSource: string = '',
+  ) {
+    type Param = Reindex & {
+      body: {
+        script?: {
+          lang: string
+          source: string
+        }
+      }
+    }
+
+    const param: Param = {
+      wait_for_completion: true,
+      refresh: true,
+      body: {
+        source: { index: sourceIndexName },
+        dest: { index: destIndexName },
+      },
+    }
+    if (scriptSource) {
+      param.body.script = {
+        lang: 'painless',
+        source: scriptSource,
+      }
+    }
+    console.log(param)
+    try {
+      await this.client.reindex(param)
+    } catch (err) {
+      logger.error(`error : ${JSON.stringify(err, null, 4)}`)
+    }
+  }
+
+  /**
+   * Copies values from source index to other environment indexes
+   *
+   * @param {string} sourceIndex
+   * @param {Environment[]} environments
+   * @memberof ElasticService
+   */
+  async createMocks(sourceIndex: string, environments: Environment[]) {
+    let instance: string
+
+    logger.debug('-- Creating mocks started  -- ')
+    //Copying values from source index and inserting
+    // modified data into destination indices
+    for (let i = 0; i < environments.length; i++) {
+      const environment = environments[i]
+      switch (environment) {
+        case Environment.DEV:
+          instance = 'IS-DEV'
+          break
+        case Environment.STAGING:
+          instance = 'IS-TEST'
+          break
+        case Environment.PROD:
+          instance = 'IS'
+          break
+      }
+
+      const newIndex = `${this.getAliasName()}_${environment}`
+      logger.debug(`deleting index ${newIndex}`)
+      await this.deleteIndex(newIndex)
+      logger.debug(
+        `copying all from index "${sourceIndex}" to index "${newIndex}"`,
+      )
+      logger.debug(
+        're-indexing and replacing field values "environment and details[0].xroadIdentifier.instance" in first record of environments',
+      )
+      await this.reIndex(
+        sourceIndex,
+        newIndex,
+        `ctx._source.environments[0].environment = '${environment}';ctx._source.environments[0].details[0].xroadIdentifier.instance = '${instance}'`,
+      )
+        .then(() => {
+          logger.debug(`Re-indexing done!`)
+        })
+        .catch((err) =>
+          logger.info(`Re index error ${JSON.stringify(err, null, 4)}`),
+        )
+    }
+
+    logger.debug(`Done cloning environments: "${environments}"`)
+    logger.debug(
+      `Removing first three services from source index named ${sourceIndex}`,
+    )
+    const idsToRemoveFromSourceIndex = (
+      await this.fetchAllIds(sourceIndex)
+    ).slice(0, 3)
+    await this.deleteByIds(idsToRemoveFromSourceIndex, sourceIndex)
+      .then((res) =>
+        logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
+      )
+      .catch((err) => logger.debug('deleteById error', err))
+
+    for (let i = 0; i < environments.length; i++) {
+      const environment = environments[i]
+      const newIndex = `${this.getAliasName()}_${environment}`
+      const delCount = 2 * (i + 1)
+      logger.debug(
+        `Removing last ${delCount} services from cloned environment index "${newIndex}"`,
+      )
+      const idsToRemoveFromNewIndex = (await this.fetchAllIds(newIndex)).slice(
+        delCount * -1,
+      )
+      logger.debug(
+        `Deleting service with ids: "${idsToRemoveFromNewIndex}"  from ${newIndex}`,
+      )
+      await this.deleteByIds(idsToRemoveFromNewIndex, newIndex)
+        .then((res) =>
+          logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
+        )
+        .catch((err) => logger.debug('deleteById error', err))
+    }
+    logger.debug('-- Creating mocks finished -- ')
   }
 }

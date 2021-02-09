@@ -98,12 +98,14 @@ export class RestServiceCollector implements ServiceCollector {
     await this.elasticService.updateAlias()
     logger.debug(`Done updating values at: ${new Date().toISOString()}`)
 
+    logger.info('Processing other environments.')
+    //TODO: remove createMocks when you are able to copy from other clusters
+    await this.elasticService.createMocks(this.elasticService.getWorkerIndexName(), [Environment.STAGING, Environment.PROD])
     await this.elasticService.copyValuesFromOtherEnvironments()
-
     //TODO: if another instance of the collector is running in the same
     //TODO: environment, the line below, will delete it's index.
     await this.elasticService.deleteDanglingIndices()
-
     logger.info(`Collecting done on ${this.elasticService.getEnvironment()}`)
   }
+
 }
