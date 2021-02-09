@@ -162,7 +162,23 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
 
   return (
     <GridContainer>
-      <GridRow className={styles.tabPanelRow}>
+      <GridRow
+        className={styles.tabPanelRow}
+        direction={['row', 'row', 'rowReverse']}
+      >
+        <GridColumn span={['12/12', '12/12', '5/12', '4/12']}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            height="full"
+            justifyContent="center"
+          >
+            <LottieLoader
+              animationData={animationData}
+              selectedIndex={selectedIndex}
+            />
+          </Box>
+        </GridColumn>
         <GridColumn hiddenBelow="lg" span="1/12" />
         <GridColumn span={['12/12', '12/12', '7/12', '6/12']} position="static">
           <Box ref={contentRef}>
@@ -321,19 +337,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
             {searchContent}
           </Box>
         </GridColumn>
-        <GridColumn hiddenBelow="md" span={['0', '0', '5/12', '4/12']}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            height="full"
-            justifyContent="center"
-          >
-            <LottieLoader
-              animationData={animationData}
-              selectedIndex={selectedIndex}
-            />
-          </Box>
-        </GridColumn>
+
         <GridColumn hiddenBelow="lg" span="1/12" />
       </GridRow>
     </GridContainer>
