@@ -10,6 +10,9 @@ export default {
   drivingLicense: {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
+  education: {
+    secret: process.env.EDUCATION_SECRET,
+  },
   nationalRegistry: {
     baseSoapUrl: 'https://localhost:8443',
     user: process.env.SOFFIA_USER ?? '',
@@ -40,6 +43,7 @@ export default {
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
   documentProviderService: {
+    documentsServiceBasePath: 'http://localhost:3369',
     test: {
       basePath:
         'https://test-documentprovidermanagement-island-is.azurewebsites.net',
@@ -54,5 +58,10 @@ export default {
       clientSecret: process.env.DOCUMENT_PROVIDER_CLIENT_SECRET ?? '',
       tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
     },
+  },
+  syslumennService: {
+    url: process.env.SYSLUMENN_HOST ?? '',
+    username: process.env.SYSLUMENN_USERNAME ?? '',
+    password: process.env.SYSLUMENN_PASSWORD ?? '',
   },
 }

@@ -10,16 +10,13 @@ import {
 
 import { VistaSkjalModel } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
-import { BucketService } from './bucket.service'
 import { VistaSkjalInput } from '../types'
 
 @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
-@Resolver(() => String) // @UseGuards(IdsAuthGuard, Sco// @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/propesGuard) // TODO: enable when go to dev/pro
-// @UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
+@Resolver(() => String)
 export class HealthInsuranceResolver {
   constructor(
     private readonly healthInsuranceService: HealthInsuranceService,
-    private readonly bucketService: BucketService,
   ) {}
 
   @Query(() => String, {
@@ -58,14 +55,5 @@ export class HealthInsuranceResolver {
     @CurrentUser() user: AuthUser,
   ): Promise<VistaSkjalModel> {
     return this.healthInsuranceService.applyInsurance(inputs, user.nationalId)
-  }
-
-  /* TEST */
-  @Query(() => String)
-  async healthInsuranceBtest(): Promise<string | undefined> {
-    console.log('testing...')
-    // return this.bucketService.getFileContent('smasaga.txtx')
-    const res = await this.bucketService.getFileContent('tux.png')
-    return res?.body
   }
 }

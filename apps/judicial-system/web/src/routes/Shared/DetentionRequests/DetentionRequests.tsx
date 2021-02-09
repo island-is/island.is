@@ -4,10 +4,6 @@ import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
 import cn from 'classnames'
 import {
-  JudgeLogo,
-  ProsecutorLogo,
-} from '@island.is/judicial-system-web/src/shared-components/Logos'
-import {
   AlertMessage,
   Button,
   Text,
@@ -19,6 +15,7 @@ import {
 import {
   DropdownMenu,
   Loading,
+  Logo,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -150,7 +147,7 @@ export const DetentionRequests: React.FC = () => {
         } else {
           return {
             color: 'blue',
-            text: 'virkt',
+            text: 'Virkt',
           }
         }
       case CaseState.REJECTED:
@@ -239,9 +236,10 @@ export const DetentionRequests: React.FC = () => {
     <div className={styles.detentionRequestsContainer}>
       {user && (
         <div className={styles.logoContainer}>
-          {isJudge ? <JudgeLogo /> : <ProsecutorLogo />}
+          <Logo />
           {!isJudge && (
             <DropdownMenu
+              menuLabel="Tegund kröfu"
               icon="add"
               items={[
                 {
@@ -378,13 +376,13 @@ export const DetentionRequests: React.FC = () => {
                     <Text>
                       {c.accusedNationalId && (
                         <Text as="span" variant="small" color="dark400">
-                          {`(${
+                          {`kt: ${
                             insertAt(
                               c.accusedNationalId.replace('-', ''),
                               '-',
                               6,
                             ) || '-'
-                          })`}
+                          }`}
                         </Text>
                       )}
                     </Text>
@@ -397,11 +395,18 @@ export const DetentionRequests: React.FC = () => {
                     </Text>
                   </td>
                   <td className={styles.td}>
-                    <Text as="span">
-                      {c.type === CaseType.CUSTODY
-                        ? 'Gæsluvarðhald'
-                        : 'Farbann'}
-                    </Text>
+                    <Box component="span" display="flex" flexDirection="column">
+                      <Text as="span">
+                        {c.type === CaseType.CUSTODY
+                          ? 'Gæsluvarðhald'
+                          : 'Farbann'}
+                      </Text>
+                      {c.parentCase && (
+                        <Text as="span" variant="small" color="dark400">
+                          Framlenging
+                        </Text>
+                      )}
+                    </Box>
                   </td>
                   <td className={styles.td}>
                     <Tag

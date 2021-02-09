@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
-import { ListObjectsOutput } from 'aws-sdk/clients/s3'
 import * as S3 from 'aws-sdk/clients/s3'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -11,49 +10,37 @@ const s3 = new AWS.S3({
   region: REGION,
 })
 
-export interface Base64FileType {
-  body: string
-  fileName: string
-  contentType: string
-}
-
 @Injectable()
 export class BucketService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
-  /* TEST */
-  async getFileContent(filename: string): Promise<Base64FileType | undefined> {
-    this.logger.info('getFileContent...')
+  /* */
+  async getFileContentAsBase64(filename: string): Promise<string> {
+    this.logger.info('getFileContent base64...')
     try {
-      //todo ath með undefined
       const sm = await this.getFile(filename)
-      this.logger.debug(JSON.stringify(sm))
-      if (sm.Body && sm.ContentType) {
-        return {
-          fileName: filename,
-          contentType: sm.ContentType,
-          body: sm.Body.toString('base64'),
-        }
+      if (sm.Body) {
+        this.logger.info('found file:' + filename)
+        return sm.Body.toString('base64')
       } else {
-        throw new Error('file not found')
+        throw new Error('error getting file:' + filename)
       }
     } catch (error) {
-      this.logger.error('error getting file:' + filename)
       this.logger.error(error.message)
       throw new Error(error.message)
     }
   }
-
-  /* TEST */
-  async getList(): Promise<ListObjectsOutput> {
-    this.logger.info('get bucket list...')
-    const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
-    return list
+  /* */
+  async getFileFromUrl(urlToFile: string): Promise<S3.GetObjectOutput> {
+    const spurl = urlToFile.split('/')
+    const fn = spurl[spurl.length - 1]
+    // console.log(fn)
+    return this.getFile(fn)
   }
 
-  /* TEST */
-  async getFile(fileToGet: string): Promise<S3.GetObjectOutput> {
-    this.logger.info('get bucket file:' + fileToGet)
+  /* */
+  async getFile(filename: string): Promise<S3.GetObjectOutput> {
+    this.logger.info('get bucket file:' + filename)
     return new Promise((resolve, reject) => {
       s3.createBucket(
         {
@@ -62,7 +49,7 @@ export class BucketService {
         function () {
           const params = {
             Bucket: BUCKET_NAME,
-            Key: fileToGet,
+            Key: filename,
           }
           s3.getObject(params, function (err, data) {
             if (err) {
@@ -74,5 +61,16 @@ export class BucketService {
         },
       )
     })
+  }
+
+  /* for test */
+  async getNumberOfFiles(): Promise<number> {
+    this.logger.info('getNumberOfFiles in bucket,  ...')
+    const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
+    let num = 0
+    for (const x of list.Contents!) {
+      num++
+    }
+    return num
   }
 }

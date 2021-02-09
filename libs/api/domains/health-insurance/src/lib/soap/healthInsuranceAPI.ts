@@ -16,7 +16,7 @@ import {
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
-import { BucketService } from '../graphql/bucket.service'
+import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -139,12 +139,12 @@ export class HealthInsuranceAPI {
     ) {
       attachments += '<fylgiskjol>'
       for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
-        const resultStr = await this.bucketService.getFileContent(
+        const resultStr = await this.bucketService.getFileContentAsBase64(
           inputObj.attachmentsFileNames[i],
         )
         attachments += `<fylgiskjal>
                           <heiti>${inputObj.attachmentsFileNames[i]}</heiti>
-                          <innihald>${resultStr?.body}</innihald>
+                          <innihald>${resultStr}</innihald>
                         </fylgiskjal>`
       }
       attachments += '</fylgiskjol>'

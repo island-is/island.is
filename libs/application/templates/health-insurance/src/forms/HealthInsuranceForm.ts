@@ -19,7 +19,7 @@ import {
   ExternalData,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO } from '../constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
 import { StatusTypes } from '../types'
 import Logo from '../assets/Logo'
 import { shouldShowModal } from '../healthInsuranceUtils'
@@ -40,6 +40,24 @@ export const HealthInsuranceForm: Form = buildForm({
           subTitle: m.externalDataSubtitle.defaultMessage,
           checkboxLabel: m.externalDataCheckbox.defaultMessage,
           dataProviders: [
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.nationalRegistryTitle,
+              subTitle: m.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'directorateOfLabor',
+              type: undefined,
+              title: m.directorateOfLaborTitle,
+              subTitle: m.directorateOfLaborSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'internalRevenue',
+              type: undefined,
+              title: m.internalRevenueTitle,
+              subTitle: m.internalRevenueSubTitle,
+            }),
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
@@ -63,24 +81,6 @@ export const HealthInsuranceForm: Form = buildForm({
               type: 'OldPendingApplications',
               title: '',
               subTitle: '',
-            }),
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'directorateOfLabor',
-              type: undefined,
-              title: m.directorateOfLaborTitle,
-              subTitle: m.directorateOfLaborSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'internalRevenue',
-              type: undefined,
-              title: m.internalRevenueTitle,
-              subTitle: m.internalRevenueSubTitle,
             }),
           ],
         }),
@@ -111,6 +111,7 @@ export const HealthInsuranceForm: Form = buildForm({
             buildFileUploadField({
               id: 'confirmationOfResidencyDocument',
               title: '',
+              maxSize: FILE_SIZE_LIMIT,
               introduction: m.confirmationOfResidencyFileUpload,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
@@ -174,16 +175,6 @@ export const HealthInsuranceForm: Form = buildForm({
                 (application.externalData.nationalRegistry?.data as {
                   city?: string
                 })?.city,
-            }),
-            buildTextField({
-              id: 'applicant.nationality',
-              title: m.nationality,
-              width: 'half',
-              disabled: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  citizenship?: string
-                })?.citizenship,
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
@@ -272,6 +263,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'confirmationOfStudies',
               title: '',
               introduction: '',
+              maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: (answers) => answers.status === StatusTypes.STUDENT,
@@ -354,7 +346,7 @@ export const HealthInsuranceForm: Form = buildForm({
               ],
             }),
             buildTextField({
-              id: 'formerInsurance.additionalInformation',
+              id: 'formerInsurance.entitlementReason',
               title: m.formerInsuranceAdditionalInformation,
               placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
               variant: 'textarea',
@@ -409,6 +401,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalInfo.files',
               title: '',
               introduction: '',
+              maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: {

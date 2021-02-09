@@ -5,6 +5,7 @@ import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
+import { EducationModule } from '@island.is/api/domains/education'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
@@ -19,6 +20,7 @@ import { HealthController } from './health.controller'
 import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -54,6 +56,11 @@ const autoSchemaFile = environment.production
       xroadClientId: environment.xroad.clientId,
       secret: environment.drivingLicense.secret,
     }),
+    EducationModule.register({
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
+      secret: environment.education.secret,
+    }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
     }),
@@ -78,6 +85,8 @@ const autoSchemaFile = environment.production
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
+      documentsServiceBasePath:
+        environment.documentProviderService.documentsServiceBasePath,
     }),
     TranslationsModule,
     TerminusModule,
@@ -103,6 +112,11 @@ const autoSchemaFile = environment.production
       audience: environment.identityServer.audience,
       issuer: environment.identityServer.issuer,
       jwksUri: `${environment.identityServer.jwksUri}`,
+    }),
+    SyslumennModule.register({
+      url: environment.syslumennService.url,
+      username: environment.syslumennService.username,
+      password: environment.syslumennService.password,
     }),
   ],
 })

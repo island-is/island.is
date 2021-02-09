@@ -6,10 +6,7 @@ import { VistaSkjalInput } from './types'
 
 @Injectable()
 export class HealthInsuranceService {
-  constructor(
-    private healthInsuranceAPI: HealthInsuranceAPI,
-  )
-  {}
+  constructor(private healthInsuranceAPI: HealthInsuranceAPI) {}
 
   getProfun(): Promise<string> {
     return this.healthInsuranceAPI.getProfun()
