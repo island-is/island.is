@@ -1,16 +1,16 @@
 export interface GetVistaSkjalDtoType {
-    VistaSkjalType: VistaSkjalType
+  VistaSkjalType: VistaSkjalType
 }
 interface VistaSkjalType {
-    tokst: number
-    villulysing?: string
-    radnumer_si?: number
-    skjalanumer_si?: number
-    villulisti?: VilluListi[]
+  tokst: number
+  villulysing?: string
+  radnumer_si?: number
+  skjalanumer_si?: number
+  villulisti?: VilluListi[]
 }
 interface VilluListi {
-    linunumer?: number
-    villa?: number
-    tegundvillu?: string
-    villulysinginnri?: string
+  linunumer?: number
+  villa?: number
+  tegundvillu?: string
+  villulysinginnri?: string
 }

@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
 
 import { VistaSkjalModel } from './graphql/models'
 import { HealthInsuranceAPI } from './soap'
 import { VistaSkjalInput } from './types'
-// import { ApplicationService } from '../../../application/src/lib/application.service'
-// import { GetApplicationInput } from '../../../application/src/lib/dto/getApplication.input'
 
 @Injectable()
 export class HealthInsuranceService {
-  constructor(private healthInsuranceAPI: HealthInsuranceAPI,
-    // private applicationServe: ApplicationService
-    ) {}
+  constructor(
+    private healthInsuranceAPI: HealthInsuranceAPI,
+  )
+  {}
 
   getProfun(): Promise<string> {
     return this.healthInsuranceAPI.getProfun()
@@ -27,8 +25,11 @@ export class HealthInsuranceService {
     return this.healthInsuranceAPI.isHealthInsured(nationalId)
   }
 
-  async applyInsurance(inputs: VistaSkjalInput, auth: string): Promise<VistaSkjalModel>{
-    // const res = this.applicationServe.findOne("balabala", auth)
-    return this.healthInsuranceAPI.applyInsurance(570, inputs)
+  // Apply for Health insurance ( number 570 is identify number for health insurance application)
+  async applyInsurance(
+    inputs: VistaSkjalInput,
+    nationalId: string,
+  ): Promise<VistaSkjalModel> {
+    return this.healthInsuranceAPI.applyInsurance(570, inputs, nationalId)
   }
 }

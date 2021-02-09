@@ -5,9 +5,9 @@ export class VistaSkjalModel {
   @Field(() => Boolean)
   isSucceeded!: boolean
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   caseId?: number
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   comment?: string
 }
