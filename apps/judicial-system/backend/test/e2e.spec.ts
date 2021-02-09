@@ -249,7 +249,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 describe('User', () => {
-  it('GET /api/user/:nationalId should get the  user', async () => {
+  it('GET /api/user/:nationalId should get the user', async () => {
     const nationalId = '2222222222'
     let dbUser: User
 
