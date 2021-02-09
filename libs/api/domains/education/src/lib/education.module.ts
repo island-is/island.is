@@ -2,12 +2,20 @@ import { Module, DynamicModule } from '@nestjs/common'
 
 import { MainResolver } from './graphql'
 import { EducationService } from './education.service'
+import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { MMSApi } from './client'
 
 export interface Config {
   xroadBaseUrl: string
   xroadClientId: string
   secret: string
+  emailOptions: {
+    sendFromEmail: string
+    useTestAccount: boolean
+    options?: {
+      region: string
+    }
+  }
 }
 
 @Module({})
@@ -19,6 +27,10 @@ export class EducationModule {
         MainResolver,
         EducationService,
         {
+          provide: 'CONFIG',
+          useFactory: async () => config as Config,
+        },
+        {
           provide: MMSApi,
           useFactory: async () =>
             new MMSApi(
@@ -27,6 +39,11 @@ export class EducationModule {
               config.secret,
             ),
         },
+        {
+          provide: EMAIL_OPTIONS,
+          useValue: config.emailOptions,
+        },
+        EmailService,
       ],
       exports: [],
     }
