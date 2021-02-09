@@ -48,6 +48,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
             <GridRow>
               {organizationPage.footerItems.map((item, index) => (
                 <GridColumn
+                  key={index}
                   span={['12/12', '6/12', '4/12', '1/5']}
                   className={index === 0 ? styles.footerItemFirst : null}
                 >

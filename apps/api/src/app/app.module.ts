@@ -85,6 +85,8 @@ const autoSchemaFile = environment.production
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
+      documentsServiceBasePath:
+        environment.documentProviderService.documentsServiceBasePath,
     }),
     TranslationsModule,
     TerminusModule,
