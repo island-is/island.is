@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Select, Option } from '@island.is/island-ui/core'
+import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
 
 interface Props {
   error?: string
@@ -12,6 +12,7 @@ interface Props {
   options?: Option[]
   placeholder?: string
   onSelect?: (s: Option, onChange: (t: unknown) => void) => void
+  backgroundColor?: InputBackgroundColor
 }
 export const SelectController: FC<Props> = ({
   error,
@@ -23,14 +24,17 @@ export const SelectController: FC<Props> = ({
   options = [],
   placeholder,
   onSelect,
+  backgroundColor,
 }) => {
   const { clearErrors } = useFormContext()
+  console.log('selectController', backgroundColor)
   return (
     <Controller
       {...(defaultValue !== undefined && { defaultValue })}
       name={name}
       render={({ onChange, value }) => (
         <Select
+          backgroundColor={backgroundColor}
           hasError={error !== undefined}
           disabled={disabled}
           id={id}

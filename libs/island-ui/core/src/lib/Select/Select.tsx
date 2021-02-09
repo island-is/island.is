@@ -72,6 +72,7 @@ export const Select = ({
       className={cn(styles.wrapper, styles.wrapperColor[backgroundColor])}
       data-testid={`select-${name}`}
     >
+      {console.log('select', backgroundColor)}
       <ReactSelect
         instanceId={id}
         noOptionsMessage={() => noOptionsMessage || null}

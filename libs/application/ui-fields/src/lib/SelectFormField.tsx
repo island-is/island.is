@@ -4,7 +4,7 @@ import {
   formatText,
   SelectField,
 } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { Box, InputBackgroundColor } from '@island.is/island-ui/core'
 import {
   SelectController,
   FieldDescription,
@@ -25,12 +25,14 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
     placeholder,
     disabled,
     onSelect,
+    backgroundColor,
   } = field
   const { formatMessage } = useLocale()
   const finalOptions = useMemo(() => buildOptions(options, application), [
     options,
     application,
   ])
+  console.log('selectFormField', backgroundColor)
   return (
     <div>
       {description && (
@@ -47,6 +49,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
           disabled={disabled}
           error={error}
           id={id}
+          backgroundColor={backgroundColor}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),
