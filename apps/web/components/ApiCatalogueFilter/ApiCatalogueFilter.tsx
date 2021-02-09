@@ -1,7 +1,7 @@
-import { 
-  Filter, 
-  FilterInput, 
-  FilterMultiChoice 
+import {
+  Filter,
+  FilterInput,
+  FilterMultiChoice,
 } from '@island.is/island-ui/core'
 import React from 'react'
 
@@ -39,7 +39,7 @@ interface ApiCatalogueFilterProps {
   categories: Array<FilterCategory>
 }
 
-export const ApiCatalogueFilter : React.FC<ApiCatalogueFilterProps> = ({
+export const ApiCatalogueFilter: React.FC<ApiCatalogueFilterProps> = ({
   isDialog = false,
   labelClear,
   labelOpen,
@@ -54,7 +54,7 @@ export const ApiCatalogueFilter : React.FC<ApiCatalogueFilterProps> = ({
   labelCategoryClear,
   onCategoryChange,
   onCategoryClear,
-  categories
+  categories,
 }) => {
   return (
     <Filter
@@ -78,8 +78,7 @@ export const ApiCatalogueFilter : React.FC<ApiCatalogueFilterProps> = ({
         onChange={onCategoryChange}
         onClear={onCategoryClear}
         categories={categories}
-      >
-      </FilterMultiChoice>
+      ></FilterMultiChoice>
     </Filter>
   )
 }

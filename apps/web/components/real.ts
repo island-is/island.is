@@ -61,6 +61,9 @@ export * from './ServiceList'
 export * from './OpenApiView'
 export * from './OpenApiDocumentation'
 export * from './InstitutionPanel/InstitutionPanel'
+<<<<<<< HEAD
 export * from './InstitutionsPanel/InstitutionsPanel'
 export * from './Organization/'
+=======
+>>>>>>> 054d07a1... formatting
 export * from './ApiCatalogueFilter/ApiCatalogueFilter'

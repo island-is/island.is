@@ -21,7 +21,7 @@ import {
   SubpageDetailsContent,
   SubpageMainContent,
   RichText,
-  ApiCatalogueFilter
+  ApiCatalogueFilter,
 } from '@island.is/web/components'
 
 import getConfig from 'next/config'
@@ -356,7 +356,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                     inputPlaceholder={fn('search')}
                     inputValue={parameters.query}
                     onInputChange={(value) =>
-                        setParameters({ ...parameters, query: value })}
+                      setParameters({ ...parameters, query: value })
+                    }
                     labelCategoryClear={fn('clearCategory')}
                     onCategoryChange={({ categoryId, selected }) => {
                       setParameters({
@@ -370,12 +371,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                         [categoryId]: [],
                       })
                     }
-                    categories={filterCategories} 
+                    categories={filterCategories}
                   />
                 </Box>
               }
             >
-
               <Box display={['block', 'block', 'none']} paddingBottom={4}>
                 {/* <ApiCatalogueFilter isDialog={true} /> */}
                 <ApiCatalogueFilter
@@ -398,7 +398,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   inputPlaceholder={fn('search')}
                   inputValue={parameters.query}
                   onInputChange={(value) =>
-                      setParameters({ ...parameters, query: value })}
+                    setParameters({ ...parameters, query: value })
+                  }
                   labelCategoryClear={fn('clearCategory')}
                   onCategoryChange={({ categoryId, selected }) => {
                     setParameters({
@@ -412,7 +413,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       [categoryId]: [],
                     })
                   }
-                  categories={filterCategories} 
+                  categories={filterCategories}
                 />
               </Box>
 
