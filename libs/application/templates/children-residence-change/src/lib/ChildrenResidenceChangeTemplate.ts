@@ -32,7 +32,7 @@ const dataSchema = z.object({
     .email('Netfang þarf að vera löglegt, t.d. netfang@netfang.is'),
   phoneNumber: z
     .string()
-    .length(7, { message: 'Símanúmer þarf að vera 7 tölustafir' }),
+    .min(7, { message: 'Símanúmer þarf að vera 7 tölustafir' }),
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, 'Samþykkja þarf breytingu'),
