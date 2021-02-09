@@ -20,6 +20,7 @@ import {
   TableOfContents,
   Button,
   Tag,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -336,6 +337,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
+  const categoryHref = linkResolver('articlecategory', [article.category.slug])
+    .href
 
   return (
     <>
@@ -406,34 +409,38 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         >
           {!!article.category && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-              <Text truncate>
-                <Link
-                  href={linkResolver('articlecategory', [
-                    article.category.slug,
-                  ])}
-                >
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="small"
-                    type="button"
-                    variant="text"
-                  >
-                    {article.category.title}
-                  </Button>
-                </Link>
-              </Text>
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <Link href={href} pureChildren skipTab>
+                      {children}
+                    </Link>
+                  ),
+                }}
+              >
+                <Text truncate>
+                  <a href={categoryHref}>
+                    <Button
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                    >
+                      {article.category.title}
+                    </Button>
+                  </a>
+                </Text>
+              </LinkContext.Provider>
             </Box>
           )}
           {article.organization.length > 0 && (
             <Box minWidth={0}>
-              <Tag
-                variant="purple"
-                truncate
-                href={article.organization[0].link}
-              >
-                {article.organization[0].title}
-              </Tag>
+              <Link href={article.organization[0].link} skipTab>
+                <Tag variant="purple" truncate>
+                  {article.organization[0].title}
+                </Tag>
+              </Link>
             </Box>
           )}
         </Box>
