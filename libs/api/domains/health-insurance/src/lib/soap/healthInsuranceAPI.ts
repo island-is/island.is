@@ -16,6 +16,7 @@ import {
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
+import { BucketService } from '../graphql/bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -31,6 +32,8 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
+    @Inject(BucketService)
+    private bucketService: BucketService,
   ) {}
 
   public async getProfun(): Promise<string> {
@@ -125,28 +128,20 @@ export class HealthInsuranceAPI {
     logger.info(
       `--- Starting applyInsurance api call ---`,
     )
-
-    // var fs = require('fs')
-
-    // let buff = fs.readFileSync('C:/Users/qdong/Downloads/kitten.jpg')
-    // let resultStr = buff.toString('base64')
-    // console.log('Image converted to base 64 is:\n\n' + resultStr)
-
-    const request = require('request-promise-native');
-
-    let jpgDataUrlPrefix = 'data:image/png;base64,';
-    let imageUrl         = 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
-
-    const resultStr = await request({
-      url: imageUrl,
-      method: 'GET',
-      encoding: null // This is actually important, or the image string will be encoded to the default encoding
-    })
-    .then((result: any) => {
-      let imageBuffer  = Buffer.from(result);
-      return imageBuffer.toString('base64');
-    });
-
+    
+    // Add attachments from S3 bucket
+    let attachments = ''
+    if (inputObj.attachmentsFileNames){
+      attachments += '<fylgiskjol>'
+      for (let i = 0; i < inputObj.attachmentsFileNames.length; i++){
+        const resultStr = await this.bucketService.getFileContent(inputObj.attachmentsFileNames[i])
+        attachments += `<fylgiskjal>
+                          <heiti>${inputObj.attachmentsFileNames[i]}</heiti>
+                          <innihald>${resultStr}</innihald>
+                        </fylgiskjal>`
+      }
+      attachments += '</fylgiskjol>'
+    }
     
     // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
 
@@ -214,16 +209,7 @@ export class HealthInsuranceAPI {
       <fyrriutgafustofnunlands>${inputObj.previousIssuingInstitution}</fyrriutgafustofnunlands>
       <tryggdurfyrralandi>${inputObj.isHealthInsuredInPreviousCountry}</tryggdurfyrralandi>
       <vidbotarupplysingar>${inputObj.additionalInformation ?? ''}</vidbotarupplysingar>
-      <fylgiskjol>
-        <fylgiskjal>
-          <heiti>googlelogo_color_272x92dp.png</heiti>
-          <innihald>${resultStr}</innihald>
-        </fylgiskjal>
-        <fylgiskjal>
-          <heiti>googlelogo_color_272x92dp.png</heiti>
-          <innihald>${resultStr}</innihald>
-        </fylgiskjal>
-      </fylgiskjol>
+      ${attachments}
     </sjukratryggingumsokn>]]>`
 
     const args = {
