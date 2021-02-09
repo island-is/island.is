@@ -423,59 +423,60 @@ export class ApplicationController {
 
     const [hasChanged, newState, newApplication] = helper.changeState(event)
 
-    if (hasChanged) {
-      const {
-        updatedApplication,
-      } = await this.applicationService.updateApplicationState(
-        application.id,
-        newState,
-        newApplication.answers,
-        newApplication.assignees,
-      )
-
-      const newStateOnEntry = helper.getStateOnEntry(newState)
-
-      if (newStateOnEntry !== null) {
-        const {
-          apiModuleAction,
-          onSuccessEvent,
-          onErrorEvent,
-        } = newStateOnEntry
-
-        const [success] = await this.templateAPIService.performAction({
-          templateId: template.type,
-          type: apiModuleAction,
-          props: {
-            application: updatedApplication as BaseApplication,
-            authorization,
-          },
-        })
-
-        if (success && onSuccessEvent) {
-          return this.changeState(
-            updatedApplication as BaseApplication,
-            template,
-            onSuccessEvent,
-            authorization,
-          )
-        } else if (!success && onErrorEvent) {
-          return this.changeState(
-            updatedApplication as BaseApplication,
-            template,
-            onErrorEvent,
-            authorization,
-          )
-        }
-
-        if (!success) {
-          return [false]
-        }
-      }
-
-      return [true, updatedApplication as BaseApplication]
+    if (!hasChanged) {
+      return [false]
     }
 
-    return [false]
+    const update = await this.applicationService.updateApplicationState(
+      application.id,
+      newState,
+      newApplication.answers,
+      newApplication.assignees,
+    )
+
+    const updatedApplication = update.updatedApplication as BaseApplication
+    const newStateOnEntry = helper.getStateOnEntry(newState)
+
+    if (newStateOnEntry !== null) {
+      const { apiModuleAction, onSuccessEvent, onErrorEvent } = newStateOnEntry
+
+      const [success] = await this.templateAPIService.performAction({
+        templateId: template.type,
+        type: apiModuleAction,
+        props: {
+          application: updatedApplication,
+          authorization,
+        },
+      })
+
+      let nextEvent: string | null = null
+
+      if (success && onSuccessEvent) {
+        nextEvent = onSuccessEvent
+      } else if (!success && onErrorEvent) {
+        nextEvent = onErrorEvent
+      }
+
+      if (nextEvent !== null) {
+        // We now have to make a nested changeState call that might
+        // further update the already updated application
+        const [
+          hasChangedAgain,
+          furtherUpdatedApplication,
+        ] = await this.changeState(
+          updatedApplication,
+          template,
+          nextEvent,
+          authorization,
+        )
+
+        if (hasChangedAgain && furtherUpdatedApplication) {
+          return [true, furtherUpdatedApplication]
+        }
+      }
+    }
+
+    return [true, updatedApplication]
   }
 
   @Put('applications/:id/attachments')
