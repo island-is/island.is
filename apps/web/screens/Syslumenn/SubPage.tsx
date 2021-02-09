@@ -62,6 +62,7 @@ const SubPage: Screen<SubPageProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -69,11 +70,12 @@ const SubPage: Screen<SubPageProps> = ({
       href: primaryLink.url,
       active:
         primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl),
+        childrenLinks.some((link) => link.url === pageUrl) ||
+        childrenLinks.some((link) => link.url === parentSubpageUrl),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pageUrl,
+        active: url === pageUrl || url === parentSubpageUrl,
       })),
     }),
   )
