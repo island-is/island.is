@@ -33,6 +33,10 @@ const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
   },
 }
 
+const p = new Promise((resolve, reject) => {
+  console.log('HÆHÆ ég er HÉRNA')
+})
+
 const contact = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
   email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
@@ -172,6 +176,10 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
               type: 'apiTemplateUtils',
               action: TEMPLATE_API_ACTIONS.notifyReviewerThroughEmail,
             },
+          },
+          {
+            id: 'test',
+            src: () => p,
           },
         ],
         meta: {
