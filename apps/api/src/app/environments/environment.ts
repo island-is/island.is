@@ -13,7 +13,7 @@ export default {
   education: {
     secret: process.env.EDUCATION_SECRET,
     emailOptions: {
-      sendFromEmail: 'development@island',
+      sendFromEmail: 'development@island.is',
       useTestAccount: true,
     },
   },

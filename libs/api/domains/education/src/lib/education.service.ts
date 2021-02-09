@@ -5,7 +5,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { EmailService } from '@island.is/email-service'
 
 import { Config } from './education.module'
-import { TeachingLicense, TeachingLicenseRecipient } from './education.type'
+import { TeachingLicense, SendTeachingLicense } from './education.type'
 import { MMSApi } from './client'
 
 @Injectable()

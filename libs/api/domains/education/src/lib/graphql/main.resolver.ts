@@ -24,7 +24,7 @@ export class MainResolver {
   }
 
   @Mutation(() => SendTeachingLicense, { nullable: true })
-  educationSendTeachingLicense(
+  sendEducationTeachingLicense(
     @CurrentUser() user: User,
     @Args('input', { type: () => SendTeachingLicenseInput })
     input: SendTeachingLicenseInput,
