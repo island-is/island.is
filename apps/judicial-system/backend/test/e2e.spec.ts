@@ -14,6 +14,7 @@ import {
   CaseDecision,
   NotificationType,
   CaseType,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -33,6 +34,8 @@ let prosecutor: TUser
 let prosecutorAuthCookie: string
 let judge: TUser
 let judgeAuthCookie: string
+let admin: TUser
+let adminAuthCookie: string
 
 interface CCase extends TCase {
   prosecutorId: string
@@ -45,12 +48,15 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  prosecutor = (await request(app.getHttpServer()).get(`/api/user/0000000000`))
+  prosecutor = (await request(app.getHttpServer()).get('/api/user/0000000000'))
     .body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (await request(app.getHttpServer()).get(`/api/user/2222222222`)).body
+  judge = (await request(app.getHttpServer()).get('/api/user/2222222222')).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
+
+  admin = (await request(app.getHttpServer()).get('/api/user/3333333333')).body
+  adminAuthCookie = sharedAuthService.signJwt(admin)
 })
 
 const minimalCaseData = {
@@ -290,6 +296,52 @@ describe('User', () => {
         const apiUser = response.body
 
         expectUsersToMatch(apiUser, dbUser)
+      })
+  })
+
+  it('POST /api/user should create a user', async () => {
+    const data = {
+      nationalId: '123456789',
+      name: 'The User',
+      title: 'The Title',
+      mobileNumber: '1234567',
+      email: 'user@dmr.is',
+      role: UserRole.JUDGE,
+      institution: 'The Institution',
+      active: true,
+    }
+    let apiUser: TUser
+
+    await User.destroy({
+      where: {
+        national_id: data.nationalId,
+      },
+    })
+      .then(() => {
+        return request(app.getHttpServer())
+          .post('/api/user')
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+          .send(data)
+          .expect(201)
+      })
+      .then((response) => {
+        apiUser = response.body
+
+        // Check the response
+        expectUsersToMatch(apiUser, {
+          ...data,
+          id: apiUser.id || 'FAILURE',
+          created: apiUser.created || 'FAILURE',
+          modified: apiUser.modified || 'FAILURE',
+        })
+
+        // Check the data in the database
+        return User.findOne({
+          where: { id: apiUser.id },
+        })
+      })
+      .then((value) => {
+        expectUsersToMatch(userToTUser(value.toJSON() as User), apiUser)
       })
   })
 })
