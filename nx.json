@@ -115,9 +115,6 @@
     "api-schema": {
       "tags": []
     },
-    "application-api-template-utils": {
-      "tags": []
-    },
     "application-core": {
       "tags": []
     },
@@ -136,6 +133,9 @@
     "application-system-form-e2e": {
       "tags": [],
       "implicitDependencies": ["application-system-form"]
+    },
+    "application-template-api-modules": {
+      "tags": []
     },
     "application-template-loader": {
       "tags": []
