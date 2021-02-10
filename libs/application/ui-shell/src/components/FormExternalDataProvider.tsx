@@ -72,7 +72,6 @@ const FormExternalDataProvider: FC<{
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-  const { formatMessage } = useLocale()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
