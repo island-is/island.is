@@ -90,6 +90,39 @@ export const HealthInsuranceForm: Form = buildForm({
           ],
         }),
         buildMultiField({
+          id: 'debug',
+          title: 'debug',
+          children: [
+            buildTextField({
+              id: 'debugApplicationsProvider',
+              title: 'applications',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.applications?.data,
+                )
+              },
+            }),
+            buildTextField({
+              id: 'debugHealthInsuranceProvider',
+              title: 'health insurance',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.healthInsurance?.data,
+                )
+              },
+            }),
+            buildTextField({
+              id: 'debugPendingApplicationsProvider',
+              title: 'oldpending',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.oldPendingApplications.data,
+                )
+              },
+            }),
+          ],
+        }),
+        buildMultiField({
           id: 'informationRetrieval',
           title: m.externalDataTitle,
           children: [
