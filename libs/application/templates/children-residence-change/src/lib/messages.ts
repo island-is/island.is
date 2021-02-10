@@ -133,9 +133,9 @@ export const selectChildren = {
     },
     description: {
       id:
-        'crc.application:section.backgroundInformation.selectChildren.description',
+        'crc.application:section.backgroundInformation.selectChildren.description#markdown',
       defaultMessage:
-        '<p>Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.</p>',
+        'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.',
       description: 'Select children subtitle',
     },
   }),
@@ -241,9 +241,10 @@ export const newResidence = {
       description: 'New legal residence page title',
     },
     description: {
-      id: 'crc.application:section.arrangement.newResidence.description',
+      id:
+        'crc.application:section.arrangement.newResidence.description#markdown',
       defaultMessage:
-        '<p>Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að lögheimili barns færist frá þér til hins foreldrisins, eða öfugt.</p><p>Vinsamlegast staðfestu að lögheimilisflutningur sé eins og fram kemur hér fyrir neðan:</p>',
+        'Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að lögheimili barns færist frá þér til hins foreldrisins, eða öfugt.\n\nVinsamlegast staðfestu að lögheimilisflutningur sé eins og fram kemur hér fyrir neðan:',
       description: 'New legal residence page description',
     },
   }),
@@ -284,9 +285,9 @@ export const duration = {
       description: 'Duration page title',
     },
     description: {
-      id: 'crc.application:section.arrangement.duration.description',
+      id: 'crc.application:section.arrangement.duration.description#markdown',
       defaultMessage:
-        '<p>Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilsbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.</p><p>Ekki er hægt að gera nýjan samning innan 6 mánaða frá gildistöku breytingar.</p><p>Athugið að samningurinn tekur gildi þann dag sem sýslumaður staðfestir samninginn og getur þar af leiðandi ekki verið afturvirkur.</p><p>Samningurinn verður staðfestur innan 14 daga.</p>',
+        'Veldu í hversu langan tíma samningurinn á að gilda. Hægt er að gera tímabundna lögheimilsbreytingu til a.m.k. 6 mánaða eða lengur eða velja að samningur gildi til frambúðar.\n\nEkki er hægt að gera nýjan samning innan 6 mánaða frá gildistöku breytingar.\n\nAthugið að samningurinn tekur gildi þann dag sem sýslumaður staðfestir samninginn og getur þar af leiðandi ekki verið afturvirkur.\n\nSamningurinn verður staðfestur innan 14 daga.',
       description: 'Duration page description',
     },
   }),
@@ -354,9 +355,9 @@ export const terms = {
       description: 'Terms page title',
     },
     description: {
-      id: 'crc.application:section.effect.terms.description',
+      id: 'crc.application:section.effect.terms.description#markdown',
       defaultMessage:
-        '<h4>Meiri heimildir lögheimilisforeldris</h4><p>Barn getur aðeins átt eitt lögheimili og hefur skráning þess margvísleg áhrif. Réttarstaða lögheimilisforeldris er önnur en réttarstaða umgengnisforeldris. Það hefur ríkari heimildir til ákvarðanatöku um málefni barns en umgengnisforeldri. </p><h4>Samráð foreldra um ákvarðanir</h4><p>Foreldrar sem fara sameiginlega með forsjá barns eiga alltaf að leitast við að hafa samráð áður en teknar eru afgerandi ákvarðanir um málefni barns er varða daglegt líf þess, til dæmis um hvar barnið skuli eiga lögheimili og um val á leik- og grunnskóla, um venjulega eða nauðsynlega heilbrigðisþjónustu og reglubundið tómstundastarf.</p><h4>Ef samráð foreldra skilar ekki árangri</h4><p>Lögheimilisforeldrið hefur á hinn bóginn heimild til þess að taka þessar ákvarðanir, ef samráðið skilar ekki árangri. Lögheimilisforeldri hefur því heimild til þess að flytja með barn innanlands og ákveða í hvaða skóla barn skuli ganga. Þá á foreldrið sem barn er með lögheimili hjá, rétt á að fá meðlag með barninu frá hinu foreldrinu og barnabætur falla til lögheimilisforeldrisins. Jafnframt getur lögheimili barns haft áhrif í ýmsu öðru tilliti, svo sem á húsaleigubætur, námslán, greiðslur vegna örorku, umönnunarbætur og fleira sem þarf að skoða í hverju tilviki. Það er því mjög þýðingarmikið atriði að ákveða hjá hvoru foreldri barn skuli eiga lögheimili.</p><h4>Réttur barns til umgengni við hitt foreldrið</h4><p>Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.</p>',
+        '#### Meiri heimildir lögheimilisforeldris\n\nBarn getur aðeins átt eitt lögheimili og hefur skráning þess margvísleg áhrif. Réttarstaða lögheimilisforeldris er önnur en réttarstaða umgengnisforeldris. Það hefur ríkari heimildir til ákvarðanatöku um málefni barns en umgengnisforeldri.\n\n#### Samráð foreldra um ákvarðanir\n\nForeldrar sem fara sameiginlega með forsjá barns eiga alltaf að leitast við að hafa samráð áður en teknar eru afgerandi ákvarðanir um málefni barns er varða daglegt líf þess, til dæmis um hvar barnið skuli eiga lögheimili og um val á leik- og grunnskóla, um venjulega eða nauðsynlega heilbrigðisþjónustu og reglubundið tómstundastarf.\n\n#### Ef samráð foreldra skilar ekki árangri\n\nLögheimilisforeldrið hefur á hinn bóginn heimild til þess að taka þessar ákvarðanir, ef samráðið skilar ekki árangri. Lögheimilisforeldri hefur því heimild til þess að flytja með barn innanlands og ákveða í hvaða skóla barn skuli ganga. Þá á foreldrið sem barn er með lögheimili hjá, rétt á að fá meðlag með barninu frá hinu foreldrinu og barnabætur falla til lögheimilisforeldrisins. Jafnframt getur lögheimili barns haft áhrif í ýmsu öðru tilliti, svo sem á húsaleigubætur, námslán, greiðslur vegna örorku, umönnunarbætur og fleira sem þarf að skoða í hverju tilviki. Það er því mjög þýðingarmikið atriði að ákveða hjá hvoru foreldri barn skuli eiga lögheimili.\n\n#### Réttur barns til umgengni við hitt foreldrið\n\nLitið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.',
       description: 'Duration page description',
     },
   }),
@@ -399,9 +400,9 @@ export const contract = {
       description: 'Contract page title',
     },
     description: {
-      id: 'crc.application:section.contract.overview.description',
+      id: 'crc.application:section.contract.overview.description#markdown',
       defaultMessage:
-        '<p>Hér er yfirlit yfir samning um breytt lögheimili. <strong>Þú og {otherParent}</strong> þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.</p>',
+        'Hér er yfirlit yfir samning um breytt lögheimili. __Þú og {otherParent}__ þurfa að staðfesta með undirritun áður en umsóknin fer í afgreiðslu hjá sýslumanni.',
       description: 'Contract page description',
     },
   }),
