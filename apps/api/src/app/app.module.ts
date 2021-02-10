@@ -60,6 +60,7 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
       secret: environment.education.secret,
+      emailOptions: environment.education.emailOptions,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,

@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { environment } from '../../../environments'
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
+import { environment } from '../../../environments'
+
 @Injectable()
-export class CaseAuditService {
+export class AuditService {
   constructor(
     @Inject(AuditTrailService)
     private readonly auditTrailService: AuditTrailService,

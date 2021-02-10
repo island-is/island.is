@@ -8,23 +8,16 @@ import {
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
-import { HealthTest } from './models'
+import { VistaSkjalModel } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
+import { VistaSkjalInput } from '../types'
 
-@UseGuards(IdsAuthGuard, ScopesGuard)
-@Resolver(() => HealthTest)
+@UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
+@Resolver(() => String)
 export class HealthInsuranceResolver {
   constructor(
     private readonly healthInsuranceService: HealthInsuranceService,
   ) {}
-
-  @Query(() => HealthTest, {
-    name: 'healthTest',
-    nullable: true,
-  })
-  healthTest(): Promise<HealthTest> {
-    return this.healthInsuranceService.getTest('1234567890')
-  }
 
   @Query(() => String, {
     name: 'healthInsuranceGetProfun',
@@ -51,5 +44,16 @@ export class HealthInsuranceResolver {
   ): Promise<number[]> {
     return this.healthInsuranceService.getPendingApplication(user.nationalId)
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
+  }
+
+  @Query(() => VistaSkjalModel, {
+    name: 'healthInsuranceApplyInsurance',
+  })
+  async healthInsuranceApplyInsurance(
+    @Args({ name: 'input', type: () => VistaSkjalInput })
+    inputs: VistaSkjalInput,
+    @CurrentUser() user: AuthUser,
+  ): Promise<VistaSkjalModel> {
+    return this.healthInsuranceService.applyInsurance(inputs, user.nationalId)
   }
 }

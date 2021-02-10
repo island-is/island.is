@@ -31,6 +31,9 @@ const mockCasesQuery = [
             accusedNationalId: 'string',
             accusedName: 'Jon Harring Sr.',
             custodyEndDate: null,
+            parentCase: {
+              id: '1337',
+            },
           },
           {
             id: 'test_id_2',

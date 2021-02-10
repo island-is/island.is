@@ -5,12 +5,18 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
+import format from 'date-fns/format'
 
 import {
   GetSjukratryggdurTypeDto,
   GetFaUmsoknSjukratryggingTypeDto,
+  GetVistaSkjalDtoType,
+  // GetVistaSkjalBody,
 } from './dto'
 import { SoapClient } from './soapClient'
+import { VistaSkjalModel } from '../graphql/models'
+import { VistaSkjalInput } from '../types'
+import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -26,6 +32,8 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
+    @Inject(BucketService)
+    private bucketService: BucketService,
   ) {}
 
   public async getProfun(): Promise<string> {
@@ -115,6 +123,160 @@ export class HealthInsuranceAPI {
     return pendingCases
   }
 
+  // Apply Insurance without attachment
+  public async applyInsurance(
+    appNumber: number,
+    inputObj: VistaSkjalInput,
+    nationalId: string,
+  ): Promise<VistaSkjalModel> {
+    logger.info(`--- Starting applyInsurance api call ---`)
+
+    // Add attachments from S3 bucket
+    let attachments = ''
+    if (
+      inputObj.attachmentsFileNames &&
+      inputObj.attachmentsFileNames.length > 0
+    ) {
+      attachments += '<fylgiskjol>'
+      for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
+        const resultStr = await this.bucketService.getFileContentAsBase64(
+          inputObj.attachmentsFileNames[i],
+        )
+        attachments += `<fylgiskjal>
+                          <heiti>${inputObj.attachmentsFileNames[i]}</heiti>
+                          <innihald>${resultStr}</innihald>
+                        </fylgiskjal>`
+      }
+      attachments += '</fylgiskjol>'
+    }
+
+    // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
+
+    // TODO: NEED TO IMPLEMENTED and stop hard-coding the xml in the body
+    // const xml: GetVistaSkjalBody = {
+    //   sjukratryggingumsokn: {
+    //     // $: {
+    //     //   'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    //     //   'xmlns:xsd': 'http://www.w3.org/2001/XMLSchema',
+    //     // },
+    //     numerumsoknar: inputObj.applicationNumber,
+    //     dagsumsoknar: format(new Date(inputObj.applicationDate), "yyyy-MM-dd"),
+    //     dagssidustubusetuthjodskra: format(new Date(inputObj.residenceDateFromNationalRegistry), "yyyy-MM-dd"),
+    //     dagssidustubusetu: format(new Date(inputObj.residenceDateUserThink), "yyyy-MM-dd"),
+    //     stadaeinstaklings: inputObj.userStatus,
+    //     bornmedumsaekjanda: inputObj.isChildrenFollowed,
+    //     fyrrautgafuland: inputObj.previousCountry,
+    //     fyrrautgafulandkodi: inputObj.previousCountryCode,
+    //     fyrriutgafustofnunlands: inputObj.previousIssuingInstitution,
+    //     tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+    //     vidbotarupplysingar: inputObj.additionalInformation ?? '',
+    //     einstaklingur: {
+    //       kennitala: inputObj.nationalId,
+    //       erlendkennitala: inputObj.foreignNationalId,
+    //       nafn: inputObj.name,
+    //       heimili: inputObj.address ?? '',
+    //       postfangstadur: inputObj.postalAddress ?? '',
+    //       rikisfang: inputObj.citizenship ?? '',
+    //       rikisfangkodi: inputObj.postalAddress ? 'IS' : '',
+    //       simi: inputObj.phoneNumber,
+    //       netfang: inputObj.email,
+    //     },
+    //     fylgiskjol: {
+    //       fylgiskjal: [
+    //         {
+    //           heiti: 'google',
+    //           innihald: resultStr,
+    //         },
+    //       ]
+    //     }
+    //   }
+    // }
+
+    const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+    <sjukratryggingumsokn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <einstaklingur>
+        <kennitala>${inputObj.nationalId ?? nationalId}</kennitala>
+        <erlendkennitala>${inputObj.foreignNationalId}</erlendkennitala>
+        <nafn>${inputObj.name}</nafn>
+        <heimili>${inputObj.address ?? ''}</heimili>
+        <postfangstadur>${inputObj.postalAddress ?? ''}</postfangstadur>
+        <rikisfang>${inputObj.citizenship ?? ''}</rikisfang>
+        <rikisfangkodi>${inputObj.postalAddress ? 'IS' : ''}</rikisfangkodi>
+        <simi>${inputObj.phoneNumber}</simi>
+        <netfang>${inputObj.email}</netfang>
+      </einstaklingur>
+      <numerumsoknar>${inputObj.applicationNumber}</numerumsoknar>
+      <dagsumsoknar>${format(
+        new Date(inputObj.applicationDate),
+        'yyyy-MM-dd',
+      )}</dagsumsoknar>
+      <dagssidustubusetuthjodskra>${format(
+        new Date(inputObj.residenceDateFromNationalRegistry),
+        'yyyy-MM-dd',
+      )}</dagssidustubusetuthjodskra>
+      <dagssidustubusetu>${format(
+        new Date(inputObj.residenceDateUserThink),
+        'yyyy-MM-dd',
+      )}</dagssidustubusetu>
+      <stadaeinstaklings>${inputObj.userStatus}</stadaeinstaklings>
+      <bornmedumsaekjanda>${inputObj.isChildrenFollowed}</bornmedumsaekjanda>
+      <fyrrautgafuland>${inputObj.previousCountry}</fyrrautgafuland>
+      <fyrrautgafulandkodi>${inputObj.previousCountryCode}</fyrrautgafulandkodi>
+      <fyrriutgafustofnunlands>${
+        inputObj.previousIssuingInstitution
+      }</fyrriutgafustofnunlands>
+      <tryggdurfyrralandi>${
+        inputObj.isHealthInsuredInPreviousCountry
+      }</tryggdurfyrralandi>
+      <vidbotarupplysingar>${
+        inputObj.additionalInformation ?? ''
+      }</vidbotarupplysingar>
+      ${attachments}
+    </sjukratryggingumsokn>]]>`
+
+    const args = {
+      sendandi: '',
+      tegundskjals: appNumber,
+      skjal: xml,
+    }
+    /*
+      Application statuses:
+      0: annars/hafnað/Rejected
+      1: tókst/Succeeded
+      2: tókst með athugasemd/Succeeded with comment
+    */
+    const res: GetVistaSkjalDtoType = await this.xroadCall('vistaskjal', args)
+
+    const vistaSkjal = new VistaSkjalModel()
+    if (!res.VistaSkjalType?.tokst) {
+      logger.info(
+        `Failed to upload document to sjukra because: ${
+          res.VistaSkjalType.villulysing ?? 'unknown error'
+        }`,
+      )
+      vistaSkjal.isSucceeded = false
+      vistaSkjal.comment = res.VistaSkjalType?.villulysing ?? 'Unknown error'
+
+      if (
+        res.VistaSkjalType.villulisti &&
+        res.VistaSkjalType.villulisti.length > 0
+      ) {
+        if (res.VistaSkjalType.villulisti[0].villulysinginnri) {
+          vistaSkjal.comment = res.VistaSkjalType.villulisti[0].villulysinginnri
+        }
+      }
+
+      return vistaSkjal
+    }
+
+    vistaSkjal.isSucceeded = true
+    vistaSkjal.caseId = res.VistaSkjalType.skjalanumer_si
+    vistaSkjal.comment = res.VistaSkjalType.villulysing ?? ''
+
+    logger.info(`--- Finished applyInsurance api call ---`)
+    return vistaSkjal
+  }
+
   private async xroadCall(functionName: string, args: object): Promise<any> {
     // create 'soap' client
     logger.info(`Start ${functionName} function call.`)
@@ -140,7 +302,7 @@ export class HealthInsuranceAPI {
           reject(err)
         } else {
           logger.info(
-            `Successful call ${functionName} function and get result: ${JSON.stringify(
+            `Successful call ${functionName} function with result: ${JSON.stringify(
               result,
               null,
               2,

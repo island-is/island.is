@@ -17,10 +17,12 @@ import {
   extractParentFromApplication,
   extractChildrenFromApplication,
 } from '../lib/utils'
+import Logo from '../../assets/Logo'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: 'Flutningur lögheimilis',
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
