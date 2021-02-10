@@ -59,8 +59,8 @@ export const dataSchema = z.object({
   periods: z.array(Period).nonempty(),
   employer: z.object({
     isSelfEmployed: z.enum([YES, NO]),
-    email: z.string().email().nonempty(),
-    nationalRegistryId: z.string(),
+    email: z.string().email().optional(),
+    nationalRegistryId: z.string().optional(),
   }),
   employerInformation: z.object({ email: z.string().email() }).optional(),
   requestRights: z.object({
