@@ -30,15 +30,23 @@ export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
           </Text>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '7/12']}>
-              <ul className={styles.districtsList}>
+              <Box paddingRight={[0, 0, 6]}>
+                <Text marginTop={3}>{slice.description}</Text>
+              </Box>
+              <Box
+                component="ul"
+                marginTop={5}
+                marginBottom={5}
+                className={styles.districtsList}
+              >
                 {slice.links.map((link, index) => (
-                  <li className={styles.districtsListItem} key={index}>
+                  <Box component="li" key={index} marginBottom={4}>
                     <Link href={link.url}>
                       <Button variant="text">{link.text}</Button>
                     </Link>
-                  </li>
+                  </Box>
                 ))}
-              </ul>
+              </Box>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '5/12']}>
               <img src={slice.image.url} alt="" />
