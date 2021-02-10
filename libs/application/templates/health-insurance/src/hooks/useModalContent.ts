@@ -3,18 +3,22 @@ import { useHistory } from 'react-router-dom'
 import { ApplicationTypes, ExternalData } from '@island.is/application/core'
 import {
   hasHealthInsurance,
-  hasActiveApplication,
+  hasActiveDraftApplication,
   hasOldPendingApplications,
   hasIcelandicAddress,
 } from '../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
 import { ContentType } from '../types'
 import { m } from '../forms/messages'
+import { Applications } from '../dataProviders/APIDataTypes'
 
 export const useModalContent = (externalData: ExternalData) => {
   const [content, setContent] = useState<ContentType>()
   const history = useHistory()
   const { lang } = useLocale()
+  const applications = externalData?.applications.data as Applications[]
+  const sortedApplications = applications.sort((a,b) => new Date(a.created) > new Date(b.created) ? 1 : -1)
+  const firstCreatedApplicationId = sortedApplications[0].id
 
   const contentList = {
     hasHealthInsurance: {
@@ -26,11 +30,11 @@ export const useModalContent = (externalData: ExternalData) => {
           lang === 'is' ? 'sjukra.is' : 'sjukra.is/english'),
     },
     activeApplication: {
-      title: m.activeApplicationTitle,
-      description: m.activeApplicationDescription,
-      buttonText: m.activeApplicationButtonText,
+      title: m.activeDraftApplicationTitle,
+      description: m.activeDraftApplicationDescription,
+      buttonText: m.activeDraftApplicationButtonText,
       buttonAction: () =>
-        history.push(`../umsoknir/${ApplicationTypes.HEALTH_INSURANCE}`),
+        history.push(`../umsokn/${firstCreatedApplicationId}`), //TODO, redirect to the active draft
     },
     oldPendingApplications: {
       title: m.activeApplicationTitle,
@@ -52,7 +56,7 @@ export const useModalContent = (externalData: ExternalData) => {
   useEffect(() => {
     if (hasHealthInsurance(externalData)) {
       setContent(contentList.hasHealthInsurance)
-    } else if (hasActiveApplication(externalData)) {
+    } else if (hasActiveDraftApplication(externalData)) {
       setContent(contentList.activeApplication)
     } else if (hasOldPendingApplications(externalData)) {
       const oldPendingApplications = externalData?.oldPendingApplications
