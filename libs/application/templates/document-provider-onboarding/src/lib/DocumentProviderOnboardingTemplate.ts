@@ -220,10 +220,10 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
               action: TEMPLATE_API_ACTIONS.notifyReviewerThroughEmail,
             },
           },
-          // {
-          //   id: 'test',
-          //   src: () => createOrganisation,
-          // },
+          {
+            id: 'test',
+            src: () => createOrganisation,
+          },
         ],
         meta: {
           name: 'In Review',
