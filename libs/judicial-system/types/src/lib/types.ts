@@ -140,8 +140,8 @@ export interface Case {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
-  accusedPleaDecision: boolean
-  accusedPlea?: string
+  accusedPleaDecision?: boolean
+  accusedPleaAnnouncement?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision
@@ -215,7 +215,8 @@ export interface UpdateCase {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
-  accusedPlea?: string
+  accusedPleaDecision?: boolean
+  accusedPleaAnnouncement?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision

@@ -39,7 +39,10 @@ describe('/domari-krafa/thingbok', () => {
                 'Þess er krafist að Jon Harring, kt. 111111-1110, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {
-              accusedPlea:
+              accusedPleaDecision: true,
+            } as UpdateCase,
+            {
+              accusedPleaAnnouncement:
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Iam id ipsum absurdum, maximum malum neglegi. Sed ne, dum huic obsequor, vobis molestus sim. Quae dici eadem de ceteris virtutibus possunt, quarum omnium fundamenta vos in voluptate tamquam in aqua ponitis. Hanc ergo intuens debet institutum illud quasi signum absolvere. Duo Reges: constructio interrete. Quorum sine causa fieri nihil putandum est. Antiquorum autem sententiam Antiochus noster mihi videtur persequi diligentissime, quam eandem Aristoteli fuisse et Polemonis docet. Atque ab his initiis profecti omnium virtutum et originem et progressionem persecuti sunt. Nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; Cur deinde Metrodori liberos commendas?',
             } as UpdateCase,
             {
@@ -80,6 +83,10 @@ describe('/domari-krafa/thingbok', () => {
         name: /Halda áfram/i,
       }),
     ).toBeDisabled()
+
+    userEvent.click(
+      await screen.findByRole('radio', { name: 'Kærði samþykkir kröfuna' }),
+    )
 
     userEvent.type(
       await screen.findByLabelText('Afstaða kærða *'),

@@ -266,11 +266,18 @@ export class Case extends Model<Case> {
   courtDocuments: string[]
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  accusedPleaDecision: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  accusedPlea: string
+  accusedPleaAnnouncement: string
 
   @Column({
     type: DataType.STRING,

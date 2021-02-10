@@ -135,7 +135,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly accusedPlea?: string
+  readonly accusedPleaAnnouncement?: string
 
   @Allow()
   @Field({ nullable: true })

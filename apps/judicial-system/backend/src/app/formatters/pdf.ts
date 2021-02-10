@@ -327,10 +327,19 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     )
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.accusedPlea, {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .text(
+      `${
+        existingCase.accusedPleaDecision === true
+          ? `Kærði samþykkir kröfuna. `
+          : existingCase.accusedPleaDecision === false
+          ? `Kærði hafnar kröfunni. `
+          : null
+      } ${existingCase.accusedPleaAnnouncement}`,
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)
