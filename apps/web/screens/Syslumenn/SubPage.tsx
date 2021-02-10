@@ -83,7 +83,9 @@ const SubPage: Screen<SubPageProps> = ({
       pageTitle={subpage.title}
       pageDescription={subpage.description}
       organizationPage={organizationPage}
-      pageFeaturedImage={subpage.featuredImage}
+      pageFeaturedImage={
+        subpage.featuredImage ?? organizationPage.featuredImage
+      }
       breadcrumbItems={[
         {
           title: 'Ísland.is',

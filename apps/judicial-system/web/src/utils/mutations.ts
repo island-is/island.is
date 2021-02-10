@@ -61,7 +61,8 @@ export const CreateCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision
@@ -98,6 +99,9 @@ export const CasesQuery = gql`
       custodyEndDate
       decision
       isCustodyEndDateInThePast
+      parentCase {
+        id
+      }
     }
   }
 `
@@ -154,7 +158,8 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision

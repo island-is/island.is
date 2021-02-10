@@ -2,7 +2,9 @@ import { style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  background: theme.color.blueberry600,
+  backgroundRepeat: 'no-repeat !important',
+  backgroundPosition: 'right !important',
+  backgroundBlendMode: 'overlay',
   marginTop: -130,
   paddingTop: 130,
   ...themeUtils.responsiveStyle({
@@ -49,8 +51,7 @@ export const navigation = style({
       marginRight: -24,
       paddingLeft: 24,
       paddingRight: 24,
-      background: theme.color.blueberry600,
-      paddingBottom: 32,
+      paddingTop: 32,
     },
   }),
 })

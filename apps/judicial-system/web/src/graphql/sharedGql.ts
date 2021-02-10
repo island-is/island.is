@@ -30,6 +30,7 @@ export const CaseQuery = gql`
       legalArguments
       comments
       prosecutor {
+        id
         name
         title
       }
@@ -42,7 +43,8 @@ export const CaseQuery = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision
@@ -55,6 +57,7 @@ export const CaseQuery = gql`
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
       judge {
+        id
         name
         title
       }

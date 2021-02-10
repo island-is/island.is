@@ -18,7 +18,7 @@ import {
 
 interface TagListProps {
   data: Array<DataCategory>
-  type: Array<TypeCategory>
+  type: TypeCategory
   access: Array<AccessCategory>
   namespace?: object
 }
@@ -57,11 +57,9 @@ export const TagList: FC<TagListProps> = ({
               {n('type')}
             </Text>
             <Inline space={1}>
-              {type?.map((item) => (
-                <Tag variant="white" outlined key={item}>
-                  {n(`type${capitalize(item)}`)}
-                </Tag>
-              ))}
+              <Tag variant="white" outlined key={type}>
+                {n(`type${capitalize(type)}`)}
+              </Tag>
             </Inline>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '3/12']}>

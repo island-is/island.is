@@ -1,20 +1,15 @@
 import React, { FC, useState } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
-import {
-  Box,
-  InputFileUpload,
-  Stack,
-  UploadFile,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
+  FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { YES, NO } from '../../constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
 import { ReviewFieldProps, StatusTypes } from '../../types'
-import InfoMessage from '../InfoMessage/InfoMessage'
+import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
 import { m } from '../../forms/messages'
@@ -32,10 +27,6 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
 
   const [children, setChildren] = useState(
     getValueViaPath(application.answers, 'children') as string,
-  )
-
-  const [fileList, setFileList] = useState(
-    getValueViaPath(application.answers, 'confirmationOfStudies') || [],
   )
 
   return (
@@ -113,9 +104,10 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
                   formatMessage,
                 )}
               />
-              <InputFileUpload
+              <FileUploadController
+                application={application}
                 id="confirmationOfStudies"
-                disabled={!isEditable}
+                maxSize={FILE_SIZE_LIMIT}
                 header={formatText(
                   m.fileUploadHeader,
                   application,
@@ -131,48 +123,52 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
                   application,
                   formatMessage,
                 )}
-                fileList={fileList as UploadFile[]}
-                /* TODO!! implement file upload/removal logic */
-                onRemove={(fileToRemove) => console.log(fileToRemove)}
-                onChange={(newFiles) =>
-                  setFileList([...(fileList as UploadFile[]), ...newFiles])
-                }
               />
             </Stack>
           </Box>
         )}
-        <Stack space={2}>
-          <FieldDescription
-            description={formatText(
-              m.childrenDescription,
-              application,
-              formatMessage,
-            )}
-          />
-          <RadioController
-            id={'children'}
-            name={'children'}
-            disabled={!isEditable}
-            defaultValue={
-              getValueViaPath(application.answers, 'children') as string[]
-            }
-            onSelect={(value) => setChildren(value as string)}
-            largeButtons={true}
-            split={'1/2'}
-            options={[
-              {
-                label: formatText(m.noOptionLabel, application, formatMessage),
-                value: NO,
-              },
-              {
-                label: formatText(m.yesOptionLabel, application, formatMessage),
-                value: YES,
-              },
-            ]}
-          />
+        <Stack space={1}>
+          <Stack space={2}>
+            <FieldDescription
+              description={formatText(
+                m.childrenDescription,
+                application,
+                formatMessage,
+              )}
+            />
+            <RadioController
+              id={'children'}
+              name={'children'}
+              disabled={!isEditable}
+              defaultValue={
+                getValueViaPath(application.answers, 'children') as string[]
+              }
+              onSelect={(value) => setChildren(value as string)}
+              largeButtons={true}
+              split={'1/2'}
+              options={[
+                {
+                  label: formatText(
+                    m.noOptionLabel,
+                    application,
+                    formatMessage,
+                  ),
+                  value: NO,
+                },
+                {
+                  label: formatText(
+                    m.yesOptionLabel,
+                    application,
+                    formatMessage,
+                  ),
+                  value: YES,
+                },
+              ]}
+            />
+          </Stack>
           {children === YES && (
             <Box marginBottom={[2, 2, 4]}>
-              <InfoMessage application={application} field={field} />
+              <ChildrenInfoMessage application={application} field={field} />
             </Box>
           )}
         </Stack>

@@ -20,11 +20,11 @@ import { getNationalIdFromToken } from '../utils/tokenUtils'
 
 @Injectable()
 export class ApplicationSerializer
-  implements NestInterceptor<Application, Promise<any>> {
+  implements NestInterceptor<Application, Promise<unknown>> {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<Promise<any>> {
+  ): Observable<Promise<unknown>> {
     let nationalId: string
     try {
       nationalId = getNationalIdFromToken(context)

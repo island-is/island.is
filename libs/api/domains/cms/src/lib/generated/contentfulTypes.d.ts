@@ -301,6 +301,42 @@ export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
   }
 }
 
+export interface IAuctionFields {
+  /** Title */
+  title: string
+
+  /** Date */
+  date?: string | undefined
+
+  /** Type */
+  type: 'first' | 'continued' | 'vehicles'
+
+  /** Content */
+  content?: string | undefined
+
+  /** Organization */
+  organization: IOrganization
+}
+
+/** Used for syslumenn auctions */
+
+export interface IAuction extends Entry<IAuctionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'auction'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAuthorFields {
   /** Name */
   name: string
@@ -615,6 +651,9 @@ export interface IFeaturedArticlesFields {
 
   /** Articles */
   articles?: IArticle[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -3187,6 +3226,7 @@ export type CONTENT_TYPE =
   | 'articleCategory'
   | 'articleGroup'
   | 'articleSubgroup'
+  | 'auction'
   | 'author'
   | 'bigBulletList'
   | 'card'
