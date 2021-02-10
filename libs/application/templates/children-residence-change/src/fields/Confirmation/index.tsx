@@ -6,7 +6,10 @@ import { DescriptionText } from '../components'
 const Confirmation = () => {
   return (
     <Box marginTop={3}>
-      <DescriptionText text={confirmation.general.description} format={{ applicationNumber: '12345' }} />
+      <DescriptionText
+        text={confirmation.general.description}
+        format={{ applicationNumber: '12345' }}
+      />
     </Box>
   )
 }
