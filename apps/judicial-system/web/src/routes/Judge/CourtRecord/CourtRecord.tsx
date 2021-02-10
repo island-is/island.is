@@ -18,13 +18,19 @@ import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHel
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatAccusedByGender,
+  formatProsecutorDemands,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
-import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseCustodyRestrictions,
+  CaseGender,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -89,8 +95,12 @@ export const CourtRecord: React.FC = () => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
 
+      if (wc.judge) {
+        attendees += `${wc.judge.name} ${wc.judge.title}\n`
+      }
+
       if (wc.prosecutor && wc.accusedName) {
-        attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${
+        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
           wc.accusedName
         } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
       }
@@ -119,6 +129,29 @@ export const CourtRecord: React.FC = () => {
           )
         }
       }
+      if (
+        !theCase.policeDemands &&
+        theCase.accusedName &&
+        theCase.court &&
+        theCase.requestedCustodyEndDate &&
+        theCase.requestedCustodyRestrictions
+      ) {
+        theCase = {
+          ...theCase,
+          policeDemands: formatProsecutorDemands(
+            theCase.type,
+            theCase.accusedNationalId,
+            theCase.accusedName,
+            theCase.court,
+            theCase.requestedCustodyEndDate,
+            theCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            ),
+            theCase.parentCase !== undefined,
+            theCase.parentCase?.decision,
+          ),
+        }
+      }
 
       setWorkingCase(theCase)
     }
@@ -133,6 +166,7 @@ export const CourtRecord: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>

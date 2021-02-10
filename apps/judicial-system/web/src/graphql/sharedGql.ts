@@ -6,6 +6,7 @@ export const CaseQuery = gql`
       id
       created
       modified
+      type
       state
       policeCaseNumber
       accusedNationalId
@@ -17,18 +18,19 @@ export const CaseQuery = gql`
       court
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
+      requestedOtherRestrictions
       caseFacts
       witnessAccounts
       investigationProgress
       legalArguments
       comments
       prosecutor {
+        id
         name
         title
       }
@@ -54,6 +56,7 @@ export const CaseQuery = gql`
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
       judge {
+        id
         name
         title
       }

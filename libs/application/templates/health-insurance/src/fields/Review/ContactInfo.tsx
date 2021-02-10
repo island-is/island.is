@@ -99,16 +99,6 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
                   defaultValue={data?.city}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12']}>
-                <Input
-                  id={'applicant.nationality'}
-                  name={'applicant.nationality'}
-                  label={formatText(m.nationality, application, formatMessage)}
-                  ref={register}
-                  disabled
-                  defaultValue={data?.nationality}
-                />
-              </GridColumn>
             </GridRow>
           </Stack>
           <FieldDescription

@@ -17,10 +17,12 @@ import {
   extractParentFromApplication,
   extractChildrenFromApplication,
 } from '../lib/utils'
+import Logo from '../../assets/Logo'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: 'Flutningur lögheimilis',
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -34,6 +36,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             buildExternalDataProvider({
               title: 'Gagnaöflun',
               id: 'approveExternalData',
+              subTitle:
+                'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+              checkboxLabel: 'Ég samþykki gagnaöflun',
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
@@ -69,11 +74,14 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               description:
                 'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið hvaða barn/börn á að flytja lögheimili fyrir.',
               large: true,
-              options: (application) =>
-                extractChildrenFromApplication(application).map((c) => ({
+              options: (application) => {
+                const otherParent = extractParentFromApplication(application)
+                return extractChildrenFromApplication(application).map((c) => ({
                   value: c.name,
                   label: c.name,
-                })),
+                  subLabel: `Hitt forsjárforeldrið er ${otherParent.name}`,
+                }))
+              },
             }),
           ],
         }),
@@ -111,6 +119,17 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'confirmResidenceChangeInfo',
+          title: 'Tilefni',
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReason',
+              title: 'Hvert er tilefni breytingar á lögheimili?',
+              component: 'Reason',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'confirmResidenceChangeInfo',
           title: 'Nýtt lögheimili',
           children: [
             buildCustomField({
@@ -138,12 +157,12 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                     {
                       value: 'permanent',
                       label: 'Til frambúðar',
-                      tooltip: 'Samningurinn gildir til 18 ára aldurs barns',
+                      subLabel: 'Samningurinn gildir til 18 ára aldurs barns',
                     },
                     {
                       value: 'temporary',
                       label: 'Tímabundið',
-                      tooltip: '6 mánuðir eða lengur',
+                      subLabel: '6 mánuðir eða lengur',
                     },
                   ],
                 }),

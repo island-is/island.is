@@ -34,11 +34,9 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Kröfu hafnað', { selector: 'h1' }),
-        ),
+        await screen.findByText('Kröfu hafnað', { selector: 'h1' }),
       ).toBeInTheDocument()
-    }, 15000)
+    })
 
     test('should have the correct subtitle if case is not accepted', async () => {
       render(
@@ -59,9 +57,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Úrskurðað 16. september 2020 kl. 19:51'),
-        ),
+        await screen.findByText('Úrskurðað 16. september 2020 kl. 19:51'),
       ).toBeInTheDocument()
     })
 
@@ -113,6 +109,12 @@ describe('Signed Verdict Overview route', () => {
           screen.queryByRole('button', { name: 'Framlengja gæslu' }),
         ),
       ).not.toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja gæsluvarðhald sem var hafnað.',
+        ),
+      ).toBeInTheDocument()
     })
   })
 
@@ -136,9 +138,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Gæsluvarðhald virkt', { selector: 'h1' }),
-        ),
+        await screen.findByText('Gæsluvarðhald virkt', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -162,13 +162,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
-              date,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
+            date,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -192,9 +190,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Fjölmiðlabann', { selector: 'span' }),
-        ),
+        await screen.findByText('Fjölmiðlabann', { selector: 'span' }),
       ).toBeInTheDocument()
     })
 
@@ -244,9 +240,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
-        ),
+        await screen.findByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -271,13 +265,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-              dateInPast,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
+            dateInPast,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -301,9 +293,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Heimsóknarbann', { selector: 'span' }),
-        ),
+        await screen.findByText('Heimsóknarbann', { selector: 'span' }),
       ).toBeInTheDocument()
     })
 
@@ -330,6 +320,31 @@ describe('Signed Verdict Overview route', () => {
           screen.queryByRole('button', { name: 'Framlengja gæslu' }),
         ),
       ).not.toBeInTheDocument()
+    })
+
+    test('should display an indicator that the case cannot be extended', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_8`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja gæsluvarðhald sem er lokið.',
+        ),
+      ).toBeInTheDocument()
     })
   })
 
@@ -353,9 +368,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Farbann virkt', { selector: 'h1' }),
-        ),
+        await screen.findByText('Farbann virkt', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -379,13 +392,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
-              date,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
+            date,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -414,6 +425,31 @@ describe('Signed Verdict Overview route', () => {
         ),
       ).not.toBeInTheDocument()
     })
+
+    test('should not show an extention for why the case cannot be extended if the user is a prosecutor', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_7`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
+        ),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('Accepted case with travel ban end time in the past', () => {
@@ -436,9 +472,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText('Farbanni lokið', { selector: 'h1' }),
-        ),
+        await screen.findByText('Farbanni lokið', { selector: 'h1' }),
       ).toBeInTheDocument()
     })
 
@@ -463,13 +497,11 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByText(
-            `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-              dateInPast,
-              TIME_FORMAT,
-            )}`,
-          ),
+        await screen.findByText(
+          `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
+            dateInPast,
+            TIME_FORMAT,
+          )}`,
         ),
       ).toBeInTheDocument()
     })
@@ -493,9 +525,7 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await waitFor(() =>
-          screen.getByRole('button', { name: 'Framlengja gæslu' }),
-        ),
+        await screen.findByRole('button', { name: 'Framlengja gæslu' }),
       ).toBeInTheDocument()
     })
   })

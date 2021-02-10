@@ -14,6 +14,7 @@ export const Application = () => {
   useNamespaces([
     'dl.application',
     'pl.application',
+    'hi.application',
     'application.system',
     'example.application',
     'dpo.application',

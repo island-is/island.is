@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsBoolean,
-  IsUUID,
-} from 'class-validator'
+import { IsString, IsOptional, IsEnum, IsUUID } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -68,11 +62,6 @@ export class UpdateCaseDto {
   readonly requestedCourtDate?: Date
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly alternativeTravelBan?: boolean
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly requestedCustodyEndDate?: Date
@@ -96,6 +85,11 @@ export class UpdateCaseDto {
   @IsEnum(CaseCustodyRestrictions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly requestedOtherRestrictions?: string
 
   @IsOptional()
   @IsString()
@@ -211,4 +205,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly prosecutorAppealAnnouncement?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly judgeId?: string
 }

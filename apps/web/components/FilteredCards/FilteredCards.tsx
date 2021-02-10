@@ -10,7 +10,8 @@ import {
   Text,
   Tag,
   Inline,
-  IconDeprecated as Icon,
+  Icon,
+  LoadingIcon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Organization, OrganizationTag } from '@island.is/api/schema'
@@ -181,7 +182,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
                     !filtersDisabled && filtersToggled,
                 })}
               >
-                <Icon type="caret" width={12} height={12} />
+                <Icon icon="caretDown" size="small" />
               </div>
             </Inline>
           </button>
@@ -227,12 +228,11 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
                 className={styles.input}
               />
               <span className={styles.inputIcon}>
-                <Icon
-                  width="18"
-                  height="18"
-                  spin={isLoading}
-                  type={isLoading ? 'loading' : 'search'}
-                />
+                {isLoading ? (
+                  <LoadingIcon size={24} color="currentColor" />
+                ) : (
+                  <Icon size="medium" type="outline" icon="search" />
+                )}
               </span>
             </div>
           </Box>

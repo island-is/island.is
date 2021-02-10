@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { HearingArrangements } from './HearingArrangements'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
@@ -7,6 +7,7 @@ import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
+  mockUsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
@@ -15,12 +16,12 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
-    // Arrange
     render(
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_2',
@@ -41,6 +42,10 @@ describe('/domari-krafa/fyrirtokutimi', () => {
             {
               id: 'test_id_2',
               defenderEmail: 'saul@goodman.com',
+            } as UpdateCase,
+            {
+              id: 'test_id_2',
+              judgeId: 'judge_1',
             } as UpdateCase,
           ]),
         ]}
@@ -59,18 +64,16 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     )
 
     // Act
-    userEvent.type(
-      await waitFor(() => screen.getByLabelText('Dómsalur *')),
-      '999',
-    )
+    userEvent.type(await screen.findByLabelText('Dómsalur *'), '999')
 
-    userEvent.tab()
+    userEvent.click(await screen.findByText('Veldu dómara'))
+    userEvent.click(await screen.findByText('Wonder Woman'))
 
     // Assert
     expect(
-      screen.getByRole('button', {
+      (await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      })) as HTMLButtonElement,
     ).not.toBeDisabled()
   })
 
@@ -81,6 +84,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -118,19 +122,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
       </MockedProvider>,
     )
 
-    // Act
-    userEvent.type(
-      await waitFor(() => screen.getByLabelText('Dómsalur *')),
-      '999',
-    )
-
-    userEvent.tab()
-
     // Assert
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      }),
     ).toBeDisabled()
   })
 
@@ -141,6 +137,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -178,13 +175,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
     // Assert
     expect(
-      await waitFor(() =>
-        screen.getByText('Krafa hefur ekki verið staðfest af ákæranda'),
-      ),
+      await screen.findByText('Krafa hefur ekki verið staðfest af ákæranda'),
     ).toBeInTheDocument()
 
     expect(
-      screen.getByText(
+      await screen.findByText(
         'Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna.',
       ),
     ).toBeInTheDocument()
@@ -197,6 +192,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -224,15 +220,14 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          (screen.getByLabelText('Veldu dagsetningu *') as HTMLInputElement)
-            .value,
-      ),
+      ((await screen.findByLabelText(
+        'Veldu dagsetningu *',
+      )) as HTMLInputElement).value,
     ).toEqual('16.09.2020')
 
     expect(
-      (screen.getByLabelText('Tímasetning *') as HTMLInputElement).value,
+      ((await screen.findByLabelText('Tímasetning *')) as HTMLInputElement)
+        .value,
     ).toEqual('19:51')
   })
 })

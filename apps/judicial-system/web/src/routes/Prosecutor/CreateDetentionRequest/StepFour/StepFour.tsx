@@ -103,6 +103,7 @@ export const StepFour: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -114,7 +115,8 @@ export const StepFour: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Box marginBottom={4}>
               <Text as="h3" variant="h3">
-                Dómkröfutexti
+                Dómkröfutexti{' '}
+                <Tooltip text="Hér er hægt að bæta texta við dómkröfur, t.d. ef óskað er eftir öðrum úrræðum til vara." />
               </Text>
             </Box>
             <BlueBox>
@@ -162,7 +164,6 @@ export const StepFour: React.FC = () => {
             </Box>
             <Box marginBottom={3}>
               <Input
-                data-testid="caseFacts"
                 name="caseFacts"
                 label="Málsatvik"
                 placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
@@ -209,7 +210,6 @@ export const StepFour: React.FC = () => {
             </Box>
             <Box marginBottom={7}>
               <Input
-                data-testid="legalArguments"
                 name="legalArguments"
                 label="Lagarök"
                 placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"

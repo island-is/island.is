@@ -72,13 +72,14 @@ const FormExternalDataProvider: FC<{
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
     },
   })
 
-  const { id, dataProviders } = externalDataProvider
+  const { id, dataProviders, subTitle, checkboxLabel } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
@@ -126,7 +127,11 @@ const FormExternalDataProvider: FC<{
         <Box marginRight={1}>
           <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
-        <Text variant="h4">{formatMessage(m.externalDataTitle)}</Text>
+        <Text variant="h4">
+          {subTitle
+            ? formatMessage(subTitle)
+            : formatMessage(m.externalDataTitle)}
+        </Text>
       </Box>
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (
@@ -161,7 +166,11 @@ const FormExternalDataProvider: FC<{
                   }}
                   checked={value}
                   name={`${id}`}
-                  label={formatMessage(m.externalDataAgreement)}
+                  label={
+                    checkboxLabel
+                      ? formatMessage(checkboxLabel)
+                      : formatMessage(m.externalDataAgreement)
+                  }
                   value={id}
                 />
               </Box>

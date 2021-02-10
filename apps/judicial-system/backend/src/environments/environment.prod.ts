@@ -3,6 +3,7 @@ export default {
   notifications: {
     judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
     prisonEmail: process.env.PRISON_EMAIL,
+    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
   },
   email: {
     fromEmail: process.env.EMAIL_FROM,
@@ -24,5 +25,8 @@ export default {
     options: {
       region: process.env.EMAIL_REGION,
     },
+  },
+  admin: {
+    users: process.env.ADMIN_USERS,
   },
 }

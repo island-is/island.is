@@ -2,14 +2,21 @@ import {
   InternalServerErrorException,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
+import format from 'date-fns/format'
 
 import {
   GetSjukratryggdurTypeDto,
   GetFaUmsoknSjukratryggingTypeDto,
+  GetVistaSkjalDtoType,
+  // GetVistaSkjalBody,
 } from './dto'
 import { SoapClient } from './soapClient'
+import { VistaSkjalModel } from '../graphql/models'
+import { VistaSkjalInput } from '../types'
+import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -25,108 +32,260 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
+    @Inject(BucketService)
+    private bucketService: BucketService,
   ) {}
 
   public async getProfun(): Promise<string> {
-    const client = await SoapClient.generateClient(
-      this.clientConfig.wsdlUrl,
-      this.clientConfig.baseUrl,
-      this.clientConfig.username,
-      this.clientConfig.password,
-      'profun',
-    )
-    return new Promise((resolve, reject) => {
-      if (!client) {
-        throw new InternalServerErrorException(
-          'HealthInsurance Soap Client not initialized',
-        )
-      }
-      return client.profun(
-        {
-          sendandi: '',
-        },
-        function (err: any, result: any) {
-          if (err) {
-            reject(err)
-          }
-          resolve(
-            result['ProfunType']['radnumer_si']
-              ? result['ProfunType']['radnumer_si']
-              : null,
-          )
-        },
-      )
-    })
+    logger.info(`--- Starting getProfun api call ---`)
+
+    const args = {
+      sendandi: '',
+    }
+    const res = await this.xroadCall('profun', args)
+    return res.ProfunType.radnumer_si ?? null
   }
 
   // check whether the person is health insured
-  public async isHealthInsured(
-    nationalId: string,
-  ): Promise<GetSjukratryggdurTypeDto> {
+  public async isHealthInsured(nationalId: string): Promise<boolean> {
     logger.info(`--- Starting isHealthInsured api call for ${nationalId} ---`)
-    // create 'soap' client
-    const client = await SoapClient.generateClient(
-      this.clientConfig.wsdlUrl,
-      this.clientConfig.baseUrl,
-      this.clientConfig.username,
-      this.clientConfig.password,
-      'sjukratryggdur',
-    )
-    if (!client) {
-      logger.error('HealthInsurance Soap Client not initialized')
-      throw new InternalServerErrorException(
-        'HealthInsurance Soap Client not initialized',
-      )
-    }
 
-    return new Promise((resolve, reject) => {
-      // call 'sjukratryggdur' function/endpoint
-      client.sjukratryggdur(
-        {
-          sendandi: '',
-          kennitala: nationalId,
-          dagsetning: Date.now(),
-        },
-        function (err: any, result: any) {
-          if (err) {
-            logger.error(JSON.stringify(err, null, 2))
-            reject(err)
-          } else if (!result.SjukratryggdurType) {
-            logger.error(
-              `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
-                result,
-                null,
-                2,
-              )}`,
-            )
-            reject(result)
-          } else {
-            logger.info(
-              `Successful get sjukratryggdur information for ${nationalId} with result: ${JSON.stringify(
-                result,
-                null,
-                2,
-              )}`,
-            )
-            resolve(result)
-          }
-        },
+    const args = {
+      sendandi: '',
+      kennitala: nationalId,
+      dagsetning: Date.now(),
+    }
+    const res: GetSjukratryggdurTypeDto = await this.xroadCall(
+      'sjukratryggdur',
+      args,
+    )
+
+    if (!res.SjukratryggdurType) {
+      logger.error(
+        `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
+          res,
+          null,
+          2,
+        )}`,
       )
-    })
+      throw new NotFoundException(`Unexpected results: ${JSON.stringify(res)}`)
+    } else {
+      logger.info(`--- Finished isHealthInsured api call for ${nationalId} ---`)
+      return res.SjukratryggdurType.sjukratryggdur == 1
+    }
   }
 
-  // get user's applications
-  public async getApplication(
+  // get user's pending applications
+  public async getPendingApplication(nationalId: string): Promise<number[]> {
+    logger.info(
+      `--- Starting getPendingApplication api call for ${nationalId} ---`,
+    )
+
+    const args = {
+      sendandi: '',
+      kennitala: nationalId,
+    }
+    /*
+      API returns null when there is no application in the system,
+      but it returns also null when the nationalId is not correct,
+      we return all reponses to developer to handle them
+
+      Application statuses:
+      0: Samþykkt/Accepted
+      1: Synjað/Refused
+      2: Í bið/Pending
+      3: Ógilt/Invalid
+    */
+    const res: GetFaUmsoknSjukratryggingTypeDto = await this.xroadCall(
+      'faumsoknirsjukratrygginga',
+      args,
+    )
+
+    if (!res.FaUmsoknSjukratryggingType?.umsoknir) {
+      logger.info(`return empty array to graphQL`)
+      return []
+    }
+
+    logger.info(`Start filtering Pending status`)
+    // Return all caseIds with Pending status
+    const pendingCases: number[] = []
+    res.FaUmsoknSjukratryggingType.umsoknir
+      .filter((umsokn) => {
+        return umsokn.stada == 2
+      })
+      .forEach((value) => {
+        pendingCases.push(value.skjalanumer)
+      })
+
+    logger.info(
+      `--- Finished getPendingApplication api call for ${nationalId} ---`,
+    )
+    return pendingCases
+  }
+
+  // Apply Insurance without attachment
+  public async applyInsurance(
+    appNumber: number,
+    inputObj: VistaSkjalInput,
     nationalId: string,
-  ): Promise<GetFaUmsoknSjukratryggingTypeDto> {
-    logger.info(`--- Starting getApplication api call for ${nationalId} ---`)
+  ): Promise<VistaSkjalModel> {
+    logger.info(`--- Starting applyInsurance api call ---`)
+
+    // Add attachments from S3 bucket
+    let attachments = ''
+    if (
+      inputObj.attachmentsFileNames &&
+      inputObj.attachmentsFileNames.length > 0
+    ) {
+      attachments += '<fylgiskjol>'
+      for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
+        const resultStr = await this.bucketService.getFileContentAsBase64(
+          inputObj.attachmentsFileNames[i],
+        )
+        attachments += `<fylgiskjal>
+                          <heiti>${inputObj.attachmentsFileNames[i]}</heiti>
+                          <innihald>${resultStr}</innihald>
+                        </fylgiskjal>`
+      }
+      attachments += '</fylgiskjol>'
+    }
+
+    // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
+
+    // TODO: NEED TO IMPLEMENTED and stop hard-coding the xml in the body
+    // const xml: GetVistaSkjalBody = {
+    //   sjukratryggingumsokn: {
+    //     // $: {
+    //     //   'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    //     //   'xmlns:xsd': 'http://www.w3.org/2001/XMLSchema',
+    //     // },
+    //     numerumsoknar: inputObj.applicationNumber,
+    //     dagsumsoknar: format(new Date(inputObj.applicationDate), "yyyy-MM-dd"),
+    //     dagssidustubusetuthjodskra: format(new Date(inputObj.residenceDateFromNationalRegistry), "yyyy-MM-dd"),
+    //     dagssidustubusetu: format(new Date(inputObj.residenceDateUserThink), "yyyy-MM-dd"),
+    //     stadaeinstaklings: inputObj.userStatus,
+    //     bornmedumsaekjanda: inputObj.isChildrenFollowed,
+    //     fyrrautgafuland: inputObj.previousCountry,
+    //     fyrrautgafulandkodi: inputObj.previousCountryCode,
+    //     fyrriutgafustofnunlands: inputObj.previousIssuingInstitution,
+    //     tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+    //     vidbotarupplysingar: inputObj.additionalInformation ?? '',
+    //     einstaklingur: {
+    //       kennitala: inputObj.nationalId,
+    //       erlendkennitala: inputObj.foreignNationalId,
+    //       nafn: inputObj.name,
+    //       heimili: inputObj.address ?? '',
+    //       postfangstadur: inputObj.postalAddress ?? '',
+    //       rikisfang: inputObj.citizenship ?? '',
+    //       rikisfangkodi: inputObj.postalAddress ? 'IS' : '',
+    //       simi: inputObj.phoneNumber,
+    //       netfang: inputObj.email,
+    //     },
+    //     fylgiskjol: {
+    //       fylgiskjal: [
+    //         {
+    //           heiti: 'google',
+    //           innihald: resultStr,
+    //         },
+    //       ]
+    //     }
+    //   }
+    // }
+
+    const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+    <sjukratryggingumsokn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <einstaklingur>
+        <kennitala>${inputObj.nationalId ?? nationalId}</kennitala>
+        <erlendkennitala>${inputObj.foreignNationalId}</erlendkennitala>
+        <nafn>${inputObj.name}</nafn>
+        <heimili>${inputObj.address ?? ''}</heimili>
+        <postfangstadur>${inputObj.postalAddress ?? ''}</postfangstadur>
+        <rikisfang>${inputObj.citizenship ?? ''}</rikisfang>
+        <rikisfangkodi>${inputObj.postalAddress ? 'IS' : ''}</rikisfangkodi>
+        <simi>${inputObj.phoneNumber}</simi>
+        <netfang>${inputObj.email}</netfang>
+      </einstaklingur>
+      <numerumsoknar>${inputObj.applicationNumber}</numerumsoknar>
+      <dagsumsoknar>${format(
+        new Date(inputObj.applicationDate),
+        'yyyy-MM-dd',
+      )}</dagsumsoknar>
+      <dagssidustubusetuthjodskra>${format(
+        new Date(inputObj.residenceDateFromNationalRegistry),
+        'yyyy-MM-dd',
+      )}</dagssidustubusetuthjodskra>
+      <dagssidustubusetu>${format(
+        new Date(inputObj.residenceDateUserThink),
+        'yyyy-MM-dd',
+      )}</dagssidustubusetu>
+      <stadaeinstaklings>${inputObj.userStatus}</stadaeinstaklings>
+      <bornmedumsaekjanda>${inputObj.isChildrenFollowed}</bornmedumsaekjanda>
+      <fyrrautgafuland>${inputObj.previousCountry}</fyrrautgafuland>
+      <fyrrautgafulandkodi>${inputObj.previousCountryCode}</fyrrautgafulandkodi>
+      <fyrriutgafustofnunlands>${
+        inputObj.previousIssuingInstitution
+      }</fyrriutgafustofnunlands>
+      <tryggdurfyrralandi>${
+        inputObj.isHealthInsuredInPreviousCountry
+      }</tryggdurfyrralandi>
+      <vidbotarupplysingar>${
+        inputObj.additionalInformation ?? ''
+      }</vidbotarupplysingar>
+      ${attachments}
+    </sjukratryggingumsokn>]]>`
+
+    const args = {
+      sendandi: '',
+      tegundskjals: appNumber,
+      skjal: xml,
+    }
+    /*
+      Application statuses:
+      0: annars/hafnað/Rejected
+      1: tókst/Succeeded
+      2: tókst með athugasemd/Succeeded with comment
+    */
+    const res: GetVistaSkjalDtoType = await this.xroadCall('vistaskjal', args)
+
+    const vistaSkjal = new VistaSkjalModel()
+    if (!res.VistaSkjalType?.tokst) {
+      logger.info(
+        `Failed to upload document to sjukra because: ${
+          res.VistaSkjalType.villulysing ?? 'unknown error'
+        }`,
+      )
+      vistaSkjal.isSucceeded = false
+      vistaSkjal.comment = res.VistaSkjalType?.villulysing ?? 'Unknown error'
+
+      if (
+        res.VistaSkjalType.villulisti &&
+        res.VistaSkjalType.villulisti.length > 0
+      ) {
+        if (res.VistaSkjalType.villulisti[0].villulysinginnri) {
+          vistaSkjal.comment = res.VistaSkjalType.villulisti[0].villulysinginnri
+        }
+      }
+
+      return vistaSkjal
+    }
+
+    vistaSkjal.isSucceeded = true
+    vistaSkjal.caseId = res.VistaSkjalType.skjalanumer_si
+    vistaSkjal.comment = res.VistaSkjalType.villulysing ?? ''
+
+    logger.info(`--- Finished applyInsurance api call ---`)
+    return vistaSkjal
+  }
+
+  private async xroadCall(functionName: string, args: object): Promise<any> {
     // create 'soap' client
+    logger.info(`Start ${functionName} function call.`)
     const client = await SoapClient.generateClient(
       this.clientConfig.wsdlUrl,
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
-      'faumsoknirsjukratrygginga',
+      functionName,
     )
     if (!client) {
       logger.error('HealthInsurance Soap Client not initialized')
@@ -137,38 +296,21 @@ export class HealthInsuranceAPI {
 
     return new Promise((resolve, reject) => {
       // call 'faumsoknirsjukratrygginga' function/endpoint
-      client.faumsoknirsjukratrygginga(
-        {
-          sendandi: '',
-          kennitala: nationalId,
-        },
-        function (err: any, result: any) {
-          if (err) {
-            logger.error(JSON.stringify(err, null, 2))
-            reject(err)
-          } else {
-            /*
-             API returns null when there is no application in the system,
-             but it returns also null when the nationalId is not correct,
-             we return all reponses to developer to handle them
-
-             Application statuses:
-              0: Samþykkt/Accepted
-              1: Synjað/Refused
-              2: Í bið/Pending
-              3: Ógilt/Invalid
-            */
-            logger.info(
-              `Successful get faumsoknirsjukratrygginga information for ${nationalId} with result: ${JSON.stringify(
-                result,
-                null,
-                2,
-              )}`,
-            )
-            resolve(result)
-          }
-        },
-      )
+      client[functionName](args, function (err: any, result: any) {
+        if (err) {
+          logger.error(JSON.stringify(err, null, 2))
+          reject(err)
+        } else {
+          logger.info(
+            `Successful call ${functionName} function with result: ${JSON.stringify(
+              result,
+              null,
+              2,
+            )}`,
+          )
+          resolve(result)
+        }
+      })
     })
   }
 }
