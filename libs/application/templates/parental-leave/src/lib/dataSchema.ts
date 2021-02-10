@@ -45,6 +45,7 @@ export const dataSchema = z.object({
     pensionFund: z.string(),
     privatePensionFund: z.enum(['frjalsi', '']).optional(),
     privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
+    union: z.string().optional(),
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
@@ -54,6 +55,7 @@ export const dataSchema = z.object({
     email: z.string().email().nonempty(),
     nationalRegistryId: z.string(),
   }),
+  employerInformation: z.object({ email: z.string().email() }).optional(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z.number().optional(),
@@ -63,7 +65,7 @@ export const dataSchema = z.object({
     giveDays: z.number().optional(),
   }),
   singlePeriod: z.enum([YES, NO]),
-  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
+  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']), // Working on this one....
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
   otherParent: z.enum(['spouse', NO, 'manual']).optional(),
   otherParentName: z.string().optional(),

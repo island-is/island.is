@@ -355,7 +355,7 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildMultiField({
-              id: 'employer',
+              id: 'employerInformation',
               title: mm.employer.title,
               description: mm.employer.description,
               condition: (answers) =>
@@ -368,7 +368,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   title: mm.employer.email,
                   width: 'full',
-                  id: 'employer.email',
+                  id: 'employerInformation.email',
                 }),
               ],
             }),
