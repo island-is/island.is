@@ -11,6 +11,7 @@ import {
 interface Option {
   value: string
   label: React.ReactNode
+  subLabel?: string
   tooltip?: React.ReactNode
   excludeOthers?: boolean
 }
@@ -74,6 +75,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   checked={value && value.includes(option.value)}
                   name={`${id}[${index}]`}
                   label={option.label}
+                  subLabel={option.subLabel}
                   value={option.value}
                   hasError={error !== undefined}
                   tooltip={option.tooltip}

@@ -107,6 +107,26 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   ${slices}
 `
 
+export const GET_ORGANIZATION_SERVICES_QUERY = gql`
+  query GetOrganizationServices($input: GetArticlesInput!) {
+    getArticles(input: $input) {
+      title
+      slug
+      processEntry {
+        id
+      }
+      category {
+        slug
+        title
+      }
+      group {
+        slug
+        title
+      }
+    }
+  }
+`
+
 export const GET_ORGANIZATION_TAGS_QUERY = gql`
   query GetOrganizationTags($input: GetOrganizationTagsInput!) {
     getOrganizationTags(input: $input) {

@@ -137,6 +137,20 @@ export const SignedVerdictOverview: React.FC = () => {
     )}`
   }
 
+  const getInfoText = (workingCase: Case): string | undefined => {
+    if (workingCase.isCustodyEndDateInThePast) {
+      return 'Ekki hægt að framlengja gæsluvarðhald sem er lokið.'
+    } else if (workingCase.decision === CaseDecision.REJECTING) {
+      return 'Ekki hægt að framlengja gæsluvarðhald sem var hafnað.'
+    } else if (
+      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
+      return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
+    } else {
+      return undefined
+    }
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -304,6 +318,7 @@ export const SignedVerdictOverview: React.FC = () => {
             }`}
             onNextButtonClick={() => handleNextButtonClick()}
             nextIsLoading={isCreatingExtension}
+            infoBoxText={getInfoText(workingCase)}
           />
         </>
       ) : null}

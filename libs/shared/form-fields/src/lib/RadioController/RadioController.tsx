@@ -11,6 +11,7 @@ import {
 interface Option {
   value: string
   label: React.ReactNode
+  subLabel?: string
   tooltip?: React.ReactNode
   excludeOthers?: boolean
 }
@@ -67,6 +68,7 @@ export const RadioController: FC<Props> = ({
                 id={`${id}-${index}`}
                 name={`${id}`}
                 label={option.label}
+                subLabel={option.subLabel}
                 value={option.value}
                 disabled={disabled}
                 hasError={error !== undefined}

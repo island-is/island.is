@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 
 import { User } from '@island.is/auth-nest-tools'
 
-import { TeachingLicenseResponse } from './mms.type'
+import { LicenseResponse, LicensePDFResponse } from './mms.type'
 
 export class MMSApi {
   private readonly xroadApiUrl: string
@@ -27,10 +27,30 @@ export class MMSApi {
     return res.json()
   }
 
-  getTeachingLicenses(
-    nationalId: User['nationalId'],
-  ): Promise<TeachingLicenseResponse[]> {
-    //return this.requestApi(`api/teachingLicense/${nationalId}`) // TODO fix
-    return Promise.resolve([{ id: 'unique-id' }, { id: 'another-unique-id' }])
+  getLicenses(nationalId: User['nationalId']): Promise<LicenseResponse[]> {
+    //return this.requestApi(`api/licenses/${nationalId}`) // TODO fix
+    return Promise.resolve([
+      {
+        id: '987654',
+        school: 'Menntamálaráðuneytið',
+        programme: 'Kennararéttindi',
+        date: '2010-09-01',
+      },
+      {
+        id: '456789',
+        school: 'Viðskiptaráð',
+        programme: 'Próf í verðbréfaviðskiptum',
+        date: '2005-05-25',
+      },
+    ])
+  }
+
+  getLicensePDF(licenseId: string): Promise<LicensePDFResponse> {
+    //return this.requestApi(`api/licenses/licenseId/export`) // TODO fix
+    return Promise.resolve({
+      id: licenseId,
+      content: 'PDF CONTENT',
+      filename: `nationalID-${licenseId}`,
+    })
   }
 }
