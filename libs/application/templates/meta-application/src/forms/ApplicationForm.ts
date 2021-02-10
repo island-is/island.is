@@ -201,8 +201,8 @@ export const ApplicationForm: Form = buildForm({
                   placeholder: 'https://www.someUrl.is',
                   condition: (formValue: FormValue) => {
                     return (
-                      (formValue as { serviceFields: { digital: string } })?.serviceFields
-                        ?.digital === 'yes'
+                      (formValue as { serviceFields: { digital: string } })
+                        ?.serviceFields?.digital === 'yes'
                     )
                   },
                 }),

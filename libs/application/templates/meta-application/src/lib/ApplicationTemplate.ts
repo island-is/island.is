@@ -49,7 +49,6 @@ const Schema = z.object({
       return !isNaN(asNumber) && asNumber >= 0
     }),
     users: z.enum(['companies', 'individuals', 'both']),
-
   }),
   serviceFields: z.object({
     digital: z.enum(['yes', 'no']),
