@@ -140,11 +140,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'submitted',
-      title: m.section.received,
+      title: m.confirmation.general.sectionTitle,
       children: [
         buildCustomField({
           id: 'residenceChangeConfirmation',
-          title: 'Umsókn um breytt lögheimili móttekin',
+          title: m.confirmation.general.pageTitle,
           component: 'Confirmation',
         }),
       ],

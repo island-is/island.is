@@ -2,7 +2,7 @@ import React from 'react'
 import Markdown from 'markdown-to-jsx'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
-import { Text } from '@island.is/island-ui/core'
+import { Text, BulletList, Bullet } from '@island.is/island-ui/core'
 
 interface Props {
   text: MessageDescriptor
@@ -37,6 +37,12 @@ const DescriptionText = ({ text, format }: Props) => {
           h2: headingOverride,
           h3: headingOverride,
           h4: headingOverride,
+          ul: {
+            component: BulletList,
+          },
+          li: {
+            component: Bullet,
+          },
         },
       }}
     >
