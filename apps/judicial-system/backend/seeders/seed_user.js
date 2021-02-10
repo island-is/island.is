@@ -1,8 +1,6 @@
 'use strict'
 
-const localEnv = {
-  userSeeds: 'gudjon,baldur,ivar',
-  gudjon: `[
+const userSeeds = `[
   {
     "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
     "national_id": "0000000000",
@@ -12,10 +10,7 @@ const localEnv = {
     "email": "aki@dmr.is",
     "role": "PROSECUTOR",
     "institution": "Lögreglustjórinn"
-  }
-]`,
-
-  baldur: `[
+  },
   {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
     "national_id": "1111111111",
@@ -25,10 +20,7 @@ const localEnv = {
     "email": "dalli@dmr.is",
     "role": "REGISTRAR",
     "institution": "Héraðsdómurinn"
-  }
-]`,
-
-  ivar: `[
+  },
   {
     "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
     "national_id": "2222222222",
@@ -39,20 +31,7 @@ const localEnv = {
     "role": "JUDGE",
     "institution": "Héraðsdómurinn"
   }
-]`,
-}
-
-const userSeed = () => {
-  const seedVars = process.env.USER_SEEDS || localEnv.userSeeds
-
-  return seedVars
-    .split(',')
-    .reduce(
-      (seeds, seed) =>
-        seeds.concat(JSON.parse(process.env[seed] || localEnv[seed])),
-      [],
-    )
-}
+]`
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -75,7 +54,7 @@ module.exports = {
 
     return queryInterface.sequelize.transaction((t) =>
       Promise.all(
-        userSeed().map((user) =>
+        JSON.parse(userSeeds).map((user) =>
           queryInterface.upsert(
             'user',
             {
