@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import {
+  AccusedPleaDecision,
   Case as TCase,
   CaseAppealDecision,
   CaseCustodyProvisions,
@@ -124,8 +125,8 @@ export class Case implements TCase {
   @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]
 
-  @Field({ nullable: true })
-  readonly accusedPleaDecision?: boolean
+  @Field(() => String, { nullable: true })
+  readonly accusedPleaDecision?: AccusedPleaDecision
 
   @Field({ nullable: true })
   readonly accusedPleaAnnouncement?: string

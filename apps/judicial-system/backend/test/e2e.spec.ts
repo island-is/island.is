@@ -15,6 +15,7 @@ import {
   NotificationType,
   CaseType,
   UserRole,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -106,6 +107,7 @@ function remainingJudgeCaseData() {
     courtAttendees: 'Court Attendees',
     policeDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
+    accusedPleaDecision: AccusedPleaDecision.ACCEPT,
     accusedPleaAnnouncement: 'Accused Plea',
     litigationPresentations: 'Litigation Presentations',
     ruling: 'Ruling',

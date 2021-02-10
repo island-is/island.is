@@ -10,7 +10,10 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UpdateCase } from '@island.is/judicial-system/types'
+import {
+  AccusedPleaDecision,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
@@ -39,7 +42,7 @@ describe('/domari-krafa/thingbok', () => {
                 'Þess er krafist að Jon Harring, kt. 111111-1110, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {
-              accusedPleaDecision: true,
+              accusedPleaDecision: AccusedPleaDecision.ACCEPT,
             } as UpdateCase,
             {
               accusedPleaAnnouncement:

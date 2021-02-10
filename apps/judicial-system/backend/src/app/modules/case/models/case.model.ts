@@ -20,6 +20,7 @@ import {
   CaseGender,
   CaseDecision,
   CaseType,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
@@ -266,11 +267,12 @@ export class Case extends Model<Case> {
   courtDocuments: string[]
 
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(AccusedPleaDecision),
   })
-  @ApiProperty()
-  accusedPleaDecision: boolean
+  @ApiProperty({ enum: AccusedPleaDecision })
+  accusedPleaDecision: AccusedPleaDecision
 
   @Column({
     type: DataType.STRING,

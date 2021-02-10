@@ -8,6 +8,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
+  AccusedPleaDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
@@ -130,8 +131,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly courtDocuments?: string[]
 
   @Allow()
-  @Field({ nullable: true })
-  readonly accusedPleaDecision?: boolean
+  @Field(() => String, { nullable: true })
+  readonly accusedPleaDecision?: AccusedPleaDecision
 
   @Allow()
   @Field({ nullable: true })

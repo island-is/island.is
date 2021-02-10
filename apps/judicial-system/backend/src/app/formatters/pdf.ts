@@ -3,6 +3,7 @@ import streamBuffers from 'stream-buffers'
 import fs from 'fs'
 
 import {
+  AccusedPleaDecision,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
@@ -329,11 +330,11 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .fontSize(12)
     .text(
       `${
-        existingCase.accusedPleaDecision === true
+        existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
           ? `Kærði samþykkir kröfuna. `
-          : existingCase.accusedPleaDecision === false
+          : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
           ? `Kærði hafnar kröfunni. `
-          : null
+          : ''
       } ${existingCase.accusedPleaAnnouncement}`,
       {
         lineGap: 6,

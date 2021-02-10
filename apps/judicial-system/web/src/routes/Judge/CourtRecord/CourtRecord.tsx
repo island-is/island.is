@@ -29,6 +29,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
 import {
+  AccusedPleaDecision,
   Case,
   CaseCustodyRestrictions,
   CaseGender,
@@ -348,11 +349,14 @@ export const CourtRecord: React.FC = () => {
                   label={`${capitalize(
                     formatAccusedByGender(workingCase.accusedGender),
                   )} hafnar kröfunni`}
-                  checked={workingCase.accusedPleaDecision === false}
+                  checked={
+                    workingCase.accusedPleaDecision ===
+                    AccusedPleaDecision.REJECT
+                  }
                   onChange={() => {
                     setAndSendToServer(
                       'accusedPleaDecision',
-                      false,
+                      AccusedPleaDecision.REJECT,
                       workingCase,
                       setWorkingCase,
                       updateCase,
@@ -367,11 +371,14 @@ export const CourtRecord: React.FC = () => {
                   label={`${capitalize(
                     formatAccusedByGender(workingCase.accusedGender),
                   )} samþykkir kröfuna`}
-                  checked={workingCase.accusedPleaDecision === true}
+                  checked={
+                    workingCase.accusedPleaDecision ===
+                    AccusedPleaDecision.ACCEPT
+                  }
                   onChange={() => {
                     setAndSendToServer(
                       'accusedPleaDecision',
-                      true,
+                      AccusedPleaDecision.ACCEPT,
                       workingCase,
                       setWorkingCase,
                       updateCase,
