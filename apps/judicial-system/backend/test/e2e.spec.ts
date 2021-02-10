@@ -301,7 +301,7 @@ describe('User', () => {
 
   it('POST /api/user should create a user', async () => {
     const data = {
-      nationalId: '123456789',
+      nationalId: '1234567890',
       name: 'The User',
       title: 'The Title',
       mobileNumber: '1234567',
@@ -342,6 +342,69 @@ describe('User', () => {
       })
       .then((value) => {
         expectUsersToMatch(userToTUser(value.toJSON() as User), apiUser)
+      })
+  })
+
+  it('PUT /api/user/:id should update fields of a user by id', async () => {
+    const nationalId = '0987654321'
+    const data = {
+      name: 'The Modified User',
+      title: 'The Modified Title',
+      mobileNumber: '7654321',
+      email: 'modifieduser@dmr.is',
+      role: UserRole.PROSECUTOR,
+      institution: 'The Modified Institution',
+      active: false,
+    }
+    let dbUser: TUser
+    let apiUser: TUser
+
+    await User.destroy({
+      where: {
+        national_id: nationalId,
+      },
+    })
+      .then(() => {
+        return User.create({
+          nationalId: nationalId,
+          name: 'The User',
+          title: 'The Title',
+          mobileNumber: '1234567',
+          email: 'user@dmr.is',
+          role: UserRole.JUDGE,
+          institution: 'The Institution',
+          active: true,
+        })
+      })
+      .then((value) => {
+        dbUser = userToTUser(value.toJSON() as User)
+
+        return request(app.getHttpServer())
+          .put(`/api/user/${dbUser.id}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+          .send(data)
+          .expect(200)
+      })
+      .then((response) => {
+        apiUser = response.body
+
+        // Check the response
+        expect(apiUser.modified).not.toBe(dbUser.modified)
+        expectUsersToMatch(apiUser, {
+          ...data,
+          id: dbUser.id || 'FAILURE',
+          created: dbUser.created || 'FAILURE',
+          modified: apiUser.modified,
+          nationalId: dbUser.nationalId || 'FAILURE',
+        } as TUser)
+
+        // Check the data in the database
+        return User.findOne({
+          where: { id: apiUser.id },
+        })
+      })
+      .then((newValue) => {
+        expectUsersToMatch(userToTUser(newValue.toJSON() as User), apiUser)
       })
   })
 })
@@ -427,7 +490,7 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${value.id}`)
+          .put(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send(data)
           .expect(200)
@@ -466,7 +529,7 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${value.id}`)
+          .put(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(judgeCaseData)
           .expect(200)
