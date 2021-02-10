@@ -13,6 +13,8 @@ import {
   GridRow,
   GridColumn,
   Option,
+  Tooltip,
+  DialogPrompt,
 } from '@island.is/island-ui/core'
 import {
   Service,
@@ -97,12 +99,37 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
     <Box>
       <Box marginTop={1} marginBottom={3}>
         <Box marginBottom={2} display="flex" alignItems="flexStart">
-          <Text variant="h1">{service.title}</Text>
-          {service.pricing.length > 0 && (
-            <Box marginLeft={1}>
-              <Tag>{n(`pricing${capitalize(service.pricing[0])}`)}</Tag>
-            </Box>
-          )}
+          <Inline space={1}>
+            <Text variant="h1">{service.title}</Text>
+            {service.pricing.length > 0 && (
+              <Box height="full" display="flex" alignItems="center">
+                <DialogPrompt
+                  baseId={`pricing-${service.pricing[0]}-dialog`}
+                  title={n(`pricing${capitalize(service.pricing[0])}`)}
+                  description={n(
+                    `pricing${capitalize(service.pricing[0])}Description`,
+                  )}
+                  ariaLabel={`Show detailed description of ${service.pricing[0]} pricing`}
+                  disclosureElement={
+                    <Box>
+                      <Tooltip
+                        placement="right"
+                        as="span"
+                        text={n(
+                          `pricing${capitalize(service.pricing[0])}Description`,
+                        )}
+                      >
+                        <Tag variant="white" outlined key={service.pricing[0]}>
+                          {n(`pricing${capitalize(service.pricing[0])}`)}
+                        </Tag>
+                      </Tooltip>
+                    </Box>
+                  }
+                  buttonTextCancel={n('closeDialog')}
+                />
+              </Box>
+            )}
+          </Inline>
         </Box>
         {service.summary && (
           <Text variant="intro" paddingBottom={2}>
