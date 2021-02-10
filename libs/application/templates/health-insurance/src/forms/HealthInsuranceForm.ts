@@ -122,25 +122,25 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        buildMultiField({
-          id: 'informationRetrieval',
-          title: m.externalDataTitle,
-          children: [
-            buildCustomField({
-              id: 'informationRetrieval',
-              component: 'InformationRetrieval',
-              title: '',
-            }),
-            buildCustomField({
-              id: 'errorModal',
-              component: 'ErrorModal',
-              title: '',
-            }),
-          ],
-          condition: (formValue: FormValue, externalData: ExternalData) => {
-            return shouldShowModal(externalData)
-          },
-        }),
+        // buildMultiField({
+        //   id: 'informationRetrieval',
+        //   title: m.externalDataTitle,
+        //   children: [
+        //     buildCustomField({
+        //       id: 'informationRetrieval',
+        //       component: 'InformationRetrieval',
+        //       title: '',
+        //     }),
+        //     buildCustomField({
+        //       id: 'errorModal',
+        //       component: 'ErrorModal',
+        //       title: '',
+        //     }),
+        //   ],
+        //   condition: (formValue: FormValue, externalData: ExternalData) => {
+        //     return shouldShowModal(externalData)
+        //   },
+        // }),
         buildMultiField({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
