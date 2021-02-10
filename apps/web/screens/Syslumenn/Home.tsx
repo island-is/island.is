@@ -109,7 +109,12 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
           </GridColumn>
         </GridRow>
       </GridContainer>
-      <Section paddingTop={[8, 8, 6]} paddingBottom={[8, 8, 6]} background="purple100" aria-labelledby="latestNewsTitle">
+      <Section
+        paddingTop={[8, 8, 6]}
+        paddingBottom={[8, 8, 6]}
+        background="purple100"
+        aria-labelledby="latestNewsTitle"
+      >
         <LatestNewsSection
           label="Fréttir og tilkynningar"
           labelId="latestNewsTitle"

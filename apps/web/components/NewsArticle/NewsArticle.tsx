@@ -11,8 +11,11 @@ import { Main, SidebarBox, Sticky } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { GetNamespaceQuery, GetSingleNewsItemQuery } from '../../graphql/schema'
-import { Image } from '../../../../libs/island-ui/contentful/src/lib/Image/Image'
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
+  richText,
+  Slice as SliceType,
+  Image,
+} from '@island.is/island-ui/contentful'
 import { useNamespace } from '@island.is/web/hooks'
 
 interface NewsArticleProps {

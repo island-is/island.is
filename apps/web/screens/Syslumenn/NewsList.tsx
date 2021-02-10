@@ -7,8 +7,6 @@ import { Screen } from '../../types'
 import {
   Select as NativeSelect,
   Bullet,
-  OrganizationHeader,
-  OrganizationFooter,
   OrganizationWrapper,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -33,7 +31,6 @@ import {
   GET_NEWS_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
 } from '../queries'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
 import {
   GetNewsDatesQuery,
   QueryGetNewsDatesArgs,
