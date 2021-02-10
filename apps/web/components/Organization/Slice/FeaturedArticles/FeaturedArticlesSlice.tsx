@@ -34,72 +34,70 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const isMobile = width < theme.breakpoints.md
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-      <GridContainer>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[8, 6, 10]}
-          paddingBottom={[4, 5, 10]}
-        >
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '5/12']}>
-              <Box className={styles.popularTitleWrap}>
-                <Text variant="h2" as="h2" marginBottom={4}>
-                  {slice.title}
-                </Text>
-                <Box display={['none', 'none', 'block']}>
-                  <img src={slice.image.url} alt="" />
-                </Box>
+      <Box
+        borderTopWidth="standard"
+        borderColor="standard"
+        paddingTop={[8, 6, 8]}
+        paddingBottom={[4, 5, 10]}
+      >
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '4/11']}>
+            <Box className={styles.popularTitleWrap}>
+              <Text variant="h2" as="h2" marginBottom={4}>
+                {slice.title}
+              </Text>
+              <Box display={['none', 'none', 'block']}>
+                <img src={slice.image.url} alt="" />
               </Box>
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '7/12']}>
-              <Stack space={2}>
-                {slice.articles.map(({ title, slug, processEntry }) => {
-                  const url = linkResolver('Article' as LinkType, [slug])
-                  return (
-                    <FocusableBox
-                      key={slug}
-                      href={url.href}
-                      target={isMobile ? '' : '_blank'}
-                      borderRadius="large"
-                    >
-                      {({ isFocused }) => (
-                        <LinkCard
-                          isFocused={isFocused}
-                          tag={
-                            !!processEntry && n('applicationProcess', 'Umsókn')
-                          }
-                        >
-                          {title}
-                        </LinkCard>
-                      )}
-                    </FocusableBox>
-                  )
-                })}
-              </Stack>
-            </GridColumn>
-          </GridRow>
-          {!!slice.link && (
-            <Box
-              display="flex"
-              justifyContent="flexEnd"
-              paddingTop={4}
-              paddingBottom={1}
-            >
-              <Link href={slice.link.url}>
-                <Button
-                  icon="arrowForward"
-                  iconType="filled"
-                  type="button"
-                  variant="text"
-                >
-                  {n('seeAllServices', 'Sjá allt efni')}
-                </Button>
-              </Link>
             </Box>
-          )}
-        </Box>
-      </GridContainer>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '7/11']}>
+            <Stack space={2}>
+              {slice.articles.map(({ title, slug, processEntry }) => {
+                const url = linkResolver('Article' as LinkType, [slug])
+                return (
+                  <FocusableBox
+                    key={slug}
+                    href={url.href}
+                    target={isMobile ? '' : '_blank'}
+                    borderRadius="large"
+                  >
+                    {({ isFocused }) => (
+                      <LinkCard
+                        isFocused={isFocused}
+                        tag={
+                          !!processEntry && n('applicationProcess', 'Umsókn')
+                        }
+                      >
+                        {title}
+                      </LinkCard>
+                    )}
+                  </FocusableBox>
+                )
+              })}
+            </Stack>
+          </GridColumn>
+        </GridRow>
+        {!!slice.link && (
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            paddingTop={4}
+            paddingBottom={1}
+          >
+            <Link href={slice.link.url}>
+              <Button
+                icon="arrowForward"
+                iconType="filled"
+                type="button"
+                variant="text"
+              >
+                {n('seeAllServices', 'Sjá allt efni')}
+              </Button>
+            </Link>
+          </Box>
+        )}
+      </Box>
     </section>
   )
 }

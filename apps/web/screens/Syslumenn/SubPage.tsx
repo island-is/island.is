@@ -110,6 +110,7 @@ const SubPage: Screen<SubPageProps> = ({
           active: false,
         },
       }}
+      fullWidthContent={true}
     >
       <GridContainer>
         <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>

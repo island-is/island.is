@@ -10,7 +10,6 @@ export const headerBg = style({
   ...themeUtils.responsiveStyle({
     md: {
       marginBottom: '2px',
-      maxHeight: 365,
     },
   }),
 })
@@ -41,7 +40,7 @@ export const headerLogo = style({
 export const navigation = style({
   ...themeUtils.responsiveStyle({
     md: {
-      marginTop: -230,
+      marginTop: -220,
       background: 'none',
       paddingBottom: 0,
     },
