@@ -1,10 +1,6 @@
 import { cms } from '@island.is/api/mocks'
 
 describe('web', () => {
-  it('should do nothing', () => {
-    // TODO: this is disabled for now until it gets unblocked
-  })
-
   beforeEach(() => cy.visit('/'))
 
   it('should display front page slider', () => {
