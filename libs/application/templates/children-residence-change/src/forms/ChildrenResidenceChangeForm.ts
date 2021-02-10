@@ -1,20 +1,13 @@
 import {
   buildForm,
   buildSection,
-  buildTextField,
   Form,
   FormModes,
   buildDataProviderItem,
   buildExternalDataProvider,
-  buildCheckboxField,
-  buildMultiField,
   buildCustomField,
   buildSubSection,
 } from '@island.is/application/core'
-import {
-  extractParentFromApplication,
-  extractChildrenFromApplication,
-} from '../lib/utils'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -73,28 +66,10 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'otherParent',
           title: m.otherParent.general.sectionTitle,
           children: [
-            // TODO: create custom field for this for better control
-            buildMultiField({
-              id: 'informationAboutOtherParent',
+            buildCustomField({
+              id: 'contactInfo',
               title: m.otherParent.general.pageTitle,
-              description: (application) => {
-                const parent = extractParentFromApplication(application)
-                // TODO: format this with m.otherParent.general.description
-                return `Hitt foreldrið er ${parent.name} (${parent.ssn})`
-              },
-              children: [
-                buildTextField({
-                  id: 'email',
-                  backgroundColor: 'blue',
-                  description: m.otherParent.inputs.description,
-                  title: m.otherParent.inputs.emailLabel,
-                }),
-                buildTextField({
-                  id: 'phoneNumber',
-                  backgroundColor: 'blue',
-                  title: m.otherParent.inputs.phoneNumberLabel,
-                }),
-              ],
+              component: 'ContactInfo',
             }),
           ],
         }),

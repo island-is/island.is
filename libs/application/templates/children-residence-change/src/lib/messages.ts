@@ -169,21 +169,20 @@ export const otherParent = {
       defaultMessage: 'Staðfestu upplýsingar um hitt foreldrið',
       description: 'Other parent page title',
     },
+    intro: {
+      id: 'crc.application:section.backgroundInformation.otherParent.intro',
+      defaultMessage: 'Hitt foreldrið er {parentName} ({parentSSN})',
+      description: 'Other parent page intro',
+    },
     description: {
       id:
         'crc.application:section.backgroundInformation.otherParent.description',
-      defaultMessage: 'Hitt foreldrið er ${parentName} (${parentSSN})',
+      defaultMessage:
+        'Til að afla samþykkis hins foreldrisins þurfum við að fá netfang og símanúmer viðkomandi.',
       description: 'Other parent page description',
     },
   }),
   inputs: defineMessages({
-    description: {
-      id:
-        'crc.application:section.backgroundInformation.otherParent.inputs.description',
-      defaultMessage:
-        'Til að afla samþykkis hins foreldrisins þurfum við að fá netfang og símanúmer viðkomandi.',
-      description: 'Description for inputs',
-    },
     emailLabel: {
       id:
         'crc.application:section.backgroundInformation.otherParent.inputs.emailLabel',
