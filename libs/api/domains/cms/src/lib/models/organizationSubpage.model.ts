@@ -27,10 +27,10 @@ export class OrganizationSubpage {
   slices: Array<typeof SliceUnion>
 
   @Field({ nullable: true })
-  sliceCustomRenderer: string
+  sliceCustomRenderer?: string
 
   @Field({ nullable: true })
-  sliceExtraText: string
+  sliceExtraText?: string
 
   @Field({ nullable: true })
   parentSubpage?: string
