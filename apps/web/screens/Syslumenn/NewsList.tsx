@@ -48,6 +48,7 @@ import {
 import { NewsCard } from '../../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
+import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 
 const PERPAGE = 10
 
@@ -345,7 +346,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
-  const tag = (query.tag as string) ?? null
+  const tag = (query.tag as string) ?? SYSLUMENN_NEWS_TAG_ID
 
   const [
     {
