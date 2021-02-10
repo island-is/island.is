@@ -52,7 +52,7 @@ export const Users: React.FC = () => {
           icon="add"
           items={[
             {
-              href: Constants.STEP_ONE_NEW_DETENTION_ROUTE,
+              href: Constants.USER_NEW_ROUTE,
               title: 'Notenda',
             },
             {
