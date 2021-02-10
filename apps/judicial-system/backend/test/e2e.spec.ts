@@ -314,7 +314,7 @@ describe('User', () => {
 
     await User.destroy({
       where: {
-        national_id: data.nationalId,
+        national_id: data.nationalId, // eslint-disable-line @typescript-eslint/camelcase
       },
     })
       .then(() => {
@@ -337,7 +337,7 @@ describe('User', () => {
 
         // Check the data in the database
         return User.findOne({
-          where: { id: apiUser.id }, // eslint-disable-line @typescript-eslint/camelcase
+          where: { id: apiUser.id },
         })
       })
       .then((value) => {
