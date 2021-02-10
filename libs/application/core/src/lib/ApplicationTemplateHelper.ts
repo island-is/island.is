@@ -7,8 +7,10 @@ import {
   InvokeSourceDefinition,
   ActionTypes,
 } from 'xstate'
-import { Application, ExternalData, FormValue } from '../types/Application'
 import merge from 'lodash/merge'
+
+import { ApplicationStateMetaOnEntry } from '@island.is/application/core'
+import { Application, ExternalData, FormValue } from '../types/Application'
 
 import {
   ApplicationContext,
@@ -22,13 +24,6 @@ import {
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 import get from 'lodash/get'
 import has from 'lodash/has'
-
-interface APITemplateUtilsServiceInvokeSourceDefinition
-  extends InvokeSourceDefinition {
-  // TODO: use action type from apiTemplateUtils
-  // import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
-  action: any
-}
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -69,9 +64,17 @@ export class ApplicationTemplateHelper<
     )
   }
 
+  getStateOnEntry(
+    stateKey: string = this.application.state,
+  ): ApplicationStateMetaOnEntry<TEvents> | null {
+    return (
+      this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
+    )
+  }
+
   getApplicationStateInformation(
     stateKey: string = this.application.state,
-  ): ApplicationStateMeta | undefined {
+  ): ApplicationStateMeta<TEvents> | undefined {
     return this.template.stateMachineConfig.states[stateKey]?.meta
   }
 
@@ -80,38 +83,8 @@ export class ApplicationTemplateHelper<
    * @param event A state machine event
    * returns [hasChanged, newState, newApplication] where newApplication has the updated state value
    */
-  changeState(
-    event: Event<TEvents>,
-    // TODO: import type from application-api-template-utils
-    apiTemplateUtils: any,
-  ): [boolean, string, Application] {
-    this.initializeStateMachine(undefined, {
-      services: {
-        apiTemplateUtils: (
-          context: TContext,
-          event: TEvents,
-          { src }: InvokeMeta,
-        ) => {
-          if (event.type === ActionTypes.Init) {
-            // Do not send emails on xstate.init event
-            return Promise.reject('')
-          }
-
-          const {
-            action,
-          } = src as APITemplateUtilsServiceInvokeSourceDefinition
-
-          try {
-            return apiTemplateUtils.performAction(action)
-          } catch (e) {
-            console.log(e)
-            // pass
-          }
-
-          return Promise.reject('')
-        },
-      },
-    })
+  changeState(event: Event<TEvents>): [boolean, string, Application] {
+    this.initializeStateMachine(undefined)
     const service = interpret(
       this.stateMachine,
       this.template.stateMachineOptions,
