@@ -21,6 +21,7 @@ import {
 import { m } from './messages'
 import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
 import { StatusTypes } from '../types'
+import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
   isEUCountry,
@@ -138,8 +139,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  streetAddress?: string
-                })?.streetAddress,
+                  address?: Address
+                }).address?.streetAddress,
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -148,8 +149,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  postalCode?: string
-                })?.postalCode,
+                  address?: Address
+                }).address?.postalCode || '', //Todo remove || '' before pushing to production
             }),
             buildTextField({
               id: 'applicant.city',
@@ -158,8 +159,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  city?: string
-                })?.city,
+                  address?: Address
+                }).address?.city,
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
