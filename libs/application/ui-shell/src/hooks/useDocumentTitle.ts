@@ -10,8 +10,10 @@ export function useDocumentTitle(title: string, retainOnUnmount = false): void {
   useEffect(() => {
     return () => {
       if (!retainOnUnmount) {
+        // eslint-disable-next-line
         document.title = defaultTitle.current
       }
     }
+    // eslint-disable-next-line
   }, [])
 }
