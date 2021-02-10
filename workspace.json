@@ -1760,6 +1760,35 @@
         }
       }
     },
+    "application-templates-signature-lists": {
+      "root": "libs/application/templates/signature-lists",
+      "sourceRoot": "libs/application/templates/signature-lists/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/signature-lists/tsconfig.lib.json",
+              "libs/application/templates/signature-lists/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/signature-lists/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/signature-lists/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-ui-fields": {
       "root": "libs/application/ui-fields",
       "sourceRoot": "libs/application/ui-fields/src",

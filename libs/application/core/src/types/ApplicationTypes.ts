@@ -1,5 +1,6 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
+  SIGNATURES = 'SignatureLists',
   PASSPORT = 'Passport',
   DRIVING_LESSONS = 'DrivingLessons',
   DRIVING_LICENSE = 'DrivingLicense',
