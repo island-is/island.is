@@ -54,6 +54,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
 
+  const headerBg = pageFeaturedImage
+    ? `url(${pageFeaturedImage.url}), linear-gradient(99.09deg, #24268E 23.68%, #CD1270 123.07%)`
+    : `linear-gradient(99.09deg, #24268E 23.68%, #CD1270 123.07%)`
+
   return (
     <>
       <HeadWithSocialSharing
@@ -63,7 +67,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <Box className={styles.headerBg}>
+      <Box className={styles.headerBg} style={{ background: headerBg }}>
         <GridContainer>
           <Box marginTop={[1, 1, 3]} marginBottom={5}>
             <Breadcrumbs
