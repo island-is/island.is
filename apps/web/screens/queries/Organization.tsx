@@ -64,7 +64,6 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
-      parentSubpage
       featuredImage {
         url
         title
@@ -99,6 +98,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       sliceCustomRenderer
       sliceExtraText
+      parentSubpage
       featuredImage {
         url
         title
