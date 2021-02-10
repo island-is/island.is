@@ -19,8 +19,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import {
   HeadWithSocialSharing,
-  OrganizationHeader,
-  OrganizationFooter,
   NewsArticle,
   OrganizationWrapper,
 } from '@island.is/web/components'
