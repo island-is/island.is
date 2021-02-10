@@ -13,8 +13,7 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
   if (response && response?.status === 'success') {
     const applications = response.data as Applications[]
     const pendingApplications = applications?.filter(
-      (application) =>
-        application.state === 'draft' 
+      (application) => application.state === 'draft',
     )
     return pendingApplications?.length > 1
   }
@@ -40,9 +39,9 @@ export const hasIcelandicAddress = (externalData: ExternalData) => {
 export const shouldShowModal = (externalData: ExternalData) => {
   return (
     hasHealthInsurance(externalData) ||
-    hasActiveDraftApplication(externalData) ||
     hasOldPendingApplications(externalData) ||
-    hasIcelandicAddress(externalData)
+    hasIcelandicAddress(externalData) ||
+    hasActiveDraftApplication(externalData)
   )
 }
 
