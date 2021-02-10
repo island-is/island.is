@@ -15,7 +15,9 @@ export const useModalContent = (externalData: ExternalData) => {
   const [content, setContent] = useState<ContentType>()
   const history = useHistory()
   const applications = externalData?.applications.data as Applications[]
-  const sortedApplications = applications.sort((a,b) => new Date(a.created) > new Date(b.created) ? 1 : -1)
+  const sortedApplications = applications.sort((a, b) =>
+    new Date(a.created) > new Date(b.created) ? 1 : -1,
+  )
   const firstCreatedApplicationId = sortedApplications[0].id
 
   const contentList = {
@@ -58,8 +60,6 @@ export const useModalContent = (externalData: ExternalData) => {
   useEffect(() => {
     if (hasHealthInsurance(externalData)) {
       setContent(contentList.hasHealthInsurance)
-    } else if (hasActiveDraftApplication(externalData)) {
-      setContent(contentList.activeApplication)
     } else if (hasOldPendingApplications(externalData)) {
       const oldPendingApplications = externalData?.oldPendingApplications
         ?.data as string[]
@@ -72,6 +72,8 @@ export const useModalContent = (externalData: ExternalData) => {
       })
     } else if (hasIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
+    } else if (hasActiveDraftApplication(externalData)) {
+      setContent(contentList.activeApplication)
     }
   }, [externalData])
 
