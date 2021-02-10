@@ -112,7 +112,9 @@ export class ElasticService {
    * @returns  - array of string
    * @memberof ElasticService
    */
-  async fetchAliasIndexNames(aliasName: string): Promise<string[] | undefined> {
+  async fetchIndexNamesFromAlias(
+    aliasName: string,
+  ): Promise<string[] | undefined> {
     interface Item {
       alias: string
       index: string
@@ -171,8 +173,9 @@ export class ElasticService {
   }
 
   /**
-   * Deletes all indices with names, that start with current alias name
-   * + current environment, that do not belong to the associated alias.
+   * Deletes all indices with names, that start with
+   * current alias name + current environment name and
+   * do NOT belong to the associated alias.
    *
    * See: getWorkerPrefix() for more info on naming convention.
    *
@@ -181,13 +184,13 @@ export class ElasticService {
     logger.debug('Delete dangling indices started')
     const indices = await this.fetchAllIndexNames()
     if (indices) {
-      const activeIndices = await this.fetchAliasIndexNames(
+      const activeIndices = await this.fetchIndexNamesFromAlias(
         this.getWorkerPrefix(),
       )
       logger.debug('activeIndices', activeIndices)
 
-      // Get all indices associated with us in this environment except the ones
-      // which are being used in current environment alias.
+      // Get all indices associated with us in this environment
+      // except those, being used in current environment alias.
       const workers = indices.filter(
         (e) =>
           e.startsWith(`${this.getWorkerPrefix()}`) &&
@@ -221,8 +224,15 @@ export class ElasticService {
     return this.aliasName
   }
 
+  private getCollectorWorkingName(environment: Environment) {
+    return `${this.getPrefix(environment)}CollectorWorking`
+  }
+
+  private getPrefix(environment: Environment) {
+    return `${this.getAliasName()}-${environment}`
+  }
   private getWorkerPrefix() {
-    return `${this.getAliasName()}-${this.getEnvironment()}`
+    return this.getPrefix(this.getEnvironment())
   }
 
   /**
@@ -236,34 +246,81 @@ export class ElasticService {
   }
 
   /**
+   * Add aliases to a index.
+   * Removes aliases from a index.
+   * ... or both.
+   *
+   * @param {string} indexName
+   * @param {string[]} aliasesToAdd - aliases to add to the index
+   * @param {string[]} aliasesToRemove - aliases to remove from the index
+   */
+  async updateIndexAliases(
+    indexName: string,
+    aliasesToAdd: string[] | null,
+    aliasesToRemove: string[] | null,
+  ): Promise<boolean> {
+    const toAdd = aliasesToAdd ? aliasesToAdd : []
+    const toRemove = aliasesToRemove ? aliasesToRemove : []
+
+    if (!indexName || (toAdd.length === 0 && toRemove.length === 0)) {
+      logger.warning(`Nothing to do for updateIndexAliases`)
+      return false
+    }
+
+    const updateOptions: any = {
+      body: {
+        actions: [],
+      },
+    }
+    toRemove.forEach((aliasName) => {
+      updateOptions.body.actions.push({
+        remove: {
+          index: indexName,
+          alias: aliasName,
+        },
+      })
+    })
+    toAdd.forEach((aliasName) => {
+      updateOptions.body.actions.push({
+        add: {
+          index: indexName,
+          alias: aliasName,
+        },
+      })
+    })
+    return await this.client.indices
+      .updateAliases(updateOptions)
+      .then(() => {
+        return true
+      })
+      .catch((err) => {
+        logger.debug(`updateIndexAliases failed`, err)
+        return false
+      })
+  }
+  /**
    *  Add the worker index to the alias,
    *  removes the old index from the alias and finally deletes the old index.
    */
-  async updateAlias() {
-    //todo: we need delete index because we are changing it to a alias
-    //todo: remove next line when this index has been deleted in all environments
-
+  async ActivateWorkerIndex() {
     logger.info(`Updating alias: "${this.getWorkerPrefix()}"`)
 
-    const allAliases = await this.fetchAllAliasNames()
-    logger.debug(`All aliases ${allAliases}`)
-
-    if (!allAliases.indexOf(this.getAliasName())) {
-      //todo: We are on a old environment where a index with current alias name exists.
+    const allIndices = await this.fetchAllIndices()
+    if (allIndices && allIndices.includes(this.getAliasName())) {
       logger.info(
-        'Todo: Remove this after it has been run on all environments.',
-      )
-      logger.info(
-        `Deleting index "${this.getAliasName()}" so we can use that name as an alias.`,
+        `Found a index named ${this.getAliasName()}.  We need that name for our alias so we are deleting the index.`,
       )
       await this.deleteIndex(this.getAliasName()).catch((err) => {
         logger.debug(
-          `Index name does not exist, it is an alias and thats how we like it.${err}.`,
+          `Unable to delete index named "${this.getAliasName()}".${err}.`,
         )
       })
     }
 
-    const oldIndices = await this.fetchAliasIndexNames(this.getWorkerPrefix())
+    const oldIndices = await this.fetchIndexNamesFromAlias(
+      this.getWorkerPrefix(),
+    )
+
     logger.debug(`old indices: ${oldIndices}`)
     const updateOptions: any = {
       body: {
@@ -308,10 +365,12 @@ export class ElasticService {
   /**
    * Accepts array of Services to bulk insert into elastic search.
    */
-  async bulk(services: Array<Service>, indexName: string): Promise<void> {
+  async bulk(services: Array<Service>, indexName: string): Promise<boolean> {
     if (!indexName) {
-      throw new Error('Bulk index name missing.')
+      logger.debug('Bulk index name missing.')
+      return false
     }
+
     logger.debug(`Inserting into index ${indexName}`)
     logger.info('Bulk insert', services)
 
@@ -327,17 +386,45 @@ export class ElasticService {
         bulk.push(service)
       })
 
-      await this.client.bulk({
-        body: bulk,
-        index: indexName,
-      })
+      const res = await this.client
+        .bulk({
+          body: bulk,
+          index: indexName,
+        })
+        .then(() => true)
+        .catch(() => false)
+      if (res) {
+        return res
+      }
     } else {
       logger.debug('nothing to bulk insert')
     }
+    return false
   }
 
+  /**
+   * Inserts array of services into the worker index
+   *
+   * @param {Array<Service>} services
+   * @param {boolean} createCollectorAlias - if true an collector alias will be
+   * attached to the index so collectors on other environments can check if this
+   * collector is currently running.
+   */
   async bulkWorker(services: Array<Service>) {
-    await this.bulk(services, this.getWorkerIndexName())
+    return await this.bulk(services, this.getWorkerIndexName())
+  }
+
+  /**
+   *  Add CollectorWorking alias to worker index to report to collectors
+   *  on other environments that collection currently running.
+   * @memberof ElasticService
+   */
+  async createCollectorWorkingAlias() {
+    const aliases = [this.getCollectorWorkingName(this.getEnvironment())]
+    logger.debug(
+      `Adding alias "${aliases[0]}" to index ${this.getWorkerIndexName()}.`,
+    )
+    await this.updateIndexAliases(this.getWorkerIndexName(), aliases, null)
   }
 
   async fetchAll(
@@ -504,27 +591,38 @@ export class ElasticService {
    * @param {Environment} environment
    * @returns {boolean}
    */
-  private isCollectorRunning(environment: Environment): boolean {
-    // todo: check if alias "xroadcollector_working" exists on given environment
-    // if "xroadcollector_working" exits return true
-    // if "xroadcollector_working" exits return false
-    if (environment === Environment.STAGING) return false
-    return false
+  async isCollectorRunning(environment: Environment): Promise<boolean> {
+    // todo: check if alias this.getCollectorWorkingName(environment) exists on given environment
+    const aliasName = this.getCollectorWorkingName(environment)
+    const indices = await this.fetchIndexNamesFromAlias(aliasName)
+
+    let value = false
+    if (indices && indices.length) {
+      value = true
+    }
+
+    logger.debug(
+      `Waiting for alias "${aliasName}" connected to indices. Collector is ${
+        value ? '' : 'not '
+      }running`,
+      indices,
+    )
+    return value
   }
 
   /**
-   * Waits until a collector finishes running one of the given environments.
+   * Waits until a collector finishes running in one of the given environments.
    *
    * @param {Environment[]} environments
-   * @param {number} [checkIntervalMilliseconds=1000]
-   * @param {number} [maxWaitTimeMilliseconds=10000]
-   * @returns {Environment|null} - Returns Environment if collector is not running in that environment.
-                                 - null: If collector is still running in all given environments and max wait time is reached.
+   * @param {Date} stopWaiting                  - When to cancel waiting for other environments.
+   * @param {number} [checkInterval=(2 * 1000)] - How long between checks in milliseconds. Default set to 2 seconds.
+   * @returns {(Promise<Environment | null>)}   - Returns Environment if collector is not running in that environment.
+                                                - null: If collector is still running in all given environments and max wait time is reached.
    */
   private async waitForCollectorToFinishOnOtherCluster(
     environments: Environment[],
-    checkIntervalMilliseconds: number = 1000,
-    maxWaitTimeMilliseconds: number = 10000,
+    stopWaiting: Date,
+    checkInterval: number = 2 * 1000,
   ): Promise<Environment | null> {
     if (!environments || !environments.length) {
       return null
@@ -537,20 +635,23 @@ export class ElasticService {
     }
 
     let now = Date.now()
-    const maxWait = now + maxWaitTimeMilliseconds
 
-    while (now < maxWait) {
+    logger.info(
+      `Waiting for collectors on other environments to finish. Will stop waiting at "${stopWaiting.toISOString()}"`,
+    )
+
+    while (now < stopWaiting.getTime()) {
       for (let i = 0; i < environments.length; i++) {
-        if (!this.isCollectorRunning(environments[i])) {
+        if (!(await this.isCollectorRunning(environments[i]))) {
           return environments[i]
         }
       }
-      await pause(checkIntervalMilliseconds)
+      await pause(checkInterval)
       now = Date.now()
     }
 
-    logger.debug(
-      'waitForCollectorToFinishOnOtherClusters timed out, that is, MaxWait reached!',
+    logger.warn(
+      'Waiting for collector to finish on other environments took to long, now we will stop waiting and finish up.',
     )
     return null
   }
@@ -562,9 +663,10 @@ export class ElasticService {
    * @param {Environment} environment
    */
   private async copyRemoteValues(environment: Environment) {
+    
     //todo: copy values from other environment cluster
     logger.info(`Copying values from ${environment}`)
-    const externalIndex = `${this.getAliasName()}_${environment}`
+    const externalIndex = this.getPrefix(environment)
     const externalIds = await this.fetchAllIds(externalIndex)
 
     if (!externalIds || !externalIds.length) {
@@ -593,14 +695,15 @@ export class ElasticService {
       externalUnique,
     )
 
-    return
+    logger.info(`Copying values from environment ${environment} finished`)
   }
 
   /**
    *  Copies values from other environments into worker index
    *
+   *  @param {number} [waitMax=(120 * 1000)] - How long to wait until we give up in milliseconds. Default set to 120 seconds.
    */
-  async copyValuesFromOtherEnvironments() {
+  async copyValuesFromOtherEnvironments(waitMax: number = 120 * 1000) {
     logger.info('`Copying values from other environments')
     const otherEnvironments = this.getOtherEnvironments()
     logger.debug(
@@ -615,8 +718,11 @@ export class ElasticService {
       )}`,
     )
 
+    const endWait = new Date(Date.now() + waitMax)
+
     let environment = await this.waitForCollectorToFinishOnOtherCluster(
       otherEnvironments,
+      endWait,
     )
     while (environment) {
       logger.debug(
@@ -628,9 +734,15 @@ export class ElasticService {
 
       environment = await this.waitForCollectorToFinishOnOtherCluster(
         otherEnvironments,
+        endWait,
       )
     }
 
+    // Removing CollectorWorking alias from worker index to report to collectors
+    // on other environments that collection NOT currently running.
+    await this.updateIndexAliases(this.getWorkerIndexName(), null, [
+      this.getCollectorWorkingName(this.getEnvironment()),
+    ])
     logger.info(`Copying values from other environments finished`)
   }
 
@@ -697,7 +809,9 @@ export class ElasticService {
           break
       }
 
-      const newIndex = `${this.getAliasName()}_${environment}`
+      const newIndex = this.getPrefix(environment)
+
+
       logger.debug(`deleting index ${newIndex}`)
       await this.deleteIndex(newIndex)
       logger.debug(
@@ -734,7 +848,8 @@ export class ElasticService {
 
     for (let i = 0; i < environments.length; i++) {
       const environment = environments[i]
-      const newIndex = `${this.getAliasName()}_${environment}`
+      const newIndex = this.getPrefix(environment)
+
       const delCount = 2 * (i + 1)
       logger.debug(
         `Removing last ${delCount} services from cloned environment index "${newIndex}"`,
@@ -751,6 +866,61 @@ export class ElasticService {
         )
         .catch((err) => logger.debug('deleteById error', err))
     }
+
+    // add fake alias to to fool isCollectorRunning
+    await this.updateIndexAliases(
+      this.getWorkerIndexName(),
+      [
+        this.getCollectorWorkingName(Environment.STAGING),
+        this.getCollectorWorkingName(Environment.PROD),
+      ],
+      null,
+    )
+
+    const deleteAliasAfter = (
+      els: ElasticService,
+      indexName: string,
+      aliasName: string,
+      delay: number,
+    ) => {
+      logger.debug(
+        `Adding Timer, triggered at "${new Date(
+          Date.now() + delay,
+        ).toISOString()}" for the removal of alias ${aliasName} from index ${indexName}.`,
+      )
+
+      return new Promise(function (resolve) {
+        setTimeout(async () => {
+          logger.debug('removing worker alias ' + aliasName)
+          const success = await els.updateIndexAliases(indexName, null, [
+            aliasName,
+          ])
+          logger.debug(
+            success
+              ? `successfully removed "${aliasName}"`
+              : `failed removing "${aliasName}"`,
+          )
+          resolve
+        }, delay)
+      })
+    }
+
+    logger.debug('-- Setting upp fake workers on different environments -- ')
+    //delete staging working alias from worker index after 10 seconds
+    deleteAliasAfter(
+      this,
+      this.getWorkerIndexName(),
+      this.getCollectorWorkingName(Environment.STAGING),
+      5 * 1000,
+    )
+    //delete prod working alias from worker index after 20 seconds
+    deleteAliasAfter(
+      this,
+      this.getWorkerIndexName(),
+      this.getCollectorWorkingName(Environment.PROD),
+      20 * 1000,
+    )
+
     logger.debug('-- Creating mocks finished -- ')
   }
 }

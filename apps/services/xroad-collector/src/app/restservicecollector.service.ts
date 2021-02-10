@@ -67,7 +67,8 @@ export class RestServiceCollector implements ServiceCollector {
   private async indexProviders(providers: Array<Provider>): Promise<void> {
     // Get latest state in X-Road in this environment
     this.elasticService.initWorker(this.getConfig().environment)
-
+    let createCollectionAlias = true
+    let addedItems: boolean
     for (const provider of providers) {
       try {
         // For each provider get list af all REST services
@@ -78,7 +79,12 @@ export class RestServiceCollector implements ServiceCollector {
         )
 
         // Insert into Elastic worker index
-        await this.elasticService.bulkWorker(services)
+
+        addedItems = await this.elasticService.bulkWorker(services)
+        if (addedItems && createCollectionAlias) {
+          await this.elasticService.createCollectorWorkingAlias()
+          createCollectionAlias = false
+        }
       } catch (err) {
         logger.error(
           `Failed to index service metadata for provider ${providerToString(
@@ -95,17 +101,21 @@ export class RestServiceCollector implements ServiceCollector {
     logger.debug(
       `Adding index "${this.elasticService.getAliasName()}" to alias at: ${new Date().toISOString()}`,
     )
-    await this.elasticService.updateAlias()
+    await this.elasticService.ActivateWorkerIndex()
     logger.debug(`Done updating values at: ${new Date().toISOString()}`)
 
     logger.info('Processing other environments.')
+
     //TODO: remove createMocks when you are able to copy from other clusters
-    await this.elasticService.createMocks(this.elasticService.getWorkerIndexName(), [Environment.STAGING, Environment.PROD])
+    await this.elasticService.createMocks(
+      this.elasticService.getWorkerIndexName(),
+      [Environment.STAGING, Environment.PROD],
+    )
     await this.elasticService.copyValuesFromOtherEnvironments()
+
     //TODO: if another instance of the collector is running in the same
     //TODO: environment, the line below, will delete it's index.
     await this.elasticService.deleteDanglingIndices()
     logger.info(`Collecting done on ${this.elasticService.getEnvironment()}`)
   }
-
 }
