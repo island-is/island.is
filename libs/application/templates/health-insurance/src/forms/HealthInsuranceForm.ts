@@ -21,6 +21,7 @@ import {
 import { m } from './messages'
 import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
 import { StatusTypes } from '../types'
+import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
   isEUCountry,
@@ -89,24 +90,57 @@ export const HealthInsuranceForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'informationRetrieval',
-          title: m.externalDataTitle,
+          id: 'debug',
+          title: 'debug',
           children: [
-            buildCustomField({
-              id: 'informationRetrieval',
-              component: 'InformationRetrieval',
-              title: '',
+            buildTextField({
+              id: 'debugApplicationsProvider',
+              title: 'applications',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.applications?.data,
+                )
+              },
             }),
-            buildCustomField({
-              id: 'errorModal',
-              component: 'ErrorModal',
-              title: '',
+            buildTextField({
+              id: 'debugHealthInsuranceProvider',
+              title: 'health insurance',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.healthInsurance?.data,
+                )
+              },
+            }),
+            buildTextField({
+              id: 'debugPendingApplicationsProvider',
+              title: 'oldpending',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.oldPendingApplications.data,
+                )
+              },
             }),
           ],
-          condition: (formValue: FormValue, externalData: ExternalData) => {
-            return shouldShowModal(externalData)
-          },
         }),
+        // buildMultiField({
+        //   id: 'informationRetrieval',
+        //   title: m.externalDataTitle,
+        //   children: [
+        //     buildCustomField({
+        //       id: 'informationRetrieval',
+        //       component: 'InformationRetrieval',
+        //       title: '',
+        //     }),
+        //     buildCustomField({
+        //       id: 'errorModal',
+        //       component: 'ErrorModal',
+        //       title: '',
+        //     }),
+        //   ],
+        //   condition: (formValue: FormValue, externalData: ExternalData) => {
+        //     return shouldShowModal(externalData)
+        //   },
+        // }),
         buildMultiField({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
@@ -138,8 +172,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  streetAddress?: string
-                })?.streetAddress,
+                  address?: Address
+                }).address?.streetAddress,
             }),
             buildTextField({
               id: 'applicant.postalCode',
@@ -148,8 +182,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  postalCode?: string
-                })?.postalCode,
+                  address?: Address
+                }).address?.postalCode || '', //Todo remove || '' before pushing to production
             }),
             buildTextField({
               id: 'applicant.city',
@@ -158,8 +192,8 @@ export const HealthInsuranceForm: Form = buildForm({
               disabled: true,
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
-                  city?: string
-                })?.city,
+                  address?: Address
+                }).address?.city,
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',

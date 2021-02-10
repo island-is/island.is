@@ -3,16 +3,16 @@ import decode from 'jwt-decode'
 import { ExecutionContext } from '@nestjs/common'
 import { environment } from '../../../../environments'
 
+export function getAuthorizationHeader(ctx: ExecutionContext): string {
+  return ctx.switchToHttp().getRequest().headers.authorization
+}
+
 export function getNationalIdFromToken(ctx: ExecutionContext): string {
-  const request = ctx.switchToHttp().getRequest()
-  try {
-    const decodedToken = decode(
-      request.headers.authorization?.replace('Bearer ', ''),
-    ) as { nationalId: string }
-    return decodedToken.nationalId
-  } catch (e) {
-    throw new Error(e)
+  const authorization = getAuthorizationHeader(ctx)
+  const decodedToken = decode(authorization?.replace('Bearer ', '')) as {
+    nationalId: string
   }
+  return decodedToken.nationalId
 }
 
 export function verifyToken<T>(token: string): T | null {

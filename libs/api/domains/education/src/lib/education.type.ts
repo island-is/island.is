@@ -1,7 +1,10 @@
-export interface TeachingLicense {
+export interface License {
   id: string
+  school: string
+  programme: string
+  date: string
 }
 
-export interface SendTeachingLicense {
+export interface SendLicense {
   email: string
 }

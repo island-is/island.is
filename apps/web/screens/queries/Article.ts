@@ -24,6 +24,7 @@ export const GET_ARTICLE_QUERY = gql`
       }
       organization {
         title
+        shortTitle
         slug
         link
         logo {

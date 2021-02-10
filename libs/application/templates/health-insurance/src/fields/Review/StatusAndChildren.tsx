@@ -127,35 +127,45 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
             </Stack>
           </Box>
         )}
-        <Stack space={2}>
-          <FieldDescription
-            description={formatText(
-              m.childrenDescription,
-              application,
-              formatMessage,
-            )}
-          />
-          <RadioController
-            id={'children'}
-            name={'children'}
-            disabled={!isEditable}
-            defaultValue={
-              getValueViaPath(application.answers, 'children') as string[]
-            }
-            onSelect={(value) => setChildren(value as string)}
-            largeButtons={true}
-            split={'1/2'}
-            options={[
-              {
-                label: formatText(m.noOptionLabel, application, formatMessage),
-                value: NO,
-              },
-              {
-                label: formatText(m.yesOptionLabel, application, formatMessage),
-                value: YES,
-              },
-            ]}
-          />
+        <Stack space={1}>
+          <Stack space={2}>
+            <FieldDescription
+              description={formatText(
+                m.childrenDescription,
+                application,
+                formatMessage,
+              )}
+            />
+            <RadioController
+              id={'children'}
+              name={'children'}
+              disabled={!isEditable}
+              defaultValue={
+                getValueViaPath(application.answers, 'children') as string[]
+              }
+              onSelect={(value) => setChildren(value as string)}
+              largeButtons={true}
+              split={'1/2'}
+              options={[
+                {
+                  label: formatText(
+                    m.noOptionLabel,
+                    application,
+                    formatMessage,
+                  ),
+                  value: NO,
+                },
+                {
+                  label: formatText(
+                    m.yesOptionLabel,
+                    application,
+                    formatMessage,
+                  ),
+                  value: YES,
+                },
+              ]}
+            />
+          </Stack>
           {children === YES && (
             <Box marginBottom={[2, 2, 4]}>
               <ChildrenInfoMessage application={application} field={field} />
