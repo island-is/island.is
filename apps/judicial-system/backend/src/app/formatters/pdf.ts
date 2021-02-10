@@ -7,7 +7,6 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  User,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
