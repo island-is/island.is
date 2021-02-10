@@ -9,7 +9,11 @@ import {
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseGender } from '@island.is/judicial-system/types'
+import {
+  AccusedPleaDecision,
+  Case,
+  CaseGender,
+} from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -81,7 +85,16 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         )}`}
         breakSpaces
       >
-        <Text>{workingCase.accusedPlea}</Text>
+        <Text>
+          <Text as="span" fontWeight="semiBold">
+            {workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+              ? `Kærði hafnar kröfunni. `
+              : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
+              ? `Kærði samþykkir kröfuna. `
+              : ''}
+          </Text>
+          {workingCase.accusedPleaAnnouncement}
+        </Text>
       </AccordionListItem>
       <AccordionListItem title="Málflutningur" breakSpaces>
         <Text>{workingCase.litigationPresentations}</Text>
