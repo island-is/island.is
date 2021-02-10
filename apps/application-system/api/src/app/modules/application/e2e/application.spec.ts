@@ -25,6 +25,8 @@ class MockEmailService {
 }
 
 const nationalId = '123456-4321'
+let server: request.SuperTest<request.Test>
+
 beforeAll(async () => {
   app = await setup({
     override: (builder) => {
@@ -34,6 +36,8 @@ beforeAll(async () => {
         .compile()
     },
   })
+
+  server = request(app.getHttpServer())
 })
 
 describe('Application system API', () => {
@@ -52,7 +56,7 @@ describe('Application system API', () => {
   })
   it(`POST /application should register application`, async () => {
     // Act
-    const response = await request(app.getHttpServer())
+    const response = await server
       .post('/applications')
       .send({
         applicant: nationalId,
@@ -75,7 +79,7 @@ describe('Application system API', () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
-    const failedResponse = await request(app.getHttpServer())
+    const failedResponse = await server
       .post('/applications')
       .send({
         applicant: nationalId,
@@ -99,7 +103,8 @@ describe('Application system API', () => {
 
   it('should fail when trying to POST when not logged in', async () => {
     spy.mockRestore()
-    const failedResponse = await request(app.getHttpServer())
+
+    const failedResponse = await server
       .post('/applications')
       .send({
         applicant: nationalId,
@@ -118,7 +123,6 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing answers on an application which dont comply the dataschema', async () => {
-    const server = request(app.getHttpServer())
     const response = await server
       .post('/applications')
       .send({
@@ -148,7 +152,6 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
-    const server = request(app.getHttpServer())
     const response = await server
       .post('/applications')
       .send({
@@ -186,7 +189,6 @@ describe('Application system API', () => {
   })
 
   it('should be able to PUT answers when updating the state of the application', async () => {
-    const server = request(app.getHttpServer())
     const response = await server
       .post('/applications')
       .send({
@@ -220,7 +222,6 @@ describe('Application system API', () => {
   })
 
   it('should not update non-writable answers when PUT-ing answers while updating the state', async () => {
-    const server = request(app.getHttpServer())
     const response = await server
       .post('/applications')
       .send({
@@ -262,7 +263,6 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing externalData on an application where it is in a state where it is not permitted', async () => {
-    const server = request(app.getHttpServer())
     const response = await server
       .post('/applications')
       .send({
@@ -297,7 +297,7 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing an application that does not exist', async () => {
-    const response = await request(app.getHttpServer())
+    const response = await server
       .put('/applications/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
       .send({
         applicant: nationalId,
@@ -317,7 +317,6 @@ describe('Application system API', () => {
   })
 
   it('should successfully PUT answers to an existing application if said answers comply to the schema', async () => {
-    const server = request(app.getHttpServer())
     const response = await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
@@ -348,7 +347,6 @@ describe('Application system API', () => {
   })
 
   it('PUT /applications/:id should not be able to overwrite external data', async () => {
-    const server = request(app.getHttpServer())
     const response = await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
@@ -375,7 +373,6 @@ describe('Application system API', () => {
   })
 
   it('GET /applicants/:nationalRegistryId/applications should return a list of applications for applicant', async () => {
-    const server = request(app.getHttpServer())
     await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
@@ -400,7 +397,6 @@ describe('Application system API', () => {
   })
 
   it('GET /assignees/:nationalRegistryId/applications should return a list of applications for assignee', async () => {
-    const server = request(app.getHttpServer())
     await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
@@ -425,7 +421,6 @@ describe('Application system API', () => {
   })
 
   it('PUT application/:id/createPdf should return a presigned url', async () => {
-    const server = request(app.getHttpServer())
     const expectPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
