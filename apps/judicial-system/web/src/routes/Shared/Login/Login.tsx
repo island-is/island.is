@@ -24,13 +24,17 @@ export const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
-      {urlParams.has('error') && (
+      {urlParams.has('villa') && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
             <AlertMessage
               type="info"
               title="Innskráning ógild"
-              message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."
+              message={
+                urlParams.get('villa') === 'innskraning-utrunnin'
+                  ? 'Innskráning ekki lengur gild. Vinsamlegast reynið aftur.'
+                  : 'Ekki notandi'
+              }
             />
           </Box>
         </div>
