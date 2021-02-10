@@ -20,13 +20,20 @@ const PersonalAllowance = z
   .optional()
 
 const Period = z.object({
-  startDate: z.string().refine((d) => isValid(parseISO(d))),
-  endDate: z.string().refine((d) => isValid(parseISO(d))),
+  startDate: z
+    .string()
+    .refine((d) => isValid(parseISO(d)))
+    .optional(),
+  endDate: z
+    .string()
+    .refine((d) => isValid(parseISO(d)))
+    .optional(),
   ratio: z
     .string()
     .refine(
       (val) => !isNaN(Number(val)) && parseInt(val) > 0 && parseInt(val) <= 100,
-    ),
+    )
+    .optional(),
 })
 
 export const dataSchema = z.object({
@@ -65,7 +72,7 @@ export const dataSchema = z.object({
     giveDays: z.number().optional(),
   }),
   singlePeriod: z.enum([YES, NO]),
-  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']), // Working on this one....
+  firstPeriodStart: z.enum(['dateOfBirth', 'specificDate']),
   confirmLeaveDuration: z.enum(['duration', 'specificDate']),
   otherParent: z.enum(['spouse', NO, 'manual']).optional(),
   otherParentName: z.string().optional(),

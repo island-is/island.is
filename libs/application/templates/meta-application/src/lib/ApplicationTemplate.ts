@@ -49,6 +49,9 @@ const Schema = z.object({
       return !isNaN(asNumber) && asNumber >= 0
     }),
     users: z.enum(['companies', 'individuals', 'both']),
+
+  }),
+  serviceFields: z.object({
     digital: z.enum(['yes', 'no']),
     link: z.string().url().optional(),
   }),
@@ -56,7 +59,7 @@ const Schema = z.object({
     z.object({
       name: z.string(),
       publisher: z.string(),
-      acceptsPayment: z.enum(['yes', 'no']),
+      download: z.enum(['yes', 'no']),
     }),
   ),
   payment: z.object({
