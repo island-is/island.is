@@ -6,7 +6,6 @@ import {
   hasActiveApplication,
   hasOldPendingApplications,
   hasIcelandicAddress,
-  isFormerCountryOutsideEu,
 } from '../healthInsuranceUtils'
 import { ContentType } from '../types'
 import { m } from '../forms/messages'
@@ -70,9 +69,6 @@ export const useModalContent = (externalData: ExternalData) => {
     } else if (hasIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
     }
-    // else if (isFormerCountryOutsideEu(externalData)) {
-    //   setContent({ ...contentList.activeApplication, buttonAction: () => history.push(`../umsoknir/${ApplicationTypes.HEALTH_INSURANCE}`)})
-    // }
   }, [externalData])
 
   return content

@@ -8,11 +8,13 @@ import {
   buildCustomField,
   buildSubSection,
 } from '@island.is/application/core'
+import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
   title: m.application.name,
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
