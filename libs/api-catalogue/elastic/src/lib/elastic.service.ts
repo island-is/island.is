@@ -8,6 +8,7 @@ import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
 import { Environment } from 'libs/api-catalogue/consts/src/lib/environment'
+import union from 'lodash/union'
 import {
   CatAliases,
   CatIndices,
@@ -263,7 +264,7 @@ export class ElasticService {
     const toRemove = aliasesToRemove ? aliasesToRemove : []
 
     if (!indexName || (toAdd.length === 0 && toRemove.length === 0)) {
-      logger.warning(`Nothing to do for updateIndexAliases`)
+      logger.warn(`Nothing to do for updateIndexAliases`)
       return false
     }
 
@@ -594,7 +595,7 @@ export class ElasticService {
   async isCollectorRunning(environment: Environment): Promise<boolean> {
     // todo: check if alias this.getCollectorWorkingName(environment) exists on given environment
     const aliasName = this.getCollectorWorkingName(environment)
-    const indices = await this.fetchIndexNamesFromAlias(aliasName)
+    const indices = await this.fetchIndexNamesFromAlias(aliasName) //todo: this should be done from remote cluster
 
     let value = false
     if (indices && indices.length) {
@@ -656,6 +657,22 @@ export class ElasticService {
     return null
   }
 
+  copyRemoteIndexToLocalIndex(
+    remoteEnvironment: Environment,
+    remoteIndexName: string,
+    localIndexName: string,
+  ) {
+    logger.warn(
+      `This function should copy services from ` +
+        `alias named "${remoteIndexName}" ` +
+        `located on cluster, running the ${remoteEnvironment} environment.`,
+    )
+    logger.warn(
+      `The services should be copied to ` +
+        `a local index called "${localIndexName}".`,
+    )
+  }
+
   /**
    * Copies values from a environment located on a different cluster
    *
@@ -663,10 +680,15 @@ export class ElasticService {
    * @param {Environment} environment
    */
   private async copyRemoteValues(environment: Environment) {
-    
     //todo: copy values from other environment cluster
-    logger.info(`Copying values from ${environment}`)
+    this.copyRemoteIndexToLocalIndex(
+      environment,
+      this.getAliasName(),
+      this.getPrefix(environment),
+    )
+
     const externalIndex = this.getPrefix(environment)
+    logger.info(`Copying values from index ${externalIndex}`)
     const externalIds = await this.fetchAllIds(externalIndex)
 
     if (!externalIds || !externalIds.length) {
@@ -686,16 +708,100 @@ export class ElasticService {
     logger.debug(`commonIds   : ${commonIds}`)
     logger.debug(`externalUnique   : ${externalUnique}`)
 
-    logger.debug(
-      `todo: add merge services with following ids to "${environment}"`,
-      commonIds,
-    )
-    logger.debug(
-      `todo: add services with following ids to "${environment}"`,
+    // fetching services not existing in current environment
+    const uniqueExternalServices = await this.fetchServices(
+      externalIndex,
       externalUnique,
     )
+    logger.debug(
+      `Adding to worker index, ${uniqueExternalServices.length} services that only exist in external index.`,
+    )
+
+    // Adding to current environment services that do not exist in it
+    //todo: Maybe this should be done in chunks, not sure how intelligent the elasticsearch client is.
+    this.bulkWorker(uniqueExternalServices)
+
+    //Get services that exist in both environments
+    const localServices = await this.fetchServices(
+      this.getWorkerIndexName(),
+      commonIds,
+    )
+
+    const externalServices = await this.fetchServices(externalIndex, commonIds)
+
+    //Merging external services into each localService object
+    const mergedServices: Service[] = []
+    localServices.forEach((source) =>
+      mergedServices.push(
+        this.mergeServices(
+          source,
+          externalServices[
+            externalServices.findIndex((item) => item.id === source.id)
+          ],
+        ),
+      ),
+    )
+
+    //Replacing the local local service objects with the merged ones.
+    //todo: Maybe this should be done in chunks, not sure how intelligent the elasticsearch client is.
+    this.bulkWorker(mergedServices)
 
     logger.info(`Copying values from environment ${environment} finished`)
+  }
+
+  /**
+   * Merges two service objects into a new one
+   *
+   * @param {Service} source
+   * @param {Service} mergeIntoSource
+   * @returns {Service}
+   */
+  mergeServices(source: Service, mergeIntoSource: Service): Service {
+    const merged: Service = Object.assign(source)
+
+    //Each environment should add it's environment to the first array.
+    merged.environments.push(mergeIntoSource.environments[0])
+    merged.access = union(source.access, mergeIntoSource.access)
+    merged.data = union(source.data, mergeIntoSource.data)
+    merged.pricing = union(source.pricing, mergeIntoSource.pricing)
+    merged.type = union(source.type, mergeIntoSource.type)
+    return merged
+  }
+
+  /**
+   *  Fetches services from a index that match given ids
+   *
+   * @param {string} [index=this.getAliasName()]
+   * @param {string[]} serviceIds
+   * @returns {Promise<Service[]>}
+   */
+  async fetchServices(
+    index: string = this.getAliasName(),
+    serviceIds: string[],
+  ): Promise<Service[]> {
+    logger.info(`Fetching services from ${index}`)
+    const requestBody = {
+      _source: true,
+      query: {
+        ids: { values: serviceIds },
+      },
+    }
+
+    return await this.search<SearchResponse<Service>, typeof requestBody>(
+      requestBody,
+      index,
+    )
+      .then((result) => {
+        let arr: Service[] = []
+        if (result?.body?.hits?.hits?.length) {
+          arr = result?.body?.hits?.hits?.map((item) => item._source)
+        }
+        return arr
+      })
+      .catch((err) => {
+        logger.debug(`fetchServices error `, err)
+        return []
+      })
   }
 
   /**
@@ -704,19 +810,20 @@ export class ElasticService {
    *  @param {number} [waitMax=(120 * 1000)] - How long to wait until we give up in milliseconds. Default set to 120 seconds.
    */
   async copyValuesFromOtherEnvironments(waitMax: number = 120 * 1000) {
-    logger.info('`Copying values from other environments')
-    const otherEnvironments = this.getOtherEnvironments()
-    logger.debug(
+    //TODO: remove createMocks when you are able to copy from other clusters
+    await this.createMocks(this.getWorkerIndexName(), [
+      Environment.STAGING,
+      Environment.PROD,
+    ])
+
+    logger.info(
       `Copying values from other environments to`,
       this.getEnvironment(),
     )
-    logger.info(
-      `Environments to copy from: ${JSON.stringify(
-        otherEnvironments,
-        null,
-        4,
-      )}`,
-    )
+
+    const otherEnvironments = this.getOtherEnvironments()
+
+    logger.info(`Environments to copy from: "${otherEnvironments}"`)
 
     const endWait = new Date(Date.now() + waitMax)
 
@@ -810,7 +917,6 @@ export class ElasticService {
       }
 
       const newIndex = this.getPrefix(environment)
-
 
       logger.debug(`deleting index ${newIndex}`)
       await this.deleteIndex(newIndex)
