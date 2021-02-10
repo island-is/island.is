@@ -8,15 +8,13 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
   return isInsured === true
 }
 
-export const hasActiveApplication = (externalData: ExternalData) => {
+export const hasActiveDraftApplication = (externalData: ExternalData) => {
   const response = externalData?.applications
   if (response && response?.status === 'success') {
     const applications = response.data as Applications[]
     const pendingApplications = applications?.filter(
       (application) =>
-        application.state === 'draft' ||
-        application.state === 'inReview' ||
-        application.state === 'missingInfo',
+        application.state === 'draft' 
     )
     return pendingApplications?.length > 1
   }
@@ -42,7 +40,7 @@ export const hasIcelandicAddress = (externalData: ExternalData) => {
 export const shouldShowModal = (externalData: ExternalData) => {
   return (
     hasHealthInsurance(externalData) ||
-    hasActiveApplication(externalData) ||
+    hasActiveDraftApplication(externalData) ||
     hasOldPendingApplications(externalData) ||
     hasIcelandicAddress(externalData)
   )
