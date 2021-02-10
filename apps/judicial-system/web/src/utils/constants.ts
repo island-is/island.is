@@ -1,5 +1,7 @@
 // Routes
 export const REQUEST_LIST_ROUTE = '/krofur'
+export const USER_LIST_ROUTE = '/notendur'
+export const USER_CHANGE_ROUTE = '/notendur/breyta'
 export const SIGNED_VERDICT_OVERVIEW = '/krafa/yfirlit'
 
 // Prosicution

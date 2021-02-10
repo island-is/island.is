@@ -110,7 +110,13 @@ export const UsersQuery = gql`
     users {
       id
       name
+      nationalId
+      mobileNumber
       role
+      title
+      email
+      institution
+      active
     }
   }
 `

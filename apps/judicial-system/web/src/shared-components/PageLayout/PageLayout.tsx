@@ -18,7 +18,7 @@ import { Sections } from '@island.is/judicial-system-web/src/types'
 
 interface PageProps {
   children: ReactNode
-  activeSection: number
+  activeSection?: number
   isLoading: boolean
   notFound: boolean
   caseType?: CaseType
@@ -27,6 +27,7 @@ interface PageProps {
   parentCaseDecision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
   isExtension?: boolean
+  showSidepanel?: boolean
 }
 
 const PageLayout: React.FC<PageProps> = ({
@@ -39,6 +40,7 @@ const PageLayout: React.FC<PageProps> = ({
   decision,
   parentCaseDecision,
   isCustodyEndDateInThePast,
+  showSidepanel = true,
 }) => {
   const caseResult = () => {
     if (
@@ -155,25 +157,27 @@ const PageLayout: React.FC<PageProps> = ({
               </GridColumn>
             </Box>
           </GridColumn>
-          <GridColumn span={['0', '0', '3/12', '3/12']}>
-            <Box marginLeft={2}>
-              <Logo />
-              <FormStepper
-                // Remove the extension parts of the formstepper if the user is not applying for an extension
-                sections={
-                  activeSection === Sections.EXTENSION ||
-                  activeSection === Sections.JUDGE_EXTENSION
-                    ? sections
-                    : sections.filter((_, index) => index <= 2)
-                }
-                formName={
-                  caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
-                }
-                activeSection={activeSection}
-                activeSubSection={activeSubSection}
-              />
-            </Box>
-          </GridColumn>
+          {showSidepanel && (
+            <GridColumn span={['0', '0', '3/12', '3/12']}>
+              <Box marginLeft={2}>
+                <Logo />
+                <FormStepper
+                  // Remove the extension parts of the formstepper if the user is not applying for an extension
+                  sections={
+                    activeSection === Sections.EXTENSION ||
+                    activeSection === Sections.JUDGE_EXTENSION
+                      ? sections
+                      : sections.filter((_, index) => index <= 2)
+                  }
+                  formName={
+                    caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+                  }
+                  activeSection={activeSection}
+                  activeSubSection={activeSubSection}
+                />
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
       </GridContainer>
     </Box>
