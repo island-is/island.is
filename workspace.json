@@ -1079,7 +1079,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/core/src/templates/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/core/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2091,6 +2091,13 @@
       "projectType": "",
       "schematics": {},
       "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-translation-extension/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
         "serve": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {

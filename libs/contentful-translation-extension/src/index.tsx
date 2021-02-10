@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { render } from 'react-dom'
 import TextField from '@contentful/forma-36-react-components/dist/components/TextField'
 import TableCell from '@contentful/forma-36-react-components/dist/components/Table/TableCell'
@@ -11,58 +11,45 @@ import {
   FieldExtensionSDK,
   EditorLocaleSettings,
 } from 'contentful-ui-extensions-sdk'
+import Markdown from 'markdown-to-jsx'
+import isEmpty from 'lodash/isEmpty'
 
-import '@contentful/forma-36-react-components/dist/styles.css'
 import './index.css'
+
+import { MarkdownEditor } from './components/MarkdownEditor'
+import { Label } from './components/Label'
+import { unifyAndDeserialize } from './utils/deserialize'
+import { serializeAndFormat } from './utils/serialize'
 
 interface AppProps {
   extension: FieldExtensionSDK
 }
 
-interface AppState {
-  spaceLocales: Record<string, string>
-  activeLocales: { id: string; name: string }[]
-}
+const App = ({ extension }: AppProps) => {
+  const spaceLocales = extension.locales.names
+  const [activeLocales, setActiveLocales] = useState(
+    extension.locales.available.map((locale) => ({
+      id: locale,
+      name: spaceLocales[locale],
+    })),
+  )
 
-class App extends React.Component<AppProps, AppState> {
-  localeSettingsDetachHandler: Function | null = null
+  const { strings, defaults } = extension.entry.fields
+  const values = defaults.getValue()
 
-  constructor(props: AppProps) {
-    super(props)
-
-    const { locales } = props.extension
-    const spaceLocales = locales.names
-
-    this.state = {
-      spaceLocales,
-      activeLocales: locales.available.map((locale) => ({
-        id: locale,
-        name: spaceLocales[locale],
-      })),
-    }
-  }
-
-  componentDidMount() {
-    this.localeSettingsDetachHandler = this.props.extension.editor.onLocaleSettingsChanged(
-      this.onLocaleSettingsHandler,
-    )
-  }
-
-  onLocaleSettingsHandler = (data: EditorLocaleSettings) => {
-    const { spaceLocales } = this.state
-
+  const handleLocaleSettingsHandler = (data: EditorLocaleSettings) => {
     if (data?.mode === 'multi' && data.active) {
-      this.setState({
-        activeLocales: data.active.map((locale) => ({
+      setActiveLocales(
+        data.active.map((locale) => ({
           id: locale,
           name: spaceLocales[locale],
         })),
-      })
+      )
     }
   }
 
-  onChange = (locale: string, key: string, value: string | Document) => {
-    const { strings } = this.props.extension.entry.fields
+  const onChange = (locale: string, key: string, value: string | Document) => {
+    const { strings } = extension.entry.fields
     const currentJson = strings.getValue(locale)
 
     const newJson = {
@@ -73,116 +60,157 @@ class App extends React.Component<AppProps, AppState> {
     strings.setValue(newJson, locale)
   }
 
-  render() {
-    const { strings, defaults } = this.props.extension.entry.fields
-    const { activeLocales } = this.state
-    const values = defaults.getValue()
+  useEffect(() => {
+    const localeChangeListener = extension.editor.onLocaleSettingsChanged(
+      handleLocaleSettingsHandler,
+    )
 
-    return Object.keys(values).map((item, i) => (
-      <Table
-        key={`${item}-${i}`}
-        style={{ marginBottom: '20px', border: '1px solid #e5ebed' }}
-      >
-        <TableHead>
-          <TableRow>
-            <TableCell width="50%" style={{ backgroundColor: '#e5ebed' }}>
-              Key: {item}
-            </TableCell>
+    return () => {
+      localeChangeListener?.()
+    }
+  }, [])
 
-            <TableCell style={{ backgroundColor: '#e5ebed' }} />
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {values[item].deprecated && (
+  return (
+    <>
+      {Object.keys(values).map((item, i) => (
+        <Table
+          key={`${item}-${i}`}
+          style={{
+            marginBottom: '20px',
+            border: '1px solid #e5ebed',
+            borderRadius: 10,
+          }}
+        >
+          <TableHead>
             <TableRow>
-              <TableCell
-                colSpan={2}
-                style={{
-                  verticalAlign: 'middle',
-                  backgroundColor: '#ffd3d9',
-                  color: '#bf3045',
-                }}
-              >
-                This translation has been removed from the latest version of the
-                application.
+              <TableCell style={{ backgroundColor: '#e5ebed' }} colSpan={2}>
+                Key: {item}
               </TableCell>
             </TableRow>
-          )}
+          </TableHead>
 
-          <TableRow>
-            <TableCell
-              width="50%"
-              style={{
-                fontWeight: 600,
-                verticalAlign: 'middle',
-                backgroundColor: '#f7f9fa',
-              }}
-            >
-              Default message
-            </TableCell>
+          <TableBody>
+            {values[item].deprecated && (
+              <TableRow>
+                <TableCell
+                  colSpan={2}
+                  style={{
+                    verticalAlign: 'middle',
+                    backgroundColor: '#ffd3d9',
+                    color: '#bf3045',
+                  }}
+                >
+                  This translation has been removed from the latest version of
+                  the application.
+                </TableCell>
+              </TableRow>
+            )}
 
-            <TableCell
-              style={{
-                fontWeight: 600,
-                verticalAlign: 'middle',
-                backgroundColor: '#f7f9fa',
-              }}
-            >
-              {values[item].defaultMessage}
-            </TableCell>
-          </TableRow>
+            <TableRow>
+              <TableCell
+                width="30%"
+                style={{
+                  verticalAlign: 'middle',
+                  backgroundColor: '#f7f9fa',
+                }}
+                colSpan={2}
+              >
+                <Label>Default message</Label>
 
-          <TableRow>
-            <TableCell
-              width="50%"
-              style={{ verticalAlign: 'middle', backgroundColor: '#f7f9fa' }}
-            >
-              Description
-            </TableCell>
+                {values[item].markdown ? (
+                  <div>
+                    <Markdown>{values[item].defaultMessage}</Markdown>
+                  </div>
+                ) : (
+                  <p>{values[item].defaultMessage}</p>
+                )}
+              </TableCell>
+            </TableRow>
 
-            <TableCell
-              style={{ verticalAlign: 'middle', backgroundColor: '#f7f9fa' }}
-            >
-              {values[item].description}
-            </TableCell>
-          </TableRow>
+            <TableRow>
+              <TableCell
+                width="30%"
+                style={{
+                  verticalAlign: 'middle',
+                  backgroundColor: '#f7f9fa',
+                }}
+                colSpan={2}
+              >
+                <Label>Description</Label>
+                <p>{values[item].description}</p>
+              </TableCell>
+            </TableRow>
 
-          {activeLocales
-            .sort((a, b) => (a.id === 'is-IS' ? -1 : b.id === 'is-IS' ? 1 : 0))
-            .map((locale, ii) => {
-              const value = strings.getForLocale(locale.id).getValue()?.[item]
-
-              return (
-                <TableRow key={`${item}-${ii}`}>
-                  <TableCell width="50%" style={{ verticalAlign: 'middle' }}>
-                    {locale.name}
-                  </TableCell>
-
-                  <TableCell
-                    className="table-cell"
-                    style={{ verticalAlign: 'middle' }}
-                  >
-                    <TextField
-                      id={`${item}-${value}`}
-                      name=""
-                      labelText=""
-                      value={value}
-                      validationMessage={
-                        !value ? 'Translation missing' : undefined
-                      }
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        this.onChange(locale.id, item, e.currentTarget.value)
-                      }
-                    />
-                  </TableCell>
-                </TableRow>
+            {activeLocales
+              .sort((a, b) =>
+                a.id === 'is-IS' ? -1 : b.id === 'is-IS' ? 1 : 0,
               )
-            })}
-        </TableBody>
-      </Table>
-    ))
-  }
+              .map((locale, ii) => {
+                const value = strings.getForLocale(locale.id).getValue()?.[item]
+
+                if (!value && !isEmpty(value)) {
+                  return (
+                    <TableRow key={`${item}-${ii}`}>
+                      <TableCell
+                        colSpan={2}
+                        style={{
+                          verticalAlign: 'middle',
+                          backgroundColor: '#ffd3d9',
+                          color: '#bf3045',
+                        }}
+                      >
+                        <Label>{locale.name}</Label>
+
+                        <p>
+                          An error happened, please report this issue on{' '}
+                          <strong>#dev_support</strong> on Slack.
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  )
+                }
+
+                return (
+                  <TableRow key={`${item}-${ii}`}>
+                    <TableCell style={{ verticalAlign: 'middle' }} colSpan={2}>
+                      <Label>{locale.name}</Label>
+
+                      {values[item]?.markdown ? (
+                        <>
+                          <MarkdownEditor
+                            value={unifyAndDeserialize(value)}
+                            dialogs={extension.dialogs}
+                            onChange={(value) => {
+                              // We serialize our array of Node to be a markdown string and we set it as our new value
+                              const serialized = serializeAndFormat(value)
+
+                              onChange(locale.id, item, serialized)
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <TextField
+                          id={`${item}-${value}`}
+                          name=""
+                          labelText=""
+                          value={value}
+                          validationMessage={
+                            !value ? 'Translation missing' : undefined
+                          }
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            onChange(locale.id, item, e.currentTarget.value)
+                          }
+                        />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+          </TableBody>
+        </Table>
+      ))}
+    </>
+  )
 }
 
 /**

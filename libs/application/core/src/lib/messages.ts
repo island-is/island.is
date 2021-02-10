@@ -97,7 +97,7 @@ export const m = defineMessages({
     description: 'In progress',
   },
   tagsRequiresAction: {
-    id: 'application.system:tags.inProgress',
+    id: 'application.system:tags.requiresAction',
     defaultMessage: 'Krefst aðgerða',
     description: 'Requires action',
   },

@@ -29,18 +29,18 @@ if (!CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
 
 const client = createClient({ accessToken: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN })
 
-try {
-  spawn.sync('npx', [
-    'formatjs',
-    'extract',
-    '--out-file',
-    'libs/localization/messages.json',
-    '--format',
-    'libs/localization/scripts/formatter.js',
-    process.argv[2],
-  ])
-} catch (e) {
-  console.error(`Error while trying to extract strings ${e}`)
+const format = spawn.sync('npx', [
+  'formatjs',
+  'extract',
+  '--out-file',
+  'libs/localization/messages.json',
+  '--format',
+  'libs/localization/scripts/formatter.js',
+  process.argv[2],
+])
+
+if (format.stderr.toString() !== '') {
+  logger.error(format.stderr.toString())
   process.exit()
 }
 
@@ -122,7 +122,7 @@ glob
           items: Record<string, any>[]
         }).items.map((locale) => ({ id: locale.code }))
 
-        // If namespace exists we update it, else we create it
+        // If namespace does exist we update it, else we create it
         if (namespace) {
           updateNamespace(namespace, namespaceMessages, locales)
         } else {

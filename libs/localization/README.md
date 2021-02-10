@@ -148,6 +148,19 @@ const { formatMessage } = useLocale()
 return <div>{formatMessage(message)}</div>
 ```
 
+## Markdown support
+
+We are supporting both TextField and Markdown for the translations. If you want to define markdown messages, you will need to add a `#markdown` to the end of the string's id. That will show the Markdown editor within Contentful.
+
+```typescript
+const message = defineMessage({
+  id: 'global:title#markdown',
+  defaultMessage: 'Some copy with **markdown** in it.',
+  description:
+    'It will be rendered as _markdown_ in the Contentful UI extension as well',
+})
+```
+
 ## Message Extraction
 
 Add the `extract-strings` script to `workspace.json`. Running this script will extract messages from the project and create or update a Namespace entry in Contentful, if the namespace did not exist it will need to be published in Contentful before the client can query the entry.

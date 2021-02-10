@@ -39,3 +39,9 @@ Will build and deploy the changes to Contentful. If you want your extension to b
 ```bash
 yarn deploy contentful-translation-extension --token managementToken
 ```
+
+### Custom S3 deploy
+
+Since the extension is now over the 512KB allowed by Contentful we are hosting it by ourselves in AWS S3.
+
+// TODO Add instructions here
