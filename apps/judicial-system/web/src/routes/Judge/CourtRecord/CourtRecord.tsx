@@ -4,6 +4,7 @@ import {
   GridContainer,
   GridRow,
   Input,
+  RadioButton,
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -13,10 +14,12 @@ import {
   PageLayout,
   TimeInputField,
   CaseNumbers,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
+  capitalize,
   formatAccusedByGender,
   formatProsecutorDemands,
   NounCases,
@@ -45,7 +48,9 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   validateAndSetTime,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import * as styles from './CourtRecord.treat'
 
 interface CaseData {
   case?: Case
@@ -332,44 +337,86 @@ export const CourtRecord: React.FC = () => {
                 gr. sömu laga
               </Text>
             </Box>
-            <Input
-              data-testid="accusedPlea"
-              name="accusedPlea"
-              label={`Afstaða ${formatAccusedByGender(
-                workingCase.accusedGender || CaseGender.OTHER,
-                NounCases.GENITIVE,
-              )}`}
-              defaultValue={workingCase.accusedPlea}
-              placeholder={`Hvað hafði ${formatAccusedByGender(
-                workingCase.accusedGender || CaseGender.OTHER,
-              )} að segja um kröfuna? Mótmælti eða samþykkti?`}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'accusedPlea',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  accusedPleaErrorMessage,
-                  setAccusedPleaMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'accusedPlea',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setAccusedPleaMessage,
-                )
-              }
-              errorMessage={accusedPleaErrorMessage}
-              hasError={accusedPleaErrorMessage !== ''}
-              textarea
-              rows={7}
-              required
-            />
+            <BlueBox>
+              <div className={styles.accusedPleaDecision}>
+                <RadioButton
+                  name="accusedPleaDecision"
+                  id="accused-plea-decision-accepting"
+                  label={`${capitalize(
+                    formatAccusedByGender(workingCase.accusedGender),
+                  )} hafnar kröfunni`}
+                  checked={workingCase.accusedPleaDecision}
+                  onChange={() => {
+                    setAndSendToServer(
+                      'accusedPleaDecision',
+                      true,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }}
+                  large
+                  filled
+                />
+                <RadioButton
+                  name="accusedPleaDecision"
+                  id="accused-plea-decision-rejecting"
+                  label={`${capitalize(
+                    formatAccusedByGender(workingCase.accusedGender),
+                  )} hafnar kröfunni`}
+                  checked={!workingCase.accusedPleaDecision}
+                  onChange={() => {
+                    setAndSendToServer(
+                      'accusedPleaDecision',
+                      false,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }}
+                  large
+                  filled
+                />
+              </div>
+              <Input
+                data-testid="accusedPlea"
+                name="accusedPlea"
+                label={`Afstaða ${formatAccusedByGender(
+                  workingCase.accusedGender || CaseGender.OTHER,
+                  NounCases.GENITIVE,
+                )}`}
+                defaultValue={workingCase.accusedPlea}
+                placeholder={`Hvað hafði ${formatAccusedByGender(
+                  workingCase.accusedGender || CaseGender.OTHER,
+                )} að segja um kröfuna? Mótmælti eða samþykkti?`}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'accusedPlea',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    accusedPleaErrorMessage,
+                    setAccusedPleaMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'accusedPlea',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setAccusedPleaMessage,
+                  )
+                }
+                errorMessage={accusedPleaErrorMessage}
+                hasError={accusedPleaErrorMessage !== ''}
+                textarea
+                rows={7}
+                required
+              />
+            </BlueBox>
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>

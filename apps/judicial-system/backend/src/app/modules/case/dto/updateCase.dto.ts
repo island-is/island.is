@@ -157,6 +157,11 @@ export class UpdateCaseDto {
   readonly accusedPlea?: string
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly accusedPleaDecision?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly litigationPresentations?: string

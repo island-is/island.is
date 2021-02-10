@@ -140,6 +140,7 @@ export interface Case {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
+  accusedPleaDecision: boolean
   accusedPlea?: string
   litigationPresentations?: string
   ruling?: string

@@ -92,6 +92,7 @@ const judgeUpdateRule = {
     'courtAttendees',
     'policeDemands',
     'courtDocuments',
+    'accusedPleaDecision',
     'accusedPlea',
     'litigationPresentations',
     'ruling',
