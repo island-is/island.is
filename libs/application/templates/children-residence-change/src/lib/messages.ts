@@ -131,11 +131,11 @@ export const selectChildren = {
       defaultMessage: 'Veldu barn/börn',
       description: 'Select children page title',
     },
-    subTitle: {
+    description: {
       id:
-        'crc.application:section.backgroundInformation.selectChildren.subTitle',
+        'crc.application:section.backgroundInformation.selectChildren.description',
       defaultMessage:
-        'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.',
+        '<p>Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.</p>',
       description: 'Select children subtitle',
     },
   }),

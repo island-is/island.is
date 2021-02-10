@@ -62,21 +62,10 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'selectChildInCustody',
           title: m.selectChildren.general.sectionTitle,
           children: [
-            // TODO: create custom field for this for better control
-            buildCheckboxField({
+            buildCustomField({
               id: 'selectChild',
               title: m.selectChildren.general.pageTitle,
-              description: m.selectChildren.general.subTitle,
-              large: true,
-              options: (application) => {
-                const otherParent = extractParentFromApplication(application)
-                return extractChildrenFromApplication(application).map((c) => ({
-                  value: c.name,
-                  label: c.name,
-                  // TODO: format this with m.selectChildren.checkboxes.subLabel
-                  subLabel: `Hitt forsjárforeldrið er ${otherParent.name}`,
-                }))
-              },
+              component: 'SelectChildren',
             }),
           ],
         }),
