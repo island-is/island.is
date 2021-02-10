@@ -37,7 +37,6 @@ export const CreateCaseMutation = gql`
       court
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken
@@ -99,6 +98,9 @@ export const CasesQuery = gql`
       custodyEndDate
       decision
       isCustodyEndDateInThePast
+      parentCase {
+        id
+      }
     }
   }
 `
@@ -131,7 +133,6 @@ export const ExtendCaseMutation = gql`
       court
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken

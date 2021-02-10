@@ -15,3 +15,4 @@ export { default as RulingAccordionItem } from './RulingAccordionItem/RulingAcco
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { default as UserProvider } from './UserProvider/UserProvider'
 export { default as DropdownMenu } from './DropdownMenu/DropdownMenu'
+export { default as Logo } from './Logo/Logo'

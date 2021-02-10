@@ -345,6 +345,10 @@ export const slices = gql`
         id
       }
     }
+    link {
+      text
+      url
+    }
   }
 
   fragment TwoColumnTextFields on TwoColumnText {

@@ -209,16 +209,6 @@ export const constructProsecutorDemands = (
           : ''
       } ${
         workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
-      }${
-        workingCase.alternativeTravelBan
-          ? `,${
-              workingCase.parentCase &&
-              workingCase.parentCase?.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? ' áframhaldandi'
-                : ''
-            } farbanni til vara,`
-          : ''
       } með úrskurði ${workingCase.court?.replace(
         'Héraðsdómur',
         'Héraðsdóms',

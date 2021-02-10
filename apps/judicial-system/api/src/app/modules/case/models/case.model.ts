@@ -62,9 +62,6 @@ export class Case implements TCase {
   readonly requestedCourtDate?: string
 
   @Field({ nullable: true })
-  alternativeTravelBan?: boolean
-
-  @Field({ nullable: true })
   readonly requestedCustodyEndDate?: string
 
   @Field({ nullable: true })

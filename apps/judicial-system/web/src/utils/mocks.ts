@@ -21,12 +21,15 @@ export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
+  institution: 'Lögreglustjórinn á höfuðborgarsvæðinu',
 } as User
 
 export const mockJudge = {
+  id: 'judge_1',
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
+  institution: 'Héraðsdómur Reykjavíkur',
 } as User
 
 const testCase1 = {
@@ -42,7 +45,6 @@ const testCase1 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-16T19:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
   lawsBroken: 'string',
   custodyProvisions: [
@@ -90,7 +92,6 @@ const testCase2 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -139,7 +140,6 @@ const testCase3 = {
   court: 'string',
   arrestDate: null,
   requestedCourtDate: null,
-  alternativeTravelBan: false,
   requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
@@ -234,7 +234,6 @@ const testCase5 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -264,7 +263,7 @@ const testCase5 = {
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
-  judge: null,
+  judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
 }
@@ -283,7 +282,6 @@ const testCase6 = {
   court: 'string',
   arrestDate: null,
   requestedCourtDate: null,
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -333,7 +331,6 @@ const testCase7 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -382,7 +379,6 @@ const testCase8 = {
   court: 'string',
   arrestDate: null,
   requestedCourtDate: null,
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],

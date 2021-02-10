@@ -46,11 +46,11 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  prosecutor = (await request(app.getHttpServer()).get(`/api/user/2510654469`))
+  prosecutor = (await request(app.getHttpServer()).get(`/api/user/0000000000`))
     .body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (await request(app.getHttpServer()).get(`/api/user/1112902539`)).body
+  judge = (await request(app.getHttpServer()).get(`/api/user/2222222222`)).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 })
 
@@ -72,7 +72,6 @@ function remainingProsecutorCaseData() {
   return {
     arrestDate: '2020-09-08T08:00:00.000Z',
     requestedCourtDate: '2020-09-08T11:30:00.000Z',
-    alternativeTravelBan: false,
     requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
     otherDemands: 'Other Demands',
     lawsBroken: 'Broken Laws',
@@ -189,9 +188,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.requestedCourtDate || null).toBe(
     caseTwo.requestedCourtDate || null,
   )
-  expect(parseBoolean(caseOne.alternativeTravelBan)).toBe(
-    parseBoolean(caseTwo.alternativeTravelBan),
-  )
   expect(caseOne.requestedCustodyEndDate || null).toBe(
     caseTwo.requestedCustodyEndDate || null,
   )
@@ -253,8 +249,8 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 describe('User', () => {
-  it('GET /api/user/:nationalId should get the  user', async () => {
-    const nationalId = '1112902539'
+  it('GET /api/user/:nationalId should get the user', async () => {
+    const nationalId = '2222222222'
     let dbUser: User
 
     await User.findOne({
@@ -459,26 +455,17 @@ describe('Case', () => {
           ...dbCase,
           modified: apiCase.modified,
           state: CaseState.ACCEPTED,
-          judgeId: judge.id,
         })
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
-          include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
-          ],
+          include: [{ model: User, as: 'prosecutor' }],
         })
       })
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), {
           ...apiCase,
-          judge: ({
-            ...judge,
-            created: value.judge.created,
-            modified: value.judge.modified,
-          } as unknown) as TUser,
         })
       })
   })

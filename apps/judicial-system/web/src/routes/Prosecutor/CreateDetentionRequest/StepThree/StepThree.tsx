@@ -6,8 +6,6 @@ import {
   Box,
   Input,
   DatePicker,
-  RadioButton,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -37,7 +35,6 @@ import {
   validateAndSetTime,
   validateAndSendTimeToServer,
   getTimeFromDate,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -114,7 +111,6 @@ export const StepThree: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
     ]
-
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
@@ -161,10 +157,7 @@ export const StepThree: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Dómkröfur{' '}
-                {workingCase.type === CaseType.CUSTODY ? (
-                  <Tooltip text="Hér er hægt að velja um gæsluvarðhald eða gæsluvarðhald með farbanni til vara. Sé farbann til vara valið, endurspeglar valið dómkröfurnar á næstu síðu." />
-                ) : null}
+                Dómkröfur
               </Text>
               {workingCase.parentCase && (
                 <Box marginTop={1}>
@@ -182,48 +175,6 @@ export const StepThree: React.FC = () => {
             </Box>
             {workingCase.type === CaseType.CUSTODY ? (
               <BlueBox>
-                <Box marginBottom={2}>
-                  <GridRow>
-                    <GridColumn span="5/12">
-                      <RadioButton
-                        name="alternativeTravelBan"
-                        id="alternativeTravelBanOff"
-                        label="Gæsluvarðhald"
-                        checked={!workingCase.alternativeTravelBan}
-                        onChange={() =>
-                          setAndSendToServer(
-                            'alternativeTravelBan',
-                            false,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        large
-                        filled
-                      />
-                    </GridColumn>
-                    <GridColumn span="7/12">
-                      <RadioButton
-                        name="alternativeTravelBan"
-                        id="alternativeTravelBanOn"
-                        label="Gæsluvarðhald, farbann til vara"
-                        checked={workingCase.alternativeTravelBan}
-                        onChange={() =>
-                          setAndSendToServer(
-                            'alternativeTravelBan',
-                            true,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        large
-                        filled
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
                 <GridRow>
                   <GridColumn span="5/8">
                     <DatePicker
@@ -527,7 +478,9 @@ export const StepThree: React.FC = () => {
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              isStepIllegal || workingCase.custodyProvisions?.length === 0
+              isStepIllegal ||
+              !workingCase.custodyProvisions ||
+              workingCase.custodyProvisions?.length === 0
             }
           />
         </>

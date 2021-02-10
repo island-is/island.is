@@ -64,7 +64,6 @@ const prosecutorUpdateRule = {
     'court',
     'arrestDate',
     'requestedCourtDate',
-    'alternativeTravelBan',
     'requestedCustodyEndDate',
     'otherDemands',
     'lawsBroken',
@@ -104,6 +103,7 @@ const judgeUpdateRule = {
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
     'prosecutorAppealAnnouncement',
+    'judgeId',
   ],
 } as RolesRule
 
@@ -189,7 +189,6 @@ export class CaseController {
   })
   async transition(
     @Param('id') id: string,
-    @CurrentHttpUser() user: User,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
@@ -198,22 +197,7 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, existingCase.state)
 
-    let update: UpdateCaseDto
-
-    // Remove when client has started assigned a judge to each case
-    if (
-      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
-        transition.transition,
-      ) &&
-      user.role === UserRole.JUDGE
-    ) {
-      update = {
-        state,
-        judgeId: user.id,
-      } as UpdateCaseDto
-    } else {
-      update = { state } as UpdateCaseDto
-    }
+    const update = { state } as UpdateCaseDto
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
@@ -245,21 +229,38 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
-  @RolesRules(judgeRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Gets the ruling for an existing case as a pdf document',
   })
-  async getRulingPdf(
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-    @Res() res: Response,
-  ) {
+  async getRulingPdf(@Param('id') id: string, @Res() res: Response) {
     const existingCase = await this.findCaseById(id)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase, user)
+    const pdf = await this.caseService.getRulingPdf(existingCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @Get('case/:id/request')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the request for an existing case as a pdf document',
+  })
+  async getRequestPdf(@Param('id') id: string, @Res() res: Response) {
+    const existingCase = await this.findCaseById(id)
+
+    const pdf = await this.caseService.getRequestPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -285,15 +286,12 @@ export class CaseController {
   ) {
     const existingCase = await this.findCaseById(id)
 
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException('A ruling must be signed by a judge')
+    if (user.role !== UserRole.JUDGE && user.id !== existingCase.judgeId) {
+      throw new ForbiddenException('A ruling must be signed by the cases judge')
     }
 
     try {
-      const response = await this.caseService.requestSignature(
-        existingCase,
-        user,
-      )
+      const response = await this.caseService.requestSignature(existingCase)
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {

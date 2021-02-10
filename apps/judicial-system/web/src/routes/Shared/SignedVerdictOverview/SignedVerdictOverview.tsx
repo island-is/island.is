@@ -97,7 +97,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const isTravelBan =
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
+      theCase.type === CaseType.TRAVEL_BAN
 
     if (theCase.isCustodyEndDateInThePast) {
       return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
@@ -116,7 +116,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
     const isTravelBan =
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type == CaseType.TRAVEL_BAN
+      theCase.type === CaseType.TRAVEL_BAN
 
     if (theCase.isCustodyEndDateInThePast) {
       return `${
@@ -135,6 +135,20 @@ export const SignedVerdictOverview: React.FC = () => {
       theCase.custodyEndDate,
       TIME_FORMAT,
     )}`
+  }
+
+  const getInfoText = (workingCase: Case): string | undefined => {
+    if (workingCase.isCustodyEndDateInThePast) {
+      return 'Ekki hægt að framlengja gæsluvarðhald sem er lokið.'
+    } else if (workingCase.decision === CaseDecision.REJECTING) {
+      return 'Ekki hægt að framlengja gæsluvarðhald sem var hafnað.'
+    } else if (
+      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
+      return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
+    } else {
+      return undefined
+    }
   }
 
   /**
@@ -278,16 +292,33 @@ export const SignedVerdictOverview: React.FC = () => {
             </Accordion>
           </Box>
           <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Opna PDF kröfu"
+                pdfType="request"
+              />
+            </Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF þingbók og úrskurð"
+              pdfType="ruling"
+            />
           </Box>
           <FormFooter
             hideNextButton={
+              user?.role !== UserRole.PROSECUTOR ||
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
               workingCase.decision === CaseDecision.REJECTING ||
-              user?.role !== UserRole.PROSECUTOR
+              workingCase.isCustodyEndDateInThePast
             }
-            nextButtonText="Framlengja gæslu"
+            nextButtonText={`Framlengja ${
+              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+            }`}
             onNextButtonClick={() => handleNextButtonClick()}
             nextIsLoading={isCreatingExtension}
+            infoBoxText={getInfoText(workingCase)}
           />
         </>
       ) : null}

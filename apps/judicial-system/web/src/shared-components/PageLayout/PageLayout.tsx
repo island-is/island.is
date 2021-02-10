@@ -1,4 +1,4 @@
-import React, { ReactNode, FC, useContext } from 'react'
+import React, { ReactNode } from 'react'
 import {
   Box,
   GridContainer,
@@ -9,17 +9,11 @@ import {
   LinkContext,
 } from '@island.is/island-ui/core'
 import * as styles from './PageLayout.treat'
-import { ProsecutorLogo } from '../Logos'
-import { JudgeLogo } from '../Logos'
 import Loading from '../Loading/Loading'
+import Logo from '../Logo/Logo'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  CaseDecision,
-  CaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
-import { UserContext } from '../UserProvider/UserProvider'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 
 interface PageProps {
@@ -35,7 +29,7 @@ interface PageProps {
   isExtension?: boolean
 }
 
-const PageLayout: FC<PageProps> = ({
+const PageLayout: React.FC<PageProps> = ({
   children,
   activeSection,
   activeSubSection,
@@ -46,8 +40,6 @@ const PageLayout: FC<PageProps> = ({
   parentCaseDecision,
   isCustodyEndDateInThePast,
 }) => {
-  const { user } = useContext(UserContext)
-
   const caseResult = () => {
     if (
       decision === CaseDecision.REJECTING ||
@@ -139,7 +131,6 @@ const PageLayout: FC<PageProps> = ({
       ],
     },
   ]
-
   return children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
@@ -166,15 +157,7 @@ const PageLayout: FC<PageProps> = ({
           </GridColumn>
           <GridColumn span={['0', '0', '3/12', '3/12']}>
             <Box marginLeft={2}>
-              {user?.role === UserRole.JUDGE ? (
-                <Box marginBottom={7}>
-                  <JudgeLogo />
-                </Box>
-              ) : user?.role === UserRole.PROSECUTOR ? (
-                <Box marginBottom={7}>
-                  <ProsecutorLogo />
-                </Box>
-              ) : null}
+              <Logo />
               <FormStepper
                 // Remove the extension parts of the formstepper if the user is not applying for an extension
                 sections={
