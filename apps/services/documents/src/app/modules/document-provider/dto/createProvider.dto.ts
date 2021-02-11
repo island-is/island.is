@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateProviderDto {
   @IsNotEmpty()
@@ -14,16 +14,16 @@ export class CreateProviderDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   endpoint?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   endpointType?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   apiScope?: string
 }

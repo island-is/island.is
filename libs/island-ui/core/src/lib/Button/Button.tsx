@@ -57,6 +57,7 @@ export interface ButtonProps {
   loading?: boolean
   nowrap?: boolean
   title?: string
+  inline?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
@@ -76,6 +77,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       disabled,
       loading,
       nowrap,
+      inline,
       ...buttonProps
     },
     ref,
@@ -108,6 +110,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.loading]: loading,
           },
         )}
+        display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}
         {...buttonProps}
       >

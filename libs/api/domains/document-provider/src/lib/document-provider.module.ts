@@ -1,5 +1,5 @@
 import { DynamicModule, HttpModule } from '@nestjs/common'
-import { Configuration, OrganisationsApi } from '../../gen/fetch'
+import { Configuration, OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 import { DocumentProviderResolver } from './document-provider.resolver'
 import { DocumentProviderService } from './document-provider.service'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
@@ -40,6 +40,16 @@ export class DocumentProviderModule {
           provide: OrganisationsApi,
           useFactory: () =>
             new OrganisationsApi(
+              new Configuration({
+                fetchApi: fetch,
+                basePath: config.documentsServiceBasePath,
+              }),
+            ),
+        },
+        {
+          provide: ProvidersApi,
+          useFactory: () =>
+            new ProvidersApi(
               new Configuration({
                 fetchApi: fetch,
                 basePath: config.documentsServiceBasePath,
