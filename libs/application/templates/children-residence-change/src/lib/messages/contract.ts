@@ -15,6 +15,19 @@ export const contract = {
       description: 'Contract page description',
     },
   }),
+  alert: defineMessages({
+    title: {
+      id: 'crc.application:section.contract.overview.alert.title',
+      defaultMessage: 'Upphafsdagur samnings',
+      description: 'Title for alert message',
+    },
+    message: {
+      id: 'crc.application:section.contract.overview.alert.message',
+      defaultMessage: 'Upphafsdagur samnings',
+      description:
+        'Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur afgreitt hana.',
+    },
+  }),
   labels: defineMessages({
     childName: {
       id: 'crc.application:section.contract.overview.labels.childName',

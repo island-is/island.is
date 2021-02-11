@@ -17,7 +17,6 @@ const Overview = ({ application }: FieldBaseProps) => {
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
   const children = extractChildrenFromApplication(application)
-  const usePluralForChildren = children.length > 1
   const answers = extractAnswersFromApplication(application)
   const { formatMessage } = useIntl()
   return (
@@ -25,8 +24,8 @@ const Overview = ({ application }: FieldBaseProps) => {
       <Box marginTop={3}>
         <AlertMessage
           type="info"
-          title="Upphafsdagur samnings"
-          message="Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur afgreitt hana."
+          title={formatMessage(m.contract.alert.title)}
+          message={formatMessage(m.contract.alert.message)}
         />
       </Box>
       <Box marginTop={5}>
