@@ -54,7 +54,7 @@ export const transformApplicationToParentalLeaveDTO = (
       : extractAnswer(application.answers, 'employer.nationalRegistryId'),
     email: isSelfEmployed
       ? extractAnswer(application.answers, 'applicant.email')
-      : extractAnswer(application.answers, 'employer.email'),
+      : extractAnswer(application.answers, 'employer.information.email'),
   }
 
   return {

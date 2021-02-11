@@ -53,8 +53,8 @@ export const ParentalLeaveForm: Form = buildForm({
           title: m.externalDataSubSection,
           children: [
             buildExternalDataProvider({
-              title: m.introductionProvider,
               id: 'approveExternalData',
+              title: m.introductionProvider,
               dataProviders: [
                 buildDataProviderItem({
                   id: 'userProfile',
@@ -355,7 +355,7 @@ export const ParentalLeaveForm: Form = buildForm({
               ],
             }),
             buildMultiField({
-              id: 'employerInformation',
+              id: 'employer.information',
               title: mm.employer.title,
               description: mm.employer.description,
               condition: (answers) =>
@@ -368,7 +368,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   title: mm.employer.email,
                   width: 'full',
-                  id: 'employerInformation.email',
+                  id: 'employer.information.email',
                 }),
               ],
             }),
