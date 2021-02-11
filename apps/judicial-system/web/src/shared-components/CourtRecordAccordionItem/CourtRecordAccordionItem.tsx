@@ -86,14 +86,13 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         breakSpaces
       >
         <Text>
-          <Text as="span" fontWeight="semiBold">
-            {workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+          {`${
+            workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
               ? `Kærði hafnar kröfunni. `
               : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
               ? `Kærði samþykkir kröfuna. `
-              : ''}
-          </Text>
-          {workingCase.accusedPleaAnnouncement}
+              : ''
+          }${workingCase.accusedPleaAnnouncement}`}
         </Text>
       </AccordionListItem>
       <AccordionListItem title="Málflutningur" breakSpaces>
