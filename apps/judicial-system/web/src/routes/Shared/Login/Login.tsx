@@ -3,6 +3,7 @@ import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import * as styles from './Login.treat'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
@@ -22,20 +23,44 @@ export const Login = () => {
     }
   }, [user])
 
+  const getErrorAlert = (errorCode: LoginErrorCodes): JSX.Element | null => {
+    switch (errorCode) {
+      case LoginErrorCodes.LOGIN_FAILED:
+        return (
+          <AlertMessage
+            type="info"
+            title="Innskráning ógild"
+            message="Innskráning tókst ekki. Ertu viss um að þú hafir slegið inn rétt símanúmer?"
+          />
+        )
+      case LoginErrorCodes.UNAUTHENTICATED:
+        return (
+          <AlertMessage
+            type="warning"
+            title="Innskráning tókst ekki"
+            message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."
+          />
+        )
+      case LoginErrorCodes.UNAUTHORIZED:
+        return (
+          <AlertMessage
+            type="warning"
+            title="Þú ert ekki með aðgang"
+            message="Þú hefur ekki fengið aðgang að Réttarvörslugátt. Ef þú telur þig eiga að hafa aðgang þarft þú að hafa samband við viðeigandi stjórnanda eða notendaþjónustu hjá þinni starfsstöð."
+          />
+        )
+
+      default:
+        return null
+    }
+  }
+
   return (
     <div className={styles.loginContainer}>
       {urlParams.has('villa') && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
-            <AlertMessage
-              type="info"
-              title="Innskráning ógild"
-              message={
-                urlParams.get('villa') === 'innskraning-utrunnin'
-                  ? 'Innskráning ekki lengur gild. Vinsamlegast reynið aftur.'
-                  : 'Ekki notandi'
-              }
-            />
+            {getErrorAlert(urlParams.get('villa') as LoginErrorCodes)}
           </Box>
         </div>
       )}
