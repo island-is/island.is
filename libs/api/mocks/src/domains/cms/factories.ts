@@ -15,6 +15,7 @@ import {
   LifeEventPage,
   Link,
   Menu,
+  MenuLinkWithChildren,
   News,
   ReferenceLink,
   SectionWithImage,
@@ -108,11 +109,17 @@ export const link = factory<Link>({
   url: () => faker.internet.url(),
 })
 
+export const menuLink = factory<MenuLinkWithChildren>({
+  title: () => title(),
+  link: () => referenceLink(),
+  childLinks: () => [],
+})
+
 export const menu = factory<Menu>({
   id: faker.random.uuid(),
   title: () => title(),
   links: () => link.list(4),
-  menuLinks: () => [],
+  menuLinks: () => menuLink.list(4),
 })
 
 export const groupedMenu = factory<GroupedMenu>({
