@@ -28,6 +28,7 @@ import SignedVerdictOverview from '@island.is/judicial-system-web/src/routes/Sha
 import { CaseType } from '@island.is/judicial-system/types'
 import { Users } from '@island.is/judicial-system-web/src/routes/Shared/Users/Users'
 import ChangeUser from '../routes/Shared/ChangeUser/ChangeUser'
+import NewUser from '../routes/Shared/NewUser/NewUser'
 
 const App: React.FC = () => {
   return (
@@ -92,6 +93,9 @@ const App: React.FC = () => {
               </Route>
               <Route path={Constants.REQUEST_LIST_ROUTE}>
                 <DetentionRequests />
+              </Route>
+              <Route path={`${Constants.USER_NEW_ROUTE}/`}>
+                <NewUser />
               </Route>
               <Route path={`${Constants.USER_CHANGE_ROUTE}/:id?`}>
                 <ChangeUser />
