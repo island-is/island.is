@@ -17,6 +17,7 @@ import {
   TypeCategory,
   AccessCategory,
 } from '@island.is/web/graphql/schema'
+import ServiceTag from './ServiceTag'
 
 interface TagListProps {
   data: Array<DataCategory>
@@ -49,26 +50,7 @@ export const TagList: FC<TagListProps> = ({
             </Inline>
             <Inline space={1}>
               {data?.map((item) => (
-                <DialogPrompt
-                  baseId={`data-${item}-dialog`}
-                  title={n(`data${capitalize(item)}`)}
-                  description={n(`data${capitalize(item)}Description`)}
-                  ariaLabel={`Show detailed description of ${item} data`}
-                  disclosureElement={
-                    <Box>
-                      <Tooltip
-                        placement="right"
-                        as="span"
-                        text={n(`data${capitalize(item)}Description`)}
-                      >
-                        <Tag variant="white" outlined key={item}>
-                          {n(`data${capitalize(item)}`)}
-                        </Tag>
-                      </Tooltip>
-                    </Box>
-                  }
-                  buttonTextCancel={n('closeDialog')}
-                />
+                <ServiceTag category="data" item={item} namespace={namespace} />
               ))}
             </Inline>
           </GridColumn>
@@ -83,26 +65,7 @@ export const TagList: FC<TagListProps> = ({
               <Tooltip placement="right" text={n('typeTooltipText')} />
             </Inline>
             <Inline space={1}>
-              <DialogPrompt
-                baseId={`type-${type}-dialog`}
-                title={n(`type${capitalize(type)}`)}
-                description={n(`type${capitalize(type)}Description`)}
-                ariaLabel={`Show detailed description of ${type} type`}
-                disclosureElement={
-                  <Box>
-                    <Tooltip
-                      placement="right"
-                      as="span"
-                      text={n(`type${capitalize(type)}Description`)}
-                    >
-                      <Tag variant="white" outlined key={type}>
-                        {n(`type${capitalize(type)}`)}
-                      </Tag>
-                    </Tooltip>
-                  </Box>
-                }
-                buttonTextCancel={n('closeDialog')}
-              />
+              <ServiceTag category="type" item={type} namespace={namespace} />
             </Inline>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '3/12']}>
@@ -114,25 +77,10 @@ export const TagList: FC<TagListProps> = ({
             </Inline>
             <Inline space={1}>
               {access?.map((item) => (
-                <DialogPrompt
-                  baseId={`access-${item}-dialog`}
-                  title={n(`access${capitalize(item)}`)}
-                  description={n(`access${capitalize(item)}Description`)}
-                  ariaLabel={`Show detailed description of ${item} access`}
-                  disclosureElement={
-                    <Box>
-                      <Tooltip
-                        placement="right"
-                        as="span"
-                        text={n(`access${capitalize(item)}Description`)}
-                      >
-                        <Tag variant="white" outlined key={item}>
-                          {n(`access${capitalize(item)}`)}
-                        </Tag>
-                      </Tooltip>
-                    </Box>
-                  }
-                  buttonTextCancel={n('closeDialog')}
+                <ServiceTag
+                  category="access"
+                  item={item}
+                  namespace={namespace}
                 />
               ))}
             </Inline>

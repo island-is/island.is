@@ -24,6 +24,7 @@ import {
 import TagList from './TagList'
 import XroadValue from './XroadValue'
 import ServiceInfoLink from './ServiceInfoLink'
+import ServiceTag from './ServiceTag'
 
 export interface ServiceInformationProps {
   service: Service
@@ -103,29 +104,10 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
             <Text variant="h1">{service.title}</Text>
             {service.pricing.length > 0 && (
               <Box height="full" display="flex" alignItems="center">
-                <DialogPrompt
-                  baseId={`pricing-${service.pricing[0]}-dialog`}
-                  title={n(`pricing${capitalize(service.pricing[0])}`)}
-                  description={n(
-                    `pricing${capitalize(service.pricing[0])}Description`,
-                  )}
-                  ariaLabel={`Show detailed description of ${service.pricing[0]} pricing`}
-                  disclosureElement={
-                    <Box>
-                      <Tooltip
-                        placement="right"
-                        as="span"
-                        text={n(
-                          `pricing${capitalize(service.pricing[0])}Description`,
-                        )}
-                      >
-                        <Tag variant="white" outlined key={service.pricing[0]}>
-                          {n(`pricing${capitalize(service.pricing[0])}`)}
-                        </Tag>
-                      </Tooltip>
-                    </Box>
-                  }
-                  buttonTextCancel={n('closeDialog')}
+                <ServiceTag
+                  category="pricing"
+                  item={service.pricing[0]}
+                  namespace={strings}
                 />
               </Box>
             )}
