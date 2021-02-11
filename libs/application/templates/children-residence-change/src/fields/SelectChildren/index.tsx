@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocale } from '@island.is/localization'
+import { useIntl } from 'react-intl'
 import { FieldBaseProps } from '@island.is/application/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -12,7 +12,7 @@ import { DescriptionText } from '../components'
 
 const SelectChildren = ({ field, application, error }: FieldBaseProps) => {
   const { id, disabled } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
   const otherParent = extractParentFromApplication(application)
   return (
     <>

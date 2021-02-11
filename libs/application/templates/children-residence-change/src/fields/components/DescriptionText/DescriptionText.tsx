@@ -1,7 +1,6 @@
 import React from 'react'
 import Markdown from 'markdown-to-jsx'
-import { MessageDescriptor } from 'react-intl'
-import { useLocale } from '@island.is/localization'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { Text, BulletList, Bullet } from '@island.is/island-ui/core'
 
 interface Props {
@@ -25,7 +24,7 @@ const textOverride = {
 }
 
 const DescriptionText = ({ text, format }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
   return (
     <Markdown
       options={{

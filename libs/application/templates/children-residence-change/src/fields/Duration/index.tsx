@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { duration } from '../../lib/messages'
 import { DescriptionText } from '../components'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { Box } from '@island.is/island-ui/core'
 import {
   DatePickerController,
   RadioController,
@@ -16,7 +16,7 @@ const Duration = ({ field, application, error }: FieldBaseProps) => {
     field.id,
     undefined,
   ) as ValidAnswers
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
     currentAnswer,

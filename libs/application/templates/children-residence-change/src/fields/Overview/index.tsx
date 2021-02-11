@@ -1,6 +1,6 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { FieldBaseProps } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
 import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import { DescriptionText } from '../components'
 import {
@@ -19,7 +19,7 @@ const Overview = ({ application }: FieldBaseProps) => {
   const children = extractChildrenFromApplication(application)
   const usePluralForChildren = children.length > 1
   const answers = extractAnswersFromApplication(application)
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
   return (
     <>
       <Box marginTop={3}>

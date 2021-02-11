@@ -1,8 +1,8 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
 import { otherParent } from '../../lib/messages'
 import { extractParentFromApplication } from '../../lib/utils'
 
@@ -11,7 +11,7 @@ const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
   const parent = extractParentFromApplication(application)
   // TODO: add validation

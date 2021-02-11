@@ -1,8 +1,8 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Input } from '@island.is/island-ui/core'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
 import { reason } from '../../lib/messages'
 
 const Reason = ({ error, application, field }: FieldBaseProps) => {
@@ -10,7 +10,7 @@ const Reason = ({ error, application, field }: FieldBaseProps) => {
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
-  const { formatMessage } = useLocale()
+  const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
 
   return (
