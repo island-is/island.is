@@ -16,13 +16,13 @@ import { ValueType } from 'react-select/src/types'
 import { isNextDisabled } from '../../../utils/stepHelper'
 import { validate, Validation } from '../../../utils/validate'
 
-interface props {
+interface Props {
   user: User
   onSave: (user: User) => void
   loading: boolean
 }
 
-export const UserForm: React.FC<props> = (props) => {
+export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
 
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
