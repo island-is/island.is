@@ -201,13 +201,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
               value={organizations.find((x) => x.value === organization)}
               onChange={({ value }: Option) => {
                 setOrganization(String(value))
-                Router.replace(
-                  window.location.protocol +
-                    '//' +
-                    window.location.host +
-                    window.location.pathname +
-                    `#${value}`,
-                )
+                Router.replace(`#${value}`)
               }}
             />
           </GridColumn>
@@ -245,7 +239,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
 
           return (
             <FocusableBox
-              href={`/stofnanir/syslumenn/uppbod/${auction.id}`}
+              href={linkResolver('auction', [auction.id]).href}
               borderWidth="standard"
               borderColor="standard"
               borderRadius="standard"
@@ -260,7 +254,6 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                 <Text variant="h3">
                   {format(date, 'd. MMMM yyyy')} | {auction.title}
                 </Text>
-
                 <Text paddingTop={1}>
                   {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
                 </Text>
