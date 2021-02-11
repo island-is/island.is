@@ -49,6 +49,9 @@ const prosecutorRule = UserRole.PROSECUTOR as RolesRule
 // Allows judges to perform any action
 const judgeRule = UserRole.JUDGE as RolesRule
 
+// Allows registrars to perform any action
+const registrarRule = UserRole.REGISTRAR as RolesRule
+
 // Allows prosecutors to update a specific set of fields
 const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
@@ -255,6 +258,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -265,12 +269,14 @@ export class CaseController {
     return this.caseService.getAll()
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   async getById(@Param('id') id: string): Promise<Case> {
     return this.findCaseById(id)
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -293,6 +299,7 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
