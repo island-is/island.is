@@ -153,7 +153,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
 
   return (
     <OrganizationWrapper
-      pageTitle={n('auction', 'Uppboð')}
+      pageTitle={n('auctions', 'Uppboð')}
       organizationPage={organizationPage}
       breadcrumbItems={[
         {
@@ -262,8 +262,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                 </Text>
 
                 <Text paddingTop={1}>
-                  Uppfært {format(updatedAt, 'd. MMMM')} kl.{' '}
-                  {format(updatedAt, 'H:m')}
+                  {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
                 </Text>
               </Box>
               <Box

@@ -75,7 +75,7 @@ const Auction: Screen<AuctionProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={n('auction', 'Uppboð')}
+      pageTitle={n('singleAuction', 'Uppboð')}
       organizationPage={organizationPage}
       breadcrumbItems={[
         {
@@ -110,7 +110,7 @@ const Auction: Screen<AuctionProps> = ({
         <Text marginBottom={4}>{format(date, 'dd. MMMM yyyy')}</Text>
         <MarkdownText>{auction.content}</MarkdownText>
         <Text paddingTop={4}>
-          Uppfært {format(updatedAt, 'd. MMMM')} kl. {format(updatedAt, 'H:m')}
+          {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
         </Text>
       </Box>
     </OrganizationWrapper>
