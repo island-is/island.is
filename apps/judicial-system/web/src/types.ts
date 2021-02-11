@@ -36,3 +36,9 @@ export enum JudgeSubsections {
 }
 
 export type ReactSelectOption = { label: string; value: string | number }
+
+export enum LoginErrorCodes {
+  UNAUTHORIZED = 'innskraning-ekki-notandi',
+  UNAUTHENTICATED = 'innskraning-utrunnin',
+  LOGIN_FAILED = 'innskraning-ogild',
+}
