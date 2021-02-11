@@ -12,8 +12,8 @@ import {
   TagProps,
   FocusableBox,
   TagVariant,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
-import { ColorSchemeContext } from '@island.is/web/context'
 import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
