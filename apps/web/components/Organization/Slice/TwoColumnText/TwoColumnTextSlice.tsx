@@ -42,7 +42,7 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
               <MarkdownText>{slice.leftContent}</MarkdownText>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <MarkdownText>{slice.leftContent}</MarkdownText>
+              <MarkdownText>{slice.rightContent}</MarkdownText>
             </GridColumn>
           </GridRow>
         </Box>

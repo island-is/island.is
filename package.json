@@ -123,6 +123,7 @@
     "downshift": "5.4.3",
     "elastic-builder": "2.6.1",
     "entropy-string": "4.2.0",
+    "eslint-plugin-local-rules": "1.0.1",
     "express": "4.17.1",
     "express-validator": "6.4.1",
     "faker": "5.1.0",
