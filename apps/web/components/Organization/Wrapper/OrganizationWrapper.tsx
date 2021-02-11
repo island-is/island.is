@@ -85,14 +85,14 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         </GridContainer>
         <Box className={styles.headerWrapper}>
           <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
-            <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
+            <Box paddingTop={2}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
                   alt=""
                 />
-                <Text variant="h1" as="h1" color="white">
+                <Text variant="h1" as="h1" color="white" marginTop={[0, 0, 3]}>
                   {organizationPage.title}
                 </Text>
               </Box>
