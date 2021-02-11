@@ -147,7 +147,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
       }
 
       // If the startDate is using the expected date of birth, we then calculate the minimum period required from the date of birth
-      if (differenceInDays(parseISO(endDate), parseISO(dob)) < minPeriodDays) {
+      if (
+        !startDate &&
+        differenceInDays(parseISO(endDate), parseISO(dob)) < minPeriodDays
+      ) {
         return buildError(
           `End date cannot be less than the ${minPeriodDays} days from the date of birth.`,
           field,
