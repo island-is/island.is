@@ -33,26 +33,33 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-      <GridContainer>
+    !!slice.articles.length && (
+      <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
         <Box
           borderTopWidth="standard"
           borderColor="standard"
-          paddingTop={[8, 6, 10]}
+          paddingTop={[8, 6, 8]}
           paddingBottom={[4, 5, 10]}
         >
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '5/12']}>
+            <GridColumn span={['12/12', '12/12', '4/11']}>
               <Box className={styles.popularTitleWrap}>
-                <Text variant="h2" as="h2" marginBottom={4}>
+                <Text
+                  variant="h2"
+                  as="h2"
+                  marginBottom={4}
+                  id={'sliceTitle-' + slice.id}
+                >
                   {slice.title}
                 </Text>
-                <Box display={['none', 'none', 'block']}>
-                  <img src={slice.image.url} alt="" />
-                </Box>
+                {!!slice.image && (
+                  <Box display={['none', 'none', 'block']}>
+                    <img src={slice.image.url} alt="" />
+                  </Box>
+                )}
               </Box>
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '7/12']}>
+            <GridColumn span={['12/12', '12/12', '7/11']}>
               <Stack space={2}>
                 {slice.articles.map(({ title, slug, processEntry }) => {
                   const url = linkResolver('Article' as LinkType, [slug])
@@ -99,7 +106,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
             </Box>
           )}
         </Box>
-      </GridContainer>
-    </section>
+      </section>
+    )
   )
 }

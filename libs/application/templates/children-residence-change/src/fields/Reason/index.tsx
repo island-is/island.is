@@ -1,14 +1,16 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Input } from '@island.is/island-ui/core'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
+import { reason } from '../../lib/messages'
 
 const Reason = ({ error, application, field }: FieldBaseProps) => {
   const { id } = field
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
-
+  const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
 
   return (
@@ -21,9 +23,9 @@ const Reason = ({ error, application, field }: FieldBaseProps) => {
             <Input
               id={id}
               name={`${id}`}
-              label="Tilefni"
+              label={formatMessage(reason.input.label)}
               value={value}
-              placeholder="Skrifaðu hér í stuttu máli ástæðu þess að lögheimili barnsins er að færast á milli foreldra"
+              placeholder={formatMessage(reason.input.placeholder)}
               textarea={true}
               rows={6}
               onChange={(e) => {
