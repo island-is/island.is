@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
 import * as AWS from 'aws-sdk'
-import * as AwsConnector from 'aws-elasticsearch-connector'
+import AwsConnector from 'aws-elasticsearch-connector'
 import { environment as elasticEnvironment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'
@@ -199,7 +199,16 @@ export class ElasticService {
       )
       if (workers.length) {
         logger.debug(`deleting indices:  ${JSON.stringify(workers, null, 4)}`)
-        await this.client.indices.delete({ index: workers })
+        try {
+          await this.client.indices.delete({ index: workers })
+        } catch (err) {
+          logger.warn(
+            'Canceling deletion of dangling indices ' +
+              'because deleting indices failed with the error: ',
+            err,
+          )
+          return
+        }
       } else {
         logger.debug(`No dangling indices to delete.`)
       }
@@ -372,8 +381,9 @@ export class ElasticService {
       return false
     }
 
-    logger.debug(`Inserting into index ${indexName}`)
-    logger.info('Bulk insert', services)
+    logger.info(
+      `Bulk inserting ${services.length} service(s) into index "${indexName}"`,
+    )
 
     if (services.length) {
       const bulk: Array<any> = []
@@ -940,38 +950,38 @@ export class ElasticService {
     }
 
     logger.debug(`Done cloning environments: "${environments}"`)
-    logger.debug(
-      `Removing first three services from source index named ${sourceIndex}`,
-    )
-    const idsToRemoveFromSourceIndex = (
-      await this.fetchAllIds(sourceIndex)
-    ).slice(0, 3)
-    await this.deleteByIds(idsToRemoveFromSourceIndex, sourceIndex)
-      .then((res) =>
-        logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
-      )
-      .catch((err) => logger.debug('deleteById error', err))
+    // logger.debug(
+    //   `Removing first three services from source index named ${sourceIndex}`,
+    // )
+    // const idsToRemoveFromSourceIndex = (
+    //   await this.fetchAllIds(sourceIndex)
+    // ).slice(0, 3)
+    // await this.deleteByIds(idsToRemoveFromSourceIndex, sourceIndex)
+    //   .then((res) =>
+    //     logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
+    //   )
+    //   .catch((err) => logger.debug('deleteById error', err))
 
-    for (let i = 0; i < environments.length; i++) {
-      const environment = environments[i]
-      const newIndex = this.getPrefix(environment)
+    // for (let i = 0; i < environments.length; i++) {
+    //   const environment = environments[i]
+    //   const newIndex = this.getPrefix(environment)
 
-      const delCount = 2 * (i + 1)
-      logger.debug(
-        `Removing last ${delCount} services from cloned environment index "${newIndex}"`,
-      )
-      const idsToRemoveFromNewIndex = (await this.fetchAllIds(newIndex)).slice(
-        delCount * -1,
-      )
-      logger.debug(
-        `Deleting service with ids: "${idsToRemoveFromNewIndex}"  from ${newIndex}`,
-      )
-      await this.deleteByIds(idsToRemoveFromNewIndex, newIndex)
-        .then((res) =>
-          logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
-        )
-        .catch((err) => logger.debug('deleteById error', err))
-    }
+    //   const delCount = 2 * (i + 1)
+    //     logger.debug(
+    //       `Removing last ${delCount} services from cloned environment index "${newIndex}"`,
+    //     )
+    //     const idsToRemoveFromNewIndex = (await this.fetchAllIds(newIndex)).slice(
+    //       delCount * -1,
+    //     )
+    //     logger.debug(
+    //       `Deleting service with ids: "${idsToRemoveFromNewIndex}"  from ${newIndex}`,
+    //     )
+    //     await this.deleteByIds(idsToRemoveFromNewIndex, newIndex)
+    //       .then((res) =>
+    //         logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
+    //       )
+    //       .catch((err) => logger.debug('deleteById error', err))
+    // }
 
     // add fake alias to to fool isCollectorRunning
     await this.updateIndexAliases(
