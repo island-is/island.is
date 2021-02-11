@@ -7,25 +7,25 @@ import {
   buildSubmitField,
   Form,
   FormModes,
-  m as mm,
+  coreMessages,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { employerForm as m } from '../lib/messages'
+import { employerFormMessages } from '../lib/messages'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
-  title: m.formTitle,
+  title: employerFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      title: m.reviewSection,
+      title: employerFormMessages.reviewSection,
       children: [
         buildMultiField({
           id: 'multi',
-          title: m.reviewMultiTitle,
+          title: employerFormMessages.reviewMultiTitle,
           children: [
             buildCustomField(
               {
@@ -39,7 +39,7 @@ export const EmployerApproval: Form = buildForm({
             ),
             buildSubmitField({
               id: 'submit',
-              title: mm.buttonSubmit,
+              title: coreMessages.buttonSubmit,
               placement: 'footer',
               actions: [
                 { name: 'Reject', type: 'reject', event: 'REJECT' },
@@ -50,8 +50,8 @@ export const EmployerApproval: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'final',
-          title: mm.thanks,
-          description: mm.thanksDescription,
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),

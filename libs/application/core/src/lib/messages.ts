@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const m = defineMessages({
+export const coreMessages = defineMessages({
   buttonNext: {
     id: 'application.system:button.next',
     defaultMessage: 'Halda áfram',
@@ -40,9 +40,9 @@ export const m = defineMessages({
   globalErrorMessage: {
     id: 'application.system:boundary.error.message',
     defaultMessage:
-      'Fyrirgefðu! eitthvað fór rosalega úrskeiðis og við erum að skoða það',
+      'Fyrirgefðu! Eitthvað fór rosalega úrskeiðis og við erum að skoða það',
     description:
-      'Sorry! something went terribly wrong and we are looking into it',
+      'Sorry! Something went terribly wrong and we are looking into it',
   },
   userRoleError: {
     id: 'application.system:user.role.error',

@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { ApplicationForm, NotFound } from '@island.is/application/ui-shell'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '@island.is/application/core'
+import { coreMessages } from '@island.is/application/core'
 
 import useAuth from '../hooks/useAuth'
 
@@ -29,8 +29,8 @@ export const Application = () => {
   if (!nationalRegistryId) {
     return (
       <NotFound
-        title={formatMessage(m.notLoggedIn)}
-        subTitle={formatMessage(m.notLoggedInDescription)}
+        title={formatMessage(coreMessages.notLoggedIn)}
+        subTitle={formatMessage(coreMessages.notLoggedInDescription)}
       />
     )
   }

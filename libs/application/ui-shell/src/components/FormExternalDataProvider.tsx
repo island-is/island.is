@@ -13,7 +13,7 @@ import {
   ExternalData,
   FormValue,
   getValueViaPath,
-  m,
+  coreMessages,
 } from '@island.is/application/core'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
@@ -129,7 +129,7 @@ const FormExternalDataProvider: FC<{
         <Text variant="h4">
           {subTitle
             ? formatMessage(subTitle)
-            : formatMessage(m.externalDataTitle)}
+            : formatMessage(coreMessages.externalDataTitle)}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -168,7 +168,7 @@ const FormExternalDataProvider: FC<{
                   label={
                     checkboxLabel
                       ? formatMessage(checkboxLabel)
-                      : formatMessage(m.externalDataAgreement)
+                      : formatMessage(coreMessages.externalDataAgreement)
                   }
                   value={id}
                 />

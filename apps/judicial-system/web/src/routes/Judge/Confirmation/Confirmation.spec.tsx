@@ -60,7 +60,7 @@ describe('Confirmation route', () => {
         name: /Staðfesta og hefja undirritun/i,
       }),
     ).not.toBeDisabled()
-  }, 10000)
+  })
 
   test(`should not allow users to continue if the user is not the assigned judge`, async () => {
     // Arrange

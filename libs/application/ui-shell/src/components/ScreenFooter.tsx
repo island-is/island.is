@@ -7,7 +7,7 @@ import {
   formatText,
   FormModes,
   SubmitField,
-  m,
+  coreMessages,
 } from '@island.is/application/core'
 
 import * as styles from './ScreenFooter.treat'
@@ -53,7 +53,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           disabled={!canProceed || loading}
           type="submit"
         >
-          {formatText(m.buttonSubmit, application, formatMessage)}
+          {formatText(coreMessages.buttonSubmit, application, formatMessage)}
         </Button>
       )
     }
@@ -129,7 +129,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                   icon="arrowForward"
                   type="submit"
                 >
-                  {formatMessage(m.buttonNext)}
+                  {formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>
             )}
@@ -137,7 +137,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
             {showGoBack && (
               <Button variant="ghost" onClick={goBack}>
-                {formatMessage(m.buttonBack)}
+                {formatMessage(coreMessages.buttonBack)}
               </Button>
             )}
           </Box>

@@ -15,7 +15,7 @@ import {
   Page,
   Button,
 } from '@island.is/island-ui/core'
-import { Application, m } from '@island.is/application/core'
+import { Application, coreMessages } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
 
@@ -70,16 +70,20 @@ export const Applications: FC = () => {
   if (applicationsError)
     return (
       <NotFound
-        title={formatMessage(m.notFoundApplicationType)}
-        subTitle={formatMessage(m.notFoundApplicationTypeMessage, { type })}
+        title={formatMessage(coreMessages.notFoundApplicationType)}
+        subTitle={formatMessage(coreMessages.notFoundApplicationTypeMessage, {
+          type,
+        })}
       />
     )
 
   if (createError)
     return (
       <NotFound
-        title={formatMessage(m.createErrorApplication)}
-        subTitle={formatMessage(m.createErrorApplicationMessage, { type })}
+        title={formatMessage(coreMessages.createErrorApplication)}
+        subTitle={formatMessage(coreMessages.createErrorApplicationMessage, {
+          type,
+        })}
       />
     )
 
@@ -88,7 +92,7 @@ export const Applications: FC = () => {
       {!loading && !isEmpty(data?.getApplicationsByApplicant) && (
         <Box padding="containerGutter">
           <Box marginTop={5} marginBottom={5}>
-            <Text variant="h1">{formatMessage(m.applications)}</Text>
+            <Text variant="h1">{formatMessage(coreMessages.applications)}</Text>
           </Box>
 
           <Stack space={2}>
@@ -99,7 +103,7 @@ export const Applications: FC = () => {
                   heading={application.name || application.typeId}
                   text={format(new Date(application.modified), 'do MMMM yyyy')}
                   cta={{
-                    label: formatMessage(m.buttonNext),
+                    label: formatMessage(coreMessages.buttonNext),
                     variant: 'secondary',
                     onClick: () => history.push(`../umsokn/${application.id}`),
                   }}
@@ -118,7 +122,7 @@ export const Applications: FC = () => {
             justifyContent="flexEnd"
           >
             <Button onClick={createApplication}>
-              {formatMessage(m.newApplication)}
+              {formatMessage(coreMessages.newApplication)}
             </Button>
           </Box>
         </Box>

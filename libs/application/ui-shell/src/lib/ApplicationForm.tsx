@@ -8,7 +8,7 @@ import {
   ApplicationTemplateHelper,
   Form,
   Schema,
-  m,
+  coreMessages,
 } from '@island.is/application/core'
 import {
   getApplicationTemplateByTypeId,
@@ -106,7 +106,7 @@ const ShellWrapper: FC<{
             )
             const role = template.mapUserToRole(nationalRegistryId, application)
             if (!role) {
-              throw new Error(formatMessage(m.userRoleError))
+              throw new Error(formatMessage(coreMessages.userRoleError))
             }
             const currentRole = stateInformation.roles.find(
               (r) => r.id === role,

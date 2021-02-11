@@ -18,7 +18,7 @@ import {
   formatText,
   MessageFormatter,
   mergeAnswers,
-  m,
+  coreMessages,
 } from '@island.is/application/core'
 import {
   Box,
@@ -69,7 +69,7 @@ type ScreenProps = {
 }
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(formatMessage(m.updateOrSubmitError, { error }))
+  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
 }
 
 const Screen: FC<ScreenProps> = ({

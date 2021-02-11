@@ -20,7 +20,7 @@ import {
   getAvailableRights,
   getExpectedDateOfBirth,
 } from '../../parentalLeaveUtils'
-import { m, mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 
 const Duration: FC<FieldBaseProps> = ({ field, application }) => {
@@ -69,7 +69,9 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box>
       <FieldDescription
-        description={formatMessage(mm.duration.monthsDescription)}
+        description={formatMessage(
+          parentalLeaveFormMessages.duration.monthsDescription,
+        )}
       />
       <Box
         background="blue100"
@@ -98,8 +100,13 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
             className={styles.percentLabel}
           >
             <Text variant="h4" as="span">
-              {formatMessage(mm.duration.paymentsRatio)}&nbsp;&nbsp;
-              <Tooltip text={formatMessage(mm.paymentPlan.description)} />
+              {formatMessage(parentalLeaveFormMessages.duration.paymentsRatio)}
+              &nbsp;&nbsp;
+              <Tooltip
+                text={formatMessage(
+                  parentalLeaveFormMessages.paymentPlan.description,
+                )}
+              />
             </Text>
           </Box>
           <Box
@@ -131,17 +138,21 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                 showMinMaxLabels
                 showToolTip
                 label={{
-                  singular: formatMessage(m.month),
-                  plural: formatMessage(m.months),
+                  singular: formatMessage(parentalLeaveFormMessages.base.month),
+                  plural: formatMessage(parentalLeaveFormMessages.base.months),
                 }}
                 rangeDates={{
                   start: {
                     date: formatDateFns(currentStartDateAnswer),
-                    message: formatMessage(m.rangeStartDate),
+                    message: formatMessage(
+                      parentalLeaveFormMessages.base.rangeStartDate,
+                    ),
                   },
                   end: {
                     date: formatDateFns(chosenEndDate),
-                    message: formatMessage(m.rangeEndDate),
+                    message: formatMessage(
+                      parentalLeaveFormMessages.base.rangeEndDate,
+                    ),
                   },
                 }}
                 currentIndex={chosenDuration}

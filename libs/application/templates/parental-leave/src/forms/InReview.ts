@@ -7,11 +7,14 @@ import {
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { inReviewForm as m, mm } from '../lib/messages'
+import {
+  inReviewFormMessages,
+  parentalLeaveFormMessages,
+} from '../lib/messages'
 
 export const InReview: Form = buildForm({
   id: 'ParentalLeaveInReview',
-  title: m.formTitle,
+  title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
@@ -23,8 +26,8 @@ export const InReview: Form = buildForm({
           id: 'InReviewSteps',
           title: (application) =>
             application.state === 'approved'
-              ? mm.reviewScreen.titleApproved
-              : mm.reviewScreen.titleInReview,
+              ? parentalLeaveFormMessages.reviewScreen.titleApproved
+              : parentalLeaveFormMessages.reviewScreen.titleInReview,
           component: 'InReviewSteps',
         }),
       ],

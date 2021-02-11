@@ -6,34 +6,34 @@ import {
   buildSubmitField,
   Form,
   FormModes,
-  m as mm,
+  coreMessages,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { otherParentApprovalForm as m } from '../lib/messages'
+import { otherParentApprovalFormMessages } from '../lib/messages'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
-  title: m.formTitle,
+  title: otherParentApprovalFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'review',
-      title: m.reviewSection,
+      title: otherParentApprovalFormMessages.reviewSection,
       children: [
         buildMultiField({
           id: 'multi',
-          title: m.multiTitle,
+          title: otherParentApprovalFormMessages.multiTitle,
           children: [
             buildDescriptionField({
               id: 'intro',
               title: '',
-              description: m.introDescription,
+              description: otherParentApprovalFormMessages.introDescription,
             }),
             buildSubmitField({
               id: 'submit',
-              title: mm.buttonSubmit,
+              title: coreMessages.buttonSubmit,
               placement: 'footer',
               actions: [
                 { name: 'Reject', type: 'reject', event: 'REJECT' },
@@ -44,8 +44,8 @@ export const OtherParentApproval: Form = buildForm({
         }),
         buildDescriptionField({
           id: 'final',
-          title: mm.thanks,
-          description: mm.thanksDescription,
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),
