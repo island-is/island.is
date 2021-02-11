@@ -28,7 +28,7 @@ export const Login = () => {
       case LoginErrorCodes.LOGIN_FAILED:
         return (
           <AlertMessage
-            type="info"
+            type="warning"
             title="Innskráning ógild"
             message="Innskráning tókst ekki. Ertu viss um að þú hafir slegið inn rétt símanúmer?"
           />
@@ -36,7 +36,7 @@ export const Login = () => {
       case LoginErrorCodes.UNAUTHENTICATED:
         return (
           <AlertMessage
-            type="warning"
+            type="info"
             title="Innskráning tókst ekki"
             message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."
           />
