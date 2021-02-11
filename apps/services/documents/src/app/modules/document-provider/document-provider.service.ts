@@ -54,7 +54,7 @@ export class DocumentProviderService {
     this.logger.debug(
       `Creating organisation with nationalId - ${organisation.nationalId}`,
     )
-    console.log(JSON.stringify(organisation))
+    //console.log(JSON.stringify(organisation))
     return this.organisationModel.create(organisation, {
       include: [AdministrativeContact, TechnicalContact, Helpdesk],
     })
