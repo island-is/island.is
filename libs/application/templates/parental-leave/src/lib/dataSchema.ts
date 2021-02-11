@@ -1,6 +1,4 @@
 import * as z from 'zod'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '../constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -18,23 +16,6 @@ const PersonalAllowance = z
     useAsMuchAsPossible: z.enum([YES, NO]).optional(),
   })
   .optional()
-
-const Period = z.object({
-  startDate: z
-    .string()
-    .refine((d) => isValid(parseISO(d)))
-    .optional(),
-  endDate: z
-    .string()
-    .refine((d) => isValid(parseISO(d)))
-    .optional(),
-  ratio: z
-    .string()
-    .refine(
-      (val) => !isNaN(Number(val)) && parseInt(val) > 0 && parseInt(val) <= 100,
-    )
-    .optional(),
-})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -56,7 +37,6 @@ export const dataSchema = z.object({
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  periods: z.array(Period).nonempty(),
   employer: z.object({
     isSelfEmployed: z.enum([YES, NO]),
     email: z.string().email().optional(),
