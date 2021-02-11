@@ -10,16 +10,16 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
 
 export const hasActiveApplication = (externalData: ExternalData) => {
   const response = externalData?.applications
-  if (response && response?.status === 'success') {
-    const applications = response.data as Applications[]
-    const pendingApplications = applications?.filter(
-      (application) =>
-        application.state === 'draft' ||
-        application.state === 'inReview' ||
-        application.state === 'missingInfo',
-    )
-    return pendingApplications?.length > 1
-  }
+  // if (response && response?.status === 'success') {
+  //   const applications = response.data as Applications[]
+  //   const pendingApplications = applications?.filter(
+  //     (application) =>
+  //       application.state === 'draft' ||
+  //       application.state === 'inReview' ||
+  //       application.state === 'missingInfo',
+  //   )
+  //   return pendingApplications?.length > 1
+  // }
   // If we can not find any pending applications becausee of failure to fetch info, we will return false to allow the user to continue to create a new application
   return false
 }

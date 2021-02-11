@@ -90,24 +90,57 @@ export const HealthInsuranceForm: Form = buildForm({
           ],
         }),
         buildMultiField({
-          id: 'informationRetrieval',
-          title: m.externalDataTitle,
+          id: 'debug',
+          title: 'debug',
           children: [
-            buildCustomField({
-              id: 'informationRetrieval',
-              component: 'InformationRetrieval',
-              title: '',
+            buildTextField({
+              id: 'debugApplicationsProvider',
+              title: 'applications',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.applications?.data,
+                )
+              },
             }),
-            buildCustomField({
-              id: 'errorModal',
-              component: 'ErrorModal',
-              title: '',
+            buildTextField({
+              id: 'debugHealthInsuranceProvider',
+              title: 'health insurance',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.healthInsurance?.data,
+                )
+              },
+            }),
+            buildTextField({
+              id: 'debugPendingApplicationsProvider',
+              title: 'oldpending',
+              defaultValue: (application: Application) => {
+                return JSON.stringify(
+                  application.externalData?.oldPendingApplications.data,
+                )
+              },
             }),
           ],
-          condition: (formValue: FormValue, externalData: ExternalData) => {
-            return shouldShowModal(externalData)
-          },
         }),
+        // buildMultiField({
+        //   id: 'informationRetrieval',
+        //   title: m.externalDataTitle,
+        //   children: [
+        //     buildCustomField({
+        //       id: 'informationRetrieval',
+        //       component: 'InformationRetrieval',
+        //       title: '',
+        //     }),
+        //     buildCustomField({
+        //       id: 'errorModal',
+        //       component: 'ErrorModal',
+        //       title: '',
+        //     }),
+        //   ],
+        //   condition: (formValue: FormValue, externalData: ExternalData) => {
+        //     return shouldShowModal(externalData)
+        //   },
+        // }),
         buildMultiField({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
