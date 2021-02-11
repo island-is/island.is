@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { StaticText, m } from '@island.is/application/core'
+import { StaticText, coreMessages } from '@island.is/application/core'
 
 interface Props {
   title?: StaticText
@@ -25,10 +25,10 @@ export const NotFound: FC<Props> = ({ title, subTitle }) => {
             404
           </Text>
           <Text variant="h1" as="h1" marginBottom={3}>
-            {formatMessage(title ?? m.notFoundTitle)}
+            {formatMessage(title ?? coreMessages.notFoundTitle)}
           </Text>
           <Text variant="intro" as="p">
-            {formatMessage(subTitle ?? m.notFoundSubTitle)}
+            {formatMessage(subTitle ?? coreMessages.notFoundSubTitle)}
           </Text>
         </Box>
       </GridColumn>
