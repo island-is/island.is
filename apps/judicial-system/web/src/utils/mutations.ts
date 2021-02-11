@@ -203,6 +203,22 @@ export const UsersQuery = gql`
   }
 `
 
+export const UserQuery = gql`
+  query UserQuery($input: UserQueryInput!) {
+    user(input: $input) {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution
+      active
+    }
+  }
+`
+
 export const UpdateUserMutation = gql`
   mutation UpdateUserMutation($input: UpdateUserInput!) {
     updateUser(input: $input) {

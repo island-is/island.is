@@ -20,13 +20,13 @@ import {
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
-import { setup } from './setup'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
 import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification/models'
+import { setup } from './setup'
 
 jest.setTimeout(20000)
 
@@ -289,6 +289,19 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 describe('User', () => {
+  it('GET /api/user/:id should get the user', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/user/${prosecutor.id}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        const apiUser = response.body
+
+        expectUsersToMatch(apiUser, prosecutor)
+      })
+  })
+
   it('GET /api/user/?nationalId=<national id> should get the user', async () => {
     const nationalId = '2222222222'
     let dbUser: TUser

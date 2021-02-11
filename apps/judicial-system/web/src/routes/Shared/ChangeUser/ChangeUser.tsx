@@ -7,12 +7,12 @@ import { useHistory, useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   UpdateUserMutation,
-  UsersQuery,
+  UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import UserForm from '../UserForm/UserForm'
 
 interface UserData {
-  users: User[]
+  user: User
 }
 
 interface SaveData {
@@ -24,7 +24,8 @@ export const ChangeUser: React.FC = () => {
 
   const [user, setUser] = useState<User>()
 
-  const { data, loading } = useQuery<UserData>(UsersQuery, {
+  const { data, loading } = useQuery<UserData>(UserQuery, {
+    variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -33,7 +34,7 @@ export const ChangeUser: React.FC = () => {
 
   useEffect(() => {
     if (data && id) {
-      setUser(data.users.find((u) => u.id === id))
+      setUser(data.user)
     }
   }, [data, id, setUser])
 
@@ -70,7 +71,7 @@ export const ChangeUser: React.FC = () => {
     <PageLayout
       showSidepanel={false}
       isLoading={loading}
-      notFound={!data?.users}
+      notFound={!data?.user}
     >
       {user && <UserForm user={user} onSave={saveUser} loading={saveLoading} />}
     </PageLayout>
