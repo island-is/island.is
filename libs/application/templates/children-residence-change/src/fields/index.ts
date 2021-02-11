@@ -1,5 +1,8 @@
 export { default as ChangeInformation } from './ChangeInformation'
 export { default as Confirmation } from './Confirmation'
+export { default as ContactInfo } from './ContactInfo'
+export { default as Duration } from './Duration'
 export { default as Overview } from './Overview'
 export { default as Reason } from './Reason'
+export { default as SelectChildren } from './SelectChildren'
 export { default as Terms } from './Terms'
