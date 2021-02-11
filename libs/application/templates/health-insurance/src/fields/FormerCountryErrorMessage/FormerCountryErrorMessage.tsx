@@ -6,7 +6,6 @@ import Markdown from 'markdown-to-jsx'
 import * as styles from './FormerCountryErrorMessage.treat'
 import { m } from '../../forms/messages'
 
-
 const FormerCountryErrorMessage: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
