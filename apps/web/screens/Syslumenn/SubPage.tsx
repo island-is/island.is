@@ -32,6 +32,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const OrganizationSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
@@ -39,7 +40,6 @@ const OrganizationSlice = dynamic(() =>
 const SliceDropdown = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.SliceDropdown),
 )
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
