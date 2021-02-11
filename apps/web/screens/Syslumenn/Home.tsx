@@ -34,6 +34,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
+import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -146,6 +147,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
+          tag: SYSLUMENN_NEWS_TAG_ID,
         },
       },
     }),
