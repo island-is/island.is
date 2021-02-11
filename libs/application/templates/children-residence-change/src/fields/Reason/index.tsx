@@ -26,8 +26,6 @@ const Reason = ({ error, application, field }: FieldBaseProps) => {
               label={formatMessage(reason.input.label)}
               value={value}
               placeholder={formatMessage(reason.input.placeholder)}
-              hasError={!!error}
-              errorMessage="Required"
               textarea={true}
               rows={6}
               onChange={(e) => {

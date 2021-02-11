@@ -129,7 +129,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'overview',
-      title: m.contract.general.sectionTitle,
+      title: m.section.overview,
       children: [
         buildCustomField({
           id: 'residenceChangeReview',
@@ -140,7 +140,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
     }),
     buildSection({
       id: 'submitted',
-      title: m.confirmation.general.sectionTitle,
+      title: m.section.received,
       children: [
         buildCustomField({
           id: 'residenceChangeConfirmation',
