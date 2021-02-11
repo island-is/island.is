@@ -1,6 +1,5 @@
 # Fallback. If there is no owner, assign to core maintainers.
-# Remove fallback rule while graphql files are in the way.
-# *                                                                 @island-is/core
+*                                                                   @island-is/core
 
 /*                                                                  @island-is/core
 /.github/                                                           @island-is/core
@@ -33,6 +32,7 @@
 /libs/application/graphql/                                          @island-is/aranja
 /libs/application/ui-fields/                                        @island-is/aranja
 /libs/application/ui-shell/                                         @island-is/aranja
+/libs/application/template-api-modules/                             @island-is/aranja
 /libs/application/template-loader/                                  @island-is/aranja
 /libs/application/templates/meta-application/                       @island-is/aranja
 /libs/application/templates/parental-leave/                         @island-is/aranja
