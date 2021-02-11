@@ -32,6 +32,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const OrganizationSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
@@ -60,6 +61,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id)
 
   const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
   const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`
