@@ -2,7 +2,6 @@ import { assign } from 'xstate'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { gql, useMutation } from '@apollo/client'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -11,47 +10,7 @@ import {
   ApplicationTemplate,
   Application,
 } from '@island.is/application/core'
-import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
-import { generateNotifyReviewerTemplate } from '../emailTemplateGenerators'
-
-const createOrganisationMutation = gql`
-  mutation {
-    createOrganisation(
-      input: {
-        nationalId: "0606801239"
-        name: "API Corp 3"
-        address: "From API 3"
-        email: "api3@apicorp.com"
-        phoneNumber: "5885522"
-        administrativeContact: {
-          name: "test"
-          email: "test"
-          phoneNumber: "8620450"
-        }
-        technicalContact: {
-          name: "test-tech"
-          email: "tech@test.is"
-          phoneNumber: "5554567"
-        }
-        helpdesk: { email: "help@desk.is", phoneNumber: "5555555" }
-      }
-    ) {
-      id
-      nationalId
-      name
-      address
-      email
-      phoneNumber
-    }
-  }
-`
-const [createOrganisationTest] = useMutation(createOrganisationMutation)
-
-const createOrganisation = async () => {
-  const results = await createOrganisationTest()
-
-  console.log('ÞETTA ER KOMIÐ ')
-}
+import { API_MODULE_ACTIONS } from '../../constants'
 
 type Events =
   | { type: 'APPROVE' }
@@ -62,22 +21,6 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
-}
-interface ApiTemplateUtilActions {
-  [key: string]: ApplicationAPITemplateAction
-}
-const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
-  notifyReviewerThroughEmail: {
-    type: 'assignThroughEmail',
-    generateTemplate: generateNotifyReviewerTemplate,
-  },
-}
-
-const p = () => {
-  return new Promise((resolve, reject) => {
-    console.log('HÆHÆ hér er ég!')
-    resolve('Sucess')
-  })
 }
 
 const contact = z.object({
@@ -204,30 +147,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         },
       },
       inReview: {
-        entry: assign((context) => {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: ['2311637949'],
-            },
-          }
-        }),
-        invoke: [
-          {
-            src: {
-              type: 'apiTemplateUtils',
-              action: TEMPLATE_API_ACTIONS.notifyReviewerThroughEmail,
-            },
-          },
-          {
-            id: 'test',
-            src: () => createOrganisation,
-          },
-        ],
         meta: {
           name: 'In Review',
           progress: 0.5,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignReviewer,
+          },
           roles: [
             {
               id: Roles.ASSIGNEE,
