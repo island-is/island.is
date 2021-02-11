@@ -7,7 +7,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { Box, Tag, DialogPrompt, Tooltip } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-import { capitalize } from 'lodash'
+import capitalize from 'lodash/capitalize'
 
 interface ServiceTagProps {
   category: string

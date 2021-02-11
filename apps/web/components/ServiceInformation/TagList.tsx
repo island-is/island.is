@@ -1,5 +1,4 @@
-import React, { FC, ReactElement } from 'react'
-import capitalize from 'lodash/capitalize'
+import React, { FC } from 'react'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   Box,
