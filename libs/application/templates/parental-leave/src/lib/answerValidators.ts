@@ -16,7 +16,9 @@ import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
 import { NO } from '../constants'
-import { isValidEmail } from './isValidEmail'
+
+const emailRegex = /[^\\.\\s@:](?:[^\\s@:]*[^\\s@:\\.])?@[^\\.\\s@]+(?:\\.[^\\.\\s@]+)*/g
+const isValidEmail = (value: string) => emailRegex.test(value)
 
 const buildValidationError = (
   path: string,
