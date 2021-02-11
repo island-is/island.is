@@ -1,21 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect, useState } from 'react'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  NavigationItem,
-  Option,
-  Select,
-  Text,
-} from '@island.is/island-ui/core'
+import React from 'react'
+import { Box, NavigationItem, Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
   QueryGetAuctionArgs,
-  QueryGetAuctionsArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
@@ -26,11 +16,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { MarkdownText, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
-import {
-  GET_AUCTION_QUERY,
-  GET_AUCTIONS_QUERY,
-} from '@island.is/web/screens/queries/Auction'
-import { useQuery } from '@apollo/client'
+import { GET_AUCTION_QUERY } from '@island.is/web/screens/queries/Auction'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 const { publicRuntimeConfig } = getConfig()
