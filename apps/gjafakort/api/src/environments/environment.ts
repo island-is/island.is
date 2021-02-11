@@ -5,6 +5,11 @@ export default {
   sentry: {
     dsn: '',
   },
+  accessGroups: {
+    developers: process.env.DEVELOPERS,
+    admins: process.env.ADMINS,
+    testers: process.env.TESTERS,
+  },
   auth: {
     samlEntryPoint: 'https://innskraning.island.is/?id=ferdagjof.local',
     audience: 'localhost:4200',

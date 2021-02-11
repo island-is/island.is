@@ -20,6 +20,7 @@ import {
   TableOfContents,
   Button,
   Tag,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -50,6 +51,7 @@ import {
   useLinkResolver,
 } from '../hooks/useLinkResolver'
 import { Locale } from '../i18n/I18n'
+import { useScrollPosition } from '../hooks/useScrollPosition'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -270,15 +272,41 @@ export interface ArticleProps {
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
+  const processEntryRef = useRef(null)
   const [mounted, setMounted] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
   useEffect(() => {
     portalRef.current = document.querySelector('#__next')
+    processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
   }, [])
   useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { linkResolver } = useLinkResolver()
+
+  useScrollPosition(
+    ({ currPos }) => {
+      let px = -600
+
+      if (typeof window !== `undefined`) {
+        px = window.innerHeight * -1
+      }
+
+      const elementPosition =
+        processEntryRef && processEntryRef.current
+          ? processEntryRef?.current.getBoundingClientRect().bottom +
+            (px - currPos.y)
+          : 0
+
+      const canShow = elementPosition + currPos.y >= 0
+      setIsVisible(canShow)
+    },
+    [setIsVisible],
+    null,
+    false,
+    150,
+  )
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug
@@ -309,6 +337,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
+  const categoryHref = linkResolver('articlecategory', [article.category.slug])
+    .href
+  const organizationTitle = article.organization[0].title
+  const organizationShortTitle = article.organization[0].shortTitle
 
   return (
     <>
@@ -379,34 +411,44 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         >
           {!!article.category && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-              <Text truncate>
-                <Link
-                  href={linkResolver('articlecategory', [
-                    article.category.slug,
-                  ])}
-                >
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="small"
-                    type="button"
-                    variant="text"
-                  >
-                    {article.category.title}
-                  </Button>
-                </Link>
-              </Text>
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <Link href={href} pureChildren skipTab>
+                      {children}
+                    </Link>
+                  ),
+                }}
+              >
+                <Text truncate>
+                  <a href={categoryHref}>
+                    <Button
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                    >
+                      {article.category.title}
+                    </Button>
+                  </a>
+                </Text>
+              </LinkContext.Provider>
             </Box>
           )}
           {article.organization.length > 0 && (
             <Box minWidth={0}>
-              <Tag
-                variant="purple"
-                truncate
-                href={article.organization[0].link}
-              >
-                {article.organization[0].title}
-              </Tag>
+              {article.organization[0].link ? (
+                <Link href={article.organization[0].link} skipTab>
+                  <Tag variant="purple" truncate>
+                    {organizationShortTitle || organizationTitle}
+                  </Tag>
+                </Link>
+              ) : (
+                <Tag variant="purple" truncate disabled>
+                  {organizationShortTitle || organizationTitle}
+                </Tag>
+              )}
             </Box>
           )}
         </Box>
@@ -451,7 +493,12 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             undefined,
             activeLocale,
           )}
-          <Box display={['block', 'block', 'none']} marginTop={7} printHidden>
+          <Box
+            id="processRef"
+            display={['block', 'block', 'none']}
+            marginTop={7}
+            printHidden
+          >
             {!!processEntry && <ProcessEntry {...processEntry} />}
           </Box>
           {article.organization.length > 0 && (
@@ -496,6 +543,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </Box>
         {!!processEntry &&
           mounted &&
+          isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
               <ProcessEntry fixed {...processEntry} />

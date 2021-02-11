@@ -20,7 +20,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
 }) => {
   return (
     <footer aria-labelledby="organizationFooterTitle">
-      <Box background="blueberry600" color="white" paddingTop={5}>
+      <Box className={styles.footerBg} color="white" paddingTop={5}>
         <GridContainer>
           <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
             <Box
@@ -48,6 +48,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
             <GridRow>
               {organizationPage.footerItems.map((item, index) => (
                 <GridColumn
+                  key={index}
                   span={['12/12', '6/12', '4/12', '1/5']}
                   className={index === 0 ? styles.footerItemFirst : null}
                 >

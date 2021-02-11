@@ -7,6 +7,7 @@ import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
+  mockUsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
@@ -15,12 +16,12 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
-    // Arrange
     render(
       <MockedProvider
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_2',
@@ -42,6 +43,10 @@ describe('/domari-krafa/fyrirtokutimi', () => {
               id: 'test_id_2',
               defenderEmail: 'saul@goodman.com',
             } as UpdateCase,
+            {
+              id: 'test_id_2',
+              judgeId: 'judge_1',
+            } as UpdateCase,
           ]),
         ]}
         addTypename={false}
@@ -61,6 +66,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     // Act
     userEvent.type(await screen.findByLabelText('Dómsalur *'), '999')
 
+    userEvent.click(await screen.findByText('Veldu dómara'))
+    userEvent.click(await screen.findByText('Wonder Woman'))
+
     // Assert
     expect(
       (await screen.findByRole('button', {
@@ -76,6 +84,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -128,6 +137,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',
@@ -182,6 +192,7 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         mocks={[
           ...mockCaseQueries,
           ...mockJudgeQuery,
+          ...mockUsersQuery,
           ...mockUpdateCaseMutation([
             {
               id: 'test_id_3',

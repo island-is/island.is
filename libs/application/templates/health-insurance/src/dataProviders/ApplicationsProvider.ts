@@ -21,18 +21,18 @@ export class ApplicationsProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError()
+          return this.handleError(response.errors[0].message)
         }
 
         return Promise.resolve(response.data?.getApplicationsByApplicant)
       })
       .catch(() => {
-        return this.handleError()
+        return this.handleError('An error occured. Please try again.')
       })
   }
 
-  handleError() {
-    return Promise.resolve()
+  handleError(error: any) {
+    return Promise.resolve(error ? error : 'error')
   }
 
   onProvideError(result: string): FailedDataProviderResult {

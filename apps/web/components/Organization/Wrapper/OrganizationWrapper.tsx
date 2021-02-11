@@ -35,6 +35,7 @@ interface WrapperProps {
   organizationPage?: OrganizationPage
   breadcrumbItems?: BreadCrumbItem[]
   mainContent?: ReactNode
+  sidebarContent?: ReactNode
   navigationData: NavigationData
   fullWidthContent?: boolean
 }
@@ -46,11 +47,16 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   organizationPage,
   breadcrumbItems,
   mainContent,
+  sidebarContent,
   navigationData,
   fullWidthContent = false,
   children,
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
+
+  const headerBg = pageFeaturedImage
+    ? `url(${pageFeaturedImage.url}), linear-gradient(99.09deg, #24268E 23.68%, #CD1270 123.07%)`
+    : `linear-gradient(99.09deg, #24268E 23.68%, #CD1270 123.07%)`
 
   return (
     <>
@@ -61,7 +67,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <Box className={styles.headerBg}>
+      <Box className={styles.headerBg} style={{ background: headerBg }}>
         <GridContainer>
           <Box marginTop={[1, 1, 3]} marginBottom={5}>
             <Breadcrumbs
@@ -78,7 +84,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           </Box>
         </GridContainer>
         <Box className={styles.headerWrapper}>
-          <SidebarWrapper sidebarContent="" hideSidebarInMobile={true}>
+          <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
             <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <img
@@ -99,23 +105,26 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           <SidebarWrapper
             fullWidthContent={fullWidthContent}
             sidebarContent={
-              <Box className={styles.navigation}>
-                <Navigation
-                  baseId="pageNav"
-                  isMenuDialog={isMobile}
-                  items={navigationData.items}
-                  title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
-                  titleLink={navigationData.titleLink}
-                  renderLink={(link, item) => {
-                    return item?.href ? (
-                      <NextLink href={item?.href}>{link}</NextLink>
-                    ) : (
-                      link
-                    )
-                  }}
-                />
-              </Box>
+              <>
+                <Box className={styles.navigation}>
+                  <Navigation
+                    baseId="pageNav"
+                    isMenuDialog={isMobile}
+                    items={navigationData.items}
+                    title={navigationData.title}
+                    activeItemTitle={navigationData.activeItemTitle}
+                    titleLink={navigationData.titleLink}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                </Box>
+                {sidebarContent}
+              </>
             }
           >
             {mainContent ?? children}

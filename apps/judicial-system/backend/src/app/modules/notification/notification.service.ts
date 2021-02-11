@@ -304,30 +304,40 @@ export class NotificationService {
     )
   }
 
-  private sendCourtDateEmailNotificationToDefender(
+  private async sendCourtDateEmailNotificationToDefender(
     existingCase: Case,
   ): Promise<Recipient> {
     if (!existingCase.defenderEmail) {
       return
     }
 
-    const subject = `Krafa um ${
-      existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-    } í vinnslu`
+    const pdf = await generateRequestPdf(existingCase)
+
+    const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       existingCase.type,
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.court,
+      existingCase.courtCaseNumber,
       existingCase.courtDate,
       existingCase.courtRoom,
     )
+
+    const attachments = [
+      {
+        filename: `${existingCase.policeCaseNumber}.pdf`,
+        content: pdf,
+        encoding: 'binary',
+      },
+    ]
 
     return this.sendEmail(
       existingCase.defenderName,
       existingCase.defenderEmail,
       subject,
       html,
+      attachments,
     )
   }
 

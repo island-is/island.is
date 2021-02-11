@@ -6,8 +6,6 @@ import {
   Box,
   Input,
   DatePicker,
-  RadioButton,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -37,7 +35,6 @@ import {
   validateAndSetTime,
   validateAndSendTimeToServer,
   getTimeFromDate,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import parseISO from 'date-fns/parseISO'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -114,7 +111,6 @@ export const StepThree: React.FC = () => {
         validations: ['empty', 'time-format'],
       },
     ]
-
     if (workingCase) {
       setIsStepIllegal(isNextDisabled(requiredFields))
     }
@@ -482,7 +478,9 @@ export const StepThree: React.FC = () => {
           <FormFooter
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              isStepIllegal || workingCase.custodyProvisions?.length === 0
+              isStepIllegal ||
+              !workingCase.custodyProvisions ||
+              workingCase.custodyProvisions?.length === 0
             }
           />
         </>

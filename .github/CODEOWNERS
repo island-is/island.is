@@ -21,6 +21,7 @@
 /libs/application/templates/driving-license/                        @island-is/vice-versa
 /libs/application/templates/passport/                               @island-is/vice-versa
 /libs/api/domains/driving-license/                                  @island-is/vice-versa
+/libs/api/domains/education/                                        @island-is/vice-versa
 /libs/service-portal/driving-license/                               @island-is/vice-versa
 /libs/service-portal/eligibility/                                   @island-is/vice-versa
 
@@ -32,6 +33,7 @@
 /libs/application/graphql/                                          @island-is/aranja
 /libs/application/ui-fields/                                        @island-is/aranja
 /libs/application/ui-shell/                                         @island-is/aranja
+/libs/application/template-api-modules/                             @island-is/aranja
 /libs/application/template-loader/                                  @island-is/aranja
 /libs/application/templates/meta-application/                       @island-is/aranja
 /libs/application/templates/parental-leave/                         @island-is/aranja
