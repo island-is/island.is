@@ -17,6 +17,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationSubpageArgs,
+  Slice,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -26,13 +27,18 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import {
-  OrganizationSlice,
-  OrganizationWrapper,
-  MarkdownText,
-} from '@island.is/web/components'
+import { OrganizationWrapper, MarkdownText } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
+import { Namespace } from '@island.is/api/schema'
+import dynamic from 'next/dynamic'
+
+const OrganizationSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
+)
+const SliceDropdown = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.SliceDropdown),
+)
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -56,6 +62,7 @@ const SubPage: Screen<SubPageProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -63,11 +70,12 @@ const SubPage: Screen<SubPageProps> = ({
       href: primaryLink.url,
       active:
         primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl),
+        childrenLinks.some((link) => link.url === pageUrl) ||
+        childrenLinks.some((link) => link.url === parentSubpageUrl),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pageUrl,
+        active: url === pageUrl || url === parentSubpageUrl,
       })),
     }),
   )
@@ -77,7 +85,9 @@ const SubPage: Screen<SubPageProps> = ({
       pageTitle={subpage.title}
       pageDescription={subpage.description}
       organizationPage={organizationPage}
-      pageFeaturedImage={subpage.featuredImage}
+      pageFeaturedImage={
+        subpage.featuredImage ?? organizationPage.featuredImage
+      }
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -100,6 +110,7 @@ const SubPage: Screen<SubPageProps> = ({
           active: false,
         },
       }}
+      fullWidthContent={true}
     >
       <GridContainer>
         <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
@@ -141,16 +152,30 @@ const SubPage: Screen<SubPageProps> = ({
           </GridRow>
         </Box>
       </GridContainer>
-      {subpage.slices.map((slice) => (
-        <OrganizationSlice
-          key={slice.id}
-          slice={slice}
-          organization={organizationPage.organization}
-          namespace={namespace}
-        />
-      ))}
+      {renderSlices(
+        subpage.slices,
+        subpage.sliceCustomRenderer,
+        subpage.sliceExtraText,
+        namespace,
+      )}
     </OrganizationWrapper>
   )
+}
+
+const renderSlices = (
+  slices: Slice[],
+  renderType: string,
+  extraText: string,
+  namespace: Namespace,
+) => {
+  switch (renderType) {
+    case 'SliceDropdown':
+      return <SliceDropdown slices={slices} sliceExtraText={extraText} />
+    default:
+      return slices.map((slice) => (
+        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+      ))
+  }
 }
 
 SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
