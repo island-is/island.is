@@ -21,10 +21,10 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
   return false
 }
 
-export const hasOldPendingApplications = (externalData: ExternalData) => {
-  const oldPendingApplications = externalData?.oldPendingApplications
+export const pendingApplications = (externalData: ExternalData) => {
+  const pendingApplications = externalData?.oldPendingApplications
     ?.data as string[]
-  return oldPendingApplications?.length > 0
+  return pendingApplications?.length > 0
 }
 
 export const hasIcelandicAddress = (externalData: ExternalData) => {
@@ -39,7 +39,7 @@ export const hasIcelandicAddress = (externalData: ExternalData) => {
 export const shouldShowModal = (externalData: ExternalData) => {
   return (
     hasHealthInsurance(externalData) ||
-    hasOldPendingApplications(externalData) ||
+    pendingApplications(externalData) ||
     hasIcelandicAddress(externalData) ||
     hasActiveDraftApplication(externalData)
   )
