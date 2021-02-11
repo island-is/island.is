@@ -54,4 +54,11 @@ export const contract = {
       description: 'Label for new residence',
     },
   }),
+  pdfButton: defineMessages({
+    label: {
+      id: 'crc.application:section.contract.overview.pdfButton.label',
+      defaultMessage: 'Sjá samning á PDF skjali',
+      description: 'Label for PDF button',
+    },
+  }),
 }
