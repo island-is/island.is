@@ -1,10 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Districts,
-  FeaturedArticles,
-  Organization,
-  Slice,
-} from '@island.is/web/graphql/schema'
+import { Slice } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
 
@@ -34,13 +29,11 @@ const TwoColumnTextSlice = dynamic(() =>
 
 interface OrganizationSliceProps {
   slice: Slice
-  organization: Organization
   namespace?: Namespace
 }
 
 export const OrganizationSlice: FC<OrganizationSliceProps> = ({
   slice,
-  organization,
   namespace,
 }) => {
   switch (slice.__typename) {
