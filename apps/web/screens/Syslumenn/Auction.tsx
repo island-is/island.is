@@ -18,6 +18,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { GET_AUCTION_QUERY } from '@island.is/web/screens/queries/Auction'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -40,16 +41,15 @@ const Auction: Screen<AuctionProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
+  const Router = useRouter()
 
-  const pageUrl = `/stofnanir/syslumenn/uppbod`
+  const pageUrl = Router.pathname
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active:
-        primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl),
+      active: pageUrl.includes(primaryLink.url),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,

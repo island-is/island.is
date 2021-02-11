@@ -50,7 +50,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
   const { format } = useDateUtils()
   const Router = useRouter()
 
-  const pageUrl = `/stofnanir/syslumenn/uppbod`
+  const pageUrl = Router.pathname
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
