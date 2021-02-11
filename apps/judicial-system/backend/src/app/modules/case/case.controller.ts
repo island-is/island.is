@@ -108,7 +108,7 @@ const judgeUpdateRule = {
   ],
 } as RolesRule
 
-// Allows judges to update a specific set of fields
+// Allows registrars to update a specific set of fields
 const registrarUpdateRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD,
