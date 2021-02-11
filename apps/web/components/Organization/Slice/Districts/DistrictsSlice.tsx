@@ -18,34 +18,50 @@ interface SliceProps {
 export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
-      <GridContainer>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[8, 6, 15]}
-          paddingBottom={[4, 5, 10]}
-        >
-          <Text variant="h3" as="h2">
-            {slice.title}
-          </Text>
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '7/12']}>
-              <ul className={styles.districtsList}>
-                {slice.links.map((link, index) => (
-                  <li className={styles.districtsListItem} key={index}>
-                    <Link href={link.url}>
-                      <Button variant="text">{link.text}</Button>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '5/12']}>
-              <img src={slice.image.url} alt="" />
-            </GridColumn>
-          </GridRow>
-        </Box>
-      </GridContainer>
+      <Box
+        borderTopWidth="standard"
+        borderColor="standard"
+        paddingTop={[8, 6, 10]}
+        paddingBottom={[4, 5, 10]}
+      >
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '10/11']}
+            offset={['0', '0', '0', '0', '1/11']}
+          >
+            <Text variant="h3" as="h2">
+              {slice.title}
+            </Text>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '7/11', '7/11', '6/11']}
+            offset={['0', '0', '0', '0', '1/11']}
+          >
+            <Box paddingRight={[0, 0, 6]}>
+              <Text marginTop={3}>{slice.description}</Text>
+            </Box>
+            <Box
+              component="ul"
+              marginTop={5}
+              marginBottom={5}
+              className={styles.districtsList}
+            >
+              {slice.links.map((link, index) => (
+                <Box component="li" key={index} marginBottom={4}>
+                  <Link href={link.url}>
+                    <Button variant="text">{link.text}</Button>
+                  </Link>
+                </Box>
+              ))}
+            </Box>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '4/11']}>
+            <img src={slice.image.url} alt="" />
+          </GridColumn>
+        </GridRow>
+      </Box>
     </section>
   )
 }
