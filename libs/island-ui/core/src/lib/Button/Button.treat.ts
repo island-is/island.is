@@ -5,7 +5,6 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 export const isEmpty = style({})
 
 const buttonBase = {
-  display: 'flex',
   alignItems: 'center',
   fontWeight: theme.typography.semiBold,
   borderRadius: 8,
@@ -416,7 +415,6 @@ export const colors = {
 }
 
 export const circle = style({
-  display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: '50%',
