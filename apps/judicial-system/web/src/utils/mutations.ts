@@ -61,7 +61,8 @@ export const CreateCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision
@@ -147,7 +148,8 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision
@@ -188,6 +190,22 @@ export const CreateUserMutation = gql`
 export const UsersQuery = gql`
   query UsersQuery {
     users {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution
+      active
+    }
+  }
+`
+
+export const UserQuery = gql`
+  query UserQuery($input: UserQueryInput!) {
+    user(input: $input) {
       id
       name
       nationalId

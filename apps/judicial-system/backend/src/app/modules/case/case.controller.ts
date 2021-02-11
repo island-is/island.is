@@ -49,6 +49,9 @@ const prosecutorRule = UserRole.PROSECUTOR as RolesRule
 // Allows judges to perform any action
 const judgeRule = UserRole.JUDGE as RolesRule
 
+// Allows registrars to perform any action
+const registrarRule = UserRole.REGISTRAR as RolesRule
+
 // Allows prosecutors to update a specific set of fields
 const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
@@ -92,7 +95,39 @@ const judgeUpdateRule = {
     'courtAttendees',
     'policeDemands',
     'courtDocuments',
-    'accusedPlea',
+    'accusedPleaDecision',
+    'accusedPleaAnnouncement',
+    'litigationPresentations',
+    'ruling',
+    'decision',
+    'custodyEndDate',
+    'custodyRestrictions',
+    'otherRestrictions',
+    'accusedAppealDecision',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealDecision',
+    'prosecutorAppealAnnouncement',
+    'judgeId',
+  ],
+} as RolesRule
+
+// Allows registrars to update a specific set of fields
+const registrarUpdateRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'defenderName',
+    'defenderEmail',
+    'courtCaseNumber',
+    'courtDate',
+    'courtRoom',
+    'courtStartTime',
+    'courtEndTime',
+    'courtAttendees',
+    'policeDemands',
+    'courtDocuments',
+    'accusedPleaDecision',
+    'accusedPleaAnnouncement',
     'litigationPresentations',
     'ruling',
     'decision',
@@ -131,6 +166,14 @@ const judgeTransitionRule = {
   ],
 } as RolesRule
 
+// Allows registrars to receive cases
+const registrarTransitionRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.RECEIVE],
+} as RolesRule
+
 @UseGuards(RolesGuard)
 @UseGuards(JwtAuthGuard)
 @Controller('api')
@@ -162,7 +205,7 @@ export class CaseController {
     return this.caseService.create(caseToCreate, user)
   }
 
-  @RolesRules(prosecutorUpdateRule, judgeUpdateRule)
+  @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -181,7 +224,11 @@ export class CaseController {
     return updatedCase
   }
 
-  @RolesRules(prosecutorTransitionRule, judgeTransitionRule)
+  @RolesRules(
+    prosecutorTransitionRule,
+    judgeTransitionRule,
+    registrarTransitionRule,
+  )
   @Put('case/:id/state')
   @ApiOkResponse({
     type: Case,
@@ -197,12 +244,10 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, existingCase.state)
 
-    const update = { state } as UpdateCaseDto
-
-    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
-      id,
-      update,
-    )
+    const {
+      numberOfAffectedRows,
+      updatedCase,
+    } = await this.caseService.update(id, { state } as UpdateCaseDto)
 
     if (numberOfAffectedRows === 0) {
       throw new ConflictException(
@@ -213,6 +258,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('cases')
   @ApiOkResponse({
     type: Case,
@@ -223,12 +269,14 @@ export class CaseController {
     return this.caseService.getAll()
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   async getById(@Param('id') id: string): Promise<Case> {
     return this.findCaseById(id)
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -251,6 +299,7 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -286,8 +335,10 @@ export class CaseController {
   ) {
     const existingCase = await this.findCaseById(id)
 
-    if (user.role !== UserRole.JUDGE && user.id !== existingCase.judgeId) {
-      throw new ForbiddenException('A ruling must be signed by the cases judge')
+    if (user?.id !== existingCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
     }
 
     try {
@@ -319,8 +370,10 @@ export class CaseController {
   ): Promise<SignatureConfirmationResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException('A ruling must be signed by a judge')
+    if (user?.id !== existingCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
     }
 
     return this.caseService.getSignatureConfirmation(

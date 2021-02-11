@@ -90,6 +90,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
           size="small"
           disabled={!nextDocumentToUpload}
           onClick={() => handleAddDocument()}
+          fluid
         >
           Bæta við skjali
         </Button>

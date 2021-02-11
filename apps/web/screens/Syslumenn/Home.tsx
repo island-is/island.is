@@ -1,6 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Box, NavigationItem, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  NavigationItem,
+  Text,
+} from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -18,6 +25,7 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import getConfig from 'next/config'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -34,6 +42,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -71,16 +80,25 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           active: false,
         },
       }}
-      mainContent={<Text variant="intro">{organizationPage.description}</Text>}
+      mainContent={
+        <Box paddingTop={2}>
+          <Text variant="intro">{organizationPage.description}</Text>
+        </Box>
+      }
     >
-      {organizationPage.slices.map((slice) => (
-        <OrganizationSlice
-          key={slice.id}
-          slice={slice}
-          organization={organizationPage.organization}
-          namespace={namespace}
-        />
-      ))}
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12', '11/12']}>
+            {organizationPage.slices.map((slice) => (
+              <OrganizationSlice
+                key={slice.id}
+                slice={slice}
+                namespace={namespace}
+              />
+            ))}
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </OrganizationWrapper>
   )
 }

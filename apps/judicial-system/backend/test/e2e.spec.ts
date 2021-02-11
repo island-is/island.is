@@ -15,17 +15,18 @@ import {
   NotificationType,
   CaseType,
   UserRole,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
-import { setup } from './setup'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
 import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification/models'
+import { setup } from './setup'
 
 jest.setTimeout(20000)
 
@@ -48,14 +49,19 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  prosecutor = (await request(app.getHttpServer()).get('/api/user/0000000000'))
-    .body
+  prosecutor = (
+    await request(app.getHttpServer()).get('/api/user/?nationalId=0000000000')
+  ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (await request(app.getHttpServer()).get('/api/user/2222222222')).body
+  judge = (
+    await request(app.getHttpServer()).get('/api/user/?nationalId=2222222222')
+  ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
-  admin = (await request(app.getHttpServer()).get('/api/user/3333333333')).body
+  admin = (
+    await request(app.getHttpServer()).get('/api/user/?nationalId=3333333333')
+  ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
 })
 
@@ -106,7 +112,8 @@ function remainingJudgeCaseData() {
     courtAttendees: 'Court Attendees',
     policeDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-    accusedPlea: 'Accused Plea',
+    accusedPleaDecision: AccusedPleaDecision.ACCEPT,
+    accusedPleaAnnouncement: 'Accused Plea',
     litigationPresentations: 'Litigation Presentations',
     ruling: 'Ruling',
     decision: CaseDecision.ACCEPTING,
@@ -245,7 +252,12 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments || null).toStrictEqual(
     caseTwo.courtDocuments || null,
   )
-  expect(caseOne.accusedPlea || null).toBe(caseTwo.accusedPlea || null)
+  expect(caseOne.accusedPleaDecision || null).toBe(
+    caseTwo.accusedPleaDecision || null,
+  )
+  expect(caseOne.accusedPleaAnnouncement || null).toBe(
+    caseTwo.accusedPleaAnnouncement || null,
+  )
   expect(caseOne.litigationPresentations || null).toBe(
     caseTwo.litigationPresentations || null,
   )
@@ -277,7 +289,20 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 describe('User', () => {
-  it('GET /api/user/:nationalId should get the user', async () => {
+  it('GET /api/user/:id should get the user', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/user/${prosecutor.id}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        const apiUser = response.body
+
+        expectUsersToMatch(apiUser, prosecutor)
+      })
+  })
+
+  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
     const nationalId = '2222222222'
     let dbUser: TUser
 
@@ -288,7 +313,7 @@ describe('User', () => {
         dbUser = userToTUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
-          .get(`/api/user/${nationalId}`)
+          .get(`/api/user/?nationalId=${nationalId}`)
           .send()
           .expect(200)
       })

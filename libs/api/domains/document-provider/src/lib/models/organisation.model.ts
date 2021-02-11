@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Contact } from './contact.model'
 import { Helpdesk } from './helpdesk.model'
+import { Provider } from './provider.model'
 
 @ObjectType()
 export class Organisation {
@@ -36,4 +37,7 @@ export class Organisation {
 
   @Field(() => Helpdesk, { nullable: true })
   helpdesk?: Helpdesk
+
+  @Field(() => [Provider], { nullable: true })
+  providers?: Provider[]
 }

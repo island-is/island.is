@@ -29,7 +29,11 @@ class BackendAPI extends RESTDataSource {
   }
 
   getUsers(): Promise<User[]> {
-    return this.get(`users`)
+    return this.get('users')
+  }
+
+  getUser(id: string): Promise<User> {
+    return this.get(`user/${id}`)
   }
 
   createUser(createUser: CreateUser): Promise<User> {
