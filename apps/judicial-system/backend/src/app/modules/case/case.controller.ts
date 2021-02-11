@@ -163,7 +163,7 @@ const judgeTransitionRule = {
   ],
 } as RolesRule
 
-// Allows registrats to receive cases
+// Allows registrars to receive cases
 const registrarTransitionRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD_VALUES,
