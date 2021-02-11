@@ -11,18 +11,18 @@ export class Client implements FeatureFlagClient {
         'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable',
       )
     }
-    const cc_config: IJSAutoPollOptions = {
+    const ccConfig: IJSAutoPollOptions = {
       dataGovernance: DataGovernance.EuOnly,
     }
     if (typeof window === 'undefined') {
       this.configcat = require('configcat-node').createClient(
         resolvedSdkKey,
-        cc_config,
+        ccConfig,
       )
     } else {
       this.configcat = require('configcat-js').createClient(
         resolvedSdkKey,
-        cc_config,
+        ccConfig,
       )
     }
   }
