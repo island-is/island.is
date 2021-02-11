@@ -10,7 +10,7 @@ export default (
   }: { application: Application; clientLocationOrigin: string },
   token: string,
 ): SendMailOptions => {
-  const email = get(application.answers, 'employer.information.email', null)
+  const email = get(application.answers, 'employer.email', null)
 
   if (email === null) {
     throw new Error('Cannot create email template, missing employer email')

@@ -368,7 +368,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildTextField({
                   title: mm.employer.email,
                   width: 'full',
-                  id: 'employer.information.email',
+                  id: 'employer.email',
                 }),
               ],
             }),

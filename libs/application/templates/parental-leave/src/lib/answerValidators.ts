@@ -8,11 +8,15 @@ import {
   Application,
   AnswerValidator,
   AnswerValidationError,
+  getValueViaPath,
 } from '@island.is/application/core'
+import isEmpty from 'lodash/isEmpty'
 
 import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
+import { NO } from '../constants'
+import { isValidEmail } from './isValidEmail'
 
 const buildValidationError = (
   path: string,
@@ -34,11 +38,36 @@ const buildValidationError = (
   }
 }
 
+const EMPLOYER = 'employer'
 const FIRST_PERIOD_START = 'firstPeriodStart'
 const PERIODS = 'periods'
 
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
+  [EMPLOYER]: (newAnswer: unknown, application: Application) => {
+    console.log('-newAnswer', newAnswer)
+    const obj = newAnswer as Record<string, any>
+    const buildError = buildValidationError(`${EMPLOYER}.email`)
+    const isSelfEmployed = getValueViaPath(
+      application.answers,
+      'employer.isSelfEmployed',
+    )
+
+    // If the new answer is the `isSelfEmployed` step, it means we didn't enter the email address yet
+    if (obj.isSelfEmployed) {
+      return undefined
+    }
+
+    if (isSelfEmployed === NO && isEmpty(obj?.email)) {
+      return buildError(`You need to define your employer email address.`)
+    }
+
+    if (isSelfEmployed === NO && !isValidEmail(obj.email)) {
+      return buildError('You need to define a valid email address.')
+    }
+
+    return undefined
+  },
   [FIRST_PERIOD_START]: (_, application: Application) => {
     const buildError = buildValidationError(FIRST_PERIOD_START)
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
@@ -115,6 +144,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
       // We need a valid end date
       if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {
         return buildError('The end date is not valid.', field)
+      }
+
+      // If the startDate is using the expected date of birth, we then calculate the minimum period required from the date of birth
+      if (differenceInDays(parseISO(endDate), parseISO(dob)) < minPeriodDays) {
+        return buildError(
+          `End date cannot be less than the ${minPeriodDays} days from the date of birth.`,
+          field,
+        )
       }
 
       // We check if endDate is after startDate

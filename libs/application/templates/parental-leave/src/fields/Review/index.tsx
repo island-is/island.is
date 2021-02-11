@@ -391,8 +391,8 @@ const Review: FC<ReviewScreenProps> = ({
             {editable ? (
               <Box paddingY={4}>
                 <Input
-                  id="employer.information.email"
-                  name="employer.information.email"
+                  id="employer.email"
+                  name="employer.email"
                   label={formatMessage(mm.employer.email)}
                   ref={register}
                 />
@@ -402,7 +402,7 @@ const Review: FC<ReviewScreenProps> = ({
                 {
                   getValueViaPath(
                     application.answers,
-                    'employer.information.email',
+                    'employer.email',
                   ) as string[]
                 }
               </Text>

@@ -696,12 +696,12 @@ export const mm: MessageDir = {
       description: 'Add translation',
     },
     email: {
-      id: 'pl.application:employer.information.email',
+      id: 'pl.application:employer.email',
       defaultMessage: 'Netfang vinnuveitanda',
       description: 'Employer email',
     },
     emailConfirm: {
-      id: 'pl.application:employer.information.email.confirm',
+      id: 'pl.application:employer.email.confirm',
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
       description: 'Confirm employer email',
     },

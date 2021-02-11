@@ -17,6 +17,11 @@ const PersonalAllowance = z
   })
   .optional()
 
+/**
+ * Both periods and employer objects had been removed from here, and the logic has
+ * been moved to the answerValidators because it needs to be more advanced than
+ * what zod can handle.
+ */
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
@@ -37,11 +42,6 @@ export const dataSchema = z.object({
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employer: z.object({
-    isSelfEmployed: z.enum([YES, NO]),
-    email: z.string().email().optional(),
-    nationalRegistryId: z.string().optional(),
-  }),
   employerInformation: z.object({ email: z.string().email() }).optional(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
