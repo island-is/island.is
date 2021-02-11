@@ -32,6 +32,11 @@ import {
 } from '@island.is/shared/mocking'
 import { SystemMetadata } from '@island.is/shared/types'
 
+export const referenceLink = factory<ReferenceLink>({
+  slug: () => faker.lorem.slug(),
+  type: () => 'article',
+})
+
 export const image = factory<SystemMetadata<Image>>({
   typename: 'Image',
   width: 500,
@@ -177,11 +182,6 @@ export const frontPageSlider = factory<FrontpageSlider>({
   subtitle: () => faker.lorem.sentence(),
   link: null,
   content: () => faker.lorem.paragraph(),
-})
-
-export const referenceLink = factory<ReferenceLink>({
-  slug: () => faker.lorem.slug(),
-  type: () => 'article',
 })
 
 export const featured = factory<Featured>({
