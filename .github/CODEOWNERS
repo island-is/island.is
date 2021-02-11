@@ -1,6 +1,5 @@
 # Fallback. If there is no owner, assign to core maintainers.
-# Remove fallback rule while graphql files are in the way.
-# *                                                                 @island-is/core
+*                                                                 @island-is/core
 
 /*                                                                  @island-is/core
 /.github/                                                           @island-is/core
