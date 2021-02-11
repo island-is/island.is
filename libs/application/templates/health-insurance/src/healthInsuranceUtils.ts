@@ -1,7 +1,8 @@
 import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
-import { FAROE_ISLANDS, GREENLAND } from './constants'
+import { EFTA, EU } from './constants'
+import { Country, NordicCountries } from './types'
 
 export const hasHealthInsurance = (externalData: ExternalData) => {
   const isInsured = externalData?.healthInsurance?.data
@@ -49,21 +50,56 @@ export const shouldShowModal = (externalData: ExternalData) => {
 }
 
 export const isEUCountry = (formerCountry: string) => {
-  try {
-    const countryData = JSON.parse(formerCountry)
-    const { regions } = countryData
-    return regions.includes('EU') || regions.includes('EFTA')
-  } catch (error) {
-    return false
-  }
+  const regions = getCountryRegions(formerCountry)
+  return regions.includes(EU) || regions.includes(EFTA)
 }
 
 export const requireConfirmationOfResidency = (formerCountry: string) => {
+  const countryName = getCountryName(formerCountry)
+  return (
+    countryName === NordicCountries.FAROE_ISLANDS ||
+    countryName === NordicCountries.GREENLAND
+  )
+}
+
+export const isNordicCountry = (formerCountry: string) => {
+  const countryName = getCountryName(formerCountry)
+  return Object.values(NordicCountries).includes(countryName)
+}
+
+export const requireWaitingPeriod = (
+  formerCountry: string,
+  citizenship: string,
+) => {
+  // Moving from outside of an EU/EEA country require waiting period
+  // Moving from an EU country, and user is not an EU/EEA citizen require waiting period
+  // Exceptions are if user is moving from a nordic country.
+  if (!isNordicCountry(formerCountry)) {
+    if (isEUCountry(formerCountry)) {
+      if (!isEUCountry(citizenship)) return true
+    } else {
+      return true
+    }
+  }
+  return false
+}
+
+const getCountryName = (countryField: string) => {
   try {
-    const countryData = JSON.parse(formerCountry)
+    const countryData = JSON.parse(countryField)
     const { name } = countryData
-    return name === FAROE_ISLANDS || name === GREENLAND
+    return name
   } catch (error) {
-    return false
+    return ''
+  }
+}
+
+const getCountryRegions = (countryField: string) => {
+  try {
+    const countryData = JSON.parse(countryField)
+    const { regions } = countryData
+    return regions
+  } catch (error) {
+    return []
   }
 }
