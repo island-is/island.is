@@ -311,8 +311,6 @@ export class NotificationService {
       return
     }
 
-    // const pdf = await generateRequestPdf(existingCase)
-
     const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       existingCase.type,
@@ -324,20 +322,11 @@ export class NotificationService {
       existingCase.courtRoom,
     )
 
-    // const attachments = [
-    //   {
-    //     filename: `${existingCase.policeCaseNumber}.pdf`,
-    //     content: pdf,
-    //     encoding: 'binary',
-    //   },
-    // ]
-
     return this.sendEmail(
       existingCase.defenderName,
       existingCase.defenderEmail,
       subject,
       html,
-      // attachments,
     )
   }
 
