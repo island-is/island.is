@@ -26,7 +26,6 @@ export const ReviewApplication: Form = buildForm({
           id: 'review',
           title: m.reviewTitle,
           children: [
-            //Error in dev tools, missing keys on divider fields...
             buildDividerField({ title: m.applicantTitle }),
             buildTextField({
               id: 'applicant.nationalId',
@@ -60,7 +59,6 @@ export const ReviewApplication: Form = buildForm({
               title: m.applicantZipCode,
               disabled: true,
             }),
-            //Error in dev tools, missing keys on divider fields...
             buildDividerField({
               title: m.administrativeContactTitle,
             }),
@@ -81,7 +79,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
             buildDividerField({ title: m.technicalContactTitle }),
             buildTextField({
               id: 'technicalContact.name',
@@ -100,7 +97,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on divider fields...
             buildDividerField({ title: m.helpDeskTitle }),
             buildTextField({
               id: 'helpDesk.email',
@@ -114,7 +110,6 @@ export const ReviewApplication: Form = buildForm({
               format: '###-####',
               placeholder: '000-0000',
             }),
-            //Error in dev tools, missing keys on radio controller...
             buildSubmitField({
               id: 'approvedByReviewer',
               title: m.reviewQuestion,
@@ -122,7 +117,6 @@ export const ReviewApplication: Form = buildForm({
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
-                //TODO Add "ófullnægjandi" here
               ],
             }),
             buildTextField({
