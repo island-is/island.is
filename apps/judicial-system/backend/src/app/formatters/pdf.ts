@@ -454,6 +454,17 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
+      `${
+        existingCase.registrar?.name || 'Dómritari hefur ekki verið skráður'
+      } ${existingCase.registrar?.title || ''}`,
+      {
+        align: 'center',
+        paragraphGap: 0,
+      },
+    )
+    .text(' ')
+    .font('Helvetica-Bold')
+    .text(
       `${existingCase.judge?.name || 'Dómari hefur ekki verið skráður'} ${
         existingCase.judge?.title || ''
       }`,

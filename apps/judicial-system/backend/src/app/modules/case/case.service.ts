@@ -123,6 +123,7 @@ export class CaseService {
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: User, as: 'registrar' },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],
@@ -137,6 +138,7 @@ export class CaseService {
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: User, as: 'registrar' },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],

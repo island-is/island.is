@@ -107,6 +107,10 @@ export const CourtRecord: React.FC = () => {
       if (wc.judge) {
         attendees += `${wc.judge.name} ${wc.judge.title}\n`
       }
+      console.log(wc)
+      if (wc.registrar) {
+        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
+      }
 
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
