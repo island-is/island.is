@@ -60,6 +60,7 @@ export const DetentionRequests: React.FC = () => {
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
+  const isRegistrar = user?.role === UserRole.REGISTRAR
 
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
@@ -116,7 +117,7 @@ export const DetentionRequests: React.FC = () => {
 
       if (isProsecutor) {
         setCases(casesWithoutDeleted)
-      } else if (isJudge) {
+      } else if (isJudge || isRegistrar) {
         const judgeCases = casesWithoutDeleted.filter((c: Case) => {
           // Judges should see all cases except cases with status code NEW.
           return c.state !== CaseState.NEW
@@ -127,7 +128,7 @@ export const DetentionRequests: React.FC = () => {
         setCases([])
       }
     }
-  }, [cases, isProsecutor, isJudge, resCases, setCases])
+  }, [cases, isProsecutor, isJudge, isRegistrar, resCases, setCases])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
@@ -163,7 +164,7 @@ export const DetentionRequests: React.FC = () => {
   const handleClick = (c: Case): void => {
     if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
       history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
-    } else if (isJudge) {
+    } else if (isJudge || isRegistrar) {
       history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
       history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
