@@ -49,14 +49,19 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  prosecutor = (await request(app.getHttpServer()).get('/api/user/0000000000'))
-    .body
+  prosecutor = (
+    await request(app.getHttpServer()).get('/api/user/?nationalId=0000000000')
+  ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (await request(app.getHttpServer()).get('/api/user/2222222222')).body
+  judge = (
+    await request(app.getHttpServer()).get('/api/user/?nationalId=2222222222')
+  ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
-  admin = (await request(app.getHttpServer()).get('/api/user/3333333333')).body
+  admin = (
+    await request(app.getHttpServer()).get('/api/user/?nationalId=3333333333')
+  ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
 })
 
@@ -284,7 +289,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
 }
 
 describe('User', () => {
-  it('GET /api/user/:nationalId should get the user', async () => {
+  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
     const nationalId = '2222222222'
     let dbUser: TUser
 
@@ -295,7 +300,7 @@ describe('User', () => {
         dbUser = userToTUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
-          .get(`/api/user/${nationalId}`)
+          .get(`/api/user/?nationalId=${nationalId}`)
           .send()
           .expect(200)
       })

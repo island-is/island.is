@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
@@ -84,9 +85,9 @@ export class UserController {
    * This endpoint is not guarded as it needs to respond to unauthenticated requests
    * from the authentication service.
    */
-  @Get('user/:nationalId')
+  @Get('user')
   @ApiOkResponse({ type: User, description: 'Gets an existing user' })
-  async getByNationalId(@Param('nationalId') nationalId: string) {
+  async getByNationalId(@Query('nationalId') nationalId: string) {
     const user = await this.userService.findByNationalId(nationalId)
 
     if (!user) {
