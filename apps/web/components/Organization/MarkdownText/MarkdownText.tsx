@@ -45,8 +45,7 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
                 color,
                 variant,
                 lineHeight: 'lg',
-                paddingBottom: '2',
-                paddingTop: '6',
+                paddingBottom: '0',
               },
             },
             ul: {
@@ -61,7 +60,7 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
           },
         }}
       >
-        {(children as string).replace(/\n/gi, '<br>')}
+        {children.replace(/\n\n/g, '\n\n<br>\n\n')}
       </Markdown>
     </div>
   )
