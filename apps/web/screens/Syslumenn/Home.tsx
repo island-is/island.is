@@ -1,6 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { NavigationItem, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  NavigationItem,
+  Text,
+} from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -71,11 +78,25 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
           active: false,
         },
       }}
-      mainContent={<Text variant="intro">{organizationPage.description}</Text>}
+      mainContent={
+        <Box paddingTop={2}>
+          <Text variant="intro">{organizationPage.description}</Text>
+        </Box>
+      }
     >
-      {organizationPage.slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
-      ))}
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12', '11/12']}>
+            {organizationPage.slices.map((slice) => (
+              <OrganizationSlice
+                key={slice.id}
+                slice={slice}
+                namespace={namespace}
+              />
+            ))}
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </OrganizationWrapper>
   )
 }
