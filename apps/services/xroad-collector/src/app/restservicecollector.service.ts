@@ -6,7 +6,7 @@ import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
 import { Provider, providerToString } from '@island.is/api-catalogue/types'
 import { ConfigService } from '@nestjs/config'
-import { Environment } from 'libs/api-catalogue/consts/src'
+import { Environment } from '@island.is/api-catalogue/consts'
 
 interface ConfigValues {
   environment: Environment
