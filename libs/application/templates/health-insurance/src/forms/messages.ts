@@ -446,27 +446,26 @@ export const m = defineMessages({
     id: 'hi.application:activeDraftApplication.description',
     defaultMessage:
       'You have already started to fill out an application. Please open your previous draft to continue.',
-    description:
-      'You have already started to fill out an application. Please open your previous draft to continue.',
+    description: 'Information for those that alreade have a started draft',
   },
   activeDraftApplicationButtonText: {
     id: 'hi.application:activeDraftApplication.buttonText',
     defaultMessage: 'Open draft',
     description: 'Open draft',
   },
-  activeApplicationTitle: {
+  pendingApplicationTitle: {
     id: 'hi.application:activeApplication.title',
     defaultMessage: 'Virk umsókn',
     description: 'Active application',
   },
-  oldPendingApplicationDescription: {
+  pendingApplicationDescription: {
     id: 'hi.application:oldPendingApplication.description',
     defaultMessage:
       'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er **{applicationNumber}**. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
     description:
       'You have already submitted an application for health insurance. Your application number is **{applicationNumber}**. Please contact the Icelandic Health Insurance if you have any questions.',
   },
-  oldPendingApplicationButtonText: {
+  pendingApplicationButtonText: {
     id: 'hi.application:oldPendingApplication.buttonText',
     defaultMessage: 'Hafa samband',
     description: 'Contact info',

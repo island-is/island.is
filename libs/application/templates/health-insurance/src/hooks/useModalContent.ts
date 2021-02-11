@@ -4,7 +4,7 @@ import { ApplicationTypes, ExternalData } from '@island.is/application/core'
 import {
   hasHealthInsurance,
   hasActiveDraftApplication,
-  hasOldPendingApplications,
+  pendingApplications,
   hasIcelandicAddress,
 } from '../healthInsuranceUtils'
 import { ContentType } from '../types'
@@ -28,16 +28,16 @@ export const useModalContent = (externalData: ExternalData) => {
       buttonAction: () =>
         history.push(`../umsoknir/${ApplicationTypes.HEALTH_INSURANCE}`),
     },
-    activeApplication: {
+    activeDraftApplication: {
       title: m.activeDraftApplicationTitle,
       description: m.activeDraftApplicationDescription,
       buttonText: m.activeDraftApplicationButtonText,
       buttonAction: () =>
-        history.push(`../umsokn/${firstCreatedApplicationId}`), //TODO, redirect to the active draft
+        history.push(`../umsokn/${firstCreatedApplicationId}`),
     },
-    oldPendingApplications: {
-      title: m.activeApplicationTitle,
-      buttonText: m.oldPendingApplicationButtonText,
+    pendingApplication: {
+      title: m.pendingApplicationTitle,
+      buttonText: m.pendingApplicationButtonText,
       buttonAction: () =>
         (window.location.href = `https://www.sjukra.is/um-okkur/thjonustuleidir/`),
     },
@@ -60,20 +60,20 @@ export const useModalContent = (externalData: ExternalData) => {
   useEffect(() => {
     if (hasHealthInsurance(externalData)) {
       setContent(contentList.hasHealthInsurance)
-    } else if (hasOldPendingApplications(externalData)) {
+    } else if (pendingApplications(externalData)) {
       const oldPendingApplications = externalData?.oldPendingApplications
         ?.data as string[]
       setContent({
-        ...contentList.oldPendingApplications,
+        ...contentList.pendingApplication,
         description: () => ({
-          ...m.oldPendingApplicationDescription,
+          ...m.pendingApplicationDescription,
           values: { applicationNumber: oldPendingApplications[0] },
         }),
       })
     } else if (hasIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
     } else if (hasActiveDraftApplication(externalData)) {
-      setContent(contentList.activeApplication)
+      setContent(contentList.activeDraftApplication)
     }
   }, [externalData])
 
