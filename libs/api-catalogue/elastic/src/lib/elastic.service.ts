@@ -41,7 +41,7 @@ export class ElasticService {
   }
 
   /**
-   *
+   * Creates a prefixed string from a number.
    *
    * @private
    * @param {number} number - The value to be formatted
@@ -382,7 +382,9 @@ export class ElasticService {
     }
 
     logger.info(
-      `Bulk inserting ${services.length} service(s) into index "${indexName}"`,
+      `Bulk inserting ${services.length} service${
+        services.length !== 1 ? 's' : ''
+      } into index "${indexName}"`,
     )
 
     if (services.length) {
@@ -477,11 +479,19 @@ export class ElasticService {
     )
   }
 
+  /**
+   * Fetches first n ids from a index
+   *
+   * @param index
+   * @param maxCount - maximum count of ids to return
+   */
   async fetchAllIds(
     index: string = this.getAliasName(),
+    maxCount: number = 1000,
   ): Promise<Array<string>> {
     logger.info('Fetch all Ids')
     const requestBody = {
+      size: maxCount,
       _source: false,
       query: {
         match_all: {},
@@ -789,8 +799,10 @@ export class ElasticService {
     index: string = this.getAliasName(),
     serviceIds: string[],
   ): Promise<Service[]> {
-    logger.info(`Fetching services from ${index}`)
+    const maxSize = serviceIds.length
+    logger.info(`Fetching ${maxSize} services from ${index}`)
     const requestBody = {
+      size: maxSize,
       _source: true,
       query: {
         ids: { values: serviceIds },
@@ -821,10 +833,11 @@ export class ElasticService {
    */
   async copyValuesFromOtherEnvironments(waitMax: number = 120 * 1000) {
     //TODO: remove createMocks when you are able to copy from other clusters
-    await this.createMocks(this.getWorkerIndexName(), [
-      Environment.STAGING,
-      Environment.PROD,
-    ])
+    await this.createMocks(
+      this.getWorkerIndexName(),
+      [Environment.STAGING, Environment.PROD],
+      false,
+    )
 
     logger.info(
       `Copying values from other environments to`,
@@ -899,17 +912,36 @@ export class ElasticService {
     }
   }
 
+  /*
+    todo: remove when mocks are not needed.
+  */
+  async createMocksDeleteByIds(
+    deleteEnvironment: Environment,
+    deleteIds: string[],
+  ) {
+    let deleteIndexName = this.getPrefix(deleteEnvironment)
+    logger.debug(
+      `Removing ${deleteIds.length} services from ${deleteEnvironment} :${deleteIds}`,
+    )
+    await this.deleteByIds(deleteIds, deleteIndexName)
+  }
   /**
    * Copies values from source index to other environment indexes
-   *
+   * //todo:  remove when mocks are not needed
    * @param {string} sourceIndex
    * @param {Environment[]} environments
    * @memberof ElasticService
    */
-  async createMocks(sourceIndex: string, environments: Environment[]) {
+  async createMocks(
+    sourceIndex: string,
+    environments: Environment[],
+    deleteServicesToTestMergeLogic: boolean,
+  ) {
     let instance: string
 
-    logger.debug('-- Creating mocks started  -- ')
+    logger.debug(
+      '  ---------------------- Creating mocks started  ---------------------- ',
+    )
     //Copying values from source index and inserting
     // modified data into destination indices
     for (let i = 0; i < environments.length; i++) {
@@ -931,7 +963,7 @@ export class ElasticService {
       logger.debug(`deleting index ${newIndex}`)
       await this.deleteIndex(newIndex)
       logger.debug(
-        `copying all from index "${sourceIndex}" to index "${newIndex}"`,
+        `copying all services from index "${sourceIndex}" to index "${newIndex}"`,
       )
       logger.debug(
         're-indexing and replacing field values "environment and details[0].xroadIdentifier.instance" in first record of environments',
@@ -950,38 +982,6 @@ export class ElasticService {
     }
 
     logger.debug(`Done cloning environments: "${environments}"`)
-    // logger.debug(
-    //   `Removing first three services from source index named ${sourceIndex}`,
-    // )
-    // const idsToRemoveFromSourceIndex = (
-    //   await this.fetchAllIds(sourceIndex)
-    // ).slice(0, 3)
-    // await this.deleteByIds(idsToRemoveFromSourceIndex, sourceIndex)
-    //   .then((res) =>
-    //     logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
-    //   )
-    //   .catch((err) => logger.debug('deleteById error', err))
-
-    // for (let i = 0; i < environments.length; i++) {
-    //   const environment = environments[i]
-    //   const newIndex = this.getPrefix(environment)
-
-    //   const delCount = 2 * (i + 1)
-    //     logger.debug(
-    //       `Removing last ${delCount} services from cloned environment index "${newIndex}"`,
-    //     )
-    //     const idsToRemoveFromNewIndex = (await this.fetchAllIds(newIndex)).slice(
-    //       delCount * -1,
-    //     )
-    //     logger.debug(
-    //       `Deleting service with ids: "${idsToRemoveFromNewIndex}"  from ${newIndex}`,
-    //     )
-    //     await this.deleteByIds(idsToRemoveFromNewIndex, newIndex)
-    //       .then((res) =>
-    //         logger.debug('deleteById successful', JSON.stringify(res, null, 4)),
-    //       )
-    //       .catch((err) => logger.debug('deleteById error', err))
-    // }
 
     // add fake alias to to fool isCollectorRunning
     await this.updateIndexAliases(
@@ -1037,6 +1037,63 @@ export class ElasticService {
       20 * 1000,
     )
 
-    logger.debug('-- Creating mocks finished -- ')
+    logger.info('  -  Ids existing after mocking  -')
+    for (let i = 0; i < environments.length; i++) {
+      const environment = environments[i]
+      const index =
+        environment === Environment.DEV
+          ? this.getWorkerIndexName()
+          : this.getPrefix(environment)
+      const ids = await this.fetchAllIds(index)
+      logger.debug(`The ${ids.length} ids from ${index}`)
+      logger.info(`are: ${ids}`)
+    }
+
+    if (deleteServicesToTestMergeLogic) {
+      logger.info(
+        ` Removing services from different environments to test merging logic.
+      Delete logic is:
+             Removing services on environments marked with 0
+        
+      dev
+     / staging
+    | / prod
+    || /
+    dsp
+    000 SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU
+    001 SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p
+    010 SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx
+    011 SVMtREVWX0dPVl8xMDAxM19WaW5udWVmdGlybGl0aWQtUHJvdGVjdGVkX3NseXNhc2tyYW5pbmc
+    100 SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE
+    101 SVMtREVWX0dPVl8xMDAwM19WTVNULVBhcmVudGFsTGVhdmUtUHJvdGVjdGVkX1BhcmVudGFsTGVhdmVBcHBsaWNhdGlvbg
+    110 SVMtREVWX0dPVl8xMDAwMF9Qb3N0aG9sZi1Qcm90ZWN0ZWRfc2tqYWxhdGlsa3lubmluZw
+    111 others should exist on all environments
+    
+    `,
+      )
+
+      this.createMocksDeleteByIds(Environment.DEV, [
+        'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
+        'SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p',
+        'SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx',
+        'SVMtREVWX0dPVl8xMDAxM19WaW5udWVmdGlybGl0aWQtUHJvdGVjdGVkX3NseXNhc2tyYW5pbmc',
+      ])
+      this.createMocksDeleteByIds(Environment.STAGING, [
+        'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
+        'SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p',
+        'SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE',
+        'SVMtREVWX0dPVl8xMDAwM19WTVNULVBhcmVudGFsTGVhdmUtUHJvdGVjdGVkX1BhcmVudGFsTGVhdmVBcHBsaWNhdGlvbg',
+      ])
+      this.createMocksDeleteByIds(Environment.PROD, [
+        'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
+        'SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx',
+        'SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE',
+        'SVMtREVWX0dPVl8xMDAwMF9Qb3N0aG9sZi1Qcm90ZWN0ZWRfc2tqYWxhdGlsa3lubmluZw',
+      ])
+    }
+
+    logger.debug(
+      '  ---------------------- Creating mocks finished ---------------------- ',
+    )
   }
 }
