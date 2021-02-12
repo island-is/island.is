@@ -1,18 +1,19 @@
-import { createMemoryHistory } from 'history'
 import React from 'react'
+import { createMemoryHistory } from 'history'
 import { render, screen } from '@testing-library/react'
 import { Route, Router } from 'react-router-dom'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import Overview from './Overview'
-import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
+import { MockedProvider } from '@apollo/client/testing'
+
+import { UpdateCase } from '@island.is/judicial-system/types'
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import Overview from './Overview'
 
 describe('/domari-krafa with an ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

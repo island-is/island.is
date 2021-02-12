@@ -5,7 +5,6 @@ import {
   CaseAppealDecision,
   CaseDecision,
 } from '@island.is/judicial-system/types'
-import * as style from './RulingAccordionItem.treat'
 import {
   getConclusion,
   getAppealDecisionText,
@@ -16,6 +15,7 @@ import {
   formatAlternativeTravelBanRestrictions,
   formatCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
+import * as style from './RulingAccordionItem.treat'
 
 interface Props {
   workingCase: Case
