@@ -330,7 +330,7 @@ describe('Step helper', () => {
       const wc = {
         decision: CaseDecision.REJECTING,
         accusedName: 'Mikki Refur',
-        accusedNationalId: '1212121299',
+        accusedNationalId: '1212121299', // eslint-disable-line local-rules/disallow-kennitalas
         accusedGender: CaseGender.MALE,
       }
 
@@ -343,7 +343,7 @@ describe('Step helper', () => {
           // Credit: https://www.polvara.me/posts/five-things-you-didnt-know-about-testing-library/
           const hasText = (node: Element) =>
             node.textContent ===
-            'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.'
+            'Kröfu um að kærði, Mikki Refur, kt. 121212-1299, sæti gæsluvarðhaldi er hafnað.' // eslint-disable-line local-rules/disallow-kennitalas
 
           const nodeHasText = hasText(node)
           const childrenDontHaveText = Array.from(node.children).every(
