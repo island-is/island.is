@@ -22,6 +22,12 @@ interface Props {
   loading: boolean
 }
 
+interface FieldValidation {
+  validations: Validation[]
+  errorMessage?: String | undefined
+  setErrorMessage?: React.Dispatch<React.SetStateAction<string | undefined>>
+}
+
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
 
@@ -48,66 +54,81 @@ export const UserForm: React.FC<Props> = (props) => {
     (institution) => institution.label === user?.institution,
   )
 
-  const isSaveDisabled = () => {
-    return isNextDisabled([
-      {
-        value: user.name,
-        validations: ['empty'],
-      },
-      {
-        value: user.nationalId,
-        validations: ['empty', 'national-id'],
-      },
-      {
-        value: user.institution,
-        validations: ['empty'],
-      },
-      {
-        value: user.title,
-        validations: ['empty'],
-      },
-      {
-        value: user.mobileNumber,
-        validations: ['empty'],
-      },
-      {
-        value: user.email,
-        validations: ['empty', 'email-format'],
-      },
-    ])
+  const validations: {[key: string]: FieldValidation} = {
+    "name": {
+      validations: ['empty'],
+      errorMessage: nameErrorMessage,
+      setErrorMessage: setNameErrorMessage
+    },
+    "nationalId": {
+      validations: ['empty', 'national-id'],
+      errorMessage: nationalIdErrorMessage,
+      setErrorMessage: setNationalIdErrorMessage
+    },
+    "institution": {
+      validations: ['empty'],
+    },
+    "title": {
+      validations: ['empty'],
+      errorMessage: titleErrorMessage,
+      setErrorMessage: setTitleErrorMessage
+    },
+    "mobileNumber": {
+      validations: ['empty'],
+      errorMessage: mobileNumberErrorMessage,
+      setErrorMessage: setMobileNumberErrorMessage
+    },
+    "email": {
+      validations: ['empty', 'email-format'],
+      errorMessage: emailErrorMessage,
+      setErrorMessage: setEmailErrorMessage
+    }
+  }
+
+  const isValid = () => {
+
+    for(const fieldName in validations) {
+
+      const validation = validations[fieldName]
+
+      const value = user[fieldName as keyof User] as string
+
+      if(validation.validations.some(v => validate(value, v).isValid === false)) {
+        return false
+      }
+    }
+
+    return true
   }
 
   const storeAndRemoveErrorIfValid = (
     field: string,
     value: string,
-    validations: Validation[],
-    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
   ) => {
     setUser({
       ...user,
       [field]: value,
     })
 
-    const isValid = !validations.some(
-      (validation) => validate(value, validation).isValid === false,
-    )
+    const fieldValidation = validations[field]
 
-    if (isValid) {
-      setErrorMessage(undefined)
+    if (!fieldValidation.validations.some(v => validate(value, v).isValid === false)) {
+      fieldValidation.setErrorMessage?.(undefined)
     }
   }
 
   const validateAndSetError = (
+    field: string,
     value: string,
-    validations: Validation[],
-    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
   ) => {
-    const error = validations
+    const fieldValidation = validations[field]
+
+    const error = fieldValidation.validations
       .map((v) => validate(value, v))
       .find((v) => v.isValid === false)
 
     if (error) {
-      setErrorMessage(error.errorMessage)
+      fieldValidation.setErrorMessage?.(error.errorMessage)
     }
   }
 
@@ -128,15 +149,12 @@ export const UserForm: React.FC<Props> = (props) => {
             storeAndRemoveErrorIfValid(
               'name',
               event.target.value,
-              ['empty'],
-              setNameErrorMessage,
             )
           }
           onBlur={(event) =>
             validateAndSetError(
+              'name',
               event.target.value,
-              ['empty'],
-              setNameErrorMessage,
             )
           }
           hasError={nameErrorMessage !== undefined}
@@ -152,15 +170,12 @@ export const UserForm: React.FC<Props> = (props) => {
             storeAndRemoveErrorIfValid(
               'nationalId',
               event.target.value,
-              ['empty', 'national-id'],
-              setNationalIdErrorMessage,
             )
           }
           onBlur={(event) =>
             validateAndSetError(
+              'nationalId',
               event.target.value,
-              ['empty', 'national-id'],
-              setNationalIdErrorMessage,
             )
           }
           readOnly={user.id.length > 0 ? true : false}
@@ -239,15 +254,12 @@ export const UserForm: React.FC<Props> = (props) => {
             storeAndRemoveErrorIfValid(
               'title',
               event.target.value,
-              ['empty'],
-              setTitleErrorMessage,
             )
           }
           onBlur={(event) =>
             validateAndSetError(
+              'title',
               event.target.value,
-              ['empty'],
-              setTitleErrorMessage,
             )
           }
           required
@@ -263,15 +275,12 @@ export const UserForm: React.FC<Props> = (props) => {
             storeAndRemoveErrorIfValid(
               'mobileNumber',
               event.target.value,
-              ['empty'],
-              setMobileNumberErrorMessage,
             )
           }
           onBlur={(event) =>
             validateAndSetError(
+              'mobileNumber',
               event.target.value,
-              ['empty'],
-              setMobileNumberErrorMessage,
             )
           }
         >
@@ -297,15 +306,12 @@ export const UserForm: React.FC<Props> = (props) => {
             storeAndRemoveErrorIfValid(
               'email',
               event.target.value,
-              ['empty', 'email-format'],
-              setEmailErrorMessage,
             )
           }
           onBlur={(event) =>
             validateAndSetError(
+              'email',
               event.target.value,
-              ['empty', 'email-format'],
-              setEmailErrorMessage,
             )
           }
           required
@@ -327,7 +333,7 @@ export const UserForm: React.FC<Props> = (props) => {
       </Box>
       <FormFooter
         onNextButtonClick={() => props.onSave(user)}
-        nextIsDisabled={isSaveDisabled()}
+        nextIsDisabled={!isValid()}
         nextIsLoading={props.loading}
         nextButtonText="Vista"
       />
