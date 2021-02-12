@@ -11,7 +11,7 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { formatNationalId } from 'libs/judicial-system/formatters/src'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 
 interface UserData {
   users: User[]

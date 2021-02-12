@@ -13,15 +13,25 @@ import * as styles from './UserForm.treat'
 import InputMask from 'react-input-mask'
 import { ReactSelectOption } from '../../../types'
 import { ValueType } from 'react-select/src/types'
+import { isNextDisabled } from '../../../utils/stepHelper'
+import { validate, Validation } from '../../../utils/validate'
 
-interface props {
+interface Props {
   user: User
   onSave: (user: User) => void
   loading: boolean
 }
 
-export const UserForm: React.FC<props> = (props) => {
+export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
+
+  const [nameErrorMessage, setNameErrorMessage] = useState<string>()
+  const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
+  const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
+  const [mobileNumberErrorMessage, setMobileNumberErrorMessage] = useState<
+    string
+  >()
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
   const institutions = [
     {
@@ -38,6 +48,69 @@ export const UserForm: React.FC<props> = (props) => {
     (institution) => institution.label === user?.institution,
   )
 
+  const isSaveDisabled = () => {
+    return isNextDisabled([
+      {
+        value: user.name,
+        validations: ['empty'],
+      },
+      {
+        value: user.nationalId,
+        validations: ['empty', 'national-id'],
+      },
+      {
+        value: user.institution,
+        validations: ['empty'],
+      },
+      {
+        value: user.title,
+        validations: ['empty'],
+      },
+      {
+        value: user.mobileNumber,
+        validations: ['empty'],
+      },
+      {
+        value: user.email,
+        validations: ['empty', 'email-format'],
+      },
+    ])
+  }
+
+  const storeAndRemoveErrorIfValid = (
+    field: string,
+    value: string,
+    validations: Validation[],
+    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+  ) => {
+    setUser({
+      ...user,
+      [field]: value,
+    })
+
+    const isValid = !validations.some(
+      (validation) => validate(value, validation).isValid === false,
+    )
+
+    if (isValid) {
+      setErrorMessage(undefined)
+    }
+  }
+
+  const validateAndSetError = (
+    value: string,
+    validations: Validation[],
+    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+  ) => {
+    const error = validations
+      .map((v) => validate(value, v))
+      .find((v) => v.isValid === false)
+
+    if (error) {
+      setErrorMessage(error.errorMessage)
+    }
+  }
+
   return (
     <>
       <Box marginBottom={7}>
@@ -51,7 +124,23 @@ export const UserForm: React.FC<props> = (props) => {
           label="Nafn"
           placeholder="Fullt nafn"
           defaultValue={user.name}
-          onChange={(event) => setUser({ ...user, name: event.target.value })}
+          onChange={(event) =>
+            storeAndRemoveErrorIfValid(
+              'name',
+              event.target.value,
+              ['empty'],
+              setNameErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSetError(
+              event.target.value,
+              ['empty'],
+              setNameErrorMessage,
+            )
+          }
+          hasError={nameErrorMessage !== undefined}
+          errorMessage={nameErrorMessage}
           required
         />
       </Box>
@@ -60,7 +149,19 @@ export const UserForm: React.FC<props> = (props) => {
           mask="999999-9999"
           maskPlaceholder={null}
           onChange={(event) =>
-            setUser({ ...user, nationalId: event.target.value })
+            storeAndRemoveErrorIfValid(
+              'nationalId',
+              event.target.value,
+              ['empty', 'national-id'],
+              setNationalIdErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSetError(
+              event.target.value,
+              ['empty', 'national-id'],
+              setNationalIdErrorMessage,
+            )
           }
           readOnly={user.id.length > 0 ? true : false}
         >
@@ -71,6 +172,8 @@ export const UserForm: React.FC<props> = (props) => {
             placeholder="Kennitala"
             defaultValue={user.nationalId}
             required
+            hasError={nationalIdErrorMessage !== undefined}
+            errorMessage={nationalIdErrorMessage}
           />
         </InputMask>
       </Box>
@@ -123,6 +226,7 @@ export const UserForm: React.FC<props> = (props) => {
               institution: (selectedOption as ReactSelectOption).label,
             })
           }
+          required
         />
       </Box>
       <Box marginBottom={2}>
@@ -131,8 +235,24 @@ export const UserForm: React.FC<props> = (props) => {
           label="Titill"
           placeholder=""
           defaultValue={user.title}
-          onChange={(event) => setUser({ ...user, title: event.target.value })}
+          onChange={(event) =>
+            storeAndRemoveErrorIfValid(
+              'title',
+              event.target.value,
+              ['empty'],
+              setTitleErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSetError(
+              event.target.value,
+              ['empty'],
+              setTitleErrorMessage,
+            )
+          }
           required
+          hasError={titleErrorMessage !== undefined}
+          errorMessage={titleErrorMessage}
         />
       </Box>
       <Box marginBottom={2}>
@@ -140,7 +260,19 @@ export const UserForm: React.FC<props> = (props) => {
           mask="999-9999"
           maskPlaceholder={null}
           onChange={(event) =>
-            setUser({ ...user, mobileNumber: event.target.value })
+            storeAndRemoveErrorIfValid(
+              'mobileNumber',
+              event.target.value,
+              ['empty'],
+              setMobileNumberErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSetError(
+              event.target.value,
+              ['empty'],
+              setMobileNumberErrorMessage,
+            )
           }
         >
           <Input
@@ -150,6 +282,8 @@ export const UserForm: React.FC<props> = (props) => {
             placeholder="Síma númer"
             defaultValue={user.mobileNumber}
             required
+            hasError={mobileNumberErrorMessage !== undefined}
+            errorMessage={mobileNumberErrorMessage}
           />
         </InputMask>
       </Box>
@@ -159,8 +293,24 @@ export const UserForm: React.FC<props> = (props) => {
           label="Netfang"
           placeholder=""
           defaultValue={user.email}
-          onChange={(event) => setUser({ ...user, email: event.target.value })}
+          onChange={(event) =>
+            storeAndRemoveErrorIfValid(
+              'email',
+              event.target.value,
+              ['empty', 'email-format'],
+              setEmailErrorMessage,
+            )
+          }
+          onBlur={(event) =>
+            validateAndSetError(
+              event.target.value,
+              ['empty', 'email-format'],
+              setEmailErrorMessage,
+            )
+          }
           required
+          hasError={emailErrorMessage !== undefined}
+          errorMessage={emailErrorMessage}
         />
       </Box>
       <Box marginBottom={2}>
@@ -176,8 +326,8 @@ export const UserForm: React.FC<props> = (props) => {
         />
       </Box>
       <FormFooter
-        onNextButtonClick={async () => await props.onSave(user)}
-        nextIsDisabled={false}
+        onNextButtonClick={() => props.onSave(user)}
+        nextIsDisabled={isSaveDisabled()}
         nextIsLoading={props.loading}
         nextButtonText="Vista"
       />
