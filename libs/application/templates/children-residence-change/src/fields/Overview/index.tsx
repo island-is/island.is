@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
-import { DescriptionText } from '../components'
+import { useMutation } from '@apollo/client'
+import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
+import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
+import { CREATE_PDF_PRESIGNED_URL } from '@island.is/application/graphql'
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
@@ -11,6 +12,7 @@ import {
   extractApplicantFromApplication,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
+import { DescriptionText } from '../components'
 
 const Overview = ({ application }: FieldBaseProps) => {
   const applicant = extractApplicantFromApplication(application)
@@ -19,6 +21,30 @@ const Overview = ({ application }: FieldBaseProps) => {
   const children = extractChildrenFromApplication(application)
   const answers = extractAnswersFromApplication(application)
   const { formatMessage } = useIntl()
+
+  const [
+    createPdfPresignedUrl,
+    { loading: loadingUrl, data: response },
+  ] = useMutation(CREATE_PDF_PRESIGNED_URL, {
+    onError: (e) => console.log('error', e),
+  })
+
+  useEffect(() => {
+    createPdfPresignedUrl({
+      variables: {
+        input: {
+          id: application.id,
+          type: PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+        },
+      },
+    })
+  }, [application.id, createPdfPresignedUrl])
+
+  const pdfUrl =
+    response?.createPdfPresignedUrl?.attachments?.[
+      PdfTypes.CHILDREN_RESIDENCE_CHANGE
+    ]
+
   return (
     <>
       <Box marginTop={3}>
@@ -83,7 +109,7 @@ const Overview = ({ application }: FieldBaseProps) => {
         <Text>{parent?.name}</Text>
         <Text fontWeight="light">{parentAddress}</Text>
       </Box>
-      <Box marginTop={4} marginBottom={6}>
+      <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
@@ -92,6 +118,22 @@ const Overview = ({ application }: FieldBaseProps) => {
             ? answers.selectedDuration[1]
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
+      </Box>
+      <Box marginTop={5} marginBottom={3}>
+        <Button
+          colorScheme="default"
+          icon="open"
+          iconType="outline"
+          onClick={() => window.open(pdfUrl, '_blank')}
+          preTextIconType="filled"
+          size="default"
+          type="button"
+          variant="ghost"
+          loading={loadingUrl}
+          disabled={loadingUrl || !pdfUrl}
+        >
+          {formatMessage(m.contract.pdfButton.label)}
+        </Button>
       </Box>
     </>
   )

@@ -1,14 +1,15 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import Overview from './Overview'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { MemoryRouter, Route } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
+
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   mockCaseQueries,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import Overview from './Overview'
 
 describe('/stofna-krofu/yfirlit', () => {
   test('should display the approprieate custody provisions', async () => {
