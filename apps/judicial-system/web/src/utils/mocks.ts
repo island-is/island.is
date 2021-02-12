@@ -32,6 +32,11 @@ export const mockJudge = {
   institution: 'Héraðsdómur Reykjavíkur',
 } as User
 
+export const mockAdmin = {
+  role: UserRole.ADMIN,
+  name: 'Adrian Administrator',
+} as User
+
 const testCase1 = {
   id: 'test_id',
   created: '2020-09-16T19:50:08.033Z',
@@ -438,6 +443,19 @@ export const mockProsecutorQuery = [
     result: {
       data: {
         currentUser: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockAdminQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockAdmin,
       },
     },
   },
