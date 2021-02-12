@@ -54,9 +54,9 @@ beforeAll(async () => {
   ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = // eslint-disable-next-line local-rules/disallow-kennitalas
-  (await request(app.getHttpServer()).get('/api/user/?nationalId=2222222222'))
-    .body
+  judge = ( // eslint-disable-next-line local-rules/disallow-kennitalas
+    await request(app.getHttpServer()).get('/api/user/?nationalId=2222222222')
+  ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
   admin = (
