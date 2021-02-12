@@ -4,7 +4,7 @@ import { ApplicationTypes, ExternalData } from '@island.is/application/core'
 import {
   hasHealthInsurance,
   hasActiveDraftApplication,
-  pendingApplications,
+  hasPendingApplications,
   hasIcelandicAddress,
 } from '../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
@@ -59,7 +59,7 @@ export const useModalContent = (externalData: ExternalData) => {
   useEffect(() => {
     if (hasHealthInsurance(externalData)) {
       setContent(contentList.hasHealthInsurance)
-    } else if (pendingApplications(externalData)) {
+    } else if (hasPendingApplications(externalData)) {
       const oldPendingApplications = externalData?.oldPendingApplications
         ?.data as string[]
       setContent({
