@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
 import { PdfTypes } from '@island.is/application/core'
@@ -87,14 +87,17 @@ export class FileService {
           answers,
           externalData,
         )
-        let bucket = environment.fsS3Bucket ?? ''
+        let bucket = environment.fsS3Bucket ?? 'development-legal-residence-change'
         let s3FileName = `${this.childrenResidenceChangeS3Prefix}/${ssn}/${application.id}.pdf`
-        const s3File = await this.getFile(bucket, s3FileName) // TODO: Test this logic and add content to fileContent variable below
-        console.log({ s3File })
-        const fileContent = s3File.Body as string
+        const s3File = await this.getFile(bucket, s3FileName)
+        const fileContent = s3File.Body?.toString('binary')
+
+        if(!fileContent || !phoneNumber) {
+          throw new NotFoundException(`Variables for document signing not found`)
+        }
 
         return await this.signingService.requestSignature(
-          phoneNumber as string,
+          phoneNumber,
           'Lögheimilisbreyting barns',
           name,
           'Ísland',
@@ -137,7 +140,7 @@ export class FileService {
     )
 
     const fileName = `${this.childrenResidenceChangeS3Prefix}/${parentA.ssn}/${applicationId}.pdf`
-    const bucket = environment.fsS3Bucket ?? ''
+    const bucket = environment.fsS3Bucket ?? 'development-legal-residence-change'
 
     await this.uploadFileToS3(pdfBuffer, bucket, fileName)
 
@@ -178,7 +181,7 @@ export class FileService {
     })
   }
 
-  private async uploadFileToS3(    
+  private async uploadFileToS3(
     buffer: Buffer,
     bucket: string,
     fileName: string): Promise<void>{

@@ -163,7 +163,7 @@ export class ApplicationService {
       id,
       createPdfDto,
       authorization,
-    })
+    }).catch(handleError)
   }
 
   async requestFileSignature(
@@ -175,6 +175,6 @@ export class ApplicationService {
       id,
       requestFileSignatureDto,
       authorization,
-    })
+    }).catch(handleError)
   }
 }
