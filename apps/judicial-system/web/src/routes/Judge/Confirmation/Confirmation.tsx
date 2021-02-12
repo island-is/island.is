@@ -19,7 +19,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
-  constructConclusion,
+  getConclusion,
   getAppealDecisionText,
   isNextDisabled,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -40,16 +40,15 @@ import {
   Case,
   CaseAppealDecision,
   CaseDecision,
-  CaseGender,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useHistory, useParams } from 'react-router-dom'
-import * as style from './Confirmation.treat'
 import {
   CaseQuery,
   SendNotificationMutation,
@@ -68,6 +67,7 @@ import {
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import * as style from './Confirmation.treat'
 
 interface SigningModalProps {
   workingCase: Case
@@ -136,8 +136,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
           judge: resCase.judge,
         })
       } catch (e) {
-        console.log(e)
-
         // TODO: Handle error
       }
 
@@ -180,8 +178,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
         // TODO: Handle error
       }
     } catch (e) {
-      console.log(e)
-
       // TODO: Handle error
     }
   }, [sendNotificationMutation, workingCase.id])
@@ -258,7 +254,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
-          history.push(Constants.DETENTION_REQUESTS_ROUTE)
+          history.push(Constants.REQUEST_LIST_ROUTE)
         } else {
           setModalVisible(false)
         }
@@ -376,6 +372,7 @@ export const Confirmation: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -430,14 +427,14 @@ export const Confirmation: React.FC = () => {
                 Úrskurðarorð
               </Text>
             </Box>
-            <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
+            <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={1}>
               <Text variant="h3">
                 {workingCase.judge
                   ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                  : `${user?.name} ${user?.title}`}
+                  : `Enginn dómari skráður`}
               </Text>
             </Box>
             <Text>
@@ -498,29 +495,33 @@ export const Confirmation: React.FC = () => {
               </Box>
             )}
           </Box>
-          {workingCase.decision === CaseDecision.ACCEPTING && (
-            <Box marginBottom={7}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Tilhögun gæsluvarðhalds
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
+          {workingCase.decision === CaseDecision.ACCEPTING &&
+            workingCase.type === CaseType.CUSTODY && (
+              <Box marginBottom={7}>
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Tilhögun gæsluvarðhalds
+                  </Text>
+                </Box>
+                <Box marginBottom={2}>
+                  <Text>
+                    {formatCustodyRestrictions(
+                      workingCase.accusedGender,
+                      workingCase.custodyRestrictions,
+                    )}
+                  </Text>
+                </Box>
                 <Text>
-                  {formatCustodyRestrictions(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                    workingCase.custodyRestrictions || [],
-                  )}
+                  Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                  bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir
+                  dómara.
                 </Text>
               </Box>
-              <Text>
-                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
-                bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-              </Text>
-            </Box>
-          )}
-          {workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
+            )}
+          {(workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            (workingCase.type === CaseType.TRAVEL_BAN &&
+              workingCase.decision === CaseDecision.ACCEPTING)) && (
             <Box marginBottom={7}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
@@ -530,16 +531,16 @@ export const Confirmation: React.FC = () => {
               <Box marginBottom={2}>
                 <Text>
                   {formatAlternativeTravelBanRestrictions(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                    workingCase.custodyRestrictions || [],
-                  )}
+                    workingCase.accusedGender,
+                    workingCase.custodyRestrictions,
+                    workingCase.otherRestrictions,
+                  )
+                    .split('\n')
+                    .map((str) => (
+                      <Text>{str}</Text>
+                    ))}
                 </Text>
               </Box>
-              {workingCase.otherRestrictions && (
-                <Box marginBottom={2}>
-                  <Text>{workingCase.otherRestrictions}</Text>
-                </Box>
-              )}
               <Text>
                 Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
                 bera atriði er lúta að framkvæmd farbannsins undir dómara.
@@ -599,14 +600,24 @@ export const Confirmation: React.FC = () => {
             </GridContainer>
           </Box>
           <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF þingbók og úrskurð"
+              pdfType="ruling"
+            />
           </Box>
           <FormFooter
-            nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
+            nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
             nextIsDisabled={isStepIllegal}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
+            hideNextButton={workingCase.judge?.id !== user?.id}
+            infoBoxText={
+              workingCase.judge?.id !== user?.id
+                ? 'Einungis skráður dómari getur undirritað úrskurð'
+                : undefined
+            }
           />
           {modalVisible && (
             <SigningModal

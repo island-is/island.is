@@ -19,6 +19,7 @@ import {
   Case,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   UpdateCase,
   User,
@@ -92,7 +93,7 @@ export const StepTwo: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const { data: userData } = useQuery(UsersQuery, {
+  const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -157,7 +158,7 @@ export const StepTwo: React.FC = () => {
   )
 
   const defaultProsecutor = prosecutors?.filter(
-    (prosecutor: Option) => prosecutor.label === workingCase?.prosecutor?.name,
+    (prosecutor: Option) => prosecutor.value === workingCase?.prosecutor?.id,
   )
 
   const handleNextButtonClick = async () => {
@@ -269,8 +270,6 @@ export const StepTwo: React.FC = () => {
 
           return true
         } catch (e) {
-          console.log(e)
-
           return false
         }
       case CaseState.DRAFT:
@@ -288,10 +287,11 @@ export const StepTwo: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
-      isLoading={loading}
+      isLoading={loading || userLoading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -534,7 +534,11 @@ export const StepTwo: React.FC = () => {
           {modalVisible && (
             <Modal
               title="Viltu senda tilkynningu?"
-              text="Með því að senda tilkynningu á dómara á vakt um að krafa um gæsluvarðhald sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála."
+              text={`Með því að senda tilkynningu á dómara á vakt um að krafa um ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhald'
+                  : 'farbann'
+              } sé í vinnslu flýtir það fyrir málsmeðferð og allir aðilar eru upplýstir um stöðu mála.`}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}

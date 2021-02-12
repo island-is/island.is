@@ -2,14 +2,28 @@ import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { logger } from '@island.is/logging'
 
-import { AudienceAndScope, ClientCredentials, TestResult } from './models'
+import {
+  AudienceAndScope,
+  ClientCredentials,
+  Contact,
+  TestResult,
+  Organisation,
+  Helpdesk,
+} from './models'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
+import {
+  CreateOrganisationInput,
+  UpdateOrganisationInput,
+  UpdateContactInput,
+  UpdateHelpdeskInput,
+} from './dto'
+import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
-  logger.error(error)
-  throw new ApolloError('Failed to resolve request', error.response.message)
+  logger.error(JSON.stringify(error))
+  throw new ApolloError('Failed to resolve request', error.status)
 }
 
 @Injectable()
@@ -17,7 +31,95 @@ export class DocumentProviderService {
   constructor(
     private documentProviderClientTest: DocumentProviderClientTest,
     private documentProviderClientProd: DocumentProviderClientProd,
+    private organisationsApi: OrganisationsApi,
+    private providersApi: ProvidersApi,
   ) {}
+
+  async getOrganisations(): Promise<Organisation[]> {
+    return await this.organisationsApi
+      .organisationControllerGetOrganisations()
+      .catch(handleError)
+  }
+
+  async getOrganisation(nationalId: string): Promise<Organisation> {
+    return await this.organisationsApi
+      .organisationControllerFindByNationalId({ nationalId })
+      .catch(handleError)
+  }
+
+  async createOrganisation(
+    input: CreateOrganisationInput,
+  ): Promise<Organisation> {
+    const createOrganisationDto = { ...input }
+
+    return await this.organisationsApi
+      .organisationControllerCreateOrganisation({ createOrganisationDto })
+      .catch(handleError)
+  }
+
+  async updateOrganisation(
+    id: string,
+    organisation: UpdateOrganisationInput,
+  ): Promise<Organisation> {
+    const dto = {
+      id,
+      updateOrganisationDto: { ...organisation },
+    }
+
+    return await this.organisationsApi
+      .organisationControllerUpdateOrganisation(dto)
+      .catch(handleError)
+  }
+
+  async updateAdministrativeContact(
+    organisationId: string,
+    contactId: string,
+    contact: UpdateContactInput,
+  ): Promise<Contact> {
+    const dto = {
+      id: organisationId,
+      administrativeContactId: contactId,
+      updateContactDto: { ...contact },
+    }
+
+    return await this.organisationsApi
+      .organisationControllerUpdateAdministrativeContact(dto)
+      .catch(handleError)
+  }
+
+  async updateTechnicalContact(
+    organisationId: string,
+    contactId: string,
+    contact: UpdateContactInput,
+  ): Promise<Contact> {
+    const dto = {
+      id: organisationId,
+      technicalContactId: contactId,
+      updateContactDto: { ...contact },
+    }
+
+    return await this.organisationsApi
+      .organisationControllerUpdateTechnicalContact(dto)
+      .catch(handleError)
+  }
+
+  async updateHelpdesk(
+    organisationId: string,
+    helpdeskId: string,
+    helpdesk: UpdateHelpdeskInput,
+  ): Promise<Helpdesk> {
+    const dto = {
+      id: organisationId,
+      helpdeskId: helpdeskId,
+      updateHelpdeskDto: { ...helpdesk },
+    }
+
+    return await this.organisationsApi
+      .organisationControllerUpdateHelpdesk(dto)
+      .catch(handleError)
+  }
+
+  //-------------------- PROVIDER --------------------------
 
   async createProviderOnTest(
     nationalId: string,
@@ -93,6 +195,28 @@ export class DocumentProviderService {
       result.clientSecret,
       result.providerId,
     )
+
+    // Get the current organisation from nationalId
+    const organisation = await this.getOrganisation(nationalId)
+
+    if (!organisation) {
+      throw new ApolloError('Could not find organisation.')
+    }
+
+    // Create provider for organisation
+    const createProviderDto = {
+      id: credentials.providerId,
+      organisationId: organisation.id,
+    }
+
+    const provider = await this.providersApi.providerControllerCreateProvider({
+      createProviderDto,
+    })
+
+    if (!provider) {
+      throw new ApolloError('Could not create provider.')
+    }
+
     return credentials
   }
 
@@ -110,6 +234,25 @@ export class DocumentProviderService {
       .catch(handleError)
 
     const audienceAndScope = new AudienceAndScope(result.audience, result.scope)
+
+    // Update the provider
+    const dto = {
+      id: providerId,
+      updateProviderDto: {
+        endpoint,
+        endpointType: 'REST',
+        apiScope: audienceAndScope.scope,
+      },
+    }
+
+    const provider = await this.providersApi.providerControllerUpdateProvider(
+      dto,
+    )
+
+    if (!provider) {
+      throw new ApolloError('Could not update provider.')
+    }
+
     return audienceAndScope
   }
 }

@@ -25,6 +25,7 @@ export const CreateCaseMutation = gql`
       id
       created
       modified
+      type
       state
       policeCaseNumber
       accusedNationalId
@@ -36,12 +37,12 @@ export const CreateCaseMutation = gql`
       court
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
+      requestedOtherRestrictions
       caseFacts
       witnessAccounts
       investigationProgress
@@ -60,7 +61,8 @@ export const CreateCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision
@@ -76,6 +78,10 @@ export const CreateCaseMutation = gql`
         name
         title
       }
+      registrar {
+        name
+        title
+      }
       parentCase {
         id
       }
@@ -88,6 +94,7 @@ export const CasesQuery = gql`
     cases {
       id
       created
+      type
       state
       policeCaseNumber
       accusedNationalId
@@ -96,6 +103,9 @@ export const CasesQuery = gql`
       custodyEndDate
       decision
       isCustodyEndDateInThePast
+      parentCase {
+        id
+      }
     }
   }
 `
@@ -116,6 +126,7 @@ export const ExtendCaseMutation = gql`
       id
       created
       modified
+      type
       state
       policeCaseNumber
       accusedNationalId
@@ -127,12 +138,12 @@ export const ExtendCaseMutation = gql`
       court
       arrestDate
       requestedCourtDate
-      alternativeTravelBan
       requestedCustodyEndDate
       otherDemands
       lawsBroken
       custodyProvisions
       requestedCustodyRestrictions
+      requestedOtherRestrictions
       caseFacts
       witnessAccounts
       investigationProgress
@@ -151,7 +162,8 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision

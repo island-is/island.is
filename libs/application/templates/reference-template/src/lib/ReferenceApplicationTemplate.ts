@@ -5,22 +5,26 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
 
+import { API_MODULE } from '../shared'
+
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
-type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
+type ReferenceTemplateEvent =
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ASSIGN }
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
 const ExampleSchema = z.object({
+  name: z.string().nonempty().max(256),
   person: z.object({
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
@@ -29,7 +33,6 @@ const ExampleSchema = z.object({
       }
       return asNumber > 15
     }),
-    name: z.string().nonempty().max(256),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     phoneNumber: z.string().min(7),
     email: z.string().email(),
@@ -46,8 +49,8 @@ const ExampleSchema = z.object({
 
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<Events>,
-  Events
+  ApplicationStateSchema<ReferenceTemplateEvent>,
+  ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
   name: 'Reference application',
@@ -58,7 +61,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um ökunám',
-          progress: 0.33,
+          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -82,7 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
-          progress: 0.66,
+          progress: 0.75,
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -115,6 +118,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
+          onEntry: {
+            apiModuleAction: API_MODULE.sendApplication,
+          },
           progress: 1,
           roles: [
             {

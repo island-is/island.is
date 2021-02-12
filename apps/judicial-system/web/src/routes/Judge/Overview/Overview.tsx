@@ -15,6 +15,7 @@ import {
   PageLayout,
   CaseNumbers,
   InfoCard,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -24,9 +25,9 @@ import {
   CaseCustodyProvisions,
   CaseState,
   CaseTransition,
+  CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -42,6 +43,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import * as styles from './Overview.treat'
 
 interface CaseData {
   case?: Case
@@ -102,7 +104,7 @@ export const JudgeOverview: React.FC = () => {
           state: data.transitionCase.state,
         } as Case)
       } catch (e) {
-        console.log(e)
+        // TODO: Handle error
       }
     }
 
@@ -130,12 +132,17 @@ export const JudgeOverview: React.FC = () => {
       isLoading={loading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
           <Box marginBottom={10}>
             <Text as="h1" variant="h1">
-              Yfirlit kröfu
+              {`Yfirlit ${
+                workingCase.type === CaseType.CUSTODY
+                  ? 'kröfu'
+                  : 'farbannskröfu'
+              }`}
             </Text>
           </Box>
           <Box component="section" marginBottom={7}>
@@ -278,13 +285,23 @@ export const JudgeOverview: React.FC = () => {
             <div className={styles.infoSection}>
               <Box marginBottom={1}>
                 <Text variant="h3" as="h3">
-                  Takmarkanir og tilhögun á gæslu
+                  {`Takmarkanir og tilhögun ${
+                    workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+                  }`}
                 </Text>
               </Box>
               <Text>
                 {formatRequestedCustodyRestrictions(
+                  workingCase.type,
                   workingCase.requestedCustodyRestrictions,
-                )}
+                  workingCase.requestedOtherRestrictions,
+                )
+                  .split('\n')
+                  .map((requestedCustodyRestriction, index) => (
+                    <Text key={index} as="span">
+                      {requestedCustodyRestriction}
+                    </Text>
+                  ))}
               </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (
@@ -338,6 +355,11 @@ export const JudgeOverview: React.FC = () => {
                 </Text>
               </div>
             )}
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF kröfu"
+              pdfType="request"
+            />
           </Box>
           <FormFooter
             nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}

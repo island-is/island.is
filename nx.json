@@ -88,6 +88,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-education": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -95,6 +98,9 @@
       "tags": []
     },
     "api-domains-national-registry": {
+      "tags": []
+    },
+    "api-domains-syslumenn": {
       "tags": []
     },
     "api-domains-translations": {
@@ -107,9 +113,6 @@
       "tags": []
     },
     "api-schema": {
-      "tags": []
-    },
-    "application-api-template-utils": {
       "tags": []
     },
     "application-core": {
@@ -130,6 +133,9 @@
     "application-system-form-e2e": {
       "tags": [],
       "implicitDependencies": ["application-system-form"]
+    },
+    "application-template-api-modules": {
+      "tags": []
     },
     "application-template-loader": {
       "tags": []

@@ -2,16 +2,21 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
-import StepOne from './StepOne'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   mockCaseQueries,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
-import { CaseGender, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  CaseGender,
+  CaseType,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import StepOne from './StepOne'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -23,9 +28,11 @@ describe('/krafa with an id', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={['/krafa/test_id_2']}>
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_ONE_ROUTE}/test_id_2`]}
+        >
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -46,7 +53,7 @@ describe('/krafa with an id', () => {
 
     expect(
       ((await screen.findByLabelText('Kennitala *')) as HTMLInputElement).value,
-    ).toEqual('111111-1110')
+    ).toEqual('000000-0000')
 
     expect(
       ((await screen.findByLabelText('Fullt nafn *')) as HTMLInputElement)
@@ -79,9 +86,11 @@ describe('/krafa with an id', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={['/krafa/test_id_3']}>
+        <MemoryRouter
+          initialEntries={[`${Constants.STEP_ONE_ROUTE}/test_id_3`]}
+        >
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id`}>
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id`}>
               <StepOne />
             </Route>
           </UserProvider>
@@ -109,10 +118,10 @@ describe('/krafa without ID', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
-              <StepOne />
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
+              <StepOne type={CaseType.CUSTODY} />
             </Route>
           </UserProvider>
         </MemoryRouter>
@@ -132,10 +141,10 @@ describe('/krafa without ID', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[Constants.SINGLE_REQUEST_BASE_ROUTE]}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
-              <StepOne />
+            <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
+              <StepOne type={CaseType.CUSTODY} />
             </Route>
           </UserProvider>
         </MemoryRouter>
@@ -192,10 +201,10 @@ describe('/krafa without ID', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={['/krafa']}>
+        <MemoryRouter initialEntries={[Constants.STEP_ONE_ROUTE]}>
           <UserProvider>
-            <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}`}>
-              <StepOne />
+            <Route path={Constants.STEP_ONE_ROUTE}>
+              <StepOne type={CaseType.CUSTODY} />
             </Route>
           </UserProvider>
         </MemoryRouter>
@@ -210,7 +219,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
 
-    userEvent.type(await screen.findByLabelText('Kennitala *'), '1112902539')
+    userEvent.type(await screen.findByLabelText('Kennitala *'), '000000-0000')
 
     userEvent.type(await screen.findByLabelText('Fullt nafn *'), 'Jon Harring')
 

@@ -1,17 +1,18 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { SignedVerdictOverview } from './SignedVerdictOverview'
 import { MemoryRouter, Route } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import '@testing-library/jest-dom'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { SignedVerdictOverview } from './SignedVerdictOverview'
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {
@@ -109,6 +110,12 @@ describe('Signed Verdict Overview route', () => {
           screen.queryByRole('button', { name: 'Framlengja gæslu' }),
         ),
       ).not.toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja gæsluvarðhald sem var hafnað.',
+        ),
+      ).toBeInTheDocument()
     })
   })
 
@@ -315,6 +322,31 @@ describe('Signed Verdict Overview route', () => {
         ),
       ).not.toBeInTheDocument()
     })
+
+    test('should display an indicator that the case cannot be extended', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_8`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja gæsluvarðhald sem er lokið.',
+        ),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('Accepted case with active travel ban', () => {
@@ -393,6 +425,31 @@ describe('Signed Verdict Overview route', () => {
           screen.queryByRole('button', { name: 'Framlengja gæslu' }),
         ),
       ).not.toBeInTheDocument()
+    })
+
+    test('should not show an extention for why the case cannot be extended if the user is a prosecutor', async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
+          addTypename={false}
+        >
+          <MemoryRouter
+            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_7`]}
+          >
+            <UserProvider>
+              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
+                <SignedVerdictOverview />
+              </Route>
+            </UserProvider>
+          </MemoryRouter>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
+        ),
+      ).toBeInTheDocument()
     })
   })
 

@@ -75,7 +75,9 @@ emailOptions: {
 },
 ```
 
-Finally, to enable prison email notifications provide a prison email address: `PRISON_EMAIL=<prison email>`
+You need to be authenticated against AWS for this to work.
+
+Finally, to enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL<prison administration email>`
 
 ### Graphql
 

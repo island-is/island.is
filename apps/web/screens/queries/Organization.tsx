@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -24,12 +25,107 @@ export const GET_ORGANIZATION_QUERY = gql`
       id
       slug
       title
+      logo {
+        title
+        url
+      }
       link
       tag {
         id
         title
       }
       description
+    }
+  }
+`
+
+export const GET_ORGANIZATION_PAGE_QUERY = gql`
+  query GetOrganizationPage($input: GetOrganizationPageInput!) {
+    getOrganizationPage(input: $input) {
+      id
+      slug
+      title
+      description
+      menuLinks {
+        primaryLink {
+          text
+          url
+        }
+        childrenLinks {
+          text
+          url
+        }
+      }
+      organization {
+        logo {
+          url
+        }
+      }
+      slices {
+        ...AllSlices
+      }
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
+      footerItems {
+        title
+        content
+        link {
+          text
+          url
+        }
+      }
+    }
+  }
+  ${slices}
+`
+
+export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
+  query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
+    getOrganizationSubpage(input: $input) {
+      title
+      slug
+      description
+      links {
+        text
+        url
+      }
+      slices {
+        ...AllSlices
+      }
+      sliceCustomRenderer
+      sliceExtraText
+      parentSubpage
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
+    }
+  }
+  ${slices}
+`
+
+export const GET_ORGANIZATION_SERVICES_QUERY = gql`
+  query GetOrganizationServices($input: GetArticlesInput!) {
+    getArticles(input: $input) {
+      title
+      slug
+      processEntry {
+        id
+      }
+      category {
+        slug
+        title
+      }
+      group {
+        slug
+        title
+      }
     }
   }
 `

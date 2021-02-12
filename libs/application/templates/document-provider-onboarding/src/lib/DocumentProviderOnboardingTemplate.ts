@@ -1,3 +1,7 @@
+import { assign } from 'xstate'
+import * as z from 'zod'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -6,8 +10,7 @@ import {
   ApplicationTemplate,
   Application,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
-import * as z from 'zod'
+import { API_MODULE_ACTIONS } from '../../constants'
 
 type Events =
   | { type: 'APPROVE' }
@@ -20,40 +23,57 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
-
 const contact = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmerið þarf að vera gilt' },
+  ),
 })
 
 const helpDeskContact = z.object({
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmer þarf að vera gilt' },
+  ),
 })
 
 //TODO: extend contact. Couldn't get it to work easily with contact.extend
 const applicant = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email().nonempty(),
-  phoneNumber: z.string().min(7),
-  nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false), {
-    message: 'Skrá þarf löglega kennitölu, með eða án bandstriks', //Question: how should error messages be translated?
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: z.string().refine(
+    (p) => {
+      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+      return phoneNumber && phoneNumber.isValid()
+    },
+    { message: 'Símanúmer þarf að vera gilt' },
+  ),
+  nationalId: z.string().refine((k) => kennitala.isValid(k), {
+    message: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
   }),
-  address: z.string().nonempty(),
-  zipCode: z.string().nonempty(),
+  // .refine((k) => kennitala.isCompany(k), {
+  //   message: 'Skrá þarf kennitölu fyrirtækis eða stofnunar',
+  // }),
+  address: z
+    .string()
+    .nonempty({ message: 'Heimilisfang þarf að vera útfyllt' }),
+  zipCode: z
+    .string()
+    .nonempty({ message: 'Póstnúmer og staður þarf að vera útfyllt' }),
 })
 
 const termsOfAgreement = z.object({
-  userTerms: z.boolean().refine((v) => v, {
-    //When to show these ?
-    message: 'Þú verður að samþykkja notendaskilmála',
-  }),
-  securityTerms: z.boolean().refine((v) => v, {
-    //When to show these ?
-    message: 'Þú verður að samþykkja öryggisskilmála ',
-  }),
+  userTerms: z.boolean().refine((v) => v, {}),
+  securityTerms: z.boolean().refine((v) => v, {}),
 })
 
 const endPoint = z.object({
@@ -127,18 +147,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         },
       },
       inReview: {
-        entry: assign((context) => {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: ['2311637949'],
-            },
-          }
-        }),
         meta: {
           name: 'In Review',
           progress: 0.5,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignReviewer,
+          },
           roles: [
             {
               id: Roles.ASSIGNEE,

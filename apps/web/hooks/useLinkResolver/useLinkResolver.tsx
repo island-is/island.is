@@ -51,6 +51,22 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
+  organizations: {
+    is: '/stofnanir',
+    en: '/en/organizations',
+  },
+  organizationpage: {
+    is: '/stofnanir/[slug]',
+    en: '/en/organizations/[slug]',
+  },
+  organizationsubpage: {
+    is: '/stofnanir/[slug]/[subSlug]',
+    en: '/en/organizations/[slug]/[subSlug]',
+  },
+  auction: {
+    is: '/stofnanir/syslumenn/uppbod/[id]',
+    en: '',
+  },
   lifeeventpage: {
     is: '/lifsvidburdur/[slug]',
     en: '/en/life-event/[slug]',

@@ -1,7 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
 
 import { HealthInsuranceResolver } from './graphql'
-import { BucketService } from './graphql/bucket.service'
+import { BucketService } from './bucket.service'
 import { HealthInsuranceService } from './healthInsurance.service'
 import {
   HealthInsuranceAPI,

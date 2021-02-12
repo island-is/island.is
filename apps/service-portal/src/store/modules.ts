@@ -10,6 +10,7 @@ import { assetsModule } from '@island.is/service-portal/assets'
 import { eligibilityModule } from '@island.is/service-portal/eligibility'
 import { drivingLicenseModule } from '@island.is/service-portal/driving-license'
 import { environment as env } from '../environments'
+import { documentProviderModule } from '@island.is/service-portal/document-provider'
 
 type ModuleFeatureFlag = keyof typeof env.featureFlags
 
@@ -24,6 +25,7 @@ const mapper: Record<ModuleFeatureFlag, ServicePortalModule> = {
   delegation: eligibilityModule,
   assets: assetsModule,
   drivingLicense: drivingLicenseModule,
+  documentProvider: documentProviderModule,
 }
 
 export const modules = () => {

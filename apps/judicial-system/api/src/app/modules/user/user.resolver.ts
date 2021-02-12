@@ -1,4 +1,4 @@
-import { Context, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -7,14 +7,19 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
+import { AuditedAction } from '@island.is/judicial-system/audit-trail'
 
 import { BackendAPI } from '../../../services'
+import { AuditService } from '../audit'
+import { CreateUserInput, UpdateUserInput } from './dto'
 import { User } from './user.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(
+    @Inject(AuditService)
+    private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -33,5 +38,41 @@ export class UserResolver {
     this.logger.debug('Getting current user')
 
     return user as User
+  }
+
+  @Mutation(() => User, { nullable: true })
+  createUser(
+    @Args('input', { type: () => CreateUserInput })
+    input: CreateUserInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<User> {
+    this.logger.debug('Creating user')
+
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.CREATE_USER,
+      backendApi.createUser(input),
+      (theUser) => theUser.id,
+    )
+  }
+
+  @Mutation(() => User, { nullable: true })
+  updateUser(
+    @Args('input', { type: () => UpdateUserInput })
+    input: UpdateUserInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<User> {
+    const { id, ...updateUser } = input
+
+    this.logger.debug(`Updating user ${id}`)
+
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.UPDATE_USER,
+      backendApi.updateUser(id, updateUser),
+      id,
+    )
   }
 }

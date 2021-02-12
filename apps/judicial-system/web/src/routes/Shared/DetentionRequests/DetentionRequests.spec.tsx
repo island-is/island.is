@@ -1,18 +1,20 @@
+import '@testing-library/jest-dom'
+
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { DetentionRequests } from './DetentionRequests'
-import { CaseState } from '@island.is/judicial-system/types'
 import { MemoryRouter, Route } from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
+import { MockedProvider } from '@apollo/client/testing'
+
+import { CaseState } from '@island.is/judicial-system/types'
 import {
   mockJudgeQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import '@testing-library/jest-dom'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import userEvent from '@testing-library/user-event'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { DetentionRequests } from './DetentionRequests'
 
 const mockCasesQuery = [
   {
@@ -31,6 +33,9 @@ const mockCasesQuery = [
             accusedNationalId: 'string',
             accusedName: 'Jon Harring Sr.',
             custodyEndDate: null,
+            parentCase: {
+              id: '1337',
+            },
           },
           {
             id: 'test_id_2',
@@ -105,11 +110,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -130,11 +133,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -142,7 +143,9 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await screen.findByTestId('judge-logo')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Héraðsdómur Reykjavíkur'),
+    ).toBeInTheDocument()
   })
 
   test('should not display a button to create a request if the user is a judge', async () => {
@@ -151,11 +154,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -176,11 +177,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -199,11 +198,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -224,11 +221,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -249,11 +244,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -261,7 +254,9 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await screen.findByTestId('prosecutor-logo')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Lögreglustjórinn á höfuðborgarsvæðinu'),
+    ).toBeInTheDocument()
   })
 
   test('should list all cases in a list if you are a prosecutor', async () => {
@@ -270,11 +265,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -293,11 +286,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -305,7 +296,7 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    expect(await screen.findByText('11. nóv. 2020')).toBeInTheDocument()
+    expect(await screen.findByText('11.11.2020')).toBeInTheDocument()
   })
 
   test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
@@ -314,11 +305,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -346,11 +335,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -378,11 +365,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -410,11 +395,9 @@ describe('Detention requests route', () => {
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>
@@ -450,11 +433,9 @@ describe('Detention requests route', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.DETENTION_REQUESTS_ROUTE}`]}
-        >
+        <MemoryRouter initialEntries={[`${Constants.REQUEST_LIST_ROUTE}`]}>
           <UserProvider>
-            <Route path={`${Constants.DETENTION_REQUESTS_ROUTE}`}>
+            <Route path={`${Constants.REQUEST_LIST_ROUTE}`}>
               <DetentionRequests />
             </Route>
           </UserProvider>

@@ -46,6 +46,14 @@ const judgeNotificationRule = {
   dtoFieldValues: [NotificationType.COURT_DATE, NotificationType.RULING],
 } as RolesRule
 
+// Allows registrars to send court-date
+const registrarNotificationRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'type',
+  dtoFieldValues: [NotificationType.COURT_DATE],
+} as RolesRule
+
 @UseGuards(RolesGuard)
 @UseGuards(JwtAuthGuard)
 @Controller('api/case/:id')
@@ -72,7 +80,11 @@ export class NotificationController {
     return existingCase
   }
 
-  @RolesRules(prosecutorNotificationRule, judgeNotificationRule)
+  @RolesRules(
+    prosecutorNotificationRule,
+    judgeNotificationRule,
+    registrarNotificationRule,
+  )
   @Post('notification')
   @ApiCreatedResponse({
     type: SendNotificationResponse,

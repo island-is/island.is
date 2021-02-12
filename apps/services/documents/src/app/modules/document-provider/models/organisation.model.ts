@@ -66,7 +66,7 @@ export class Organisation extends Model<Organisation> {
   phoneNumber?: string
 
   @HasMany(() => Provider)
-  @ApiProperty()
+  @ApiProperty({ type: [Provider] })
   providers?: Provider[]
 
   @HasOne(() => AdministrativeContact)
@@ -79,7 +79,7 @@ export class Organisation extends Model<Organisation> {
 
   @HasOne(() => Helpdesk)
   @ApiProperty()
-  helpDesk?: Helpdesk
+  helpdesk?: Helpdesk
 
   @CreatedAt
   @ApiProperty()

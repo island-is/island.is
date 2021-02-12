@@ -1,4 +1,5 @@
 import { ReadableStreamBuffer } from 'stream-buffers'
+import { Response } from 'express'
 
 import {
   Body,
@@ -63,12 +64,12 @@ const prosecutorUpdateRule = {
     'court',
     'arrestDate',
     'requestedCourtDate',
-    'alternativeTravelBan',
     'requestedCustodyEndDate',
     'otherDemands',
     'lawsBroken',
     'custodyProvisions',
     'requestedCustodyRestrictions',
+    'requestedOtherRestrictions',
     'caseFacts',
     'legalArguments',
     'comments',
@@ -91,7 +92,8 @@ const judgeUpdateRule = {
     'courtAttendees',
     'policeDemands',
     'courtDocuments',
-    'accusedPlea',
+    'accusedPleaDecision',
+    'accusedPleaAnnouncement',
     'litigationPresentations',
     'ruling',
     'decision',
@@ -102,6 +104,40 @@ const judgeUpdateRule = {
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
     'prosecutorAppealAnnouncement',
+    'judgeId',
+    'registrarId',
+  ],
+} as RolesRule
+
+// Allows registrars to update a specific set of fields
+const registrarUpdateRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD,
+  dtoFields: [
+    'defenderName',
+    'defenderEmail',
+    'courtCaseNumber',
+    'courtDate',
+    'courtRoom',
+    'courtStartTime',
+    'courtEndTime',
+    'courtAttendees',
+    'policeDemands',
+    'courtDocuments',
+    'accusedPleaDecision',
+    'accusedPleaAnnouncement',
+    'litigationPresentations',
+    'ruling',
+    'decision',
+    'custodyEndDate',
+    'custodyRestrictions',
+    'otherRestrictions',
+    'accusedAppealDecision',
+    'accusedAppealAnnouncement',
+    'prosecutorAppealDecision',
+    'prosecutorAppealAnnouncement',
+    'judgeId',
+    'registrarId',
   ],
 } as RolesRule
 
@@ -127,6 +163,14 @@ const judgeTransitionRule = {
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
   ],
+} as RolesRule
+
+// Allows registrars to receive cases
+const registrarTransitionRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.RECEIVE],
 } as RolesRule
 
 @UseGuards(RolesGuard)
@@ -160,7 +204,7 @@ export class CaseController {
     return this.caseService.create(caseToCreate, user)
   }
 
-  @RolesRules(prosecutorUpdateRule, judgeUpdateRule)
+  @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -179,7 +223,11 @@ export class CaseController {
     return updatedCase
   }
 
-  @RolesRules(prosecutorTransitionRule, judgeTransitionRule)
+  @RolesRules(
+    prosecutorTransitionRule,
+    judgeTransitionRule,
+    registrarTransitionRule,
+  )
   @Put('case/:id/state')
   @ApiOkResponse({
     type: Case,
@@ -187,31 +235,18 @@ export class CaseController {
   })
   async transition(
     @Param('id') id: string,
-    @CurrentHttpUser() user: User,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
 
     const existingCase = await this.findCaseById(id)
 
-    const update = {
-      state: transitionCase(transition.transition, existingCase.state),
-    } as UpdateCaseDto
+    const state = transitionCase(transition.transition, existingCase.state)
 
-    // Remove when client has started assigning a judge to each case
-    if (
-      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
-        transition.transition,
-      ) &&
-      user.role === UserRole.JUDGE
-    ) {
-      update['judgeId'] = user.id
-    }
-
-    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
-      id,
-      update,
-    )
+    const {
+      numberOfAffectedRows,
+      updatedCase,
+    } = await this.caseService.update(id, { state } as UpdateCaseDto)
 
     if (numberOfAffectedRows === 0) {
       throw new ConflictException(
@@ -238,21 +273,16 @@ export class CaseController {
     return this.findCaseById(id)
   }
 
-  @RolesRules(judgeRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Gets the ruling for an existing case as a pdf document',
   })
-  async getRulingPdf(
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-    @Res() res,
-  ) {
+  async getRulingPdf(@Param('id') id: string, @Res() res: Response) {
     const existingCase = await this.findCaseById(id)
 
-    const pdf = await this.caseService.getRulingPdf(existingCase, user)
+    const pdf = await this.caseService.getRulingPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
@@ -260,7 +290,29 @@ export class CaseController {
     })
     stream.put(pdf, 'binary')
 
-    res.header('Content-length', pdf.length)
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @Get('case/:id/request')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the request for an existing case as a pdf document',
+  })
+  async getRequestPdf(@Param('id') id: string, @Res() res: Response) {
+    const existingCase = await this.findCaseById(id)
+
+    const pdf = await this.caseService.getRequestPdf(existingCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
 
     return stream.pipe(res)
   }
@@ -274,19 +326,18 @@ export class CaseController {
   async requestSignature(
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
-    @Res() res,
-  ): Promise<SigningServiceResponse> {
+    @Res() res: Response,
+  ) {
     const existingCase = await this.findCaseById(id)
 
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException('A ruling must be signed by a judge')
+    if (user?.id !== existingCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
     }
 
     try {
-      const response = await this.caseService.requestSignature(
-        existingCase,
-        user,
-      )
+      const response = await this.caseService.requestSignature(existingCase)
       return res.status(201).send(response)
     } catch (error) {
       if (error instanceof DokobitError) {
@@ -314,13 +365,14 @@ export class CaseController {
   ): Promise<SignatureConfirmationResponse> {
     const existingCase = await this.findCaseById(id)
 
-    if (user.role !== UserRole.JUDGE) {
-      throw new ForbiddenException('A ruling must be signed by a judge')
+    if (user?.id !== existingCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
     }
 
     return this.caseService.getSignatureConfirmation(
       existingCase,
-      user,
       documentToken,
     )
   }

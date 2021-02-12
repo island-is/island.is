@@ -3,7 +3,10 @@ import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-r
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseGender,
+  CaseTransition,
+  CaseType,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -53,10 +56,6 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
-export const isFalsy = (str?: string | null): boolean => {
-  return str === '' || str === undefined || str === null
-}
-
 export const laws = {
   _95_1_A: 'a-lið 1. mgr. 95. gr.',
   _95_1_B: 'b-lið 1. mgr. 95. gr.',
@@ -77,6 +76,10 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'E - Fjölmiðlabann'
     case CaseCustodyRestrictions.VISITAION:
       return 'C - Heimsóknarbann'
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
+      return 'Tilkynningaskylda'
+    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
+      return 'Afhending vegabréfs'
   }
 }
 
@@ -105,7 +108,7 @@ export enum NounCases {
 }
 
 export function formatAccusedByGender(
-  accusedGender: CaseGender,
+  accusedGender?: CaseGender,
   nounCase: NounCases = NounCases.NOMINATIVE,
 ) {
   switch (accusedGender) {
@@ -113,14 +116,17 @@ export function formatAccusedByGender(
       return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
     case CaseGender.FEMALE:
       return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
+    case CaseGender.OTHER:
     default:
       return 'kærða'
   }
 }
 
+// Formats the restrictions set by the judge
+// Note that only the predetermined list of restrictions is relevant here
 export function formatCustodyRestrictions(
-  accusedGender: CaseGender,
-  custodyRestrictions: CaseCustodyRestrictions[],
+  accusedGender?: CaseGender,
+  custodyRestrictions?: CaseCustodyRestrictions[],
 ): string {
   const relevantCustodyRestrictions = custodyRestrictions?.filter(
     (restriction) =>
@@ -132,7 +138,9 @@ export function formatCustodyRestrictions(
       ].includes(restriction),
   )
 
-  if (!(relevantCustodyRestrictions?.length > 0)) {
+  if (
+    !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
+  ) {
     return 'Sækjandi tekur fram að gæsluvarðhaldið sé án takmarkana.'
   }
 
@@ -184,9 +192,11 @@ export function formatCustodyRestrictions(
   return `${res}gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
+// Fromats the restrictions set by the judge when choosing alternative travle ban
 export const formatAlternativeTravelBanRestrictions = (
-  accusedGender: CaseGender,
-  custodyRestrictions: CaseCustodyRestrictions[],
+  accusedGender?: CaseGender,
+  custodyRestrictions?: CaseCustodyRestrictions[],
+  otherRestrictions?: string,
 ): string => {
   const relevantCustodyRestrictions = custodyRestrictions?.filter(
     (restriction) =>
@@ -196,7 +206,12 @@ export const formatAlternativeTravelBanRestrictions = (
       ].includes(restriction),
   )
 
-  if (!(relevantCustodyRestrictions?.length > 0)) {
+  const hasTravelBanRestrictions =
+    relevantCustodyRestrictions && relevantCustodyRestrictions?.length > 0
+  const hasOtherRestrictions = otherRestrictions && otherRestrictions.length > 0
+
+  // No restrictions
+  if (!hasTravelBanRestrictions && !hasOtherRestrictions) {
     return 'Sækjandi tekur fram að farbannið sé án takmarkana.'
   }
 
@@ -204,38 +219,106 @@ export const formatAlternativeTravelBanRestrictions = (
     accusedGender,
     NounCases.DATIVE,
   )
-  const alternativeTravelBanRequireNotificationText = relevantCustodyRestrictions.includes(
-    CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-  )
-    ? ` Að ${accusedGenderText} verði gert að tilkynna sig.`
-    : ''
-  const alternativeTravelBanConfiscatePassportText = relevantCustodyRestrictions.includes(
-    CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-  )
-    ? ` Að ${accusedGenderText} verði gert að afhenda vegabréfið sitt.`
+
+  const travelBanRestrictionsText = hasTravelBanRestrictions
+    ? `Sækjandi tekur fram að farbannið verði með takmörkunum.${
+        relevantCustodyRestrictions?.includes(
+          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+        )
+          ? ` Að ${accusedGenderText} verði gert að tilkynna sig.`
+          : ''
+      }${
+        relevantCustodyRestrictions?.includes(
+          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+        )
+          ? ` Að ${accusedGenderText} verði gert að afhenda vegabréfið sitt.`
+          : ''
+      }`
     : ''
 
-  return `Sækjandi tekur fram að farbannið verði með takmörkunum.${alternativeTravelBanRequireNotificationText}${alternativeTravelBanConfiscatePassportText}`
+  const paragraphBreak =
+    hasTravelBanRestrictions && hasOtherRestrictions ? '\n' : ''
+
+  const otherRestrictionsText = hasOtherRestrictions ? otherRestrictions : ''
+
+  return `${travelBanRestrictionsText}${paragraphBreak}${otherRestrictionsText}`
 }
 
+// Formats the requested restrictions from the prosecutor
 export const formatRequestedCustodyRestrictions = (
-  restrictions?: CaseCustodyRestrictions[],
+  type: CaseType,
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  requestedOtherRestrictions?: string,
 ) => {
-  return restrictions && restrictions.length > 0
-    ? restrictions
-        .map((restriction) => getRestrictionByValue(restriction))
-        .toString()
-        .replace(',', ', ')
-    : 'Ekki er farið fram á takmarkanir á gæslu'
+  const hasRequestedCustodyRestrictions =
+    requestedCustodyRestrictions && requestedCustodyRestrictions?.length > 0
+  const hasRequestedOtherRestrictions =
+    requestedOtherRestrictions && requestedOtherRestrictions?.length > 0
+
+  // No restrictions
+  if (!hasRequestedCustodyRestrictions && !hasRequestedOtherRestrictions) {
+    return `Ekki er farið fram á takmarkanir á ${
+      type === CaseType.CUSTODY ? 'gæslu' : 'farbanni'
+    }.`
+  }
+
+  const requestedCustodyRestrictionsText = hasRequestedCustodyRestrictions
+    ? requestedCustodyRestrictions &&
+      requestedCustodyRestrictions.reduce(
+        (acc, restriction, index) =>
+          `${acc}${index > 0 ? ', ' : ''}${getRestrictionByValue(restriction)}`,
+        '',
+      )
+    : ''
+
+  const paragraphBreak =
+    hasRequestedCustodyRestrictions && hasRequestedOtherRestrictions ? '\n' : ''
+
+  const requestedOtherRestrictionsText = hasRequestedOtherRestrictions
+    ? requestedOtherRestrictions
+    : ''
+
+  return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
 }
 
-export function formatGender(gender: CaseGender): string {
+export function formatProsecutorDemands(
+  type: CaseType,
+  accusedNationalId: string,
+  accusedName: string,
+  court: string,
+  requestedCustodyEndDate: Date | string,
+  isolation: boolean,
+  isExtension: boolean,
+  previousDecision?: CaseDecision,
+): string {
+  return `Þess er krafist að ${accusedName}, kt. ${formatNationalId(
+    accusedNationalId,
+  )}, sæti${
+    isExtension && previousDecision === CaseDecision.ACCEPTING
+      ? ' áframhaldandi'
+      : ''
+  } ${
+    type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni'
+  } með úrskurði ${court?.replace(
+    'Héraðsdómur',
+    'Héraðsdóms',
+  )}, til ${formatDate(requestedCustodyEndDate, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}${
+    type === CaseType.CUSTODY && isolation
+      ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+      : ''
+  }.`
+}
+
+export function formatGender(gender?: CaseGender): string {
   switch (gender) {
     case CaseGender.MALE:
       return 'Karl'
     case CaseGender.FEMALE:
       return 'Kona'
     case CaseGender.OTHER:
+    default:
       return 'Kynsegin/Annað'
   }
 }
