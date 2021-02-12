@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
-import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import {
   capitalize,
   formatRequestedCustodyRestrictions,
@@ -10,6 +9,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { Case, CaseType } from '@island.is/judicial-system/types'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import AccordionListItem from '../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case
