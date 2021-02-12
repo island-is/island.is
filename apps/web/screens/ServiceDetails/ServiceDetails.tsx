@@ -120,6 +120,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const { activeLocale } = useI18n()
   return (
     <SubpageLayout
+      mainPaddingBottom={[0, 0, 3]}
       main={
         <SidebarLayout
           sidebarContent={

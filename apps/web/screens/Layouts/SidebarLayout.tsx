@@ -4,6 +4,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 
 import * as styles from './SidebarLayout.treat'
@@ -14,6 +15,7 @@ interface SidebarLayoutProps {
   isSticky?: boolean
   hiddenOnTablet?: boolean
   fullWidthContent?: boolean
+  paddingTop?: ResponsiveSpace
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
@@ -21,9 +23,10 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   isSticky = true,
   hiddenOnTablet = false,
   fullWidthContent = false,
+  paddingTop = [0, 0, 8],
   children,
 }) => (
-  <Box paddingTop={[0, 0, 8]}>
+  <Box paddingTop={paddingTop}>
     <GridContainer position="none">
       <Box
         display="flex"
