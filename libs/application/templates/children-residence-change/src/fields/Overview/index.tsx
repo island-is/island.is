@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import { CREATE_PDF_PRESIGNED_URL } from '@island.is/application/graphql'
+import { PdfTypes } from 'libs/application/core/src/types/PdfTypes'
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
@@ -22,26 +23,28 @@ const Overview = ({ application }: FieldBaseProps) => {
   const answers = extractAnswersFromApplication(application)
   const { formatMessage } = useIntl()
 
-  const [createPdfPresignedUrl, { loading: loadingUrl, data }] = useMutation(
-    CREATE_PDF_PRESIGNED_URL,
-    {
-      onError: (e) => console.log('error', e),
-    },
-  )
+  const [
+    createPdfPresignedUrl,
+    { loading: loadingUrl, data: response },
+  ] = useMutation(CREATE_PDF_PRESIGNED_URL, {
+    onError: (e) => console.log('error', e),
+  })
 
   useEffect(() => {
     createPdfPresignedUrl({
       variables: {
         input: {
           id: application.id,
-          type: 'ChildrenResidenceChange',
+          type: PdfTypes.CHILDREN_RESIDENCE_CHANGE,
         },
       },
     })
   }, [application.id, createPdfPresignedUrl])
 
   const pdfUrl =
-    data?.createPdfPresignedUrl?.attachments?.ChildrenResidenceChange
+    response?.createPdfPresignedUrl?.attachments?.[
+      PdfTypes.CHILDREN_RESIDENCE_CHANGE
+    ]
 
   return (
     <>
