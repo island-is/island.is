@@ -315,7 +315,7 @@ describe('User', () => {
     let dbUser: TUser
 
     await User.findOne({
-      where: { judgeNationalId },
+      where: { national_id: judgeNationalId }, // eslint-disable-line @typescript-eslint/camelcase
     })
       .then((value) => {
         dbUser = userToTUser(value.toJSON() as User)
