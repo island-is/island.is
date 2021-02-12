@@ -31,10 +31,13 @@ import { setup } from './setup'
 jest.setTimeout(20000)
 
 let app: INestApplication
+const prosecutorNationaId = '0000000000'
 let prosecutor: TUser
 let prosecutorAuthCookie: string
+const judgeNationalId = '2222222222' // eslint-disable-line local-rules/disallow-kennitalas
 let judge: TUser
 let judgeAuthCookie: string
+const adminNationalId = '3333333333'
 let admin: TUser
 let adminAuthCookie: string
 
@@ -50,17 +53,23 @@ beforeAll(async () => {
   const sharedAuthService = await app.resolve(SharedAuthService)
 
   prosecutor = (
-    await request(app.getHttpServer()).get('/api/user/?nationalId=0000000000')
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${prosecutorNationaId}`,
+    )
   ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = ( // eslint-disable-next-line local-rules/disallow-kennitalas
-    await request(app.getHttpServer()).get('/api/user/?nationalId=2222222222')
+  judge = (
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${judgeNationalId}`,
+    )
   ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
   admin = (
-    await request(app.getHttpServer()).get('/api/user/?nationalId=3333333333')
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${adminNationalId}`,
+    )
   ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
 })
@@ -303,17 +312,16 @@ describe('User', () => {
   })
 
   it('GET /api/user/?nationalId=<national id> should get the user', async () => {
-    const nationalId = '2222222222' // eslint-disable-line local-rules/disallow-kennitalas
     let dbUser: TUser
 
     await User.findOne({
-      where: { nationalId },
+      where: { judgeNationalId },
     })
       .then((value) => {
         dbUser = userToTUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
-          .get(`/api/user/?nationalId=${nationalId}`)
+          .get(`/api/user/?nationalId=${judgeNationalId}`)
           .send()
           .expect(200)
       })
