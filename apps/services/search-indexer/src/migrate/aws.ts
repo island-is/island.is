@@ -253,7 +253,7 @@ const checkIfAwsEsPackageExists = async (
   packageName: string,
 ): Promise<string | null> => {
   const esPackages = await getAwsEsPackagesDetails()
-  logger.info('Checking if package exists', { packageName })
+  logger.info('Checking if package exists', { packageName, esPackages })
   const foundPackage = esPackages.find(
     (esPackage) => esPackage.PackageName === packageName,
   )
