@@ -57,6 +57,7 @@ import {
   OrganizationPage,
   mapOrganizationPage,
 } from './models/organizationPage.model'
+import { Auction, mapAuction } from './models/auction.model'
 
 const makePage = (
   page: number,
@@ -250,6 +251,43 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganizationSubpage'))
 
     return result.items.map(mapOrganizationSubpage)[0] ?? null
+  }
+
+  async getAuctions(
+    organization: string,
+    year: number,
+    month: number,
+    lang: string,
+  ): Promise<Auction[]> {
+    const fromDate = new Date(year, month, 1).toISOString()
+    const toDate = new Date(year, month + 1, 1).toISOString()
+
+    const params = {
+      ['content_type']: 'auction',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': organization,
+      'fields.date[gte]': fromDate,
+      'fields.date[lte]': toDate,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAuctionFields>(lang, params)
+      .catch(errorHandler('getAuctions'))
+
+    return result.items.map(mapAuction)
+  }
+
+  async getAuction(id: string, lang: string): Promise<Auction> {
+    const params = {
+      ['content_type']: 'auction',
+      'sys.id': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAuctionFields>(lang, params)
+      .catch(errorHandler('getAuction'))
+
+    return result.items.map(mapAuction)[0]
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {

@@ -32,6 +32,13 @@ export const mockJudge = {
   institution: 'Héraðsdómur Reykjavíkur',
 } as User
 
+export const mockRegistrar = {
+  id: 'registrar_1',
+  role: UserRole.REGISTRAR,
+  name: 'Alfred Thaddeus Crane Pennyworth',
+  title: 'dómritari',
+} as User
+
 const testCase1 = {
   id: 'test_id',
   created: '2020-09-16T19:50:08.033Z',
@@ -85,7 +92,7 @@ const testCase2 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '111111-1110',
+  accusedNationalId: '000000-0000',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
@@ -450,7 +457,7 @@ export const mockUsersQuery = [
     },
     result: {
       data: {
-        users: [mockProsecutor, mockJudge],
+        users: [mockProsecutor, mockJudge, mockRegistrar],
       },
     },
   },
