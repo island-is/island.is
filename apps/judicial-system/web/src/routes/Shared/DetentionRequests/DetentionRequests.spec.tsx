@@ -1,18 +1,20 @@
+import '@testing-library/jest-dom'
+
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { DetentionRequests } from './DetentionRequests'
-import { CaseState } from '@island.is/judicial-system/types'
 import { MemoryRouter, Route } from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
+import { MockedProvider } from '@apollo/client/testing'
+
+import { CaseState } from '@island.is/judicial-system/types'
 import {
   mockJudgeQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import '@testing-library/jest-dom'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import userEvent from '@testing-library/user-event'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { DetentionRequests } from './DetentionRequests'
 
 const mockCasesQuery = [
   {

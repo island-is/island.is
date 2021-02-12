@@ -25,7 +25,7 @@ export const ExampleForm: Form = buildForm({
       title: m.introSection,
       children: [
         buildTextField({
-          id: 'person.name',
+          id: 'name',
           title: m.name,
         }),
         buildDescriptionField({
@@ -35,7 +35,7 @@ export const ExampleForm: Form = buildForm({
             ...m.introIntroduction,
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
-            values: { name: application.answers.person?.name },
+            values: { name: application.answers.name },
           }),
         }),
         buildMultiField({

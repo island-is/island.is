@@ -284,6 +284,7 @@ const Screen: FC<ScreenProps> = ({
                 externalData={externalData}
                 externalDataProvider={screen}
                 formValue={formValue}
+                errors={dataSchemaOrApiErrors}
               />
             ) : (
               <FormField

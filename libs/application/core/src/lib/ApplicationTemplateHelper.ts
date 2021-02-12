@@ -1,17 +1,10 @@
-import {
-  interpret,
-  Event,
-  EventObject,
-  MachineOptions,
-  InvokeMeta,
-  InvokeSourceDefinition,
-  ActionTypes,
-} from 'xstate'
+import { interpret, Event, EventObject, MachineOptions } from 'xstate'
 import merge from 'lodash/merge'
-
+import get from 'lodash/get'
+import has from 'lodash/has'
 import { ApplicationStateMetaOnEntry } from '@island.is/application/core'
-import { Application, ExternalData, FormValue } from '../types/Application'
 
+import { Application, ExternalData, FormValue } from '../types/Application'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -22,8 +15,6 @@ import {
   ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
-import get from 'lodash/get'
-import has from 'lodash/has'
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -179,6 +170,7 @@ export class ApplicationTemplateHelper<
     for (const validatorPath of validatorPaths) {
       if (has(newAnswers, validatorPath)) {
         const newAnswer = get(newAnswers, validatorPath)
+
         const result = await validators[validatorPath](
           newAnswer,
           this.application,
