@@ -54,7 +54,7 @@ beforeAll(async () => {
   ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (
+  judge = ( // eslint-disable-next-line local-rules/disallow-kennitalas
     await request(app.getHttpServer()).get('/api/user/?nationalId=2222222222')
   ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
@@ -303,7 +303,7 @@ describe('User', () => {
   })
 
   it('GET /api/user/?nationalId=<national id> should get the user', async () => {
-    const nationalId = '2222222222'
+    const nationalId = '2222222222' // eslint-disable-line local-rules/disallow-kennitalas
     let dbUser: TUser
 
     await User.findOne({
