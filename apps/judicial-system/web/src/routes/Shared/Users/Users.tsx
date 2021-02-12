@@ -70,7 +70,7 @@ export const Users: React.FC = () => {
       </Box>
       {data && (
         <table
-          className={styles.detentionRequestsTable}
+          className={styles.userTable}
           data-testid="detention-requests-table"
           aria-describedby="tableCation"
         >
@@ -136,13 +136,13 @@ export const Users: React.FC = () => {
         </table>
       )}
       {loading && (
-        <Box className={styles.detentionRequestsTable}>
+        <Box className={styles.userTable}>
           <Loading />
         </Box>
       )}
       {error && (
         <div
-          className={styles.detentionRequestsError}
+          className={styles.userError}
           data-testid="detention-requests-error"
         >
           <AlertMessage

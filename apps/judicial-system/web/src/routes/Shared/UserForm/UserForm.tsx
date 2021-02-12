@@ -13,7 +13,6 @@ import * as styles from './UserForm.treat'
 import InputMask from 'react-input-mask'
 import { ReactSelectOption } from '../../../types'
 import { ValueType } from 'react-select/src/types'
-import { isNextDisabled } from '../../../utils/stepHelper'
 import { validate, Validation } from '../../../utils/validate'
 
 interface Props {
