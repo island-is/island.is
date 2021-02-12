@@ -85,7 +85,7 @@ const testCase2 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '111111-1110',
+  accusedNationalId: '111111-1110', // eslint-disable-line local-rules/disallow-kennitalas
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
