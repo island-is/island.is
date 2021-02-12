@@ -314,6 +314,9 @@ export interface IAuctionFields {
   /** Content */
   content?: string | undefined
 
+  /** Content Test */
+  contentTest?: Document | undefined
+
   /** Organization */
   organization: IOrganization
 }
@@ -682,6 +685,9 @@ export interface IFooterItemFields {
 
   /** Content */
   content?: string | undefined
+
+  /** Content Test */
+  contentTest?: Document | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -1670,6 +1676,9 @@ export interface IOneColumnTextFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Content Test */
+  contentTest?: Document | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -1858,6 +1867,9 @@ export interface IOrganizationSubpageFields {
 
   /** Description */
   description?: string | undefined
+
+  /** Description Test */
+  descriptionTest?: Document | undefined
 
   /** Links */
   links?: ILink[] | undefined
@@ -2877,6 +2889,9 @@ export interface ITwoColumnTextFields {
   /** Left Content */
   leftContent?: string | undefined
 
+  /** Left Content Test */
+  leftContentTest?: Document | undefined
+
   /** Left Link */
   leftLink?: ILink | undefined
 
@@ -2885,6 +2900,9 @@ export interface ITwoColumnTextFields {
 
   /** Right Content */
   rightContent?: string | undefined
+
+  /** Right Content Test */
+  rightContentTest?: Document | undefined
 
   /** Right Link */
   rightLink?: ILink | undefined

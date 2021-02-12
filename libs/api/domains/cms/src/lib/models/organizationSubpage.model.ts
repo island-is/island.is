@@ -4,7 +4,11 @@ import { IOrganizationSubpage } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { mapOrganizationPage, OrganizationPage } from './organizationPage.model'
 import { Image, mapImage } from './image.model'
-import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
+import {
+  mapDocument,
+  safelyMapSliceUnion,
+  SliceUnion,
+} from '../unions/slice.union'
 
 @ObjectType()
 export class OrganizationSubpage {
@@ -19,6 +23,9 @@ export class OrganizationSubpage {
 
   @Field({ nullable: true })
   description?: string
+
+  @Field(() => [SliceUnion], { nullable: true })
+  descriptionTest: Array<typeof SliceUnion>
 
   @Field(() => [Link], { nullable: true })
   links?: Array<Link>
@@ -50,6 +57,9 @@ export const mapOrganizationSubpage = ({
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   description: fields.description ?? '',
+  descriptionTest: fields.descriptionTest
+    ? mapDocument(fields.descriptionTest, sys.id + ':content')
+    : [],
   links: (fields.links ?? []).map(mapLink),
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   sliceCustomRenderer: fields.sliceCustomRenderer ?? '',
