@@ -21,7 +21,9 @@ export const useModalContent = (externalData: ExternalData) => {
       title: m.alreadyInsuredTitle,
       description: m.alreadyInsuredDescription,
       buttonText: m.alreadyInsuredButtonText,
-      buttonAction: () => history.push(`../apply-for-health-insurance`),
+      buttonAction: () =>
+        (window.location.href =
+          lang === 'is' ? 'sjukra.is' : 'sjukra.is/english'),
     },
     activeApplication: {
       title: m.activeApplicationTitle,
