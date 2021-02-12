@@ -5,8 +5,8 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
-export class OldPendingApplications extends BasicDataProvider {
-  type = 'OldPendingApplications'
+export class PendingApplications extends BasicDataProvider {
+  type = 'PendingApplications'
 
   provide(application: Application): Promise<string> {
     const query = `query HealthInsuranceGetPendingApplication {

@@ -10,7 +10,7 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
 
 export const hasActiveDraftApplication = (externalData: ExternalData) => {
   const response = externalData?.applications
-  if (response && response?.status === 'success') {
+  if (response && typeof response === 'object') {
     const applications = response.data as Applications[]
     const pendingApplications = applications?.filter(
       (application) => application.state === 'draft',
@@ -22,7 +22,7 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
 }
 
 export const hasPendingApplications = (externalData: ExternalData) => {
-  const pendingApplications = externalData?.oldPendingApplications
+  const pendingApplications = externalData?.pendingApplications
     ?.data as string[]
   return pendingApplications?.length > 0
 }

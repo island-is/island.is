@@ -65,13 +65,13 @@ export const useModalContent = (externalData: ExternalData) => {
     if (hasHealthInsurance(externalData)) {
       setContent(contentList.hasHealthInsurance)
     } else if (hasPendingApplications(externalData)) {
-      const oldPendingApplications = externalData?.oldPendingApplications
+      const pendingApplications = externalData?.pendingApplications
         ?.data as string[]
       setContent({
         ...contentList.pendingApplication,
         description: () => ({
           ...m.pendingApplicationDescription,
-          values: { applicationNumber: oldPendingApplications[0] },
+          values: { applicationNumber: pendingApplications[0] },
         }),
       })
     } else if (hasIcelandicAddress(externalData)) {
