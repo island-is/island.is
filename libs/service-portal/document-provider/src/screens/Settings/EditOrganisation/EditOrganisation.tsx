@@ -3,32 +3,28 @@ import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
-import { TechnicalContactForm } from '../../../components/Forms/TechnicalContactForm'
+import { InstitutionForm } from '../../../components/Forms/InstitutionForm'
 import { useGetOrganisation } from '../../../shared/useGetOrganisation'
 import { SettingsFormsLoader } from '../../../components/SettingsFormsLoader'
 
-const EditTechnicalContact: ServicePortalModuleComponent = () => {
+const EditOrganisation: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
-  const { organisation } = useGetOrganisation('123456-0000')
+  const { organisation, loading } = useGetOrganisation('123456-0000')
 
-  const { technicalContact } = organisation || {}
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={4}>
         <Text variant="h1" as="h1">
-          {formatMessage(m.SettingsEditTechnicalContactTitle)}
+          {formatMessage(m.SettingsEditInstitutionTitle)}
         </Text>
       </Box>
-      {technicalContact ? (
-        <TechnicalContactForm
-          organisationId={organisation?.id}
-          technicalContact={technicalContact}
-        />
+      {loading ? (
+        <SettingsFormsLoader numberOfLoaders={6} />
       ) : (
-        <SettingsFormsLoader numberOfLoaders={4} />
+        <InstitutionForm organisation={organisation} />
       )}
     </Box>
   )
 }
 
-export default EditTechnicalContact
+export default EditOrganisation
