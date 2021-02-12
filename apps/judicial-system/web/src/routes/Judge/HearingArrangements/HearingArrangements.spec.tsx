@@ -47,6 +47,10 @@ describe('/domari-krafa/fyrirtokutimi', () => {
               id: 'test_id_2',
               judgeId: 'judge_1',
             } as UpdateCase,
+            {
+              id: 'test_id_2',
+              registrarId: 'registrar_1',
+            } as UpdateCase,
           ]),
         ]}
         addTypename={false}
@@ -68,6 +72,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
     userEvent.click(await screen.findByText('Veldu dómara'))
     userEvent.click(await screen.findByText('Wonder Woman'))
+
+    userEvent.click(await screen.findByText('Veldu dómritara'))
+    userEvent.click(await screen.findByText('Alfred Thaddeus Crane Pennyworth'))
 
     // Assert
     expect(

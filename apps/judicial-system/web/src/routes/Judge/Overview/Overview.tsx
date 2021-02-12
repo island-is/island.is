@@ -122,7 +122,7 @@ export const JudgeOverview: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-  console.log(data)
+
   return (
     <PageLayout
       activeSection={
