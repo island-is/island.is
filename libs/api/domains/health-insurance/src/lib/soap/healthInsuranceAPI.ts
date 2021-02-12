@@ -277,7 +277,7 @@ export class HealthInsuranceAPI {
     return vistaSkjal
   }
 
-  private async xroadCall(functionName: string, args: object): Promise<any> {
+  public async xroadCall(functionName: string, args: object): Promise<any> {
     // create 'soap' client
     logger.info(`Start ${functionName} function call.`)
     const client = await SoapClient.generateClient(
