@@ -75,7 +75,6 @@ export class CaseService {
 
   private async sendRulingAsSignedPdf(
     existingCase: Case,
-    user: TUser,
     signedRulingPdf: string,
   ): Promise<void> {
     if (!environment.production) {
@@ -90,8 +89,14 @@ export class CaseService {
         signedRulingPdf,
       ),
       this.sendEmail(
-        existingCase.judge?.name || user?.name,
-        existingCase.judge?.email || user?.email,
+        existingCase.registrar?.name,
+        existingCase.registrar?.email,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
+      this.sendEmail(
+        existingCase.judge?.name,
+        existingCase.judge?.email,
         existingCase.courtCaseNumber,
         signedRulingPdf,
       ),
@@ -215,7 +220,6 @@ export class CaseService {
 
   async getSignatureConfirmation(
     existingCase: Case,
-    user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
@@ -232,7 +236,7 @@ export class CaseService {
           documentToken,
         )
 
-        await this.sendRulingAsSignedPdf(existingCase, user, signedPdf)
+        await this.sendRulingAsSignedPdf(existingCase, signedPdf)
       } catch (error) {
         if (error instanceof DokobitError) {
           return {
