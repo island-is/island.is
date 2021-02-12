@@ -62,46 +62,46 @@ export const UserForm: React.FC<Props> = (props) => {
     (institution) => institution.label === user?.institution,
   )
 
-  const validations: {[key: string]: FieldValidation} = {
-    "name": {
+  const validations: { [key: string]: FieldValidation } = {
+    name: {
       validations: ['empty'],
       errorMessage: nameErrorMessage,
-      setErrorMessage: setNameErrorMessage
+      setErrorMessage: setNameErrorMessage,
     },
-    "nationalId": {
+    nationalId: {
       validations: ['empty', 'national-id'],
       errorMessage: nationalIdErrorMessage,
-      setErrorMessage: setNationalIdErrorMessage
+      setErrorMessage: setNationalIdErrorMessage,
     },
-    "institution": {
+    institution: {
       validations: ['empty'],
     },
-    "title": {
+    title: {
       validations: ['empty'],
       errorMessage: titleErrorMessage,
-      setErrorMessage: setTitleErrorMessage
+      setErrorMessage: setTitleErrorMessage,
     },
-    "mobileNumber": {
+    mobileNumber: {
       validations: ['empty'],
       errorMessage: mobileNumberErrorMessage,
-      setErrorMessage: setMobileNumberErrorMessage
+      setErrorMessage: setMobileNumberErrorMessage,
     },
-    "email": {
+    email: {
       validations: ['empty', 'email-format'],
       errorMessage: emailErrorMessage,
-      setErrorMessage: setEmailErrorMessage
-    }
+      setErrorMessage: setEmailErrorMessage,
+    },
   }
 
   const isValid = () => {
-
-    for(const fieldName in validations) {
-
+    for (const fieldName in validations) {
       const validation = validations[fieldName]
 
       const value = user[fieldName as keyof User] as string
 
-      if(validation.validations.some(v => validate(value, v).isValid === false)) {
+      if (
+        validation.validations.some((v) => validate(value, v).isValid === false)
+      ) {
         return false
       }
     }
@@ -109,10 +109,7 @@ export const UserForm: React.FC<Props> = (props) => {
     return true
   }
 
-  const storeAndRemoveErrorIfValid = (
-    field: string,
-    value: string,
-  ) => {
+  const storeAndRemoveErrorIfValid = (field: string, value: string) => {
     setUser({
       ...user,
       [field]: value,
@@ -120,15 +117,16 @@ export const UserForm: React.FC<Props> = (props) => {
 
     const fieldValidation = validations[field]
 
-    if (!fieldValidation.validations.some(v => validate(value, v).isValid === false)) {
+    if (
+      !fieldValidation.validations.some(
+        (v) => validate(value, v).isValid === false,
+      )
+    ) {
       fieldValidation.setErrorMessage?.(undefined)
     }
   }
 
-  const validateAndSetError = (
-    field: string,
-    value: string,
-  ) => {
+  const validateAndSetError = (field: string, value: string) => {
     const fieldValidation = validations[field]
 
     const error = fieldValidation.validations
@@ -154,17 +152,9 @@ export const UserForm: React.FC<Props> = (props) => {
           placeholder="Fullt nafn"
           defaultValue={user.name}
           onChange={(event) =>
-            storeAndRemoveErrorIfValid(
-              'name',
-              event.target.value,
-            )
+            storeAndRemoveErrorIfValid('name', event.target.value)
           }
-          onBlur={(event) =>
-            validateAndSetError(
-              'name',
-              event.target.value,
-            )
-          }
+          onBlur={(event) => validateAndSetError('name', event.target.value)}
           hasError={nameErrorMessage !== undefined}
           errorMessage={nameErrorMessage}
           required
@@ -175,16 +165,10 @@ export const UserForm: React.FC<Props> = (props) => {
           mask="999999-9999"
           maskPlaceholder={null}
           onChange={(event) =>
-            storeAndRemoveErrorIfValid(
-              'nationalId',
-              event.target.value,
-            )
+            storeAndRemoveErrorIfValid('nationalId', event.target.value)
           }
           onBlur={(event) =>
-            validateAndSetError(
-              'nationalId',
-              event.target.value,
-            )
+            validateAndSetError('nationalId', event.target.value)
           }
           readOnly={user.id.length > 0 ? true : false}
         >
@@ -259,17 +243,9 @@ export const UserForm: React.FC<Props> = (props) => {
           placeholder=""
           defaultValue={user.title}
           onChange={(event) =>
-            storeAndRemoveErrorIfValid(
-              'title',
-              event.target.value,
-            )
+            storeAndRemoveErrorIfValid('title', event.target.value)
           }
-          onBlur={(event) =>
-            validateAndSetError(
-              'title',
-              event.target.value,
-            )
-          }
+          onBlur={(event) => validateAndSetError('title', event.target.value)}
           required
           hasError={titleErrorMessage !== undefined}
           errorMessage={titleErrorMessage}
@@ -280,16 +256,10 @@ export const UserForm: React.FC<Props> = (props) => {
           mask="999-9999"
           maskPlaceholder={null}
           onChange={(event) =>
-            storeAndRemoveErrorIfValid(
-              'mobileNumber',
-              event.target.value,
-            )
+            storeAndRemoveErrorIfValid('mobileNumber', event.target.value)
           }
           onBlur={(event) =>
-            validateAndSetError(
-              'mobileNumber',
-              event.target.value,
-            )
+            validateAndSetError('mobileNumber', event.target.value)
           }
         >
           <Input
@@ -311,17 +281,9 @@ export const UserForm: React.FC<Props> = (props) => {
           placeholder=""
           defaultValue={user.email}
           onChange={(event) =>
-            storeAndRemoveErrorIfValid(
-              'email',
-              event.target.value,
-            )
+            storeAndRemoveErrorIfValid('email', event.target.value)
           }
-          onBlur={(event) =>
-            validateAndSetError(
-              'email',
-              event.target.value,
-            )
-          }
+          onBlur={(event) => validateAndSetError('email', event.target.value)}
           required
           hasError={emailErrorMessage !== undefined}
           errorMessage={emailErrorMessage}
