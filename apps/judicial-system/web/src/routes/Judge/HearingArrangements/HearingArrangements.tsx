@@ -8,6 +8,7 @@ import {
   Select,
   Text,
   Option,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -255,7 +256,8 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Dómari
+                Dómari{' '}
+                <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
               </Text>
             </Box>
             <Select
@@ -273,7 +275,8 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Dómritari
+                Dómritari{' '}
+                <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
               </Text>
             </Box>
             <Select
