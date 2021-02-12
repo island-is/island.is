@@ -218,7 +218,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
 
-    userEvent.type(await screen.findByLabelText('Kennitala *'), '1234567890')
+    userEvent.type(await screen.findByLabelText('Kennitala *'), '0000000000') // eslint-disable-line local-rules/disallow-kennitalas
 
     userEvent.type(await screen.findByLabelText('Fullt nafn *'), 'Jon Harring')
 
