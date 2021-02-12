@@ -52,7 +52,7 @@ describe('/krafa with an id', () => {
 
     expect(
       ((await screen.findByLabelText('Kennitala *')) as HTMLInputElement).value,
-    ).toEqual('111111-1110')
+    ).toEqual('000000-0000')
 
     expect(
       ((await screen.findByLabelText('Fullt nafn *')) as HTMLInputElement)
@@ -218,7 +218,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
 
-    userEvent.type(await screen.findByLabelText('Kennitala *'), '1112902539')
+    userEvent.type(await screen.findByLabelText('Kennitala *'), '000000-0000')
 
     userEvent.type(await screen.findByLabelText('Fullt nafn *'), 'Jon Harring')
 
