@@ -84,6 +84,15 @@ describe('answerValidators', () => {
     })
   })
 
+  it('should return error if the endDate is before or less than 14 days from the DOB when the startDate is undefined', () => {
+    const newAnswers = [{ endDate: '2021-01-20' }]
+
+    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
+      message: `End date cannot be less than the ${minPeriodDays} days from the date of birth.`,
+      path: 'periods[0].endDate',
+    })
+  })
+
   it('should return error for endDate before minimum days', () => {
     const newAnswers = [
       { startDate: '2021-01-29', endDate: '2021-02-04', ratio: '100' },

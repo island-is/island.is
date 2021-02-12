@@ -41,8 +41,9 @@ enum States {
 }
 
 function hasEmployer(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application
-    .answers as SchemaFormValues
+  const currentApplicationAnswers = context.application.answers as {
+    employer: { isSelfEmployed: typeof YES | typeof NO }
+  }
 
   return currentApplicationAnswers.employer.isSelfEmployed === NO
 }
