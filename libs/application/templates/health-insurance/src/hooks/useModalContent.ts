@@ -29,7 +29,9 @@ export const useModalContent = (externalData: ExternalData) => {
       buttonText: m.alreadyInsuredButtonText,
       buttonAction: () =>
         (window.location.href =
-          lang === 'is' ? 'sjukra.is' : 'sjukra.is/english'),
+          lang === 'is'
+            ? 'https://www.sjukra.is'
+            : 'https://www.sjukra.is/english'),
     },
     activeDraftApplication: {
       title: m.activeDraftApplicationTitle,
@@ -42,7 +44,10 @@ export const useModalContent = (externalData: ExternalData) => {
       title: m.pendingApplicationTitle,
       buttonText: m.pendingApplicationButtonText,
       buttonAction: () =>
-        (window.location.href = `https://www.sjukra.is/um-okkur/thjonustuleidir/`),
+        (window.location.href =
+          lang === 'is'
+            ? 'https://www.sjukra.is/um-okkur/thjonustuleidir/ '
+            : 'https://www.sjukra.is/english'),
     },
     registerAddress: {
       title: m.registerYourselfTitle,
