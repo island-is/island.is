@@ -57,16 +57,18 @@ export enum ServicePortalPath {
   UserProfileEmailConfirmation = '/stillingar/stadfesta-netfang/:hash',
 
   // Skjalaveita
-  DocumentProviderRoot = '/skjalaveita',
-  DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',
-  DocumentProviderDocumentProvidersSingle = '/skjalaveita/skjalaveitendur/:id',
-  DocumentProviderMyCategories = '/skjalaveita/minir-flokkar',
-  DocumentProviderSettingsRoot = '/skjalaveita/skjalaveita-stillingar',
-  DocumentProviderSettingsEditInstituion = '/skjalaveita/skjalaveita-stillingar/breyta-stofnun',
-  DocumentProviderSettingsEditResponsibleContact = '/skjalaveita/skjalaveita-stillingar/breyta-abyrgdarmanni',
-  DocumentProviderSettingsEditTechnicalContact = '/skjalaveita/skjalaveita-stillingar/breyta-taeknilegum-tengilid',
-  DocumentProviderSettingsEditUserHelpContact = '/skjalaveita/skjalaveita-stillingar/breyta-notendaadstod',
-  DocumentProviderSettingsEditEndpoints = '/skjalaveita/skjalaveita-stillingar/breyta-endapunkt',
-  DocumentProviderTechnicalInfo = '/skjalaveita/taeknilegar-upplysingar',
-  DocumentProviderStatistics = '/skjalaveita/tolfraedi',
+  // Tímabundin breyting á DocumentProviderRoot gildi úr skjalaveita -> skjalaveitur af því að þetta
+  // verður bara ein síða til að byrja með
+  DocumentProviderRoot = '/skjalaveitur', // Breytt path
+  DocumentProviderDocumentProvidersSingle = '/skjalaveitur/:nationalId',
+  // DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',
+  // DocumentProviderMyCategories = '/skjalaveita/minir-flokkar',
+  // DocumentProviderSettingsRoot = '/skjalaveita/skjalaveita-stillingar',
+  // DocumentProviderSettingsEditInstituion = '/skjalaveita/skjalaveita-stillingar/breyta-stofnun',
+  // DocumentProviderSettingsEditResponsibleContact = '/skjalaveita/skjalaveita-stillingar/breyta-abyrgdarmanni',
+  // DocumentProviderSettingsEditTechnicalContact = '/skjalaveita/skjalaveita-stillingar/breyta-taeknilegum-tengilid',
+  // DocumentProviderSettingsEditUserHelpContact = '/skjalaveita/skjalaveita-stillingar/breyta-notendaadstod',
+  // DocumentProviderSettingsEditEndpoints = '/skjalaveita/skjalaveita-stillingar/breyta-endapunkt',
+  // DocumentProviderTechnicalInfo = '/skjalaveita/taeknilegar-upplysingar',
+  // DocumentProviderStatistics = '/skjalaveita/tolfraedi',
 }
