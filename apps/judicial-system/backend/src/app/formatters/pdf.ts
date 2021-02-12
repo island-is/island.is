@@ -3,11 +3,11 @@ import streamBuffers from 'stream-buffers'
 import fs from 'fs'
 
 import {
+  AccusedPleaDecision,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  User,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -328,10 +328,19 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     )
     .font('Helvetica')
     .fontSize(12)
-    .text(existingCase.accusedPlea, {
-      lineGap: 6,
-      paragraphGap: 0,
-    })
+    .text(
+      `${
+        existingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
+          ? `Kærði samþykkir kröfuna. `
+          : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+          ? `Kærði hafnar kröfunni. `
+          : ''
+      } ${existingCase.accusedPleaAnnouncement}`,
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
     .text(' ')
     .font('Helvetica-Bold')
     .fontSize(14)

@@ -66,7 +66,7 @@ export class Organisation extends Model<Organisation> {
   phoneNumber?: string
 
   @HasMany(() => Provider)
-  @ApiProperty()
+  @ApiProperty({ type: [Provider] })
   providers?: Provider[]
 
   @HasOne(() => AdministrativeContact)

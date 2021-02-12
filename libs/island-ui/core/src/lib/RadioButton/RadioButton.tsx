@@ -1,7 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import { Text } from '@island.is/island-ui/core'
-
+import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
 import * as styles from './RadioButton.treat'
 
