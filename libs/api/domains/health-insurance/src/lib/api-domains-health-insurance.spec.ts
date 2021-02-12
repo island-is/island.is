@@ -14,14 +14,6 @@ describe('apiDomainsHealthInsurance', () => {
   })
 })
 
-//https://blog.theodo.com/2019/06/test-nestjs-with-jest-typescript/
-
-describe('apiDomainsHealthInsurance', () => {
-  it('should work', () => {
-    expect(apiDomainsHealthInsurance()).toEqual('api-domains-health-insurance')
-  })
-})
-
 describe('healthInsuranceTest', () => {
   let hapi: HealthInsuranceAPI
   let config: HealthInsuranceConfig = {
