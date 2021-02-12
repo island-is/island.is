@@ -32,13 +32,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
               borderColor="blueberry300"
               borderBottomWidth="standard"
             >
-              <Box marginRight={4}>
-                <img
-                  src={organizationPage.organization.logo.url}
-                  alt=""
-                  width="70"
-                />
-              </Box>
+              {!!organizationPage.organization.logo.url && (
+                <Box marginRight={4}>
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    alt=""
+                    width="70"
+                  />
+                </Box>
+              )}
               <div id="organizationFooterTitle">
                 <Text variant="h2" color="white">
                   {organizationPage.title}

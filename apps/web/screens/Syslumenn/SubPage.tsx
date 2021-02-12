@@ -32,6 +32,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const OrganizationSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
@@ -60,8 +61,10 @@ const SubPage: Screen<SubPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id)
 
   const pageUrl = `/stofnanir/${organizationPage.slug}/${subpage.slug}`
+  const parentSubpageUrl = `/stofnanir/${organizationPage.slug}/${subpage.parentSubpage}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -69,11 +72,12 @@ const SubPage: Screen<SubPageProps> = ({
       href: primaryLink.url,
       active:
         primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl),
+        childrenLinks.some((link) => link.url === pageUrl) ||
+        childrenLinks.some((link) => link.url === parentSubpageUrl),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pageUrl,
+        active: url === pageUrl || url === parentSubpageUrl,
       })),
     }),
   )
@@ -108,6 +112,7 @@ const SubPage: Screen<SubPageProps> = ({
           active: false,
         },
       }}
+      fullWidthContent={true}
     >
       <GridContainer>
         <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>

@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './OrganizationWrapper.treat'
+import cn from 'classnames'
 import NextLink from 'next/link'
 import {
   HeadWithSocialSharing,
@@ -85,14 +86,16 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         </GridContainer>
         <Box className={styles.headerWrapper}>
           <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
-            <Box paddingTop={[2, 2, 0]} paddingBottom={[0, 0, 4]}>
+            <Box paddingTop={2}>
               <Box display="flex" flexDirection="row" alignItems="center">
-                <img
-                  src={organizationPage.organization.logo.url}
-                  className={styles.headerLogo}
-                  alt=""
-                />
-                <Text variant="h1" as="h1" color="white">
+                {!!organizationPage.organization.logo.url && (
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                )}
+                <Text variant="h1" as="h1" color="white" marginTop={[0, 0, 3]}>
                   {organizationPage.title}
                 </Text>
               </Box>
@@ -106,7 +109,14 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             fullWidthContent={fullWidthContent}
             sidebarContent={
               <>
-                <Box className={styles.navigation}>
+                <Box
+                  className={cn(
+                    styles.navigation,
+                    organizationPage.organization.logo.url
+                      ? styles.navigationWithLogo
+                      : styles.navigationWithoutLogo,
+                  )}
+                >
                   <Navigation
                     baseId="pageNav"
                     isMenuDialog={isMobile}

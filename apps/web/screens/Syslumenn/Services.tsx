@@ -32,6 +32,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -62,6 +63,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
