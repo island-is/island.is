@@ -244,7 +244,7 @@ export const uploadS3DictionaryFiles = async (
 
 const getAwsEsPackagesDetails = async () => {
   logger.info('Getting all AWS ES packages')
-  const packages = await awsEs.describePackages().promise()
+  const packages = await awsEs.describePackages({ MaxResults: 100 }).promise()
 
   return packages.PackageDetailsList
 }
