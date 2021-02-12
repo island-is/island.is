@@ -16,7 +16,7 @@ describe('apiDomainsHealthInsurance', () => {
 
 describe('healthInsuranceTest', () => {
   let hapi: HealthInsuranceAPI
-  let config: HealthInsuranceConfig = {
+  const config: HealthInsuranceConfig = {
     baseUrl: 'http://localhost:8080',
     password: '',
     username: '',
@@ -50,6 +50,7 @@ describe('healthInsuranceTest', () => {
   describe('isHealthInsuredMock', () => {
     it('is healthInsured tjekk', async () => {
       const kennitala = '1111111111'
+      /*eslint-disable */
       const res = {
         SjukratryggdurType: {
           radnumer_si: 211426334,
@@ -58,6 +59,7 @@ describe('healthInsuranceTest', () => {
           a_bidtima: 0,
         },
       }
+      /*eslint-enable */
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
