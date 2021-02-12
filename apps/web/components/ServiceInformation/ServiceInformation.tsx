@@ -13,6 +13,8 @@ import {
   GridRow,
   GridColumn,
   Option,
+  Tooltip,
+  DialogPrompt,
 } from '@island.is/island-ui/core'
 import {
   Service,
@@ -22,6 +24,7 @@ import {
 import TagList from './TagList'
 import XroadValue from './XroadValue'
 import ServiceInfoLink from './ServiceInfoLink'
+import ServiceTag from './ServiceTag'
 
 export interface ServiceInformationProps {
   service: Service
@@ -97,12 +100,18 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
     <Box>
       <Box marginTop={1} marginBottom={3}>
         <Box marginBottom={2} display="flex" alignItems="flexStart">
-          <Text variant="h1">{service.title}</Text>
-          {service.pricing.length > 0 && (
-            <Box marginLeft={1}>
-              <Tag>{n(`pricing${capitalize(service.pricing[0])}`)}</Tag>
-            </Box>
-          )}
+          <Inline space={1}>
+            <Text variant="h1">{service.title}</Text>
+            {service.pricing.length > 0 && (
+              <Box height="full" display="flex" alignItems="center">
+                <ServiceTag
+                  category="pricing"
+                  item={service.pricing[0]}
+                  namespace={strings}
+                />
+              </Box>
+            )}
+          </Inline>
         </Box>
         {service.summary && (
           <Text variant="intro" paddingBottom={2}>
