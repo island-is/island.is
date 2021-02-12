@@ -167,8 +167,8 @@ export const checkAWSAccess = async (): Promise<boolean> => {
 
 interface CreateS3KeyInput {
   filename: string
-  locale?: ElasticsearchIndexLocale
-  version?: string
+  locale: ElasticsearchIndexLocale
+  version: string
 }
 const createS3Key = ({
   filename,
@@ -286,7 +286,7 @@ export const createAwsEsPackages = async (
         PackageType: 'TXT-DICTIONARY',
         PackageSource: {
           S3BucketName: environment.s3Bucket,
-          S3Key: createS3Key({ filename: analyzerType, locale }),
+          S3Key: createS3Key({ filename: analyzerType, locale, version }),
         },
       }
 
