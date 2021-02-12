@@ -73,6 +73,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       footerItems {
         title
         content
+        contentTest {
+          ...HtmlFields
+        }
         link {
           text
           url
@@ -89,6 +92,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       title
       slug
       description
+      descriptionTest {
+        ...HtmlFields
+      }
       links {
         text
         url

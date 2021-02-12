@@ -13,12 +13,13 @@ import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { MarkdownText, OrganizationWrapper } from '@island.is/web/components'
+import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { GET_AUCTION_QUERY } from '@island.is/web/screens/queries/Auction'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -94,7 +95,7 @@ const Auction: Screen<AuctionProps> = ({
           {auction.organization.title}
         </Text>
         <Text marginBottom={4}>{format(date, 'dd. MMMM yyyy')}</Text>
-        <MarkdownText>{auction.content}</MarkdownText>
+        {richText(auction.contentTest as SliceType[])}
         <Text paddingTop={4}>
           {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
         </Text>

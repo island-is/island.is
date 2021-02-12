@@ -27,12 +27,13 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper, MarkdownText } from '@island.is/web/components'
+import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 const OrganizationSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
@@ -131,9 +132,7 @@ const SubPage: Screen<SubPageProps> = ({
             <GridColumn
               span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
             >
-              <MarkdownText variant={subpage.slices.length ? 'h3' : 'default'}>
-                {subpage.description}
-              </MarkdownText>
+              {richText(subpage.descriptionTest as SliceType[])}
             </GridColumn>
             {subpage.links.length > 0 && (
               <GridColumn
