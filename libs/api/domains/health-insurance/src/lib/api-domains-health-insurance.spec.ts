@@ -51,7 +51,7 @@ describe('healthInsuranceTest', () => {
 
   // describe('isHealthInsuredDirect', () => {
   //   it('is healthInsured tjekk', async () => {
-  //     const isInsured = await hapi.isHealthInsured('0301665909')
+  //     const isInsured = await hapi.isHealthInsured('1111111111')
   //   })
   // })
 
