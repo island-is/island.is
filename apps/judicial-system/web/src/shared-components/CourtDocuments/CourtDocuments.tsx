@@ -9,10 +9,10 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useState, useRef } from 'react'
 import { useKey } from 'react-use'
-import BlueBox from '../BlueBox/BlueBox'
-import * as styles from './CourtDocuments.treat'
 import { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+import BlueBox from '../BlueBox/BlueBox'
+import * as styles from './CourtDocuments.treat'
 interface CourtDocumentsProps {
   title: string
   text: string
