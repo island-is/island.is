@@ -42,6 +42,14 @@ export const UserForm: React.FC<Props> = (props) => {
       label: 'Lögreglustjórinn á höfuðborgarsvæðinu',
       value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
     },
+    {
+      label: 'Bráðabirgðadómstóllinn',
+      value: 'Bráðabirgðadómstóllinn',
+    },
+    {
+      label: 'Bráðabirgðalögreglustjórinn',
+      value: 'Bráðabirgðalögreglustjórinn',
+    },
   ]
 
   const usersInstitution = institutions.find(
