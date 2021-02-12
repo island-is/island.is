@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import { CREATE_PDF_PRESIGNED_URL } from '@island.is/application/graphql'
-import { PdfTypes } from '@island.is/application/core'
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
