@@ -8,26 +8,23 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
   return isInsured === true
 }
 
-export const hasActiveApplication = (externalData: ExternalData) => {
+export const hasActiveDraftApplication = (externalData: ExternalData) => {
   const response = externalData?.applications
-  // if (response && response?.status === 'success') {
-  //   const applications = response.data as Applications[]
-  //   const pendingApplications = applications?.filter(
-  //     (application) =>
-  //       application.state === 'draft' ||
-  //       application.state === 'inReview' ||
-  //       application.state === 'missingInfo',
-  //   )
-  //   return pendingApplications?.length > 1
-  // }
+  if (response && typeof response === 'object') {
+    const applications = response.data as Applications[]
+    const pendingApplications = applications?.filter(
+      (application) => application.state === 'draft',
+    )
+    return pendingApplications?.length > 1
+  }
   // If we can not find any pending applications becausee of failure to fetch info, we will return false to allow the user to continue to create a new application
   return false
 }
 
-export const hasOldPendingApplications = (externalData: ExternalData) => {
-  const oldPendingApplications = externalData?.oldPendingApplications
+export const hasPendingApplications = (externalData: ExternalData) => {
+  const pendingApplications = externalData?.pendingApplications
     ?.data as string[]
-  return oldPendingApplications?.length > 0
+  return pendingApplications?.length > 0
 }
 
 export const hasIcelandicAddress = (externalData: ExternalData) => {
@@ -42,9 +39,9 @@ export const hasIcelandicAddress = (externalData: ExternalData) => {
 export const shouldShowModal = (externalData: ExternalData) => {
   return (
     hasHealthInsurance(externalData) ||
-    hasActiveApplication(externalData) ||
-    hasOldPendingApplications(externalData) ||
-    hasIcelandicAddress(externalData)
+    hasPendingApplications(externalData) ||
+    hasIcelandicAddress(externalData) ||
+    hasActiveDraftApplication(externalData)
   )
 }
 

@@ -82,8 +82,8 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'oldPendingApplications',
-              type: 'OldPendingApplications',
+              id: 'pendingApplications',
+              type: 'PendingApplications',
               title: '',
               subTitle: '',
             }),
@@ -113,10 +113,10 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
             buildTextField({
               id: 'debugPendingApplicationsProvider',
-              title: 'oldpending',
+              title: 'pending',
               defaultValue: (application: Application) => {
                 return JSON.stringify(
-                  application.externalData?.oldPendingApplications.data,
+                  application.externalData?.pendingApplications.data,
                 )
               },
             }),
