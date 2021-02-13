@@ -270,8 +270,6 @@ export const StepTwo: React.FC = () => {
 
           return true
         } catch (e) {
-          console.log(e)
-
           return false
         }
       case CaseState.DRAFT:

@@ -20,10 +20,19 @@ const Terms = ({ field, error }: FieldBaseProps) => {
         name={`${id}`}
         error={error}
         large={true}
+        defaultValue={[]}
         options={[
           {
-            value: 'yes',
+            value: 'effect',
             label: formatMessage(terms.residenceChangeCheckbox.label),
+          },
+          {
+            value: 'childSupport',
+            label: 'Ég skil að réttur til meðlagsgreiðslna flyst með barninu',
+          },
+          {
+            value: 'childBenefit',
+            label: 'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
           },
         ]}
       />

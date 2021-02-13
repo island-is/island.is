@@ -61,6 +61,11 @@ export const CaseQuery = gql`
         name
         title
       }
+      registrar {
+        id
+        name
+        title
+      }
       parentCase {
         id
         custodyEndDate

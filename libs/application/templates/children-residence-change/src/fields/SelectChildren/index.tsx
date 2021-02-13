@@ -26,6 +26,7 @@ const SelectChildren = ({ field, application, error }: FieldBaseProps) => {
         id={id}
         disabled={disabled}
         name={`${id}`}
+        defaultValue={[]}
         error={error}
         large={true}
         options={extractChildrenFromApplication(application).map((c) => ({
