@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react'
 import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
-import * as styles from './Login.treat'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
+import * as styles from './Login.treat'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)

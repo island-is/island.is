@@ -37,6 +37,8 @@ let prosecutorAuthCookie: string
 const judgeNationalId = '2222222222' // eslint-disable-line local-rules/disallow-kennitalas
 let judge: TUser
 let judgeAuthCookie: string
+const registrarNationalId = '1111111111'
+let registrar: TUser
 const adminNationalId = '3333333333'
 let admin: TUser
 let adminAuthCookie: string
@@ -44,6 +46,7 @@ let adminAuthCookie: string
 interface CCase extends TCase {
   prosecutorId: string
   judgeId: string
+  registrarId: string
   parentCaseId: string
 }
 
@@ -65,6 +68,10 @@ beforeAll(async () => {
     )
   ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
+
+  registrar = (
+    await request(app.getHttpServer()).get(`/api/user/${registrarNationalId}`)
+  ).body
 
   admin = (
     await request(app.getHttpServer()).get(
@@ -134,6 +141,7 @@ function remainingJudgeCaseData() {
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
     judgeId: judge.id,
+    registrarId: registrar.id,
   }
 }
 
@@ -197,6 +205,7 @@ function caseToCCase(dbCase: Case) {
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
     judge: theCase.judge && userToTUser(theCase.judge),
+    registrar: theCase.registrar && userToTUser(theCase.registrar),
   } as unknown) as CCase
 }
 
@@ -293,6 +302,8 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
   expectUsersToMatch(caseOne.judge, caseTwo.judge)
+  expect(caseOne.registrarId || null).toBe(caseTwo.registrarId || null)
+  expectUsersToMatch(caseOne.registrar, caseTwo.registrar)
   expect(caseOne.parentCaseId || null).toBe(caseTwo.parentCaseId || null)
   expect(caseOne.parentCase || null).toStrictEqual(caseTwo.parentCase || null)
 }
@@ -628,6 +639,7 @@ describe('Case', () => {
           include: [
             { model: User, as: 'prosecutor' },
             { model: User, as: 'judge' },
+            { model: User, as: 'registrar' },
           ],
         })
       })
@@ -636,6 +648,7 @@ describe('Case', () => {
           ...apiCase,
           prosecutor,
           judge,
+          registrar,
         })
       })
   })
@@ -675,6 +688,7 @@ describe('Case', () => {
           ...dbCase,
           prosecutor,
           judge,
+          registrar,
         })
       })
   })
@@ -701,7 +715,6 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.ACCEPTED,
-      judgeId: judge.id,
     })
       .then((value) =>
         request(app.getHttpServer())

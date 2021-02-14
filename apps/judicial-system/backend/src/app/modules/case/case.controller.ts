@@ -108,6 +108,7 @@ const judgeUpdateRule = {
     'prosecutorAppealDecision',
     'prosecutorAppealAnnouncement',
     'judgeId',
+    'registrarId',
   ],
 } as RolesRule
 
@@ -139,6 +140,7 @@ const registrarUpdateRule = {
     'prosecutorAppealDecision',
     'prosecutorAppealAnnouncement',
     'judgeId',
+    'registrarId',
   ],
 } as RolesRule
 
@@ -378,7 +380,6 @@ export class CaseController {
 
     return this.caseService.getSignatureConfirmation(
       existingCase,
-      user,
       documentToken,
     )
   }

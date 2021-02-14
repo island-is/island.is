@@ -167,6 +167,9 @@ export class Case implements TCase {
   @Field(() => User, { nullable: true })
   readonly judge?: User
 
+  @Field(() => User, { nullable: true })
+  readonly registrar?: User
+
   @Field(() => Case, { nullable: true })
   readonly parentCase?: Case
 

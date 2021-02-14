@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
-import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import {
   capitalize,
   formatAccusedByGender,
@@ -14,6 +13,7 @@ import {
   Case,
   CaseGender,
 } from '@island.is/judicial-system/types'
+import AccordionListItem from '../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case

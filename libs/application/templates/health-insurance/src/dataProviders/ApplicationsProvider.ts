@@ -14,6 +14,7 @@ export class ApplicationsProvider extends BasicDataProvider {
       getApplicationsByApplicant(typeId: ${ApplicationTypes.HEALTH_INSURANCE}) {
         id
         state
+        created
       }
     }`
 

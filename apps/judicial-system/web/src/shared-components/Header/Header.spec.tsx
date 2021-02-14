@@ -1,13 +1,14 @@
-import { createMemoryHistory } from 'history'
-import { Header } from './'
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { Router } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
+import { createMemoryHistory } from 'history'
+
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { MockedProvider } from '@apollo/client/testing'
 import { mockAdminQuery, mockProsecutorQuery } from '../../utils/mocks'
 import { UserProvider } from '..'
+import { Header } from './'
 
 describe('Header', () => {
   test('should direct normal users to detention requests route when user click the logo', async () => {

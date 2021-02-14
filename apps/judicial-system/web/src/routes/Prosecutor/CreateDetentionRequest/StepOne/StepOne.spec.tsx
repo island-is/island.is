@@ -2,20 +2,21 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, MemoryRouter } from 'react-router-dom'
-import StepOne from './StepOne'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   mockCaseQueries,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import {
   CaseGender,
   CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import StepOne from './StepOne'
 
 describe('/krafa with an id', () => {
   test('should prefill the inputs with the correct data if id is in the url', async () => {
@@ -52,7 +53,7 @@ describe('/krafa with an id', () => {
 
     expect(
       ((await screen.findByLabelText('Kennitala *')) as HTMLInputElement).value,
-    ).toEqual('111111-1110') // eslint-disable-line local-rules/disallow-kennitalas
+    ).toEqual('000000-0000')
 
     expect(
       ((await screen.findByLabelText('Fullt nafn *')) as HTMLInputElement)
@@ -218,7 +219,7 @@ describe('/krafa without ID', () => {
 
     userEvent.click(await screen.findByRole('radio', { name: 'Kona' }))
 
-    userEvent.type(await screen.findByLabelText('Kennitala *'), '0000000000')
+    userEvent.type(await screen.findByLabelText('Kennitala *'), '000000-0000')
 
     userEvent.type(await screen.findByLabelText('Fullt nafn *'), 'Jon Harring')
 

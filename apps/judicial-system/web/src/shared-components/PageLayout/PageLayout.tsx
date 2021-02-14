@@ -8,9 +8,6 @@ import {
   AlertBanner,
   LinkContext,
 } from '@island.is/island-ui/core'
-import * as styles from './PageLayout.treat'
-import Loading from '../Loading/Loading'
-import Logo from '../Logo/Logo'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   CaseDecision,
@@ -20,6 +17,9 @@ import {
 import { Link } from 'react-router-dom'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
+import Logo from '../Logo/Logo'
+import Loading from '../Loading/Loading'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
