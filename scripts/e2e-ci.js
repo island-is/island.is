@@ -87,6 +87,7 @@ const CMD = {
 
 const build = async () => {
   console.log(`Building ${target}...`)
+  const start = new Date().getTime()
 
   try {
     const buildResult = await pexec(CMD.BUILD)
@@ -97,7 +98,8 @@ const build = async () => {
     process.exit(1)
   }
 
-  console.log('Build complete...')
+  const end = new Date().getTime()
+  console.log(`Build complete in ${Math.round((end - start) / 1000)} seconds.`)
 }
 
 const serve = () => {
