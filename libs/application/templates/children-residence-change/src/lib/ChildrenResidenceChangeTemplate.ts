@@ -36,12 +36,12 @@ const dataSchema = z.object({
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, 'Samþykkja þarf breytingu'),
-  selectDuration: z
-    .enum(['temporary', 'permanent'])
-    .optional()
-    .refine((v) => v, {
-      message: 'Velja þarf valmöguleika',
-    }),
+  // selectDuration: z
+  //   .enum(['temporary', 'permanent'])
+  //   .optional()
+  //   .refine((v) => v, {
+  //     message: 'Velja þarf valmöguleika',
+  //   }),
   approveTerms: z.array(z.string()).length(3, 'Samþykkja þarf alla skilmála'),
 })
 

@@ -631,7 +631,7 @@ describe('Case', () => {
       .then(() =>
         request(app.getHttpServer())
           .get(`/api/cases`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200),
       )
@@ -650,7 +650,7 @@ describe('Case', () => {
 
         return request(app.getHttpServer())
           .get(`/api/case/${dbCase.id}`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200)
       })

@@ -4,7 +4,7 @@ import { Application, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { m } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   maxDaysToGiveOrReceive,
   defaultMonths,
@@ -53,22 +53,26 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
   ) as number
 
   const requestDaysStringKey =
-    requestDaysAnswer === 1 ? m.requestRightsDay : m.requestRightsDays
+    requestDaysAnswer === 1
+      ? parentalLeaveFormMessages.requestRightsDay
+      : parentalLeaveFormMessages.requestRightsDays
 
   const yourRightsWithGivenDaysStringKey =
     maxDays - giveDaysAnswer === 1
-      ? m.yourRightsInMonthsAndDay
-      : m.yourRightsInMonthsAndDays
+      ? parentalLeaveFormMessages.yourRightsInMonthsAndDay
+      : parentalLeaveFormMessages.yourRightsInMonthsAndDays
 
   const giveDaysStringKey =
-    giveDaysAnswer === 1 ? m.giveRightsDay : m.giveRightsDays
+    giveDaysAnswer === 1
+      ? parentalLeaveFormMessages.giveRightsDay
+      : parentalLeaveFormMessages.giveRightsDays
 
   const boxChartKeys =
     requestRightsAnswer === YES
       ? [
           {
             label: () => ({
-              ...m.yourRightsInMonths,
+              ...parentalLeaveFormMessages.yourRightsInMonths,
               values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
@@ -97,7 +101,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
       : [
           {
             label: () => ({
-              ...m.yourRightsInMonths,
+              ...parentalLeaveFormMessages.yourRightsInMonths,
               values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
@@ -121,7 +125,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
       <BoxChart
         application={application}
         titleLabel={() => ({
-          ...m.monthsTotal,
+          ...parentalLeaveFormMessages.monthsTotal,
           values: { months: numberOfBoxes },
         })}
         boxes={numberOfBoxes}
@@ -138,7 +142,10 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
       />
       {showDisclaimer && (
         <Box marginTop={5}>
-          <Text> {formatMessage(m.rightsTotalSmallPrint)}</Text>
+          <Text>
+            {' '}
+            {formatMessage(parentalLeaveFormMessages.rightsTotalSmallPrint)}
+          </Text>
         </Box>
       )}
     </Box>
