@@ -14,14 +14,11 @@ export class OneColumnText {
   @Field()
   title: string
 
-  @Field({ nullable: true })
-  content?: string
-
   @Field(() => Link, { nullable: true })
   link?: Link
 
   @Field(() => [SliceUnion], { nullable: true })
-  contentTest: Array<typeof SliceUnion>
+  content: Array<typeof SliceUnion>
 }
 
 export const mapOneColumnText = ({
@@ -31,9 +28,8 @@ export const mapOneColumnText = ({
   typename: 'OneColumnText',
   id: sys.id,
   title: fields.title ?? '',
-  content: fields.content ?? '',
   link: fields.link ? mapLink(fields.link) : null,
-  contentTest: fields.contentTest
-    ? mapDocument(fields.contentTest, sys.id + ':content')
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':content')
     : [],
 })

@@ -39,10 +39,10 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              {richText(slice.leftContentTest as SliceType[])}
+              {richText(slice.leftContent as SliceType[])}
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              {richText(slice.rightContentTest as SliceType[])}
+              {richText(slice.rightContent as SliceType[])}
             </GridColumn>
           </GridRow>
         </Box>

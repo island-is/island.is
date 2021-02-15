@@ -14,11 +14,8 @@ export class TwoColumnText {
   @Field({ nullable: true })
   rightTitle?: string
 
-  @Field({ nullable: true })
-  rightContent?: string
-
   @Field(() => [SliceUnion], { nullable: true })
-  rightContentTest: Array<typeof SliceUnion>
+  rightContent: Array<typeof SliceUnion>
 
   @Field(() => Link, { nullable: true })
   rightLink?: Link
@@ -26,11 +23,8 @@ export class TwoColumnText {
   @Field({ nullable: true })
   leftTitle?: string
 
-  @Field({ nullable: true })
-  leftContent?: string
-
   @Field(() => [SliceUnion], { nullable: true })
-  leftContentTest: Array<typeof SliceUnion>
+  leftContent: Array<typeof SliceUnion>
 
   @Field(() => Link, { nullable: true })
   leftLink?: Link
@@ -43,15 +37,13 @@ export const mapTwoColumnText = ({
   typename: 'TwoColumnText',
   id: sys.id,
   rightTitle: fields.rightTitle ?? '',
-  rightContent: fields.rightContent ?? '',
-  rightContentTest: fields.rightContentTest
-    ? mapDocument(fields.rightContentTest, sys.id + ':right-content')
+  rightContent: fields.rightContent
+    ? mapDocument(fields.rightContent, sys.id + ':right-content')
     : [],
   rightLink: fields.rightLink ? mapLink(fields.rightLink) : null,
   leftTitle: fields.leftTitle ?? '',
-  leftContent: fields.leftContent ?? '',
-  leftContentTest: fields.leftContentTest
-    ? mapDocument(fields.leftContentTest, sys.id + ':left-content')
+  leftContent: fields.leftContent
+    ? mapDocument(fields.leftContent, sys.id + ':left-content')
     : [],
   leftLink: fields.leftLink ? mapLink(fields.leftLink) : null,
 })

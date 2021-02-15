@@ -132,7 +132,7 @@ const SubPage: Screen<SubPageProps> = ({
             <GridColumn
               span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
             >
-              {richText(subpage.descriptionTest as SliceType[])}
+              {richText(subpage.description as SliceType[])}
             </GridColumn>
             {subpage.links.length > 0 && (
               <GridColumn

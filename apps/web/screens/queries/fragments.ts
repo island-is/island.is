@@ -355,8 +355,7 @@ export const slices = gql`
     __typename
     id
     rightTitle
-    rightContent
-    rightContentTest {
+    rightContent {
       ...HtmlFields
     }
     rightLink {
@@ -364,8 +363,7 @@ export const slices = gql`
       url
     }
     leftTitle
-    leftContent
-    leftContentTest {
+    leftContent {
       ...HtmlFields
     }
     leftLink {
@@ -391,12 +389,11 @@ export const slices = gql`
     __typename
     id
     title
-    content
     link {
       text
       url
     }
-    contentTest {
+    content {
       ...HtmlFields
     }
   }

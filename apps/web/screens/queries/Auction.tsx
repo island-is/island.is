@@ -24,8 +24,7 @@ export const GET_AUCTION_QUERY = gql`
       type
       date
       updatedAt
-      content
-      contentTest {
+      content {
         ...AllSlices
       }
       organization {

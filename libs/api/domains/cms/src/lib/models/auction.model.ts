@@ -21,11 +21,8 @@ export class Auction {
   @Field()
   type: string
 
-  @Field({ nullable: true })
-  content?: string
-
   @Field(() => [SliceUnion], { nullable: true })
-  contentTest: Array<typeof SliceUnion>
+  content: Array<typeof SliceUnion>
 
   @Field(() => Organization)
   organization: Organization
@@ -37,9 +34,8 @@ export const mapAuction = ({ fields, sys }: IAuction): Auction => ({
   title: fields.title ?? '',
   date: fields.date ?? '',
   type: fields.type ?? '',
-  content: fields.content ?? '',
-  contentTest: fields.contentTest
-    ? mapDocument(fields.contentTest, sys.id + ':content')
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':content')
     : [],
   organization: fields.organization
     ? mapOrganization(fields.organization)

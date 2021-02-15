@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { globalStyle, style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const footerBg = style({
@@ -11,4 +11,9 @@ export const footerItemFirst = style({
       flexBasis: '100%',
     },
   },
+})
+export const footerItem = style({})
+
+globalStyle(`${footerItem} p, ${footerItem} a`, {
+  color: '#fff !important',
 })

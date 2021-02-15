@@ -72,8 +72,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       }
       footerItems {
         title
-        content
-        contentTest {
+        content {
           ...HtmlFields
         }
         link {
@@ -91,8 +90,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
     getOrganizationSubpage(input: $input) {
       title
       slug
-      description
-      descriptionTest {
+      description {
         ...HtmlFields
       }
       links {

@@ -26,7 +26,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           >
             {slice.title}
           </Text>
-          {richText(slice.contentTest as SliceType[])}
+          {richText(slice.content as SliceType[])}
           {slice.link && (
             <Link href="#">
               <Button

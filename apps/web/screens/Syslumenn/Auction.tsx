@@ -95,7 +95,7 @@ const Auction: Screen<AuctionProps> = ({
           {auction.organization.title}
         </Text>
         <Text marginBottom={4}>{format(date, 'dd. MMMM yyyy')}</Text>
-        {richText(auction.contentTest as SliceType[])}
+        {richText(auction.content as SliceType[])}
         <Text paddingTop={4}>
           {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
         </Text>

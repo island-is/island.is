@@ -312,10 +312,10 @@ export interface IAuctionFields {
   type: 'first' | 'continued' | 'vehicles'
 
   /** Content */
-  content?: string | undefined
+  content?: Document | undefined
 
-  /** Content Test */
-  contentTest?: Document | undefined
+  /** Content Old */
+  contentOld?: string | undefined
 
   /** Organization */
   organization: IOrganization
@@ -684,10 +684,10 @@ export interface IFooterItemFields {
   link?: ILink | undefined
 
   /** Content */
-  content?: string | undefined
+  content?: Document | undefined
 
-  /** Content Test */
-  contentTest?: Document | undefined
+  /** Content Old */
+  contentOld?: string | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -1671,14 +1671,14 @@ export interface IOneColumnTextFields {
   /** Title */
   title: string
 
+  /** Content Old */
+  contentOld?: string | undefined
+
   /** Content */
-  content?: string | undefined
+  content?: Document | undefined
 
   /** Link */
   link?: ILink | undefined
-
-  /** Content Test */
-  contentTest?: Document | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -1731,46 +1731,6 @@ export interface IOrganization extends Entry<IOrganizationFields> {
     contentType: {
       sys: {
         id: 'organization'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IOrganizationNewsFields {
-  /** Organization */
-  organization?: IOrganization | undefined
-
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Date */
-  date: string
-
-  /** Introduction */
-  introduction?: string | undefined
-
-  /** Featured Image */
-  featuredImage: Asset
-
-  /** Content */
-  content?: Document | undefined
-}
-
-export interface IOrganizationNews extends Entry<IOrganizationNewsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'organizationNews'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1865,11 +1825,11 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
-  /** Description */
-  description?: string | undefined
+  /** Description Old */
+  descriptionOld?: string | undefined
 
-  /** Description Test */
-  descriptionTest?: Document | undefined
+  /** Description */
+  description?: Document | undefined
 
   /** Links */
   links?: ILink[] | undefined
@@ -2886,11 +2846,11 @@ export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
 
-  /** Left Content */
-  leftContent?: string | undefined
+  /** Left Content Old */
+  leftContentOld?: string | undefined
 
-  /** Left Content Test */
-  leftContentTest?: Document | undefined
+  /** Left Content */
+  leftContent?: Document | undefined
 
   /** Left Link */
   leftLink?: ILink | undefined
@@ -2898,11 +2858,11 @@ export interface ITwoColumnTextFields {
   /** Right Title */
   rightTitle?: string | undefined
 
-  /** Right Content */
-  rightContent?: string | undefined
+  /** Right Content Old */
+  rightContentOld?: string | undefined
 
-  /** Right Content Test */
-  rightContentTest?: Document | undefined
+  /** Right Content */
+  rightContent?: Document | undefined
 
   /** Right Link */
   rightLink?: ILink | undefined
@@ -3288,7 +3248,6 @@ export type CONTENT_TYPE =
   | 'offices'
   | 'oneColumnText'
   | 'organization'
-  | 'organizationNews'
   | 'organizationOffice'
   | 'organizationPage'
   | 'organizationSubpage'

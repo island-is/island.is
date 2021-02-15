@@ -15,19 +15,15 @@ export class FooterItem {
   @Field(() => Link, { nullable: true })
   link: Link
 
-  @Field({ nullable: true })
-  content?: string
-
   @Field(() => [SliceUnion], { nullable: true })
-  contentTest: Array<typeof SliceUnion>
+  content: Array<typeof SliceUnion>
 }
 
 export const mapFooterItem = ({ fields, sys }: IFooterItem): FooterItem => ({
   id: sys.id,
   title: fields.title ?? '',
   link: fields.link ? mapLink(fields.link) : null,
-  content: fields.content ?? '',
-  contentTest: fields.contentTest
-    ? mapDocument(fields.contentTest, sys.id + ':content')
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':content')
     : [],
 })

@@ -10,6 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './OrganizationFooter.treat'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { footerBg, footerItem } from './OrganizationFooter.treat'
 
 interface FooterProps {
   organizationPage: OrganizationPage
@@ -73,7 +74,9 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
                         )}
                       </Text>
                     </Box>
-                    {richText(item.contentTest as SliceType[])}
+                    <Box className={styles.footerItem}>
+                      {richText(item.content as SliceType[])}
+                    </Box>
                   </Box>
                 </GridColumn>
               ))}
