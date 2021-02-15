@@ -24,8 +24,8 @@ import { StatusTypes } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
-  isEUCountry,
   requireConfirmationOfResidency,
+  requireWaitingPeriod,
   shouldShowModal,
 } from '../healthInsuranceUtils'
 
@@ -82,8 +82,8 @@ export const HealthInsuranceForm: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              id: 'oldPendingApplications',
-              type: 'OldPendingApplications',
+              id: 'pendingApplications',
+              type: 'PendingApplications',
               title: '',
               subTitle: '',
             }),
@@ -97,26 +97,22 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'debugApplicationsProvider',
               title: 'applications',
               defaultValue: (application: Application) => {
-                return JSON.stringify(
-                  application.externalData?.applications?.data,
-                )
+                return JSON.stringify(application.externalData?.applications)
               },
             }),
             buildTextField({
               id: 'debugHealthInsuranceProvider',
               title: 'health insurance',
               defaultValue: (application: Application) => {
-                return JSON.stringify(
-                  application.externalData?.healthInsurance?.data,
-                )
+                return JSON.stringify(application.externalData?.healthInsurance)
               },
             }),
             buildTextField({
               id: 'debugPendingApplicationsProvider',
-              title: 'oldpending',
+              title: 'pending',
               defaultValue: (application: Application) => {
                 return JSON.stringify(
-                  application.externalData?.oldPendingApplications.data,
+                  application.externalData?.pendingApplications,
                 )
               },
             }),
@@ -183,7 +179,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address?.postalCode || '', //Todo remove || '' before pushing to production
+                }).address?.postalCode || '000', //Todo remove || '000'
             }),
             buildTextField({
               id: 'applicant.city',
@@ -194,6 +190,11 @@ export const HealthInsuranceForm: Form = buildForm({
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
                 }).address?.city,
+            }),
+            buildCustomField({
+              id: 'applicant.citizenship',
+              title: '',
+              component: 'CitizenshipField',
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
@@ -351,10 +352,12 @@ export const HealthInsuranceForm: Form = buildForm({
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
+                const citizenship = (answers as {
+                  applicant: { citizenship: string }
+                })?.applicant?.citizenship
                 return (
                   !!formerCountry &&
-                  !isEUCountry(formerCountry) &&
-                  !requireConfirmationOfResidency(formerCountry)
+                  requireWaitingPeriod(formerCountry, citizenship)
                 )
               },
             }),
@@ -382,10 +385,10 @@ export const HealthInsuranceForm: Form = buildForm({
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
-                return (
-                  isEUCountry(formerCountry) ||
-                  requireConfirmationOfResidency(formerCountry)
-                )
+                const citizenship = (answers as {
+                  applicant: { citizenship: string }
+                })?.applicant?.citizenship
+                return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
             buildRadioField({
@@ -401,10 +404,10 @@ export const HealthInsuranceForm: Form = buildForm({
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
-                return (
-                  isEUCountry(formerCountry) ||
-                  requireConfirmationOfResidency(formerCountry)
-                )
+                const citizenship = (answers as {
+                  applicant: { citizenship: string }
+                })?.applicant?.citizenship
+                return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
             buildTextField({
