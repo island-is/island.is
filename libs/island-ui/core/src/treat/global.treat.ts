@@ -49,6 +49,8 @@ globalStyle('button, input, optgroup, select, textarea', {
   margin: 0,
   fontFamily: 'inherit',
   fontSize: 'inherit',
+  fontWeight: 'inherit',
+  color: 'inherit',
   lineHeight: 'inherit',
 })
 
