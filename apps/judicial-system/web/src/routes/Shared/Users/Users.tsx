@@ -110,7 +110,7 @@ export const Users: React.FC = () => {
                 className={cn(styles.tableRowContainer)}
                 data-testid="detention-requests-table-row"
                 role="button"
-                aria-label="Opna notenda"
+                aria-label="Opna notanda"
                 onClick={() => {
                   handleClick(user)
                 }}
