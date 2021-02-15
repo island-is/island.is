@@ -47,7 +47,7 @@ export class ServiceDetail implements IServiceDetail {
   @IsObject()
   xroadIdentifier!: XroadIdentifier
 
-   @Field(() => String)
-   @IsString()
-   openApiString!: string
+  @Field(() => String)
+  @IsString()
+  openApiString!: string
 }

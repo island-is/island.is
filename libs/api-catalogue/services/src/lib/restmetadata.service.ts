@@ -99,7 +99,7 @@ export class RestMetadataService {
               featureRequest: spec.info['x-links']?.featureRequest ?? '',
             },
             xroadIdentifier: sorted[i],
-            openApiString: JSON.stringify(spec)
+            openApiString: JSON.stringify(spec),
           })
         } else {
           logger.error(
