@@ -34,6 +34,14 @@ const complexOrg = {
   },
 }
 
+const provider = {
+  endpoint: 'https://somedomain.is/api/customer',
+  endpointType: 'REST',
+  apiScope: 'https://somedomain.is/api/customer/.default',
+  xroad: false,
+  externalProviderId: 'b9fe843a1dea446a9c8497a3f1e8ad72',
+}
+
 beforeAll(async () => {
   app = await setup()
 })
@@ -89,6 +97,14 @@ describe('Organisation API', () => {
       .send({})
       .expect(400)
     expect(response.body.error).toBe('Bad Request')
+  })
+
+  it('GET /organisations should return empty array if no organisations exists', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/organisations')
+      .expect(200)
+    const { body } = response
+    expect(body.length).toBe(0)
   })
 
   it('GET /organisations should return list of organisations', async () => {
@@ -294,5 +310,239 @@ describe('Organisation API', () => {
 
     const { body } = putResponse
     expect(body.email).toEqual('sos@sameinadir.is')
+  })
+})
+
+describe('Provider API', () => {
+  it('GET /providers should return empty array if no proviers exists', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/providers')
+      .expect(200)
+    const { body } = response
+    expect(body.length).toBe(0)
+  })
+
+  it('GET /providers should return list of providers', async () => {
+    const postResponse = await request(app.getHttpServer())
+      .post('/organisations')
+      .send(simpleOrg)
+      .expect(201)
+    const { id: organisationId } = postResponse.body
+
+    await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+      })
+      .expect(201)
+
+    const provider2 = {
+      endpoint: 'https://someotherdomain.is/api/customer',
+      endpointType: 'REST',
+      apiScope: 'https://someotherdomain.is/api/customer/.default',
+      xroad: false,
+      externalProviderId: 'b9fe843a1dea446a9c8497a3f1e8ad73',
+    }
+
+    await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider2,
+        organisationId,
+      })
+      .expect(201)
+
+    const getResponse = await request(app.getHttpServer())
+      .get('/providers')
+      .expect(200)
+    const { body } = getResponse
+    expect(body.length).toBe(2)
+  })
+
+  it('POST /providers should register provider', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/organisations')
+      .send(simpleOrg)
+      .expect(201)
+    const { id: organisationId } = response.body
+
+    const response2 = await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+      })
+      .expect(201)
+    const { body } = response2
+    expect(body.id).toBeTruthy()
+    expect(body.organisationId).toEqual(organisationId)
+    expect(body.endpoint).toEqual(provider.endpoint)
+    expect(body.endpointType).toEqual(provider.endpointType)
+    expect(body.apiScope).toEqual(provider.apiScope)
+    expect(body.xroad).toEqual(provider.xroad)
+    expect(body.externalProviderId).toEqual(provider.externalProviderId)
+  })
+
+  it('GET /providers/{id} should return 404 not found', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/providers/123')
+      .expect(404)
+    const { body } = response
+    expect(body.error).toBe('Not Found')
+    expect(body.message).toBe(`A provider with id 123 does not exist`)
+  })
+
+  it('GET /providers/{id} should return provider', async () => {
+    const postOrganisation = await request(app.getHttpServer())
+      .post('/organisations')
+      .send(simpleOrg)
+      .expect(201)
+    const { id: organisationId } = postOrganisation.body
+
+    const postProvider = await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+      })
+      .expect(201)
+    const { id } = postProvider.body
+
+    const getResponse = await request(app.getHttpServer())
+      .get(`/providers/${id}`)
+      .expect(200)
+    const { body } = getResponse
+    expect(body.id).toBeTruthy()
+    expect(body.organisationId).toEqual(organisationId)
+    expect(body.endpoint).toEqual(provider.endpoint)
+    expect(body.endpointType).toEqual(provider.endpointType)
+    expect(body.apiScope).toEqual(provider.apiScope)
+    expect(body.xroad).toEqual(provider.xroad)
+    expect(body.externalProviderId).toEqual(provider.externalProviderId)
+  })
+
+  it('PUT /providers/{id} should update provider', async () => {
+    const postOrganisation = await request(app.getHttpServer())
+      .post('/organisations')
+      .send(simpleOrg)
+      .expect(201)
+    const { id: organisationId } = postOrganisation.body
+
+    const postProvider = await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+      })
+      .expect(201)
+    const { id } = postProvider.body
+
+    const putProvider = await request(app.getHttpServer())
+      .put(`/providers/${id}`)
+      .send({
+        endpoint: 'https://newdomain.is/api/customer',
+        apiScope: 'https://newdomain.is/api/customer/.default',
+      })
+      .expect(200)
+    const { body } = putProvider
+    expect(body.id).toBeTruthy()
+    expect(body.organisationId).toEqual(organisationId)
+    expect(body.endpoint).toEqual('https://newdomain.is/api/customer')
+    expect(body.endpointType).toEqual(provider.endpointType)
+    expect(body.apiScope).toEqual('https://newdomain.is/api/customer/.default')
+    expect(body.xroad).toEqual(provider.xroad)
+    expect(body.externalProviderId).toEqual(provider.externalProviderId)
+  })
+
+  it('POST /providers should allow xroad paths', async () => {
+    const postOrganisation = await request(app.getHttpServer())
+      .post('/organisations')
+      .send(simpleOrg)
+      .expect(201)
+    const { id: organisationId } = postOrganisation.body
+
+    const postProvider = await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+        endpoint: '/k2/IS-DEV/SMUUU/12345/somecorp/api/v1/customer',
+      })
+      .expect(201)
+    const { body } = postProvider
+    expect(body.id).toBeTruthy()
+    expect(body.organisationId).toEqual(organisationId)
+    expect(body.endpoint).toEqual(
+      '/k2/IS-DEV/SMUUU/12345/somecorp/api/v1/customer',
+    )
+    expect(body.endpointType).toEqual(provider.endpointType)
+    expect(body.apiScope).toEqual(provider.apiScope)
+    expect(body.xroad).toEqual(provider.xroad)
+    expect(body.externalProviderId).toEqual(provider.externalProviderId)
+  })
+
+  it('GET /providers/external should return 404 if externalProviderId is not found', async () => {
+    const response = await request(app.getHttpServer())
+      .get(`/providers/external/${provider.externalProviderId}`)
+      .expect(404)
+    const { body } = response
+    expect(body.error).toBe('Not Found')
+    expect(body.message).toBe(
+      `A provider with externalProviderId ${provider.externalProviderId} does not exist`,
+    )
+  })
+
+  it('GET /providers/external should find providers by external id', async () => {
+    const postOrganisation = await request(app.getHttpServer())
+      .post('/organisations')
+      .send(simpleOrg)
+      .expect(201)
+    const { id: organisationId } = postOrganisation.body
+
+    await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+      })
+      .expect(201)
+
+    const getResponse = await request(app.getHttpServer())
+      .get(`/providers/external/${provider.externalProviderId}`)
+      .expect(200)
+    const { body } = getResponse
+
+    expect(body.id).toBeTruthy()
+    expect(body.organisationId).toEqual(organisationId)
+    expect(body.endpoint).toEqual(provider.endpoint)
+    expect(body.endpointType).toEqual(provider.endpointType)
+    expect(body.apiScope).toEqual(provider.apiScope)
+    expect(body.xroad).toEqual(provider.xroad)
+    expect(body.externalProviderId).toEqual(provider.externalProviderId)
+  })
+
+  it('POST /providers externalProviderId should be unique', async () => {
+    const postOrganisation = await request(app.getHttpServer())
+      .post('/organisations')
+      .send(simpleOrg)
+      .expect(201)
+    const { id: organisationId } = postOrganisation.body
+
+    await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+      })
+      .expect(201)
+
+    const response = await request(app.getHttpServer())
+      .post('/providers')
+      .send({
+        ...provider,
+        organisationId,
+      })
+      .expect(500)
   })
 })

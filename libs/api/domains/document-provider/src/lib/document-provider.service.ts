@@ -205,7 +205,7 @@ export class DocumentProviderService {
 
     // Create provider for organisation
     const createProviderDto = {
-      id: credentials.providerId,
+      externalProviderId: credentials.providerId,
       organisationId: organisation.id,
     }
 
@@ -223,6 +223,7 @@ export class DocumentProviderService {
   async updateEndpoint(
     endpoint: string,
     providerId: string,
+    xroad = false,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -235,21 +236,27 @@ export class DocumentProviderService {
 
     const audienceAndScope = new AudienceAndScope(result.audience, result.scope)
 
+    // Find provider by externalProviderId
+    const provider = await this.providersApi.providerControllerFindByExternalId(
+      { id: providerId },
+    )
+
     // Update the provider
     const dto = {
-      id: providerId,
+      id: provider.id,
       updateProviderDto: {
         endpoint,
         endpointType: 'REST',
         apiScope: audienceAndScope.scope,
+        xroad,
       },
     }
 
-    const provider = await this.providersApi.providerControllerUpdateProvider(
+    const updatedProvider = await this.providersApi.providerControllerUpdateProvider(
       dto,
     )
 
-    if (!provider) {
+    if (!updatedProvider) {
       throw new ApolloError('Could not update provider.')
     }
 

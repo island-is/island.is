@@ -53,23 +53,27 @@ export class Provider extends Model<Provider> {
   @ApiProperty()
   apiScope?: string
 
-  // @Column({
-  //   type: DataType.BOOLEAN,
-  // })
-  // @ApiProperty()
-  // xroad?: string
-
-  // @Column({
-  //   type: DataType.STRING,
-  // })
-  // @ApiProperty()
-  // externalProviderId?: string
-
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
   createdBy?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  xroad!: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    unique: true,
+  })
+  @ApiProperty()
+  externalProviderId?: string
 
   @CreatedAt
   @ApiProperty()
