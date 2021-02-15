@@ -86,7 +86,6 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
-      pageDescription={subpage.description}
       organizationPage={organizationPage}
       pageFeaturedImage={
         subpage.featuredImage ?? organizationPage.featuredImage
