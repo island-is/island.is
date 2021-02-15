@@ -39,7 +39,7 @@ export const ChangeUser: React.FC = () => {
   }, [data, id, setUser])
 
   useEffect(() => {
-    document.title = 'Breyta notenda - Réttarvörslugátt'
+    document.title = 'Breyta notanda - Réttarvörslugátt'
   }, [])
 
   const saveUser = async (user: User) => {
