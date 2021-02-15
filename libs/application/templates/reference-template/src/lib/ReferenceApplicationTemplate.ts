@@ -24,8 +24,8 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 const ExampleSchema = z.object({
-  name: z.string().nonempty().max(256),
   person: z.object({
+    name: z.string().nonempty().max(256),
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
       if (isNaN(asNumber)) {
