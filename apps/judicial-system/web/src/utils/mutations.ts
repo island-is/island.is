@@ -78,6 +78,10 @@ export const CreateCaseMutation = gql`
         name
         title
       }
+      registrar {
+        name
+        title
+      }
       parentCase {
         id
       }

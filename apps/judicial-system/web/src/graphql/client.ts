@@ -1,10 +1,10 @@
+import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client'
 import authLink from './authLink'
 import errorLink from './errorLink'
 import httpLink from './httpLink'
 import retryLink from './retryLink'
 
 import { possibleTypes } from './possibleTypes.json'
-import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client'
 
 const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 

@@ -3,9 +3,9 @@ import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 
 import { api } from '@island.is/judicial-system-web/src/services'
-import * as styles from './Header.treat'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import * as styles from './Header.treat'
 
 interface Props {
   pathname: string

@@ -24,7 +24,6 @@ import {
   CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -40,6 +39,7 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import * as styles from './DetentionRequests.treat'
 
 type directionType = 'ascending' | 'descending'
 interface SortConfig {
@@ -231,7 +231,7 @@ export const DetentionRequests: React.FC = () => {
           // TODO: Handle error
         }
       } catch (e) {
-        console.log(e)
+        // TODO: Handle error
       }
     }
   }
