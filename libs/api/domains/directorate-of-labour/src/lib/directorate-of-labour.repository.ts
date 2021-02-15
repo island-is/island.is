@@ -28,7 +28,9 @@ export class DirectorateOfLabourRepository {
       ]
     }
 
+    console.log('getting unions')
     const { unions } = await this.unionApi.unionGetUnions()
+    console.log('done')
 
     if (unions) {
       return unions
@@ -37,7 +39,7 @@ export class DirectorateOfLabourRepository {
     throw new Error('Could not fetch unions')
   }
 
-  async getPensionFunds(): Promise<PensionFund[]> {
+  private async getAllPensionFunds(): Promise<PensionFund[]> {
     if (isRunningInDevelopment) {
       return [
         {
@@ -54,6 +56,18 @@ export class DirectorateOfLabourRepository {
     }
 
     throw new Error('Could not fetch pension funds')
+  }
+
+  async getPensionFunds(): Promise<PensionFund[]> {
+    const pensionFunds = await this.getAllPensionFunds()
+
+    return pensionFunds.filter((pensionFund) => pensionFund.id.startsWith('L'))
+  }
+
+  async getPrivatePensionFunds(): Promise<PensionFund[]> {
+    const pensionFunds = await this.getAllPensionFunds()
+
+    return pensionFunds.filter((pensionFund) => pensionFund.id.startsWith('X'))
   }
 
   async getParentalLeavesEntitlements(

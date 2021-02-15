@@ -35,20 +35,30 @@ export class ParentalLeaveService {
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
-    const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(application)
 
-    const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
-      nationalRegistryId,
-      parentalLeave: parentalLeaveDTO,
-    })
-
-    if (response.id !== null) {
-      await this.sharedTemplateAPIService.sendEmail(
-        generateApplicationApprovedEmail,
+    try {
+      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
       )
-    } else {
-      throw new Error('Could not send application')
+
+
+      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+        {
+          nationalRegistryId,
+          parentalLeave: parentalLeaveDTO,
+        },
+      )
+
+      if (response.id !== null) {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationApprovedEmail,
+          application,
+        )
+      } else {
+        throw new Error('Could not send application')
+      }
+    } catch (e) {
+      console.log('Failed to send application', e)
     }
   }
 }

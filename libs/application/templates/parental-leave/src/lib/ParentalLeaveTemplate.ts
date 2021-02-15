@@ -371,11 +371,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (application.assignees.includes(id) && application.state !== 'draft') {
+      return Roles.ASSIGNEE
+    }
     if (id === application.applicant) {
       return Roles.APPLICANT
-    }
-    if (application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
     }
     return undefined
   },
