@@ -30,6 +30,7 @@ export enum ServicePortalPath {
 
   // Electronic Documents
   ElectronicDocumentsRoot = '/rafraen-skjol',
+  ElectronicDocumentsFileDownload = '/rafraen-skjol/:id',
 
   // Heilsa
   HealthRoot = '/heilsa',
