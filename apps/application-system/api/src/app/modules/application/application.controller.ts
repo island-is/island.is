@@ -54,6 +54,7 @@ import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
+import { UploadSignedDocumentDto } from './dto/uploadSignedDocument.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -596,9 +597,6 @@ export class ApplicationController {
       documentToken,
     } = await this.fileService.requestFileSignature(application, type)
 
-    console.log({ controlCode })
-    console.log({ documentToken })
-
     const { updatedApplication } = await this.applicationService.update(
       application.id,
       {
@@ -613,5 +611,26 @@ export class ApplicationController {
     )
 
     return updatedApplication
+  }
+
+  @Put('application/:id/uploadSignedDocument')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async uploadSignedDocument(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: UploadSignedDocumentDto,
+  ): Promise<ApplicationResponseDto> {
+    const { documentToken } = input
+    await this.fileService.uploadSignedDocument(application, documentToken)
+
+    return application
   }
 }
