@@ -50,7 +50,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 </Tag>
               ) : userProfile?.email && userProfile?.emailVerified === false ? (
                 <Link to={ServicePortalPath.UserProfileEditEmail}>
-                  <Tag variant="red">
+                  <Tag variant="red" disabled>
                     {formatMessage({
                       id: 'sp.settings:not-verified',
                       defaultMessage: 'Óstaðfest',
@@ -85,7 +85,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
               ) : userProfile?.mobilePhoneNumber &&
                 userProfile?.mobilePhoneNumberVerified === false ? (
                 <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
-                  <Tag variant="red">
+                  <Tag variant="red" disabled>
                     {formatMessage({
                       id: 'sp.settings:not-verified',
                       defaultMessage: 'Óstaðfest',
