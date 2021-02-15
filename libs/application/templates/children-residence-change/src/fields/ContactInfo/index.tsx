@@ -15,6 +15,7 @@ const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
   const { setValue } = useFormContext()
   const parent = extractParentFromApplication(application)
   // TODO: add validation
+  console.log({error})
   return (
     <>
       <Box marginTop={3}>
@@ -31,21 +32,22 @@ const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
       <Box marginTop={5}>
         <Controller
           name="email"
-          defaultValue={getValue('contactInfo')?.[0]}
+          defaultValue={getValue('email')}
           render={({ value, onChange }) => {
             return (
               <Input
-                id={`${id}[0]`}
-                name={`${id}[0]`}
+                id="email"
+                name="email"
                 backgroundColor="blue"
                 type="text"
                 label={formatMessage(otherParent.inputs.emailLabel)}
                 value={value}
                 hasError={!!error}
+                // errorMessage={error?.email}
                 required={true}
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(`${id}[0]`, e.target.value)
+                  setValue('email', e.target.value)
                 }}
               />
             )
@@ -54,22 +56,23 @@ const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
       </Box>
       <Box marginTop={2}>
         <Controller
-          name="phonenumber"
-          defaultValue={getValue('contactInfo')?.[1]}
+          name="phoneNumber"
+          defaultValue={getValue('phoneNumber')}
           render={({ value, onChange }) => {
             return (
               <Input
-                id={`${id}[1]`}
-                name={`${id}[1]`}
+                id="phoneNumber"
+                name="phoneNumber"
                 backgroundColor="blue"
                 type="tel"
                 label={formatMessage(otherParent.inputs.phoneNumberLabel)}
                 value={value}
                 required={true}
                 hasError={!!error}
+                // errorMessage={error?.phoneNumber}
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(`${id}[1]`, e.target.value)
+                  setValue('phoneNumber', e.target.value)
                 }}
               />
             )

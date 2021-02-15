@@ -56,6 +56,14 @@ export function extractAnswersToSubmitFromScreen(
     const repeaterId = baseId.split('[')[0] ?? ''
     return pick(data, [repeaterId])
   }
+  console.log('screen------', screen)
+  if (screen.type === 'CUSTOM' && (screen.childInputIds as string[])?.length > 1) {
+    console.log('fer ég hingað?')
+    return pick(
+        data,
+        (screen.childInputIds as string[]).map((id) => id),
+      )
+  }
   switch (screen.type) {
     case FormItemTypes.MULTI_FIELD:
       return pick(

@@ -95,6 +95,7 @@ const Screen: FC<ScreenProps> = ({
   renderLastScreenButton,
   screen,
 }) => {
+  console.log('screeen toop----', screen)
   const { answers: formValue, externalData, id: applicationId } = application
   const { formatMessage } = useLocale()
   const hookFormData = useForm<FormValue, ResolverContext>({
@@ -227,7 +228,7 @@ const Screen: FC<ScreenProps> = ({
     const target = isMobile ? headerHeight : 0
     window.scrollTo(0, target)
   }, [activeScreenIndex, isMobile])
-
+  console.log('screen', screen)
   return (
     <FormProvider {...hookFormData}>
       <Box

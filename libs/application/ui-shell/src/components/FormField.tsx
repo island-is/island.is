@@ -31,7 +31,7 @@ const FormField: FC<{
   if (!field.isNavigable) {
     return null
   }
-
+  console.log({ errors })
   const error = getValueViaPath(errors, field.id, undefined) as
     | string
     | undefined
