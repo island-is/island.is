@@ -28,9 +28,11 @@ export const GET_LIFE_EVENTS_QUERY = gql`
       intro
       thumbnail {
         url
+        title
       }
       image {
         url
+        title
       }
     }
   }

@@ -64,8 +64,8 @@ export const routesTemplate = {
     en: '/en/organizations/[slug]/[subSlug]',
   },
   lifeeventpage: {
-    is: '/lifsvidburdur/[slug]',
-    en: '/en/life-event/[slug]',
+    is: '/lifsvidburdir/[slug]',
+    en: '/en/life-events/[slug]',
   },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',

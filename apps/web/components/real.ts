@@ -12,6 +12,7 @@
  */
 
 export * from './Card/Card'
+export * from './CardsSlider/CardsSlider'
 export * from './Categories/Categories'
 export * from './Header/Header'
 export * from './Sidebar/Sidebar'
