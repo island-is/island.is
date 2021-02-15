@@ -291,16 +291,7 @@ const Category: Screen<CategoryProps> = ({
             }}
           />
         </Box>
-        <Box paddingBottom={[5, 5, 10]}>
-          <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
-            {category.title}
-          </Text>
-          <Text variant="intro" as="p">
-            {category.description}
-          </Text>
-        </Box>
-
-        <Box display={['block', 'block', 'none']} marginBottom={4}>
+        <Box display={['block', 'block', 'none']}>
           <Navigation
             baseId="mobileNav"
             colorScheme="purple"
@@ -319,6 +310,14 @@ const Category: Screen<CategoryProps> = ({
             title={n('sidebarHeader')}
             activeItemTitle={category.title}
           />
+        </Box>
+        <Box paddingBottom={[5, 5, 10]}>
+          <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
+            {category.title}
+          </Text>
+          <Text variant="intro" as="p">
+            {category.description}
+          </Text>
         </Box>
         <Stack space={2}>
           {sortedGroups.map(({ groupSlug }, index) => {
