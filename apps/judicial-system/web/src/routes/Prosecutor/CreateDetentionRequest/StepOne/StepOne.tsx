@@ -453,6 +453,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             </Box>
             <Box marginBottom={2}>
               <Input
+                data-testid="defenderName"
                 name="defenderName"
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
@@ -474,6 +475,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
               />
             </Box>
             <Input
+              data-testid="defenderEmail"
               name="defenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
