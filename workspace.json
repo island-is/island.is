@@ -244,6 +244,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run air-discount-scheme-web:build-next:production",
+              "yarn nx run air-discount-scheme-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/air-discount-scheme/web",
@@ -260,17 +269,26 @@
             }
           }
         },
-        "serve": {
-          "builder": "@nrwl/next:server",
+        "build-server": {
+          "builder": "@nrwl/node:build",
           "options": {
-            "buildTarget": "air-discount-scheme-web:build",
-            "dev": true
+            "outputPath": "dist/apps/air-discount-scheme/web",
+            "main": "apps/air-discount-scheme/web/server.ts",
+            "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
-              "buildTarget": "air-discount-scheme-web:build:production",
-              "dev": false
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "air-discount-scheme-web:build-server"
           }
         },
         "export": {
@@ -320,6 +338,7 @@
           "options": {
             "cypressConfig": "apps/air-discount-scheme/web-e2e/cypress.json",
             "tsConfig": "apps/air-discount-scheme/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "air-discount-scheme-web:serve"
           },
           "configurations": {
@@ -1828,6 +1847,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run auth-admin-web:build-next:production",
+              "yarn nx run auth-admin-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/auth-admin-web",
@@ -1837,18 +1865,26 @@
             "production": {}
           }
         },
-        "serve": {
-          "builder": "@nrwl/next:server",
+        "build-server": {
+          "builder": "@nrwl/node:build",
           "options": {
-            "buildTarget": "auth-admin-web:build",
-            "dev": true,
-            "proxyConfig": "apps/auth-admin-web/proxy.config.json"
+            "outputPath": "dist/apps/auth-admin-web",
+            "main": "apps/auth-admin-web/server.ts",
+            "tsConfig": "apps/auth-admin-web/tsconfig.json",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
-              "buildTarget": "auth-admin-web:build:production",
-              "dev": false
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "auth-admin-web:build-server"
           }
         },
         "export": {
@@ -1888,6 +1924,7 @@
           "options": {
             "cypressConfig": "apps/auth-admin-web-e2e/cypress.json",
             "tsConfig": "apps/auth-admin-web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "auth-admin-web:serve"
           },
           "configurations": {
@@ -2553,6 +2590,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run gjafakort-web:build-next:production",
+              "yarn nx run gjafakort-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/gjafakort/web",
@@ -2569,6 +2615,22 @@
             }
           }
         },
+        "build-server": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/gjafakort/web",
+            "main": "apps/gjafakort/web/server.ts",
+            "tsConfig": "apps/gjafakort/web/tsconfig.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
         "translations": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2577,16 +2639,9 @@
           }
         },
         "serve": {
-          "builder": "@nrwl/next:server",
+          "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "gjafakort-web:build",
-            "dev": true
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "gjafakort-web:build:production",
-              "dev": false
-            }
+            "buildTarget": "gjafakort-web:build-server"
           }
         },
         "export": {
@@ -2626,6 +2681,7 @@
           "options": {
             "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
             "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "gjafakort-web:serve"
           },
           "configurations": {
@@ -2665,6 +2721,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/infra-express-server/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "infra-metrics": {
+      "root": "libs/infra-metrics",
+      "sourceRoot": "libs/infra-metrics/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/infra-metrics/tsconfig.lib.json",
+              "libs/infra-metrics/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-metrics/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-metrics/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -2717,6 +2799,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/infra-nest-server/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "infra-next-server": {
+      "root": "libs/infra-next-server",
+      "sourceRoot": "libs/infra-next-server/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/infra-next-server/tsconfig.lib.json",
+              "libs/infra-next-server/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-next-server/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-next-server/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -3569,6 +3677,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run reference-next-app:build-next:production",
+              "yarn nx run reference-next-app:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/reference-next-app",
@@ -3585,17 +3702,26 @@
             }
           }
         },
-        "serve": {
-          "builder": "@nrwl/next:server",
+        "build-server": {
+          "builder": "@nrwl/node:build",
           "options": {
-            "buildTarget": "reference-next-app:build",
-            "dev": true
+            "outputPath": "dist/apps/reference-next-app",
+            "main": "apps/reference-next-app/server.ts",
+            "tsConfig": "apps/reference-next-app/tsconfig.json",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
-              "buildTarget": "reference-next-app:build:production",
-              "dev": false
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "reference-next-app:build-server"
           }
         },
         "export": {
@@ -4947,6 +5073,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run skilavottord-web:build-next:production",
+              "yarn nx run skilavottord-web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/skilavottord/web",
@@ -4963,18 +5098,26 @@
             }
           }
         },
-        "serve": {
-          "builder": "@nrwl/next:server",
+        "build-server": {
+          "builder": "@nrwl/node:build",
           "options": {
-            "buildTarget": "skilavottord-web:build",
-            "dev": true,
-            "proxyConfig": "apps/skilavottord/web/proxy.conf.json"
+            "outputPath": "dist/apps/skilavottord/web",
+            "main": "apps/skilavottord/web/server.ts",
+            "tsConfig": "apps/skilavottord/web/tsconfig.json",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
-              "buildTarget": "skilavottord-web:build:production",
-              "dev": false
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "skilavottord-web:build-server"
           }
         },
         "export": {
@@ -5120,6 +5263,7 @@
           "options": {
             "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
             "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "skilavottord-web:serve"
           },
           "configurations": {
@@ -5203,6 +5347,15 @@
       "schematics": {},
       "architect": {
         "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run web:build-next:production",
+              "yarn nx run web:build-server:production"
+            ]
+          }
+        },
+        "build-next": {
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/web",
@@ -5219,18 +5372,26 @@
             }
           }
         },
-        "serve": {
-          "builder": "@nrwl/next:server",
+        "build-server": {
+          "builder": "@nrwl/node:build",
           "options": {
-            "buildTarget": "web:build",
-            "dev": true,
-            "proxyConfig": "apps/web/proxy.config.json"
+            "outputPath": "dist/apps/web",
+            "main": "apps/web/server.ts",
+            "tsConfig": "apps/web/tsconfig.json",
+            "maxWorkers": 2
           },
           "configurations": {
             "production": {
-              "buildTarget": "web:build:production",
-              "dev": false
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "web:build-server"
           }
         },
         "export": {
@@ -5276,6 +5437,7 @@
           "options": {
             "cypressConfig": "apps/web-e2e/cypress.json",
             "tsConfig": "apps/web-e2e/tsconfig.e2e.json",
+            "baseUrl": "http://localhost:4200",
             "devServerTarget": "web:serve"
           },
           "configurations": {

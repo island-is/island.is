@@ -7,9 +7,8 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
-import { runMetricServer } from './runMetricServer'
 import { logger, LoggingModule } from '@island.is/logging'
-import { collectDefaultMetrics } from 'prom-client'
+import { startMetricServer } from '@island.is/infra-metrics'
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
@@ -70,7 +69,7 @@ const startServer = async (app: INestApplication, port = 3333) => {
       context: 'Bootstrap',
     })
   })
-  await runMetricServer(metricsPort)
+  await startMetricServer(metricsPort)
 }
 
 function setupOpenApi(
@@ -93,8 +92,6 @@ export const bootstrap = async (options: RunServerOptions) => {
     description: 'Generate OpenAPI schema into the specified file',
     type: 'string',
   }).argv
-
-  collectDefaultMetrics()
 
   const app = await createApp(options)
 
