@@ -27,12 +27,13 @@ export class ApplicationsProvider extends BasicDataProvider {
 
         return Promise.resolve(response.data?.getApplicationsByApplicant)
       })
-      .catch(() => {
-        return this.handleError('An error occured. Please try again.')
+      .catch((error) => {
+        return this.handleError(error)
       })
   }
 
   handleError(error: any) {
+    console.log(`An error occured: ${JSON.stringify(error)}`)
     return Promise.resolve(error ? error : 'error')
   }
 
