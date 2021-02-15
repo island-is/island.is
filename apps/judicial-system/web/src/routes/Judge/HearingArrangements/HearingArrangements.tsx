@@ -8,6 +8,7 @@ import {
   Select,
   Text,
   Option,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -131,8 +132,18 @@ export const HearingArrangements: React.FC = () => {
       return { label: judge.name, value: judge.id }
     })
 
+  const registrars = (userData?.users || [])
+    .filter((user: User) => user.role === UserRole.REGISTRAR)
+    .map((registrar: User) => {
+      return { label: registrar.name, value: registrar.id }
+    })
+
   const defaultJudge = judges?.find(
     (judge: Option) => judge.value === workingCase?.judge?.id,
+  )
+
+  const defaultRegistrar = registrars?.find(
+    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
 
   useEffect(() => {
@@ -177,7 +188,11 @@ export const HearingArrangements: React.FC = () => {
     ]
 
     if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields) || !workingCase.judge)
+      setIsStepIllegal(
+        isNextDisabled(requiredFields) ||
+          !workingCase.judge ||
+          !workingCase.registrar,
+      )
     }
   }, [workingCase, isStepIllegal])
 
@@ -188,6 +203,22 @@ export const HearingArrangements: React.FC = () => {
       const judge = userData?.users.find((j) => j.id === id)
 
       setWorkingCase({ ...workingCase, judge: judge })
+    }
+  }
+
+  const setRegistrar = (id: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'registrarId',
+        id,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      const registrar = userData?.users.find((r) => r.id === id)
+
+      setWorkingCase({ ...workingCase, registrar: registrar })
     }
   }
 
@@ -225,16 +256,39 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Dómari
+                Dómari{' '}
+                <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
               </Text>
             </Box>
             <Select
               name="judge"
               label="Veldu dómara"
+              placeholder="Velja héraðsdómara"
               defaultValue={defaultJudge}
               options={judges}
               onChange={(selectedOption: ValueType<ReactSelectOption>) =>
                 setJudge((selectedOption as ReactSelectOption).value.toString())
+              }
+              required
+            />
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómritari{' '}
+                <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+              </Text>
+            </Box>
+            <Select
+              name="registrar"
+              label="Veldu dómritara"
+              placeholder="Velja dómritara"
+              defaultValue={defaultRegistrar}
+              options={registrars}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
               }
               required
             />

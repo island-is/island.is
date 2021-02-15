@@ -1,17 +1,18 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { SignedVerdictOverview } from './SignedVerdictOverview'
 import { MemoryRouter, Route } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import '@testing-library/jest-dom'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { SignedVerdictOverview } from './SignedVerdictOverview'
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {

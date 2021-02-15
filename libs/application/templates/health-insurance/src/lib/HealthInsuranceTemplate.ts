@@ -39,6 +39,7 @@ const HealthInsuranceSchema = z.object({
     city: z.string().nonempty(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
+    citizenship: z.string().optional(),
   }),
   status: z.enum([
     StatusTypes.EMPLOYED,

@@ -1088,35 +1088,6 @@
         }
       }
     },
-    "application-api-template-utils": {
-      "root": "libs/application/api-template-utils",
-      "sourceRoot": "libs/application/api-template-utils/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/api-template-utils/tsconfig.lib.json",
-              "libs/application/api-template-utils/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/api-template-utils/**"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/application/api-template-utils/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "application-core": {
       "root": "libs/application/core",
       "sourceRoot": "libs/application/core/src",
@@ -1144,7 +1115,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/core/src/templates/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/core/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1398,7 +1369,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
           }
         },
         "docker-static": {}
@@ -1431,6 +1402,35 @@
               "**/node_modules/**",
               "!apps/application-system/form-e2e/**/*"
             ]
+          }
+        }
+      }
+    },
+    "application-template-api-modules": {
+      "root": "libs/application/template-api-modules",
+      "sourceRoot": "libs/application/template-api-modules/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/template-api-modules/tsconfig.lib.json",
+              "libs/application/template-api-modules/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/template-api-modules/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/template-api-modules/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -1551,7 +1551,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/driving-lessons/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-lessons/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1586,7 +1586,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/driving-license/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1685,7 +1685,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/parental-leave/src/lib/messages.ts"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/parental-leave/src/lib/messages.ts"
           }
         }
       }
@@ -1720,7 +1720,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/passport/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1755,7 +1755,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/templates/reference-template/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/reference-template/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1816,7 +1816,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/ui-shell/src/{lib,components}/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-shell/src/{lib,components}/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -2154,6 +2154,34 @@
             "passWithNoTests": true
           }
         }
+      }
+    },
+    "contentful-translation-extension": {
+      "root": "libs/contentful-translation-extension",
+      "sourceRoot": "libs/contentful-translation-extension/src",
+      "projectType": "",
+      "schematics": {},
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-translation-extension/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "contentful-extension-scripts start --input libs/contentful-translation-extension --output dist/contentful-translation-extension --id translation-extension-v2 --name translation-extension-v2 --space-id 8k0h54kbe6bj --field-types Object --mt {args.token}"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "contentful-extension-scripts build --input libs/contentful-translation-extension --output dist/contentful-translation-extension"
+          }
+        },
+        "docker-static": {}
       }
     },
     "dokobit-signing": {
@@ -3598,7 +3626,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract 'apps/reference-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/reference-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
           }
         }
       }
@@ -3684,7 +3712,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}"
           }
         },
         "docker-static": {}
@@ -3723,7 +3751,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/applications/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+                "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/applications/src/{lib,components,screens}/**/*.{js,ts,tsx}"
               }
             ]
           }
@@ -3760,7 +3788,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3821,7 +3849,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/core/src/{lib,components,helpers,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3885,7 +3913,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/documents/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -3977,7 +4005,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -4041,7 +4069,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -4076,7 +4104,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/finance/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -4140,7 +4168,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -4175,7 +4203,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/settings/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
         }
       }
@@ -4237,8 +4265,7 @@
             "jestConfig": "apps/services/auth-admin-api/jest.config.js",
             "passWithNoTests": true
           }
-        },
-        "docker-express": {}
+        }
       }
     },
     "services-auth-api": {

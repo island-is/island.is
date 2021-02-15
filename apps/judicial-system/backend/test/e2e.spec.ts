@@ -15,6 +15,7 @@ import {
   NotificationType,
   CaseType,
   UserRole,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -33,6 +34,7 @@ let app: INestApplication
 let prosecutor: TUser
 let prosecutorAuthCookie: string
 let judge: TUser
+let registrar: TUser
 let judgeAuthCookie: string
 let admin: TUser
 let adminAuthCookie: string
@@ -40,6 +42,7 @@ let adminAuthCookie: string
 interface CCase extends TCase {
   prosecutorId: string
   judgeId: string
+  registrarId: string
   parentCaseId: string
 }
 
@@ -54,6 +57,9 @@ beforeAll(async () => {
 
   judge = (await request(app.getHttpServer()).get('/api/user/2222222222')).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
+
+  registrar = (await request(app.getHttpServer()).get('/api/user/1111111111'))
+    .body
 
   admin = (await request(app.getHttpServer()).get('/api/user/3333333333')).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
@@ -106,7 +112,8 @@ function remainingJudgeCaseData() {
     courtAttendees: 'Court Attendees',
     policeDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-    accusedPlea: 'Accused Plea',
+    accusedPleaDecision: AccusedPleaDecision.ACCEPT,
+    accusedPleaAnnouncement: 'Accused Plea',
     litigationPresentations: 'Litigation Presentations',
     ruling: 'Ruling',
     decision: CaseDecision.ACCEPTING,
@@ -118,6 +125,7 @@ function remainingJudgeCaseData() {
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
     judgeId: judge.id,
+    registrarId: registrar.id,
   }
 }
 
@@ -181,6 +189,7 @@ function caseToCCase(dbCase: Case) {
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
     judge: theCase.judge && userToTUser(theCase.judge),
+    registrar: theCase.registrar && userToTUser(theCase.registrar),
   } as unknown) as CCase
 }
 
@@ -245,7 +254,12 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments || null).toStrictEqual(
     caseTwo.courtDocuments || null,
   )
-  expect(caseOne.accusedPlea || null).toBe(caseTwo.accusedPlea || null)
+  expect(caseOne.accusedPleaDecision || null).toBe(
+    caseTwo.accusedPleaDecision || null,
+  )
+  expect(caseOne.accusedPleaAnnouncement || null).toBe(
+    caseTwo.accusedPleaAnnouncement || null,
+  )
   expect(caseOne.litigationPresentations || null).toBe(
     caseTwo.litigationPresentations || null,
   )
@@ -271,7 +285,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.prosecutorAppealAnnouncement || null,
   )
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
+  expect(caseOne.registrarId || null).toBe(caseTwo.registrarId || null)
   expectUsersToMatch(caseOne.judge, caseTwo.judge)
+  expectUsersToMatch(caseOne.registrar, caseTwo.registrar)
   expect(caseOne.parentCaseId || null).toBe(caseTwo.parentCaseId || null)
   expect(caseOne.parentCase || null).toStrictEqual(caseTwo.parentCase || null)
 }
@@ -595,6 +611,7 @@ describe('Case', () => {
           include: [
             { model: User, as: 'prosecutor' },
             { model: User, as: 'judge' },
+            { model: User, as: 'registrar' },
           ],
         })
       })
@@ -603,6 +620,7 @@ describe('Case', () => {
           ...apiCase,
           prosecutor,
           judge,
+          registrar,
         })
       })
   })
@@ -613,7 +631,7 @@ describe('Case', () => {
       .then(() =>
         request(app.getHttpServer())
           .get(`/api/cases`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200),
       )
@@ -632,7 +650,7 @@ describe('Case', () => {
 
         return request(app.getHttpServer())
           .get(`/api/case/${dbCase.id}`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200)
       })
@@ -642,6 +660,7 @@ describe('Case', () => {
           ...dbCase,
           prosecutor,
           judge,
+          registrar,
         })
       })
   })
@@ -668,7 +687,6 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.ACCEPTED,
-      judgeId: judge.id,
     })
       .then((value) =>
         request(app.getHttpServer())

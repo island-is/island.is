@@ -1,10 +1,11 @@
-import { createMemoryHistory } from 'history'
-import { Header } from './'
 import React from 'react'
 import { render } from '@testing-library/react'
 import { Router } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
+import { createMemoryHistory } from 'history'
+
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { Header } from './'
 
 describe('Header', () => {
   test('should direct users to detention requests route when user click the logo', () => {

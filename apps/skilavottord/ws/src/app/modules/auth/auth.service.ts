@@ -27,6 +27,9 @@ const RECYCLINGCOMPANY = [
   /* Fura   */
   '2211692989', // Úlfar Haraldsson admin later
   '2808714009', // Dagný Michelle Jónsdóttir
+  '3108654949', // Ólafía Sigurjónsdóttir
+  '2512942099', // Marjón Pétur Benediktsson
+  '0306942609', // Karítas Þorvaldsdóttir
 ]
 
 const RECYCLINGFUND = [

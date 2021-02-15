@@ -1,12 +1,13 @@
 import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import { BrowserRouter, MemoryRouter, Route } from 'react-router-dom'
-import Login from './Login'
+import fetchMock from 'fetch-mock'
+import { MockedProvider } from '@apollo/client/testing'
+
 import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
 import { api } from '@island.is/judicial-system-web/src/services'
-import fetchMock from 'fetch-mock'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import { MockedProvider } from '@apollo/client/testing'
+import Login from './Login'
 
 describe('Login route', () => {
   fetchMock.mock('/api/auth/logout', 200)

@@ -1,20 +1,21 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import StepThree from './StepThree'
 import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   CaseCustodyProvisions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   mockCaseQueries,
   mockProsecutorQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import StepThree from './StepThree'
 
 describe('Create detention request, step three', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

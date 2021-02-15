@@ -20,6 +20,7 @@ import {
   CaseGender,
   CaseDecision,
   CaseType,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
@@ -266,11 +267,19 @@ export class Case extends Model<Case> {
   courtDocuments: string[]
 
   @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(AccusedPleaDecision),
+  })
+  @ApiProperty({ enum: AccusedPleaDecision })
+  accusedPleaDecision: AccusedPleaDecision
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  accusedPlea: string
+  accusedPleaAnnouncement: string
 
   @Column({
     type: DataType.STRING,
@@ -357,6 +366,18 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  registrarId: string
+
+  @BelongsTo(() => User, 'registrarId')
+  @ApiProperty({ type: User })
+  registrar: User
 
   @ForeignKey(() => Case)
   @Column({

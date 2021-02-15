@@ -8,6 +8,7 @@ import {
   CaseAppealDecision,
   CaseGender,
   CaseDecision,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -152,9 +153,14 @@ export class UpdateCaseDto {
   readonly courtDocuments?: string
 
   @IsOptional()
+  @IsEnum(AccusedPleaDecision)
+  @ApiPropertyOptional({ enum: AccusedPleaDecision })
+  readonly accusedPleaDecision?: AccusedPleaDecision
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedPlea?: string
+  readonly accusedPleaAnnouncement?: string
 
   @IsOptional()
   @IsString()
@@ -210,4 +216,9 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly judgeId?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly registrarId?: string
 }
