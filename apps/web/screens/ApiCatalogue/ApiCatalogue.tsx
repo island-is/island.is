@@ -12,9 +12,6 @@ import {
   Button,
   GridContainer,
   LoadingIcon,
-  Filter,
-  FilterInput,
-  FilterMultiChoice,
   Navigation,
   Link,
 } from '@island.is/island-ui/core'
@@ -24,6 +21,7 @@ import {
   SubpageDetailsContent,
   SubpageMainContent,
   RichText,
+  ApiCatalogueFilter,
 } from '@island.is/web/components'
 
 import getConfig from 'next/config'
@@ -339,7 +337,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
             <SidebarLayout
               sidebarContent={
                 <Box paddingRight={[0, 0, 3]}>
-                  <Filter
+                  <ApiCatalogueFilter
                     labelClear={fn('clear')}
                     labelOpen={fn('openFilterButton')}
                     labelClose={fn('closeFilter')}
@@ -355,35 +353,70 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                         access: [],
                       })
                     }
-                  >
-                    <FilterInput
-                      placeholder={fn('search')}
-                      name="filterInput"
-                      value={parameters.query}
-                      onChange={(value) =>
-                        setParameters({ ...parameters, query: value })
-                      }
-                    ></FilterInput>
-                    <FilterMultiChoice
-                      labelClear={fn('clearCategory')}
-                      onChange={({ categoryId, selected }) => {
-                        setParameters({
-                          ...parameters,
-                          [categoryId]: selected,
-                        })
-                      }}
-                      onClear={(categoryId) =>
-                        setParameters({
-                          ...parameters,
-                          [categoryId]: [],
-                        })
-                      }
-                      categories={filterCategories}
-                    ></FilterMultiChoice>
-                  </Filter>
+                    inputPlaceholder={fn('search')}
+                    inputValue={parameters.query}
+                    onInputChange={(value) =>
+                      setParameters({ ...parameters, query: value })
+                    }
+                    labelCategoryClear={fn('clearCategory')}
+                    onCategoryChange={({ categoryId, selected }) => {
+                      setParameters({
+                        ...parameters,
+                        [categoryId]: selected,
+                      })
+                    }}
+                    onCategoryClear={(categoryId) =>
+                      setParameters({
+                        ...parameters,
+                        [categoryId]: [],
+                      })
+                    }
+                    categories={filterCategories}
+                  />
                 </Box>
               }
             >
+              <Box display={['block', 'block', 'none']} paddingBottom={4}>
+                {/* <ApiCatalogueFilter isDialog={true} /> */}
+                <ApiCatalogueFilter
+                  isDialog={true}
+                  labelClear={fn('clear')}
+                  labelOpen={fn('openFilterButton')}
+                  labelClose={fn('closeFilter')}
+                  labelResult={fn('mobileResult')}
+                  labelTitle={fn('mobileTitle')}
+                  resultCount={data?.getApiCatalogue?.services?.length ?? 0}
+                  onFilterClear={() =>
+                    setParameters({
+                      query: '',
+                      pricing: [],
+                      data: [],
+                      type: [],
+                      access: [],
+                    })
+                  }
+                  inputPlaceholder={fn('search')}
+                  inputValue={parameters.query}
+                  onInputChange={(value) =>
+                    setParameters({ ...parameters, query: value })
+                  }
+                  labelCategoryClear={fn('clearCategory')}
+                  onCategoryChange={({ categoryId, selected }) => {
+                    setParameters({
+                      ...parameters,
+                      [categoryId]: selected,
+                    })
+                  }}
+                  onCategoryClear={(categoryId) =>
+                    setParameters({
+                      ...parameters,
+                      [categoryId]: [],
+                    })
+                  }
+                  categories={filterCategories}
+                />
+              </Box>
+
               {(error || data?.getApiCatalogue?.services.length < 1) && (
                 <GridContainer>
                   {error ? (

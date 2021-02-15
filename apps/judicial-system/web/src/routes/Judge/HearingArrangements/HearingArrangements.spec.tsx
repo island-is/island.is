@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { HearingArrangements } from './HearingArrangements'
 import { UpdateCase } from '@island.is/judicial-system/types'
 import userEvent from '@testing-library/user-event'
 import {
@@ -13,6 +12,7 @@ import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import { HearingArrangements } from './HearingArrangements'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -47,6 +47,10 @@ describe('/domari-krafa/fyrirtokutimi', () => {
               id: 'test_id_2',
               judgeId: 'judge_1',
             } as UpdateCase,
+            {
+              id: 'test_id_2',
+              registrarId: 'registrar_1',
+            } as UpdateCase,
           ]),
         ]}
         addTypename={false}
@@ -68,6 +72,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
     userEvent.click(await screen.findByText('Veldu dómara'))
     userEvent.click(await screen.findByText('Wonder Woman'))
+
+    userEvent.click(await screen.findByText('Veldu dómritara'))
+    userEvent.click(await screen.findByText('Alfred Thaddeus Crane Pennyworth'))
 
     // Assert
     expect(

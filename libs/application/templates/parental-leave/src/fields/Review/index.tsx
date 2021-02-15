@@ -396,9 +396,9 @@ const Review: FC<ReviewScreenProps> = ({
                           label={formatMessage(
                             parentalLeaveFormMessages.base.union,
                           )}
-                          name={'payments.union'}
+                          name="payments.union"
                           disabled={false}
-                          id={'payments.union'}
+                          id="payments.union"
                           options={[{ label: 'TODO', value: 'todo' }]}
                         />
                       ) : (
@@ -425,8 +425,8 @@ const Review: FC<ReviewScreenProps> = ({
             {editable ? (
               <Box paddingY={4}>
                 <Input
-                  id={'employer.email'}
-                  name={'employer.email'}
+                  id="employer.email"
+                  name="employer.email"
                   label={formatMessage(
                     parentalLeaveFormMessages.employer.email,
                   )}
@@ -519,9 +519,9 @@ const Review: FC<ReviewScreenProps> = ({
 
               {editable ? (
                 <RadioController
-                  id={'shareInformationWithOtherParent'}
+                  id="shareInformationWithOtherParent"
                   disabled={false}
-                  name={'shareInformationWithOtherParent'}
+                  name="shareInformationWithOtherParent"
                   defaultValue={
                     getValueViaPath(
                       application.answers,

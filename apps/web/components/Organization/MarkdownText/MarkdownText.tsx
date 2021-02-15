@@ -61,7 +61,7 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
           },
         }}
       >
-        {children}
+        {(children as string).replace(/\n/gi, '<br>')}
       </Markdown>
     </div>
   )

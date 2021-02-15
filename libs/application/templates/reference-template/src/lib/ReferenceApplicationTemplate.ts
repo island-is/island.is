@@ -24,6 +24,7 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 const ExampleSchema = z.object({
+  name: z.string().nonempty().max(256),
   person: z.object({
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
@@ -32,7 +33,6 @@ const ExampleSchema = z.object({
       }
       return asNumber > 15
     }),
-    name: z.string().nonempty().max(256),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     phoneNumber: z.string().min(7),
     email: z.string().email(),

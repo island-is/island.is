@@ -7,17 +7,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
-import { ReviewFieldProps } from '../../types'
-
-type Country = {
-  name: string
-  alpha2Code: string
-  regionalBlocs: Blocs[]
-}
-
-type Blocs = {
-  acronym: string
-}
+import { ReviewFieldProps, Country } from '../../types'
 
 interface Props extends ReviewFieldProps {
   isReviewField?: boolean

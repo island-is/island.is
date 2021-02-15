@@ -437,31 +437,35 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description: 'How to register',
   },
-  activeApplicationTitle: {
+  activeDraftApplicationTitle: {
+    id: 'hi.application:activeDraftApplication.title',
+    defaultMessage: 'Open your previous draft',
+    description: 'Open your previous draft',
+  },
+  activeDraftApplicationDescription: {
+    id: 'hi.application:activeDraftApplication.description',
+    defaultMessage:
+      'You have already started to fill out an application. Please open your previous draft to continue.',
+    description: 'Information for those that alreade have a started draft',
+  },
+  activeDraftApplicationButtonText: {
+    id: 'hi.application:activeDraftApplication.buttonText',
+    defaultMessage: 'Open draft',
+    description: 'Open draft',
+  },
+  pendingApplicationTitle: {
     id: 'hi.application:activeApplication.title',
     defaultMessage: 'Virk umsókn',
     description: 'Active application',
   },
-  activeApplicationDescription: {
-    id: 'hi.application:activeApplication.description',
-    defaultMessage:
-      'Þú hefur nú þegar sótt um sjúkratryggingu. Við umsókn voru sendar upplýsingar á netfang sem gefið var upp. Þú getur alltaf séð stöðu umsóknar á Mínum síðum',
-    description:
-      'You have already submitted an application for health insurance. We will notify you on the e-mail address you provided in the application when the status changes. You can always see your application status in My Pages.',
-  },
-  activeApplicationButtonText: {
-    id: 'hi.application:activeApplication.buttonText',
-    defaultMessage: 'Sjá stöðu',
-    description: 'See status',
-  },
-  oldPendingApplicationDescription: {
+  pendingApplicationDescription: {
     id: 'hi.application:oldPendingApplication.description',
     defaultMessage:
       'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er **{applicationNumber}**. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
     description:
       'You have already submitted an application for health insurance. Your application number is **{applicationNumber}**. Please contact the Icelandic Health Insurance if you have any questions.',
   },
-  oldPendingApplicationButtonText: {
+  pendingApplicationButtonText: {
     id: 'hi.application:oldPendingApplication.buttonText',
     defaultMessage: 'Hafa samband',
     description: 'Contact info',

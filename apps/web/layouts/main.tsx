@@ -24,11 +24,9 @@ import {
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
-import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
-  QueryGetMenuArgs,
-  GetMenuQuery,
   GetGroupedMenuQuery,
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
@@ -38,9 +36,7 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
-  MenuLink,
   Menu,
-  MenuLinkWithChildren,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -59,6 +55,9 @@ import {
   linkResolver as LinkResolver,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
+
+const IS_MOCK =
+  process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -448,6 +447,51 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       }
     })
 
+  const initialFooterMenu = {
+    footerUpperInfo: [],
+    footerUpperContact: [],
+    footerLowerMenu: [],
+    footerTagsMenu: [],
+    footerMiddleMenu: [],
+  }
+
+  const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
+    if (IS_MOCK) {
+      const key = Object.keys(menus)[idx]
+      if (key) {
+        menus[key] = mapLinks(menu as Menu)
+      }
+      return menus
+    }
+
+    switch (menu.id) {
+      // Footer lower
+      case '6vTuiadpCKOBhAlSjYY8td':
+        menus.footerLowerMenu = mapLinks(menu as Menu)
+        break
+      // Footer middle
+      case '7hSbSQm5F5EBc0KxPTFVAS':
+        menus.footerMiddleMenu = mapLinks(menu as Menu)
+        break
+      // Footer tags
+      case '6oGQDyWos4xcKX9BdMHd5R':
+        menus.footerTagsMenu = mapLinks(menu as Menu)
+        break
+      // Footer upper
+      case '62Zh6hUc3bi0JwNRnqV8Nm':
+        menus.footerUpperInfo = mapLinks(menu as Menu)
+        break
+      // Footer upper contact
+      case '5yUCZ4U6aZ8rZ9Jigme7GI':
+        menus.footerUpperContact = mapLinks(menu as Menu)
+        break
+      default:
+        break
+    }
+
+    return menus
+  }, initialFooterMenu)
+
   return {
     categories,
     alertBannerContent: {
@@ -457,43 +501,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
-    ...footerMenuData.menus.reduce(
-      (menus, menu) => {
-        switch (menu.id) {
-          // Footer lower
-          case '6vTuiadpCKOBhAlSjYY8td':
-            menus.footerLowerMenu = mapLinks(menu as Menu)
-            break
-          // Footer middle
-          case '7hSbSQm5F5EBc0KxPTFVAS':
-            menus.footerMiddleMenu = mapLinks(menu as Menu)
-            break
-          // Footer tags
-          case '6oGQDyWos4xcKX9BdMHd5R':
-            menus.footerTagsMenu = mapLinks(menu as Menu)
-            break
-          // Footer upper
-          case '62Zh6hUc3bi0JwNRnqV8Nm':
-            menus.footerUpperInfo = mapLinks(menu as Menu)
-            break
-          // Footer upper contact
-          case '5yUCZ4U6aZ8rZ9Jigme7GI':
-            menus.footerUpperContact = mapLinks(menu as Menu)
-            break
-          default:
-            break
-        }
-
-        return menus
-      },
-      {
-        footerUpperInfo: null,
-        footerUpperContact: null,
-        footerLowerMenu: null,
-        footerTagsMenu: null,
-        footerMiddleMenu: null,
-      },
-    ),
+    ...footerMenu,
     namespace,
     respOrigin,
     megaMenuData: {
