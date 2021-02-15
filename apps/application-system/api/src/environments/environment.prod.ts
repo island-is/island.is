@@ -1,7 +1,7 @@
 export default {
   production: true,
   environment: process.env.ENVIRONMENT,
-  baseApiUrl: '',
+  baseApiUrl: process.env.GRAPHQL_API_URL,
   clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
   identityServer: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
