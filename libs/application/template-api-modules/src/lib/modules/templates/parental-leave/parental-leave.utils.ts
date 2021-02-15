@@ -104,12 +104,12 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const union: Union = {
     id: extractAnswer(application.answers, 'payments.union'),
-    name: 'Stéttarfélag verkfr./tölvunarfr.', // We only save the id, not the name of the fund
+    name: '', // We only save the id, not the name of the fund
   }
 
   const pensionFund: PensionFund = {
     id: extractAnswer(application.answers, 'payments.pensionFund'),
-    name: 'Frjálsi lífeyrissjóðurinn sk.', // We only save the id, not the name of the fund
+    name: '', // We only save the id, not the name of the fund
     // API needs to be refactored to only expect id
   }
 
@@ -121,7 +121,7 @@ export const transformApplicationToParentalLeaveDTO = (
   const privatePensionFund: PensionFund = rawPrivatePensionFund
     ? {
         id: rawPrivatePensionFund,
-        name: 'Frjálsi lífeyrissjóðurinn', // We only save the id, not the name of the fund
+        name: '', // We only save the id, not the name of the fund
         // API needs to be refactored to only expect id
       }
     : {
