@@ -147,15 +147,6 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         },
       },
       inReview: {
-        entry: assign((context) => {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: ['2311637949', '2404805659'],
-            },
-          }
-        }),
         meta: {
           name: 'In Review',
           progress: 0.5,
