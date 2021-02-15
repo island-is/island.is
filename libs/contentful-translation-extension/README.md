@@ -9,7 +9,11 @@ This is the Contentful extension responsible of translations for namespaces for 
 The following commands are handle using contentful's [`contentful-extension-scripts`](https://github.com/jeremybarbet/create-contentful-extension). It uses a custom `tsconfig.json` and not the shared one from the root project.
 
 {% hint style="warning" %}
-To be able to run the `start` and `deploy` commands you will need to pass a `managementToken`.
+To be able to run the `start` command you will need to pass a `managementToken`. It's required to be able to run the extension in development through Contentful.
+{% endhint %}
+
+{% hint style="info" %}
+We host the extension by ourself using the `docker-static` image because it goes over the 512KB limit from Contentful.
 {% endhint %}
 
 ### Start
@@ -34,14 +38,4 @@ yarn build contentful-translation-extension
 
 ### Deploy
 
-Will build and deploy the changes to Contentful. If you want your extension to be hosted by contentful it has to be under 512KB.
-
-```bash
-yarn deploy contentful-translation-extension --token managementToken
-```
-
-### Custom S3 deploy
-
-Since the extension is now over the 512KB allowed by Contentful we are hosting it by ourselves in AWS S3.
-
-// TODO Add instructions here
+The extension's build script is bundling the files inside the NX dist folder under `dist/contentful-translation-extension`. The `docker-static` is deploying theses files into a Docker image. We then add this URL into Contentful to access theses files.

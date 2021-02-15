@@ -3300,10 +3300,10 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@jeremybarbet/contentful-extension-scripts@0.22.5":
-  version "0.22.5"
-  resolved "https://registry.yarnpkg.com/@jeremybarbet/contentful-extension-scripts/-/contentful-extension-scripts-0.22.5.tgz#09957681fe2ee98e59a48550cf4d7b670427806f"
-  integrity sha512-btnxaW19bsd0oEvtTzJhfz9vNem8Rw13n5+WjcevlI4+nayPqd4VYEEUlw/C7Ns9Np+BFGjmNwztoiQZ4E9x/g==
+"@jeremybarbet/contentful-extension-scripts@0.22.6":
+  version "0.22.6"
+  resolved "https://registry.yarnpkg.com/@jeremybarbet/contentful-extension-scripts/-/contentful-extension-scripts-0.22.6.tgz#c0457529c8900af5d5e39f43956c9f6201f49154"
+  integrity sha512-LCxOVFv/MX+sqVKpR065TSDQO5yh97tgATVtm+ZaC+xve4R2HI9fOZX2IJ8S5fGd5Z5v7BU9cim02bzZf2vTAQ==
   dependencies:
     babel-jest "^26.6.1"
     chalk "4.1.0"
