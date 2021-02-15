@@ -6,6 +6,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  LoadingIcon,
   NavigationItem,
   Option,
   Select,
@@ -108,17 +109,21 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       value: 'syslumadurinn-a-hoefudborgarsvaedinu',
     },
   ]
-  const months = []
 
   const date = new Date()
+
+  const months = [
+    {
+      label: 'Næstu uppboð',
+      value: `${date.getFullYear()}-${date.getMonth()}-01`,
+    },
+  ]
 
   const [organization, setOrganization] = useState<string>(
     organizations[0].value,
   )
 
-  const [month, setMonth] = useState<string>(
-    `${date.getFullYear()}-${date.getMonth()}`,
-  )
+  const [month, setMonth] = useState<string>(months[0].value)
 
   for (let i = 0; i <= 2; i++) {
     months.push({
@@ -226,14 +231,25 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
         paddingTop={[4, 4, 6]}
         paddingBottom={[4, 5, 10]}
       >
-        {!data?.getAuctions.length && (
-          <Text>{n('noAuctionsFound', 'Engin uppboð fundust')}</Text>
+        {loading && (
+          <Box display="flex" marginTop={4} justifyContent="center">
+            <LoadingIcon size={48} color="" />
+          </Box>
+        )}
+        {!data?.getAuctions.length && !loading && (
+          <Box display="flex" marginTop={4} justifyContent="center">
+            <Text variant="h3">
+              {n('noAuctionsFound', 'Engin uppboð fundust')}
+            </Text>
+          </Box>
         )}
         {data?.getAuctions.map((auction) => {
-          const date = new Date(auction.date)
+          const currentDate = new Date()
+          const auctionDate = new Date(auction.date)
           const updatedAt = new Date(auction.updatedAt)
 
-          return (
+          return auctionDate <= currentDate &&
+            month === months[0].value ? null : (
             <FocusableBox
               href={linkResolver('auction', [auction.id]).href}
               borderWidth="standard"
@@ -248,7 +264,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                   {n('auctionType-' + auction.type)}
                 </Text>
                 <Text variant="h3">
-                  {format(date, 'd. MMMM yyyy')} | {auction.title}
+                  {format(auctionDate, 'd. MMMM yyyy')} | {auction.title}
                 </Text>
                 <Text paddingTop={1}>
                   {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
@@ -262,7 +278,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                 marginLeft="auto"
               >
                 <Tag>{auction.organization.title}</Tag>
-                <Text variant="small">{format(date, 'dd.MM.yyyy')}</Text>
+                <Text variant="small">{format(auctionDate, 'dd.MM.yyyy')}</Text>
               </Box>
             </FocusableBox>
           )
