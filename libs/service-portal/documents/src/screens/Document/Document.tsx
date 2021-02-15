@@ -130,7 +130,7 @@ export const Document: FC = () => {
           justifyContent="center"
           background="white"
         >
-          <LoadingIcon animate size={80} />
+          <LoadingIcon animate size={40} />
         </Box>
       )}
       {error && (
