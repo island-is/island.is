@@ -8,6 +8,10 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
+import {
+  isEUCountry,
+  requireConfirmationOfResidency,
+} from '../healthInsuranceUtils'
 import { StatusTypes } from '../types'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
@@ -27,7 +31,6 @@ const FileSchema = z.object({
 
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   applicant: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
@@ -36,6 +39,7 @@ const HealthInsuranceSchema = z.object({
     city: z.string().nonempty(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
+    citizenship: z.string().optional(),
   }),
   status: z.enum([
     StatusTypes.EMPLOYED,
@@ -46,13 +50,20 @@ const HealthInsuranceSchema = z.object({
   confirmationOfStudies: z.array(FileSchema).nonempty(),
   children: z.string().nonempty(),
   formerInsurance: z.object({
-    country: z.string().nonempty(),
-    registration: z.string().nonempty(),
+    registration: z.enum([YES, NO]),
+    country: z
+      .string()
+      .refine((value) =>
+        value
+          ? isEUCountry(value) || requireConfirmationOfResidency(value)
+          : false,
+      ),
     personalId: z.string().nonempty(),
     institution: z.string(),
     entitlement: z.enum([YES, NO]),
     entitlementReason: z.string().nonempty(),
   }),
+  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   additionalInfo: z.object({
     hasAdditionalInfo: z.enum([YES, NO]),
     files: z.array(FileSchema),

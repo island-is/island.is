@@ -24,7 +24,6 @@ import {
   CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import * as styles from './DetentionRequests.treat'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -40,6 +39,7 @@ import {
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import * as styles from './DetentionRequests.treat'
 
 type directionType = 'ascending' | 'descending'
 interface SortConfig {
@@ -58,7 +58,9 @@ export const DetentionRequests: React.FC = () => {
   const { user } = useContext(UserContext)
   const history = useHistory()
 
+  const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
+  const isRegistrar = user?.role === UserRole.REGISTRAR
 
   const { data, error, loading } = useQuery(CasesQuery, {
     fetchPolicy: 'no-cache',
@@ -113,7 +115,9 @@ export const DetentionRequests: React.FC = () => {
         return c.state !== CaseState.DELETED
       })
 
-      if (isJudge) {
+      if (isProsecutor) {
+        setCases(casesWithoutDeleted)
+      } else if (isJudge || isRegistrar) {
         const judgeCases = casesWithoutDeleted.filter((c: Case) => {
           // Judges should see all cases except cases with status code NEW.
           return c.state !== CaseState.NEW
@@ -121,10 +125,10 @@ export const DetentionRequests: React.FC = () => {
 
         setCases(judgeCases)
       } else {
-        setCases(casesWithoutDeleted)
+        setCases([])
       }
     }
-  }, [cases, isJudge, resCases, setCases])
+  }, [cases, isProsecutor, isJudge, isRegistrar, resCases, setCases])
 
   const mapCaseStateToTagVariant = (
     state: CaseState,
@@ -160,7 +164,7 @@ export const DetentionRequests: React.FC = () => {
   const handleClick = (c: Case): void => {
     if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
       history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
-    } else if (isJudge) {
+    } else if (isJudge || isRegistrar) {
       history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
       history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
@@ -227,7 +231,7 @@ export const DetentionRequests: React.FC = () => {
           // TODO: Handle error
         }
       } catch (e) {
-        console.log(e)
+        // TODO: Handle error
       }
     }
   }
@@ -237,7 +241,7 @@ export const DetentionRequests: React.FC = () => {
       {user && (
         <div className={styles.logoContainer}>
           <Logo />
-          {!isJudge && (
+          {isProsecutor && (
             <DropdownMenu
               menuLabel="Tegund kröfu"
               icon="add"
@@ -346,7 +350,7 @@ export const DetentionRequests: React.FC = () => {
                   </Text>
                 </th>
                 <th></th>
-                {!isJudge && <th></th>}
+                {isProsecutor && <th></th>}
               </tr>
             </thead>
             <tbody>
@@ -435,7 +439,7 @@ export const DetentionRequests: React.FC = () => {
                     </Text>
                   </td>
                   <td className={cn(styles.td, 'secondLast')}>
-                    {!isJudge &&
+                    {isProsecutor &&
                       (c.state === CaseState.NEW ||
                         c.state === CaseState.DRAFT ||
                         c.state === CaseState.SUBMITTED ||

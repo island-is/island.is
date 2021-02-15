@@ -25,10 +25,18 @@ export const mockProsecutor = {
 } as User
 
 export const mockJudge = {
+  id: 'judge_1',
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: 'Héraðsdómur Reykjavíkur',
+} as User
+
+export const mockRegistrar = {
+  id: 'registrar_1',
+  role: UserRole.REGISTRAR,
+  name: 'Alfred Thaddeus Crane Pennyworth',
+  title: 'dómritari',
 } as User
 
 const testCase1 = {
@@ -63,7 +71,7 @@ const testCase1 = {
   courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ',
@@ -84,7 +92,7 @@ const testCase2 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '111111-1110',
+  accusedNationalId: '000000-0000',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
@@ -110,7 +118,7 @@ const testCase2 = {
   courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -156,7 +164,7 @@ const testCase3 = {
   courtAttendees: null,
   courtRoom: '999',
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: null,
@@ -204,7 +212,7 @@ const testCase4 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -252,7 +260,7 @@ const testCase5 = {
   courtEndTime: '2020-09-16',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
@@ -262,7 +270,7 @@ const testCase5 = {
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
-  judge: null,
+  judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
 }
@@ -300,7 +308,7 @@ const testCase6 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
@@ -349,7 +357,7 @@ const testCase7 = {
   courtEndTime: '2020-09-16',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -397,7 +405,7 @@ const testCase8 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -449,7 +457,7 @@ export const mockUsersQuery = [
     },
     result: {
       data: {
-        users: [mockProsecutor, mockJudge],
+        users: [mockProsecutor, mockJudge, mockRegistrar],
       },
     },
   },

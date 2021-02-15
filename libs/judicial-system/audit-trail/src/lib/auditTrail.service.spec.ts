@@ -52,9 +52,9 @@ describe('AuditTrailService', () => {
     // Arrange
     const userId = 'some-user-id'
     const action = AuditedAction.OVERVIEW
-    const caseIds = ['some-case-id', 'another-case-id']
+    const ids = ['some-id', 'another-id']
     const act = () => {
-      service.audit(userId, action, caseIds)
+      service.audit(userId, action, ids)
     }
 
     // Act and assert
@@ -66,17 +66,17 @@ describe('AuditTrailService', () => {
     const spy = jest.spyOn(auditTrail, 'info')
     const userId = 'some-user-id'
     const action = AuditedAction.VIEW_DETAILS
-    const caseId = 'some-case-id'
+    const id = 'some-id'
     service.initTrail({ useGenericLogger: false })
 
     // Act
-    service.audit(userId, action, caseId)
+    service.audit(userId, action, id)
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
       user: userId,
       action,
-      cases: caseId,
+      entities: id,
     })
 
     // Cleanup
@@ -89,18 +89,18 @@ describe('AuditTrailService', () => {
     const spy = jest.spyOn(genericLogger, 'info')
     const userId = 'some-user-id'
     const action = AuditedAction.VIEW_DETAILS
-    const caseId = 'some-case-id'
+    const id = 'some-id'
     service.initTrail({ useGenericLogger: true })
 
     // Act
-    service.audit(userId, action, caseId)
+    service.audit(userId, action, id)
 
     // Assert
     expect(spy).toHaveBeenCalledWith(
       JSON.stringify({
         user: userId,
         action,
-        cases: caseId,
+        entities: id,
       }),
     )
 

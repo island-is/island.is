@@ -93,7 +93,7 @@ export const StepTwo: React.FC = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const { data: userData } = useQuery(UsersQuery, {
+  const { data: userData, loading: userLoading } = useQuery(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -158,7 +158,7 @@ export const StepTwo: React.FC = () => {
   )
 
   const defaultProsecutor = prosecutors?.filter(
-    (prosecutor: Option) => prosecutor.label === workingCase?.prosecutor?.name,
+    (prosecutor: Option) => prosecutor.value === workingCase?.prosecutor?.id,
   )
 
   const handleNextButtonClick = async () => {
@@ -270,8 +270,6 @@ export const StepTwo: React.FC = () => {
 
           return true
         } catch (e) {
-          console.log(e)
-
           return false
         }
       case CaseState.DRAFT:
@@ -289,7 +287,7 @@ export const StepTwo: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_TWO}
-      isLoading={loading}
+      isLoading={loading || userLoading}
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}

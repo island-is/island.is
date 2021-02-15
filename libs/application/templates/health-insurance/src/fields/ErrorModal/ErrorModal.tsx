@@ -69,7 +69,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   colorScheme="destructive"
                   onClick={() => {
                     closeModal()
-                    history.push(`../umsoknir/${typeId}`)
+                    history.push(`../apply-for-health-insurance`)
                   }}
                   fluid
                 >

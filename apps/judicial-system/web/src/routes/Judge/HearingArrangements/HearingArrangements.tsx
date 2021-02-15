@@ -5,7 +5,10 @@ import {
   GridColumn,
   GridRow,
   Input,
+  Select,
   Text,
+  Option,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -27,6 +30,8 @@ import {
   CaseState,
   NotificationType,
   UpdateCase,
+  User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -37,6 +42,7 @@ import {
 import parseISO from 'date-fns/parseISO'
 import {
   JudgeSubsections,
+  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -45,10 +51,17 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   validateAndSetTime,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { ValueType } from 'react-select/src/types'
 
 interface CaseData {
   case?: Case
+}
+
+interface UserData {
+  users: User[]
 }
 
 export const HearingArrangements: React.FC = () => {
@@ -69,6 +82,14 @@ export const HearingArrangements: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
+
+  const { data: userData, loading: userLoading } = useQuery<UserData>(
+    UsersQuery,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -104,6 +125,26 @@ export const HearingArrangements: React.FC = () => {
 
     return data?.sendNotification?.notificationSent
   }
+
+  const judges = (userData?.users || [])
+    .filter((user: User) => user.role === UserRole.JUDGE)
+    .map((judge: User) => {
+      return { label: judge.name, value: judge.id }
+    })
+
+  const registrars = (userData?.users || [])
+    .filter((user: User) => user.role === UserRole.REGISTRAR)
+    .map((registrar: User) => {
+      return { label: registrar.name, value: registrar.id }
+    })
+
+  const defaultJudge = judges?.find(
+    (judge: Option) => judge.value === workingCase?.judge?.id,
+  )
+
+  const defaultRegistrar = registrars?.find(
+    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
+  )
 
   useEffect(() => {
     document.title = 'Fyrirtaka - Réttarvörslugátt'
@@ -147,9 +188,39 @@ export const HearingArrangements: React.FC = () => {
     ]
 
     if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
+      setIsStepIllegal(
+        isNextDisabled(requiredFields) ||
+          !workingCase.judge ||
+          !workingCase.registrar,
+      )
     }
   }, [workingCase, isStepIllegal])
+
+  const setJudge = (id: string) => {
+    if (workingCase) {
+      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
+
+      const judge = userData?.users.find((j) => j.id === id)
+
+      setWorkingCase({ ...workingCase, judge: judge })
+    }
+  }
+
+  const setRegistrar = (id: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'registrarId',
+        id,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      const registrar = userData?.users.find((r) => r.id === id)
+
+      setWorkingCase({ ...workingCase, registrar: registrar })
+    }
+  }
 
   return (
     <PageLayout
@@ -157,7 +228,7 @@ export const HearingArrangements: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
-      isLoading={loading}
+      isLoading={loading || userLoading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
@@ -181,6 +252,46 @@ export const HearingArrangements: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
             <CaseNumbers workingCase={workingCase} />
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómari{' '}
+                <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
+              </Text>
+            </Box>
+            <Select
+              name="judge"
+              label="Veldu dómara"
+              placeholder="Velja héraðsdómara"
+              defaultValue={defaultJudge}
+              options={judges}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setJudge((selectedOption as ReactSelectOption).value.toString())
+              }
+              required
+            />
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómritari{' '}
+                <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+              </Text>
+            </Box>
+            <Select
+              name="registrar"
+              label="Veldu dómritara"
+              placeholder="Velja dómritara"
+              defaultValue={defaultRegistrar}
+              options={registrars}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              }
+              required
+            />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>

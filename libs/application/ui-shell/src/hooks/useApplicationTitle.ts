@@ -1,5 +1,3 @@
-import { ApplicationUIState } from '../reducer/ReducerTypes'
-import useDocumentTitle from '@rehooks/document-title'
 import { useLocale } from '@island.is/localization'
 import {
   formatText,
@@ -8,6 +6,9 @@ import {
   SubSection,
 } from '@island.is/application/core'
 import { MessageDescriptor } from 'react-intl'
+
+import { ApplicationUIState } from '../reducer/ReducerTypes'
+import { useDocumentTitle } from './useDocumentTitle'
 
 type FormatMessage = (
   descriptor: MessageDescriptor | string,

@@ -75,7 +75,6 @@ export class CaseService {
 
   private async sendRulingAsSignedPdf(
     existingCase: Case,
-    user: TUser,
     signedRulingPdf: string,
   ): Promise<void> {
     if (!environment.production) {
@@ -90,8 +89,14 @@ export class CaseService {
         signedRulingPdf,
       ),
       this.sendEmail(
-        existingCase.judge?.name || user?.name,
-        existingCase.judge?.email || user?.email,
+        existingCase.registrar?.name,
+        existingCase.registrar?.email,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
+      this.sendEmail(
+        existingCase.judge?.name,
+        existingCase.judge?.email,
         existingCase.courtCaseNumber,
         signedRulingPdf,
       ),
@@ -123,6 +128,7 @@ export class CaseService {
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: User, as: 'registrar' },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],
@@ -137,6 +143,7 @@ export class CaseService {
       include: [
         { model: User, as: 'prosecutor' },
         { model: User, as: 'judge' },
+        { model: User, as: 'registrar' },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],
@@ -169,12 +176,12 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  getRulingPdf(existingCase: Case, user: TUser): Promise<string> {
+  getRulingPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
-    return generateRulingPdf(existingCase, user)
+    return generateRulingPdf(existingCase)
   }
 
   getRequestPdf(existingCase: Case): Promise<string> {
@@ -185,22 +192,19 @@ export class CaseService {
     return generateRequestPdf(existingCase)
   }
 
-  async requestSignature(
-    existingCase: Case,
-    user: TUser,
-  ): Promise<SigningServiceResponse> {
+  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    const pdf = await generateRulingPdf(existingCase, user)
+    const pdf = await generateRulingPdf(existingCase)
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
-        user.mobileNumber,
+        existingCase.judge?.mobileNumber,
         'Undirrita dóm - Öryggistala',
-        user.name,
+        existingCase.judge?.name,
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -216,7 +220,6 @@ export class CaseService {
 
   async getSignatureConfirmation(
     existingCase: Case,
-    user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
@@ -233,7 +236,7 @@ export class CaseService {
           documentToken,
         )
 
-        await this.sendRulingAsSignedPdf(existingCase, user, signedPdf)
+        await this.sendRulingAsSignedPdf(existingCase, signedPdf)
       } catch (error) {
         if (error instanceof DokobitError) {
           return {

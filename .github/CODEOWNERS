@@ -1,6 +1,5 @@
 # Fallback. If there is no owner, assign to core maintainers.
-# Remove fallback rule while graphql files are in the way.
-# *                                                                 @island-is/core
+*                                                                   @island-is/core
 
 /*                                                                  @island-is/core
 /.github/                                                           @island-is/core
@@ -21,6 +20,7 @@
 /libs/application/templates/driving-license/                        @island-is/vice-versa
 /libs/application/templates/passport/                               @island-is/vice-versa
 /libs/api/domains/driving-license/                                  @island-is/vice-versa
+/libs/api/domains/education/                                        @island-is/vice-versa
 /libs/service-portal/driving-license/                               @island-is/vice-versa
 /libs/service-portal/eligibility/                                   @island-is/vice-versa
 
@@ -32,10 +32,13 @@
 /libs/application/graphql/                                          @island-is/aranja
 /libs/application/ui-fields/                                        @island-is/aranja
 /libs/application/ui-shell/                                         @island-is/aranja
+/libs/application/template-api-modules/                             @island-is/aranja
 /libs/application/template-loader/                                  @island-is/aranja
 /libs/application/templates/meta-application/                       @island-is/aranja
 /libs/application/templates/parental-leave/                         @island-is/aranja
 /libs/application/templates/reference-template/                     @island-is/aranja
+/libs/contentful-translation-extension                              @island-is/aranja
+/libs/localization                                                  @island-is/aranja
 /libs/utils/api/                                                    @island-is/aranja
 /libs/vmst-client/                                                  @island-is/aranja
 
@@ -88,7 +91,9 @@
 /apps/services/documents                                            @island-is/advania
 
 /apps/skilavottord/                                                 @island-is/deloitte
+/libs/application/templates/health-insurance                        @island-is/deloitte
 /libs/skilavottord/                                                 @island-is/deloitte
+/libs/api/domains/health-insurance/                                 @island-is/deloitte
 
 /apps/auth-admin-web/                                               @island-is/fuglar
 /apps/auth-admin-web-e2e/                                           @island-is/fuglar
