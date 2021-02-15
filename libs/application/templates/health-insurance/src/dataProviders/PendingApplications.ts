@@ -30,7 +30,7 @@ export class PendingApplications extends BasicDataProvider {
   }
 
   handleError(error: any) {
-    console.log(`An error occured: ${JSON.stringify(error)}`)
+    console.log(`Provider error - PendingApplications: ${JSON.stringify(error)}`)
     return Promise.resolve(error ? error : 'error')
   }
 

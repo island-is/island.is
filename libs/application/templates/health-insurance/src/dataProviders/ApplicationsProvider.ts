@@ -33,7 +33,7 @@ export class ApplicationsProvider extends BasicDataProvider {
   }
 
   handleError(error: any) {
-    console.log(`An error occured: ${JSON.stringify(error)}`)
+    console.log(`Provider error - Applications: ${JSON.stringify(error)}`)
     return Promise.resolve(error ? error : 'error')
   }
 
