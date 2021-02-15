@@ -89,7 +89,7 @@ export class FileService {
     )
 
     const fileName = `children-residence-change/${parentA.ssn}/${applicationId}.pdf`
-    const bucket = environment.fsS3Bucket || 'development-legal-residence-change'
+    const bucket = environment.fsS3Bucket || ''
 
     return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
   }
