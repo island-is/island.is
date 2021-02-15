@@ -104,13 +104,12 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const union: Union = {
     id: extractAnswer(application.answers, 'payments.union'),
-    name: '', // We only save the id, not the name of the fund
+    name: '',
   }
 
   const pensionFund: PensionFund = {
     id: extractAnswer(application.answers, 'payments.pensionFund'),
-    name: '', // We only save the id, not the name of the fund
-    // API needs to be refactored to only expect id
+    name: '',
   }
 
   const rawPrivatePensionFund: string | null = extractAnswer(
@@ -121,13 +120,11 @@ export const transformApplicationToParentalLeaveDTO = (
   const privatePensionFund: PensionFund = rawPrivatePensionFund
     ? {
         id: rawPrivatePensionFund,
-        name: '', // We only save the id, not the name of the fund
-        // API needs to be refactored to only expect id
+        name: '',
       }
     : {
         id: 'X000', // Does not wish to pay into a private pension fund
-        name: '', // We only save the id, not the name of the fund
-        // API needs to be refactored to only expect id
+        name: '',
       }
 
   const rawPrivatePensionFundRatio: string | undefined = extractAnswer(
@@ -154,8 +151,7 @@ export const transformApplicationToParentalLeaveDTO = (
     email: extractAnswer(application.answers, 'applicant.email'),
     phoneNumber: extractAnswer(application.answers, 'applicant.phoneNumber'),
     paymentInfo: {
-      // bankAccount: extractAnswer(application.answers, 'payments.bank'),
-      bankAccount: '123456789000',
+      bankAccount: extractAnswer(application.answers, 'payments.bank'),
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union,
