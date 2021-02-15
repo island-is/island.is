@@ -264,7 +264,7 @@ export const UserForm: React.FC<Props> = (props) => {
             data-testid="mobileNumber"
             name="mobileNumber"
             label="Símanúmer"
-            placeholder="Síma númer"
+            placeholder="Símanúmer"
             defaultValue={user.mobileNumber}
             required
             hasError={mobileNumberErrorMessage !== undefined}
