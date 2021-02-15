@@ -186,6 +186,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           progress: 1,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationRejected,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -202,6 +205,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'TestPhase',
           progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationApproved,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -238,13 +244,14 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
+
   mapUserToRole(
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
 
-    //This if statement might change depending on the "umboðskerfi"
+    // This if statement might change depending on the "umboðskerfi"
     if (
       process.env.NODE_ENV === 'development' &&
       application.state === 'inReview'
