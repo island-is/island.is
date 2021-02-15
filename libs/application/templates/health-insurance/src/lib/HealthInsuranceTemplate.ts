@@ -12,6 +12,7 @@ import {
   isEUCountry,
   requireConfirmationOfResidency,
 } from '../healthInsuranceUtils'
+import { API_MODULE } from '../shared'
 import { StatusTypes } from '../types'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
@@ -108,10 +109,13 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
-          progress: 0.5,
+          onEntry: {
+            apiModuleAction: API_MODULE.sendApplication,
+          },
+          progress: 1,
           roles: [
             {
-              id: 'reviewer',
+              id: 'applicant',
               formLoader: () =>
                 import('../forms/ConfirmationScreen').then((val) =>
                   Promise.resolve(val.HealthInsuranceConfirmation),
@@ -124,9 +128,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      return 'reviewer'
-    }
     return 'applicant'
   },
 }
