@@ -239,7 +239,6 @@ export const UserForm: React.FC<Props> = (props) => {
         <Input
           name="title"
           label="Titill"
-          placeholder=""
           defaultValue={user.title}
           onChange={(event) =>
             storeAndRemoveErrorIfValid('title', event.target.value)
