@@ -27,7 +27,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
       : dedent(`Hello.
 
         Your application for document providing has been approved.
-
+        <a href="${clientLocationOrigin}/umsokn/${application.id}" target="_blank">Click here to implement and test</a>.
         Best regards,
         Island.is
       `)
