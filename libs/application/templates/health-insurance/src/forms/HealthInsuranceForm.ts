@@ -97,18 +97,14 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'debugApplicationsProvider',
               title: 'applications',
               defaultValue: (application: Application) => {
-                return JSON.stringify(
-                  application.externalData?.applications?.data,
-                )
+                return JSON.stringify(application.externalData?.applications)
               },
             }),
             buildTextField({
               id: 'debugHealthInsuranceProvider',
               title: 'health insurance',
               defaultValue: (application: Application) => {
-                return JSON.stringify(
-                  application.externalData?.healthInsurance?.data,
-                )
+                return JSON.stringify(application.externalData?.healthInsurance)
               },
             }),
             buildTextField({
@@ -116,7 +112,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: 'pending',
               defaultValue: (application: Application) => {
                 return JSON.stringify(
-                  application.externalData?.pendingApplications.data,
+                  application.externalData?.pendingApplications,
                 )
               },
             }),
