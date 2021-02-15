@@ -7,13 +7,13 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
+import InputMask from 'react-input-mask'
+import { ValueType } from 'react-select/src/types'
 import { FormFooter } from '@island.is/judicial-system-web/src/shared-components'
 import { User, UserRole } from '@island.is/judicial-system/types'
-import * as styles from './UserForm.treat'
-import InputMask from 'react-input-mask'
 import { ReactSelectOption } from '../../../types'
-import { ValueType } from 'react-select/src/types'
 import { validate, Validation } from '../../../utils/validate'
+import * as styles from './UserForm.treat'
 
 interface Props {
   user: User
@@ -23,7 +23,7 @@ interface Props {
 
 interface FieldValidation {
   validations: Validation[]
-  errorMessage?: String | undefined
+  errorMessage?: string | undefined
   setErrorMessage?: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
@@ -119,9 +119,10 @@ export const UserForm: React.FC<Props> = (props) => {
     if (
       !fieldValidation.validations.some(
         (v) => validate(value, v).isValid === false,
-      )
+      ) &&
+      fieldValidation.setErrorMessage
     ) {
-      fieldValidation.setErrorMessage?.(undefined)
+      fieldValidation.setErrorMessage(undefined)
     }
   }
 
@@ -132,8 +133,8 @@ export const UserForm: React.FC<Props> = (props) => {
       .map((v) => validate(value, v))
       .find((v) => v.isValid === false)
 
-    if (error) {
-      fieldValidation.setErrorMessage?.(error.errorMessage)
+    if (error && fieldValidation.setErrorMessage) {
+      fieldValidation.setErrorMessage(error.errorMessage)
     }
   }
 

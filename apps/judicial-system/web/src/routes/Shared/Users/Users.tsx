@@ -6,12 +6,12 @@ import {
   DropdownMenu,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { User, UserRole } from '@island.is/judicial-system/types'
-import * as styles from './Users.treat'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
+import * as styles from './Users.treat'
 
 interface UserData {
   users: User[]
