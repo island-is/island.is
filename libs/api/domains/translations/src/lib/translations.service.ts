@@ -5,21 +5,21 @@ import { ContentfulRepository, localeMap } from '@island.is/api/domains/cms'
 import isEmpty from 'lodash/isEmpty'
 import mergeWith from 'lodash/mergeWith'
 
+export interface TranslationsDict {
+  [key: string]: string
+}
+
 // Declare fallbacks for locales here since they are not set in Contentful for various reasons,
-// this can be replaced by fetching contentful locales if fallback is set in the future, same format.
+// this can be replaced by fetching Contentful locales if fallback is set in the future, same format.
 const locales = [
   { code: 'is-IS', fallbackCode: null },
   { code: 'en', fallbackCode: 'is-IS' },
 ]
 
-export interface TranslationsDict {
-  [key: string]: string
-}
-
 const errorHandler = (name: string) => {
   return (error: Error) => {
     logger.error(error)
-    throw new ApolloError('Failed to resolve request in ' + name)
+    throw new ApolloError(`Failed to resolve request in ${name}`)
   }
 }
 
@@ -36,20 +36,23 @@ export class TranslationsService {
     const result = await this.contentfulRepository
       .getLocalizedEntries<any>('*', {
         ['content_type']: 'namespace',
-        select: 'fields.strings,fields.fallback',
+        select: 'fields.strings',
         'fields.namespace[in]': namespaces.join(','),
       })
       .catch(errorHandler('getNamespace'))
 
-    const withFallbacks = result?.items?.map(({ fields }) =>
-      mergeWith(
-        {},
-        locale.fallbackCode ? fields.strings[locale.fallbackCode] : {},
-        fields.strings[locale.code],
-        (o, s) => (isEmpty(s) ? o : s),
-      ),
-    )
+    return result.items.reduce((acc, cur) => {
+      const strings = cur.fields.strings
 
-    return withFallbacks.reduce((obj, cur) => Object.assign(obj, cur), {})
+      return {
+        ...acc,
+        ...mergeWith(
+          {},
+          locale.fallbackCode ? strings?.[locale.fallbackCode] : {},
+          strings?.[locale.code],
+          (o, s) => (isEmpty(s) ? o : s),
+        ),
+      }
+    }, {})
   }
 }
