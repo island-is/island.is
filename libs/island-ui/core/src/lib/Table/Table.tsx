@@ -1,26 +1,32 @@
-import React, { ReactNode, FC } from 'react'
+import React, { ReactNode, FC, AllHTMLAttributes } from 'react'
 import cn from 'classnames'
 
 import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles'
 import { getTextStyles, TextProps } from '../Text/Text'
 import * as styles from './Table.treat'
 
-type DataField = Omit<UseBoxStylesProps, 'component'> & {
+type DataField = {
   children?: ReactNode
   text?: Pick<
     TextProps,
     'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
   >
+  box?: Omit<UseBoxStylesProps, 'component'>
 }
 
-type Table = Omit<UseBoxStylesProps, 'component'> & {
+type Table = {
   children?: ReactNode
+  box?: Omit<UseBoxStylesProps, 'component'>
 }
 
-export const Table = ({ children, ...props }: Table) => {
+export const Table = ({
+  children,
+  box,
+  ...props
+}: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => {
   return (
     <div
-      className={useBoxStyles({ component: 'div', overflow: 'auto', ...props })}
+      className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}
     >
       <table
         className={cn(
@@ -31,6 +37,7 @@ export const Table = ({ children, ...props }: Table) => {
           }),
           styles.table,
         )}
+        {...props}
       >
         {children}
       </table>
@@ -49,7 +56,13 @@ export const Foot: FC = ({ children }) => {
 export const Row: FC = ({ children }) => {
   return <tr>{children}</tr>
 }
-export const Data = ({ children, text = {}, ...props }: DataField) => {
+export const Data = ({
+  children,
+  text = {},
+  box = {},
+  ...props
+}: DataField &
+  Omit<AllHTMLAttributes<HTMLTableDataCellElement>, 'className'>) => {
   const classNames = cn(
     styles.cell,
     getTextStyles({
@@ -64,12 +77,22 @@ export const Data = ({ children, text = {}, ...props }: DataField) => {
       paddingBottom: 'p5',
       borderBottomWidth: 'standard',
       borderColor: 'blue200',
-      ...props,
+      ...box,
     }),
   )
-  return <td className={classNames}>{children}</td>
+  return (
+    <td className={classNames} {...props}>
+      {children}
+    </td>
+  )
 }
-export const HeadData = ({ children, text = {}, ...props }: DataField) => {
+export const HeadData = ({
+  children,
+  text = {},
+  box = {},
+  ...props
+}: DataField &
+  Omit<AllHTMLAttributes<HTMLTableHeaderCellElement>, 'className'>) => {
   const classNames = cn(
     styles.cell,
     getTextStyles({
@@ -86,8 +109,12 @@ export const HeadData = ({ children, text = {}, ...props }: DataField) => {
       borderColor: 'blue200',
       background: 'blue100',
       textAlign: 'left',
-      ...props,
+      ...box,
     }),
   )
-  return <th className={classNames}>{children}</th>
+  return (
+    <th className={classNames} {...props}>
+      {children}
+    </th>
+  )
 }

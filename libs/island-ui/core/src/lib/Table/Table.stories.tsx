@@ -86,7 +86,7 @@ export const BasicTable = () => {
           <HeadData>Skóli</HeadData>
           <HeadData>Námsbraut</HeadData>
           <HeadData>Dagsetning</HeadData>
-          <HeadData textAlign="right">Skjöl</HeadData>
+          <HeadData box={{ textAlign: 'right' }}>Skjöl</HeadData>
         </Row>
       </Head>
       <Body>
@@ -95,7 +95,13 @@ export const BasicTable = () => {
             <Data>{license.school}</Data>
             <Data>{license.programme}</Data>
             <Data>{license.date}</Data>
-            <Data textAlign="right" paddingTop="none" paddingBottom="none">
+            <Data
+              box={{
+                textAlign: 'right',
+                paddingTop: 'none',
+                paddingBottom: 'none',
+              }}
+            >
               <DropdownMenu
                 disclosure={
                   <Button
