@@ -17,7 +17,7 @@ export class HealthInsuranceProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError(response.errors[0].message)
+          return this.handleError(response)
         }
 
         return Promise.resolve(response.data?.healthInsuranceIsHealthInsured)
