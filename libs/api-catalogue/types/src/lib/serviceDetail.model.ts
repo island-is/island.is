@@ -55,7 +55,7 @@ export interface ServiceDetail {
   /**
    * The entire open api document from the service.
    */
-   openApiString: string
+  openApiString: string
 
   /**
    * X-Road identifying the service in different X-Road environments.

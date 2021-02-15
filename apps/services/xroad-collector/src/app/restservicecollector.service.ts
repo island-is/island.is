@@ -80,7 +80,7 @@ export class RestServiceCollector implements ServiceCollector {
 
         // Insert into Elastic worker index
 
-        addedItems = await this.elasticService.bulkWorker(services)
+        addedItems = await this.elasticService.bulkWorker(services, true)
         if (addedItems && createCollectionAlias) {
           await this.elasticService.createCollectorWorkingAlias()
           createCollectionAlias = false

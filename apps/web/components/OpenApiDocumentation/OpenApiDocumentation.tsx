@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react'
 import { OpenApi } from '@island.is/api-catalogue/types'
-import { Box } from '@island.is/island-ui/core'
+import { Text, Box, Tooltip } from '@island.is/island-ui/core'
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -15,6 +15,7 @@ import { Box } from '@island.is/island-ui/core'
 
 export interface OpenApiDocumentationProps {
   spec: OpenApi
+  liveSpecification: boolean
 }
 
 interface Window {
@@ -25,6 +26,7 @@ declare const window: Window
 
 export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
   spec,
+  liveSpecification,
 }: OpenApiDocumentationProps) => {
   useEffect(() => {
     window.Redoc.init(
@@ -40,6 +42,18 @@ export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
   return (
     <Box width="full" paddingTop="containerGutter">
       <Box id="redoc-container" background="white" />
+      {liveSpecification && (
+        <Box display="flex" width="full" justifyContent="flexEnd">
+          <Text>
+            Live{' '}
+            <Tooltip
+              placement="right"
+              as="button"
+              text={'The specification was fetched when this page was opened.'}
+            />
+          </Text>
+        </Box>
+      )}
     </Box>
   )
 }
