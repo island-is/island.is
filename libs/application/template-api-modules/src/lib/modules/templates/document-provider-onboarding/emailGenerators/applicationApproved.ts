@@ -14,10 +14,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
   const applicantEmail = get(application.answers, 'applicant.email')
 
   // TODO translate using locale
-  const subject =
-    locale === 'is'
-      ? 'Umsókn samþykkt: ReferenceTemplate'
-      : 'Application approved: Reference Template'
+  const subject = locale === 'is' ? 'Umsókn samþykkt' : 'Application approved'
   const body =
     locale === 'is'
       ? dedent(`Góðan dag.
