@@ -29,7 +29,6 @@ interface FieldValidation {
 
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
-
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
