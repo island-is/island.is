@@ -91,6 +91,7 @@
 /apps/skilavottord/                                                 @island-is/deloitte
 /libs/application/templates/health-insurance                        @island-is/deloitte
 /libs/skilavottord/                                                 @island-is/deloitte
+/libs/api/domains/health-insurance/                                 @island-is/deloitte
 
 /apps/auth-admin-web/                                               @island-is/fuglar
 /apps/auth-admin-web-e2e/                                           @island-is/fuglar
