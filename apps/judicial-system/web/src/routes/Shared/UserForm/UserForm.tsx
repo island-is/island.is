@@ -263,7 +263,7 @@ export const UserForm: React.FC<Props> = (props) => {
           <Input
             data-testid="mobileNumber"
             name="mobileNumber"
-            label="Síma númer"
+            label="Símanúmer"
             placeholder="Síma númer"
             defaultValue={user.mobileNumber}
             required
