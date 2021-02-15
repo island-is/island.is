@@ -104,6 +104,7 @@ export class FileService {
       Key: fileName,
       ContentEncoding: 'base64',
       ContentDisposition: 'inline',
+      ContentType: 'application/pdf',
       Body: buffer,
     }
 
