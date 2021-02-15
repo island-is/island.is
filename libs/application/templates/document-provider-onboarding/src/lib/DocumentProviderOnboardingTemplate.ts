@@ -147,6 +147,15 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         },
       },
       inReview: {
+        entry: assign((context) => {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              assignees: ['2311637949', '2404805659'],
+            },
+          }
+        }),
         meta: {
           name: 'In Review',
           progress: 0.5,
@@ -251,7 +260,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
 
-    // This if statement might change depending on the "umboðskerfi"
+    //This if statement might change depending on the "umboðskerfi"
     if (
       process.env.NODE_ENV === 'development' &&
       application.state === 'inReview'

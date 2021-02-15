@@ -279,13 +279,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
               variant: 'email',
               placeholder: m.helpDeskEmailPlaceholder,
             }),
-            // //CustomField is a workaround because of a bug in react-hook-form
-            // buildCustomField({
-            //   id: 'helpDeskConfirmation',
-            //   title: 'helpDeskConfirmation',
-            //   component: 'Review',
-            // }),
-
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
