@@ -20,7 +20,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
       ? dedent(`Góðan dag.
 
         Umsókn þín um að gerast skajalveita hefur verið samþykkt.
-        smelltu hér <a href="${clientLocationOrigin}/umsokn/${application.id}" target="_blank">smellt hér til þess að halda áfram í útfærslu og prófanir</a>.
+        <a href="${clientLocationOrigin}/umsokn/${application.id}" target="_blank">smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
         Með kveðju,
         starfsfólk Island.is
       `)
