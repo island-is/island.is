@@ -83,7 +83,7 @@ export const updateStringsObject = (
             ...stringsAcc,
             [stringsCur]:
               cur.id === DEFAULT_LOCALE && isEmpty(value)
-                ? messages?.[stringsCur].defaultMessage
+                ? messages?.[stringsCur]?.defaultMessage ?? ''
                 : value,
           }
         }, {}),
@@ -97,7 +97,7 @@ export const updateStringsObject = (
               ...messagesAcc,
               [messagesCur]:
                 cur.id === DEFAULT_LOCALE
-                  ? messages?.[messagesCur].defaultMessage
+                  ? messages?.[messagesCur]?.defaultMessage ?? ''
                   : '',
             }),
             {},

@@ -844,22 +844,22 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Below are the steps that will happen next.',
     },
     descReview: {
-      id: 'pl.application:review.desc',
+      id: 'pl.application:review.descReview',
       defaultMessage: 'Hér að neðan er umsókn þín sem þú sendir inn.',
       description: 'Below is your submitted application.',
     },
     buttonsView: {
-      id: 'pl.application:review.desc',
+      id: 'pl.application:review.buttonsView',
       defaultMessage: 'Skoða forrit',
       description: 'View application',
     },
     buttonsViewProgress: {
-      id: 'pl.application:review.desc',
+      id: 'pl.application:review.buttonsViewProgress',
       defaultMessage: 'Skoða framfarir',
       description: 'View progress',
     },
     buttonsEdit: {
-      id: 'pl.application:review.desc',
+      id: 'pl.application:review.buttonsEdit',
       defaultMessage: 'Breyta / bæta við tímabilum',
       description: 'Edit or add periods to the application',
     },
@@ -917,12 +917,12 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Your employer will confirm the dates of your parental leave.',
     },
     deptTitle: {
-      id: 'pl.application:review.employer.title',
+      id: 'pl.application:review.dept.title',
       defaultMessage: 'Vinnumálastofnun samþykkir umsókn',
       description: 'Vinnumálastofnun approves application',
     },
     deptDesc: {
-      id: 'pl.application:review.employer.description',
+      id: 'pl.application:review.dept.description',
       defaultMessage:
         'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
@@ -999,17 +999,17 @@ export const parentalLeaveFormMessages: MessageDir = {
 
 export const employerFormMessages = defineMessages({
   formTitle: {
-    id: 'pl.application:form.title',
+    id: 'pl.application:employer.form.title',
     defaultMessage: 'Samþykki vinnuveitanda fyrir umsókn um fæðingarorlof',
     description: 'Employer approval for parental leave application',
   },
   reviewSection: {
-    id: 'pl.application:review.section',
+    id: 'pl.application:employer.review.section',
     defaultMessage: 'Samþykki vinnuveitanda',
     description: 'Employer approval',
   },
   reviewMultiTitle: {
-    id: 'pl.application:review.multi.title',
+    id: 'pl.application:employer.review.multi.title',
     defaultMessage:
       'Starfsmaður þinn hefur sótt um fæðingarorlof. Samþykkir þú tímabilið sem hann valdi?',
     description:
@@ -1019,7 +1019,7 @@ export const employerFormMessages = defineMessages({
 
 export const inReviewFormMessages = defineMessages({
   formTitle: {
-    id: 'pl.application:form.title',
+    id: 'pl.application:inReview.form.title',
     defaultMessage: 'Fæðingarorlof',
     description: 'Parental Leave',
   },
@@ -1027,30 +1027,30 @@ export const inReviewFormMessages = defineMessages({
 
 export const otherParentApprovalFormMessages = defineMessages({
   formTitle: {
-    id: 'pl.application:form.title',
+    id: 'pl.application:otherParent.form.title',
     defaultMessage: 'Annað foreldra samþykki fyrir umsókn um fæðingarorlof',
     description: 'Other parent approval for parental leave application',
   },
   reviewSection: {
-    id: 'pl.application:review.section',
+    id: 'pl.application:otherParent.review.section',
     defaultMessage: 'Annað samþykki foreldra',
     description: 'Other parent approval',
   },
   multiTitle: {
-    id: 'pl.application:multi.title',
+    id: 'pl.application:otherParent.multi.title',
     defaultMessage: 'Viltu láta einn mánuð af fæðingarorlofsrétti þínum?',
     description:
       'Do you want to give away one month of your parental leave rights?',
   },
   introDescription: {
-    id: 'pl.application:intro.description',
+    id: 'pl.application:otherParent.intro.description',
     defaultMessage:
       'Þú ert greinilega að búast við barni með einhverjum einstaklingi sem vill nota einn mánuð af réttindum þínum. Það þýðir að réttindi þín verða í mesta lagi 5 mánuðir. Ertu sammála?',
     description:
       'You are apparently expecting a baby with some person that wishes to use one month of your rights. That means your rights will be 5 months at most. Do you agree?',
   },
   finalTitle: {
-    id: 'pl.application:final.title',
+    id: 'pl.application:otherParent.final.title',
     defaultMessage: 'Takk fyrir',
     description: 'Thank you',
   },
@@ -1058,12 +1058,12 @@ export const otherParentApprovalFormMessages = defineMessages({
 
 export const dataSchema = defineMessages({
   phoneNumber: {
-    id: 'pl.application:phoneNumber',
+    id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'The phone number must be valid.',
   },
   otherParentId: {
-    id: 'pl.application:otherParentDd',
+    id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'ID number must be valid.',
   },
