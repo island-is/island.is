@@ -912,7 +912,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     employerDesc: {
       id: 'pl.application:review.employer.description',
       defaultMessage:
-        'Vinnuveitandi þinn mun staðfesta dagsetningar foreldraorlofs þíns.',
+        'Vinnuveitandi þinn mun staðfesta dagsetningar fæðingarorlofs þíns.',
       description:
         'Your employer will confirm the dates of your parental leave.',
     },
@@ -1000,7 +1000,7 @@ export const parentalLeaveFormMessages: MessageDir = {
 export const employerFormMessages = defineMessages({
   formTitle: {
     id: 'pl.application:form.title',
-    defaultMessage: 'Samþykki vinnuveitanda fyrir umsókn um foreldraorlof',
+    defaultMessage: 'Samþykki vinnuveitanda fyrir umsókn um fæðingarorlof',
     description: 'Employer approval for parental leave application',
   },
   reviewSection: {
@@ -1011,7 +1011,7 @@ export const employerFormMessages = defineMessages({
   reviewMultiTitle: {
     id: 'pl.application:review.multi.title',
     defaultMessage:
-      'Starfsmaður þinn hefur sótt um foreldraorlof. Samþykkir þú valin tímabil hans?',
+      'Starfsmaður þinn hefur sótt um fæðingarorlof. Samþykkir þú tímabilið sem hann valdi?',
     description:
       'Your employee has applied for parental leave. Do you approve of his/her selected periods?',
   },
@@ -1028,7 +1028,7 @@ export const inReviewFormMessages = defineMessages({
 export const otherParentApprovalFormMessages = defineMessages({
   formTitle: {
     id: 'pl.application:form.title',
-    defaultMessage: 'Annað foreldra samþykki fyrir umsókn um foreldraorlof',
+    defaultMessage: 'Annað foreldra samþykki fyrir umsókn um fæðingarorlof',
     description: 'Other parent approval for parental leave application',
   },
   reviewSection: {
@@ -1038,7 +1038,7 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
   multiTitle: {
     id: 'pl.application:multi.title',
-    defaultMessage: 'Viltu láta einn mánuð af foreldraorlofsrétti þínum?',
+    defaultMessage: 'Viltu láta einn mánuð af fæðingarorlofsrétti þínum?',
     description:
       'Do you want to give away one month of your parental leave rights?',
   },
