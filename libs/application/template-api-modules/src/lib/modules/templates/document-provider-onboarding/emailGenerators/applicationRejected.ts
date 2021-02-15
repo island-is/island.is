@@ -19,7 +19,7 @@ export const generateApplicationRejectedEmail: EmailTemplateGenerator = (
     locale === 'is'
       ? dedent(`Góðan dag.
 
-        Umsókn þinni um að gerast skajalveita hefur verið hafnað.
+        Umsókn þinni um að gerast skjalaveita hefur verið hafnað.
         Ástæða höfnunar: ${get(application.answers, 'rejectionReason')}
 
         Með kveðju,

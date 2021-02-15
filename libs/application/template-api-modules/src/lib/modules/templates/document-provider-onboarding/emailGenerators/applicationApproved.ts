@@ -12,6 +12,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
   } = props
 
   const applicantEmail = get(application.answers, 'applicant.email')
+  const applicationLink = `${clientLocationOrigin}/umsokn/${application.id}`
 
   // TODO translate using locale
   const subject = locale === 'is' ? 'Umsókn samþykkt' : 'Application approved'
@@ -19,15 +20,15 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
     locale === 'is'
       ? dedent(`Góðan dag.
 
-        Umsókn þín um að gerast skajalveita hefur verið samþykkt.
-        <a href="${clientLocationOrigin}/umsokn/${application.id}" target="_blank">smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
+        Umsókn þín um að gerast skjalaveita hefur verið samþykkt.
+        <a href=${applicationLink} target="_blank">smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
         Með kveðju,
         starfsfólk Island.is
       `)
       : dedent(`Hello.
 
         Your application for document providing has been approved.
-        <a href="${clientLocationOrigin}/umsokn/${application.id}" target="_blank">Click here to implement and test</a>.
+        <a href=${applicationLink} target="_blank">Click here to implement and test</a>.
         Best regards,
         Island.is
       `)
