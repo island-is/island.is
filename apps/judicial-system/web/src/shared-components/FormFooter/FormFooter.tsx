@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
-
+import * as styles from './FormFooter.treat'
 interface Props {
   nextUrl?: string
   nextIsDisabled?: boolean
@@ -45,13 +45,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         </Button>
       )}
       {props.infoBoxText && (
-        <Box
-          padding={2}
-          borderRadius="large"
-          background="blue100"
-          borderColor="blue200"
-          borderWidth="standard"
-        >
+        <div className={styles.infoBoxContainer}>
           <Box display="flex" alignItems="center">
             <Box
               display="flex"
@@ -61,9 +55,9 @@ const FormFooter: React.FC<Props> = (props: Props) => {
             >
               <Icon type="filled" color="blue400" icon="informationCircle" />
             </Box>
-            <Text>{props.infoBoxText}</Text>
+            <Text variant="small">{props.infoBoxText}</Text>
           </Box>
-        </Box>
+        </div>
       )}
     </Box>
   )

@@ -1,5 +1,5 @@
 import { Global, LoggerService, Module } from '@nestjs/common'
-export { Logger } from 'winston'
+export type { Logger } from 'winston'
 import { logger } from '../logging'
 import { WinstonLogger } from 'nest-winston'
 

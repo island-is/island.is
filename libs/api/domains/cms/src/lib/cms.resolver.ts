@@ -73,6 +73,9 @@ import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { OrganizationPage } from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
+import { GetAuctionsInput } from './dto/getAuctions.input'
+import { Auction } from './models/auction.model'
+import { GetAuctionInput } from './dto/getAuction.input'
 
 const { cacheTime } = environment
 
@@ -197,6 +200,25 @@ export class CmsResolver {
       input.slug,
       input?.lang ?? 'is-IS',
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Auction])
+  getAuctions(
+    @Args('input') input: GetAuctionsInput,
+  ): Promise<Auction[] | null> {
+    return this.cmsContentfulService.getAuctions(
+      input.organization,
+      input.year,
+      input.month,
+      input.lang,
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Auction)
+  getAuction(@Args('input') input: GetAuctionInput): Promise<Auction | null> {
+    return this.cmsContentfulService.getAuction(input.id, input.lang)
   }
 
   @Directive(cacheControlDirective())

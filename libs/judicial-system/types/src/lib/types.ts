@@ -101,6 +101,11 @@ export enum CaseDecision {
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
 }
 
+export enum AccusedPleaDecision {
+  ACCEPT = 'ACCEPT',
+  REJECT = 'REJECT',
+}
+
 export type Gender = 'karl' | 'kona' | 'annað'
 
 export interface Case {
@@ -140,7 +145,8 @@ export interface Case {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
-  accusedPlea?: string
+  accusedPleaDecision?: AccusedPleaDecision
+  accusedPleaAnnouncement?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision
@@ -153,6 +159,7 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  registrar?: User
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
@@ -214,7 +221,8 @@ export interface UpdateCase {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
-  accusedPlea?: string
+  accusedPleaDecision?: AccusedPleaDecision
+  accusedPleaAnnouncement?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision

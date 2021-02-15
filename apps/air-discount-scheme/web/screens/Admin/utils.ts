@@ -26,6 +26,8 @@ export const downloadCSV = (flightLegs: FlightLeg[], filters: FilterInput) => {
       'Afsláttur',
       'FlugID',
       'FlugLeggjaID',
+      'Kyn',
+      'Aldur',
     ]
     const data = getFilteredFlightLegs(
       airline === Airlines.norlandair ? Airlines.icelandair : airline,
@@ -44,6 +46,8 @@ export const downloadCSV = (flightLegs: FlightLeg[], filters: FilterInput) => {
       flightLeg.originalPrice - flightLeg.discountPrice,
       flightLeg.flight.id,
       flightLeg.id,
+      flightLeg.flight.userInfo.gender,
+      flightLeg.flight.userInfo.age,
     ])
     data.unshift(header)
 

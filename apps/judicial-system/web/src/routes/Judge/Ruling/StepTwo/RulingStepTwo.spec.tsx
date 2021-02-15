@@ -1,21 +1,22 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { RulingStepTwo } from './RulingStepTwo'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { MemoryRouter, Route } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
+import userEvent from '@testing-library/user-event'
+
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MemoryRouter, Route } from 'react-router-dom'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { RulingStepTwo } from './RulingStepTwo'
 
 describe('/domari-krafa/urskurdarord', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
