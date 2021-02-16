@@ -12,6 +12,7 @@ import {
   Form,
   FormModes,
   FormValue,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -37,6 +38,12 @@ export const ExampleForm: Form = buildForm({
             // @ts-ignore
             values: { name: application.answers.name },
           }),
+        }),
+        buildFileUploadField({
+          id: 'attachments',
+          title: 'Viðhengi',
+          introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
+          uploadMultiple: true,
         }),
         buildMultiField({
           id: 'about',
