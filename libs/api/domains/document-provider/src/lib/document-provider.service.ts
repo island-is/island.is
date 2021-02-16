@@ -146,6 +146,7 @@ export class DocumentProviderService {
   async updateEndpointOnTest(
     endpoint: string,
     providerId: string,
+    xroad: boolean,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -153,7 +154,7 @@ export class DocumentProviderService {
     // )
 
     const result = await this.documentProviderClientTest
-      .updateEndpoint(providerId, endpoint)
+      .updateEndpoint(providerId, endpoint, xroad)
       .catch(handleError)
 
     const audienceAndScope = new AudienceAndScope(result.audience, result.scope)
@@ -223,7 +224,7 @@ export class DocumentProviderService {
   async updateEndpoint(
     endpoint: string,
     providerId: string,
-    xroad = false,
+    xroad: boolean,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -231,7 +232,7 @@ export class DocumentProviderService {
     // )
 
     const result = await this.documentProviderClientProd
-      .updateEndpoint(providerId, endpoint)
+      .updateEndpoint(providerId, endpoint, xroad)
       .catch(handleError)
 
     const audienceAndScope = new AudienceAndScope(result.audience, result.scope)

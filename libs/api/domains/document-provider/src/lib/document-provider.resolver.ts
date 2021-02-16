@@ -149,6 +149,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.updateEndpointOnTest(
       input.endpoint,
       input.providerId,
+      input.xroad || false,
     )
   }
 
@@ -195,6 +196,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.updateEndpoint(
       input.endpoint,
       input.providerId,
+      input.xroad || false,
     )
   }
 }
