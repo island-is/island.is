@@ -5,6 +5,9 @@ import { Job } from 'bull'
 import * as AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationService } from './application.service'
 import { FileStorageService } from '@island.is/file-storage'
+import { Inject } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
+import { applicationConfiguration } from './application.configuration'
 
 interface JobData {
   applicationId: string
@@ -16,27 +19,30 @@ export class UploadProcessor {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
+    @Inject(applicationConfiguration.KEY)
+    private readonly config: ConfigType<typeof applicationConfiguration>,
   ) {}
 
   @Process('upload')
   async handleUpload(job: Job) {
     const { attachmentUrl }: JobData = job.data
-    console.log('Start uploading...')
     const { bucket, key } = AmazonS3URI(attachmentUrl)
-    const destinationBucket = 'testing-islandis-copy'
-    const region = 'eu-west-1'
+    const attachmentBucket = this.config.attachmentBucket
+
+    if (!attachmentBucket) {
+      throw new Error('Application attachment bucket not configured.')
+    }
 
     return await this.fileStorageService.copyObjectFromUploadBucket(
       key,
-      destinationBucket,
-      region,
+      attachmentBucket,
+      this.config.region,
       bucket,
     )
   }
 
   @OnQueueCompleted()
   async onCompleted(job: Job, url: string) {
-    console.log('On completed: job ', job.id, ' -> result: ', url)
     const { applicationId }: JobData = job.data
     const { key } = AmazonS3URI(url)
 

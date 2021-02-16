@@ -11,6 +11,8 @@ import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
+import { ConfigModule } from '@nestjs/config'
+import { applicationConfiguration } from './application.configuration'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
 
@@ -49,6 +51,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       emailOptions: environment.emailOptions,
       jwtSecret: environment.auth.jwtSecret,
     }),
+    ConfigModule.forFeature(applicationConfiguration),
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
     BullModule,

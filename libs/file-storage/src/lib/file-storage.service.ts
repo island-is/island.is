@@ -1,25 +1,34 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
+import { ConfigType } from '@nestjs/config'
+import { fileStorageConfiguration } from './file-storage.configuration'
 
-const uploadBucket = 'testing-islandis' // TODO get from env and update to correct bucket
-
-AWS.config.update({ region: 'eu-west-1' })
+const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 
 @Injectable()
 export class FileStorageService {
   private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
+  private uploadBucket?: string
+
+  constructor(
+    @Inject(fileStorageConfiguration.KEY)
+    private readonly config: ConfigType<typeof fileStorageConfiguration>,
+  ) {}
 
   generatePresignedPost(filename: string): Promise<AWS.S3.PresignedPost> {
+    if (!this.config.uploadBucket) {
+      throw new Error('Upload bucket not configured.')
+    }
+
     const fileId = uuid()
-    console.log('generatePresignedPost with id: ', `${filename}_${fileId}`)
+    const key = `${fileId}_${filename}`
 
     const params = {
-      Bucket: uploadBucket,
-      Expires: 10000000, //time to expire in seconds, TODO select length
-
+      Bucket: this.config.uploadBucket,
+      Expires: PRESIGNED_POST_EXPIRES,
       Fields: {
-        key: `${fileId}_${filename}`,
+        key,
       },
       conditions: [['content-length-range', 0, 10000000]], // Max 10MB
     }
