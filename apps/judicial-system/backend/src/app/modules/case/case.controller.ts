@@ -16,6 +16,7 @@ import {
   Res,
   Header,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -42,6 +43,7 @@ import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
+import { CaseInterceptor, CasesInterceptor } from './interceptors'
 
 // Allows prosecutors to perform any action
 const prosecutorRule = UserRole.PROSECUTOR as RolesRule
@@ -262,6 +264,7 @@ export class CaseController {
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('cases')
+  @UseInterceptors(CasesInterceptor)
   @ApiOkResponse({
     type: Case,
     isArray: true,
@@ -273,6 +276,7 @@ export class CaseController {
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
+  @UseInterceptors(CaseInterceptor)
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
   async getById(@Param('id') id: string): Promise<Case> {
     return this.findCaseById(id)

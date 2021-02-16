@@ -337,12 +337,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kröfu um að kærði, Mikki Refur, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -375,12 +379,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -408,12 +416,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -439,12 +451,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -474,12 +490,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi farbanni, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -509,12 +529,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Kærði, Doe kt. 012345-6789, skal sæta áframhaldandi gæsluvarðhaldi, þó ekki lengur en til fimmtudagsins 22. október 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -546,12 +570,16 @@ describe('Step helper', () => {
           const hasText = (node: Element) =>
             node.textContent === 'Saksóknari hefur ekki fyllt út dómkröfur.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -588,12 +616,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Þess er krafist að Doe, kt. 012345-6789, sæti áframhaldandi gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -627,12 +659,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31. Lorem ipsum.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeTruthy()
     })
@@ -666,12 +702,16 @@ describe('Step helper', () => {
             node.textContent ===
             'Þess er krafist að Doe, kt. 012345-6789, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til fimmtudagsins 26. nóvember 2020, kl. 12:31.'
 
-          const nodeHasText = hasText(node)
-          const childrenDontHaveText = Array.from(node.children).every(
-            (child) => !hasText(child),
-          )
+          if (node) {
+            const nodeHasText = hasText(node)
+            const childrenDontHaveText = Array.from(node.children).every(
+              (child) => !hasText(child),
+            )
 
-          return nodeHasText && childrenDontHaveText
+            return nodeHasText && childrenDontHaveText
+          }
+
+          return false
         }),
       ).toBeInTheDocument()
     })
