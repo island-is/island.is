@@ -26,6 +26,7 @@ export type Icon =
   | 'documents'
   | 'download'
   | 'ellipse'
+  | 'ellipsisVertical'
   | 'fileTrayFull'
   | 'filter'
   | 'heart'
@@ -80,6 +81,7 @@ export default {
     documents: 'Documents',
     download: 'Download',
     ellipse: 'Ellipse',
+    ellipsisVertical: 'EllipsisVertical',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
     heart: 'Heart',
@@ -133,6 +135,7 @@ export default {
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
+    ellipsisVertical: 'EllipsisVerticalOutline',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',

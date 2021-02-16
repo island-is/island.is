@@ -2,14 +2,15 @@ import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './ScreenFooter.treat'
 import {
   Application,
   formatText,
   FormModes,
   SubmitField,
+  coreMessages,
 } from '@island.is/application/core'
 
+import * as styles from './ScreenFooter.treat'
 interface FooterProps {
   application: Application
   mode?: FormModes
@@ -52,15 +53,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           disabled={!canProceed || loading}
           type="submit"
         >
-          {formatText(
-            {
-              id: 'application.system:button.submit',
-              defaultMessage: 'Submit',
-              description: 'Submit button text',
-            },
-            application,
-            formatMessage,
-          )}
+          {formatText(coreMessages.buttonSubmit, application, formatMessage)}
         </Button>
       )
     }
@@ -136,11 +129,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                   icon="arrowForward"
                   type="submit"
                 >
-                  {formatMessage({
-                    id: 'application.system:button.next',
-                    defaultMessage: 'Continue',
-                    description: 'Next button text',
-                  })}
+                  {formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>
             )}
@@ -148,11 +137,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           <Box display={['none', 'inlineFlex']} padding={2} paddingLeft="none">
             {showGoBack && (
               <Button variant="ghost" onClick={goBack}>
-                {formatMessage({
-                  id: 'application.system:button.back',
-                  defaultMessage: 'Back',
-                  description: 'Back button text',
-                })}
+                {formatMessage(coreMessages.buttonBack)}
               </Button>
             )}
           </Box>

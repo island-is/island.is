@@ -1,12 +1,13 @@
-import { createMemoryHistory } from 'history'
 import React from 'react'
-import { render, screen } from '@testing-library/react'
 import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
+import { render, screen } from '@testing-library/react'
+import { MockedProvider } from '@apollo/client/testing'
+
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import Logo from './Logo'
 import UserProvider from '../UserProvider/UserProvider'
 import { mockJudgeQuery } from '../../utils/mocks'
-import { MockedProvider } from '@apollo/client/testing'
+import Logo from './Logo'
 
 describe('Logo', () => {
   test('should display the current users institution', async () => {

@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { style } from 'treat'
+import { style, globalStyle } from 'treat'
 
 export const menu = style({
   width: 150,
@@ -21,4 +21,8 @@ export const menuItem = style({
       outline: 'none',
     },
   },
+})
+
+globalStyle(`${menuItem} button:focus`, {
+  outline: 'none',
 })

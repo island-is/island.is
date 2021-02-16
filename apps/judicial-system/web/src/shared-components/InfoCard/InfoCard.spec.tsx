@@ -1,6 +1,7 @@
-import InfoCard from './InfoCard'
 import React from 'react'
 import { render, screen } from '@testing-library/react'
+
+import InfoCard from './InfoCard'
 
 describe('InfoCard', () => {
   test('should display the assigned defender name if that info is provided even though the defender email is not', async () => {

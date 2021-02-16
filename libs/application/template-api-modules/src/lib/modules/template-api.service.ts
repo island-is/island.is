@@ -4,7 +4,11 @@ import { ApplicationTypes } from '@island.is/application/core'
 
 import { TemplateApiModuleActionProps } from '../types'
 
-import { ParentalLeaveService, ReferenceTemplateService } from './templates'
+import {
+  ParentalLeaveService,
+  ReferenceTemplateService,
+  DocumentProviderOnboardingService,
+} from './templates'
 
 interface ApplicationApiAction {
   templateId: string
@@ -23,10 +27,14 @@ export class TemplateAPIService {
   constructor(
     private readonly parentalLeaveService: ParentalLeaveService,
     private readonly referenceTemplateService: ReferenceTemplateService,
+    private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
   ) {}
 
   private async tryRunningActionOnService(
-    service: ReferenceTemplateService | ParentalLeaveService,
+    service:
+      | ReferenceTemplateService
+      | ParentalLeaveService
+      | DocumentProviderOnboardingService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -59,6 +67,11 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.PARENTAL_LEAVE:
         return this.tryRunningActionOnService(this.parentalLeaveService, action)
+      case ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING:
+        return this.tryRunningActionOnService(
+          this.documentProviderOnboardingService,
+          action,
+        )
     }
 
     return [false]

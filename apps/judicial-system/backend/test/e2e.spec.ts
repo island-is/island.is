@@ -20,27 +20,33 @@ import {
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
-import { setup } from './setup'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
 import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification/models'
+import { setup } from './setup'
 
 jest.setTimeout(20000)
 
 let app: INestApplication
+const prosecutorNationaId = '0000000000'
 let prosecutor: TUser
 let prosecutorAuthCookie: string
+const judgeNationalId = '2222222222' // eslint-disable-line local-rules/disallow-kennitalas
 let judge: TUser
 let judgeAuthCookie: string
+const registrarNationalId = '1111111111'
+let registrar: TUser
+const adminNationalId = '3333333333'
 let admin: TUser
 let adminAuthCookie: string
 
 interface CCase extends TCase {
   prosecutorId: string
   judgeId: string
+  registrarId: string
   parentCaseId: string
 }
 
@@ -49,14 +55,29 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  prosecutor = (await request(app.getHttpServer()).get('/api/user/0000000000'))
-    .body
+  prosecutor = (
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${prosecutorNationaId}`,
+    )
+  ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (await request(app.getHttpServer()).get('/api/user/2222222222')).body
+  judge = (
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${judgeNationalId}`,
+    )
+  ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
-  admin = (await request(app.getHttpServer()).get('/api/user/3333333333')).body
+  registrar = (
+    await request(app.getHttpServer()).get(`/api/user/${registrarNationalId}`)
+  ).body
+
+  admin = (
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${adminNationalId}`,
+    )
+  ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
 })
 
@@ -120,6 +141,7 @@ function remainingJudgeCaseData() {
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
     judgeId: judge.id,
+    registrarId: registrar.id,
   }
 }
 
@@ -183,6 +205,7 @@ function caseToCCase(dbCase: Case) {
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
     judge: theCase.judge && userToTUser(theCase.judge),
+    registrar: theCase.registrar && userToTUser(theCase.registrar),
   } as unknown) as CCase
 }
 
@@ -279,23 +302,37 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
   expectUsersToMatch(caseOne.judge, caseTwo.judge)
+  expect(caseOne.registrarId || null).toBe(caseTwo.registrarId || null)
+  expectUsersToMatch(caseOne.registrar, caseTwo.registrar)
   expect(caseOne.parentCaseId || null).toBe(caseTwo.parentCaseId || null)
   expect(caseOne.parentCase || null).toStrictEqual(caseTwo.parentCase || null)
 }
 
 describe('User', () => {
-  it('GET /api/user/:nationalId should get the user', async () => {
-    const nationalId = '2222222222'
+  it('GET /api/user/:id should get the user', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/user/${prosecutor.id}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        const apiUser = response.body
+
+        expectUsersToMatch(apiUser, prosecutor)
+      })
+  })
+
+  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
     let dbUser: TUser
 
     await User.findOne({
-      where: { nationalId },
+      where: { national_id: judgeNationalId }, // eslint-disable-line @typescript-eslint/camelcase
     })
       .then((value) => {
         dbUser = userToTUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
-          .get(`/api/user/${nationalId}`)
+          .get(`/api/user/?nationalId=${judgeNationalId}`)
           .send()
           .expect(200)
       })
@@ -602,6 +639,7 @@ describe('Case', () => {
           include: [
             { model: User, as: 'prosecutor' },
             { model: User, as: 'judge' },
+            { model: User, as: 'registrar' },
           ],
         })
       })
@@ -610,6 +648,7 @@ describe('Case', () => {
           ...apiCase,
           prosecutor,
           judge,
+          registrar,
         })
       })
   })
@@ -620,7 +659,7 @@ describe('Case', () => {
       .then(() =>
         request(app.getHttpServer())
           .get(`/api/cases`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200),
       )
@@ -639,7 +678,7 @@ describe('Case', () => {
 
         return request(app.getHttpServer())
           .get(`/api/case/${dbCase.id}`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200)
       })
@@ -649,6 +688,7 @@ describe('Case', () => {
           ...dbCase,
           prosecutor,
           judge,
+          registrar,
         })
       })
   })
@@ -675,7 +715,6 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.ACCEPTED,
-      judgeId: judge.id,
     })
       .then((value) =>
         request(app.getHttpServer())

@@ -84,7 +84,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           )}
         />
         <GridRow>
-          <GridColumn span="6/12">
+          <GridColumn span="12/12">
             <CountrySelectField
               field={{ ...field, id: 'formerInsurance.country' }}
               application={application}
@@ -92,7 +92,9 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               isReviewField={true}
             />
           </GridColumn>
-          <GridColumn span="6/12">
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
             <Input
               id={'formerInsurance.personalId'}
               name={'formerInsurance.personalId'}
@@ -102,53 +104,55 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               backgroundColor={'blue'}
             />
           </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <Box marginTop={[2, 0]}>
+              <Input
+                id={'formerInsurance.institution'}
+                name={'formerInsurance.institution'}
+                label={formatText(
+                  m.formerInsuranceInstitution,
+                  application,
+                  formatMessage,
+                )}
+                ref={register}
+                disabled={!isEditable}
+                backgroundColor={'blue'}
+              />
+            </Box>
+          </GridColumn>
         </GridRow>
-        <Box marginBottom={4}>
-          <Input
-            id={'formerInsurance.institution'}
-            name={'formerInsurance.institution'}
-            label={formatText(
-              m.formerInsuranceInstitution,
-              application,
-              formatMessage,
-            )}
-            ref={register}
-            disabled={!isEditable}
-            backgroundColor={'blue'}
-          />
-          {requireConfirmationOfResidency(country) && (
-            <>
-              <FieldDescription
-                description={formatText(
-                  m.confirmationOfResidencyFileUpload,
-                  application,
-                  formatMessage,
-                )}
-              />
-              <FileUploadController
-                id={'confirmationOfResidency'}
-                application={application}
-                error={error}
-                maxSize={FILE_SIZE_LIMIT}
-                header={formatText(
-                  m.fileUploadHeader,
-                  application,
-                  formatMessage,
-                )}
-                description={formatText(
-                  m.fileUploadDescription,
-                  application,
-                  formatMessage,
-                )}
-                buttonLabel={formatText(
-                  m.fileUploadButton,
-                  application,
-                  formatMessage,
-                )}
-              />
-            </>
-          )}
-        </Box>
+        {requireConfirmationOfResidency(country) && (
+          <>
+            <FieldDescription
+              description={formatText(
+                m.confirmationOfResidencyFileUpload,
+                application,
+                formatMessage,
+              )}
+            />
+            <FileUploadController
+              id={'confirmationOfResidency'}
+              application={application}
+              error={error}
+              maxSize={FILE_SIZE_LIMIT}
+              header={formatText(
+                m.fileUploadHeader,
+                application,
+                formatMessage,
+              )}
+              description={formatText(
+                m.fileUploadDescription,
+                application,
+                formatMessage,
+              )}
+              buttonLabel={formatText(
+                m.fileUploadButton,
+                application,
+                formatMessage,
+              )}
+            />
+          </>
+        )}
       </Stack>
       <Box marginBottom={4}>
         <TextWithTooltip

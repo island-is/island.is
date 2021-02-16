@@ -27,16 +27,12 @@ const dataSchema = z.object({
   }),
   service: z.object({
     type: z.enum(['regular', 'express']),
-    comment: z.string(),
     dropLocation: z.enum(['1', '2', '3']),
     extraOptions: z
       .array(z.union([z.enum(['bringOwnPhoto']), z.undefined()]))
       .nonempty(),
   }),
-  timeSchedule: z.object({
-    location: z.enum(['1', '2', '3']),
-  }),
-  approveExternalData: z.boolean().refine((v) => v),
+  fetchData: z.boolean().refine((v) => v),
 })
 
 const PassportTemplate: ApplicationTemplate<

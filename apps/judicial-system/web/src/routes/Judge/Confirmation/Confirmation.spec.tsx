@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { Confirmation } from './Confirmation'
 import {
   CaseAppealDecision,
   UpdateCase,
@@ -15,6 +14,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import userEvent from '@testing-library/user-event'
+import { Confirmation } from './Confirmation'
 
 describe('Confirmation route', () => {
   test(`should not allow users to continue unless every required field has been filled out`, async () => {
