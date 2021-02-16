@@ -33,6 +33,7 @@ bootstrap({
 "build": {
   "builder": "@nrwl/workspace:run-commands",
   "options": {
+    "outputPath": "dist/apps/{{pathToAppDir}}",
     "commands": [
       "yarn nx run {{projectName}}:build-next:production",
       "yarn nx run {{projectName}}:build-server:production"
