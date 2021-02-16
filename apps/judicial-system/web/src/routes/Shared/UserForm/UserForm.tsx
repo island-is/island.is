@@ -164,7 +164,10 @@ export const UserForm: React.FC<Props> = (props) => {
           mask="999999-9999"
           maskPlaceholder={null}
           onChange={(event) =>
-            storeAndRemoveErrorIfValid('nationalId', event.target.value)
+            storeAndRemoveErrorIfValid(
+              'nationalId',
+              event.target.value.replace('-', ''),
+            )
           }
           onBlur={(event) =>
             validateAndSetError('nationalId', event.target.value)
@@ -254,7 +257,10 @@ export const UserForm: React.FC<Props> = (props) => {
           mask="999-9999"
           maskPlaceholder={null}
           onChange={(event) =>
-            storeAndRemoveErrorIfValid('mobileNumber', event.target.value)
+            storeAndRemoveErrorIfValid(
+              'mobileNumber',
+              event.target.value.replace('-', ''),
+            )
           }
           onBlur={(event) =>
             validateAndSetError('mobileNumber', event.target.value)
