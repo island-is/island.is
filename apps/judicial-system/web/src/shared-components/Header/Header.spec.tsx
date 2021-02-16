@@ -6,7 +6,12 @@ import { createMemoryHistory } from 'history'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { MockedProvider } from '@apollo/client/testing'
-import { mockAdminQuery, mockProsecutorQuery } from '../../utils/mocks'
+import {
+  mockAdmin,
+  mockAdminQuery,
+  mockProsecutor,
+  mockProsecutorQuery,
+} from '../../utils/mocks'
 import { UserProvider } from '..'
 import { Header } from './'
 
@@ -27,7 +32,7 @@ describe('Header', () => {
     )
 
     // wait for login to complete
-    await screen.findByTestId('logout-button')
+    await screen.findByRole('button', { name: mockProsecutor.name })
 
     // Act
     expect(history.location.pathname).toEqual(Constants.STEP_ONE_ROUTE)
@@ -53,7 +58,7 @@ describe('Header', () => {
     )
 
     // wait for login to complete
-    await screen.findByTestId('logout-button')
+    await screen.findByRole('button', { name: mockAdmin.name })
 
     // Act
     expect(history.location.pathname).toEqual(Constants.USER_NEW_ROUTE)

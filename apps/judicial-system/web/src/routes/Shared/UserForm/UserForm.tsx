@@ -29,7 +29,6 @@ interface FieldValidation {
 
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
-
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
@@ -240,7 +239,6 @@ export const UserForm: React.FC<Props> = (props) => {
         <Input
           name="title"
           label="Titill"
-          placeholder=""
           defaultValue={user.title}
           onChange={(event) =>
             storeAndRemoveErrorIfValid('title', event.target.value)
@@ -265,8 +263,8 @@ export const UserForm: React.FC<Props> = (props) => {
           <Input
             data-testid="mobileNumber"
             name="mobileNumber"
-            label="Síma númer"
-            placeholder="Síma númer"
+            label="Símanúmer"
+            placeholder="Símanúmer"
             defaultValue={user.mobileNumber}
             required
             hasError={mobileNumberErrorMessage !== undefined}
@@ -292,7 +290,7 @@ export const UserForm: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Checkbox
           name="active"
-          label="Virkja notendan"
+          label="Virkja notandann"
           checked={user.active}
           onChange={({ target }) =>
             setUser({ ...user, active: target.checked })
