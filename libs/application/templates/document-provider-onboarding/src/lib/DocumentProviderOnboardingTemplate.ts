@@ -30,6 +30,9 @@ enum States {
   REVIEWER_WAITING_TO_ASSIGN = 'reviewerWaitingToAssign',
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
+  TEST_PHASE = 'testPhase',
+  REJECTED = 'rejected',
+  FINISHED = 'finished',
 }
 
 const contact = z.object({
@@ -154,12 +157,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'reviewerWaitingToAssign',
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEWER_WAITING_TO_ASSIGN,
           },
         },
       },
-      reviewerWaitingToAssign: {
+      [States.REVIEWER_WAITING_TO_ASSIGN]: {
         meta: {
           name: 'Waiting to assign reviewer',
           progress: 0.4,
@@ -179,15 +182,15 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.ASSIGN]: { target: 'inReview' },
-          [DefaultEvents.REJECT]: { target: 'draft' },
-          [DefaultEvents.EDIT]: { target: 'draft' },
+          [DefaultEvents.ASSIGN]: { target: States.IN_REVIEW },
+          [DefaultEvents.REJECT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
-      inReview: {
+      [States.IN_REVIEW]: {
         exit: 'clearAssignees',
         meta: {
-          name: 'In Review',
+          name: States.IN_REVIEW,
           progress: 0.5,
           roles: [
             {
@@ -197,8 +200,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                   Promise.resolve(val.ReviewApplication),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-                { event: 'REJECT', name: 'Hafna', type: 'reject' },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
               ],
               read: 'all',
               write: { answers: ['rejectionReason'] },
@@ -214,11 +221,11 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: 'testPhase' },
-          REJECT: { target: 'rejected' },
+          [DefaultEvents.APPROVE]: { target: States.TEST_PHASE },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
-      rejected: {
+      [States.REJECTED]: {
         meta: {
           name: 'Rejected',
           progress: 1,
@@ -237,7 +244,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
       },
-      testPhase: {
+      [States.TEST_PHASE]: {
         meta: {
           name: 'TestPhase',
           progress: 0.75,
@@ -257,12 +264,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'finished',
+          [DefaultEvents.SUBMIT]: {
+            target: [States.FINISHED],
           },
         },
       },
-      finished: {
+      [States.FINISHED]: {
         meta: {
           name: 'Finished',
           progress: 1,
@@ -292,42 +299,26 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       })),
     },
   },
-  //   mapUserToRole(
-  //     id: string,
-  //     application: Application,
-  //   ): ApplicationRole | undefined {
-  //     //This logic makes it so the application is not accessible to anybody but involved parties
-
-  //     //This if statement might change depending on the "umboðskerfi"
-  //     // if (
-  //     //   process.env.NODE_ENV === 'development' &&
-  //     //   application.state === 'inReview'
-  //     // ) {
-  //     //   return Roles.ASSIGNEE
-  //     // }
-  //     if (id === application.applicant) {
-  //       return Roles.APPLICANT
-  //     }
-  //     if (
-  //       // application.state === 'inReview' &&
-  //       application.assignees.includes(id)
-  //     ) {
-  //       return Roles.ASSIGNEE
-  //     }
-  //     //Returns nothing if user is not same as applicant nor is part of the assignes
-  //     return undefined
-  //   },
-  // }
   mapUserToRole(
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    //This logic makes it so the application is not accessible to anybody but involved parties
+
+    //This if statement might change depending on the "umboðskerfi"
+    // if (
+    //   process.env.NODE_ENV === 'development' &&
+    //   application.state === 'inReview'
+    // ) {
+    //   return Roles.ASSIGNEE
+    // }
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
+    //Returns nothing if user is not same as applicant nor is part of the assignes
     return undefined
   },
 }
