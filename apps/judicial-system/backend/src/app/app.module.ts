@@ -11,7 +11,7 @@ import { environment } from '../environments'
 
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
-import { CaseModule, NotificationModule, UserModule } from './modules'
+import { CaseModule, InstitutionModule, NotificationModule, UserModule } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -23,6 +23,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     UserModule,
     CaseModule,
     NotificationModule,
+    InstitutionModule,
   ],
 })
 export class AppModule {}
