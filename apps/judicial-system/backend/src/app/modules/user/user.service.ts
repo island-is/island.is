@@ -34,6 +34,14 @@ export class UserService {
     })
   }
 
+  findById(id: string): Promise<User> {
+    this.logger.debug(`Finding user ${id}`)
+
+    return this.userModel.findOne({
+      where: { id },
+    })
+  }
+
   async findByNationalId(nationalId: string): Promise<User> {
     this.logger.debug(`Getting user with national id ${nationalId}`)
 

@@ -186,6 +186,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           progress: 1,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationRejected,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -202,6 +205,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
         meta: {
           name: 'TestPhase',
           progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationApproved,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -238,6 +244,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
+
   mapUserToRole(
     id: string,
     application: Application,

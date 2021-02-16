@@ -20,9 +20,11 @@ means your service will be packaged as a NextJS Docker container image. We have 
 
 If you would like to see some examples, simply search for "docker" in that file and you should find plenty.
 
-That's it.
-
 When you push this change to `main` your Docker image will get built and pushed to our private central Docker registry
+
+{% hint style="info" %}
+To dockerize a NextJS project, you additionally need to configure it to use [our custom server](./next-server.md#setup-in-new-project).
+{% endhint %}
 
 ## Can I create a secret in the aws parameters store for services to consume?
 

@@ -20,7 +20,7 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
-import { User } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
@@ -201,6 +201,6 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
       })
-      .redirect(returnUrl)
+      .redirect(user?.role === UserRole.ADMIN ? '/notendur' : returnUrl)
   }
 }

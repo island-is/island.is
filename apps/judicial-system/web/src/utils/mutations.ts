@@ -110,16 +110,6 @@ export const CasesQuery = gql`
   }
 `
 
-export const UsersQuery = gql`
-  query UsersQuery {
-    users {
-      id
-      name
-      role
-    }
-  }
-`
-
 export const ExtendCaseMutation = gql`
   mutation ExtendCaseMutation($input: ExtendCaseInput!) {
     extendCase(input: $input) {
@@ -182,6 +172,62 @@ export const ExtendCaseMutation = gql`
       parentCase {
         id
       }
+    }
+  }
+`
+export const CreateUserMutation = gql`
+  mutation CreateUserMutation($input: CreateUserInput!) {
+    createUser(input: $input) {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution
+      active
+    }
+  }
+`
+
+export const UsersQuery = gql`
+  query UsersQuery {
+    users {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution
+      active
+    }
+  }
+`
+
+export const UserQuery = gql`
+  query UserQuery($input: UserQueryInput!) {
+    user(input: $input) {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution
+      active
+    }
+  }
+`
+
+export const UpdateUserMutation = gql`
+  mutation UpdateUserMutation($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      id
+      modified
     }
   }
 `

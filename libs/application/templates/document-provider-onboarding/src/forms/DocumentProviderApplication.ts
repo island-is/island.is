@@ -266,13 +266,19 @@ export const DocumentProviderOnboarding: Form = buildForm({
               title: m.helpDeskSection,
               color: 'currentColor',
             }),
-            //CustomField is a workaround because of a bug in react-hook-form
-            buildCustomField({
-              id: 'helpDeskConfirmation',
-              title: 'helpDeskConfirmation',
-              component: 'Review',
+            buildTextField({
+              id: 'helpDesk.phoneNumber',
+              title: m.helpDeskPhoneNumber,
+              variant: 'tel',
+              format: '###-####',
+              placeholder: m.helpDeskPhoneNumberPlaceholder,
             }),
-
+            buildTextField({
+              id: 'helpDesk.email',
+              title: m.helpDeskEmail,
+              variant: 'email',
+              placeholder: m.helpDeskEmailPlaceholder,
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
