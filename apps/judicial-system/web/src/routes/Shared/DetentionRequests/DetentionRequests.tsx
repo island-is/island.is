@@ -445,6 +445,7 @@ export const DetentionRequests: React.FC = () => {
                         c.state === CaseState.SUBMITTED ||
                         c.state === CaseState.RECEIVED) && (
                         <Box
+                          data-testid="deleteCase"
                           component="button"
                           aria-label="Viltu afturkalla kröfu?"
                           className={styles.deleteButton}

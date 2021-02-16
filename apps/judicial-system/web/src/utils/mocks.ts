@@ -39,7 +39,7 @@ export const mockRegistrar = {
   title: 'dómritari',
 } as User
 
-const testCase1 = {
+export const testCase1 = {
   id: 'test_id',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',

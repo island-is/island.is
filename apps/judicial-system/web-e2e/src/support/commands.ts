@@ -18,6 +18,25 @@ declare namespace Cypress {
 Cypress.Commands.add('login', (email, password) => {
   console.log('Custom command example: Login', email, password)
 })
+
+Cypress.Commands.add('stubAPIResponses', () => {
+  cy.intercept('POST', '/api/graphql', (req) => {
+    req.reply((res) => {
+      if (
+        req.body.hasOwnProperty('query') &&
+        req.body.query.includes('CasesQuery')
+      ) {
+        res.send({
+          fixture: 'cases',
+        })
+      }
+    })
+  })
+})
+
+Cypress.Commands.add('getByTestid', (selector) => {
+  return cy.get(`[data-testid=${selector}]`)
+})
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
