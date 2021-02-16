@@ -9,7 +9,7 @@ const userSeeds = `[
     "mobile_number": "0000000",
     "email": "aki@dmr.is",
     "role": "PROSECUTOR",
-    "institution": "Lögreglustjórinn"
+    "institution": "Bráðabirgðalögreglustjórinn"
   },
   {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
@@ -19,7 +19,7 @@ const userSeeds = `[
     "mobile_number": "1111111",
     "email": "dalli@dmr.is",
     "role": "REGISTRAR",
-    "institution": "Héraðsdómurinn"
+    "institution": "Bráðabirgðadómstóllinn"
   },
   {
     "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
@@ -29,7 +29,7 @@ const userSeeds = `[
     "mobile_number": "2222222",
     "email": "dora@dmr.is",
     "role": "JUDGE",
-    "institution": "Héraðsdómurinn"
+    "institution": "Bráðabirgðadómstóllinn"
   }
 ]`
 
