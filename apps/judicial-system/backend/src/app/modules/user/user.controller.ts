@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
@@ -68,7 +69,6 @@ export class UserController {
     return updatedUser
   }
 
-  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('users')
   @ApiOkResponse({
@@ -80,13 +80,32 @@ export class UserController {
     return this.userService.getAll(user)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('user/:id')
+  @ApiOkResponse({
+    type: User,
+    description: 'Gets an existing user',
+  })
+  async getById(@Param('id') id: string) {
+    const user = await this.userService.findById(id)
+
+    if (!user) {
+      throw new NotFoundException(`User ${id} not found`)
+    }
+
+    return user
+  }
+
   /*
    * This endpoint is not guarded as it needs to respond to unauthenticated requests
    * from the authentication service.
    */
-  @Get('user/:nationalId')
-  @ApiOkResponse({ type: User, description: 'Gets an existing user' })
-  async getByNationalId(@Param('nationalId') nationalId: string) {
+  @Get('user')
+  @ApiOkResponse({
+    type: User,
+    description: 'Gets an existing user by national id',
+  })
+  async getByNationalId(@Query('nationalId') nationalId: string) {
     const user = await this.userService.findByNationalId(nationalId)
 
     if (!user) {

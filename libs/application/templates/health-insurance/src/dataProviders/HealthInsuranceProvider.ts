@@ -17,7 +17,7 @@ export class HealthInsuranceProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError(response)
+          return this.handleError(response.errors)
         }
 
         return Promise.resolve(response.data?.healthInsuranceIsHealthInsured)
@@ -28,8 +28,8 @@ export class HealthInsuranceProvider extends BasicDataProvider {
   }
 
   handleError(error: any) {
-    console.log(`An error occured: ${JSON.stringify(error)}`)
-    return Promise.resolve(error ? error : 'error')
+    console.log('Provider error - HealthInsurance:', error)
+    return Promise.resolve(error)
   }
 
   onProvideError(result: string): FailedDataProviderResult {
