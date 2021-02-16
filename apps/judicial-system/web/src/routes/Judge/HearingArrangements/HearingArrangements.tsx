@@ -477,6 +477,7 @@ export const HearingArrangements: React.FC = () => {
             onNextButtonClick={async () => {
               const notificationSent = await sendNotification(workingCase.id)
 
+              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
               // @ts-ignore
               if (notificationSent && !window.Cypress) {
                 setModalVisible(true)
