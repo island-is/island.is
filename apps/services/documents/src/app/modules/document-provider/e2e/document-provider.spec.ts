@@ -537,7 +537,7 @@ describe('Provider API', () => {
       })
       .expect(201)
 
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post('/providers')
       .send({
         ...provider,
