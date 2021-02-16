@@ -10,7 +10,7 @@ export function isStateHiddenFromRole(
 }
 
 export function isProsecutorInstitutionHiddenFromUser(
-  prosecutorInstitutionId: String,
+  prosecutorInstitutionId: string,
   user: User,
 ): boolean {
   return (
