@@ -48,7 +48,7 @@ export const m = defineMessages({
   internalRevenueSubTitle: {
     id: 'hi.application:externalData.internalRevenue.subtitle',
     defaultMessage:
-      'Skatturinn annast álagningu skatta, tolla og annarra gjalda auk þess að viðhafa eftirlit með réttmæti skattskila.  Skatturinn gegnir margþættu tollgæsluhlutverki á landamærum og veitir samfélaginu vernd gegn ólögmætum inn- og útflutningi vöru.',
+      'Skatturinn annast álagningu skatta, tolla og annarra gjalda auk þess að viðhafa eftirlit með réttmæti skattskila. Skatturinn gegnir margþættu tollgæsluhlutverki á landamærum og veitir samfélaginu vernd gegn ólögmætum inn- og útflutningi vöru.',
     description:
       'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
   },
@@ -371,7 +371,7 @@ export const m = defineMessages({
     id: 'hi.application:successfulSubmission.message',
     defaultMessage: 'Númer umsókninnar er **{applicationNumber}**.',
     description:
-      'Your application number is **{applicationNumber}**. A confirmation e-mail has also been sent. ',
+      'Your application number is **{applicationNumber}**.',
   },
   nextStepReviewTime: {
     id: 'hi.application:nextStep.duration',
@@ -379,14 +379,6 @@ export const m = defineMessages({
       'Tekið getur allt að 2-6 vikur að fara yfir umsókn. Lengd svartíma fer eftir því hversu fljótt fyrra tryggingarland þitt svarar fyrirspurn okkar og getur það tekið lengri tíma.',
     description:
       'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance is to responds on our request, it may take longer time.',
-  },
-  nextStepStatusCheck: {
-    // should this be removed?
-    id: 'hi.application:nextStep.currentStatus',
-    defaultMessage:
-      'Þú getur alltaf séð núverandi stöðu umsóknar þinnar á Mínum síðum.',
-    description:
-      'You can always see the current status of your application in My Pages.',
   },
   missingInfoSection: {
     id: 'hi.application:missingInfo.section',
@@ -499,7 +491,7 @@ export const m = defineMessages({
     id: 'hi.application:alreadyInsured.description',
     defaultMessage:
       'Þú ert nú þegar með virka sjúkratryggingu hjá Sjúkratryggingum Íslands og þarft því ekki að sækja um.\n Nánari upplýsingar er að finna á heimasíðu Sjúkratrygginga Íslands.',
-    description: 'already insured',
+    description: 'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at sjukra.is/english',
   },
   alreadyInsuredButtonText: {
     id: 'hi.application:alreadyInsured.buttonText',
