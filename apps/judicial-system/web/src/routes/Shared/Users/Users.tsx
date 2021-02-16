@@ -53,7 +53,7 @@ export const Users: React.FC = () => {
           items={[
             {
               href: Constants.USER_NEW_ROUTE,
-              title: 'Notenda',
+              title: 'Notanda',
             },
             {
               title: 'Stofnun',
