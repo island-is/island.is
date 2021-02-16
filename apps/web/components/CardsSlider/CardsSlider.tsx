@@ -1,23 +1,16 @@
-import React, {
-  FC,
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from 'react'
+import React, { FC, useState, useRef, useCallback, useEffect } from 'react'
+import {
+  useWindowSize,
+  useIsomorphicLayoutEffect,
+  useMountedState,
+} from 'react-use'
 import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
-import {
-  Inline,
-  Text,
-  Box,
-  Hidden,
-  Button,
-} from '@island.is/island-ui/core'
 import 'react-alice-carousel/lib/alice-carousel.css'
-import * as styles from './CardsSlider.treat'
+import { Inline, Text, Box, Hidden, Button } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Card, CardProps } from '@island.is/web/components'
-import { useWindowSize, useIsomorphicLayoutEffect, useMountedState, useMeasure } from 'react-use'
+import * as styles from './CardsSlider.treat'
 
 interface StagePaddingProps {
   paddingLeft: number
@@ -40,8 +33,6 @@ const initialSlideState = {
 export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   const { width } = useWindowSize()
   const isMounted = useMountedState()
-  const [wrapperHeight] = useMeasure()
-  const [titleHeight] = useMeasure()
 
   const [cardHeight, setCardHeight] = useState<string>('auto')
   const [slideState, setSlideState] = useState<EventObject>(initialSlideState)
@@ -53,34 +44,31 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
 
   const handleOnDragStart = (e) => e.preventDefault()
 
-
   useEffect(() => {
     setCardHeight('auto')
-
-    if(isMounted ) {
-      const wrapperHeight = document.getElementById('wrapperwrapper')?.clientHeight
-      const titleHeight = document.getElementById('titlewrapper')?.clientHeight
-       //setCardHeight(`${wrapperHeight - titleHeight}px`)
-
+    if (isMounted) {
+      const carouselHeight = ref && ref.current?.rootComponentDimensions.height
+      if (carouselHeight) {
+        setCardHeight(`${carouselHeight > 400 ? 'auto' : carouselHeight}px`)
+      }
     }
-      
-    
   }, [ref])
 
   const onResize = useCallback(() => {
     setCardHeight('auto')
-
     setStagePadding({
       paddingLeft: 0,
-      paddingRight: width >= 768 ? 124 : 50,
+      paddingRight:
+        width >= theme.breakpoints.md
+          ? 124
+          : width > theme.breakpoints.xs
+          ? 50
+          : 20,
     })
 
     const el = ref && ref.current?.stageComponent?.offsetParent
 
-    console.log("el er:", el)
-
     if (el) {
-      console.log("setjum height sem: ", el.offsetHeight)
       setCardHeight(`${el.offsetHeight}px`)
       setSlideState({
         ...initialSlideState,
@@ -112,8 +100,8 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   const atStart = slideState.isPrevSlideDisabled
 
   return (
-    <div className={cn(styles.wrapper)} id="wrapper" ref={wrapperHeight}>
-      <Box id="titleWrapper" paddingBottom={4} ref={titleHeight}>
+    <div className={cn(styles.wrapper)}>
+      <Box paddingBottom={4}>
         <Text variant={'h3'}>{title}</Text>
       </Box>
 
@@ -129,11 +117,11 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
           0: {
             items: 1,
           },
-          425: {
+          768: {
             items: 2,
           },
         }}
-        dotsDisabled
+        dotsDisabled={theme.breakpoints.md < width}
         buttonsDisabled
         mouseTrackingEnabled
         items={cards.map(({ title, description, link, tags, image }, index) => (

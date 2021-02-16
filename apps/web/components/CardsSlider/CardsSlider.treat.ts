@@ -21,32 +21,25 @@ export const item = style({
   flexFlow: 'column',
 })
 
-export const arrowButton = style({
-  display: 'inline-flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  boxSizing: 'border-box',
-  width: 40,
-  height: 40,
-  backgroundColor: theme.color.blue400,
-  borderRadius: '50%',
-  outline: 0,
-  opacity: 1,
-  transition: `all 300ms ease`,
-})
-
-export const arrowButtonDisabled = style({
-  pointerEvents: 'none',
-  opacity: 0.25,
-  transition: `all 150ms ease`,
-})
-
-export const controls = style({
-  position: 'absolute',
-  top: 0,
-  right: 0
-})
-
 globalStyle(`${wrapper} .alice-carousel__wrapper`, {
   overflow: 'visible',
+})
+
+globalStyle(`${wrapper} .alice-carousel__dots`, {
+  position: 'absolute',
+  top: -60,
+  right: 0,
+  margin: 0,
+})
+
+globalStyle(`${wrapper} .alice-carousel__dots-item`, {
+  backgroundColor: theme.color.red200,
+  transition: `width 300ms ease`,
+})
+
+globalStyle(`${wrapper} .alice-carousel__dots .__active`, {
+  width: 32,
+  backgroundColor: theme.color.red400,
+  borderRadius: 8,
+  transition: `width 300ms ease`,
 })
