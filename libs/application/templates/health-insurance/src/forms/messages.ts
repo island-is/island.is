@@ -370,8 +370,7 @@ export const m = defineMessages({
   successfulSubmissionMessage: {
     id: 'hi.application:successfulSubmission.message',
     defaultMessage: 'Númer umsókninnar er **{applicationNumber}**.',
-    description:
-      'Your application number is **{applicationNumber}**.',
+    description: 'Your application number is **{applicationNumber}**.',
   },
   nextStepReviewTime: {
     id: 'hi.application:nextStep.duration',
@@ -491,7 +490,8 @@ export const m = defineMessages({
     id: 'hi.application:alreadyInsured.description',
     defaultMessage:
       'Þú ert nú þegar með virka sjúkratryggingu hjá Sjúkratryggingum Íslands og þarft því ekki að sækja um.\n Nánari upplýsingar er að finna á heimasíðu Sjúkratrygginga Íslands.',
-    description: 'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at sjukra.is/english',
+    description:
+      'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at sjukra.is/english',
   },
   alreadyInsuredButtonText: {
     id: 'hi.application:alreadyInsured.buttonText',
