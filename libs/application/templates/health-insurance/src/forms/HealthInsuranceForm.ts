@@ -42,8 +42,8 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: m.externalDataSubtitle.defaultMessage,
-          checkboxLabel: m.externalDataCheckbox.defaultMessage,
+          subTitle: m.externalDataSubtitle,
+          checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
@@ -62,6 +62,12 @@ export const HealthInsuranceForm: Form = buildForm({
               type: undefined,
               title: m.internalRevenueTitle,
               subTitle: m.internalRevenueSubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'insuranceAdministration',
+              type: undefined,
+              title: m.socialInsuranceAdministrationTitle,
+              subTitle: m.socialInsuranceAdministrationSubtitle,
             }),
             buildDataProviderItem({
               id: 'userProfile',
@@ -89,25 +95,25 @@ export const HealthInsuranceForm: Form = buildForm({
             }),
           ],
         }),
-        // buildMultiField({
-        //   id: 'informationRetrieval',
-        //   title: m.externalDataTitle,
-        //   children: [
-        //     buildCustomField({
-        //       id: 'informationRetrieval',
-        //       component: 'InformationRetrieval',
-        //       title: '',
-        //     }),
-        //     buildCustomField({
-        //       id: 'errorModal',
-        //       component: 'ErrorModal',
-        //       title: '',
-        //     }),
-        //   ],
-        //   condition: (formValue: FormValue, externalData: ExternalData) => {
-        //     return shouldShowModal(externalData)
-        //   },
-        // }),
+        buildMultiField({
+          id: 'informationRetrieval',
+          title: m.externalDataTitle,
+          children: [
+            buildCustomField({
+              id: 'informationRetrieval',
+              component: 'InformationRetrieval',
+              title: '',
+            }),
+            buildCustomField({
+              id: 'errorModal',
+              component: 'ErrorModal',
+              title: '',
+            }),
+          ],
+          condition: (formValue: FormValue, externalData: ExternalData) => {
+            return shouldShowModal(externalData)
+          },
+        }),
         buildMultiField({
           id: 'contactInfoSection',
           title: m.contactInfoTitle,
@@ -387,10 +393,21 @@ export const HealthInsuranceForm: Form = buildForm({
               placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
               variant: 'textarea',
               backgroundColor: 'blue',
-              condition: (answers) =>
-                (answers as {
+              condition: (answers: FormValue) => {
+                const entitlement = (answers as {
                   formerInsurance: { entitlement: string }
-                })?.formerInsurance?.entitlement === YES,
+                })?.formerInsurance?.entitlement
+                const formerCountry = (answers as {
+                  formerInsurance: { country: string }
+                })?.formerInsurance?.country
+                const citizenship = (answers as {
+                  applicant: { citizenship: string }
+                })?.applicant?.citizenship
+                return (
+                  entitlement === YES &&
+                  !requireWaitingPeriod(formerCountry, citizenship)
+                )
+              },
             }),
           ],
         }),
