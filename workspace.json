@@ -2215,9 +2215,11 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/contentful-translation-extension",
             "command": "contentful-extension-scripts build --input libs/contentful-translation-extension --output dist/contentful-translation-extension"
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "dokobit-signing": {
