@@ -26,6 +26,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
             postalCode
             city
             streetAddress
+            lastUpdated
           }
         }
       }
@@ -35,17 +36,18 @@ export class NationalRegistryProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError()
+          return this.handleError(response.errors)
         }
 
         return Promise.resolve(response.data.nationalRegistryUser)
       })
-      .catch(() => {
-        return this.handleError()
+      .catch((error) => {
+        return this.handleError(error)
       })
   }
 
-  handleError() {
+  handleError(error: any) {
+    console.log('Provider error - NationalRegistry:', error)
     return Promise.resolve({})
   }
 
