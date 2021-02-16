@@ -1,6 +1,5 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsString, IsEnum } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
 import { UploadSignedFileDtoTypeEnum } from '../../../gen/fetch'
 
 registerEnumType(UploadSignedFileDtoTypeEnum, {
@@ -17,7 +16,7 @@ export class UploadSignedFileInput {
   @IsString()
   documentToken!: string
 
-  @ApiProperty({ enum: UploadSignedFileDtoTypeEnum })
+  @Field((type) => UploadSignedFileDtoTypeEnum)
   @IsEnum(UploadSignedFileDtoTypeEnum)
-  readonly type!: UploadSignedFileDtoTypeEnum
+  type!: UploadSignedFileDtoTypeEnum
 }

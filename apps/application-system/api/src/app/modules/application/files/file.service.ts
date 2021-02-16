@@ -25,6 +25,10 @@ export class FileService {
     ChildrenResidenceChange: 'children-residence-change',
   }
 
+  private dokobitFileName: KeyMapping<PdfTypes, string> = {
+    ChildrenResidenceChange: 'Lögheimilisbreyting-barns.pdf',
+  }
+
   constructor(
     @Inject(SigningService)
     private readonly signingService: SigningService,
@@ -63,17 +67,11 @@ export class FileService {
     documentToken: string,
     type: PdfTypes,
   ) {
-    const answers = application.answers as FormValue
-    const externalData = application.externalData as FormValue
-
-    const { ssn } = this.applicantData(answers, externalData)
-
     await this.signingService
-      .getSignedDocument(`${'ssn'}.pdf`, documentToken)
+      .getSignedDocument(this.dokobitFileName[type], documentToken)
       .then((file) => {
-        let bucket =
-          environment.fsS3Bucket ?? 'development-legal-residence-change'
-        let s3FileName = `${this.bucketTypePrefix[type]}/${application.id}/${Signature.partiallySigned}.pdf`
+        let bucket = environment.fsS3Bucket ?? ''
+        let s3FileName = `${this.bucketTypePrefix[type]}/${application.id}/${Signature.PartiallySigned}.pdf`
         this.uploadFileToS3(Buffer.from(file, 'binary'), bucket, s3FileName)
       })
   }
@@ -87,28 +85,11 @@ export class FileService {
 
     switch (type) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const { phoneNumber, name, ssn } = this.applicantData(
+        return await this.requestFileSignatureForResidenceChange(
           answers,
           externalData,
-        )
-        let bucket = environment.fsS3Bucket ?? ''
-        let s3FileName = `${this.bucketTypePrefix[type]}/${application.id}/${Signature.unsigned}.pdf`
-        const s3File = await this.getFile(bucket, s3FileName)
-        const fileContent = s3File.Body?.toString('binary')
-
-        if (!fileContent || !phoneNumber) {
-          throw new NotFoundException(
-            `Variables for document signing not found`,
-          )
-        }
-
-        return await this.signingService.requestSignature(
-          phoneNumber,
-          'Lögheimilisbreyting barns',
-          name,
-          'Ísland',
-          `${ssn}.pdf`,
-          fileContent,
+          type,
+          application.id,
         )
       }
     }
@@ -131,6 +112,33 @@ export class FileService {
     return { parentA, parentB, childrenAppliedFor, expiry }
   }
 
+  private async requestFileSignatureForResidenceChange(
+    answers: FormValue,
+    externalData: FormValue,
+    type: PdfTypes,
+    applicationId: string,
+  ): Promise<SigningServiceResponse> {
+    const { phoneNumber, name } = this.applicantData(answers, externalData)
+
+    let bucket = environment.fsS3Bucket ?? ''
+    let s3FileName = `${this.bucketTypePrefix[type]}/${applicationId}/${Signature.Unsigned}.pdf`
+    const s3File = await this.getFile(bucket, s3FileName)
+    const fileContent = s3File.Body?.toString('binary')
+
+    if (!fileContent || !phoneNumber) {
+      throw new NotFoundException(`Variables for document signing not found`)
+    }
+
+    return await this.signingService.requestSignature(
+      phoneNumber,
+      'Lögheimilisbreyting barns',
+      name,
+      'Ísland',
+      this.dokobitFileName[type],
+      fileContent,
+    )
+  }
+
   private async createResidenceChangePdf(
     parentA: ParentResidenceChange,
     parentB: ParentResidenceChange,
@@ -147,7 +155,7 @@ export class FileService {
 
     const fileName = `${
       this.bucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
-    }/${applicationId}/${Signature.unsigned}.pdf`
+    }/${applicationId}/${Signature.Unsigned}.pdf`
     let bucket = environment.fsS3Bucket ?? ''
 
     await this.uploadFileToS3(pdfBuffer, bucket, fileName)

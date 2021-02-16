@@ -121,7 +121,7 @@ export class SigningService extends DataSource {
 
   async getSignedDocument(
     documentName: string,
-    documentToken: string
+    documentToken: string,
   ): Promise<string> {
     // Try to retrieve the signed document
     // The Dokobit API returns pretty much immediatly from the status call
