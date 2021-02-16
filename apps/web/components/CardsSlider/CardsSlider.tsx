@@ -1,9 +1,5 @@
-import React, { FC, useState, useRef, useCallback, useEffect } from 'react'
-import {
-  useWindowSize,
-  useIsomorphicLayoutEffect,
-  useMountedState,
-} from 'react-use'
+import React, { FC, useState, useRef, useCallback } from 'react'
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
 import 'react-alice-carousel/lib/alice-carousel.css'
@@ -32,7 +28,6 @@ const initialSlideState = {
 
 export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   const { width } = useWindowSize()
-  const isMounted = useMountedState()
 
   const [cardHeight, setCardHeight] = useState<string>('auto')
   const [slideState, setSlideState] = useState<EventObject>(initialSlideState)
@@ -43,20 +38,6 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   const ref = useRef(null)
 
   const handleOnDragStart = (e) => e.preventDefault()
-
-  useEffect(() => {
-    setCardHeight('auto')
-    if (isMounted) {
-      const carouselHeight = ref && ref.current?.rootComponentDimensions.height
-      if (carouselHeight) {
-        setCardHeight(`${carouselHeight >= 500 ? '472' : carouselHeight}px`)
-        setSlideState({
-          ...initialSlideState,
-          itemsInSlide: ref.current.state.items,
-        })
-      }
-    }
-  }, [ref])
 
   const onResize = useCallback(() => {
     setCardHeight('auto')
@@ -69,15 +50,21 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
           ? 50
           : 20,
     })
-
-    const el = ref && ref.current?.stageComponent?.offsetParent
-
-    if (el) {
-      setCardHeight(`${el.offsetHeight}px`)
-    }
   }, [ref])
 
   useIsomorphicLayoutEffect(() => {
+    setTimeout(() => {
+      if (cardHeight === 'auto') {
+        const el = ref && ref.current?.stageComponent?.offsetParent
+        if (el) {
+          setCardHeight(el.offsetHeight)
+        }
+      }
+    }, 0)
+  }, [cardHeight])
+
+  useIsomorphicLayoutEffect(() => {
+    onResize()
     window.addEventListener('resize', onResize)
     return () => {
       window.removeEventListener('resize', onResize)
