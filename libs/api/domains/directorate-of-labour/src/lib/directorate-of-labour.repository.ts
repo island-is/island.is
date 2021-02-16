@@ -28,9 +28,7 @@ export class DirectorateOfLabourRepository {
       ]
     }
 
-    console.log('getting unions')
     const { unions } = await this.unionApi.unionGetUnions()
-    console.log('done')
 
     if (unions) {
       return unions
