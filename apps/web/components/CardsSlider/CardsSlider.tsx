@@ -121,7 +121,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
             items: 2,
           },
         }}
-        dotsDisabled={theme.breakpoints.md < width}
+        dotsDisabled={theme.breakpoints.md <= width}
         buttonsDisabled
         mouseTrackingEnabled
         items={cards.map(({ title, description, link, tags, image }, index) => (
