@@ -16,7 +16,10 @@ export class NationalRegistryProvider extends BasicDataProvider {
           nationalId
           age
           fullName
-          citizenship
+          citizenship {
+            code
+            name
+          }
           legalResidence
           address {
             code
