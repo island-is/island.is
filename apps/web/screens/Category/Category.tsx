@@ -7,11 +7,14 @@ import {
   Text,
   Stack,
   Box,
+  Link,
   Breadcrumbs,
   AccordionCard,
   TopicCard,
   FocusableBox,
   Navigation,
+  LinkContext,
+  Button,
 } from '@island.is/island-ui/core'
 import { Card, Sticky } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
@@ -274,7 +277,11 @@ const Category: Screen<CategoryProps> = ({
           </Sticky>
         }
       >
-        <Box paddingBottom={[2, 2, 4]}>
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['none', 'none', 'block']}
+          printHidden
+        >
           <Breadcrumbs
             items={[
               {
@@ -290,6 +297,39 @@ const Category: Screen<CategoryProps> = ({
               )
             }}
           />
+        </Box>
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['flex', 'flex', 'none']}
+          justifyContent="spaceBetween"
+          alignItems="center"
+          printHidden
+        >
+          <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+            <LinkContext.Provider
+              value={{
+                linkRenderer: (href, children) => (
+                  <Link href={href} pureChildren skipTab>
+                    {children}
+                  </Link>
+                ),
+              }}
+            >
+              <Text truncate>
+                <Link {...linkResolver('homepage')} passHref>
+                  <Button
+                    preTextIcon="arrowBack"
+                    preTextIconType="filled"
+                    size="small"
+                    type="button"
+                    variant="text"
+                  >
+                    Ísland.is
+                  </Button>
+                </Link>
+              </Text>
+            </LinkContext.Provider>
+          </Box>
         </Box>
         <Box display={['block', 'block', 'none']}>
           <Navigation
