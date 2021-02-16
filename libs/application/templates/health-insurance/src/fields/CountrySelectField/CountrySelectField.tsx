@@ -60,9 +60,14 @@ const CountrySelectField: FC<Props> = ({
         id={id}
         name={id}
         label={formatText(m.formerInsuranceCountry, application, formatMessage)}
-        placeholder="Select the country that you are moving from"
+        placeholder={formatText(
+          m.formerInsuranceCountryPlaceholder,
+          application,
+          formatMessage,
+        )}
         options={options}
         disabled={isReviewField}
+        backgroundColor="blue"
       />
     </Box>
   )
