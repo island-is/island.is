@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
-import { generateAssignReviewerEmail } from './emailGenerators'
+import {
+  generateAssignReviewerEmail,
+  generateApplicationApprovedEmail,
+  generateApplicationRejectedEmail,
+} from './emailGenerators'
 
 @Injectable()
 export class DocumentProviderOnboardingService {
@@ -14,6 +18,18 @@ export class DocumentProviderOnboardingService {
   async assignReviewer({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignReviewerEmail,
+      application,
+    )
+  }
+  async applicationApproved({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationApprovedEmail,
+      application,
+    )
+  }
+  async applicationRejected({ application }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateApplicationRejectedEmail,
       application,
     )
   }
