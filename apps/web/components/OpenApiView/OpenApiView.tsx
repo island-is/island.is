@@ -60,7 +60,7 @@ export const OpenApiView = ({
         setDocumentation(null)
       }
     }
-  }, [loading, data, error])
+  }, [loading, data, error, backupSpec])
 
   return (
     <Box>

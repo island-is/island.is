@@ -1,58 +1,18 @@
-import { ElasticService } from '@island.is/api-catalogue/elastic'
 import { Injectable } from '@nestjs/common'
 import { ProviderService } from '@island.is/api-catalogue/services'
 import { ServiceCollector } from './servicecollector.interface'
 import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
 import { Provider, providerToString } from '@island.is/api-catalogue/types'
-import { ConfigService } from '@nestjs/config'
-import { Environment } from '@island.is/api-catalogue/consts'
+import { CollectionService } from './collection.service'
 
-interface ConfigValues {
-  environment: Environment
-  //aliasName: string
-}
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {
   constructor(
-    private configService: ConfigService,
     private readonly providerService: ProviderService,
     private readonly restMetadataService: RestMetadataService,
-    private readonly elasticService: ElasticService,
+    private readonly collectionService: CollectionService,
   ) {}
-
-  getConfig(): ConfigValues {
-    logger.debug('Checking config')
-    //const aliasName = this.configService.get<string>('aliasName')
-    const environmentValue = this.configService.get<string>('environment')
-    // if (!aliasName) {
-    //   throw new Error('Environment variable XROAD_COLLECTOR_ALIAS is missing')
-    // }
-    if (!environmentValue) {
-      throw new Error('Environment variable ENVIRONMENT is missing')
-    }
-
-    const environment: Environment =
-      Environment[
-        Object.keys(Environment).find(
-          (key) => Environment[key] === environmentValue,
-        )
-      ]
-
-    if (!environment) {
-      throw new Error(
-        `Invalid value in environment variable "ENVIRONMENT". Valid values:[${Environment.DEV}|${Environment.STAGING}|${Environment.PROD}]`,
-      )
-    }
-
-    const ret: ConfigValues = {
-      //aliasName: aliasName,
-      environment: environment,
-    }
-
-    logger.info('Config values:', ret)
-    return ret
-  }
 
   async indexServices(): Promise<void> {
     logger.info('Start indexing of REST services')
@@ -66,23 +26,22 @@ export class RestServiceCollector implements ServiceCollector {
 
   private async indexProviders(providers: Array<Provider>): Promise<void> {
     // Get latest state in X-Road in this environment
-    this.elasticService.initWorker(this.getConfig().environment)
     let createCollectionAlias = true
     let addedItems: boolean
+
     for (const provider of providers) {
       try {
         // For each provider get list af all REST services
         // currently supporting those who were registered using OpenAPI
         const services = await this.restMetadataService.getServices(
           provider,
-          this.elasticService.getEnvironment(),
+          this.collectionService.getEnvironment(),
         )
 
         // Insert into Elastic worker index
-
-        addedItems = await this.elasticService.bulkWorker(services, true)
+        addedItems = await this.collectionService.bulkWorker(services, true)
         if (addedItems && createCollectionAlias) {
-          await this.elasticService.createCollectorWorkingAlias()
+          await this.collectionService.createCollectorWorkingAlias()
           createCollectionAlias = false
         }
       } catch (err) {
@@ -96,20 +55,20 @@ export class RestServiceCollector implements ServiceCollector {
     }
 
     logger.debug(
-      `Added all services to index "${this.elasticService.getWorkerIndexName()}"`,
+      `Added all services to index "${this.collectionService.getWorkerIndexName()}"`,
     )
     logger.debug(
-      `Adding index "${this.elasticService.getAliasName()}" to alias at: ${new Date().toISOString()}`,
+      `Adding index "${this.collectionService.getAliasName()}" to alias at: ${new Date().toISOString()}`,
     )
-    await this.elasticService.ActivateWorkerIndex()
+    await this.collectionService.ActivateWorkerIndex()
     logger.debug(`Done updating values at: ${new Date().toISOString()}`)
 
     logger.info('Processing other environments.')
-    await this.elasticService.copyValuesFromOtherEnvironments()
+    await this.collectionService.copyValuesFromOtherEnvironments()
 
     //TODO: if another instance of the collector is running in the same
     //TODO: environment, the line below, will delete it's index.
-    await this.elasticService.deleteDanglingIndices()
-    logger.info(`Collecting done on ${this.elasticService.getEnvironment()}`)
+    await this.collectionService.deleteDanglingIndices()
+    logger.info(`Collecting done on ${this.collectionService.getEnvironment()}`)
   }
 }
