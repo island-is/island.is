@@ -27,6 +27,7 @@ export default {
     'subArticle',
     'url',
     'articleGroup',
+    'articleSubgroup',
     'articleCategory',
     'menuLink',
     'menuLinkWithChildren',
