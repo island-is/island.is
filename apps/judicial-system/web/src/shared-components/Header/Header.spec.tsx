@@ -15,7 +15,8 @@ describe('Header', () => {
     // Arrange
     const history = createMemoryHistory()
     history.push(Constants.STEP_ONE_ROUTE)
-    const { getByTestId } = render(
+
+    render(
       <MockedProvider mocks={mockProsecutorQuery} addTypename={false}>
         <Router history={history}>
           <UserProvider>
@@ -28,11 +29,9 @@ describe('Header', () => {
     // wait for login to complete
     await screen.findByTestId('logout-button')
 
-    const logo = getByTestId('link-to-home')
-
     // Act
     expect(history.location.pathname).toEqual(Constants.STEP_ONE_ROUTE)
-    userEvent.click(logo)
+    userEvent.click(await screen.findByTestId('link-to-home'))
 
     // Assert
     expect(history.location.pathname).toEqual(Constants.REQUEST_LIST_ROUTE)
@@ -42,7 +41,8 @@ describe('Header', () => {
     // Arrange
     const history = createMemoryHistory()
     history.push(Constants.USER_NEW_ROUTE)
-    const { getByTestId } = render(
+
+    render(
       <MockedProvider mocks={mockAdminQuery} addTypename={false}>
         <Router history={history}>
           <UserProvider>
@@ -55,11 +55,9 @@ describe('Header', () => {
     // wait for login to complete
     await screen.findByTestId('logout-button')
 
-    const logo = getByTestId('link-to-home')
-
     // Act
     expect(history.location.pathname).toEqual(Constants.USER_NEW_ROUTE)
-    userEvent.click(logo)
+    userEvent.click(await screen.findByTestId('link-to-home'))
 
     // Assert
     expect(history.location.pathname).toEqual(Constants.USER_LIST_ROUTE)

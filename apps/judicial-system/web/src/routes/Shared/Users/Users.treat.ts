@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const detentionRequestsContainer = style({
+export const userControlContainer = style({
   display: 'grid',
   gridColumnGap: 24,
   gridTemplateColumns: 'repeat(12, 1fr)',
@@ -39,12 +39,6 @@ export const tableRowContainer = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
   transition: 'all .5s ease-in-out',
-
-  selectors: {
-    '&.isDeleting': {
-      transform: 'translateX(-150px)',
-    },
-  },
 })
 
 export const th = style({

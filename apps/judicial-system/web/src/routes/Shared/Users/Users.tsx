@@ -45,10 +45,10 @@ export const Users: React.FC = () => {
   }
 
   return (
-    <div className={styles.detentionRequestsContainer}>
+    <div className={styles.userControlContainer}>
       <div className={styles.logoContainer}>
         <DropdownMenu
-          menuLabel="Tegund kröfu"
+          menuLabel="Bæta við"
           icon="add"
           items={[
             {
