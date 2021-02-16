@@ -20,6 +20,8 @@ export class HealthInsuranceService {
     // const vistaskjal = new VistaSkjalModel()
     // vistaskjal.isSucceeded = true
     // return vistaskjal
+    console.log(JSON.stringify(application, null, 2))
     await new Promise((resolve) => setTimeout(resolve, 2000))
+    console.log("Health-Insurance - Finished sendApplication")
   }
 }
