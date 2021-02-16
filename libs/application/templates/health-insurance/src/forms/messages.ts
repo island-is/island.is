@@ -62,7 +62,7 @@ export const m = defineMessages({
     defaultMessage:
       'Hlutverk TR er að framfylgja lögum um almannatryggingar, lögum um félagslega aðstoð og lögum um málefni langveikra barna auk þess að sinna öðrum verkefnum sem stofnuninni eru falin hverju sinni.',
     description:
-      'Handles the public pension system, as well as childs pension, spouses pension, disability grant, age-related disability supplement, guaranteed income and household supplement.', // todo add ' in child's and spouse's
+      'Handles the public pension system, as well as child´s pension, spouse´s pension, disability grant, age-related disability supplement, guaranteed income and household supplement.', // todo add ' in child's and spouse's
   },
   confirmationOfResidencyTitle: {
     id: 'hi.application:confirmationOfResidency.title',
@@ -266,6 +266,11 @@ export const m = defineMessages({
       'Varst þú skráður í almannatryggingakerfi í fyrra tryggingarlandi?',
     description:
       'Were you registered with a national health insurance institution in your former country of insurance?',
+  },
+  formerInsuranceCountryPlaceholder: {
+    id: 'hi.application:formerInsurance.countryPlaceholder',
+    defaultMessage: 'Select a country',
+    description: 'Select a country',
   },
   formerInsuranceDetails: {
     id: 'hi.application:formerInsurance.details',
