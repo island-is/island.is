@@ -13,7 +13,6 @@ import {
   Service,
   ServiceDetail,
   XroadIdentifier,
-  Environment,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY, GET_API_SERVICE_QUERY } from '../queries'
 import {

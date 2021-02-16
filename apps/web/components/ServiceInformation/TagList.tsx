@@ -3,12 +3,10 @@ import { useNamespace } from '@island.is/web/hooks'
 import {
   Box,
   Inline,
-  Tag,
   Text,
   GridColumn,
   GridContainer,
   GridRow,
-  DialogPrompt,
   Tooltip,
 } from '@island.is/island-ui/core'
 import {
