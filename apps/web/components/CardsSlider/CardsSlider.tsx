@@ -49,7 +49,11 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
     if (isMounted) {
       const carouselHeight = ref && ref.current?.rootComponentDimensions.height
       if (carouselHeight) {
-        setCardHeight(`${carouselHeight > 400 ? 'auto' : carouselHeight}px`)
+        setCardHeight(`${carouselHeight >= 500 ? '472' : carouselHeight}px`)
+        setSlideState({
+          ...initialSlideState,
+          itemsInSlide: ref.current.state.items,
+        })
       }
     }
   }, [ref])
@@ -70,10 +74,6 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
 
     if (el) {
       setCardHeight(`${el.offsetHeight}px`)
-      setSlideState({
-        ...initialSlideState,
-        itemsInSlide: ref.current.state.items,
-      })
     }
   }, [ref])
 

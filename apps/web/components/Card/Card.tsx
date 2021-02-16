@@ -33,7 +33,7 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 
 export interface CardProps {
   title: string
-  image?: Image
+  image?: { title: string; url: string }
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
@@ -83,67 +83,70 @@ export const Card: FC<CardProps> = ({
 
   const items = (
     <Box ref={ref}>
-    <GridRow  direction={stackImage ? 'columnReverse' : 'row'}>
-      <GridColumn key={1} span={isImage && !stackImage ? '8/12' : '12/12'}>
-        <Stack space={1}>
-          <Text as="h3" variant="h3" color={titleColor}>
-            <Box display="flex" flexDirection="row" alignItems="center">
-              <Box display="inlineFlex" flexGrow={1}>
-                {title}
+      <GridRow direction={stackImage ? 'columnReverse' : 'row'}>
+        <GridColumn key={1} span={isImage && !stackImage ? '8/12' : '12/12'}>
+          <Stack space={1}>
+            <Text as="h3" variant="h3" color={titleColor}>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Box display="inlineFlex" flexGrow={1}>
+                  {title}
+                </Box>
               </Box>
-            </Box>
-          </Text>
-          {description && <Text>{description}</Text>}
-          {tags.length > 0 && (
-            <Box paddingTop={3} flexGrow={0} position="relative">
-              <Inline space={1}>
-                {tags.map(({ title, href, ...props }: CardTagsProps, index) => {
-                  const tagProps = {
-                    ...tagPropsDefaults,
-                    ...props.tagProps,
-                    variant: tagVariant,
-                  }
+            </Text>
+            {description && <Text>{description}</Text>}
+            {tags.length > 0 && (
+              <Box paddingTop={3} flexGrow={0} position="relative">
+                <Inline space={1}>
+                  {tags.map(
+                    ({ title, href, ...props }: CardTagsProps, index) => {
+                      const tagProps = {
+                        ...tagPropsDefaults,
+                        ...props.tagProps,
+                        variant: tagVariant,
+                      }
 
-                  return href ? (
-                    <Link key={index} {...link}>
-                      <Tag {...tagProps}>{title}</Tag>
-                    </Link>
-                  ) : (
-                    <Tag key={index} {...tagProps}>
-                      {title}
-                    </Tag>
-                  )
-                })}
-              </Inline>
-            </Box>
-          )}
-        </Stack>
-      </GridColumn>
-      {isImage && (
-        <GridColumn
-          key={2}
-          span={!stackImage ? '4/12' : '12/12'}
-          position="relative"
-        >
-          <Box
-            display="flex"
-            width="full"
-            marginTop={2}
-            justifyContent="center"
-            flexGrow={1}
-            marginBottom={2}
-            style={{ height: 200 }}
-          >
-            <BackgroundImage
-              positionX={!stackImage ? 'right' : null}
-              background="transparent"
-              backgroundSize="contain"
-              image={image}
-            />
-          </Box>
+                      return href ? (
+                        <Link key={index} {...link}>
+                          <Tag {...tagProps}>{title}</Tag>
+                        </Link>
+                      ) : (
+                        <Tag key={index} {...tagProps}>
+                          {title}
+                        </Tag>
+                      )
+                    },
+                  )}
+                </Inline>
+              </Box>
+            )}
+          </Stack>
         </GridColumn>
-      )}
-    </GridRow></Box>
+        {isImage && (
+          <GridColumn
+            key={2}
+            span={!stackImage ? '4/12' : '12/12'}
+            position="relative"
+          >
+            <Box
+              display="flex"
+              width="full"
+              marginTop={2}
+              justifyContent="center"
+              flexGrow={1}
+              marginBottom={2}
+              style={{ height: 200 }}
+            >
+              <BackgroundImage
+                positionX={!stackImage ? 'right' : null}
+                background="transparent"
+                backgroundSize="contain"
+                image={image}
+              />
+            </Box>
+          </GridColumn>
+        )}
+      </GridRow>
+    </Box>
   )
 
   if (link?.href) {

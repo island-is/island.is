@@ -32,7 +32,7 @@ import {
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -90,15 +90,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                       {
                         title: 'Ísland.is',
                         href: '/',
+                        typename: 'homepage',
                       },
                       {
-                        isTag: true,
-                        title: n('lifeEventTitle', 'Lífsviðburður'),
+                        title: n('lifeEvents', 'Lífsviðburðir'),
+                        href: linkResolver('lifeevents').href,
                       },
                     ]}
-                    renderLink={(link) => {
+                    renderLink={(link, { href }) => {
+                      //console.log(href)
                       return (
-                        <NextLink {...linkResolver('homepage')} passHref>
+                        <NextLink href={href} passHref>
                           {link}
                         </NextLink>
                       )
