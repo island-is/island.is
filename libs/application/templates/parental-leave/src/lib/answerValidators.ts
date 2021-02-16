@@ -47,7 +47,6 @@ const PERIODS = 'periods'
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
-    console.log('-newAnswer', newAnswer)
     const obj = newAnswer as Record<string, any>
     const buildError = buildValidationError(`${EMPLOYER}.email`)
     const isSelfEmployed = getValueViaPath(
