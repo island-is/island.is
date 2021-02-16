@@ -246,6 +246,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/apps/air-discount-scheme/web",
             "commands": [
               "yarn nx run air-discount-scheme-web:build-next:production",
               "yarn nx run air-discount-scheme-web:build-server:production"
@@ -1849,6 +1850,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/apps/auth-admin-web",
             "commands": [
               "yarn nx run auth-admin-web:build-next:production",
               "yarn nx run auth-admin-web:build-server:production"
@@ -2215,6 +2217,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/contentful-translation-extension",
             "command": "contentful-extension-scripts build --input libs/contentful-translation-extension --output dist/contentful-translation-extension"
           }
         },
@@ -2593,6 +2596,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/apps/gjafakort/web",
             "commands": [
               "yarn nx run gjafakort-web:build-next:production",
               "yarn nx run gjafakort-web:build-server:production"
@@ -3680,6 +3684,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/apps/reference-next-app",
             "commands": [
               "yarn nx run reference-next-app:build-next:production",
               "yarn nx run reference-next-app:build-server:production"
@@ -5076,6 +5081,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/apps/skilavottord/web",
             "commands": [
               "yarn nx run skilavottord-web:build-next:production",
               "yarn nx run skilavottord-web:build-server:production"
@@ -5350,6 +5356,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "outputPath": "dist/apps/web",
             "commands": [
               "yarn nx run web:build-next:production",
               "yarn nx run web:build-server:production"
