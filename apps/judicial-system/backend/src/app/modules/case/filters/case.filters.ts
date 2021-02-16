@@ -1,5 +1,6 @@
 import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
-import { String } from 'aws-sdk/clients/apigateway'
+
+import { Case } from '../models'
 
 export function isStateHiddenFromRole(
   state: CaseState,
@@ -16,5 +17,15 @@ export function isProsecutorInstitutionHiddenFromUser(
     prosecutorInstitutionId &&
     user?.role === UserRole.PROSECUTOR &&
     prosecutorInstitutionId !== user?.institution?.id
+  )
+}
+
+export function isCaseBlockedFromUser(theCase: Case, user: User): boolean {
+  return (
+    isStateHiddenFromRole(theCase?.state, user?.role) ||
+    isProsecutorInstitutionHiddenFromUser(
+      theCase?.prosecutor?.institutionId,
+      user,
+    )
   )
 }

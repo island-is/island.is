@@ -44,6 +44,7 @@ import { transitionCase } from './state'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
 import { CaseInterceptor, CasesInterceptor } from './interceptors'
+import { isCaseBlockedFromUser } from './filters'
 
 // Allows prosecutors to perform any action
 const prosecutorRule = UserRole.PROSECUTOR as RolesRule

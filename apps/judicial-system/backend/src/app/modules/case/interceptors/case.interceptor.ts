@@ -12,10 +12,7 @@ import {
 import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
-import {
-  isProsecutorInstitutionHiddenFromUser,
-  isStateHiddenFromRole,
-} from './case.filters'
+import { isCaseBlockedFromUser } from '../filters'
 
 @Injectable()
 export class CaseInterceptor implements NestInterceptor {
@@ -24,13 +21,7 @@ export class CaseInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((retCase: Case) => {
-        if (
-          isStateHiddenFromRole(retCase.state, user?.role) ||
-          isProsecutorInstitutionHiddenFromUser(
-            retCase.prosecutor?.institutionId,
-            user,
-          )
-        ) {
+        if (isCaseBlockedFromUser(retCase, user)) {
           throw new ForbiddenException(
             `Role ${user?.role} cannot get a case in state ${retCase.state}`,
           )
