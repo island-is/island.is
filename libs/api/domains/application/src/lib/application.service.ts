@@ -183,10 +183,7 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async uploadSignedFile(
-    input: UploadSignedFileInput,
-    authorization: string,
-  ) {
+  async uploadSignedFile(input: UploadSignedFileInput, authorization: string) {
     const { id, ...uploadSignedFileDto } = input
     return await this.applicationApi
       .applicationControllerUploadSignedFile({

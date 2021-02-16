@@ -161,9 +161,6 @@ export class ApplicationResolver {
     @Args('input') input: UploadSignedFileInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.uploadSignedFile(
-      input,
-      user.authorization,
-    )
+    return this.applicationService.uploadSignedFile(input, user.authorization)
   }
 }

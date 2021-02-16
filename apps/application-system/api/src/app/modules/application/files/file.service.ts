@@ -14,7 +14,7 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import {KeyMapping, Signature} from './utils/types'
+import { KeyMapping, Signature } from './utils/types'
 
 @Injectable()
 export class FileService {
@@ -58,7 +58,11 @@ export class FileService {
     }
   }
 
-  async uploadSignedFile(application: Application, documentToken: string, type: PdfTypes) {
+  async uploadSignedFile(
+    application: Application,
+    documentToken: string,
+    type: PdfTypes,
+  ) {
     const answers = application.answers as FormValue
     const externalData = application.externalData as FormValue
 
@@ -141,7 +145,9 @@ export class FileService {
       expiry,
     )
 
-    const fileName = `${this.bucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${applicationId}/${Signature.unsigned}.pdf`
+    const fileName = `${
+      this.bucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
+    }/${applicationId}/${Signature.unsigned}.pdf`
     let bucket = environment.fsS3Bucket ?? ''
 
     await this.uploadFileToS3(pdfBuffer, bucket, fileName)
