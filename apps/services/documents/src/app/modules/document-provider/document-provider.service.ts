@@ -1,6 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { isUuid } from 'uuidv4'
 
 import { Provider } from './models/provider.model'
 import { CreateProviderDto } from './dto/createProvider.dto'
@@ -54,7 +55,7 @@ export class DocumentProviderService {
     this.logger.debug(
       `Creating organisation with nationalId - ${organisation.nationalId}`,
     )
-    console.log(JSON.stringify(organisation))
+    //console.log(JSON.stringify(organisation))
     return this.organisationModel.create(organisation, {
       include: [AdministrativeContact, TechnicalContact, Helpdesk],
     })
@@ -87,14 +88,24 @@ export class DocumentProviderService {
 
   async findProviderById(id: string): Promise<Provider | null> {
     this.logger.debug(`Finding provider with id "${id}"`)
+    if (!isUuid(id)) return null
+
     return this.providerModel.findOne({
       where: { id },
     })
   }
 
+  async findProviderByExternalProviderId(
+    externalProviderId: string,
+  ): Promise<Provider | null> {
+    return this.providerModel.findOne({
+      where: { externalProviderId },
+    })
+  }
+
   async createProvider(provider: CreateProviderDto): Promise<Provider> {
     this.logger.debug(
-      `Creating provider with id ${provider.id} for organisation ${provider.organisationId}`,
+      `Creating provider for organisation ${provider.organisationId}`,
     )
 
     const organisation = await this.organisationModel.findOne({
@@ -106,7 +117,6 @@ export class DocumentProviderService {
         `Organisation with id ${provider.organisationId} doesn't exist`,
       )
     }
-
     return await this.providerModel.create(provider)
   }
 
