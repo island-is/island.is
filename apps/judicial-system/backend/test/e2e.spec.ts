@@ -33,14 +33,14 @@ import { setup } from './setup'
 jest.setTimeout(20000)
 
 let app: INestApplication
-const prosecutorNationalId = '0000000000'
+const prosecutorNationalId = '0000000009'
 let prosecutor: CUser
 let prosecutorAuthCookie: string
-const judgeNationalId = '2222222222' // eslint-disable-line local-rules/disallow-kennitalas
+const registrarNationalId = '0000001119'
+let registrar: CUser
+const judgeNationalId = '0000002229'
 let judge: CUser
 let judgeAuthCookie: string
-const registrarNationalId = '1111111111'
-let registrar: CUser
 const adminNationalId = '3333333333'
 let admin: CUser
 let adminAuthCookie: string

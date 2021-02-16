@@ -3,7 +3,7 @@
 const userSeeds = `[
   {
     "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
-    "national_id": "0000000000",
+    "national_id": "0000000009",
     "name": "Áki Ákærandi",
     "title": "ákærandi",
     "mobile_number": "0000000",
@@ -13,7 +13,7 @@ const userSeeds = `[
   },
   {
     "id": "cef1ba9b-99b6-47fc-a216-55c8194830aa",
-    "national_id": "1111111111",
+    "national_id": "0000001119",
     "name": "Dalli Dómritari",
     "title": "dómritari",
     "mobile_number": "1111111",
@@ -23,7 +23,7 @@ const userSeeds = `[
   },
   {
     "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
-    "national_id": "2222222222",
+    "national_id": "0000002229",
     "name": "Dóra Dómari",
     "title": "dómari",
     "mobile_number": "2222222",

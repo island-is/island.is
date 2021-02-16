@@ -1200,7 +1200,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
   test('should format revoked notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
-    const accusedNationalId = '1111111111' // eslint-disable-line local-rules/disallow-kennitalas
+    const accusedNationalId = '0000001111'
     const accusedName = 'Gaui Glæpon'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')

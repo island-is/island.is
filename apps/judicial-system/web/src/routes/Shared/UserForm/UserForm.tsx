@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   AlertMessage,
   Box,
   Checkbox,
   Input,
-  Option,
   RadioButton,
   Select,
   Text,
@@ -47,7 +46,6 @@ export const UserForm: React.FC<Props> = (props) => {
     string
   >()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
-  const [institutions, setInstitutions] = useState<Option[]>()
 
   const { data, loading, error } = useQuery<InstitutionData>(
     InstitutionsQuery,
@@ -57,18 +55,12 @@ export const UserForm: React.FC<Props> = (props) => {
     },
   )
 
-  useEffect(() => {
-    if (data) {
-      setInstitutions(
-        data.institutions.map((institution) => {
-          return {
-            label: institution.name,
-            value: institution.id,
-          }
-        }),
-      )
+  const institutions = data?.institutions.map((institution) => {
+    return {
+      label: institution.name,
+      value: institution.id,
     }
-  }, [data, setInstitutions])
+  })
 
   const usersInstitution = institutions?.find(
     (institution) => institution.label === user?.institution?.name,
@@ -114,10 +106,11 @@ export const UserForm: React.FC<Props> = (props) => {
       if (
         validation.validations.some((v) => validate(value, v).isValid === false)
       ) {
+        console.log('Something not valid', value, validation)
         return false
       }
     }
-
+    console.log('Everything valid')
     return true
   }
 
