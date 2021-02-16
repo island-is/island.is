@@ -15,11 +15,11 @@ import {
   Loading,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import { useQuery } from '@apollo/client'
+import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ReactSelectOption } from '../../../types'
 import { validate, Validation } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
-import { useQuery } from '@apollo/client'
-import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 interface Props {
   user: User
@@ -106,11 +106,10 @@ export const UserForm: React.FC<Props> = (props) => {
       if (
         validation.validations.some((v) => validate(value, v).isValid === false)
       ) {
-        console.log('Something not valid', value, validation)
         return false
       }
     }
-    console.log('Everything valid')
+
     return true
   }
 
