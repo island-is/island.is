@@ -14,7 +14,7 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
-import { useLocale } from '@island.is/localization'
+import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { Box, LoadingIcon } from '@island.is/island-ui/core'
 
 import { FormShell } from './FormShell'
@@ -44,6 +44,7 @@ const ApplicationLoader: FC<{
     notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
+
   const application = data?.getApplication
 
   if (!applicationId || error) {
@@ -86,6 +87,8 @@ const ShellWrapper: FC<{
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
   const { formatMessage } = useLocale()
+
+  useApplicationNamespaces(application.typeId)
 
   useEffect(() => {
     async function populateForm() {

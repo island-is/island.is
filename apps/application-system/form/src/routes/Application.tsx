@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { ApplicationForm, NotFound } from '@island.is/application/ui-shell'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 
 import useAuth from '../hooks/useAuth'

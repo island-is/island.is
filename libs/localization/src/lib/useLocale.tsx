@@ -6,8 +6,6 @@ import en from 'date-fns/locale/en-US'
 
 import { LocaleContext } from './LocaleContext'
 
-export type UseLocale = 'is' | 'en' | undefined
-
 export function useLocale() {
   const intl = useIntl()
   const contextValue = useContext(LocaleContext)

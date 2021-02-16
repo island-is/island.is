@@ -29,7 +29,7 @@ export const Applications: FC = () => {
   const { type } = useParams<{ type: ApplicationTypes }>()
   const history = useHistory()
   const { userInfo } = useAuth()
-  const { formatMessage, lang: locale } = useLocale()
+  const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   useApplicationNamespaces(type)
