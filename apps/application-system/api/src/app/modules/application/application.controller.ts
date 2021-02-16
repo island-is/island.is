@@ -54,7 +54,7 @@ import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
-import { UploadSignedDocumentDto } from './dto/uploadSignedDocument.dto'
+import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -613,7 +613,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('application/:id/uploadSignedDocument')
+  @Put('application/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
     type: String,
@@ -623,13 +623,13 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
-  async uploadSignedDocument(
+  async uploadSignedFile(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
-    @Body() input: UploadSignedDocumentDto,
+    @Body() input: UploadSignedFileDto,
   ): Promise<ApplicationResponseDto> {
-    const { documentToken } = input
-    await this.fileService.uploadSignedDocument(application, documentToken)
+    const { documentToken, type } = input
+    await this.fileService.uploadSignedFile(application, documentToken, type)
 
     return application
   }

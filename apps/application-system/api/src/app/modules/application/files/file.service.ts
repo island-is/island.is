@@ -14,12 +14,16 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import {KeyMapping, Signature} from './utils/types'
 
 @Injectable()
 export class FileService {
   s3: AWS.S3
   private one_minute = 60
-  private childrenResidenceChangeS3Prefix = 'children-residence-change'
+
+  private bucketTypePrefix: KeyMapping<PdfTypes, string> = {
+    ChildrenResidenceChange: 'children-residence-change',
+  }
 
   constructor(
     @Inject(SigningService)
@@ -54,7 +58,7 @@ export class FileService {
     }
   }
 
-  async uploadSignedDocument(application: Application, documentToken: string) {
+  async uploadSignedFile(application: Application, documentToken: string, type: PdfTypes) {
     const answers = application.answers as FormValue
     const externalData = application.externalData as FormValue
 
@@ -65,7 +69,7 @@ export class FileService {
       .then((file) => {
         let bucket =
           environment.fsS3Bucket ?? 'development-legal-residence-change'
-        let s3FileName = `${this.childrenResidenceChangeS3Prefix}/${ssn}/${application.id}-skrifað-undir.pdf`
+        let s3FileName = `${this.bucketTypePrefix[type]}/${application.id}/${Signature.partiallySigned}.pdf`
         this.uploadFileToS3(Buffer.from(file, 'binary'), bucket, s3FileName)
       })
   }
@@ -84,7 +88,7 @@ export class FileService {
           externalData,
         )
         let bucket = environment.fsS3Bucket ?? ''
-        let s3FileName = `${this.childrenResidenceChangeS3Prefix}/${ssn}/${application.id}.pdf`
+        let s3FileName = `${this.bucketTypePrefix[type]}/${application.id}/${Signature.unsigned}.pdf`
         const s3File = await this.getFile(bucket, s3FileName)
         const fileContent = s3File.Body?.toString('binary')
 
@@ -137,7 +141,7 @@ export class FileService {
       expiry,
     )
 
-    const fileName = `${this.childrenResidenceChangeS3Prefix}/${parentA.ssn}/${applicationId}.pdf`
+    const fileName = `${this.bucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${applicationId}/${Signature.unsigned}.pdf`
     let bucket = environment.fsS3Bucket ?? ''
 
     await this.uploadFileToS3(pdfBuffer, bucket, fileName)
@@ -190,7 +194,7 @@ export class FileService {
       ContentEncoding: 'base64',
       ContentDisposition: 'inline',
       ContentType: 'application/pdf',
-      Body: buffer,
+      Body: content,
     }
 
     await this.s3

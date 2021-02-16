@@ -12,7 +12,7 @@ import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
-import { UploadSignedDocumentInput } from './dto/uploadSignedDocument.input'
+import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -183,15 +183,15 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async uploadSignedDocument(
-    input: UploadSignedDocumentInput,
+  async uploadSignedFile(
+    input: UploadSignedFileInput,
     authorization: string,
   ) {
-    const { id, ...uploadSignedDocumentDto } = input
+    const { id, ...uploadSignedFileDto } = input
     return await this.applicationApi
-      .applicationControllerUploadSignedDocument({
+      .applicationControllerUploadSignedFile({
         id,
-        uploadSignedDocumentDto,
+        uploadSignedFileDto,
         authorization,
       })
       .catch(handleError)

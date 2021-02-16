@@ -12,7 +12,7 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
-import { UploadSignedDocumentInput } from './dto/uploadSignedDocument.input'
+import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -157,11 +157,11 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Application, { nullable: true })
-  uploadSignedDocument(
-    @Args('input') input: UploadSignedDocumentInput,
+  uploadSignedFile(
+    @Args('input') input: UploadSignedFileInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.uploadSignedDocument(
+    return this.applicationService.uploadSignedFile(
       input,
       user.authorization,
     )
