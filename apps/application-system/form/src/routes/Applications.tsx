@@ -15,18 +15,24 @@ import {
   Page,
   Button,
 } from '@island.is/island-ui/core'
-import { Application, coreMessages } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationTypes,
+  coreMessages,
+} from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
-import { useLocale } from '@island.is/localization'
+import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 
 import useAuth from '../hooks/useAuth'
 
 export const Applications: FC = () => {
-  const { type } = useParams()
+  const { type } = useParams<{ type: ApplicationTypes }>()
   const history = useHistory()
   const { userInfo } = useAuth()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
+
+  useApplicationNamespaces(type)
 
   const { data, loading, error: applicationsError } = useQuery(
     APPLICANT_APPLICATIONS,

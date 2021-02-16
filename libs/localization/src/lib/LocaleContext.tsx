@@ -21,7 +21,7 @@ export interface MessagesDict {
 
 interface LocaleContextType {
   lang: Locale
-  loadMessages: (namespaces: string | string[]) => void
+  loadMessages: (namespaces: string | (string | null)[]) => void
   changeLanguage: (lang: Locale) => void
   loadingMessages: boolean
   loadedNamespaces: string[]
@@ -116,9 +116,11 @@ export const LocaleProvider = ({
     setMessagesDict((old) => Object.assign({}, old, data?.getTranslations))
   }
 
-  const loadMessages = async (namespaces: string | string[]) => {
+  const loadMessages = async (namespaces: string | (string | null)[]) => {
     const namespaceArr =
-      typeof namespaces === 'string' ? [namespaces] : namespaces
+      typeof namespaces === 'string'
+        ? [namespaces]
+        : (namespaces.filter((value) => value !== null) as string[])
     const diff = difference(namespaceArr, loadedNamespaces)
 
     // Only fetch namespaces that we have not fetched yet

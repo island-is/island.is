@@ -7,19 +7,9 @@ import { coreMessages } from '@island.is/application/core'
 import useAuth from '../hooks/useAuth'
 
 export const Application = () => {
-  const { id } = useParams()
+  const { id } = useParams<{ id: string }>()
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
-
-  useNamespaces([
-    'dl.application',
-    'pl.application',
-    'hi.application',
-    'application.system',
-    'example.application',
-    'dpo.application',
-  ])
-
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   if (!id) {

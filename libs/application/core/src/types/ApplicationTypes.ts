@@ -9,3 +9,15 @@ export enum ApplicationTypes {
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
 }
+
+export const ApplicationTranslations = {
+  ExampleForm: 'example.application',
+  Passport: null,
+  DrivingLessons: 'dl.application',
+  DrivingLicense: 'dl.application',
+  ParentalLeave: 'pl.application',
+  MetaApplication: null,
+  DocumentProviderOnboarding: 'dpo.application',
+  HealthInsurance: null,
+  ChildrenResidenceChange: null,
+}

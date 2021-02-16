@@ -2,7 +2,7 @@ import { useContext, useEffect } from 'react'
 import { LocaleContext } from './LocaleContext'
 import isEmpty from 'lodash/isEmpty'
 
-export function useNamespaces(namespaces?: string | string[]) {
+export function useNamespaces(namespaces?: string | (string | null)[]) {
   const {
     loadMessages,
     loadingMessages,
@@ -11,8 +11,8 @@ export function useNamespaces(namespaces?: string | string[]) {
   } = useContext(LocaleContext)
 
   useEffect(() => {
-    if (!isEmpty(namespaces)) {
-      loadMessages(namespaces as string | string[])
+    if (namespaces && !isEmpty(namespaces)) {
+      loadMessages(namespaces)
     }
   }, [loadMessages, namespaces])
 
