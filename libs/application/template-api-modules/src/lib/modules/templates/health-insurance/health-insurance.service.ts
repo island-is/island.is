@@ -16,9 +16,10 @@ export class HealthInsuranceService {
   //     application,
   //   )
   // }
-  async applyInsurance({ application }: TemplateApiModuleActionProps): Promise<VistaSkjalModel>{
-    const vistaskjal = new VistaSkjalModel()
-    vistaskjal.isSucceeded = true
-    return vistaskjal
+  async sendApplication({ application }: TemplateApiModuleActionProps){
+    // const vistaskjal = new VistaSkjalModel()
+    // vistaskjal.isSucceeded = true
+    // return vistaskjal
+    await new Promise((resolve) => setTimeout(resolve, 2000))
   }
 }
