@@ -48,6 +48,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       clientLocationOrigin: environment.clientLocationOrigin,
       emailOptions: environment.emailOptions,
       jwtSecret: environment.auth.jwtSecret,
+      baseApiUrl: environment.baseApiUrl,
     }),
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
