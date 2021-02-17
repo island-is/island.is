@@ -39,6 +39,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as styles from './StepOne.treat'
+import { REQUEST_LIST_ROUTE } from '@island.is/judicial-system-web/src/utils/constants'
 
 interface CaseData {
   case?: Case
@@ -504,6 +505,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             />
           </Box>
           <FormFooter
+            previousUrl={REQUEST_LIST_ROUTE}
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsLoading={createLoading}
             nextIsDisabled={isStepIllegal || createLoading}

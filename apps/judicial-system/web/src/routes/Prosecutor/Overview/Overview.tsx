@@ -341,6 +341,12 @@ export const Overview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={
+              workingCase.state === CaseState.RECEIVED &&
+              workingCase.isCourtDateInThePast
+                ? Constants.REQUEST_LIST_ROUTE
+                : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
+            }
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
