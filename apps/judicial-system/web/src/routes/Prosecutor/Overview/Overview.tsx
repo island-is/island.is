@@ -284,7 +284,7 @@ export const Overview: React.FC = () => {
                 {workingCase.caseFacts && (
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
-                      <Text variant="h5">Málsatvik rakin</Text>
+                      <Text variant="h5">Málsatvik</Text>
                     </Box>
                     <Text>
                       <span className={styles.breakSpaces}>
