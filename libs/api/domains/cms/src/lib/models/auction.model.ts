@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IAuction } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class Auction {
@@ -20,8 +21,8 @@ export class Auction {
   @Field()
   type: string
 
-  @Field({ nullable: true })
-  content?: string
+  @Field(() => [SliceUnion], { nullable: true })
+  content: Array<typeof SliceUnion>
 
   @Field(() => Organization)
   organization: Organization
@@ -33,7 +34,9 @@ export const mapAuction = ({ fields, sys }: IAuction): Auction => ({
   title: fields.title ?? '',
   date: fields.date ?? '',
   type: fields.type ?? '',
-  content: fields.content ?? '',
+  content: fields.content
+    ? mapDocument(fields.content, sys.id + ':content')
+    : [],
   organization: fields.organization
     ? mapOrganization(fields.organization)
     : null,
