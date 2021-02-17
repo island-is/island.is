@@ -43,7 +43,9 @@ export class OrganisationController {
     )
 
     if (!org) {
-      throw new NotFoundException("This organisation doesn't exist")
+      throw new NotFoundException(
+        `An organisation with nationalId ${nationalId} does not exist`,
+      )
     }
 
     return org

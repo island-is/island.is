@@ -3,9 +3,6 @@ export interface GetVistaSkjalBody {
 }
 
 interface Sjukratryggingumsokn {
-  // $: { // params xml tag
-  //     [key: string]: string
-  // },
   einstaklingur: Einstaklingur
   numerumsoknar: string
   dagsumsoknar: string
@@ -33,11 +30,11 @@ interface Einstaklingur {
   netfang: string
 }
 
-interface Fylgiskjol {
+export interface Fylgiskjol {
   fylgiskjal: Fylgiskjal[]
 }
 
-interface Fylgiskjal {
+export interface Fylgiskjal {
   heiti: string
   innihald: string
 }
