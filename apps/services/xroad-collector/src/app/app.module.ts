@@ -5,6 +5,7 @@ import { ApiCatalogueServicesModule } from '@island.is/api-catalogue/services'
 import { RestServiceCollector } from './restservicecollector.service'
 import { ConfigModule } from '@nestjs/config'
 import configuration from './config/configuration'
+import { CollectionConfigService } from './CollectionConfig.service'
 import { CollectionService } from './collection.service'
 
 @Module({
@@ -16,6 +17,7 @@ import { CollectionService } from './collection.service'
   ],
   controllers: [],
   providers: [
+    CollectionConfigService,
     ElasticService,
     CollectionService,
     RestServiceCollector,

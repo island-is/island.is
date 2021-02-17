@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { ElasticService } from '@island.is/api-catalogue/elastic'
-import { ConfigService } from '@nestjs/config'
 
 import { Environment } from '@island.is/api-catalogue/consts'
 import { logger } from '@island.is/logging'
@@ -8,13 +7,7 @@ import { OpenApi, Service } from '@island.is/api-catalogue/types'
 import union from 'lodash/union'
 import { IndicesUpdateAliases } from '@elastic/elasticsearch/api/requestParams'
 import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
-
-export interface CollectorConfig {
-  environment: Environment
-  aliasName: string
-  elasticNode: string
-  production: boolean
-}
+import { CollectionConfigService } from './CollectionConfig.service'
 
 @Injectable()
 export class CollectionService {
@@ -24,14 +17,14 @@ export class CollectionService {
   elasticNode: string
 
   constructor(
-    private configService: ConfigService,
+    private collectionConfigService: CollectionConfigService,
     private readonly elasticService: ElasticService,
   ) {
     this.init()
   }
 
   private init() {
-    const config = this.getConfig()
+    const config = this.collectionConfigService.getConfig()
     this.environment = config.environment
     this.aliasName = config.aliasName
     this.elasticNode = config.elasticNode
@@ -41,49 +34,6 @@ export class CollectionService {
     logger.debug(`Worker index name "${this.getWorkerIndexName()}"`)
   }
 
-  getConfig(): CollectorConfig {
-    logger.debug('Checking config')
-    const environmentStr = this.configService.get<string>('environment')
-    logger.warn(JSON.stringify(environmentStr, null, 4))
-    if (!environmentStr) {
-      throw new Error('Environment variable ENVIRONMENT is missing')
-    }
-    const aliasName = this.configService.get<string>('aliasName')
-    if (!aliasName) {
-      throw new Error('Environment variable XROAD_COLLECTOR_ALIAS is missing')
-    }
-    const elasticNode = this.configService.get<string>('elasticNode')
-    if (!elasticNode) {
-      throw new Error('Environment variable ELASTIC_NODE is missing')
-    }
-    const production = this.configService.get<boolean>('production')
-    if (production !== true && production !== false) {
-      throw new Error('boolean value production not set')
-    }
-
-    const environment: Environment =
-      Environment[
-        Object.keys(Environment).find(
-          (key) => Environment[key] === environmentStr,
-        )
-      ]
-
-    if (!environment) {
-      throw new Error(
-        `Invalid value in environment variable "ENVIRONMENT". Valid values:[${Environment.DEV}|${Environment.STAGING}|${Environment.PROD}]`,
-      )
-    }
-
-    const ret: CollectorConfig = {
-      environment: environment,
-      aliasName: aliasName,
-      elasticNode: elasticNode,
-      production: production,
-    }
-
-    logger.info('Config values:', ret)
-    return ret
-  }
   /**
    * Before calling this function, initWorker must have been set
    */
