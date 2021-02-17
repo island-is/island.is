@@ -89,6 +89,7 @@ export const transformApplicationToParentalLeaveDTO = (
   if (periodsAnswer) {
     periods = periodsAnswer.map((period) => ({
       from: period.startDate,
+      // TODO: refactor period.endDate to not include time
       to: period.endDate.split('T')[0],
       ratio: Number(period.ratio),
       approved: true,
