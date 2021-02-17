@@ -1710,6 +1710,28 @@
         }
       }
     },
+    "application-templates-party-letter": {
+      "root": "libs/application/templates/party-letter",
+      "sourceRoot": "libs/application/templates/party-letter/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/party-letter/tsconfig.lib.json",
+              "libs/application/templates/party-letter/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/party-letter/**/*"
+            ]
+          }
+        }
+      }
+    },
     "application-templates-passport": {
       "root": "libs/application/templates/passport",
       "sourceRoot": "libs/application/templates/passport/src",

@@ -126,6 +126,9 @@
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
+      "@island.is/application/templates/party-letter": [
+        "libs/application/templates/party-letter/src/index.ts"
+      ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
