@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import get from 'lodash/get'
