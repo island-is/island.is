@@ -80,6 +80,7 @@ export const Overview: React.FC = () => {
         },
       },
     })
+    console.log(data)
 
     return data?.sendNotification?.notificationSent
   }
@@ -162,7 +163,7 @@ export const Overview: React.FC = () => {
               }`}
             </Text>
           </Box>
-          <Box component="section" marginBottom={5}>
+          <Box component="section" marginBottom={5} data-testid="caseOverview">
             <InfoCard
               data={[
                 {
@@ -220,7 +221,11 @@ export const Overview: React.FC = () => {
               }}
             />
           </Box>
-          <Box component="section" marginBottom={5}>
+          <Box
+            component="section"
+            marginBottom={5}
+            data-testid="prosecutorDemands"
+          >
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Dómkröfur

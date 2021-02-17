@@ -22,22 +22,33 @@ Cypress.Commands.add('login', (email, password) => {
 Cypress.Commands.add('stubAPIResponses', () => {
   cy.intercept('POST', '/api/graphql', (req) => {
     req.reply((res) => {
-      if (
-        req.body.hasOwnProperty('query') &&
-        req.body.query.includes('CasesQuery')
-      ) {
-        res.send({
-          fixture: 'cases',
-        })
-      } else if (
-        req.body.hasOwnProperty('query') &&
-        req.body.hasOwnProperty('variables') &&
-        req.body.query.includes('CaseQuery') &&
-        req.body.variables.input.id === 'test_id'
-      ) {
-        res.send({
-          fixture: 'case',
-        })
+      if (req.body.hasOwnProperty('query')) {
+        if (req.body.query.includes('CasesQuery')) {
+          res.send({
+            fixture: 'cases',
+          })
+        } else if (
+          req.body.hasOwnProperty('variables') &&
+          req.body.query.includes('CaseQuery')
+        ) {
+          if (req.body.variables.input.id === 'test_id') {
+            res.send({
+              fixture: 'case',
+            })
+          } else if (req.body.variables.input.id === 'test_id_stadfesta') {
+            res.send({
+              fixture: 'confirmCase',
+            })
+          }
+        } else if (req.body.query.includes('TransitionCaseMutation')) {
+          res.send({
+            fixture: 'transitionCaseMutationResponse',
+          })
+        } else if (req.body.query.includes('SendNotificationMutation')) {
+          res.send({
+            fixture: 'sendNotificationMutationResponse',
+          })
+        }
       }
     })
   })

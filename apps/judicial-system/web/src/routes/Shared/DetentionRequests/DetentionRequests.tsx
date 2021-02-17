@@ -412,7 +412,7 @@ export const DetentionRequests: React.FC = () => {
                       )}
                     </Box>
                   </td>
-                  <td className={styles.td}>
+                  <td className={styles.td} data-testid="tdTag">
                     <Tag
                       variant={
                         mapCaseStateToTagVariant(

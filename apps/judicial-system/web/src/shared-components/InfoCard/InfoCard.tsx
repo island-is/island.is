@@ -42,6 +42,7 @@ const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
       <Box className={styles.infoCardDataContainer}>
         {props.data.map((dataItem, index) => (
           <Box
+            data-testid={`infoCardDataContainer${index}`}
             className={styles.infoCardData}
             // Should be applied to every element except the last two
             marginBottom={index < props.data.length - 2 ? 3 : 0}

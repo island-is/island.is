@@ -31,6 +31,7 @@ const CheckboxList: React.FC<Props> = ({
           return (
             <GridColumn span="6/12" key={index}>
               <Box
+                data-testid="checkbox"
                 marginBottom={
                   // Do not add margins to the last two items
                   index < checkboxes.length - 2 ? 3 : 0
