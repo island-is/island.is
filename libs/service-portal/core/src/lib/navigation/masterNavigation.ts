@@ -84,8 +84,8 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           type: 'outline',
           icon: 'receipt',
         },
-        // Commentað út af því að til að byrja með er þetta bara ein síða og einungis
-        // fyrir eigendur (starfsmenn ísland.is)
+        // The first release will only contain "Skjalaveitur" and only for the project owners.
+        // Therefore 'children' are temporarily disabled to enhance the UX of the owners.
         // children: [
         //   {
         //     name: defineMessage({

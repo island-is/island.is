@@ -23,8 +23,8 @@ export const documentProviderModule: ServicePortalModule = {
           import('./screens/SingleDocumentProvider/SingleDocumentProvider'),
         ),
     },
-    // Commentað út vegna tímabundins ástands: Til að byrja með verður skjalaveitu fítus bara
-    // ein síða
+    // The first release will contain limited features and only for the project owners.
+    // Therefore these paths are temporarily disabled to enhance the UX for the owners.
     // {
     //   name: m.rootName,
     //   path: ServicePortalPath.DocumentProviderRoot,
