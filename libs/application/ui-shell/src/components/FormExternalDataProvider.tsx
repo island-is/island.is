@@ -13,12 +13,14 @@ import {
   ExternalData,
   FormValue,
   getValueViaPath,
+  coreMessages,
   RecordObject,
 } from '@island.is/application/core'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+
 import { verifyExternalData } from '../utils'
 
 const ProviderItem: FC<{
@@ -71,8 +73,8 @@ const FormExternalDataProvider: FC<{
   formValue,
   errors,
 }) => {
-  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
       addExternalData(getExternalDataFromResponse(responseData))
@@ -135,7 +137,7 @@ const FormExternalDataProvider: FC<{
         <Text variant="h4">
           {subTitle
             ? formatMessage(subTitle)
-            : 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki'}
+            : formatMessage(coreMessages.externalDataTitle)}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -173,7 +175,9 @@ const FormExternalDataProvider: FC<{
                   hasError={error !== undefined}
                   name={`${id}`}
                   label={
-                    checkboxLabel ? formatMessage(checkboxLabel) : 'Ég samþykki'
+                    checkboxLabel
+                      ? formatMessage(checkboxLabel)
+                      : formatMessage(coreMessages.externalDataAgreement)
                   }
                   value={id}
                 />

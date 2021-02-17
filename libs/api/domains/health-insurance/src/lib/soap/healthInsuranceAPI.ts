@@ -11,7 +11,9 @@ import {
   GetSjukratryggdurTypeDto,
   GetFaUmsoknSjukratryggingTypeDto,
   GetVistaSkjalDtoType,
-  // GetVistaSkjalBody,
+  GetVistaSkjalBody,
+  Fylgiskjal,
+  Fylgiskjol,
 } from './dto'
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
@@ -129,110 +131,136 @@ export class HealthInsuranceAPI {
     inputObj: VistaSkjalInput,
     nationalId: string,
   ): Promise<VistaSkjalModel> {
-    logger.info(`--- Starting applyInsurance api call ---`)
+    logger.info(
+      `--- Starting applyInsurance api call for ${
+        inputObj.nationalId ?? nationalId
+      } ---`,
+    )
+
+    const vistaSkjalBody: GetVistaSkjalBody = {
+      sjukratryggingumsokn: {
+        einstaklingur: {
+          kennitala: inputObj.nationalId ?? nationalId,
+          erlendkennitala: inputObj.foreignNationalId,
+          nafn: inputObj.name,
+          heimili: inputObj.address ?? '',
+          postfangstadur: inputObj.postalAddress ?? '',
+          rikisfang: inputObj.citizenship ?? '',
+          rikisfangkodi: inputObj.postalAddress ? 'IS' : '',
+          simi: inputObj.phoneNumber,
+          netfang: inputObj.email,
+        },
+        numerumsoknar: inputObj.applicationNumber,
+        dagsumsoknar: format(new Date(inputObj.applicationDate), 'yyyy-MM-dd'),
+        dagssidustubusetuthjodskra: format(
+          new Date(inputObj.residenceDateFromNationalRegistry),
+          'yyyy-MM-dd',
+        ),
+        dagssidustubusetu: format(
+          new Date(inputObj.residenceDateUserThink),
+          'yyyy-MM-dd',
+        ),
+        stadaeinstaklings: inputObj.userStatus,
+        bornmedumsaekjanda: inputObj.isChildrenFollowed,
+        fyrrautgafuland: inputObj.previousCountry,
+        fyrrautgafulandkodi: inputObj.previousCountryCode,
+        fyrriutgafustofnunlands: inputObj.previousIssuingInstitution,
+        tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+        vidbotarupplysingar: inputObj.additionalInformation ?? '',
+      },
+    }
 
     // Add attachments from S3 bucket
-    let attachments = ''
+    // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
+
     if (
       inputObj.attachmentsFileNames &&
       inputObj.attachmentsFileNames.length > 0
     ) {
-      attachments += '<fylgiskjol>'
-      for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
-        const resultStr = await this.bucketService.getFileContentAsBase64(
-          inputObj.attachmentsFileNames[i],
-        )
-        attachments += `<fylgiskjal>
-                          <heiti>${inputObj.attachmentsFileNames[i]}</heiti>
-                          <innihald>${resultStr}</innihald>
-                        </fylgiskjal>`
+      logger.info(`Start getting attachments`)
+      const fylgiskjol: Fylgiskjol = {
+        fylgiskjal: [],
       }
-      attachments += '</fylgiskjol>'
+      for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
+        const filename = inputObj.attachmentsFileNames[i]
+        const fylgiskjal: Fylgiskjal = {
+          heiti: filename,
+          innihald: await this.bucketService.getFileContentAsBase64(filename),
+        }
+        fylgiskjol.fylgiskjal.push(fylgiskjal)
+      }
+      vistaSkjalBody.sjukratryggingumsokn.fylgiskjol = fylgiskjol
+      logger.info(`Finished getting attachments`)
     }
 
-    // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
+    const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>${this.OBJtoXML(
+      vistaSkjalBody,
+    )}]]>`
 
-    // TODO: NEED TO IMPLEMENTED and stop hard-coding the xml in the body
-    // const xml: GetVistaSkjalBody = {
-    //   sjukratryggingumsokn: {
-    //     // $: {
-    //     //   'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-    //     //   'xmlns:xsd': 'http://www.w3.org/2001/XMLSchema',
-    //     // },
-    //     numerumsoknar: inputObj.applicationNumber,
-    //     dagsumsoknar: format(new Date(inputObj.applicationDate), "yyyy-MM-dd"),
-    //     dagssidustubusetuthjodskra: format(new Date(inputObj.residenceDateFromNationalRegistry), "yyyy-MM-dd"),
-    //     dagssidustubusetu: format(new Date(inputObj.residenceDateUserThink), "yyyy-MM-dd"),
-    //     stadaeinstaklings: inputObj.userStatus,
-    //     bornmedumsaekjanda: inputObj.isChildrenFollowed,
-    //     fyrrautgafuland: inputObj.previousCountry,
-    //     fyrrautgafulandkodi: inputObj.previousCountryCode,
-    //     fyrriutgafustofnunlands: inputObj.previousIssuingInstitution,
-    //     tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
-    //     vidbotarupplysingar: inputObj.additionalInformation ?? '',
-    //     einstaklingur: {
-    //       kennitala: inputObj.nationalId,
-    //       erlendkennitala: inputObj.foreignNationalId,
-    //       nafn: inputObj.name,
-    //       heimili: inputObj.address ?? '',
-    //       postfangstadur: inputObj.postalAddress ?? '',
-    //       rikisfang: inputObj.citizenship ?? '',
-    //       rikisfangkodi: inputObj.postalAddress ? 'IS' : '',
-    //       simi: inputObj.phoneNumber,
-    //       netfang: inputObj.email,
-    //     },
-    //     fylgiskjol: {
-    //       fylgiskjal: [
-    //         {
-    //           heiti: 'google',
-    //           innihald: resultStr,
-    //         },
-    //       ]
-    //     }
+    // TODO: clean up when go live
+    // let attachments = ''
+    // if (
+    //   inputObj.attachmentsFileNames &&
+    //   inputObj.attachmentsFileNames.length > 0
+    // ) {
+    //   logger.info(`Start getting attachments`)
+    //   attachments += '<fylgiskjol>'
+    //   for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
+    //     const filename = inputObj.attachmentsFileNames[i]
+    //     logger.info(`Getting ${filename} now`)
+    //     const resultStr = await this.bucketService.getFileContentAsBase64(
+    //       filename,
+    //     )
+    //     attachments += `<fylgiskjal>
+    //                       <heiti>${filename}</heiti>
+    //                       <innihald>${resultStr}</innihald>
+    //                     </fylgiskjal>`
     //   }
+    //   attachments += '</fylgiskjol>'
+    //   logger.info(`Finished getting attachments`)
     // }
 
-    const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
-    <sjukratryggingumsokn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-      <einstaklingur>
-        <kennitala>${inputObj.nationalId ?? nationalId}</kennitala>
-        <erlendkennitala>${inputObj.foreignNationalId}</erlendkennitala>
-        <nafn>${inputObj.name}</nafn>
-        <heimili>${inputObj.address ?? ''}</heimili>
-        <postfangstadur>${inputObj.postalAddress ?? ''}</postfangstadur>
-        <rikisfang>${inputObj.citizenship ?? ''}</rikisfang>
-        <rikisfangkodi>${inputObj.postalAddress ? 'IS' : ''}</rikisfangkodi>
-        <simi>${inputObj.phoneNumber}</simi>
-        <netfang>${inputObj.email}</netfang>
-      </einstaklingur>
-      <numerumsoknar>${inputObj.applicationNumber}</numerumsoknar>
-      <dagsumsoknar>${format(
-        new Date(inputObj.applicationDate),
-        'yyyy-MM-dd',
-      )}</dagsumsoknar>
-      <dagssidustubusetuthjodskra>${format(
-        new Date(inputObj.residenceDateFromNationalRegistry),
-        'yyyy-MM-dd',
-      )}</dagssidustubusetuthjodskra>
-      <dagssidustubusetu>${format(
-        new Date(inputObj.residenceDateUserThink),
-        'yyyy-MM-dd',
-      )}</dagssidustubusetu>
-      <stadaeinstaklings>${inputObj.userStatus}</stadaeinstaklings>
-      <bornmedumsaekjanda>${inputObj.isChildrenFollowed}</bornmedumsaekjanda>
-      <fyrrautgafuland>${inputObj.previousCountry}</fyrrautgafuland>
-      <fyrrautgafulandkodi>${inputObj.previousCountryCode}</fyrrautgafulandkodi>
-      <fyrriutgafustofnunlands>${
-        inputObj.previousIssuingInstitution
-      }</fyrriutgafustofnunlands>
-      <tryggdurfyrralandi>${
-        inputObj.isHealthInsuredInPreviousCountry
-      }</tryggdurfyrralandi>
-      <vidbotarupplysingar>${
-        inputObj.additionalInformation ?? ''
-      }</vidbotarupplysingar>
-      ${attachments}
-    </sjukratryggingumsokn>]]>`
+    // const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+    // <sjukratryggingumsokn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    //   <einstaklingur>
+    //     <kennitala>${inputObj.nationalId ?? nationalId}</kennitala>
+    //     <erlendkennitala>${inputObj.foreignNationalId}</erlendkennitala>
+    //     <nafn>${inputObj.name}</nafn>
+    //     <heimili>${inputObj.address ?? ''}</heimili>
+    //     <postfangstadur>${inputObj.postalAddress ?? ''}</postfangstadur>
+    //     <rikisfang>${inputObj.citizenship ?? ''}</rikisfang>
+    //     <rikisfangkodi>${inputObj.postalAddress ? 'IS' : ''}</rikisfangkodi>
+    //     <simi>${inputObj.phoneNumber}</simi>
+    //     <netfang>${inputObj.email}</netfang>
+    //   </einstaklingur>
+    //   <numerumsoknar>${inputObj.applicationNumber}</numerumsoknar>
+    //   <dagsumsoknar>${format(
+    //     new Date(inputObj.applicationDate),
+    //     'yyyy-MM-dd',
+    //   )}</dagsumsoknar>
+    //   <dagssidustubusetuthjodskra>${format(
+    //     new Date(inputObj.residenceDateFromNationalRegistry),
+    //     'yyyy-MM-dd',
+    //   )}</dagssidustubusetuthjodskra>
+    //   <dagssidustubusetu>${format(
+    //     new Date(inputObj.residenceDateUserThink),
+    //     'yyyy-MM-dd',
+    //   )}</dagssidustubusetu>
+    //   <stadaeinstaklings>${inputObj.userStatus}</stadaeinstaklings>
+    //   <bornmedumsaekjanda>${inputObj.isChildrenFollowed}</bornmedumsaekjanda>
+    //   <fyrrautgafuland>${inputObj.previousCountry}</fyrrautgafuland>
+    //   <fyrrautgafulandkodi>${inputObj.previousCountryCode}</fyrrautgafulandkodi>
+    //   <fyrriutgafustofnunlands>${
+    //     inputObj.previousIssuingInstitution
+    //   }</fyrriutgafustofnunlands>
+    //   <tryggdurfyrralandi>${
+    //     inputObj.isHealthInsuredInPreviousCountry
+    //   }</tryggdurfyrralandi>
+    //   <vidbotarupplysingar>${
+    //     inputObj.additionalInformation ?? ''
+    //   }</vidbotarupplysingar>
+    //   ${attachments}
+    // </sjukratryggingumsokn>]]>`
 
     const args = {
       sendandi: '',
@@ -243,8 +271,9 @@ export class HealthInsuranceAPI {
       Application statuses:
       0: annars/hafnað/Rejected
       1: tókst/Succeeded
-      2: tókst með athugasemd/Succeeded with comment
+      2: tókst en með athugasemd/Succeeded but with comment
     */
+    logger.info(`Calling vistaskjal through xroad`)
     const res: GetVistaSkjalDtoType = await this.xroadCall('vistaskjal', args)
 
     const vistaSkjal = new VistaSkjalModel()
@@ -277,7 +306,7 @@ export class HealthInsuranceAPI {
     return vistaSkjal
   }
 
-  private async xroadCall(functionName: string, args: object): Promise<any> {
+  public async xroadCall(functionName: string, args: object): Promise<any> {
     // create 'soap' client
     logger.info(`Start ${functionName} function call.`)
     const client = await SoapClient.generateClient(
@@ -301,16 +330,31 @@ export class HealthInsuranceAPI {
           logger.error(JSON.stringify(err, null, 2))
           reject(err)
         } else {
-          logger.info(
-            `Successful call ${functionName} function with result: ${JSON.stringify(
-              result,
-              null,
-              2,
-            )}`,
-          )
+          logger.info(`Successful call ${functionName} function`)
           resolve(result)
         }
       })
     })
+  }
+
+  private OBJtoXML(obj: object) {
+    let xml = ''
+    Object.entries(obj).forEach((entry) => {
+      const [key, value] = entry
+      xml += value instanceof Array ? '' : '<' + key + '>'
+      if (value instanceof Array) {
+        for (const i in value) {
+          xml += '<' + key + '>'
+          xml += this.OBJtoXML(value[i])
+          xml += '</' + key + '>'
+        }
+      } else if (typeof value == 'object') {
+        xml += this.OBJtoXML(new Object(value))
+      } else {
+        xml += value
+      }
+      xml += value instanceof Array ? '' : '</' + key + '>'
+    })
+    return xml
   }
 }

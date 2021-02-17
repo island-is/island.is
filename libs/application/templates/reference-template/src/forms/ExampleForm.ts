@@ -25,7 +25,7 @@ export const ExampleForm: Form = buildForm({
       title: m.introSection,
       children: [
         buildTextField({
-          id: 'name',
+          id: 'person.name',
           title: m.name,
         }),
         buildDescriptionField({
