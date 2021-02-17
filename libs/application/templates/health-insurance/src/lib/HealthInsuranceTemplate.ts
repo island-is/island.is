@@ -39,6 +39,7 @@ const HealthInsuranceSchema = z.object({
     city: z.string().nonempty(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
+    citizenship: z.string().optional(),
   }),
   status: z.enum([
     StatusTypes.EMPLOYED,
@@ -50,23 +51,17 @@ const HealthInsuranceSchema = z.object({
   children: z.string().nonempty(),
   formerInsurance: z.object({
     registration: z.enum([YES, NO]),
-    country: z
-      .string()
-      .refine((value) =>
-        value
-          ? isEUCountry(value) || requireConfirmationOfResidency(value)
-          : false,
-      ),
+    country: z.string(),
     personalId: z.string().nonempty(),
     institution: z.string(),
     entitlement: z.enum([YES, NO]),
-    entitlementReason: z.string().nonempty(),
+    entitlementReason: z.string().optional(),
   }),
   confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   additionalInfo: z.object({
     hasAdditionalInfo: z.enum([YES, NO]),
     files: z.array(FileSchema),
-    remarks: z.string(),
+    remarks: z.string().optional(),
   }),
   confirmCorrectInfo: z.boolean().refine((v) => v),
 })

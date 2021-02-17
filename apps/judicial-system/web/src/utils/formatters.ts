@@ -23,7 +23,6 @@ export const parseString = (
     const json = JSON.parse(`{"${property}": ${JSON.stringify(value)}}`)
     return json
   } catch (e) {
-    console.log(e)
     return null
   }
 }
@@ -38,7 +37,6 @@ export const parseTransition = (
     )
     return json
   } catch (e) {
-    console.log(e)
     return null
   }
 }

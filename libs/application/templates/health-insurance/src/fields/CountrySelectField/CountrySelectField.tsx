@@ -7,17 +7,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
-import { ReviewFieldProps } from '../../types'
-
-type Country = {
-  name: string
-  alpha2Code: string
-  regionalBlocs: Blocs[]
-}
-
-type Blocs = {
-  acronym: string
-}
+import { ReviewFieldProps, Country } from '../../types'
 
 interface Props extends ReviewFieldProps {
   isReviewField?: boolean
@@ -70,9 +60,14 @@ const CountrySelectField: FC<Props> = ({
         id={id}
         name={id}
         label={formatText(m.formerInsuranceCountry, application, formatMessage)}
-        placeholder="Select the country that you are moving from"
+        placeholder={formatText(
+          m.formerInsuranceCountryPlaceholder,
+          application,
+          formatMessage,
+        )}
         options={options}
         disabled={isReviewField}
+        backgroundColor="blue"
       />
     </Box>
   )

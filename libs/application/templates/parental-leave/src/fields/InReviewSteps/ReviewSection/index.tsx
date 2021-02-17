@@ -1,8 +1,11 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-
 import { useLocale } from '@island.is/localization'
-import { Application, formatText } from '@island.is/application/core'
+import {
+  Application,
+  formatText,
+  coreMessages,
+} from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.treat'
@@ -76,11 +79,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Box pointerEvents="none">
             <Tag variant="blue">
               {formatText(
-                {
-                  id: 'application.system:tags.inProgress',
-                  defaultMessage: 'In progress',
-                  description: 'In progress tag text',
-                },
+                coreMessages.tagsInProgress,
                 application,
                 formatMessage,
               )}
@@ -91,11 +90,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Box pointerEvents="none">
             <Tag variant="red">
               {formatText(
-                {
-                  id: 'application.system:tags.inProgress',
-                  defaultMessage: 'Requires action',
-                  description: 'Requires action tag text',
-                },
+                coreMessages.tagsRequiresAction,
                 application,
                 formatMessage,
               )}

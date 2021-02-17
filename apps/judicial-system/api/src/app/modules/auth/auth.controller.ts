@@ -20,7 +20,7 @@ import {
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
-import { User } from '@island.is/judicial-system/types'
+import { User, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
@@ -84,7 +84,8 @@ export class AuthController {
       verifyResult = await this.loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-      return res.redirect('/?error=true')
+
+      return res.redirect('/?villa=innskraning-ogild')
     }
 
     const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
@@ -96,7 +97,8 @@ export class AuthController {
           userAuthId: user?.authId,
         },
       })
-      return res.redirect('/?error=true')
+
+      return res.redirect('/?villa=innskraning-ogild')
     }
 
     return this.redirectAuthenticatedUser(
@@ -105,7 +107,7 @@ export class AuthController {
         name: user.fullname,
         mobile: user.mobile,
       },
-      returnUrl ?? '/krofur',
+      returnUrl ?? '/krofur', // looks like the return url gets lost sometimes
       res,
       new Entropy({ bits: 128 }).string(),
     )
@@ -126,13 +128,14 @@ export class AuthController {
     // Local development
     if (environment.auth.allowAuthBypass && nationalId) {
       this.logger.debug(`Logging in as ${nationalId} in development mode`)
+
       return this.redirectAuthenticatedUser(
         {
           nationalId,
           name: '',
           mobile: '',
         },
-        returnUrl ?? '/krofur',
+        returnUrl ?? '/krofur', // just in case the return url is missing
         res,
       )
     }
@@ -174,14 +177,15 @@ export class AuthController {
           authUser,
         },
       })
-      return res.redirect('/?error=true')
+
+      return res.redirect('/?villa=innskraning-ekki-notandi')
     }
 
     const jwtToken = this.sharedAuthService.signJwt(user as User, csrfToken)
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
-      return res.redirect('/error=true')
+      return res.redirect('/?villa=innskraning-ogild')
     }
 
     return res
@@ -197,6 +201,6 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
       })
-      .redirect(returnUrl)
+      .redirect(user?.role === UserRole.ADMIN ? '/notendur' : returnUrl)
   }
 }

@@ -367,6 +367,18 @@ export class Case extends Model<Case> {
   @ApiProperty({ type: User })
   judge: User
 
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  registrarId: string
+
+  @BelongsTo(() => User, 'registrarId')
+  @ApiProperty({ type: User })
+  registrar: User
+
   @ForeignKey(() => Case)
   @Column({
     type: DataType.UUID,

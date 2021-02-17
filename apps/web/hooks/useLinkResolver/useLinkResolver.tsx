@@ -71,6 +71,10 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
+  auction: {
+    is: '/stofnanir/syslumenn/uppbod/[id]',
+    en: '',
+  },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',

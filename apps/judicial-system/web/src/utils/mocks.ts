@@ -14,7 +14,7 @@ import {
   CaseQuery,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
-import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 export const mockProsecutor = {
@@ -30,6 +30,18 @@ export const mockJudge = {
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: 'Héraðsdómur Reykjavíkur',
+} as User
+
+export const mockRegistrar = {
+  id: 'registrar_1',
+  role: UserRole.REGISTRAR,
+  name: 'Alfred Thaddeus Crane Pennyworth',
+  title: 'dómritari',
+} as User
+
+export const mockAdmin = {
+  role: UserRole.ADMIN,
+  name: 'Adrian Administrator',
 } as User
 
 const testCase1 = {
@@ -85,7 +97,7 @@ const testCase2 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '111111-1110',
+  accusedNationalId: '000000-0000',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
@@ -420,11 +432,11 @@ const testCase8 = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: UserQuery,
+      query: CurrentUserQuery,
     },
     result: {
       data: {
-        user: mockJudge,
+        currentUser: mockJudge,
       },
     },
   },
@@ -433,11 +445,24 @@ export const mockJudgeQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: UserQuery,
+      query: CurrentUserQuery,
     },
     result: {
       data: {
-        user: mockProsecutor,
+        currentUser: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockAdminQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockAdmin,
       },
     },
   },
@@ -450,7 +475,7 @@ export const mockUsersQuery = [
     },
     result: {
       data: {
-        users: [mockProsecutor, mockJudge],
+        users: [mockProsecutor, mockJudge, mockRegistrar],
       },
     },
   },

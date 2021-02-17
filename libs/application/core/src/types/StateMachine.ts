@@ -6,6 +6,7 @@ import {
   StateSchema,
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
+
 import { Form, FormText } from './Form'
 import { Application } from './Application'
 

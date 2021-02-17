@@ -140,3 +140,15 @@ export const GET_ORGANIZATION_TAGS_QUERY = gql`
     }
   }
 `
+
+export const GET_HOMESTAYS_QUERY = gql`
+  query GetHomestays($input: GetHomestaysInput!) {
+    getHomestays(input: $input) {
+      registrationNumber
+      address
+      name
+      city
+      manager
+    }
+  }
+`

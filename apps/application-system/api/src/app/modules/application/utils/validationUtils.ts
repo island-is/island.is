@@ -22,6 +22,7 @@ export async function validateApplicationSchema(
   const applicationTemplate = await getApplicationTemplateByTypeId(
     application.typeId,
   )
+
   if (applicationTemplate === null) {
     throw new BadRequestException(
       `No template exists for type: ${application.typeId}`,
@@ -34,6 +35,7 @@ export async function validateApplicationSchema(
       `Template ${application.typeId} is not ready for production`,
     )
   }
+
   const schemaFormValidationError = validateAnswers(
     applicationTemplate.dataSchema,
     newAnswers,

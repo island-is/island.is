@@ -7,7 +7,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
-import { mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
 type ValidAnswers = 'dateOfBirth' | 'specificDate' | undefined
@@ -37,7 +37,9 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
   return (
     <Box marginY={3} key={field.id}>
       <FieldDescription
-        description={formatMessage(mm.firstPeriodStart.description)}
+        description={formatMessage(
+          parentalLeaveFormMessages.firstPeriodStart.description,
+        )}
       />
       <Box paddingTop={3} marginBottom={3}>
         <RadioController
@@ -48,16 +50,22 @@ const FirstPeriodStart: FC<FieldBaseProps> = ({
           }
           options={[
             {
-              label: formatMessage(mm.firstPeriodStart.dateOfBirthOption),
+              label: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart.dateOfBirthOption,
+              ),
               tooltip: formatMessage(
-                mm.firstPeriodStart.dateOfBirthOptionTooltip,
+                parentalLeaveFormMessages.firstPeriodStart
+                  .dateOfBirthOptionTooltip,
               ),
               value: 'dateOfBirth',
             },
             {
-              label: formatMessage(mm.firstPeriodStart.specificDateOption),
+              label: formatMessage(
+                parentalLeaveFormMessages.firstPeriodStart.specificDateOption,
+              ),
               tooltip: formatMessage(
-                mm.firstPeriodStart.specificDateOptionTooltip,
+                parentalLeaveFormMessages.firstPeriodStart
+                  .specificDateOptionTooltip,
               ),
               value: 'specificDate',
             },
