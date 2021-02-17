@@ -35,7 +35,7 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
     () => [
       {
         Header: formatText(
-          parentalLeaveFormMessages.salaryLabelYear,
+          parentalLeaveFormMessages.base.salaryLabelYear,
           application,
           formatMessage,
         ),
@@ -43,7 +43,7 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
       } as const,
       {
         Header: formatText(
-          parentalLeaveFormMessages.salaryLabelMonth,
+          parentalLeaveFormMessages.base.salaryLabelMonth,
           application,
           formatMessage,
         ),
@@ -51,7 +51,7 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
       } as const,
       {
         Header: formatText(
-          parentalLeaveFormMessages.salaryLabelPensionFund,
+          parentalLeaveFormMessages.base.salaryLabelPensionFund,
           application,
           formatMessage,
         ),
@@ -59,7 +59,7 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
       } as const,
       {
         Header: formatText(
-          parentalLeaveFormMessages.salaryLabelTax,
+          parentalLeaveFormMessages.base.salaryLabelTax,
           application,
           formatMessage,
         ),
@@ -71,7 +71,7 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
       } as const,
       {
         Header: formatText(
-          parentalLeaveFormMessages.salaryLabelPaidAmount,
+          parentalLeaveFormMessages.base.salaryLabelPaidAmount,
           application,
           formatMessage,
         ),
@@ -87,12 +87,12 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
       data={data}
       truncate
       showMoreLabel={formatText(
-        parentalLeaveFormMessages.salaryLabelShowMore,
+        parentalLeaveFormMessages.base.salaryLabelShowMore,
         application,
         formatMessage,
       )}
       showLessLabel={formatText(
-        parentalLeaveFormMessages.salaryLabelShowLess,
+        parentalLeaveFormMessages.base.salaryLabelShowLess,
         application,
         formatMessage,
       )}
