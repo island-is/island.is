@@ -29,6 +29,15 @@ Cypress.Commands.add('stubAPIResponses', () => {
         res.send({
           fixture: 'cases',
         })
+      } else if (
+        req.body.hasOwnProperty('query') &&
+        req.body.hasOwnProperty('variables') &&
+        req.body.query.includes('CaseQuery') &&
+        req.body.variables.input.id === 'test_id'
+      ) {
+        res.send({
+          fixture: 'case',
+        })
       }
     })
   })
@@ -37,6 +46,12 @@ Cypress.Commands.add('stubAPIResponses', () => {
 Cypress.Commands.add('getByTestid', (selector) => {
   return cy.get(`[data-testid=${selector}]`)
 })
+
+// Credit: https://stackoverflow.com/a/65561176
+Cypress.Commands.add('clickOutside', () => {
+  return cy.get('body').click(0, 0) //0,0 here are the x and y coordinates
+})
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })

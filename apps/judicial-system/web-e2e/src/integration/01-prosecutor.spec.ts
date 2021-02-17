@@ -1,7 +1,7 @@
 describe('Custody request - Judge', () => {
   beforeEach(() => cy.visit('/'))
 
-  it('should run without failing', () => {
+  xit('should run without failing', () => {
     cy.visit('/api/auth/login?nationalId=2222222222')
     cy.get('[data-testid=detention-requests-table-row]')
       .first()

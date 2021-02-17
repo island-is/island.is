@@ -22,6 +22,6 @@ describe('/krofur', () => {
 
   it('should have a button that allows me to delete cases', () => {
     cy.getByTestid('deleteCase').click()
-    cy.contains('button', 'Afturkalla').click()
+    cy.contains('button', 'Afturkalla')
   })
 })

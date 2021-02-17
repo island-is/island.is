@@ -1,0 +1,55 @@
+{
+  "data": {
+    "case": {
+      "id": "test_id",
+      "created": "2020-09-16T19:50:08.033Z",
+      "modified": "2020-09-16T19:51:39.466Z",
+      "type": "CUSTODY",
+      "state": "DRAFT",
+      "policeCaseNumber": "string",
+      "accusedNationalId": "string",
+      "accusedName": "Jon Harring",
+      "accusedAddress": "Harringvej 2",
+      "court": "string",
+      "arrestDate": null,
+      "requestedCourtDate": null,
+      "requestedCustodyEndDate": "2020-09-16T19:51:28.224Z",
+      "lawsBroken": "string",
+      "custodyProvisions": [
+        "_95_1_A",
+        "_95_1_C"
+      ],
+      "requestedCustodyRestrictions": ["ISOLATION", "MEDIA"],
+      "caseFacts": "string",
+      "witnessAccounts": "string",
+      "investigationProgress": "string",
+      "legalArguments": "string",
+      "comments": "string",
+      "prosecutor": {
+        "id": "a1fd62db-18a6-4741-88eb-a7b7a7e05833",
+        "name": "Áki Ákærandi",
+        "title": "aðstoðarsaksóknari",
+        "__typename": "User"
+      },
+      "courtCaseNumber": null,
+      "courtDate": null,
+      "courtStartTime": null,
+      "courtEndTime": null,
+      "courtAttendees": null,
+      "policeDemands": null,
+      "accusedPleaAnnouncement": null,
+      "litigationPresentations": null,
+      "ruling":
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ",
+      "decision": null,
+      "custodyEndDate": "2020-09-16T19:50:08.033Z",
+      "custodyRestrictions": null,
+      "accusedAppealDecision": null,
+      "accusedAppealAnnouncement": "accusedAppealAnnouncement test",
+      "prosecutorAppealDecision": null,
+      "prosecutorAppealAnnouncement": "prosecutorAppealAnnouncement test",
+      "judge": null
+    }
+  }
+}
+

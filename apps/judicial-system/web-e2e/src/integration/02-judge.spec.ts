@@ -1,7 +1,7 @@
 describe('01. Custody request - Prosecutor', () => {
   beforeEach(() => cy.visit('/'))
 
-  it('should run without failing', () => {
+  xit('should run without failing', () => {
     cy.visit('/api/auth/login?nationalId=0000000000')
 
     // Detention requests screen

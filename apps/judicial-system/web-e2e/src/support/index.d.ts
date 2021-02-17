@@ -14,5 +14,11 @@ declare namespace Cypress {
      * @example cy.getByTestid('some-testid')
      */
     getByTestid(selector: string): Chainable<Element>
+
+    /**
+     * Custom command to click outside a selected element
+     * @example cy.clickOutside()
+     */
+    clickOutside(): Chainable<Element>
   }
 }
