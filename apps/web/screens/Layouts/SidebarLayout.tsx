@@ -16,6 +16,7 @@ interface SidebarLayoutProps {
   hiddenOnTablet?: boolean
   fullWidthContent?: boolean
   paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
@@ -24,6 +25,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   hiddenOnTablet = false,
   fullWidthContent = false,
   paddingTop = [0, 0, 8],
+  paddingBottom = 6,
   children,
 }) => (
   <Box paddingTop={paddingTop}>
@@ -32,7 +34,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         display="flex"
         flexDirection="row"
         height="full"
-        paddingBottom={6}
+        paddingBottom={paddingBottom}
         position={isSticky ? 'relative' : undefined}
       >
         <Box

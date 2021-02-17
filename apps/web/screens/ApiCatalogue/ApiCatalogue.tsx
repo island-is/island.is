@@ -56,7 +56,7 @@ import {
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const { publicRuntimeConfig } = getConfig()
-const LIMIT = 20
+const LIMIT = 5
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
@@ -233,9 +233,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
   return (
     <SubpageLayout
-      mainPaddingBottom={[0, 0, 3]}
+      //mainPaddingBottom={[0, 0, 3]}
       main={
         <SidebarLayout
+          paddingTop={[0, 0, 9]}
+          paddingBottom={[4, 4, 12]}
           sidebarContent={
             <Navigation
               baseId="service-list-navigation"
@@ -253,7 +255,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               <Box>
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
-                  <Box paddingBottom="gutter">
+                  <Box paddingBottom={3}>
                     <Button
                       colorScheme="default"
                       preTextIcon="arrowBack"
@@ -265,7 +267,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       </Link>
                     </Button>
                   </Box>
-                  <Box marginBottom="gutter">
+                  <Box marginBottom={3}>
                     <Navigation
                       baseId="service-list-navigation"
                       colorScheme="blue"
@@ -336,7 +338,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
           }
           content={
             <SidebarLayout
-              paddingTop={[0, 0, 4]}
+              paddingTop={[3, 3, 5]}
+              paddingBottom={[0, 0, 6]}
               sidebarContent={
                 <Box paddingRight={[0, 0, 3]}>
                   <ApiCatalogueFilter

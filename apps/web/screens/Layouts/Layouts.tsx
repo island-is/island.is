@@ -20,7 +20,7 @@ export const SubpageLayout: FC<SubpageProps> = ({
         <GridContainer>{main}</GridContainer>
       </Box>
       {details && (
-        <Box background="blue100" paddingTop={4}>
+        <Box background="blue100" paddingTop={5}>
           <GridContainer>{details}</GridContainer>
         </Box>
       )}
