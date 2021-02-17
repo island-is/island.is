@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
 export const GET_AUCTIONS_QUERY = gql`
   query GetAuctions($input: GetAuctionsInput!) {
@@ -23,10 +24,13 @@ export const GET_AUCTION_QUERY = gql`
       type
       date
       updatedAt
-      content
+      content {
+        ...AllSlices
+      }
       organization {
         title
       }
     }
   }
+  ${slices}
 `

@@ -67,7 +67,7 @@ export const InstitutionsPanel = ({
               <LabeledLink
                 label={institution.label}
                 title={institution.title}
-                href="#"
+                href={institution.href}
                 locale={locale}
               />
             </Box>
