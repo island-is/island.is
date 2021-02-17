@@ -17,7 +17,6 @@ export const useModalContent = (externalData: ExternalData) => {
   const history = useHistory()
   const { lang } = useLocale()
   const applications = externalData?.applications.data as Applications[]
-  console.log(applications)
   const sortedApplications = applications.length
     ? applications.sort((a, b) =>
         new Date(a.created) > new Date(b.created) ? 1 : -1,
