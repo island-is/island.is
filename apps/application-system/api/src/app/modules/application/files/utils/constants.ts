@@ -1,4 +1,7 @@
-export const Constants = {
+import { PdfTypes } from 'libs/application/core/src'
+import { KeyMapping } from './types'
+
+export const PdfConstants = {
   BOLD_FONT: 'Helvetica-Bold',
   NORMAL_FONT: 'Helvetica',
   PERMANENT: 'permanent',
@@ -13,4 +16,12 @@ export const Constants = {
   IMAGE_WIDTH: 126,
   IMAGE_HEIGHT: 40,
   PAGE_SIZE: 'A4',
+}
+
+export const BucketTypePrefix: KeyMapping<PdfTypes, string> = {
+  ChildrenResidenceChange: 'children-residence-change',
+}
+
+export const DokobitFileName: KeyMapping<PdfTypes, string> = {
+  ChildrenResidenceChange: 'Lögheimilisbreyting-barns.pdf',
 }

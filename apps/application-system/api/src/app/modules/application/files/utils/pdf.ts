@@ -4,7 +4,7 @@ import {
   ParentResidenceChange,
   PersonResidenceChange,
 } from '@island.is/application/templates/children-residence-change'
-import { Constants } from './constants'
+import { PdfConstants as Constants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
 export async function generateResidenceChangePdf(
