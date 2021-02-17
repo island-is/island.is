@@ -5,6 +5,7 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   GridContainer,
+  Link,
   Navigation,
   NavigationItem,
   Text,
@@ -21,6 +22,7 @@ import {
 } from '@island.is/web/components'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface NavigationData {
   title: string
@@ -53,6 +55,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
+  const { linkResolver } = useLinkResolver()
 
   const headerBg = pageFeaturedImage
     ? `url(${pageFeaturedImage.url}), linear-gradient(99.09deg, #24268E 23.68%, #CD1270 123.07%)`
@@ -86,18 +89,29 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         <Box className={styles.headerWrapper}>
           <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
             <Box paddingTop={2}>
-              <Box display="flex" flexDirection="row" alignItems="center">
-                {!!organizationPage.organization.logo.url && (
-                  <img
-                    src={organizationPage.organization.logo.url}
-                    className={styles.headerLogo}
-                    alt=""
-                  />
-                )}
-                <Text variant="h1" as="h1" color="white" marginTop={[0, 0, 3]}>
-                  {organizationPage.title}
-                </Text>
-              </Box>
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+              >
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  {!!organizationPage.organization.logo.url && (
+                    <img
+                      src={organizationPage.organization.logo.url}
+                      className={styles.headerLogo}
+                      alt=""
+                    />
+                  )}
+                  <Text
+                    variant="h1"
+                    as="h1"
+                    color="white"
+                    marginTop={[0, 0, 3]}
+                  >
+                    {organizationPage.title}
+                  </Text>
+                </Box>
+              </Link>
             </Box>
           </SidebarWrapper>
         </Box>
