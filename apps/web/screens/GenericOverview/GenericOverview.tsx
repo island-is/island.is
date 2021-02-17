@@ -153,7 +153,10 @@ GenericOverview.getInitialProps = async ({
       query: GET_GENERIC_OVERVIEW_PAGE_QUERY,
       fetchPolicy: 'no-cache',
       variables: {
-        input: { lang: locale, pageIdentifier: pathname.replace(/\//g, '') },
+        input: {
+          lang: locale,
+          pageIdentifier: pathname.replace(/^.*\/(.*)$/, '$1'),
+        },
       },
     }),
   ])

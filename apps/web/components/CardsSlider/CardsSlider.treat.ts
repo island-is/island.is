@@ -30,13 +30,14 @@ globalStyle(`${wrapper} .alice-carousel__dots`, {
   top: -60,
   right: -14,
   margin: 0,
-  maxWidth: '55%',
+  maxWidth: '62%',
 })
 
 globalStyle(`${wrapper} .alice-carousel__dots-item`, {
   backgroundColor: theme.color.red200,
   transition: `width 300ms ease`,
   borderRadius: 8,
+  marginRight: 10,
 })
 
 globalStyle(`${wrapper} .alice-carousel__dots .__active`, {
