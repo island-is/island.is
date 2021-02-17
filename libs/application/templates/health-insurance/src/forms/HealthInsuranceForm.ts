@@ -168,6 +168,11 @@ export const HealthInsuranceForm: Form = buildForm({
                   address?: Address
                 }).address?.city,
             }),
+            buildCustomField({
+              id: 'applicant.citizenship',
+              title: '',
+              component: 'CitizenshipField'
+            }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
               title: '',
