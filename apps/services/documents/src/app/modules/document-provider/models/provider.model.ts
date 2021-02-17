@@ -14,7 +14,7 @@ import { Organisation } from './organisation.model'
 @Table({ tableName: 'provider' })
 export class Provider extends Model<Provider> {
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
@@ -23,7 +23,10 @@ export class Provider extends Model<Provider> {
   id!: string
 
   @ForeignKey(() => Organisation)
-  @Column
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
   organisationId!: string
 
   @BelongsTo(() => Organisation)
@@ -55,6 +58,22 @@ export class Provider extends Model<Provider> {
   })
   @ApiProperty()
   createdBy?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  xroad!: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    unique: true,
+  })
+  @ApiProperty()
+  externalProviderId?: string
 
   @CreatedAt
   @ApiProperty()

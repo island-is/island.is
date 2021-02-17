@@ -3,20 +3,20 @@ import { IHomestay } from '../client/models/homestay'
 
 @ObjectType()
 export class Homestay {
-  @Field()
-  registrationNumber: string
+  @Field({ nullable: true })
+  registrationNumber?: string
 
-  @Field()
-  name: string
+  @Field({ nullable: true })
+  name?: string
 
-  @Field()
-  address: string
+  @Field({ nullable: true })
+  address?: string
 
-  @Field()
-  manager: string
+  @Field({ nullable: true })
+  manager?: string
 
-  @Field()
-  year: number
+  @Field({ nullable: true })
+  year?: number
 
   @Field({ nullable: true })
   city?: string

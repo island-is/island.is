@@ -3,7 +3,7 @@ import format from 'date-fns/format'
 import { Application, formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
-import { m } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 
 import { Table } from '@island.is/shared/table'
 import { formatIsk } from '../../parentalLeaveUtils'
@@ -34,23 +34,35 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
   const columns = React.useMemo(
     () => [
       {
-        Header: formatText(m.salaryLabelYear, application, formatMessage),
+        Header: formatText(
+          parentalLeaveFormMessages.salaryLabelYear,
+          application,
+          formatMessage,
+        ),
         accessor: 'year', // accessor is the "key" in the data
       } as const,
       {
-        Header: formatText(m.salaryLabelMonth, application, formatMessage),
+        Header: formatText(
+          parentalLeaveFormMessages.salaryLabelMonth,
+          application,
+          formatMessage,
+        ),
         accessor: 'month',
       } as const,
       {
         Header: formatText(
-          m.salaryLabelPensionFund,
+          parentalLeaveFormMessages.salaryLabelPensionFund,
           application,
           formatMessage,
         ),
         accessor: 'pensionAmount',
       } as const,
       {
-        Header: formatText(m.salaryLabelTax, application, formatMessage),
+        Header: formatText(
+          parentalLeaveFormMessages.salaryLabelTax,
+          application,
+          formatMessage,
+        ),
         accessor: 'taxAmount',
       } as const,
       {
@@ -58,7 +70,11 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
         accessor: 'ratio',
       } as const,
       {
-        Header: formatText(m.salaryLabelPaidAmount, application, formatMessage),
+        Header: formatText(
+          parentalLeaveFormMessages.salaryLabelPaidAmount,
+          application,
+          formatMessage,
+        ),
         accessor: 'amount',
       } as const,
     ],
@@ -71,12 +87,12 @@ const PaymentsTable: FC<PaymentsTableProps> = ({ application, payments }) => {
       data={data}
       truncate
       showMoreLabel={formatText(
-        m.salaryLabelShowMore,
+        parentalLeaveFormMessages.salaryLabelShowMore,
         application,
         formatMessage,
       )}
       showLessLabel={formatText(
-        m.salaryLabelShowLess,
+        parentalLeaveFormMessages.salaryLabelShowLess,
         application,
         formatMessage,
       )}
