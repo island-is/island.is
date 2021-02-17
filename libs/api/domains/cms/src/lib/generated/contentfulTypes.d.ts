@@ -182,6 +182,9 @@ export interface IArticleFields {
   /** Related Articles */
   relatedArticles?: IArticle[] | undefined
 
+  /** Related Content */
+  relatedContent?: ILink[] | undefined
+
   /** Baby Articles */
   subArticles?: ISubArticle[] | undefined
 
