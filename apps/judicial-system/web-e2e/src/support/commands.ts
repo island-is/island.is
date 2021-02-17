@@ -39,6 +39,10 @@ Cypress.Commands.add('stubAPIResponses', () => {
             res.send({
               fixture: 'confirmCase',
             })
+          } else if (req.body.variables.input.id === 'test_id_stadfest') {
+            res.send({
+              fixture: 'confirmedCaseJudge',
+            })
           }
         } else if (req.body.query.includes('TransitionCaseMutation')) {
           res.send({

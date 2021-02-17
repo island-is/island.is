@@ -163,7 +163,7 @@ export const Overview: React.FC = () => {
               }`}
             </Text>
           </Box>
-          <Box component="section" marginBottom={5} data-testid="caseOverview">
+          <Box component="section" marginBottom={5}>
             <InfoCard
               data={[
                 {

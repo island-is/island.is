@@ -6,7 +6,7 @@ describe('/krafa/stadfesta/:id', () => {
   })
 
   it('should have an overview of the current case', () => {
-    cy.getByTestid('caseOverview').contains(
+    cy.getByTestid('infoCard').contains(
       'Batman Robinsson, kt. 000000-0000, Batcave 1337',
     )
     cy.getByTestid('infoCardDataContainer1').contains('Héraðsdómur Reykjavíkur')

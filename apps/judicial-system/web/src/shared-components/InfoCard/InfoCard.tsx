@@ -13,7 +13,7 @@ interface Props {
 
 const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
   return (
-    <Box className={styles.infoCardContainer}>
+    <Box className={styles.infoCardContainer} data-testid="infoCard">
       <Text variant="h4">Sakborningur</Text>
       <Box className={styles.infoCardTitleContainer}>
         <Box marginBottom={4}>
