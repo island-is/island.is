@@ -20,7 +20,7 @@ export const ReviewApplication: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      title: m.introSection,
+      title: 'Safna meðmælum',
       children: [
         buildMultiField({
           id: 'about',

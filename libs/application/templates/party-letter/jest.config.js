@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'application-template-reference-template',
+  name: 'application-template-party-letter',
   preset: '../../../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -9,5 +9,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/reference-template',
+    '../../../../coverage/libs/application/templates/party-letter',
 }
