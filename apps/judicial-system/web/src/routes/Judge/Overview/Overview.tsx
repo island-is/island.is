@@ -315,7 +315,7 @@ export const JudgeOverview: React.FC = () => {
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
                       <Text variant="eyebrow" color="blue400">
-                        Málsatvik rakin
+                        Málsatvik
                       </Text>
                     </Box>
                     <Text>
