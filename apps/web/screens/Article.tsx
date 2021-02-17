@@ -339,8 +339,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const processEntry = article.processEntry
   const categoryHref = linkResolver('articlecategory', [article.category.slug])
     .href
-  const organizationTitle = article.organization[0].title
-  const organizationShortTitle = article.organization[0].shortTitle
+  const organizationTitle = article.organization[0]?.title
+  const organizationShortTitle = article.organization[0]?.shortTitle
 
   return (
     <>
