@@ -12,6 +12,9 @@ import { Application } from '@island.is/application/core'
 // 'yes' will not be hard coded once the state machine has been moved into the api module
 const BOOLEAN_TRUE = 'yes'
 
+// Id used when applicant does not wish to pay into a private pension fund
+const NO_PRIVATE_PENSION_FUND_ID = 'X000'
+
 const extractAnswer = <T>(
   object: unknown,
   path: string,
@@ -124,7 +127,7 @@ export const transformApplicationToParentalLeaveDTO = (
         name: '',
       }
     : {
-        id: 'X000', // Does not wish to pay into a private pension fund
+        id: NO_PRIVATE_PENSION_FUND_ID,
         name: '',
       }
 
