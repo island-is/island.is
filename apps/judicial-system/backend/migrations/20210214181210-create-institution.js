@@ -44,6 +44,10 @@ module.exports = {
                 name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
               },
               {
+                id: 'fbbe0ebd-33f1-4a8f-84ba-8e4b8e8b16b1',
+                name: 'Héraðssaksóknari',
+              },
+              {
                 id: 'a38666f3-0444-4e44-9654-b83f39f4db11',
                 name: 'Bráðabirgðadómstóllinn',
               },
