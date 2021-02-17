@@ -109,7 +109,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           Greinargerð um málsatvik og lagarök
         </Text>
       </Box>
-      <AccordionListItem title="Málsatvik rakin" breakSpaces>
+      <AccordionListItem title="Málsatvik" breakSpaces>
         <Text>{workingCase.caseFacts}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagarök" breakSpaces>
