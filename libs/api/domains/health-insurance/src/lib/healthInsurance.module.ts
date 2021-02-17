@@ -25,7 +25,7 @@ export class HealthInsuranceModule {
           useValue: config,
         },
       ],
-      exports: [],
+      exports: [HealthInsuranceService],
     }
   }
 }

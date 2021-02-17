@@ -22,11 +22,11 @@ export class VistaSkjalInput {
   @MaxDate(new Date(Date.now()))
   applicationDate!: Date
 
-  @Field(() => String, { nullable: true })
-  @IsOptional()
+  @Field(() => String)
+  @IsNotEmpty()
   @MaxLength(10)
   @MinLength(10)
-  nationalId?: string
+  nationalId!: string
 
   @Field(() => String)
   @IsNotEmpty()
@@ -83,12 +83,12 @@ export class VistaSkjalInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsIn(['S', 'P', 'O'])
-  userStatus!: 'S' | 'P' | 'O'
+  userStatus!: string
 
   @Field(() => Number)
   @IsNotEmpty()
   @IsIn([0, 1])
-  isChildrenFollowed!: 0 | 1
+  isChildrenFollowed!: number
 
   @Field(() => String)
   @IsNotEmpty()
@@ -109,7 +109,7 @@ export class VistaSkjalInput {
   @Field(() => Number)
   @IsNotEmpty()
   @IsIn([0, 1])
-  isHealthInsuredInPreviousCountry!: 0 | 1
+  isHealthInsuredInPreviousCountry!: number
 
   @Field(() => [String], { nullable: true })
   @IsOptional()

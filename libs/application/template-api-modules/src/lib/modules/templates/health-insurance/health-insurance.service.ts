@@ -2,26 +2,23 @@ import { Injectable } from '@nestjs/common'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { VistaSkjalModel } from '@island.is/api/domains/health-insurance'
+import { transformApplicationToHealthInsuranceDTO } from './health-insurance.utils'
+// import { HealthInsuranceService as HealthInsuranceServiceBackend } from '@island.is/api/domains/health-insurance'
 
 @Injectable()
 export class HealthInsuranceService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    // private healthInsuranceServiceBackend: HealthInsuranceServiceBackend,
   ) {}
-
-  // async assignReviewer({ application }: TemplateApiModuleActionProps) {
-  //   await this.sharedTemplateAPIService.assignApplicationThroughEmail(
-  //     generateAssignReviewerEmail,
-  //     application,
-  //   )
-  // }
   async sendApplication({ application }: TemplateApiModuleActionProps){
-    // const vistaskjal = new VistaSkjalModel()
-    // vistaskjal.isSucceeded = true
-    // return vistaskjal
+    const vistaSkjal = transformApplicationToHealthInsuranceDTO(application)
+    console.log("---------- Application --------------")
     console.log(JSON.stringify(application, null, 2))
+    console.log("-------------- Vistaskjal inputs --------------")
+    console.log(JSON.stringify(vistaSkjal, null, 2))
     await new Promise((resolve) => setTimeout(resolve, 2000))
+    // await this.healthInsuranceServiceBackend.applyInsurance(vistaSkjal)
     console.log("Health-Insurance - Finished sendApplication")
   }
 }

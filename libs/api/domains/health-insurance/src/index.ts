@@ -1,3 +1,4 @@
 export { HealthInsuranceModule } from './lib/healthInsurance.module'
 export { HealthInsuranceService } from './lib/healthInsurance.service'
-export * from './lib/graphql/models'
+export * from './lib/types'
+export {HealthInsuranceConfig} from './lib/soap'

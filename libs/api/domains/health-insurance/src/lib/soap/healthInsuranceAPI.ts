@@ -129,18 +129,17 @@ export class HealthInsuranceAPI {
   public async applyInsurance(
     appNumber: number,
     inputObj: VistaSkjalInput,
-    nationalId: string,
   ): Promise<VistaSkjalModel> {
     logger.info(
       `--- Starting applyInsurance api call for ${
-        inputObj.nationalId ?? nationalId
+        inputObj.nationalId
       } ---`,
     )
 
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
-          kennitala: inputObj.nationalId ?? nationalId,
+          kennitala: inputObj.nationalId,
           erlendkennitala: inputObj.foreignNationalId,
           nafn: inputObj.name,
           heimili: inputObj.address ?? '',
@@ -156,10 +155,18 @@ export class HealthInsuranceAPI {
           new Date(inputObj.residenceDateFromNationalRegistry),
           'yyyy-MM-dd',
         ),
+        // 'dagssidustubusetu' could not be empty string
+        // We dont have a method to get it yet
+        // So we use 'dagssidustubusetuthjodskra' for now
+        // TODO: Fix this issue
         dagssidustubusetu: format(
           new Date(inputObj.residenceDateUserThink),
           'yyyy-MM-dd',
         ),
+        // There is 'Employed' status in frontend
+        // but we don't have it yet in request
+        // So we convert it to 'Other/O'
+        // TODO: Fix this issue
         stadaeinstaklings: inputObj.userStatus,
         bornmedumsaekjanda: inputObj.isChildrenFollowed,
         fyrrautgafuland: inputObj.previousCountry,
