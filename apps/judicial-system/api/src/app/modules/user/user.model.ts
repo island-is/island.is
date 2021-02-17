@@ -33,7 +33,7 @@ export class User implements TUser {
   @Field(() => String)
   readonly role!: UserRole
 
-  @Field({ nullable: true })
+  @Field(() => Institution, { nullable: true })
   readonly institution?: Institution
 
   @Field()
