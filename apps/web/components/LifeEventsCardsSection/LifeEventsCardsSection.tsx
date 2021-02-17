@@ -32,7 +32,12 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
             title: lifeEvent.title,
             description: lifeEvent.intro,
             link: linkResolver('lifeeventpage', [lifeEvent.slug]),
-            image: lifeEvent.thumbnail ? lifeEvent.thumbnail : lifeEvent.image,
+            image: lifeEvent.thumbnail
+              ? {
+                  title: lifeEvent.thumbnail.title,
+                  url: lifeEvent.thumbnail.url,
+                }
+              : { title: lifeEvent.image.title, url: lifeEvent.image.url },
           }
         })}
       />
