@@ -41,7 +41,6 @@ export class ParentalLeaveService {
         application,
       )
 
-
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
         {
           nationalRegistryId,
