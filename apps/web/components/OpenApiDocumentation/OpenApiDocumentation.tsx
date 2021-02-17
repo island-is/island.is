@@ -38,7 +38,7 @@ export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
   }, [spec])
 
   return (
-    <Box width="full" paddingTop="containerGutter">
+    <Box width="full">
       <Box id="redoc-container" background="white" />
     </Box>
   )

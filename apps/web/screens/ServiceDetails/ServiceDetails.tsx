@@ -21,6 +21,7 @@ import {
   ServiceInformation,
   OpenApiView,
   InstitutionPanel,
+  SubpageDetailsContent,
 } from '@island.is/web/components'
 import { SubpageLayout } from '../Layouts/Layouts'
 import SidebarLayout from '../Layouts/SidebarLayout'
@@ -60,6 +61,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
 
   const n = useNamespace(strings)
   const nfc = useNamespace(filterContent)
+  const noa = useNamespace(openApiContent)
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   const { linkResolver } = useLinkResolver()
@@ -120,9 +122,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const { activeLocale } = useI18n()
   return (
     <SubpageLayout
-      mainPaddingBottom={[0, 0, 3]}
       main={
         <SidebarLayout
+          paddingTop={[0, 0, 9]}
+          paddingBottom={[4, 4, 6]}
           sidebarContent={
             <Stack space={2}>
               <Navigation
@@ -154,7 +157,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               <Box>
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
-                  <Box paddingBottom="gutter">
+                  <Box paddingBottom={3}>
                     <Button
                       colorScheme="default"
                       preTextIcon="arrowBack"
@@ -166,7 +169,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                       </Link>
                     </Button>
                   </Box>
-                  <Box marginBottom="gutter">
+                  <Box marginBottom={3}>
                     <Navigation
                       baseId="service-details-navigation"
                       colorScheme="blue"
@@ -220,12 +223,21 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
         </SidebarLayout>
       }
       details={
-        selectedGetOpenApiInput && (
-          <OpenApiView
-            strings={openApiContent}
-            openApiInput={selectedGetOpenApiInput}
-          />
-        )
+        <SubpageDetailsContent
+          header={
+            <Text variant="h4" color="blue600">
+              {noa('title')}
+            </Text>
+          }
+          content={
+            selectedGetOpenApiInput && (
+              <OpenApiView
+                strings={openApiContent}
+                openApiInput={selectedGetOpenApiInput}
+              />
+            )
+          }
+        />
       }
     />
   )

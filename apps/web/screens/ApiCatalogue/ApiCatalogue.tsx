@@ -56,7 +56,7 @@ import {
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const { publicRuntimeConfig } = getConfig()
-const LIMIT = 5
+const LIMIT = 20
 
 /* TEMPORARY LAYOUT CREATED TO SCAFFOLD API CATALOGUE INTO THE WEB */
 
@@ -233,7 +233,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
   return (
     <SubpageLayout
-      //mainPaddingBottom={[0, 0, 3]}
       main={
         <SidebarLayout
           paddingTop={[0, 0, 9]}
