@@ -232,7 +232,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     },
   })
 
-  doc.info['Title'] = 'Þingbók'
+  doc.info['Title'] = 'Úrskurður'
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
