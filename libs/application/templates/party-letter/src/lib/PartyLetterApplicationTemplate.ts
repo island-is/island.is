@@ -93,9 +93,6 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         on: {
           APPROVE: {
             target: 'approved',
-            cond: (context) => {
-              return 1 > 300
-            },
           },
         },
       },
