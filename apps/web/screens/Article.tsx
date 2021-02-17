@@ -115,8 +115,8 @@ const createArticleNavigation = (
 
 const RelatedContent: FC<{
   title: string
-  articles: Array<{ title; slug }>
-  otherContent: Array<{ text; url }>
+  articles: Array<{ title: string; slug: string }>
+  otherContent: Array<{ text: string; url: string }>
 }> = ({ title, articles, otherContent }) => {
   const { linkResolver } = useLinkResolver()
 
