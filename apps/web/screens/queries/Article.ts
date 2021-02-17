@@ -68,6 +68,10 @@ export const GET_ARTICLE_QUERY = gql`
         title
         slug
       }
+      relatedContent {
+        text
+        url
+      }
       subArticles {
         title
         slug
