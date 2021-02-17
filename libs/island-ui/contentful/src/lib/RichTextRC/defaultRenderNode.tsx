@@ -34,12 +34,12 @@ const getInnerText = (node: any): string => {
     // check all array entries and return the first non empty string
     for (const entry of node) {
       // if the array entry is a non empty string return it
-      if (typeof entry === 'string' && Boolean(entry.length)) {
+      if (typeof entry === 'string' && entry.length) {
         return entry
       } else {
         // the entry is an array or an object, try and find an embedded string
         const foundValue = getInnerText(entry)
-        if (Boolean(foundValue.length)) {
+        if (foundValue.length) {
           return foundValue
         }
       }
