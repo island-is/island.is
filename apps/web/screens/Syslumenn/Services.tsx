@@ -178,10 +178,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
     >
       <Text variant="h1" as="h1" marginBottom={4}>

@@ -24,7 +24,6 @@ import { theme } from '@island.is/island-ui/theme'
 
 interface NavigationData {
   title: string
-  titleLink?: Pick<NavigationItem, 'href' | 'active'>
   activeItemTitle?: string
   items: NavigationItem[]
 }
@@ -123,7 +122,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     items={navigationData.items}
                     title={navigationData.title}
                     activeItemTitle={navigationData.activeItemTitle}
-                    titleLink={navigationData.titleLink}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>

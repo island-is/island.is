@@ -81,10 +81,6 @@ const Auction: Screen<AuctionProps> = ({
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
     >
       <Box marginBottom={6}>
