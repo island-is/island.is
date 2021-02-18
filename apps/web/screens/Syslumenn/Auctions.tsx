@@ -149,12 +149,12 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
 
   useEffect(() => {
     refetch()
-  }, [organization, month])
+  }, [organization, month, refetch])
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
     setOrganization(hashString ?? organizations[0].value)
-  }, [Router])
+  }, [Router, organizations])
 
   return (
     <OrganizationWrapper
@@ -236,7 +236,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
             <LoadingIcon size={48} />
           </Box>
         )}
-        {!data?.getAuctions.length && !loading && (
+        {(error || !data?.getAuctions.length) && !loading && (
           <Box display="flex" marginTop={4} justifyContent="center">
             <Text variant="h3">
               {n('noAuctionsFound', 'Engin uppboð fundust')}
