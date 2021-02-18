@@ -607,6 +607,7 @@ export const Confirmation: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
             nextIsDisabled={isStepIllegal}
