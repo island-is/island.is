@@ -146,8 +146,8 @@ export const CourtRecord: React.FC = () => {
         !theCase.policeDemands &&
         theCase.accusedName &&
         theCase.court &&
-        theCase.requestedCustodyEndDate &&
-        theCase.requestedCustodyRestrictions
+        theCase.requestedCustodyEndDate
+        // Note that theCase.requestedCustodyRestrictions can be undefined
       ) {
         theCase = {
           ...theCase,
@@ -157,7 +157,7 @@ export const CourtRecord: React.FC = () => {
             theCase.accusedName,
             theCase.court,
             theCase.requestedCustodyEndDate,
-            theCase.requestedCustodyRestrictions?.includes(
+            !!theCase.requestedCustodyRestrictions?.includes(
               CaseCustodyRestrictions.ISOLATION,
             ),
             theCase.parentCase !== undefined,
