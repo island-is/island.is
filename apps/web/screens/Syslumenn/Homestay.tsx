@@ -106,10 +106,6 @@ const Homestay: Screen<HomestayProps> = ({
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
     >
       <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
