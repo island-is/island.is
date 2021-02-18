@@ -1,12 +1,12 @@
 import React, { FC, Suspense, useCallback, useMemo } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { useStore } from '../../store/stateProvider'
 import {
   ServicePortalWidget,
   ServicePortalModule,
 } from '@island.is/service-portal/core'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
+import { useModules } from '../../hooks/useModules/useModules'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import Greeting from '../../components/Greeting/Greeting'
 import { User } from 'oidc-client'
@@ -80,14 +80,18 @@ const WidgetLoader: FC<{
 }
 
 export const Dashboard: FC<{}> = () => {
-  const [{ modules }] = useStore()
+  const { modules } = useModules()
   const { userInfo, client } = useModuleProps()
 
   return (
     <Box>
       <Greeting />
       {userInfo !== null && (
-        <WidgetLoader modules={modules} userInfo={userInfo} client={client} />
+        <WidgetLoader
+          modules={Object.values(modules)}
+          userInfo={userInfo}
+          client={client}
+        />
       )}
     </Box>
   )

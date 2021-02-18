@@ -2,14 +2,14 @@ import {
   ServicePortalModule,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
-import { modules } from './modules'
+import { modules, ModuleKeys } from './modules'
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
 import { User } from 'oidc-client'
 
 export interface StoreState {
   userInfo: User | null
   userInfoState: AsyncActionState | 'logging-out'
-  modules: ServicePortalModule[]
+  modules: Record<ModuleKeys, ServicePortalModule>
   navigationState: AsyncActionState
   notificationMenuState: MenuState
   mobileMenuState: MenuState
@@ -25,7 +25,7 @@ const userObject = JSON.parse(
 export const initialState: StoreState = {
   userInfo: MOCK_SIGN_IN ? userObject : null,
   userInfoState: 'passive',
-  modules: modules(),
+  modules,
   navigationState: 'passive',
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',
@@ -70,6 +70,11 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         routes: action.payload,
+      }
+    case ActionType.SetModulesList:
+      return {
+        ...state,
+        modules: action.payload,
       }
     case ActionType.SetUserLoggingOut:
       return {
