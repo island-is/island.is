@@ -52,6 +52,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     return createNavigation(content, { title })
   }, [content, title])
 
+  image.title = null
+
   return (
     <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
