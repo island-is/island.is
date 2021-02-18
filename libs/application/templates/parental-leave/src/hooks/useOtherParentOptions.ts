@@ -18,7 +18,6 @@ const NationalRegistryFamilyQuery = gql`
 const useOtherParentOptions = () => {
   const { formatMessage } = useLocale()
   const { data, loading } = useQuery<Query>(NationalRegistryFamilyQuery)
-
   const [spouseName, spouseId] = getNameAndIdOfSpouse(
     data?.nationalRegistryFamily ?? [],
   )
@@ -26,22 +25,24 @@ const useOtherParentOptions = () => {
   const options: Option[] = [
     {
       value: NO,
-      label: formatMessage(parentalLeaveFormMessages.noOtherParent),
+      label: formatMessage(parentalLeaveFormMessages.base.noOtherParent),
     },
     {
       value: 'manual',
-      label: formatMessage(parentalLeaveFormMessages.otherParentOption),
+      label: formatMessage(parentalLeaveFormMessages.base.otherParentOption),
     },
   ]
+
   if (spouseName !== undefined && spouseId !== undefined) {
     options.unshift({
       value: 'spouse',
-      label: formatMessage(parentalLeaveFormMessages.otherParentSpouse, {
+      label: formatMessage(parentalLeaveFormMessages.base.otherParentSpouse, {
         spouseName,
         spouseId,
       }),
     })
   }
+
   return { options, loading }
 }
 
