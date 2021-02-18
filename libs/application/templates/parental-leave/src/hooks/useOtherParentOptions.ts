@@ -25,18 +25,18 @@ const useOtherParentOptions = () => {
   const options: Option[] = [
     {
       value: NO,
-      label: formatMessage(parentalLeaveFormMessages.base.noOtherParent),
+      label: formatMessage(parentalLeaveFormMessages.shared.noOtherParent),
     },
     {
       value: 'manual',
-      label: formatMessage(parentalLeaveFormMessages.base.otherParentOption),
+      label: formatMessage(parentalLeaveFormMessages.shared.otherParentOption),
     },
   ]
 
   if (spouseName !== undefined && spouseId !== undefined) {
     options.unshift({
       value: 'spouse',
-      label: formatMessage(parentalLeaveFormMessages.base.otherParentSpouse, {
+      label: formatMessage(parentalLeaveFormMessages.shared.otherParentSpouse, {
         spouseName,
         spouseId,
       }),

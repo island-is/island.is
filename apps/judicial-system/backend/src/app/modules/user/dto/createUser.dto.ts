@@ -38,7 +38,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly institution: string
+  readonly institutionId: string
 
   @IsNotEmpty()
   @IsBoolean()
