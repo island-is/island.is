@@ -20,7 +20,9 @@ export const CurrentUserQuery = gql`
       name
       title
       role
-      institution
+      institution {
+        name
+      }
     }
   }
 `
