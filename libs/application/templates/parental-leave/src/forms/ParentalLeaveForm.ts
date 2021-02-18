@@ -20,7 +20,11 @@ import {
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { formatIsk, getEstimatedMonthlyPay } from '../parentalLeaveUtils'
-import { GetPensionFunds, GetUnions } from '../graphql/queries'
+import {
+  GetPensionFunds,
+  GetUnions,
+  GetPrivatePensionFunds,
+} from '../graphql/queries'
 import { NO, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
@@ -36,6 +40,10 @@ type UnionQuery = {
 
 type PensionFundsQuery = {
   getPensionFunds: Array<SelectItem>
+}
+
+type PrivatePensionFundsQuery = {
+  getPrivatePensionFunds: Array<SelectItem>
 }
 
 export const ParentalLeaveForm: Form = buildForm({
@@ -198,6 +206,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.shared.pensionFund,
                   id: 'payments.pensionFund',
                   width: 'half',
+                  loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<
                       PensionFundsQuery
@@ -251,12 +260,26 @@ export const ParentalLeaveForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,
                   id: 'payments.privatePensionFund',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   width: 'half',
-                  options: [{ label: 'Frjalsi', value: 'frjalsi' }],
+                  loadingError: parentalLeaveFormMessages.errors.loading,
+                  loadOptions: async ({ apolloClient }) => {
+                    const { data } = await apolloClient.query<
+                      PrivatePensionFundsQuery
+                    >({
+                      query: GetPrivatePensionFunds,
+                    })
+
+                    return (
+                      data?.getPrivatePensionFunds.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      })) ?? []
+                    )
+                  },
                 }),
                 buildSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,

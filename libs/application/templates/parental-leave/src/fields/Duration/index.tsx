@@ -65,7 +65,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     } else {
       setPercent(100)
     }
-  }, [chosenDuration, monthsToUse])
+  }, [months, chosenDuration, monthsToUse])
   return (
     <Box>
       <FieldDescription
