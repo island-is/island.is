@@ -476,6 +476,7 @@ export const StepThree: React.FC = () => {
             </Box>
           )}
           <FormFooter
+            previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
               isStepIllegal ||
