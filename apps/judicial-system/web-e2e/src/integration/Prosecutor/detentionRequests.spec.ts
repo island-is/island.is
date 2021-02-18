@@ -3,7 +3,7 @@
 describe('/krofur', () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/api/auth/login?nationalId=0000000000')
+    cy.visit('/krofur')
   })
 
   it('should have a table with one row that is a button', () => {

@@ -7,6 +7,9 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
+
+import { CyHttpMessages } from 'cypress/types/net-stubbing'
+
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace Cypress {
   interface Chainable<Subject> {
@@ -21,40 +24,7 @@ Cypress.Commands.add('login', (email, password) => {
 
 Cypress.Commands.add('stubAPIResponses', () => {
   cy.intercept('POST', '/api/graphql', (req) => {
-    req.reply((res) => {
-      if (req.body.hasOwnProperty('query')) {
-        if (req.body.query.includes('CasesQuery')) {
-          res.send({
-            fixture: 'cases',
-          })
-        } else if (
-          req.body.hasOwnProperty('variables') &&
-          req.body.query.includes('CaseQuery')
-        ) {
-          if (req.body.variables.input.id === 'test_id') {
-            res.send({
-              fixture: 'case',
-            })
-          } else if (req.body.variables.input.id === 'test_id_stadfesta') {
-            res.send({
-              fixture: 'confirmCase',
-            })
-          } else if (req.body.variables.input.id === 'test_id_stadfest') {
-            res.send({
-              fixture: 'confirmedCaseJudge',
-            })
-          }
-        } else if (req.body.query.includes('TransitionCaseMutation')) {
-          res.send({
-            fixture: 'transitionCaseMutationResponse',
-          })
-        } else if (req.body.query.includes('SendNotificationMutation')) {
-          res.send({
-            fixture: 'sendNotificationMutationResponse',
-          })
-        }
-      }
-    })
+    req.reply(getFixtureFor(req))
   })
 })
 
@@ -66,6 +36,64 @@ Cypress.Commands.add('getByTestid', (selector) => {
 Cypress.Commands.add('clickOutside', () => {
   return cy.get('body').click(0, 0) //0,0 here are the x and y coordinates
 })
+
+const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
+  console.log(graphqlRequest)
+  if (graphqlRequest.body.hasOwnProperty('query')) {
+    if (graphqlRequest.body.query.includes('CasesQuery')) {
+      return {
+        fixture: 'cases',
+      }
+    } else if (
+      graphqlRequest.body.hasOwnProperty('variables') &&
+      graphqlRequest.body.query.includes('CaseQuery')
+    ) {
+      if (graphqlRequest.body.variables.input.id === 'test_id') {
+        return {
+          fixture: 'case',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id === 'test_id_stadfesta'
+      ) {
+        return {
+          fixture: 'confirmCase',
+        }
+      } else if (
+        graphqlRequest.body.variables.input.id === 'test_id_stadfest'
+      ) {
+        return {
+          fixture: 'confirmedCaseJudge',
+        }
+      }
+    } else if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
+      return {
+        fixture: 'transitionCaseMutationResponse',
+      }
+    } else if (graphqlRequest.body.query.includes('SendNotificationMutation')) {
+      return {
+        fixture: 'sendNotificationMutationResponse',
+      }
+    } else if (graphqlRequest.body.query.includes('CurrentUserQuery')) {
+      if (graphqlRequest.headers.referer.includes('/domur')) {
+        return { fixture: 'judgeUser' }
+      } else {
+        return { fixture: 'prosecutorUser' }
+      }
+    } else if (graphqlRequest.body.query.includes('UsersQuery')) {
+      if (graphqlRequest.headers.referer.includes('/domur')) {
+        return {
+          fixture: 'judgeUsers',
+        }
+      } else {
+        return {
+          fixture: 'prosecutorUsers',
+        }
+      }
+    } else if (graphqlRequest.body.query.includes('UpdateCaseMutation')) {
+      return { fixture: 'updateCaseMutationResponse' }
+    }
+  }
+}
 
 //
 // -- This is a child command --

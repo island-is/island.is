@@ -20,5 +20,11 @@ declare namespace Cypress {
      * @example cy.clickOutside()
      */
     clickOutside(): Chainable<Element>
+
+    /**
+     * Custom command to stub login requests for judges
+     * @example cy.stubJudgeLogin()
+     */
+    stubJudgeLogin(): Chainable<Element>
   }
 }

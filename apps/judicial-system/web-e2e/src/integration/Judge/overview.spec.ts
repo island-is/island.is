@@ -3,7 +3,6 @@ import { includes } from 'cypress/types/lodash'
 describe('/domur/krafa/:id', () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/api/auth/login?nationalId=2222222222')
     cy.visit('/domur/krafa/test_id_stadfest')
   })
 

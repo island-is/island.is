@@ -1,6 +1,5 @@
 describe('/krafa/ny/gaesluvardhald', () => {
   beforeEach(() => {
-    cy.visit('/api/auth/login?nationalId=0000000000')
     cy.visit('/krafa/ny/gaesluvardhald')
   })
 

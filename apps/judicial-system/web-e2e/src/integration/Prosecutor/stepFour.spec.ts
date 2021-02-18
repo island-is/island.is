@@ -1,7 +1,6 @@
 describe('/krafa/greinagerd/:id', () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/api/auth/login?nationalId=0000000000')
     cy.visit('/krafa/greinargerd/test_id')
   })
 
