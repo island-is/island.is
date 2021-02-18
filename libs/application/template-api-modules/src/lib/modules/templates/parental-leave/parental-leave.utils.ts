@@ -1,32 +1,85 @@
 import get from 'lodash/get'
 
-import { ParentalLeave, Period, Employer } from '@island.is/vmst-client'
+import {
+  ParentalLeave,
+  Period,
+  Employer,
+  Union,
+  PensionFund,
+} from '@island.is/vmst-client'
 import { Application } from '@island.is/application/core'
 
-const extractAnswer = <T>(object: unknown, key: string): T | null => {
-  const value = get(object, key, null) as T | null | undefined
+// 'yes' will not be hard coded once the state machine has been moved into the api module
+const BOOLEAN_TRUE = 'yes'
 
-  if (value === undefined || value === null) {
-    return null
+// Id used when applicant does not wish to pay into a private pension fund
+const NO_PRIVATE_PENSION_FUND_ID = 'X000'
+
+const extractAnswer = <T>(
+  object: unknown,
+  path: string,
+  defaultValue: unknown | undefined = undefined,
+): T => {
+  const value = get(object, path, undefined)
+
+  if (defaultValue === undefined && typeof value === 'undefined') {
+    throw new Error(
+      `transformApplicationToParentalLeaveDTO.extractAnswer: missing value for ${path}`,
+    )
   }
 
   return value
 }
 
+const getPersonalAllowance = (
+  application: Application,
+  fromSpouse = false,
+): number => {
+  const usePersonalAllowanceGetter = fromSpouse
+    ? 'usePersonalAllowanceFromSpouse'
+    : 'usePersonalAllowance'
+  const useMaxGetter = fromSpouse
+    ? 'personalAllowanceFromSpouse.useAsMuchAsPossible'
+    : 'personalAllowance.useAsMuchAsPossible'
+  const usageGetter = fromSpouse
+    ? 'personalAllowanceFromSpouse.usage'
+    : 'personalAllowance.usage'
+
+  const willUsePersonalAllowance =
+    extractAnswer(application.answers, usePersonalAllowanceGetter) ===
+    BOOLEAN_TRUE
+
+  if (!willUsePersonalAllowance) {
+    return 0
+  }
+
+  const willUseMax =
+    extractAnswer(application.answers, useMaxGetter) === BOOLEAN_TRUE
+
+  if (willUseMax) {
+    return 100
+  }
+
+  const usage = Number(extractAnswer(application.answers, usageGetter))
+
+  return usage
+}
+
+const getEmployer = (
+  application: Application,
+  isSelfEmployed: boolean,
+): Employer => ({
+  email: isSelfEmployed
+    ? extractAnswer(application.answers, 'applicant.email')
+    : extractAnswer(application.answers, 'employer.email'),
+  nationalRegistryId: isSelfEmployed
+    ? application.applicant
+    : extractAnswer(application.answers, 'employer.nationalRegistryId'),
+})
+
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
 ): ParentalLeave => {
-  const privatePensionFundRatioAnswer = extractAnswer(
-    application.answers,
-    'payments.privatePensionFundPercentage',
-  )
-  let privatePensionFundRatio: number | undefined
-  if (privatePensionFundRatioAnswer === null) {
-    privatePensionFundRatio = undefined
-  } else if (typeof privatePensionFundRatioAnswer === 'string') {
-    privatePensionFundRatio = Number(privatePensionFundRatioAnswer)
-  }
-
   const periodsAnswer = extractAnswer<
     {
       startDate: string
@@ -36,26 +89,55 @@ export const transformApplicationToParentalLeaveDTO = (
   >(application.answers, 'periods')
   let periods: Period[] = []
 
-  if (periodsAnswer !== null) {
+  if (periodsAnswer) {
     periods = periodsAnswer.map((period) => ({
       from: period.startDate,
-      to: period.endDate,
+      // TODO: refactor period.endDate to not include time
+      to: period.endDate.split('T')[0],
       ratio: Number(period.ratio),
+      approved: true,
+      paid: false,
     }))
   }
 
-  // 'yes' will not be hard coded once the state machine has been moved into the api module
   const isSelfEmployed =
-    extractAnswer(application.answers, 'employer.isSelfEmployed') === 'yes'
+    extractAnswer(application.answers, 'employer.isSelfEmployed') ===
+    BOOLEAN_TRUE
 
-  const employer: Employer = {
-    nationalRegistryId: isSelfEmployed
-      ? application.applicant
-      : extractAnswer(application.answers, 'employer.nationalRegistryId'),
-    email: isSelfEmployed
-      ? extractAnswer(application.answers, 'applicant.email')
-      : extractAnswer(application.answers, 'employer.email'),
+  const employer = getEmployer(application, isSelfEmployed)
+
+  const union: Union = {
+    id: extractAnswer(application.answers, 'payments.union'),
+    name: '',
   }
+
+  const pensionFund: PensionFund = {
+    id: extractAnswer(application.answers, 'payments.pensionFund'),
+    name: '',
+  }
+
+  const rawPrivatePensionFund: string | null = extractAnswer(
+    application.answers,
+    'payments.privatePensionFund',
+    null,
+  )
+  const privatePensionFund: PensionFund = rawPrivatePensionFund
+    ? {
+        id: rawPrivatePensionFund,
+        name: '',
+      }
+    : {
+        id: NO_PRIVATE_PENSION_FUND_ID,
+        name: '',
+      }
+
+  const rawPrivatePensionFundRatio: string | undefined = extractAnswer(
+    application.answers,
+    'payments.privatePensionFundPercentage',
+    '0',
+  )
+  const privatePensionFundRatio: number =
+    Number(rawPrivatePensionFundRatio) || 0
 
   return {
     applicationId: application.id,
@@ -74,33 +156,19 @@ export const transformApplicationToParentalLeaveDTO = (
     phoneNumber: extractAnswer(application.answers, 'applicant.phoneNumber'),
     paymentInfo: {
       bankAccount: extractAnswer(application.answers, 'payments.bank'),
-      personalAllowance:
-        Number(extractAnswer(application.answers, 'personalAllowance.usage')) ||
-        0,
-      personalAllowanceFromSpouse:
-        Number(
-          extractAnswer(
-            application.answers,
-            'personalAllowanceFromSpouse.usage',
-          ),
-        ) || 0,
-      // TODO: get save union value from form
-      union: extractAnswer(application.answers, 'union.todo'),
-      // TODO: save object not string and use that here
-      pensionFund: extractAnswer(
-        application.answers,
-        'payments.pensionFund.todo',
-      ),
-      // TODO: save object not string and use that here
-      privatePensionFund: extractAnswer(
-        application.answers,
-        'payments.privatePensionFund.todo',
-      ),
+      personalAllowance: getPersonalAllowance(application),
+      personalAllowanceFromSpouse: getPersonalAllowance(application, true),
+      union,
+      pensionFund,
+      privatePensionFund,
       privatePensionFundRatio,
     },
     periods,
     employers: [employer],
-    status: null,
-    rightsCode: null,
+    status: 'In Progress',
+    // TODO: extract correct rights code from application and connected applications
+    // Needs to know if primary/secondary parent, has custody and if self employed and/or employee
+    // https://islandis.slack.com/archives/G016P6FSDCK/p1608557387042300
+    rightsCode: 'M-L-GR',
   }
 }

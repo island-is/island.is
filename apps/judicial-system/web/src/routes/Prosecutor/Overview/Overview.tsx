@@ -230,36 +230,32 @@ export const Overview: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={10}>
             <Accordion>
-              <AccordionItem labelVariant="h3" id="id_2" label="Lagaákvæði">
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text as="h4" variant="h4">
-                      Lagaákvæði sem brot varða við
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.lawsBroken}
-                    </span>
-                  </Text>
-                </Box>
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text as="h4" variant="h4">
-                      Lagaákvæði sem krafan er byggð á
-                    </Text>
-                  </Box>
-                  {workingCase.custodyProvisions &&
-                    workingCase.custodyProvisions.map(
-                      (custodyProvision: CaseCustodyProvisions, index) => {
-                        return (
-                          <div key={index}>
-                            <Text>{laws[custodyProvision]}</Text>
-                          </div>
-                        )
-                      },
-                    )}
-                </Box>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_2"
+                label="Lagaákvæði sem brot varða við"
+              >
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase.lawsBroken}
+                  </span>
+                </Text>
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_2"
+                label="Lagaákvæði sem krafan er byggð á"
+              >
+                {workingCase.custodyProvisions &&
+                  workingCase.custodyProvisions.map(
+                    (custodyProvision: CaseCustodyProvisions, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{laws[custodyProvision]}</Text>
+                        </div>
+                      )
+                    },
+                  )}
               </AccordionItem>
               <AccordionItem
                 labelVariant="h3"
@@ -288,7 +284,7 @@ export const Overview: React.FC = () => {
                 {workingCase.caseFacts && (
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
-                      <Text variant="h5">Málsatvik rakin</Text>
+                      <Text variant="h5">Málsatvik</Text>
                     </Box>
                     <Text>
                       <span className={styles.breakSpaces}>
@@ -341,6 +337,12 @@ export const Overview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={
+              workingCase.state === CaseState.RECEIVED &&
+              workingCase.isCourtDateInThePast
+                ? Constants.REQUEST_LIST_ROUTE
+                : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
+            }
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
