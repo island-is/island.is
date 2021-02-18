@@ -63,7 +63,7 @@ describe(' FormShell', () => {
 
   it('should render the application title', async () => {
     await act(async () => {
-      await render(
+      render(
         <ApolloProvider client={initializeClient('')}>
           <LocaleProvider locale="is" messages={{}}>
             <FormShell
@@ -76,6 +76,9 @@ describe(' FormShell', () => {
         </ApolloProvider>,
       )
     })
-    expect(screen.getByText(`Umsókn um fæðingarorlof`)).toBeInTheDocument()
+
+    expect(
+      await screen.findByText(`Umsókn um fæðingarorlof`),
+    ).toBeInTheDocument()
   })
 })

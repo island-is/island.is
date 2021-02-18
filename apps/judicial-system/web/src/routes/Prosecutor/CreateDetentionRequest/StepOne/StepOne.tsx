@@ -31,7 +31,6 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import * as styles from './StepOne.treat'
 import InputMask from 'react-input-mask'
 import {
   setAndSendToServer,
@@ -39,6 +38,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import * as styles from './StepOne.treat'
 
 interface CaseData {
   case?: Case
@@ -504,6 +504,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsLoading={createLoading}
             nextIsDisabled={isStepIllegal || createLoading}

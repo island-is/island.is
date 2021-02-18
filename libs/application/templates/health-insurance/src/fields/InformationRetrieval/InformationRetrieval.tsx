@@ -37,6 +37,18 @@ const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
         formatMessage,
       ),
     },
+    {
+      title: formatText(
+        m.socialInsuranceAdministrationTitle,
+        application,
+        formatMessage,
+      ),
+      description: formatText(
+        m.socialInsuranceAdministrationSubtitle,
+        application,
+        formatMessage,
+      ),
+    },
   ] as DataRetrievalContent[]
 
   return (

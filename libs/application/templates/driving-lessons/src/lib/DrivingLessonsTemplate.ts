@@ -30,7 +30,7 @@ const dataSchema = z.object({
     address: z.string().nonempty(),
     zipCode: z.string().nonempty(),
   }),
-  approveExternalData: z.boolean().refine((v) => v),
+  fetchData: z.boolean().refine((v) => v),
   useGlasses: z.enum(['yes', 'no']),
   damagedEyeSight: z.enum(['yes', 'no']),
   limitedFieldOfView: z.enum(['yes', 'no']),

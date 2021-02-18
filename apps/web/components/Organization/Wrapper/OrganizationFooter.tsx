@@ -8,8 +8,9 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import { MarkdownText } from '@island.is/web/components'
 import * as styles from './OrganizationFooter.treat'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
   organizationPage: OrganizationPage
@@ -32,13 +33,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
               borderColor="blueberry300"
               borderBottomWidth="standard"
             >
-              <Box marginRight={4}>
-                <img
-                  src={organizationPage.organization.logo.url}
-                  alt=""
-                  width="70"
-                />
-              </Box>
+              {!!organizationPage.organization.logo.url && (
+                <Box marginRight={4}>
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    alt=""
+                    width="70"
+                  />
+                </Box>
+              )}
               <div id="organizationFooterTitle">
                 <Text variant="h2" color="white">
                   {organizationPage.title}
@@ -71,9 +74,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
                         )}
                       </Text>
                     </Box>
-                    <MarkdownText color="white" variant="small">
-                      {item.content}
-                    </MarkdownText>
+                    {richText(item.content as SliceType[], {
+                      renderNode: {
+                        [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          <Text variant="small" color="white">
+                            {children}
+                          </Text>
+                        ),
+                      },
+                    })}
                   </Box>
                 </GridColumn>
               ))}

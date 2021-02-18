@@ -14,6 +14,7 @@ export default {
   airlineApiKeys: {
     [Airlines.icelandair]: Airlines.icelandair,
     [Airlines.ernir]: Airlines.ernir,
+    [Airlines.norlandair]: Airlines.norlandair,
   },
   redis: {
     urls: [

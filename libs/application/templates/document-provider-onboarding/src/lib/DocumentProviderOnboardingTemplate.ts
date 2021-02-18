@@ -9,17 +9,30 @@ import {
   ApplicationTypes,
   ApplicationTemplate,
   Application,
+  DefaultEvents,
 } from '@island.is/application/core'
+import { API_MODULE_ACTIONS } from '../../constants'
 
 type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
+  | { type: DefaultEvents.APPROVE }
+  | { type: DefaultEvents.ASSIGN }
+  | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.EDIT }
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+}
+enum States {
+  DRAFT = 'draft',
+  REVIEWER_WAITING_TO_ASSIGN = 'reviewerWaitingToAssign',
+  IN_REVIEW = 'inReview',
+  APPROVED = 'approved',
+  TEST_PHASE = 'testPhase',
+  REJECTED = 'rejected',
+  FINISHED = 'finished',
 }
 
 const contact = z.object({
@@ -119,9 +132,9 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
   name: 'Umsókn um að gerast skjalaveitandi',
   dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: 'Umsókn skjalaveitu',
           progress: 0.25,
@@ -133,30 +146,51 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                   Promise.resolve(val.DocumentProviderOnboarding),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'inReview',
+          [DefaultEvents.SUBMIT]: {
+            target: States.REVIEWER_WAITING_TO_ASSIGN,
           },
         },
       },
-      inReview: {
-        entry: assign((context) => {
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              assignees: ['2311637949'],
-            },
-          }
-        }),
+      [States.REVIEWER_WAITING_TO_ASSIGN]: {
         meta: {
-          name: 'In Review',
+          name: 'Waiting to assign reviewer',
+          progress: 0.4,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignReviewer,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/DocumentProviderApplication').then((val) =>
+                  Promise.resolve(val.DocumentProviderOnboarding),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.ASSIGN]: { target: States.IN_REVIEW },
+          [DefaultEvents.REJECT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
+      },
+      [States.IN_REVIEW]: {
+        exit: 'clearAssignees',
+        meta: {
+          name: States.IN_REVIEW,
           progress: 0.5,
           roles: [
             {
@@ -166,8 +200,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
                   Promise.resolve(val.ReviewApplication),
                 ),
               actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-                { event: 'REJECT', name: 'Hafna', type: 'reject' },
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                { event: DefaultEvents.REJECT, name: 'Hafna', type: 'reject' },
               ],
               read: 'all',
               write: { answers: ['rejectionReason'] },
@@ -183,14 +221,17 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: 'testPhase' },
-          REJECT: { target: 'rejected' },
+          [DefaultEvents.APPROVE]: { target: States.TEST_PHASE },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
-      rejected: {
+      [States.REJECTED]: {
         meta: {
           name: 'Rejected',
           progress: 1,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationRejected,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -203,10 +244,13 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
       },
-      testPhase: {
+      [States.TEST_PHASE]: {
         meta: {
           name: 'TestPhase',
           progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.applicationApproved,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -220,12 +264,12 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'finished',
+          [DefaultEvents.SUBMIT]: {
+            target: [States.FINISHED],
           },
         },
       },
-      finished: {
+      [States.FINISHED]: {
         meta: {
           name: 'Finished',
           progress: 1,
@@ -243,6 +287,18 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
       },
     },
   },
+
+  stateMachineOptions: {
+    actions: {
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
+    },
+  },
   mapUserToRole(
     id: string,
     application: Application,
@@ -250,19 +306,16 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
     //This logic makes it so the application is not accessible to anybody but involved parties
 
     //This if statement might change depending on the "umboðskerfi"
-    if (
-      process.env.NODE_ENV === 'development' &&
-      application.state === 'inReview'
-    ) {
-      return Roles.ASSIGNEE
-    }
+    // if (
+    //   process.env.NODE_ENV === 'development' &&
+    //   application.state === 'inReview'
+    // ) {
+    //   return Roles.ASSIGNEE
+    // }
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
-    if (
-      application.state === 'inReview' &&
-      application.assignees.includes(id)
-    ) {
+    if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
     //Returns nothing if user is not same as applicant nor is part of the assignes

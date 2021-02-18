@@ -8,7 +8,7 @@ import { ParentalLeaveService } from './parental-leave.service'
 
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
-const XROAD_VMST_CLIENT_ID = process.env.XROAD_VMST_CLIENT_ID ?? ''
+const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
 const VMST_API_KEY = process.env.VMST_API_KEY ?? ''
 
 export class ParentalLeaveModule {
@@ -23,7 +23,7 @@ export class ParentalLeaveModule {
             XROAD_VMST_MEMBER_CODE,
             XROAD_VMST_API_PATH,
           ),
-          xRoadClient: XROAD_VMST_CLIENT_ID,
+          xRoadClient: XROAD_CLIENT_ID,
           apiKey: VMST_API_KEY,
         }),
         SharedTemplateAPIModule.register(config),

@@ -2,7 +2,6 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import CourtRecord from './CourtRecord'
 import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,
@@ -17,6 +16,7 @@ import {
 import formatISO from 'date-fns/formatISO'
 import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import CourtRecord from './CourtRecord'
 
 describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

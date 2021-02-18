@@ -56,12 +56,15 @@ CMD [ "main.js" ]
 FROM output-base as output-next
 # image with build of an Next.js app
 
+ENV PORT=4200
+
 COPY --from=builder /build/${APP_HOME}/next.config.js /webapp
 COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder /build/${APP_HOME}/public /webapp/public
 COPY --from=builder /build/${APP_DIST_HOME}/.next /webapp/.next
+COPY --from=builder /build/${APP_DIST_HOME}/main.js* /webapp
 
-ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]
+ENTRYPOINT [ "node", "main.js" ]
 
 FROM nginx:1.19.2-alpine as output-static
 

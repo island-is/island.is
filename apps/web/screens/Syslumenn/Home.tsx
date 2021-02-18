@@ -35,6 +35,7 @@ import getConfig from 'next/config'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -54,6 +55,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()
+  useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({

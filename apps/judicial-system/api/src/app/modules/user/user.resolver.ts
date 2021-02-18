@@ -11,7 +11,7 @@ import { AuditedAction } from '@island.is/judicial-system/audit-trail'
 
 import { BackendAPI } from '../../../services'
 import { AuditService } from '../audit'
-import { CreateUserInput, UpdateUserInput } from './dto'
+import { CreateUserInput, UpdateUserInput, UserQueryInput } from './dto'
 import { User } from './user.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -34,7 +34,20 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async user(@CurrentGraphQlUser() user: TUser): Promise<User | undefined> {
+  async user(
+    @Args('input', { type: () => UserQueryInput })
+    input: UserQueryInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<User | undefined> {
+    this.logger.debug(`Getting user ${input.id}`)
+
+    return backendApi.getUser(input.id)
+  }
+
+  @Query(() => User, { nullable: true })
+  async currentUser(
+    @CurrentGraphQlUser() user: TUser,
+  ): Promise<User | undefined> {
     this.logger.debug('Getting current user')
 
     return user as User

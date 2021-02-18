@@ -1,7 +1,6 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
-import AccordionListItem from '../AccordionListItem/AccordionListItem'
 import {
   capitalize,
   formatAccusedByGender,
@@ -14,6 +13,7 @@ import {
   Case,
   CaseGender,
 } from '@island.is/judicial-system/types'
+import AccordionListItem from '../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case
@@ -86,14 +86,13 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         breakSpaces
       >
         <Text>
-          <Text as="span" fontWeight="semiBold">
-            {workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+          {`${
+            workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
               ? `Kærði hafnar kröfunni. `
               : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
               ? `Kærði samþykkir kröfuna. `
-              : ''}
-          </Text>
-          {workingCase.accusedPleaAnnouncement}
+              : ''
+          }${workingCase.accusedPleaAnnouncement}`}
         </Text>
       </AccordionListItem>
       <AccordionListItem title="Málflutningur" breakSpaces>

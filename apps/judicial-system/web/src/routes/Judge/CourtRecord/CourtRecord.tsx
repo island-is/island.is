@@ -108,6 +108,10 @@ export const CourtRecord: React.FC = () => {
         attendees += `${wc.judge.name} ${wc.judge.title}\n`
       }
 
+      if (wc.registrar) {
+        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
+      }
+
       if (wc.prosecutor && wc.accusedName) {
         attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
           wc.accusedName
@@ -470,6 +474,7 @@ export const CourtRecord: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
+            previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={
               isNextDisabled([
