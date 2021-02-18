@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import get from 'lodash/get'
@@ -11,6 +10,22 @@ import {
   generateApplicationApprovedEmail,
   generateApplicationRejectedEmail,
 } from './emailGenerators'
+
+interface Contact {
+  name: string
+  email: string
+  phoneNumber: string
+}
+
+interface Applicant extends Contact {
+  nationalId: string
+  address: string
+}
+
+interface Helpdesk {
+  email: string
+  phoneNumber: string
+}
 
 @Injectable()
 export class DocumentProviderOnboardingService {
@@ -29,13 +44,22 @@ export class DocumentProviderOnboardingService {
     authorization,
   }: TemplateApiModuleActionProps) {
     try {
-      const applicant = get(application.answers, 'applicant') as any
-      const adminContact = get(
+      const applicant = (get(
+        application.answers,
+        'applicant',
+      ) as unknown) as Applicant
+      const adminContact = (get(
         application.answers,
         'administrativeContact',
-      ) as any
-      const techContact = get(application.answers, 'technicalContact') as any
-      const helpdesk = get(application.answers, 'helpDesk') as any
+      ) as unknown) as Contact
+      const techContact = (get(
+        application.answers,
+        'technicalContact',
+      ) as unknown) as Contact
+      const helpdesk = (get(
+        application.answers,
+        'helpDesk',
+      ) as unknown) as Helpdesk
 
       const query = `mutation {
       createOrganisation(
