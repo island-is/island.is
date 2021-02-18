@@ -23,7 +23,7 @@ Cypress.Commands.add('login', (email, password) => {
 })
 
 Cypress.Commands.add('stubAPIResponses', () => {
-  cy.intercept('POST', '/api/graphql', (req) => {
+  cy.intercept('POST', '**/api/graphql', (req) => {
     req.reply(getFixtureFor(req))
   })
 })

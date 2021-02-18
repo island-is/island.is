@@ -1,4 +1,4 @@
-describe('/domur/krafa/fyrirtokutimi/:id', () => {
+describe('/domur/thingbok/:id', () => {
   beforeEach(() => {
     cy.stubAPIResponses()
     cy.visit('/domur/thingbok/test_id_stadfest')
