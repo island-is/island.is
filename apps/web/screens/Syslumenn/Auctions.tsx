@@ -233,7 +233,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       >
         {loading && (
           <Box display="flex" marginTop={4} justifyContent="center">
-            <LoadingIcon size={48} color="" />
+            <LoadingIcon size={48} />
           </Box>
         )}
         {!data?.getAuctions.length && !loading && (
