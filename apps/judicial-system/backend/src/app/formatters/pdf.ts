@@ -47,9 +47,11 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     },
   })
 
-  doc.info['Title'] = `Krafa um ${
-    existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
-  }`
+  if (doc.info) {
+    doc.info['Title'] = `Krafa um ${
+      existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+    }`
+  }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
@@ -232,7 +234,9 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
     },
   })
 
-  doc.info['Title'] = 'Úrskurður'
+  if (doc.info) {
+    doc.info['Title'] = 'Úrskurður'
+  }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
