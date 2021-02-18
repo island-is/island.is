@@ -28,6 +28,7 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { MarkdownText, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -86,7 +87,6 @@ const Homestay: Screen<HomestayProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
-      pageDescription={subpage.description}
       organizationPage={organizationPage}
       pageFeaturedImage={subpage.featuredImage}
       breadcrumbItems={[
@@ -117,9 +117,7 @@ const Homestay: Screen<HomestayProps> = ({
           {subpage.title}
         </Text>
       </Box>
-      <MarkdownText variant={subpage.slices.length ? 'h3' : 'default'}>
-        {subpage.description}
-      </MarkdownText>
+      {richText(subpage.description as SliceType[])}
       <Box
         background="blue100"
         borderRadius="large"

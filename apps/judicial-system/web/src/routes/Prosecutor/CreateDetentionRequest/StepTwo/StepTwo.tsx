@@ -527,6 +527,7 @@ export const StepTwo: React.FC = () => {
             )}
           </Box>
           <FormFooter
+            previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsDisabled={isStepIllegal || transitionLoading}
             nextIsLoading={transitionLoading}

@@ -30,7 +30,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
-        ...parentalLeaveFormMessages.yourRightsInMonths,
+        ...parentalLeaveFormMessages.base.yourRightsInMonths,
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
@@ -48,11 +48,15 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           }
           options={[
             {
-              label: formatMessage(parentalLeaveFormMessages.requestRightsYes),
+              label: formatMessage(
+                parentalLeaveFormMessages.base.requestRightsYes,
+              ),
               value: YES,
             },
             {
-              label: formatMessage(parentalLeaveFormMessages.requestRightsNo),
+              label: formatMessage(
+                parentalLeaveFormMessages.base.requestRightsNo,
+              ),
               value: NO,
             },
           ]}
