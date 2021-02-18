@@ -30,7 +30,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   const boxChartKeys = [
     {
       label: () => ({
-        ...parentalLeaveFormMessages.base.yourRightsInMonths,
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
@@ -48,7 +48,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           options={[
             {
               label: formatText(
-                parentalLeaveFormMessages.base.giveRightsYes,
+                parentalLeaveFormMessages.shared.giveRightsYes,
                 application,
                 formatMessage,
               ),
@@ -56,7 +56,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
             },
             {
               label: formatText(
-                parentalLeaveFormMessages.base.giveRightsNo,
+                parentalLeaveFormMessages.shared.giveRightsNo,
                 application,
                 formatMessage,
               ),
