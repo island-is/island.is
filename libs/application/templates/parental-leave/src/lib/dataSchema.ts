@@ -36,7 +36,7 @@ export const dataSchema = z.object({
   payments: z.object({
     bank: z.string().nonempty(),
     pensionFund: z.string(),
-    privatePensionFund: z.enum(['frjalsi', '']).optional(),
+    privatePensionFund: z.string().optional(),
     privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
     union: z.string().optional(),
   }),

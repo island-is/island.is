@@ -11,6 +11,7 @@ export interface BaseTemplateAPIModuleConfig {
       region: string
     }
   }
+  baseApiUrl: string
 }
 
 export interface TemplateApiModuleActionProps {
