@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
@@ -12,8 +11,10 @@ import {
   TagProps,
   FocusableBox,
   TagVariant,
-  ColorSchemeContext,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
+import { ColorSchemeContext } from '@island.is/web/context'
 import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
@@ -30,9 +31,9 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
   variant: 'purple',
 }
 
-interface CardProps {
+export interface CardProps {
   title: string
-  image?: Image
+  image?: { title: string; url: string }
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
@@ -52,6 +53,7 @@ export const Card: FC<CardProps> = ({
   const [ref, { width }] = useMeasure()
 
   const stackImage = width < 360
+  const isImage = image?.title.length > 0
 
   let borderColor = null
   let titleColor = null
@@ -79,88 +81,71 @@ export const Card: FC<CardProps> = ({
       break
   }
 
-  const items = [
-    <Box
-      key={1}
-      className={cn(styles.cardContent, {
-        [styles.cardContentNarrower]: image && !stackImage,
-      })}
-    >
-      <Stack space={1}>
-        <Text as="h3" variant="h3" color={titleColor}>
-          <Box display="flex" flexDirection="row" alignItems="center">
-            <Box display="inlineFlex" flexGrow={1}>
-              {title}
+  const items = (
+    <Box ref={ref}>
+      <GridRow direction={stackImage ? 'columnReverse' : 'row'}>
+        <GridColumn key={1} span={isImage && !stackImage ? '8/12' : '12/12'}>
+          <Stack space={1}>
+            <Text as="h3" variant="h3" color={titleColor}>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Box display="inlineFlex" flexGrow={1}>
+                  {title}
+                </Box>
+              </Box>
+            </Text>
+            {description && <Text>{description}</Text>}
+            {tags.length > 0 && (
+              <Box paddingTop={3} flexGrow={0} position="relative">
+                <Inline space={1}>
+                  {tags.map(
+                    ({ title, href, ...props }: CardTagsProps, index) => {
+                      const tagProps = {
+                        ...tagPropsDefaults,
+                        ...props.tagProps,
+                        variant: tagVariant,
+                      }
+
+                      return href ? (
+                        <Link key={index} {...link}>
+                          <Tag {...tagProps}>{title}</Tag>
+                        </Link>
+                      ) : (
+                        <Tag key={index} {...tagProps}>
+                          {title}
+                        </Tag>
+                      )
+                    },
+                  )}
+                </Inline>
+              </Box>
+            )}
+          </Stack>
+        </GridColumn>
+        {isImage && (
+          <GridColumn
+            key={2}
+            span={!stackImage ? '4/12' : '12/12'}
+            position="relative"
+          >
+            <Box
+              display="flex"
+              width="full"
+              marginTop={2}
+              justifyContent="center"
+              flexGrow={1}
+              marginBottom={2}
+              style={{ height: 200 }}
+            >
+              <BackgroundImage
+                positionX={!stackImage ? 'right' : null}
+                background="transparent"
+                backgroundSize="contain"
+                image={image}
+              />
             </Box>
-          </Box>
-        </Text>
-        {description && <Text>{description}</Text>}
-        {tags.length > 0 && (
-          <Box paddingTop={3} flexGrow={0} position="relative">
-            <Inline space={1}>
-              {tags.map(({ title, href, ...props }: CardTagsProps, index) => {
-                const tagProps = {
-                  ...tagPropsDefaults,
-                  ...props.tagProps,
-                  variant: tagVariant,
-                }
-
-                return href ? (
-                  <Link key={index} {...link}>
-                    <Tag {...tagProps}>{title}</Tag>
-                  </Link>
-                ) : (
-                  <Tag key={index} {...tagProps}>
-                    {title}
-                  </Tag>
-                )
-              })}
-            </Inline>
-          </Box>
+          </GridColumn>
         )}
-      </Stack>
-    </Box>,
-    !!image && (
-      <Box
-        key={2}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        className={cn(styles.imageContainer, {
-          [styles.imageContainerStacked]: stackImage,
-        })}
-      >
-        <BackgroundImage
-          positionX={!stackImage ? 'right' : null}
-          background="transparent"
-          backgroundSize="contain"
-          image={image}
-        />
-      </Box>
-    ),
-  ]
-
-  if (stackImage) {
-    items.reverse()
-  }
-
-  const Content = (
-    <Box
-      ref={ref}
-      display="flex"
-      height="full"
-      borderRadius="large"
-      flexDirection="column"
-    >
-      <Box
-        flexGrow={1}
-        height="full"
-        position="relative"
-        display="flex"
-        flexDirection={stackImage ? 'column' : 'row'}
-      >
-        {items}
-      </Box>
+      </GridRow>
     </Box>
   )
 
@@ -186,7 +171,7 @@ export const Card: FC<CardProps> = ({
             )}
           ></span>
         ) : null}
-        <Frame>{Content}</Frame>
+        <Frame>{items}</Frame>
       </FocusableBox>
     )
   }
@@ -202,7 +187,7 @@ export const Card: FC<CardProps> = ({
           )}
         ></span>
       ) : null}
-      {Content}
+      {items}
     </Frame>
   )
 }

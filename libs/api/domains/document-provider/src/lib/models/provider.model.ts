@@ -17,6 +17,9 @@ export class Provider {
   @Field(() => String, { nullable: true })
   apiScope?: string
 
+  @Field(() => Boolean, { nullable: true })
+  xroad?: boolean
+
   @Field(() => Date)
   created!: Date
 

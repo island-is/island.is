@@ -474,6 +474,7 @@ export const CourtRecord: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
+            previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={
               isNextDisabled([
