@@ -38,7 +38,6 @@ Cypress.Commands.add('clickOutside', () => {
 })
 
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
-  console.log(graphqlRequest)
   if (graphqlRequest.body.hasOwnProperty('query')) {
     if (graphqlRequest.body.query.includes('CasesQuery')) {
       return {
