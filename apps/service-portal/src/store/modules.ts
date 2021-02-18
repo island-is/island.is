@@ -9,8 +9,9 @@ import { educationModule } from '@island.is/service-portal/education'
 import { assetsModule } from '@island.is/service-portal/assets'
 import { eligibilityModule } from '@island.is/service-portal/eligibility'
 import { drivingLicenseModule } from '@island.is/service-portal/driving-license'
-import { environment as env } from '../environments'
 import { documentProviderModule } from '@island.is/service-portal/document-provider'
+
+import { environment as env } from '../environments'
 
 type ModuleFeatureFlag = keyof typeof env.featureFlags
 
@@ -30,9 +31,13 @@ const mapper: Record<ModuleFeatureFlag, ServicePortalModule> = {
 
 export const modules = () => {
   const arr: ServicePortalModule[] = []
+
   Object.keys(env.featureFlags).forEach((k) => {
     const key = k as ModuleFeatureFlag
-    if (env.featureFlags[key]) arr.push(mapper[key])
+
+    if (env.featureFlags[key]) {
+      arr.push(mapper[key])
+    }
   })
 
   return arr

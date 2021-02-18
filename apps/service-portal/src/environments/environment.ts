@@ -12,7 +12,7 @@ export default {
   },
   documentProviderAdmins: process.env.NX_DOCUMENT_PROVIDER_ADMINS || '',
   featureFlags: {
-    applications: false,
+    applications: true,
     documents: true,
     settings: true,
     finance: true,
