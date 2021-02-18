@@ -19,7 +19,6 @@ export class VistaSkjalInput {
   @Field(() => Date)
   @IsNotEmpty()
   @IsDate()
-  @MaxDate(new Date(Date.now()))
   applicationDate!: Date
 
   @Field(() => String)
