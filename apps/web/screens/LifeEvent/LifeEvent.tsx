@@ -17,6 +17,7 @@ import {
   AnchorNavigation,
   BackgroundImage,
   HeadWithSocialSharing,
+  Main,
   Sticky,
 } from '@island.is/web/components'
 import {
@@ -62,7 +63,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         imageHeight={image.height.toString()}
       />
 
-      <GridContainer id="main-content">
+      <GridContainer>
         <GridRow>
           <Box
             marginBottom={[4, 4, 4, 8]}
@@ -80,58 +81,60 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         </GridRow>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
-            <GridRow>
-              <GridColumn
-                offset={['0', '0', '0', '0', '1/9']}
-                span={['9/9', '9/9', '9/9', '9/9', '7/9']}
-              >
-                <Box paddingBottom={[2, 2, 4]}>
-                  <Breadcrumbs
-                    items={[
-                      {
-                        title: 'Ísland.is',
-                        href: '/',
-                        typename: 'homepage',
-                      },
-                      {
-                        title: n('lifeEvents', 'Lífsviðburðir'),
-                        href: linkResolver('lifeevents').href,
-                      },
-                    ]}
-                    renderLink={(link, { href }) => {
-                      return (
-                        <NextLink href={href} passHref>
-                          {link}
-                        </NextLink>
-                      )
-                    }}
-                  />
-                </Box>
-                <Text variant="h1" as="h1">
-                  <span id={slugify(title)}>{title}</span>
-                </Text>
-                {intro && (
-                  <Text variant="intro" as="p" paddingTop={2}>
-                    <span id={slugify(intro)}>{intro}</span>
-                  </Text>
-                )}
-                <Box
-                  printHidden
-                  display={['block', 'block', 'block', 'none']}
-                  paddingTop={6}
-                  paddingBottom={2}
+            <Main>
+              <GridRow>
+                <GridColumn
+                  offset={['0', '0', '0', '0', '1/9']}
+                  span={['9/9', '9/9', '9/9', '9/9', '7/9']}
                 >
-                  <AnchorNavigation
-                    title={n('categoryOverview', 'Á þessari síðu')}
-                    navigation={navigation}
-                    position="right"
-                  />
-                </Box>
-                <Box paddingTop={[3, 3, 4]}>
-                  {richText(content as SliceType[])}
-                </Box>
-              </GridColumn>
-            </GridRow>
+                  <Box paddingBottom={[2, 2, 4]}>
+                    <Breadcrumbs
+                      items={[
+                        {
+                          title: 'Ísland.is',
+                          href: '/',
+                          typename: 'homepage',
+                        },
+                        {
+                          title: n('lifeEvents', 'Lífsviðburðir'),
+                          href: linkResolver('lifeevents').href,
+                        },
+                      ]}
+                      renderLink={(link, { href }) => {
+                        return (
+                          <NextLink href={href} passHref>
+                            {link}
+                          </NextLink>
+                        )
+                      }}
+                    />
+                  </Box>
+                  <Text variant="h1" as="h1">
+                    <span id={slugify(title)}>{title}</span>
+                  </Text>
+                  {intro && (
+                    <Text variant="intro" as="p" paddingTop={2}>
+                      <span id={slugify(intro)}>{intro}</span>
+                    </Text>
+                  )}
+                  <Box
+                    printHidden
+                    display={['block', 'block', 'block', 'none']}
+                    paddingTop={6}
+                    paddingBottom={2}
+                  >
+                    <AnchorNavigation
+                      title={n('categoryOverview', 'Á þessari síðu')}
+                      navigation={navigation}
+                      position="right"
+                    />
+                  </Box>
+                  <Box paddingTop={[3, 3, 4]}>
+                    {richText(content as SliceType[])}
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </Main>
           </GridColumn>
           <GridColumn hiddenBelow="lg" span={['0', '0', '0', '4/12', '3/12']}>
             <Box printHidden height="full" marginTop={10} paddingLeft={4}>

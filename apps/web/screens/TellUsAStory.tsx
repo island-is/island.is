@@ -29,7 +29,7 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
-    <Box paddingY={[2, 2, 10]} id="main-content">
+    <Box paddingY={[2, 2, 10]}>
       <GridContainer>
         <GridRow>
           <GridColumn>
