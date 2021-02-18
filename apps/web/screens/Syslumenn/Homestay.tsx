@@ -132,9 +132,10 @@ const Homestay: Screen<HomestayProps> = ({
           onChange={(event) => setQuery(event.target.value)}
         />
       </Box>
-      {filteredItems.slice(0, showCount).map((homestay) => {
+      {filteredItems.slice(0, showCount).map((homestay, index) => {
         return (
           <Box
+            key={index}
             border="standard"
             borderRadius="large"
             marginY={2}
