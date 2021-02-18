@@ -49,8 +49,7 @@ const main = async () => {
           throw new Error(err.stdout)
         })
     } catch (err) {
-      console.error(`Error while running generate-schemas: ${err}`)
-      process.exit(err.code)
+      throw new Error(`Error while running generate-schemas: ${err}`)
     }
   }
 }
