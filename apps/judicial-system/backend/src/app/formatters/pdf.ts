@@ -46,6 +46,13 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       right: 50,
     },
   })
+
+  if (doc.info) {
+    doc.info['Title'] = `Krafa um ${
+      existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+    }`
+  }
+
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
     .font('Helvetica-Bold')
@@ -226,6 +233,11 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       right: 50,
     },
   })
+
+  if (doc.info) {
+    doc.info['Title'] = 'Úrskurður'
+  }
+
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
     .font('Helvetica-Bold')
