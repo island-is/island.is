@@ -1,5 +1,3 @@
-import { includes } from 'cypress/types/lodash'
-
 describe('/domur/krafa/:id', () => {
   beforeEach(() => {
     cy.stubAPIResponses()

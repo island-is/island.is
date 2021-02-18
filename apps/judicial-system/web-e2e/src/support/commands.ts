@@ -10,33 +10,6 @@
 
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace Cypress {
-  interface Chainable<Subject> {
-    login(email: string, password: string): void
-  }
-}
-//
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password)
-})
-
-Cypress.Commands.add('stubAPIResponses', () => {
-  cy.intercept('POST', '**/api/graphql', (req) => {
-    req.reply(getFixtureFor(req))
-  })
-})
-
-Cypress.Commands.add('getByTestid', (selector) => {
-  return cy.get(`[data-testid=${selector}]`)
-})
-
-// Credit: https://stackoverflow.com/a/65561176
-Cypress.Commands.add('clickOutside', () => {
-  return cy.get('body').click(0, 0) //0,0 here are the x and y coordinates
-})
-
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
   if (graphqlRequest.body.hasOwnProperty('query')) {
     if (graphqlRequest.body.query.includes('CasesQuery')) {
@@ -94,14 +67,17 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
   }
 }
 
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+Cypress.Commands.add('stubAPIResponses', () => {
+  cy.intercept('POST', '**/api/graphql', (req) => {
+    req.reply(getFixtureFor(req))
+  })
+})
+
+Cypress.Commands.add('getByTestid', (selector) => {
+  return cy.get(`[data-testid=${selector}]`)
+})
+
+// Credit: https://stackoverflow.com/a/65561176
+Cypress.Commands.add('clickOutside', () => {
+  return cy.get('body').click(0, 0) //0,0 here are the x and y coordinates
+})

@@ -80,7 +80,6 @@ export const Overview: React.FC = () => {
         },
       },
     })
-    console.log(data)
 
     return data?.sendNotification?.notificationSent
   }
