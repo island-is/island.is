@@ -62,6 +62,7 @@ COPY --from=builder /build/${APP_HOME}/next.config.js /webapp
 COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder /build/${APP_HOME}/public /webapp/public
 COPY --from=builder /build/${APP_DIST_HOME}/.next /webapp/.next
+COPY --from=builder /build/${APP_DIST_HOME}/main.js* /webapp
 
 ENTRYPOINT [ "node", "main.js" ]
 
