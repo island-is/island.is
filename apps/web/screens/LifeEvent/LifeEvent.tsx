@@ -90,15 +90,16 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                       {
                         title: 'Ísland.is',
                         href: '/',
+                        typename: 'homepage',
                       },
                       {
-                        isTag: true,
-                        title: n('lifeEventTitle', 'Lífsviðburður'),
+                        title: n('lifeEvents', 'Lífsviðburðir'),
+                        href: linkResolver('lifeevents').href,
                       },
                     ]}
-                    renderLink={(link) => {
+                    renderLink={(link, { href }) => {
                       return (
-                        <NextLink {...linkResolver('homepage')} passHref>
+                        <NextLink href={href} passHref>
                           {link}
                         </NextLink>
                       )
