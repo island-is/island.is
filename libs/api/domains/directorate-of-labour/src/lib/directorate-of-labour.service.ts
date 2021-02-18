@@ -30,6 +30,12 @@ export class DirectorateOfLabourService {
       .catch(handleError)
   }
 
+  async getPrivatePensionFunds(): Promise<PensionFund[]> {
+    return await this.directorateOfLabourRepository
+      .getPrivatePensionFunds()
+      .catch(handleError)
+  }
+
   async getParentalLeavesEntitlements(
     dateOfBirth: string,
     nationalId: string,
