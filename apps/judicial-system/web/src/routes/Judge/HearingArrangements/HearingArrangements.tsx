@@ -469,6 +469,7 @@ export const HearingArrangements: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
               workingCase.state === CaseState.DRAFT || isStepIllegal
             }
