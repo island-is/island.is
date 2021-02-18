@@ -14,17 +14,19 @@ export class Client implements FeatureFlagClient {
     const ccConfig: IJSAutoPollOptions = {
       dataGovernance: DataGovernance.EuOnly,
     }
-    if (typeof window === 'undefined') {
-      this.configcat = require('configcat-node').createClient(
-        resolvedSdkKey,
-        ccConfig,
-      )
-    } else {
-      this.configcat = require('configcat-js').createClient(
-        resolvedSdkKey,
-        ccConfig,
-      )
-    }
+    // TODO find a way to conditionally require this without
+    // webpack throwing an error because this is a node package
+    // if (typeof window === 'undefined') {
+    // this.configcat = require('configcat-node').createClient(
+    //   resolvedSdkKey,
+    //   ccConfig,
+    // )
+    // } else {
+    this.configcat = require('configcat-js').createClient(
+      resolvedSdkKey,
+      ccConfig,
+    )
+    // }
   }
 
   async getValue(key: string, defaultValue: boolean | string, user: User) {

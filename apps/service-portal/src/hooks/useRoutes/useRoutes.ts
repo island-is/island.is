@@ -3,12 +3,14 @@ import { useEffect } from 'react'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { Action, ActionType } from '../../store/actions'
 import { useModuleProps } from '../useModuleProps/useModuleProps'
+import useModules from '../useModules/useModules'
 import { User } from 'oidc-client'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import flatten from 'lodash/flatten'
 
 export const useRoutes = () => {
-  const [{ modules }, dispatch] = useStore()
+  const [_, dispatch] = useStore()
+  const { modules } = useModules()
   const { userInfo, client } = useModuleProps()
 
   const arrangeRoutes = async (
@@ -18,7 +20,7 @@ export const useRoutes = () => {
     client: ApolloClient<NormalizedCacheObject>,
   ) => {
     const routes = await Promise.all(
-      modules.map((module) =>
+      Object.values(modules).map((module) =>
         module.routes({
           userInfo,
           client,
@@ -34,7 +36,7 @@ export const useRoutes = () => {
 
   useEffect(() => {
     if (userInfo === null) return
-    arrangeRoutes(userInfo, dispatch, modules, client)
+    arrangeRoutes(userInfo, dispatch, Object.values(modules), client)
   }, [userInfo, dispatch, modules, client])
 }
 
