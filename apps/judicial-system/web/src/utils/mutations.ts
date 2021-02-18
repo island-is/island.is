@@ -185,7 +185,10 @@ export const CreateUserMutation = gql`
       role
       title
       email
-      institutionId
+      institution {
+        id
+        name
+      }
       active
     }
   }
