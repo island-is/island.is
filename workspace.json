@@ -344,14 +344,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "air-discount-scheme-web:serve:production"
+              "devServerTarget": ""
             }
           }
         },
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n air-discount-scheme-web-e2e"
+            "command": "yarn e2e-ci -n air-discount-scheme-web-e2e -d dist/apps/air-discount-scheme/web"
           }
         },
         "lint": {
@@ -1411,7 +1411,8 @@
           "options": {
             "cypressConfig": "apps/application-system/form-e2e/cypress.json",
             "tsConfig": "apps/application-system/form-e2e/tsconfig.e2e.json",
-            "devServerTarget": "application-system-form:serve"
+            "devServerTarget": "application-system-form:serve",
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {
@@ -1422,7 +1423,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n application-system-form-e2e -t react -f dist/apps/application-system/form"
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form"
           }
         },
         "lint": {
@@ -1943,14 +1944,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "auth-admin-web:serve:production"
+              "devServerTarget": ""
             }
           }
         },
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n auth-admin-web-e2e"
+            "command": "yarn e2e-ci -n auth-admin-web-e2e -d dist/apps/auth-admin-web"
           }
         },
         "lint": {
@@ -2709,14 +2710,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "gjafakort-web:serve:production"
+              "devServerTarget": ""
             }
           }
         },
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n gjafakort-web-e2e"
+            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web"
           }
         },
         "lint": {
@@ -3463,7 +3464,8 @@
           "options": {
             "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
             "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "judicial-system-web:serve"
+            "devServerTarget": "judicial-system-web:serve",
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {
@@ -3474,7 +3476,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n judicial-system-web-e2e -t react -f dist/apps/judicial-system/web"
+            "command": "yarn e2e-ci -n judicial-system-web-e2e -t react -d dist/apps/judicial-system/web"
           }
         },
         "lint": {
@@ -4118,7 +4120,8 @@
           "options": {
             "cypressConfig": "apps/service-portal-e2e/cypress.json",
             "tsConfig": "apps/service-portal-e2e/tsconfig.e2e.json",
-            "devServerTarget": "service-portal:serve"
+            "devServerTarget": "service-portal:serve",
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {
@@ -4129,7 +4132,7 @@
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n service-portal-e2e -t react -f dist/apps/service-portal -b /minarsidur"
+            "command": "yarn e2e-ci -n service-portal-e2e -t react -d dist/apps/service-portal -b /minarsidur"
           }
         },
         "lint": {
@@ -5200,18 +5203,19 @@
           "options": {
             "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
             "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "skilavottord-web:serve"
+            "devServerTarget": "skilavottord-web:serve",
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "skilavottord-web:serve:production"
+              "devServerTarget": ""
             }
           }
         },
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n skilavottord-web-e2e"
+            "command": "yarn e2e-ci -n skilavottord-web-e2e -d dist/apps/skilavottord/web"
           }
         },
         "lint": {
@@ -5491,14 +5495,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "web:serve:production"
+              "devServerTarget": ""
             }
           }
         },
         "e2e-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn e2e-ci -n web-e2e"
+            "command": "yarn e2e-ci -n web-e2e -d dist/apps/web"
           }
         },
         "lint": {

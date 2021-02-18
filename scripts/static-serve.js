@@ -33,6 +33,14 @@ const argv = yargs
 // Set the path for static file serve
 app.use(argv['base-path'], express.static(path.join(process.cwd(), argv.dist)))
 
+// Setup server shutdown signal from parent
+process.on('SIGTERM', () => {
+  console.log('Shutting down server...')
+  server.close()
+  console.log('Exiting process...')
+  process.exit()
+})
+
 // Create base path to contain * to return index.html for all sub-paths
 // to let client handle routing.
 const basePath =
@@ -45,10 +53,3 @@ app.get(basePath, function (req, res) {
 
 const server = app.listen(argv.port)
 console.log(`App listening on port ${argv.port}...`)
-
-process.on('SIGTERM', () => {
-  console.log('Shutting down server...')
-  server.close()
-  console.log('Exiting process...')
-  process.exit()
-})

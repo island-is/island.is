@@ -27,9 +27,11 @@ const argv = yargs
     description: 'Port number of the app.',
     type: 'number',
   })
-  .option('folder', {
-    alias: 'f',
+  .option('dist', {
+    alias: 'd',
     description: 'Dist folder of the app. Only needed for React apps.',
+    demandOption: true,
+    requiresArg: true,
     type: 'string',
   })
   .option('base-path', {
@@ -53,11 +55,6 @@ const argv = yargs
   .alias('help', 'h')
   .argv
 
-// Validate that the folder option is set when type=react
-if (argv.type === 'react' && !argv.folder) {
-  throw new Error('Missing required option: folder')
-}
-
 // Strip '-e2e' ending to get the target app name
 const target = argv.name.replace('-e2e', '')
 
@@ -65,16 +62,16 @@ const target = argv.name.replace('-e2e', '')
 // prettier-ignore
 const CMD = {
   BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
-  SERVE: [
-    'node',
-    [
-      'scripts/static-serve.js',
-      '-p', argv.port,
-      '-d', argv.folder,
-      '-b', argv['base-path']
-    ]
+  SERVE_NEXT: [
+    `${argv.dist}/main.js`
   ],
-  TEST: `yarn nx run ${argv.name}:e2e:production --headless --production --base-url http://localhost:${argv.port}${
+  SERVE_REACT: [
+    'scripts/static-serve.js',
+    '-p', argv.port,
+    '-d', argv.dist,
+    '-b', argv['base-path']
+  ],
+  TEST: `yarn nx run ${argv.name}:e2e:production --headless --production${
       argv.ci ? 
         ` --record --group=${argv.name}` :
         ''
@@ -103,26 +100,22 @@ const build = async () => {
 }
 
 const serve = () => {
-  let child = undefined
+  console.log(`Starting serve for ${argv.type} app in a child process...`)
+  // Start static-serve
+  let child = spawn('node', CMD[`SERVE_${argv.type.toUpperCase()}`])
+  console.log(`Serving target project in a child process: ${child.pid}`)
 
-  if (argv.type === 'react') {
-    console.log('Starting static serve for React app in a child process...')
-    // Start static-serve
-    child = spawn(CMD.SERVE[0], CMD.SERVE[1])
-    console.log(`Serving target project in a child process: ${child.pid}`)
+  child.stdout.on('data', (data) => {
+    console.log(`Child process ${child.pid} output: ${data}`)
+  })
 
-    child.stdout.on('data', (data) => {
-      console.log(`Child process ${child.pid} output: ${data}`)
-    })
+  child.stderr.on('data', (data) => {
+    console.log(`Child process ${child.pid} error: ${data}`)
+  })
 
-    child.stderr.on('data', (data) => {
-      console.log(`Child process ${child.pid} error: ${data}`)
-    })
-
-    child.on('close', (code) => {
-      console.log(`Child process exited with code ${code}`)
-    })
-  }
+  child.on('close', (code) => {
+    console.log(`Child process exited with code ${code}`)
+  })
 
   return child
 }
