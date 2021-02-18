@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { ApplicationTypes, ExternalData } from '@island.is/application/core'
+import { ExternalData } from '@island.is/application/core'
 import {
   hasHealthInsurance,
   hasActiveDraftApplication,
@@ -17,10 +17,12 @@ export const useModalContent = (externalData: ExternalData) => {
   const history = useHistory()
   const { lang } = useLocale()
   const applications = externalData?.applications.data as Applications[]
-  const sortedApplications = applications.sort((a, b) =>
-    new Date(a.created) > new Date(b.created) ? 1 : -1,
-  )
-  const firstCreatedApplicationId = sortedApplications[0].id
+  const sortedApplications = applications.length
+    ? applications.sort((a, b) =>
+        new Date(a.created) > new Date(b.created) ? 1 : -1,
+      )
+    : []
+  const firstCreatedApplicationId = sortedApplications[0]?.id
 
   const contentList = {
     hasHealthInsurance: {

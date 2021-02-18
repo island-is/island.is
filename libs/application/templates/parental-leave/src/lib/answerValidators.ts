@@ -9,6 +9,7 @@ import {
   AnswerValidator,
   AnswerValidationError,
   getValueViaPath,
+  Answer,
 } from '@island.is/application/core'
 import isEmpty from 'lodash/isEmpty'
 
@@ -47,8 +48,7 @@ const PERIODS = 'periods'
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
-    console.log('-newAnswer', newAnswer)
-    const obj = newAnswer as Record<string, any>
+    const obj = newAnswer as Record<string, Answer>
     const buildError = buildValidationError(`${EMPLOYER}.email`)
     const isSelfEmployed = getValueViaPath(
       application.answers,
@@ -64,7 +64,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError(`You need to define your employer email address.`)
     }
 
-    if (isSelfEmployed === NO && !isValidEmail(obj.email)) {
+    if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
       return buildError('You need to define a valid email address.')
     }
 
@@ -88,7 +88,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = buildValidationError(PERIODS, newPeriodIndex)
     const period = periods[newPeriodIndex]
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
-    const dob = expectedDateOfBirth!
+    const dob = expectedDateOfBirth as string
 
     if (period?.startDate !== undefined) {
       const field = 'startDate'
