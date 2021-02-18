@@ -1,12 +1,12 @@
-x-generator: NSwag v13.9.4.0 (NJsonSchema v10.3.1.0 (Newtonsoft.Json v9.0.0.0))
+x-generator: NSwag v13.9.4.0 (NJsonSchema v10.3.1.0 (Newtonsoft.Json v12.0.0.0))
 openapi: 3.0.0
 info:
-  title: My Title
+  title: FOS - Parental Leaves API
   version: 1.0.0
 servers:
-  - url: 'https://vmst-paternity-leave.azurewebsites.net'
+  - url: https://vmst-paternity-leave.azurewebsites.net
 paths:
-  '/users/{nationalRegistryId}/parental-leaves':
+  /users/{nationalRegistryId}/parental-leaves:
     get:
       tags:
         - ParentalLeave
@@ -60,7 +60,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostParentalLeaveResponse'
-  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/periods':
+  /users/{nationalRegistryId}/parental-leaves/{applicationId}/periods:
     put:
       tags:
         - ParentalLeave
@@ -98,7 +98,7 @@ paths:
               schema:
                 type: string
                 format: binary
-  '/users/{nationalRegistryId}/parental-leaves/rights':
+  /users/{nationalRegistryId}/parental-leaves/rights:
     get:
       tags:
         - ParentalLeave
@@ -125,7 +125,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Right'
-  '/users/{nationalRegistryId}/parental-leaves/estimated-payment-plan':
+  /users/{nationalRegistryId}/parental-leaves/estimated-payment-plan:
     get:
       tags:
         - ParentalLeave
@@ -152,7 +152,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EstimatedPaymentPlan'
-  '/users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan':
+  /users/{nationalRegistryId}/parental-leaves/{applicationId}/payment-plan:
     get:
       tags:
         - ParentalLeave
@@ -191,7 +191,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PensionFundsResponse'
-  '/users/{nationalRegistryId}/pregnancy-status':
+  /users/{nationalRegistryId}/pregnancy-status:
     get:
       tags:
         - Pregnancy
@@ -231,61 +231,78 @@ components:
       properties:
         parentalLeaves:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/ParentalLeave'
     ParentalLeave:
       type: object
       additionalProperties: false
+      required:
+        - applicationId
+        - applicant
+        - otherParentId
+        - expectedDateOfBirth
+        - dateOfBirth
+        - email
+        - phoneNumber
+        - paymentInfo
+        - periods
+        - employers
+        - status
+        - rightsCode
       properties:
         applicationId:
           type: string
-          nullable: true
+          minLength: 1
         applicant:
           type: string
-          nullable: true
+          minLength: 1
+          pattern: ^\d{10}$
         otherParentId:
           type: string
-          nullable: true
+          minLength: 1
         expectedDateOfBirth:
           type: string
-          nullable: true
+          minLength: 1
         dateOfBirth:
           type: string
-          nullable: true
+          minLength: 1
         email:
           type: string
-          nullable: true
+          minLength: 1
         phoneNumber:
           type: string
-          nullable: true
+          minLength: 1
         paymentInfo:
-          nullable: true
-          oneOf:
-            - $ref: '#/components/schemas/PaymentInfo'
+          $ref: '#/components/schemas/PaymentInfo'
         periods:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/Period'
         employers:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/Employer'
         status:
           type: string
-          nullable: true
+          minLength: 1
         rightsCode:
           type: string
-          nullable: true
+          minLength: 1
     PaymentInfo:
       type: object
       additionalProperties: false
+      required:
+        - bankAccount
+        - personalAllowance
+        - personalAllowanceFromSpouse
+        - union
+        - pensionFund
+        - privatePensionFund
+        - privatePensionFundRatio
       properties:
         bankAccount:
           type: string
-          nullable: true
+          minLength: 1
         personalAllowance:
           type: number
           format: float
@@ -293,50 +310,56 @@ components:
           type: number
           format: float
         union:
-          nullable: true
-          oneOf:
-            - $ref: '#/components/schemas/Union'
+          $ref: '#/components/schemas/Union'
         pensionFund:
-          nullable: true
-          oneOf:
-            - $ref: '#/components/schemas/PensionFund'
+          $ref: '#/components/schemas/PensionFund'
         privatePensionFund:
-          nullable: true
-          oneOf:
-            - $ref: '#/components/schemas/PensionFund'
+          $ref: '#/components/schemas/PensionFund'
         privatePensionFundRatio:
           type: number
           format: float
     Union:
       type: object
       additionalProperties: false
+      required:
+        - id
+        - name
       properties:
         id:
           type: string
-          nullable: true
+          minLength: 1
         name:
           type: string
-          nullable: true
+          minLength: 1
     PensionFund:
       type: object
       additionalProperties: false
+      required:
+        - id
+        - name
       properties:
         id:
           type: string
-          nullable: true
+          minLength: 1
         name:
           type: string
-          nullable: true
+          minLength: 1
     Period:
       type: object
       additionalProperties: false
+      required:
+        - from
+        - to
+        - ratio
+        - approved
+        - paid
       properties:
         from:
           type: string
-          nullable: true
+          minLength: 1
         to:
           type: string
-          nullable: true
+          minLength: 1
         ratio:
           type: number
           format: float
@@ -347,23 +370,24 @@ components:
     Employer:
       type: object
       additionalProperties: false
+      required:
+        - email
+        - nationalRegistryId
       properties:
         email:
           type: string
-          nullable: true
+          minLength: 1
         nationalRegistryId:
           type: string
-          nullable: true
+          minLength: 1
     PostParentalLeaveResponse:
       type: object
       additionalProperties: false
       properties:
         status:
           type: string
-          nullable: true
         id:
           type: string
-          nullable: true
     Right:
       type: object
       additionalProperties: false
@@ -380,16 +404,12 @@ components:
       properties:
         dateOfBirth:
           type: string
-          nullable: true
         workPeriodFrom:
           type: string
-          nullable: true
         workPeriodTo:
           type: string
-          nullable: true
         wageDetails:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/WageDetail'
         totalWages:
@@ -404,10 +424,8 @@ components:
       properties:
         employer:
           type: string
-          nullable: true
         employerPeriod:
           type: string
-          nullable: true
         employerWages:
           type: number
           format: float
@@ -417,7 +435,6 @@ components:
       properties:
         paymentPlans:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/PaymentPlan'
     PaymentPlan:
@@ -425,9 +442,7 @@ components:
       additionalProperties: false
       properties:
         period:
-          nullable: true
-          oneOf:
-            - $ref: '#/components/schemas/Period'
+          $ref: '#/components/schemas/Period'
         estimatedAmount:
           type: number
           format: float
@@ -452,7 +467,6 @@ components:
       properties:
         pensionFunds:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/PensionFund'
     PregnancyStatus:
@@ -464,6 +478,7 @@ components:
         pregnancyDueDate:
           type: string
           format: date-time
+          nullable: true
         errorMessage:
           type: string
           nullable: true
@@ -478,6 +493,5 @@ components:
       properties:
         unions:
           type: array
-          nullable: true
           items:
             $ref: '#/components/schemas/Union'
