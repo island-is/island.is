@@ -188,6 +188,7 @@ export function buildSelectField(data: {
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
+  backgroundColor?: InputBackgroundColor
 }): SelectField {
   const {
     condition,
@@ -200,6 +201,7 @@ export function buildSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -215,6 +217,7 @@ export function buildSelectField(data: {
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 

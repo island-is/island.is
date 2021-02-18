@@ -9,17 +9,10 @@ import ManOnBenchIllustration from '../../assets/ManOnBenchIllustration'
 const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
-  const isMissingInfoConfirmation =
-    field.id === 'successfulSubmissionMissingInfo'
-
-  const pageTitle = isMissingInfoConfirmation
-    ? m.successfulSubmissionMissingInfoTitle
-    : m.successfulSubmissionTitle
-
   return (
     <Stack space={2}>
       <Text variant="h2">
-        {formatText(pageTitle, application, formatMessage)}
+        {formatText(m.successfulSubmissionTitle, application, formatMessage)}
       </Text>
       <Text>
         <Markdown>
@@ -38,13 +31,8 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
       </Box>
       <Box marginBottom={6}>
         <BulletList>
-          {!isMissingInfoConfirmation && (
-            <Bullet>
-              {formatText(m.nextStepReviewTime, application, formatMessage)}
-            </Bullet>
-          )}
           <Bullet>
-            {formatText(m.nextStepStatusCheck, application, formatMessage)}
+            {formatText(m.nextStepReviewTime, application, formatMessage)}
           </Bullet>
         </BulletList>
       </Box>

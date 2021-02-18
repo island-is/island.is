@@ -4,7 +4,7 @@ import { Query } from '@island.is/api/schema'
 import { getNameAndIdOfSpouse } from '../parentalLeaveUtils'
 import { Option } from '@island.is/application/core'
 import { NO } from '../constants'
-import { m } from '../lib/messages'
+import { parentalLeaveFormMessages } from '../lib/messages'
 
 const NationalRegistryFamilyQuery = gql`
   query NationalRegistryFamilyQuery {
@@ -18,7 +18,6 @@ const NationalRegistryFamilyQuery = gql`
 const useOtherParentOptions = () => {
   const { formatMessage } = useLocale()
   const { data, loading } = useQuery<Query>(NationalRegistryFamilyQuery)
-
   const [spouseName, spouseId] = getNameAndIdOfSpouse(
     data?.nationalRegistryFamily ?? [],
   )
@@ -26,16 +25,24 @@ const useOtherParentOptions = () => {
   const options: Option[] = [
     {
       value: NO,
-      label: formatMessage(m.noOtherParent),
+      label: formatMessage(parentalLeaveFormMessages.base.noOtherParent),
     },
-    { value: 'manual', label: formatMessage(m.otherParentOption) },
+    {
+      value: 'manual',
+      label: formatMessage(parentalLeaveFormMessages.base.otherParentOption),
+    },
   ]
+
   if (spouseName !== undefined && spouseId !== undefined) {
     options.unshift({
       value: 'spouse',
-      label: formatMessage(m.otherParentSpouse, { spouseName, spouseId }),
+      label: formatMessage(parentalLeaveFormMessages.base.otherParentSpouse, {
+        spouseName,
+        spouseId,
+      }),
     })
   }
+
   return { options, loading }
 }
 
