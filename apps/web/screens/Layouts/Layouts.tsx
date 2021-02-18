@@ -1,5 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import { Box, GridContainer, ResponsiveSpace } from '@island.is/island-ui/core'
+import { Main } from '@island.is/web/components'
 
 interface SubpageProps {
   main: ReactNode
@@ -15,16 +16,18 @@ export const SubpageLayout: FC<SubpageProps> = ({
   mainPaddingBottom,
 }) => {
   return (
-    <Box width="full" paddingTop={paddingTop} id="main-content">
-      <Box paddingBottom={mainPaddingBottom}>
-        <GridContainer>{main}</GridContainer>
-      </Box>
-      {details && (
-        <Box background="blue100" paddingTop={[3, 3, 5]}>
-          <GridContainer>{details}</GridContainer>
+    <Main>
+      <Box width="full" paddingTop={paddingTop}>
+        <Box paddingBottom={mainPaddingBottom}>
+          <GridContainer>{main}</GridContainer>
         </Box>
-      )}
-    </Box>
+        {details && (
+          <Box background="blue100" paddingTop={[3, 3, 5]}>
+            <GridContainer>{details}</GridContainer>
+          </Box>
+        )}
+      </Box>
+    </Main>
   )
 }
 

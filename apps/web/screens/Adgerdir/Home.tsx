@@ -97,10 +97,10 @@ const Home: Screen<HomeProps> = ({
         imageWidth={frontpage.featuredImage?.width?.toString()}
         imageHeight={frontpage.featuredImage?.height?.toString()}
       />
-      <Box className={covidStyles.frontpageBg} id="main-content">
+      <Box className={covidStyles.frontpageBg}>
         <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
           <Header buttonColorScheme="negative" megaMenuData={megaMenuData}>
-            <GridContainer>
+            <GridContainer id="main-content">
               <Box paddingTop={[2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
                 <GridRow>
                   <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>

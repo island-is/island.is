@@ -9,12 +9,14 @@ import {
 
 import * as styles from './SidebarLayout.treat'
 import cn from 'classnames'
+import { Main } from '@island.is/web/components'
 
 interface SidebarLayoutProps {
   sidebarContent: ReactNode
   isSticky?: boolean
   hiddenOnTablet?: boolean
   fullWidthContent?: boolean
+  addMainLandmark?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
 }
@@ -24,6 +26,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   isSticky = true,
   hiddenOnTablet = false,
   fullWidthContent = false,
+  addMainLandmark = true,
   paddingTop = [0, 0, 8],
   paddingBottom = 6,
   children,
@@ -48,24 +51,26 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         >
           {sidebarContent}
         </Box>
-        <GridContainer id="main-content">
-          <GridRow>
-            <GridColumn
-              offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
-              span={[
-                '9/9',
-                '9/9',
-                '9/9',
-                '9/9',
-                fullWidthContent ? '9/9' : '7/9',
-              ]}
-            >
-              <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
-                {children}
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+        <Main addLandmark={addMainLandmark}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
+                span={[
+                  '9/9',
+                  '9/9',
+                  '9/9',
+                  '9/9',
+                  fullWidthContent ? '9/9' : '7/9',
+                ]}
+              >
+                <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
+                  {children}
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Main>
       </Box>
     </GridContainer>
   </Box>

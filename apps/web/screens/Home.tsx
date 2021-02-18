@@ -92,7 +92,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
     </Box>
   )
   return (
-    <div id="main-content" style={{ overflow: 'hidden' }}>
+    <div style={{ overflow: 'hidden' }}>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={page.slides as FrontpageSliderType[]}
