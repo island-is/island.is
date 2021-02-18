@@ -3,12 +3,13 @@ import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { useHistory } from 'react-router-dom'
 import * as styles from './FormFooter.treat'
 interface Props {
+  previousUrl?: string
+  previousIsDisabled?: boolean
   nextUrl?: string
   nextIsDisabled?: boolean
   nextIsLoading?: boolean
   nextButtonText?: string
   onNextButtonClick?: () => void
-  previousIsDisabled?: boolean
   hideNextButton?: boolean
   infoBoxText?: string
 }
@@ -22,7 +23,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         variant="ghost"
         disabled={props.previousIsDisabled}
         onClick={() => {
-          history.goBack()
+          history.push(props.previousUrl || '')
         }}
       >
         Til baka

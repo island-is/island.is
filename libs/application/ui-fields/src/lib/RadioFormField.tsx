@@ -68,7 +68,7 @@ const RadioFormField: FC<Props> = ({
           disabled={disabled}
           error={error}
           split={width === 'half' ? '1/2' : '1/1'}
-          name={`${id}`}
+          name={id}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
             useDefaultValue(field, application)

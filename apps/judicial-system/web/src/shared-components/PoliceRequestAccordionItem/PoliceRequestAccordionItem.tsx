@@ -6,8 +6,13 @@ import {
   formatRequestedCustodyRestrictions,
   formatDate,
   TIME_FORMAT,
+  laws,
 } from '@island.is/judicial-system/formatters'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseCustodyProvisions,
+  CaseType,
+} from '@island.is/judicial-system/types'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import AccordionListItem from '../AccordionListItem/AccordionListItem'
 
@@ -64,8 +69,20 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       <AccordionListItem title="Dómkröfur">
         {constructProsecutorDemands(workingCase)}
       </AccordionListItem>
-      <AccordionListItem title="Lagaákvæði" breakSpaces>
+      <AccordionListItem title="Lagaákvæði sem brot varða við" breakSpaces>
         <Text>{workingCase.lawsBroken}</Text>
+      </AccordionListItem>
+      <AccordionListItem title="Lagaákvæði sem krafan er byggð á" breakSpaces>
+        {workingCase.custodyProvisions &&
+          workingCase.custodyProvisions.map(
+            (custodyProvision: CaseCustodyProvisions, index) => {
+              return (
+                <div key={index}>
+                  <Text>{laws[custodyProvision]}</Text>
+                </div>
+              )
+            },
+          )}
       </AccordionListItem>
       <Box marginBottom={1}>
         <Text variant="h5">{`Takmarkanir og tilhögun ${
@@ -92,7 +109,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           Greinargerð um málsatvik og lagarök
         </Text>
       </Box>
-      <AccordionListItem title="Málsatvik rakin" breakSpaces>
+      <AccordionListItem title="Málsatvik" breakSpaces>
         <Text>{workingCase.caseFacts}</Text>
       </AccordionListItem>
       <AccordionListItem title="Lagarök" breakSpaces>

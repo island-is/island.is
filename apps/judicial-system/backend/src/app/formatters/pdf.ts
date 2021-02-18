@@ -46,6 +46,13 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       right: 50,
     },
   })
+
+  if (doc.info) {
+    doc.info['Title'] = `Krafa um ${
+      existingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+    }`
+  }
+
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
     .font('Helvetica-Bold')
@@ -63,9 +70,12 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       align: 'center',
     })
     .fontSize(16)
-    .text(`Embætti: ${existingCase.prosecutor?.institution || 'Ekki skráð'}`, {
-      align: 'center',
-    })
+    .text(
+      `Embætti: ${existingCase.prosecutor?.institution?.name || 'Ekki skráð'}`,
+      {
+        align: 'center',
+      },
+    )
     .lineGap(40)
     .text(`Dómstóll: ${existingCase.court}`, { align: 'center' })
     .font('Helvetica-Bold')
@@ -150,10 +160,8 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .fontSize(14)
     .lineGap(8)
     .text(
-      `Takmarkanir ${
-        existingCase.type === CaseType.CUSTODY
-          ? 'á gæslu'
-          : 'og tilhögun farbanns'
+      `Takmarkanir og tilhögun ${
+        existingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
       }`,
       {},
     )
@@ -228,6 +236,11 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       right: 50,
     },
   })
+
+  if (doc.info) {
+    doc.info['Title'] = 'Úrskurður'
+  }
+
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
   doc
     .font('Helvetica-Bold')
@@ -571,7 +584,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
       .font('Helvetica-Bold')
       .fontSize(14)
       .lineGap(8)
-      .text('Takmarkanir og tilhögun farbanns')
+      .text('Tilhögun farbanns')
       .font('Helvetica')
       .fontSize(12)
       .text(

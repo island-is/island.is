@@ -32,7 +32,7 @@ export class UpdateUserInput implements UpdateUser {
 
   @Allow()
   @Field({ nullable: true })
-  readonly institution?: string
+  readonly institutionId?: string
 
   @Allow()
   @Field({ nullable: true })

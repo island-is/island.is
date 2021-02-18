@@ -504,6 +504,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsLoading={createLoading}
             nextIsDisabled={isStepIllegal || createLoading}
