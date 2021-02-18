@@ -56,9 +56,10 @@ export enum ServicePortalPath {
   UserProfileEditLanguage = '/stillingar/breyta-tungumali',
   UserProfileEmailConfirmation = '/stillingar/stadfesta-netfang/:hash',
 
-  // Skjalaveita
-  // Tímabundin breyting á DocumentProviderRoot gildi úr skjalaveita -> skjalaveitur af því að þetta
-  // verður bara ein síða til að byrja með
+  // DocumentProvider
+  // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
+  // release there will only be a limited number of features and this change creates a better UX in
+  // that scenario.
   DocumentProviderRoot = '/skjalaveitur', // Breytt path
   DocumentProviderDocumentProvidersSingle = '/skjalaveitur/:nationalId',
   // DocumentProviderDocumentProviders = '/skjalaveita/skjalaveitendur',
