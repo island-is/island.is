@@ -115,6 +115,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
             title={n('lifeEventsTitle')}
             titleProps={{
               id: 'lifeEventsAriaTitle',
+              as: 'h2',
             }}
             linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
             lifeEvents={page.lifeEvents}
