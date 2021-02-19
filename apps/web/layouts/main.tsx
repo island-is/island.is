@@ -278,6 +278,7 @@ const Layout: NextComponentType<
                   })
                 }
               }}
+              dismissLabel={n('alertBannerDismissLabel', 'Loka')}
             />
           </section>
         )}
