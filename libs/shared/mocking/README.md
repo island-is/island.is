@@ -420,7 +420,7 @@ Re-exported [faker](https://github.com/Marak/faker.js) to create fake mock data.
 
 ## Remove mocking code from production builds
 
-The first step is to never call `startMocking` when `process.env.NODE_ENV === 'production'`. Then Webpack is able to remove it from the bundle in production builds.
+The first step is to only call `startMocking` when `process.env.API_MOCKS === 'true'`. Then Webpack is able to remove it from the bundle in production builds.
 
 However, that still leaves all the resolver, handler, store and factory code. Webpack doesn't remove that because the code looks like this:
 
