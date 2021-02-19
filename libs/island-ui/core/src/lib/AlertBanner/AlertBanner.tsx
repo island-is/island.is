@@ -73,6 +73,7 @@ export interface AlertBannerProps {
    * Fires when banner gets dismissed, usefull for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
    */
   onDismiss?: () => void
+  dismissLabel?: string
 }
 
 export const AlertBanner: FC<AlertBannerProps> = ({
@@ -82,6 +83,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
   description,
   link,
   onDismiss,
+  dismissLabel = 'Close',
 }) => {
   const [dismissed, setDismissed] = useState(false)
 
@@ -162,6 +164,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
                 onDismiss()
               }
             }}
+            aria-label={dismissLabel}
           >
             <Icon type="close" color="dark400" width={14} />
           </button>
