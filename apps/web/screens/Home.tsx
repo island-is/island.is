@@ -97,7 +97,7 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={2}>
-          {page.featuredThings.map(({ title, attention, thing }) => {
+          {page.featured.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
             return cardUrl?.href && cardUrl?.href.length > 0 ? (
               <Link key={title} {...cardUrl} skipTab>
@@ -177,11 +177,11 @@ const Home: Screen<HomeProps> = ({
 
 Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
-    {
-      data: {
-        getFrontpageSliderList: { items },
-      },
-    },
+    //{
+    //  data: {
+    //    getFrontpageSliderList: { items },
+    //  },
+    //},
     {
       data: { getArticleCategories },
     },
@@ -190,25 +190,25 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         getNews: { items: news },
       },
     },
-    {
-      data: { getLifeEvents },
-    },
+    //{
+    //  data: { getLifeEvents },
+    //},
     {
       data: { getTestHomepage },
     },
-    namespace,
+    //namespace,
   ] = await Promise.all([
-    apolloClient.query<
-      GetFrontpageSliderListQuery,
-      QueryGetFrontpageSliderListArgs
-    >({
-      query: GET_FRONTPAGE_SLIDES_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
+    //apolloClient.query<
+    //  GetFrontpageSliderListQuery,
+    //  QueryGetFrontpageSliderListArgs
+    //>({
+    //  query: GET_FRONTPAGE_SLIDES_QUERY,
+    //  variables: {
+    //    input: {
+    //      lang: locale as ContentLanguage,
+    //    },
+    //  },
+    //}),
     apolloClient.query<
       GetArticleCategoriesQuery,
       QueryGetArticleCategoriesArgs
@@ -229,14 +229,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<GetLifeEventsQuery, QueryGetLifeEventsArgs>({
-      query: GET_LIFE_EVENTS_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
+    //apolloClient.query<GetLifeEventsQuery, QueryGetLifeEventsArgs>({
+    //  query: GET_LIFE_EVENTS_QUERY,
+    //  variables: {
+    //    input: {
+    //      lang: locale as ContentLanguage,
+    //    },
+    //  },
+    //}),
     apolloClient.query<GetTestHomepageQuery, QueryGetTestHomepageArgs>({
       query: GET_TEST_HOMEPAGE_QUERY,
       variables: {
@@ -245,28 +245,26 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'Homepage',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+    //apolloClient
+    //  .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+    //    query: GET_NAMESPACE_QUERY,
+    //    variables: {
+    //      input: {
+    //        namespace: 'Homepage',
+    //        lang: locale,
+    //      },
+    //    },
+    //  })
+    //  .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
-
-  console.log({getTestHomepage})
 
   return {
     news,
-    lifeEvents: getLifeEvents,
-    frontpageSlides: items,
+    lifeEvents: getTestHomepage.lifeEvents,
+    frontpageSlides: getTestHomepage.slides,
     categories: getArticleCategories,
     page: getTestHomepage,
-    namespace,
+    namespace: JSON.parse(getTestHomepage.namespace.fields),
     showSearchInHeader: false,
   }
 }
