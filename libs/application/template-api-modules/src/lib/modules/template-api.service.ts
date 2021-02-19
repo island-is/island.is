@@ -76,7 +76,10 @@ export class TemplateAPIService {
           action,
         )
       case ApplicationTypes.HEALTH_INSURANCE:
-        return this.tryRunningActionOnService(this.healthInsuranceService, action)
+        return this.tryRunningActionOnService(
+          this.healthInsuranceService,
+          action,
+        )
     }
 
     return [false]

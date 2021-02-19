@@ -8,7 +8,7 @@ import { VistaSkjalInput } from './types'
 export class HealthInsuranceService {
   constructor(
     @Inject(HealthInsuranceAPI)
-    private healthInsuranceAPI: HealthInsuranceAPI
+    private healthInsuranceAPI: HealthInsuranceAPI,
   ) {}
 
   getProfun(): Promise<string> {
@@ -26,9 +26,7 @@ export class HealthInsuranceService {
   }
 
   // Apply for Health insurance ( number 570 is identify number for health insurance application)
-  async applyInsurance(
-    inputs: VistaSkjalInput,
-  ): Promise<VistaSkjalModel> {
+  async applyInsurance(inputs: VistaSkjalInput): Promise<VistaSkjalModel> {
     return this.healthInsuranceAPI.applyInsurance(570, inputs)
   }
 }

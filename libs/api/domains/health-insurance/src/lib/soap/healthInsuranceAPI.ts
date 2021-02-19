@@ -131,9 +131,7 @@ export class HealthInsuranceAPI {
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
     logger.info(
-      `--- Starting applyInsurance api call for ${
-        inputObj.nationalId
-      } ---`,
+      `--- Starting applyInsurance api call for ${inputObj.nationalId} ---`,
     )
 
     const vistaSkjalBody: GetVistaSkjalBody = {
@@ -180,16 +178,14 @@ export class HealthInsuranceAPI {
     // Add attachments from S3 bucket
     // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
 
-    if (
-      inputObj.attachmentsFileNames &&
-      inputObj.attachmentsFileNames.length > 0
-    ) {
+    if (inputObj.attachmentsFileNames) {
       logger.info(`Start getting attachments`)
       const fylgiskjol: Fylgiskjol = {
         fylgiskjal: [],
       }
-      for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
-        const filename = inputObj.attachmentsFileNames[i]
+      const arrAttachments = inputObj.attachmentsFileNames.split(',')
+      for (let i = 0; i < arrAttachments.length; i++) {
+        const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
           innihald: await this.bucketService.getFileContentAsBase64(filename),
@@ -203,71 +199,6 @@ export class HealthInsuranceAPI {
     const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>${this.OBJtoXML(
       vistaSkjalBody,
     )}]]>`
-
-    // TODO: clean up when go live
-    // let attachments = ''
-    // if (
-    //   inputObj.attachmentsFileNames &&
-    //   inputObj.attachmentsFileNames.length > 0
-    // ) {
-    //   logger.info(`Start getting attachments`)
-    //   attachments += '<fylgiskjol>'
-    //   for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
-    //     const filename = inputObj.attachmentsFileNames[i]
-    //     logger.info(`Getting ${filename} now`)
-    //     const resultStr = await this.bucketService.getFileContentAsBase64(
-    //       filename,
-    //     )
-    //     attachments += `<fylgiskjal>
-    //                       <heiti>${filename}</heiti>
-    //                       <innihald>${resultStr}</innihald>
-    //                     </fylgiskjal>`
-    //   }
-    //   attachments += '</fylgiskjol>'
-    //   logger.info(`Finished getting attachments`)
-    // }
-
-    // const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
-    // <sjukratryggingumsokn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    //   <einstaklingur>
-    //     <kennitala>${inputObj.nationalId ?? nationalId}</kennitala>
-    //     <erlendkennitala>${inputObj.foreignNationalId}</erlendkennitala>
-    //     <nafn>${inputObj.name}</nafn>
-    //     <heimili>${inputObj.address ?? ''}</heimili>
-    //     <postfangstadur>${inputObj.postalAddress ?? ''}</postfangstadur>
-    //     <rikisfang>${inputObj.citizenship ?? ''}</rikisfang>
-    //     <rikisfangkodi>${inputObj.postalAddress ? 'IS' : ''}</rikisfangkodi>
-    //     <simi>${inputObj.phoneNumber}</simi>
-    //     <netfang>${inputObj.email}</netfang>
-    //   </einstaklingur>
-    //   <numerumsoknar>${inputObj.applicationNumber}</numerumsoknar>
-    //   <dagsumsoknar>${format(
-    //     new Date(inputObj.applicationDate),
-    //     'yyyy-MM-dd',
-    //   )}</dagsumsoknar>
-    //   <dagssidustubusetuthjodskra>${format(
-    //     new Date(inputObj.residenceDateFromNationalRegistry),
-    //     'yyyy-MM-dd',
-    //   )}</dagssidustubusetuthjodskra>
-    //   <dagssidustubusetu>${format(
-    //     new Date(inputObj.residenceDateUserThink),
-    //     'yyyy-MM-dd',
-    //   )}</dagssidustubusetu>
-    //   <stadaeinstaklings>${inputObj.userStatus}</stadaeinstaklings>
-    //   <bornmedumsaekjanda>${inputObj.isChildrenFollowed}</bornmedumsaekjanda>
-    //   <fyrrautgafuland>${inputObj.previousCountry}</fyrrautgafuland>
-    //   <fyrrautgafulandkodi>${inputObj.previousCountryCode}</fyrrautgafulandkodi>
-    //   <fyrriutgafustofnunlands>${
-    //     inputObj.previousIssuingInstitution
-    //   }</fyrriutgafustofnunlands>
-    //   <tryggdurfyrralandi>${
-    //     inputObj.isHealthInsuredInPreviousCountry
-    //   }</tryggdurfyrralandi>
-    //   <vidbotarupplysingar>${
-    //     inputObj.additionalInformation ?? ''
-    //   }</vidbotarupplysingar>
-    //   ${attachments}
-    // </sjukratryggingumsokn>]]>`
 
     const args = {
       sendandi: '',

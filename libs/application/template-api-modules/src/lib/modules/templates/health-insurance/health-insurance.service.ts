@@ -10,44 +10,119 @@ export class HealthInsuranceService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
-  // async sendApplication({ application }: TemplateApiModuleActionProps){
-  //   console.log("---------- Application --------------")
-  //   console.log(JSON.stringify(application, null, 2))
-  //   const vistaSkjal = transformApplicationToHealthInsuranceDTO(application)
-  //   console.log("-------------- Vistaskjal inputs --------------")
-  //   console.log(JSON.stringify(vistaSkjal, null, 2))
-  //   await new Promise((resolve) => setTimeout(resolve, 2000))
-  //   // await this.healthInsuranceServiceBackend.applyInsurance(vistaSkjal)
-
-  //   console.log("Health-Insurance - Finished sendApplication")
-  // }
 
   async sendApplication({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
     try {
+      logger.info(
+        `Start send Health Insurance application for ${application.applicant}`,
+      )
       const vistaSkjal = transformApplicationToHealthInsuranceDTO(application)
-      const query = transformApplicationToHealthInsuranceDTO(application)
-      console.log(query)
-      const res = await this.sharedTemplateAPIService.makeGraphqlQuery(authorization, query).then(async (res: Response) => {
-        const response = await res.json()
-        if (response.errors) {
-          console.log("erroring")
-          return response.errors
+
+      logger.info(`Finished transform Application to Health Insurance DTO`)
+      logger.info(`Start query`)
+      const query = `mutation {
+        healthInsuranceApplyInsurance(
+        inputs: {
+          applicationNumber: "${vistaSkjal.applicationNumber}",
+          applicationDate: "${vistaSkjal.applicationDate}",
+          nationalId: "${vistaSkjal.nationalId}",
+          foreignNationalId: "${vistaSkjal.foreignNationalId}",
+          name: "${vistaSkjal.name}",
+          ${vistaSkjal.address ? 'address:"' + vistaSkjal.address + '",' : ''}
+          ${
+            vistaSkjal.postalAddress
+              ? 'postalAddress:"' + vistaSkjal.postalAddress + '",'
+              : ''
+          }
+          ${
+            vistaSkjal.citizenship
+              ? 'citizenship:"' + vistaSkjal.citizenship + '",'
+              : ''
+          }
+          email: "${vistaSkjal.email}",
+          phoneNumber:"${vistaSkjal.phoneNumber}",
+          residenceDateFromNationalRegistry: "${
+            vistaSkjal.residenceDateFromNationalRegistry
+          }",
+          residenceDateUserThink: "${vistaSkjal.residenceDateUserThink}",
+          userStatus: "${vistaSkjal.userStatus}",
+          isChildrenFollowed: ${vistaSkjal.isChildrenFollowed},
+          previousCountry: "${vistaSkjal.previousCountry}",
+          previousCountryCode: "${vistaSkjal.previousCountryCode}",
+          previousIssuingInstitution: "${
+            vistaSkjal.previousIssuingInstitution
+          }",
+          isHealthInsuredInPreviousCountry: ${
+            vistaSkjal.isHealthInsuredInPreviousCountry
+          },
+          ${
+            vistaSkjal.additionalInformation
+              ? 'additionalInformation:"' +
+                vistaSkjal.additionalInformation +
+                '",'
+              : ''
+          }
+          ${
+            vistaSkjal.attachmentsFileNames
+              ? 'attachmentsFileNames:"' +
+                vistaSkjal.attachmentsFileNames +
+                '",'
+              : ''
+          }
+        }) {
+          isSucceeded,
+          caseId,
+          comment
         }
-        console.log("returnning")
-        return Promise.resolve(response.data)
-      })
-      .catch((error) => {
-        console.log("Catching")
-        return error
-      })
-      console.log(JSON.stringify(res, null, 2))
-      console.log("Health-Insurance - Finished sendApplication")
+      }`
+
+      const res = await this.sharedTemplateAPIService
+        .makeGraphqlQuery(authorization, query)
+        .then(async (res: Response) => {
+          const response = await res.json()
+          if (response.errors) {
+            logger.error(
+              `Error in health insurance application: ${JSON.stringify(
+                response.errors,
+              )}`,
+            )
+            throw new Error(
+              `Error in health insurance application: ${JSON.stringify(
+                response.errors,
+              )}`,
+            )
+          }
+          logger.info(`Successful send application to SÍ`)
+          return Promise.resolve(response.data)
+        })
+        .catch((error) => {
+          logger.error(
+            `Call query health insurance application failed because: ${JSON.stringify(
+              error,
+            )}`,
+          )
+          throw new Error(
+            `Call query health insurance application failed because: ${JSON.stringify(
+              error,
+            )}`,
+          )
+        })
+
+      logger.info(`Finished send Health Insurance application`)
     } catch (error) {
-      logger.error(`Health insurance application failed because: ${error}`)
-      throw error
+      logger.error(
+        `Send health insurance application failed because: ${JSON.stringify(
+          error,
+        )}`,
+      )
+      throw new Error(
+        `Send health insurance application failed because: ${JSON.stringify(
+          error,
+        )}`,
+      )
     }
   }
 }
