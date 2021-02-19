@@ -9,7 +9,10 @@ import {
 } from '@island.is/dokobit-signing'
 import { Signature } from './utils/types'
 import { BucketTypePrefix, DokobitFileName } from './utils/constants'
-import { applicantData, variablesForResidenceChange } from './utils/childrenResidenceChange'
+import {
+  applicantData,
+  variablesForResidenceChange,
+} from './utils/childrenResidenceChange'
 import { getFile, getPresignedUrl, uploadFile } from './utils/aws'
 
 @Injectable()
