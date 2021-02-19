@@ -1,6 +1,5 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
-import { logger } from '@island.is/logging'
 import { AssignmentEmailTemplateGenerator } from '../../../../types'
 
 export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
@@ -13,7 +12,6 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
   } = props
   const applicantNationalId = get(application.answers, 'applicant.nationalId')
   const applicantName = get(application.answers, 'applicant.name')
-  logger.debug(JSON.stringify(process.env))
   const email = process.env.DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
 
   const subject =
