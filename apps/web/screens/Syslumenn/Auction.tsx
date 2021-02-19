@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Box, NavigationItem, Text } from '@island.is/island-ui/core'
+import { Box, NavigationItem, Tag, Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -84,15 +84,20 @@ const Auction: Screen<AuctionProps> = ({
       }}
     >
       <Box marginBottom={6}>
-        <Text variant="h1" as="h2" marginBottom={2}>
+        <Text variant="eyebrow" color="purple400" marginBottom={1}>
+          {n('auctionType-' + auction.type)}
+        </Text>
+        <Text variant="h1" as="h2" marginBottom={1}>
           {auction.title}
         </Text>
         <Text variant="h3" as="h3" marginBottom={2}>
-          {auction.organization.title}
+          {format(date, 'e. MMMM yyyy')}
         </Text>
-        <Text marginBottom={4}>{format(date, 'dd. MMMM yyyy')}</Text>
+        <Box marginBottom={4}>
+          <Tag disabled>{auction.organization.title}</Tag>
+        </Box>
         {richText(auction.content as SliceType[])}
-        <Text paddingTop={4}>
+        <Text paddingTop={4} variant="small">
           {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
         </Text>
       </Box>

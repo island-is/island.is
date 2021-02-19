@@ -277,7 +277,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                 justifyContent="spaceBetween"
                 marginLeft="auto"
               >
-                <Tag>{auction.organization.title}</Tag>
+                <Tag disabled>{auction.organization.title}</Tag>
                 <Text variant="small">{format(auctionDate, 'dd.MM.yyyy')}</Text>
               </Box>
             </FocusableBox>
