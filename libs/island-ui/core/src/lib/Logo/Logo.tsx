@@ -73,7 +73,7 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
       >
         <defs>
           <linearGradient
-            id="a"
+            id={`a_${id}`}
             x1="3.69"
             y1="3.69"
             x2="104.39"
@@ -87,68 +87,68 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
             <stop offset="1" stopColor="#fd0050" />
           </linearGradient>
           <linearGradient
-            id="b"
+            id={`b_${id}`}
             x1="-16.95"
             y1="24.34"
             x2="83.75"
             y2="125.04"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
           <linearGradient
-            id="c"
+            id={`c_${id}`}
             x1="-37.59"
             y1="44.98"
             x2="63.11"
             y2="145.68"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
           <linearGradient
-            id="d"
+            id={`d_${id}`}
             x1="44.98"
             y1="-37.59"
             x2="145.68"
             y2="63.11"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
           <linearGradient
-            id="e"
+            id={`e_${id}`}
             x1="-16.95"
             y1="24.34"
             x2="83.75"
             y2="125.04"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
           <linearGradient
-            id="f"
+            id={`f_${id}`}
             x1="3.69"
             y1="3.69"
             x2="104.39"
             y2="104.39"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
           <linearGradient
-            id="g"
+            id={`g_${id}`}
             x1="24.34"
             y1="-16.95"
             x2="125.04"
             y2="83.75"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
           <linearGradient
-            id="h"
+            id={`h_${id}`}
             x1="3.69"
             y1="3.69"
             x2="104.39"
             y2="104.39"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
           <linearGradient
-            id="i"
+            id={`i_${id}`}
             x1="24.34"
             y1="-16.95"
             x2="125.04"
             y2="83.75"
-            xlinkHref="#a"
+            xlinkHref={`#a_${id}`}
           />
         </defs>
         <g>
@@ -212,39 +212,39 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
             <g>
               <path
                 d="M12.76 0A12.62 12.62 0 000 12.76a12.62 12.62 0 0012.76 12.76 12.62 12.62 0 0012.76-12.76A12.62 12.62 0 0012.76 0z"
-                fill={solid ? 'currentColor' : 'url(#a)'}
+                fill={solid ? 'currentColor' : `url(#a_${id})`}
               />
               <path
                 d="M54 82.57a12.76 12.76 0 1012.8 12.76A12.61 12.61 0 0054 82.57z"
-                fill={solid ? 'currentColor' : 'url(#b)'}
+                fill={solid ? 'currentColor' : `url(#b_${id})`}
               />
               <path
                 d="M12.76 82.57a12.76 12.76 0 000 25.52 12.76 12.76 0 000-25.52z"
-                fill={solid ? 'currentColor' : 'url(#c)'}
+                fill={solid ? 'currentColor' : `url(#c_${id})`}
               />
               <path
                 d="M95.33 25.52a12.62 12.62 0 0012.76-12.76 12.76 12.76 0 00-25.52 0 12.62 12.62 0 0012.76 12.76z"
-                fill={solid ? 'currentColor' : 'url(#d)'}
+                fill={solid ? 'currentColor' : `url(#d_${id})`}
               />
               <path
                 d="M12.76 41.29a12.76 12.76 0 100 25.51 12.76 12.76 0 100-25.51z"
-                fill={solid ? 'currentColor' : 'url(#e)'}
+                fill={solid ? 'currentColor' : `url(#e_${id})`}
               />
               <path
                 d="M54 41.29A12.76 12.76 0 1066.8 54 12.6 12.6 0 0054 41.29z"
-                fill={solid ? 'currentColor' : 'url(#f)'}
+                fill={solid ? 'currentColor' : `url(#f_${id})`}
               />
               <path
                 d="M95.33 41.29A12.76 12.76 0 10108.09 54a12.61 12.61 0 00-12.76-12.71z"
-                fill={solid ? 'currentColor' : 'url(#g)'}
+                fill={solid ? 'currentColor' : `url(#g_${id})`}
               />
               <path
                 d="M95.33 82.57a12.76 12.76 0 1012.76 12.76 12.62 12.62 0 00-12.76-12.76z"
-                fill={solid ? 'currentColor' : 'url(#h)'}
+                fill={solid ? 'currentColor' : `url(#h_${id})`}
               />
               <path
                 d="M54 0a12.61 12.61 0 00-12.71 12.76 12.76 12.76 0 1025.51 0A12.62 12.62 0 0054 0z"
-                fill={solid ? 'currentColor' : 'url(#i)'}
+                fill={solid ? 'currentColor' : `url(#i_${id})`}
               />
             </g>
           </g>
