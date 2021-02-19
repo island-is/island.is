@@ -283,7 +283,12 @@ export const SignedVerdictOverview: React.FC = () => {
                   title: 'Málsnúmer héraðsdóms',
                   value: workingCase.courtCaseNumber,
                 },
-                { title: 'Embætti', value: 'Lögreglan á Höfuðborgarsvæðinu' },
+                {
+                  title: 'Embætti',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
+                },
                 { title: 'Dómstóll', value: workingCase.court },
                 { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                 { title: 'Dómari', value: workingCase.judge?.name },
