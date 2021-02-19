@@ -10,17 +10,17 @@ import { LoggingModule } from '@island.is/logging'
 describe('FileService', () => {
   let service: FileService
   let signingService: SigningService
-  let signingServiceRequestSignatureResponse = {
+  const signingServiceRequestSignatureResponse = {
     controlCode: 'code',
     documentToken: 'token',
   }
-  let applicantsPhoneNumber = '111-2222'
-  let parentBPhoneNumber = '222-1111'
-  let applicantName = 'Test name'
-  let applicantSsn = '0113215029'
-  let applicationId = '1111-2222-3333-4444'
+  const applicantsPhoneNumber = '111-2222'
+  const parentBPhoneNumber = '222-1111'
+  const applicantName = 'Test name'
+  const applicantSsn = '0113215029'
+  const applicationId = '1111-2222-3333-4444'
 
-  let application = ({
+  const application = ({
     id: applicationId,
     state: 'draft',
     applicant: applicantSsn,
@@ -106,8 +106,7 @@ describe('FileService', () => {
   })
 
   it('should generate pdf for children residence change and return a presigned url', async () => {
-    console.log({application})
-    let response = await service.createPdf(
+    const response = await service.createPdf(
       application,
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
@@ -121,7 +120,7 @@ describe('FileService', () => {
     expect(response).toEqual('url')
   })
   it('should request file signature for children residence transfer then return controlCode and documentToken', async () => {
-    let response = await service.requestFileSignature(
+    const response = await service.requestFileSignature(
       application,
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )

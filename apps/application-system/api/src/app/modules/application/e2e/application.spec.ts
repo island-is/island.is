@@ -452,4 +452,41 @@ describe('Application system API', () => {
       ChildrenResidenceChange: 'presignedurl',
     })
   })
+
+  it('PUT application/:id/requestFileSignature should return a documentToken and controlCode', async () => {
+    const expectedControlCode = '0000'
+    const expectedDocumentToken = 'token'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'requestFileSignature')
+      .mockImplementation(() => Promise.resolve({controlCode: expectedControlCode, documentToken: expectedDocumentToken}))
+
+    const postResponse = await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'draft',
+      attachments: {},
+      typeId: 'ChildrenResidenceChange',
+      assignees: [],
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const newState = await server
+      .put(`/application/${postResponse.body.id}/requestFileSignature`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(newState.body.attachments).toEqual({
+      'fileSignature': {
+        'controlCode': expectedControlCode,
+        'documentToken': expectedDocumentToken
+      }
+    })
+  })
 })
