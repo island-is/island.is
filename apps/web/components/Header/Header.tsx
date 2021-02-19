@@ -52,10 +52,10 @@ export const Header: FC<HeaderProps> = ({
                 <Column width="content">
                   <FocusableBox href={english ? '/en' : '/'}>
                     <Hidden above="md">
-                      <Logo width={40} iconOnly solid={isWhite} />
+                      <Logo id="header" width={40} iconOnly solid={isWhite} />
                     </Hidden>
                     <Hidden below="lg">
-                      <Logo width={160} solid={isWhite} />
+                      <Logo id="header" width={160} solid={isWhite} />
                     </Hidden>
                   </FocusableBox>
                 </Column>
