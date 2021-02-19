@@ -360,7 +360,7 @@ export const HearingArrangements: React.FC = () => {
                     <Input
                       name="courtTime"
                       label="Tímasetning"
-                      placeholder="Settu inn tíma"
+                      placeholder="Veldu tíma"
                       errorMessage={courtTimeErrorMessage}
                       hasError={courtTimeErrorMessage !== ''}
                       defaultValue={

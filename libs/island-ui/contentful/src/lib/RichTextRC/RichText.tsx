@@ -126,6 +126,7 @@ export const richText: RichText = (
     ...opt.renderComponent,
     locale,
   }
+  console.log(documents)
   return documents.map((slice) => {
     if (slice.__typename === 'Html') {
       return (
