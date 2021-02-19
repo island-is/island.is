@@ -375,6 +375,7 @@ export const RulingStepOne: React.FC = () => {
                       data-testid="custodyEndTime"
                       name="custodyEndTime"
                       label="Tímasetning"
+                      placeholder="Veldu tíma"
                       ref={custodyEndTimeRef}
                       defaultValue={
                         workingCase.custodyEndDate?.includes('T')
