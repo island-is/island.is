@@ -20,10 +20,10 @@ import {
   getAvailableRights,
   getExpectedDateOfBirth,
 } from '../../parentalLeaveUtils'
-import { m, mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
 
-const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
+const Duration: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const { clearErrors } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
@@ -65,11 +65,13 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
     } else {
       setPercent(100)
     }
-  }, [chosenDuration, monthsToUse])
+  }, [months, chosenDuration, monthsToUse])
   return (
     <Box>
       <FieldDescription
-        description={formatMessage(mm.duration.monthsDescription)}
+        description={formatMessage(
+          parentalLeaveFormMessages.duration.monthsDescription,
+        )}
       />
       <Box
         background="blue100"
@@ -98,8 +100,13 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
             className={styles.percentLabel}
           >
             <Text variant="h4" as="span">
-              {formatMessage(mm.duration.paymentsRatio)}&nbsp;&nbsp;
-              <Tooltip text={formatMessage(mm.paymentPlan.description)} />
+              {formatMessage(parentalLeaveFormMessages.duration.paymentsRatio)}
+              &nbsp;&nbsp;
+              <Tooltip
+                text={formatMessage(
+                  parentalLeaveFormMessages.paymentPlan.description,
+                )}
+              />
             </Text>
           </Box>
           <Box
@@ -131,17 +138,25 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
                 showMinMaxLabels
                 showToolTip
                 label={{
-                  singular: formatMessage(m.month),
-                  plural: formatMessage(m.months),
+                  singular: formatMessage(
+                    parentalLeaveFormMessages.shared.month,
+                  ),
+                  plural: formatMessage(
+                    parentalLeaveFormMessages.shared.months,
+                  ),
                 }}
                 rangeDates={{
                   start: {
                     date: formatDateFns(currentStartDateAnswer),
-                    message: formatMessage(m.rangeStartDate),
+                    message: formatMessage(
+                      parentalLeaveFormMessages.shared.rangeStartDate,
+                    ),
                   },
                   end: {
                     date: formatDateFns(chosenEndDate),
-                    message: formatMessage(m.rangeEndDate),
+                    message: formatMessage(
+                      parentalLeaveFormMessages.shared.rangeEndDate,
+                    ),
                   },
                 }}
                 currentIndex={chosenDuration}
@@ -164,4 +179,4 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default ParentalLeaveUsage
+export default Duration

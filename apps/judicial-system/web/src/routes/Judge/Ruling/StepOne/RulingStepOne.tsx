@@ -375,6 +375,7 @@ export const RulingStepOne: React.FC = () => {
                       data-testid="custodyEndTime"
                       name="custodyEndTime"
                       label="Tímasetning"
+                      placeholder="Veldu tíma"
                       ref={custodyEndTimeRef}
                       defaultValue={
                         workingCase.custodyEndDate?.includes('T')
@@ -421,6 +422,7 @@ export const RulingStepOne: React.FC = () => {
               </Box>
             )}
           <FormFooter
+            previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}
           />

@@ -1,19 +1,29 @@
-import { IsString, IsOptional } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { IsString, IsOptional, IsBoolean } from 'class-validator'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateProviderDto {
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   endpoint?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   endpointType?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   apiScope?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  xroad?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  externalProviderId?: string
 }

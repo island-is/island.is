@@ -8,6 +8,10 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
+import {
+  isEUCountry,
+  requireConfirmationOfResidency,
+} from '../healthInsuranceUtils'
 import { StatusTypes } from '../types'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
@@ -27,16 +31,15 @@ const FileSchema = z.object({
 
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   applicant: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     address: z.string().nonempty(),
     postalCode: z.string().min(3).max(3),
     city: z.string().nonempty(),
-    nationality: z.string().nonempty(),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
+    citizenship: z.string().optional(),
   }),
   status: z.enum([
     StatusTypes.EMPLOYED,
@@ -47,28 +50,20 @@ const HealthInsuranceSchema = z.object({
   confirmationOfStudies: z.array(FileSchema).nonempty(),
   children: z.string().nonempty(),
   formerInsurance: z.object({
-    country: z.string().nonempty(),
-    registration: z.string().nonempty(),
+    registration: z.enum([YES, NO]),
+    country: z.string(),
     personalId: z.string().nonempty(),
     institution: z.string(),
     entitlement: z.enum([YES, NO]),
-    entitlementReason: z.string().nonempty(),
+    entitlementReason: z.string().optional(),
   }),
+  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
   additionalInfo: z.object({
     hasAdditionalInfo: z.enum([YES, NO]),
     files: z.array(FileSchema),
-    remarks: z.string(),
+    remarks: z.string().optional(),
   }),
   confirmCorrectInfo: z.boolean().refine((v) => v),
-  missingInfo: z.array(
-    z.object({
-      date: z.string(),
-      remarks: z.string().nonempty(),
-      files: z.array(FileSchema),
-    }),
-  ),
-  confirmMissingInfo: z.boolean().refine((y) => y),
-  agentComments: z.array(z.string().nonempty()),
 })
 
 const HealthInsuranceTemplate: ApplicationTemplate<
@@ -104,7 +99,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           },
         },
       },
-      // TODO: Remove inReview section (and related files) when adding agent comments feature is implemented in backend/other system
       inReview: {
         meta: {
           name: 'In Review',
@@ -113,51 +107,12 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             {
               id: 'reviewer',
               formLoader: () =>
-                import('../forms/ReviewApplication').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/ConfirmationScreen').then((val) =>
+                  Promise.resolve(val.HealthInsuranceConfirmation),
                 ),
-              actions: [
-                {
-                  event: 'MISSING_INFO',
-                  name: 'Missing information',
-                  type: 'primary',
-                },
-              ],
-              write: { answers: ['agentComments'] },
               read: 'all',
             },
           ],
-        },
-        on: {
-          MISSING_INFO: {
-            target: 'missingInfo',
-          },
-        },
-      },
-      missingInfo: {
-        meta: {
-          name: 'Missing information',
-          progress: 0.75,
-          roles: [
-            {
-              id: 'applicant',
-              formLoader: () =>
-                import('../forms/MissingInfoForm').then((val) =>
-                  Promise.resolve(val.MissingInfoForm),
-                ),
-              actions: [{ event: 'SUBMIT', name: 'Submit', type: 'primary' }],
-              write: { answers: ['missingInfo'] },
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          REJECT: {
-            target: 'inReview',
-          },
-          SUBMIT: {
-            target: 'inReview',
-          },
         },
       },
     },

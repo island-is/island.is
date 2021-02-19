@@ -25,6 +25,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
     placeholder,
     disabled,
     onSelect,
+    backgroundColor,
   } = field
   const { formatMessage } = useLocale()
   const finalOptions = useMemo(() => buildOptions(options, application), [
@@ -47,6 +48,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
           disabled={disabled}
           error={error}
           id={id}
+          backgroundColor={backgroundColor}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),

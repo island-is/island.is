@@ -14,30 +14,48 @@ import {
   CaseDecision,
   NotificationType,
   CaseType,
+  UserRole,
+  AccusedPleaDecision,
+  Institution as TInstitution,
 } from '@island.is/judicial-system/types'
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
-import { setup } from './setup'
+import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
 import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification/models'
+import { setup } from './setup'
 
 jest.setTimeout(20000)
 
 let app: INestApplication
-let prosecutor: TUser
+const prosecutorNationalId = '0000000009'
+let prosecutor: CUser
 let prosecutorAuthCookie: string
-let judge: TUser
+const registrarNationalId = '0000001119'
+let registrar: CUser
+const judgeNationalId = '0000002229'
+let judge: CUser
 let judgeAuthCookie: string
+const adminNationalId = '3333333333'
+let admin: CUser
+let adminAuthCookie: string
+
+interface CUser extends TUser {
+  institutionId: string
+}
 
 interface CCase extends TCase {
-  state: CaseState
   prosecutorId: string
+  prosecutor: CUser
   judgeId: string
+  judge: CUser
+  registrarId: string
+  registrar: CUser
   parentCaseId: string
 }
 
@@ -46,12 +64,30 @@ beforeAll(async () => {
 
   const sharedAuthService = await app.resolve(SharedAuthService)
 
-  prosecutor = (await request(app.getHttpServer()).get(`/api/user/2510654469`))
-    .body
+  prosecutor = (
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${prosecutorNationalId}`,
+    )
+  ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
-  judge = (await request(app.getHttpServer()).get(`/api/user/1112902539`)).body
+  judge = (
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${judgeNationalId}`,
+    )
+  ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
+
+  registrar = (
+    await request(app.getHttpServer()).get(`/api/user/${registrarNationalId}`)
+  ).body
+
+  admin = (
+    await request(app.getHttpServer()).get(
+      `/api/user/?nationalId=${adminNationalId}`,
+    )
+  ).body
+  adminAuthCookie = sharedAuthService.signJwt(admin)
 })
 
 const minimalCaseData = {
@@ -91,26 +127,31 @@ function remainingProsecutorCaseData() {
   }
 }
 
-const remainingJudgeCaseData = {
-  courtCaseNumber: 'Court Case Number',
-  courtDate: '2020-09-29T13:00:00.000Z',
-  courtRoom: '201',
-  courtStartTime: '2020-09-29T13:00:00.000Z',
-  courtEndTime: '2020-09-29T14:00:00.000Z',
-  courtAttendees: 'Court Attendees',
-  policeDemands: 'Police Demands',
-  courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-  accusedPlea: 'Accused Plea',
-  litigationPresentations: 'Litigation Presentations',
-  ruling: 'Ruling',
-  decision: CaseDecision.ACCEPTING,
-  custodyEndDate: '2020-09-28T12:00:00.000Z',
-  custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
-  otherRestrictions: 'Other Restrictions',
-  accusedAppealDecision: CaseAppealDecision.APPEAL,
-  accusedAppealAnnouncement: 'Accused Appeal Announcement',
-  prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-  prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
+function remainingJudgeCaseData() {
+  return {
+    courtCaseNumber: 'Court Case Number',
+    courtDate: '2020-09-29T13:00:00.000Z',
+    courtRoom: '201',
+    courtStartTime: '2020-09-29T13:00:00.000Z',
+    courtEndTime: '2020-09-29T14:00:00.000Z',
+    courtAttendees: 'Court Attendees',
+    policeDemands: 'Police Demands',
+    courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
+    accusedPleaDecision: AccusedPleaDecision.ACCEPT,
+    accusedPleaAnnouncement: 'Accused Plea',
+    litigationPresentations: 'Litigation Presentations',
+    ruling: 'Ruling',
+    decision: CaseDecision.ACCEPTING,
+    custodyEndDate: '2020-09-28T12:00:00.000Z',
+    custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
+    otherRestrictions: 'Other Restrictions',
+    accusedAppealDecision: CaseAppealDecision.APPEAL,
+    accusedAppealAnnouncement: 'Accused Appeal Announcement',
+    prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+    prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
+    judgeId: judge.id,
+    registrarId: registrar.id,
+  }
 }
 
 function getProsecutorCaseData(
@@ -128,7 +169,7 @@ function getProsecutorCaseData(
 }
 
 function getJudgeCaseData() {
-  return remainingJudgeCaseData
+  return remainingJudgeCaseData()
 }
 
 function getCaseData(
@@ -144,6 +185,24 @@ function getCaseData(
   return data as CCase
 }
 
+function institutionToTInstitution(institution: Institution) {
+  return ({
+    ...institution,
+    created: institution.created && institution.created.toISOString(),
+    modified: institution.modified && institution.modified.toISOString(),
+  } as unknown) as TInstitution
+}
+
+function userToCUser(user: User) {
+  return ({
+    ...user,
+    created: user.created && user.created.toISOString(),
+    modified: user.modified && user.modified.toISOString(),
+    institution:
+      user.institution && institutionToTInstitution(user.institution),
+  } as unknown) as CUser
+}
+
 function caseToCCase(dbCase: Case) {
   const theCase = dbCase.toJSON() as Case
 
@@ -157,17 +216,41 @@ function caseToCCase(dbCase: Case) {
     requestedCustodyEndDate:
       theCase.requestedCustodyEndDate &&
       theCase.requestedCustodyEndDate.toISOString(),
+    prosecutor: theCase.prosecutor && userToCUser(theCase.prosecutor),
     courtDate: theCase.courtDate && theCase.courtDate.toISOString(),
     courtStartTime:
       theCase.courtStartTime && theCase.courtStartTime.toISOString(),
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
+    judge: theCase.judge && userToCUser(theCase.judge),
+    registrar: theCase.registrar && userToCUser(theCase.registrar),
   } as unknown) as CCase
 }
 
-function parseBoolean(value: string | boolean) {
-  return value === 'false' ? false : value === 'true' ? true : value || false
+function expectInstitutionsToMatch(
+  institutionOne: TInstitution,
+  institutionTwo: TInstitution,
+) {
+  expect(institutionOne?.id).toBe(institutionTwo?.id)
+  expect(institutionOne?.created).toBe(institutionTwo?.created)
+  expect(institutionOne?.modified).toBe(institutionTwo?.modified)
+  expect(institutionOne?.name).toBe(institutionTwo?.name)
+}
+
+function expectUsersToMatch(userOne: CUser, userTwo: CUser) {
+  expect(userOne?.id).toBe(userTwo?.id)
+  expect(userOne?.created).toBe(userTwo?.created)
+  expect(userOne?.modified).toBe(userTwo?.modified)
+  expect(userOne?.nationalId).toBe(userTwo?.nationalId)
+  expect(userOne?.name).toBe(userTwo?.name)
+  expect(userOne?.title).toBe(userTwo?.title)
+  expect(userOne?.mobileNumber).toBe(userTwo?.mobileNumber)
+  expect(userOne?.email).toBe(userTwo?.email)
+  expect(userOne?.role).toBe(userTwo?.role)
+  expect(userOne?.institutionId || null).toBe(userTwo?.institutionId || null)
+  expectInstitutionsToMatch(userOne?.institution, userTwo?.institution)
+  expect(userOne?.active).toBe(userTwo?.active)
 }
 
 function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
@@ -206,7 +289,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.legalArguments || null).toBe(caseTwo.legalArguments || null)
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
-  expect(caseOne.prosecutor || null).toStrictEqual(caseTwo.prosecutor || null)
+  expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
@@ -217,7 +300,12 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments || null).toStrictEqual(
     caseTwo.courtDocuments || null,
   )
-  expect(caseOne.accusedPlea || null).toBe(caseTwo.accusedPlea || null)
+  expect(caseOne.accusedPleaDecision || null).toBe(
+    caseTwo.accusedPleaDecision || null,
+  )
+  expect(caseOne.accusedPleaAnnouncement || null).toBe(
+    caseTwo.accusedPleaAnnouncement || null,
+  )
   expect(caseOne.litigationPresentations || null).toBe(
     caseTwo.litigationPresentations || null,
   )
@@ -243,39 +331,168 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
     caseTwo.prosecutorAppealAnnouncement || null,
   )
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
-  expect(caseOne.judge || null).toStrictEqual(caseTwo.judge || null)
+  expectUsersToMatch(caseOne.judge, caseTwo.judge)
+  expect(caseOne.registrarId || null).toBe(caseTwo.registrarId || null)
+  expectUsersToMatch(caseOne.registrar, caseTwo.registrar)
   expect(caseOne.parentCaseId || null).toBe(caseTwo.parentCaseId || null)
   expect(caseOne.parentCase || null).toStrictEqual(caseTwo.parentCase || null)
 }
 
+describe('Institution', () => {
+  it('GET /api/institutions should get all institutions', async () => {
+    await request(app.getHttpServer())
+      .get('/api/institutions')
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        expect(response.body.length).toBe(5)
+      })
+  })
+})
+
 describe('User', () => {
-  it('GET /api/user/:nationalId should get the  user', async () => {
-    const nationalId = '1112902539'
-    let dbUser: User
+  it('GET /api/user/:id should get the user', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/user/${prosecutor.id}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        const apiUser = response.body
+
+        expectUsersToMatch(apiUser, prosecutor)
+      })
+  })
+
+  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
+    let dbUser: CUser
 
     await User.findOne({
-      where: { nationalId },
+      where: { national_id: judgeNationalId }, // eslint-disable-line @typescript-eslint/camelcase
+      include: [{ model: Institution, as: 'institution' }],
     })
       .then((value) => {
-        dbUser = value
+        dbUser = userToCUser(value.toJSON() as User)
 
         return request(app.getHttpServer())
-          .get(`/api/user/${nationalId}`)
+          .get(`/api/user/?nationalId=${judgeNationalId}`)
           .send()
           .expect(200)
       })
       .then((response) => {
         const apiUser = response.body
 
-        expect(apiUser.id).toBe(dbUser.id)
-        expect(apiUser.nationalId).toBe(dbUser.nationalId)
-        expect(apiUser.name).toBe(dbUser.name)
-        expect(apiUser.title).toBe(dbUser.title)
-        expect(apiUser.mobileNumber).toBe(dbUser.mobileNumber)
-        expect(apiUser.email).toBe(dbUser.email)
-        expect(apiUser.role).toBe(dbUser.role)
-        expect(apiUser.institution).toBe(dbUser.institution)
-        expect(apiUser.active).toBe(dbUser.active)
+        expectUsersToMatch(apiUser, dbUser)
+      })
+  })
+
+  it('POST /api/user should create a user', async () => {
+    const data = {
+      nationalId: '1234567890',
+      name: 'The User',
+      title: 'The Title',
+      mobileNumber: '1234567',
+      email: 'user@dmr.is',
+      role: UserRole.JUDGE,
+      institutionId: 'a38666f3-0444-4e44-9654-b83f39f4db11',
+      active: true,
+    }
+    let apiUser: CUser
+
+    await User.destroy({
+      where: {
+        national_id: data.nationalId, // eslint-disable-line @typescript-eslint/camelcase
+      },
+    })
+      .then(() => {
+        return request(app.getHttpServer())
+          .post('/api/user')
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+          .send(data)
+          .expect(201)
+      })
+      .then((response) => {
+        apiUser = response.body
+
+        // Check the response
+        expectUsersToMatch(apiUser, {
+          ...data,
+          id: apiUser.id || 'FAILURE',
+          created: apiUser.created || 'FAILURE',
+          modified: apiUser.modified || 'FAILURE',
+        })
+
+        // Check the data in the database
+        return User.findOne({
+          where: { id: apiUser.id },
+        })
+      })
+      .then((value) => {
+        expectUsersToMatch(userToCUser(value.toJSON() as User), apiUser)
+      })
+  })
+
+  it('PUT /api/user/:id should update fields of a user by id', async () => {
+    const nationalId = '0987654321'
+    const data = {
+      name: 'The Modified User',
+      title: 'The Modified Title',
+      mobileNumber: '7654321',
+      email: 'modifieduser@dmr.is',
+      role: UserRole.PROSECUTOR,
+      institutionId: '7b261673-8990-46b4-a310-5412ad77686a',
+      active: false,
+    }
+    let dbUser: CUser
+    let apiUser: CUser
+
+    await User.destroy({
+      where: {
+        national_id: nationalId, // eslint-disable-line @typescript-eslint/camelcase
+      },
+    })
+      .then(() => {
+        return User.create({
+          nationalId: nationalId,
+          name: 'The User',
+          title: 'The Title',
+          mobileNumber: '1234567',
+          email: 'user@dmr.is',
+          role: UserRole.JUDGE,
+          institutionId: 'a38666f3-0444-4e44-9654-b83f39f4db11',
+          active: true,
+        })
+      })
+      .then((value) => {
+        dbUser = userToCUser(value.toJSON() as User)
+
+        return request(app.getHttpServer())
+          .put(`/api/user/${dbUser.id}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+          .send(data)
+          .expect(200)
+      })
+      .then((response) => {
+        apiUser = response.body
+
+        // Check the response
+        expect(apiUser.modified).not.toBe(dbUser.modified)
+        expectUsersToMatch(apiUser, {
+          ...data,
+          id: dbUser.id || 'FAILURE',
+          created: dbUser.created || 'FAILURE',
+          modified: apiUser.modified,
+          nationalId: dbUser.nationalId || 'FAILURE',
+        } as CUser)
+
+        // Check the data in the database
+        return User.findOne({
+          where: { id: apiUser.id },
+        })
+      })
+      .then((newValue) => {
+        expectUsersToMatch(userToCUser(newValue.toJSON() as User), apiUser)
       })
   })
 })
@@ -361,7 +578,7 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${value.id}`)
+          .put(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send(data)
           .expect(200)
@@ -400,7 +617,7 @@ describe('Case', () => {
         dbCase = caseToCCase(value)
 
         return request(app.getHttpServer())
-          .put(`/api/case/${value.id}`)
+          .put(`/api/case/${dbCase.id}`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .send(judgeCaseData)
           .expect(200)
@@ -430,7 +647,10 @@ describe('Case', () => {
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create({ ...getCaseData(), state: CaseState.RECEIVED })
+    await Case.create({
+      ...getCaseData(true, true, true),
+      state: CaseState.RECEIVED,
+    })
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -455,26 +675,36 @@ describe('Case', () => {
           ...dbCase,
           modified: apiCase.modified,
           state: CaseState.ACCEPTED,
-          judgeId: judge.id,
         })
 
         // Check the data in the database
         return Case.findOne({
           where: { id: apiCase.id },
           include: [
-            { model: User, as: 'prosecutor' },
-            { model: User, as: 'judge' },
+            {
+              model: User,
+              as: 'prosecutor',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'judge',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'registrar',
+              include: [{ model: Institution, as: 'institution' }],
+            },
           ],
         })
       })
       .then((value) => {
         expectCasesToMatch(caseToCCase(value), {
           ...apiCase,
-          judge: ({
-            ...judge,
-            created: value.judge.created,
-            modified: value.judge.modified,
-          } as unknown) as TUser,
+          prosecutor,
+          judge,
+          registrar,
         })
       })
   })
@@ -485,7 +715,7 @@ describe('Case', () => {
       .then(() =>
         request(app.getHttpServer())
           .get(`/api/cases`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200),
       )
@@ -504,13 +734,18 @@ describe('Case', () => {
 
         return request(app.getHttpServer())
           .get(`/api/case/${dbCase.id}`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
+          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
           .send()
           .expect(200)
       })
       .then((response) => {
         // Check the response
-        expectCasesToMatch(response.body, { ...dbCase, prosecutor: prosecutor })
+        expectCasesToMatch(response.body, {
+          ...dbCase,
+          prosecutor,
+          judge,
+          registrar,
+        })
       })
   })
 
@@ -518,7 +753,6 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.REJECTED,
-      judgeId: judge.id,
     })
       .then(async (value) =>
         request(app.getHttpServer())
@@ -537,7 +771,6 @@ describe('Case', () => {
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.ACCEPTED,
-      judgeId: judge.id,
     })
       .then((value) =>
         request(app.getHttpServer())

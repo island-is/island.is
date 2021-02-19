@@ -42,7 +42,7 @@
     "air-discount-scheme-web": {
       "tags": []
     },
-    "air-discount-scheme/web-e2e": {
+    "air-discount-scheme-web-e2e": {
       "tags": [],
       "implicitDependencies": ["air-discount-scheme-web"]
     },
@@ -115,9 +115,6 @@
     "api-schema": {
       "tags": []
     },
-    "application-api-template-utils": {
-      "tags": []
-    },
     "application-core": {
       "tags": []
     },
@@ -136,6 +133,9 @@
     "application-system-form-e2e": {
       "tags": [],
       "implicitDependencies": ["application-system-form"]
+    },
+    "application-template-api-modules": {
+      "tags": []
     },
     "application-template-loader": {
       "tags": []
@@ -207,6 +207,9 @@
     "contentful-importer": {
       "tags": []
     },
+    "contentful-translation-extension": {
+      "tags": []
+    },
     "dokobit-signing": {
       "tags": []
     },
@@ -245,10 +248,16 @@
     "infra-express-server": {
       "tags": []
     },
+    "infra-metrics": {
+      "tags": []
+    },
     "infra-monitoring": {
       "tags": []
     },
     "infra-nest-server": {
+      "tags": []
+    },
+    "infra-next-server": {
       "tags": []
     },
     "infra-tracing": {
@@ -265,7 +274,8 @@
       "tags": []
     },
     "island-ui-storybook": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["island-ui-core"]
     },
     "island-ui-theme": {
       "tags": []
@@ -297,7 +307,7 @@
     "judicial-system-web": {
       "tags": []
     },
-    "judicial-system/web-e2e": {
+    "judicial-system-web-e2e": {
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
     },
@@ -416,12 +426,12 @@
     "skilavottord-web": {
       "tags": []
     },
-    "skilavottord-ws": {
-      "tags": []
-    },
-    "skilavottord/web-e2e": {
+    "skilavottord-web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
+    },
+    "skilavottord-ws": {
+      "tags": []
     },
     "utils-api": {
       "tags": []

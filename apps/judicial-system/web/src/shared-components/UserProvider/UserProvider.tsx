@@ -13,19 +13,22 @@ interface UserProvider {
 
 export const UserContext = createContext<UserProvider>({})
 
-export const UserQuery = gql`
-  query UserQuery {
-    user {
+export const CurrentUserQuery = gql`
+  query CurrentUserQuery {
+    currentUser {
+      id
       name
       title
       role
-      institution
+      institution {
+        id
+        name
+      }
     }
   }
 `
 
-const USER_MOCKED =
-  process.env.NODE_ENV === 'development' && process.env.NX_API_MOCKS === 'true'
+const USER_MOCKED = process.env.API_MOCKS === 'true'
 
 const UserProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
@@ -35,10 +38,10 @@ const UserProvider: React.FC = ({ children }) => {
 
   const location = useLocation()
 
-  const { data } = useQuery(UserQuery, { fetchPolicy: 'no-cache' })
+  const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
   const loggedInUser = USER_MOCKED
     ? { name: 'User', role: 'user', title: 'Mr.' }
-    : data?.user
+    : data?.currentUser
 
   useEffect(() => {
     if (loggedInUser && !user) {

@@ -92,15 +92,15 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
-      "@island.is/application/api-template-utils": [
-        "libs/application/api-template-utils/src/index.ts"
-      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
+      ],
+      "@island.is/application/template-api-modules": [
+        "libs/application/template-api-modules/src/index.ts"
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
@@ -169,8 +169,10 @@
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],
+      "@island.is/infra-metrics": ["libs/infra-metrics/src/index.ts"],
       "@island.is/infra-monitoring": ["libs/infra-monitoring/src/index.ts"],
       "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
+      "@island.is/infra-next-server": ["libs/infra-next-server/src/index.ts"],
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"

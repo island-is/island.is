@@ -113,6 +113,11 @@ export const richText: RichText = (
   locale = 'is',
 ) => {
   const options = {
+    renderText: (text) => {
+      return text.split('\n').reduce((children, textSegment, index) => {
+        return [...children, index > 0 && <br key={index} />, textSegment]
+      }, [])
+    },
     renderNode: { ...defaultRenderNode, ...opt.renderNode },
     renderMark: { ...defaultRenderMark, ...opt.renderMark },
   }
@@ -121,6 +126,7 @@ export const richText: RichText = (
     ...opt.renderComponent,
     locale,
   }
+  console.log(documents)
   return documents.map((slice) => {
     if (slice.__typename === 'Html') {
       return (

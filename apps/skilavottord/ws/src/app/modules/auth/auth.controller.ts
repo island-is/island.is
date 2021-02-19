@@ -114,14 +114,15 @@ export class AuthController {
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
 
-    this.logger.info(
+    /* this.logger.info(
       `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
-    )
+    )*/
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - returnUrl = ${returnUrl}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
-    this.logger.info(`  - Role for ${user.fullname} is Citizen`)
+    //this.logger.info(`  - Role for ${user.fullname} is Citizen`)
+    this.logger.info(`  - Role for user is Citizen`)
     this.logger.info(`--- /citizen/callback ending ---`)
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
@@ -179,10 +180,10 @@ export class AuthController {
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
 
-    this.logger.info(
+    /* this.logger.info(
       `  - personalId = ${user.kennitala}  name = ${user.fullname}   mobile = ${user.mobile}`,
-    )
-    this.logger.info(`  - csrfToken = ${csrfToken}`)
+    )*/
+    // this.logger.info(`  - csrfToken = ${csrfToken}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
     this.logger.info(`  - ACCESS_TOKEN_COOKIE = ${ACCESS_TOKEN_COOKIE.name}`)
     this.logger.info(`  - CSRF_COOKIE = ${CSRF_COOKIE.name}`)
@@ -197,7 +198,8 @@ export class AuthController {
     let RoleForUser: Role = 'citizen'
     RoleForUser = authService.getRole(RoleUser)
 
-    this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
+    //this.logger.info(`  - Role for ${user.fullname} is ${RoleForUser}`)
+    this.logger.info(`  - Role for user is ${RoleForUser}`)
     let returnUrlComp: string
     if (RoleForUser.includes('recyclingCompany')) {
       returnUrlComp = `${BASE_PATH}/deregister-vehicle`

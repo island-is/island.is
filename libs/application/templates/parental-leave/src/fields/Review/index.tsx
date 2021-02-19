@@ -29,7 +29,7 @@ import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
-import { m, mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO } from '../../constants'
 import useOtherParentOptions from '../../hooks/useOtherParentOptions'
 
@@ -128,15 +128,21 @@ const Review: FC<ReviewScreenProps> = ({
             variant="utility"
           >
             {allItemsExpanded
-              ? `${formatMessage(mm.confirmation.collapseAll)}`
-              : `${formatMessage(mm.confirmation.epxandAll)}`}
+              ? `${formatMessage(
+                  parentalLeaveFormMessages.confirmation.collapseAll,
+                )}`
+              : `${formatMessage(
+                  parentalLeaveFormMessages.confirmation.epxandAll,
+                )}`}
           </Button>
         </Box>
 
         <Accordion singleExpand={false}>
           <AccordionItem
             id="id_4"
-            label={formatMessage(m.otherParentTitle)}
+            label={formatMessage(
+              parentalLeaveFormMessages.shared.otherParentTitle,
+            )}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
@@ -183,7 +189,9 @@ const Review: FC<ReviewScreenProps> = ({
                         <Input
                           id="otherParentName"
                           name="otherParentName"
-                          label={formatMessage(m.otherParentName)}
+                          label={formatMessage(
+                            parentalLeaveFormMessages.shared.otherParentName,
+                          )}
                           ref={register}
                         />
                       ) : (
@@ -202,7 +210,9 @@ const Review: FC<ReviewScreenProps> = ({
                         <Input
                           id="otherParentId"
                           name="otherParentId"
-                          label={formatMessage(m.otherParentID)}
+                          label={formatMessage(
+                            parentalLeaveFormMessages.shared.otherParentID,
+                          )}
                           ref={register}
                         />
                       ) : (
@@ -224,7 +234,9 @@ const Review: FC<ReviewScreenProps> = ({
 
           <AccordionItem
             id="id_3"
-            label={formatMessage(m.paymentInformationSubSection)}
+            label={formatMessage(
+              parentalLeaveFormMessages.shared.paymentInformationSubSection,
+            )}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
@@ -234,7 +246,9 @@ const Review: FC<ReviewScreenProps> = ({
                     <Input
                       id="payments.bank"
                       name="payments.bank"
-                      label={formatMessage(m.paymentInformationBank)}
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared.paymentInformationBank,
+                      )}
                       ref={register}
                     />
                   ) : (
@@ -259,7 +273,9 @@ const Review: FC<ReviewScreenProps> = ({
                 <GridColumn span="6/12">
                   {editable ? (
                     <SelectController
-                      label={formatMessage(m.salaryLabelPensionFund)}
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared.salaryLabelPensionFund,
+                      )}
                       name="payments.pensionFund"
                       disabled={false}
                       id="payments.pensionFund"
@@ -279,7 +295,9 @@ const Review: FC<ReviewScreenProps> = ({
                 <GridColumn span="6/12">
                   {editable ? (
                     <SelectController
-                      label={formatMessage(m.union)}
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared.union,
+                      )}
                       name="payments.union"
                       disabled={false}
                       id="payments.union"
@@ -301,7 +319,9 @@ const Review: FC<ReviewScreenProps> = ({
               <Box marginTop={3} />
 
               <Text variant="h5" marginTop={1} marginBottom={2}>
-                {formatMessage(m.privatePensionFundName)}
+                {formatMessage(
+                  parentalLeaveFormMessages.shared.privatePensionFundName,
+                )}
               </Text>
 
               {editable ? (
@@ -316,8 +336,18 @@ const Review: FC<ReviewScreenProps> = ({
                     ) as string[]
                   }
                   options={[
-                    { label: formatMessage(m.yesOptionLabel), value: YES },
-                    { label: formatMessage(m.noOptionLabel), value: NO },
+                    {
+                      label: formatMessage(
+                        parentalLeaveFormMessages.shared.yesOptionLabel,
+                      ),
+                      value: YES,
+                    },
+                    {
+                      label: formatMessage(
+                        parentalLeaveFormMessages.shared.noOptionLabel,
+                      ),
+                      value: NO,
+                    },
                   ]}
                   onSelect={(s: string) => {
                     setStatefulPrivatePension(s as ValidAnswers)
@@ -341,7 +371,9 @@ const Review: FC<ReviewScreenProps> = ({
                     <GridColumn span="6/12">
                       {editable ? (
                         <SelectController
-                          label={formatMessage(m.privatePensionFund)}
+                          label={formatMessage(
+                            parentalLeaveFormMessages.shared.privatePensionFund,
+                          )}
                           name="payments.pensionFund"
                           disabled={false}
                           id="payments.pensionFund"
@@ -361,10 +393,12 @@ const Review: FC<ReviewScreenProps> = ({
                     <GridColumn span="6/12">
                       {editable ? (
                         <SelectController
-                          label={formatMessage(m.union)}
-                          name={'payments.union'}
+                          label={formatMessage(
+                            parentalLeaveFormMessages.shared.union,
+                          )}
+                          name="payments.union"
                           disabled={false}
-                          id={'payments.union'}
+                          id="payments.union"
                           options={[{ label: 'TODO', value: 'todo' }]}
                         />
                       ) : (
@@ -385,15 +419,17 @@ const Review: FC<ReviewScreenProps> = ({
           </AccordionItem>
           <AccordionItem
             id="id_1"
-            label={formatMessage(mm.employer.subSection)}
+            label={formatMessage(parentalLeaveFormMessages.employer.subSection)}
             startExpanded={allItemsExpanded}
           >
             {editable ? (
               <Box paddingY={4}>
                 <Input
-                  id={'employer.email'}
-                  name={'employer.email'}
-                  label={formatMessage(mm.employer.email)}
+                  id="employer.email"
+                  name="employer.email"
+                  label={formatMessage(
+                    parentalLeaveFormMessages.employer.email,
+                  )}
                   ref={register}
                 />
               </Box>
@@ -411,7 +447,7 @@ const Review: FC<ReviewScreenProps> = ({
 
           <AccordionItem
             id="id_4"
-            label={formatMessage(m.yourRights)}
+            label={formatMessage(parentalLeaveFormMessages.shared.yourRights)}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
@@ -421,14 +457,20 @@ const Review: FC<ReviewScreenProps> = ({
 
           <AccordionItem
             id="id_4"
-            label={formatMessage(m.periodsSection)}
+            label={formatMessage(
+              parentalLeaveFormMessages.shared.periodsSection,
+            )}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <Timeline
                 initDate={dobDate}
-                title={formatMessage(m.expectedDateOfBirthTitle)}
-                titleSmall={formatMessage(m.dateOfBirthTitle)}
+                title={formatMessage(
+                  parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
+                )}
+                titleSmall={formatMessage(
+                  parentalLeaveFormMessages.shared.dateOfBirthTitle,
+                )}
                 periods={formatPeriods(
                   application.answers.periods as Period[],
                   otherParentPeriods,
@@ -437,7 +479,7 @@ const Review: FC<ReviewScreenProps> = ({
               {editable && (
                 <Box paddingTop={3}>
                   <Button size="small" onClick={() => goToScreen?.('periods')}>
-                    {formatMessage(mm.leavePlan.change)}
+                    {formatMessage(parentalLeaveFormMessages.leavePlan.change)}
                   </Button>
                 </Box>
               )}
@@ -446,7 +488,9 @@ const Review: FC<ReviewScreenProps> = ({
 
           <AccordionItem
             id="id_4"
-            label={formatMessage(mm.paymentPlan.subSection)}
+            label={formatMessage(
+              parentalLeaveFormMessages.paymentPlan.subSection,
+            )}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
@@ -461,21 +505,25 @@ const Review: FC<ReviewScreenProps> = ({
 
           <AccordionItem
             id="id_4"
-            label={formatMessage(mm.shareInformation.subSection)}
+            label={formatMessage(
+              parentalLeaveFormMessages.shareInformation.subSection,
+            )}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <Box marginTop={1} marginBottom={2} marginLeft={4}>
                 <Text variant="h5">
-                  {formatMessage(mm.shareInformation.title)}
+                  {formatMessage(
+                    parentalLeaveFormMessages.shareInformation.title,
+                  )}
                 </Text>
               </Box>
 
               {editable ? (
                 <RadioController
-                  id={'shareInformationWithOtherParent'}
+                  id="shareInformationWithOtherParent"
                   disabled={false}
-                  name={'shareInformationWithOtherParent'}
+                  name="shareInformationWithOtherParent"
                   defaultValue={
                     getValueViaPath(
                       application.answers,
@@ -483,8 +531,18 @@ const Review: FC<ReviewScreenProps> = ({
                     ) as string[]
                   }
                   options={[
-                    { label: formatMessage(m.yesOptionLabel), value: YES },
-                    { label: formatMessage(m.noOptionLabel), value: NO },
+                    {
+                      label: formatMessage(
+                        parentalLeaveFormMessages.shared.yesOptionLabel,
+                      ),
+                      value: YES,
+                    },
+                    {
+                      label: formatMessage(
+                        parentalLeaveFormMessages.shared.noOptionLabel,
+                      ),
+                      value: NO,
+                    },
                   ]}
                 />
               ) : (

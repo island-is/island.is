@@ -15,8 +15,9 @@ export function useLocale() {
     descriptor: MessageDescriptor | string,
     values?: any,
   ): string {
-    if (!descriptor || typeof descriptor === 'string')
+    if (!descriptor || typeof descriptor === 'string') {
       return descriptor as string
+    }
 
     return intl.formatMessage(descriptor, values)
   }

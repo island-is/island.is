@@ -59,9 +59,21 @@ export const routesTemplate = {
     is: '/stofnanir/[slug]',
     en: '/en/organizations/[slug]',
   },
+  organizationsubpage: {
+    is: '/stofnanir/[slug]/[subSlug]',
+    en: '/en/organizations/[slug]/[subSlug]',
+  },
+  lifeevents: {
+    is: '/lifsvidburdir',
+    en: '/en/life-events',
+  },
   lifeeventpage: {
-    is: '/lifsvidburdur/[slug]',
-    en: '/en/life-event/[slug]',
+    is: '/lifsvidburdir/[slug]',
+    en: '/en/life-events/[slug]',
+  },
+  auction: {
+    is: '/stofnanir/syslumenn/uppbod/[id]',
+    en: '',
   },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',

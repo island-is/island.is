@@ -28,7 +28,6 @@ import {
   CaseType,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -44,6 +43,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import * as styles from './Overview.treat'
 
 interface CaseData {
   case?: Case
@@ -104,7 +104,7 @@ export const JudgeOverview: React.FC = () => {
           state: data.transitionCase.state,
         } as Case)
       } catch (e) {
-        console.log(e)
+        // TODO: Handle error
       }
     }
 
@@ -191,7 +191,9 @@ export const JudgeOverview: React.FC = () => {
               data={[
                 {
                   title: 'Embætti',
-                  value: 'Lögreglan á Höfuðborgarsvæðinu',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
                 },
                 {
                   title: 'Ósk um fyrirtökudag og tíma',
@@ -297,11 +299,13 @@ export const JudgeOverview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (
@@ -315,7 +319,7 @@ export const JudgeOverview: React.FC = () => {
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
                       <Text variant="eyebrow" color="blue400">
-                        Málsatvik rakin
+                        Málsatvik
                       </Text>
                     </Box>
                     <Text>
@@ -362,6 +366,7 @@ export const JudgeOverview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
               {
