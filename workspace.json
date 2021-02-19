@@ -4033,6 +4033,12 @@
             "jestConfig": "libs/service-portal/document-provider/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/document-provider/src/lib/messages.ts"
+          }
         }
       }
     },
