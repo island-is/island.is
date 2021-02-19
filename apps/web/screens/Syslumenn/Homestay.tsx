@@ -25,7 +25,7 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { MarkdownText, OrganizationWrapper } from '@island.is/web/components'
+import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -106,10 +106,6 @@ const Homestay: Screen<HomestayProps> = ({
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
     >
       <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
@@ -136,9 +132,10 @@ const Homestay: Screen<HomestayProps> = ({
           onChange={(event) => setQuery(event.target.value)}
         />
       </Box>
-      {filteredItems.slice(0, showCount).map((homestay) => {
+      {filteredItems.slice(0, showCount).map((homestay, index) => {
         return (
           <Box
+            key={index}
             border="standard"
             borderRadius="large"
             marginY={2}

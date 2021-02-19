@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -10,6 +12,8 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 import { UserRole } from '@island.is/judicial-system/types'
+
+import { Institution } from '../institution'
 
 @Table({
   tableName: 'user',
@@ -77,12 +81,17 @@ export class User extends Model<User> {
   @ApiProperty({ enum: UserRole })
   role: UserRole
 
+  @ForeignKey(() => Institution)
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    type: DataType.UUID,
+    allowNull: true,
   })
   @ApiProperty()
-  institution: string
+  institutionId: string
+
+  @BelongsTo(() => Institution, 'institutionId')
+  @ApiProperty({ type: Institution })
+  institution: Institution
 
   @Column({
     type: DataType.BOOLEAN,

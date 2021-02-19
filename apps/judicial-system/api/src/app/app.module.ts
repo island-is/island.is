@@ -19,6 +19,7 @@ import {
   CaseModule,
   FileModule,
   AuditModule,
+  InstitutionModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -44,6 +45,7 @@ const autoSchemaFile = environment.production
     UserModule,
     CaseModule,
     FileModule,
+    InstitutionModule,
   ],
   providers: [BackendAPI],
 })

@@ -96,11 +96,31 @@ export const m = defineMessages({
     defaultMessage:
       'Hér getur þú fundið alla þá skjalaveitendur sem nota pósthólf á island.is',
   },
+  documentProvidersSearchPlaceholder: {
+    id: 'sp.document-provider:document-providers-search-placeholder',
+    defaultMessage: 'Leitaðu að skjalaveitu',
+  },
+  documentProvidersNumberOfSearchResultsFoundMessage: {
+    id:
+      'sp.document-provider:document-providers-number-of-search-results-found-message',
+    defaultMessage: 'Skjalaveitendur fundust',
+  },
+  documentProvidersSearchResultsActionCardLabel: {
+    id:
+      'sp.document-provider:document-providers-search-results-action-card-label',
+    defaultMessage: 'Skoða nánar',
+  },
+
   //DocumentProvidersSingle
   //DocumentProvidersSingleInstitution
   SingleProviderDescription: {
     id: 'sp.document-provider:document-providers-single-description',
     defaultMessage: 'Ýtarlegar upplýsingar um skjalaveitu',
+  },
+  SingleProviderOrganisationNameNotFoundMessage: {
+    id:
+      'sp.document-provider:single-provider-organistion-name-not-found-message',
+    defaultMessage: 'Heiti stofnunar fannst ekki',
   },
   SingleProviderInstitutionHeading: {
     id: 'sp.document-provider:document-providers-single-institution-name',
@@ -108,26 +128,26 @@ export const m = defineMessages({
   },
   SingleProviderInstitutionNameLabel: {
     id: 'sp.document-provider:document-providers-single-institution-name-label',
-    defaultMessage: 'Nafn stofnunar',
+    defaultMessage: 'Nafn á stofnun',
   },
   SingleProviderInstitutionNamePlaceholder: {
     id:
       'sp.document-provider:document-providers-single-institution-name-placeholder',
-    defaultMessage: 'Nafn stofnunar',
+    defaultMessage: 'Nafn á stofnun',
   },
   SingleProviderInstitutionNameError: {
     id: 'sp.document-provider:document-providers-single-institution-name-error',
-    defaultMessage: 'Nafn er skilyrt',
+    defaultMessage: 'Nafn á stofnun er skilyrt',
   },
   SingleProviderInstitutionNationalIdLabel: {
     id:
       'sp.document-provider:document-providers-single-institution-nationalid-label',
-    defaultMessage: 'Kennitala stofnunar',
+    defaultMessage: 'Kennitala',
   },
   SingleProviderInstitutionNationalIdPlaceholder: {
     id:
       'sp.document-provider:document-providers-single-institution-nationalid-placeholder',
-    defaultMessage: 'Kennitala stofnunar',
+    defaultMessage: 'Kennitala',
   },
   SingleProviderInstitutionNationalIdError: {
     id:
@@ -199,20 +219,15 @@ export const m = defineMessages({
       'sp.document-provider:document-providers-single-institution-address-error',
     defaultMessage: 'Heimilisfang er skilyrt',
   },
-  SingleProviderInstitutionZipcodeLabel: {
+  SingleProviderUpdateInformationError: {
     id:
-      'sp.document-provider:document-providers-single-institution-zipcode-label',
-    defaultMessage: 'Póstnúmer',
+      'sp.document-provider:document-providers-single-update-information-error',
+    defaultMessage: 'Ekki tókst að uppfæra upplýsingar',
   },
-  SingleProviderInstitutionZipcodePlaceholder: {
+  SingleProviderUpdateInformationSuccess: {
     id:
-      'sp.document-provider:document-providers-single-institution-zipcode-placeholder',
-    defaultMessage: 'Póstnúmer',
-  },
-  SingleProviderInstitutionZipcodeError: {
-    id:
-      'sp.document-provider:document-providers-single-institution-zipcode-error',
-    defaultMessage: 'Póstnúmer er skilyrt',
+      'sp.document-provider:document-providers-single-update-information-success',
+    defaultMessage: 'Upplýsingar uppfærðar!',
   },
 
   //DocumentProvidersSingleResponsibleContact
@@ -280,6 +295,10 @@ export const m = defineMessages({
     id:
       'sp.document-provider:document-providers-single-responsible-contact-phonenumber-error-length',
     defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
+  },
+  SingleProviderGetOrganisationError: {
+    id: 'sp.document-provider:document-providers-single-get-organisation-error',
+    defaultMessage: 'Ekki tókst að sækja upplýsingar um stofnun með kt.',
   },
 
   //DocumentProvidersSingleTechnicalContact
@@ -812,6 +831,10 @@ export const m = defineMessages({
   },
   StatisticsDescription: {
     id: 'sp.document-provider:statistics-information-description',
-    defaultMessage: 'Á þessari síðu sérð þú upplýsingar um tölfræði',
+    defaultMessage: 'Hér er tölfræði yfir rafrænar skjalasendingar ',
+  },
+  StatisticsSearchPlaceholder: {
+    id: 'sp.document-provider:statistics-search-placeholder',
+    defaultMessage: 'Leitaðu eftir skjalaveitanda',
   },
 })

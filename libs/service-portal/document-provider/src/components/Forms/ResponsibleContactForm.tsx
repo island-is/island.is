@@ -1,32 +1,44 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-
-export interface ResponsibleContactFormData {
-  name: string
-  email: string
-  tel: string
-}
+import { Contact } from '@island.is/api/schema'
+import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministrativeContact'
+import { ContactInput } from '../../shared/useUpdateTechnicalContact'
 
 interface Props {
-  onSubmit: (data: ResponsibleContactFormData) => void
+  organisationId: string
+  administrativeContact: Contact
 }
 
-export const ResponsibleContactForm: FC<Props> = ({ onSubmit }) => {
+export const ResponsibleContactForm: FC<Props> = ({
+  organisationId,
+  administrativeContact,
+}) => {
   const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
+  const {
+    updateAdministrativeContact,
+    loading,
+  } = useUpdateAdministrativeContact(organisationId)
 
+  const onSubmit = (contact: Contact) => {
+    if (contact) {
+      const input: ContactInput = {
+        ...contact,
+        id: administrativeContact?.id,
+      }
+      updateAdministrativeContact(input)
+    }
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
           name="name"
-          defaultValue=""
+          defaultValue={administrativeContact?.name || ''}
           rules={{
             required: {
               value: true,
@@ -50,7 +62,7 @@ export const ResponsibleContactForm: FC<Props> = ({ onSubmit }) => {
         <Controller
           control={control}
           name="email"
-          defaultValue=""
+          defaultValue={administrativeContact?.email || ''}
           rules={{
             required: {
               value: true,
@@ -79,8 +91,8 @@ export const ResponsibleContactForm: FC<Props> = ({ onSubmit }) => {
         />
         <Controller
           control={control}
-          name="tel"
-          defaultValue=""
+          name="phoneNumber"
+          defaultValue={administrativeContact?.phoneNumber || ''}
           rules={{
             required: {
               value: true,
@@ -102,8 +114,8 @@ export const ResponsibleContactForm: FC<Props> = ({ onSubmit }) => {
               value={value}
               placeholder={formatMessage(m.SettingsEditResponsibleContactTel)}
               onChange={onChange}
-              hasError={errors.tel}
-              errorMessage={errors.tel?.message}
+              hasError={errors.phoneNumber}
+              errorMessage={errors.phoneNumber?.message}
             ></Input>
           )}
         />
@@ -116,13 +128,18 @@ export const ResponsibleContactForm: FC<Props> = ({ onSubmit }) => {
         marginTop={4}
       >
         <Box marginTop={[1, 0]}>
-          <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
+          {/* <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
             <Button variant="ghost">
               {formatMessage(m.SettingsEditResponsibleContactBackButton)}
             </Button>
-          </Link>
+          </Link> */}
         </Box>
-        <Button type="submit" variant="primary" icon="arrowForward">
+        <Button
+          type="submit"
+          variant="primary"
+          icon="arrowForward"
+          loading={loading}
+        >
           {formatMessage(m.SettingsEditResponsibleContactSaveButton)}
         </Button>
       </Box>

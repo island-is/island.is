@@ -185,7 +185,10 @@ export const CreateUserMutation = gql`
       role
       title
       email
-      institution
+      institution {
+        id
+        name
+      }
       active
     }
   }
@@ -201,7 +204,10 @@ export const UsersQuery = gql`
       role
       title
       email
-      institution
+      institution {
+        id
+        name
+      }
       active
     }
   }
@@ -217,7 +223,10 @@ export const UserQuery = gql`
       role
       title
       email
-      institution
+      institution {
+        id
+        name
+      }
       active
     }
   }
@@ -228,6 +237,15 @@ export const UpdateUserMutation = gql`
     updateUser(input: $input) {
       id
       modified
+    }
+  }
+`
+
+export const InstitutionsQuery = gql`
+  query InstitutionsQuery {
+    institutions {
+      id
+      name
     }
   }
 `
