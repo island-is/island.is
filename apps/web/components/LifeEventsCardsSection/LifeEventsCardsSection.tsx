@@ -5,6 +5,7 @@ import {
   Box,
   Link,
   Button,
+  TextProps,
 } from '@island.is/island-ui/core'
 import { GetLifeEventsQuery } from '@island.is/web/graphql/schema'
 import { CardsSlider } from '@island.is/web/components'
@@ -12,12 +13,14 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface LifeEventsSectionProps {
   title?: string
+  titleProps?: TextProps
   linkTitle?: string
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
 }
 
 export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
+  titleProps = {},
   linkTitle,
   lifeEvents = [],
 }) => {
@@ -27,6 +30,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     <GridContainer>
       <CardsSlider
         title={title}
+        titleProps={titleProps}
         cards={lifeEvents
           .filter((x) => x.slug && x.title)
           .map((lifeEvent) => {

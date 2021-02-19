@@ -3,7 +3,14 @@ import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
 import 'react-alice-carousel/lib/alice-carousel.css'
-import { Inline, Text, Box, Hidden, Button } from '@island.is/island-ui/core'
+import {
+  Inline,
+  Text,
+  Box,
+  Hidden,
+  Button,
+  TextProps,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Card, CardProps } from '@island.is/web/components'
 import * as styles from './CardsSlider.treat'
@@ -15,6 +22,7 @@ interface StagePaddingProps {
 
 interface CardsSliderProps {
   title: string
+  titleProps?: TextProps
   cards: Array<CardProps>
 }
 
@@ -26,7 +34,11 @@ const initialSlideState = {
   isNextSlideDisabled: false,
 } as EventObject
 
-export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
+export const CardsSlider: FC<CardsSliderProps> = ({
+  title,
+  titleProps = {},
+  cards,
+}) => {
   const { width } = useWindowSize()
 
   const [cardHeight, setCardHeight] = useState<string>('auto')
@@ -86,7 +98,9 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   return (
     <div className={cn(styles.wrapper)}>
       <Box paddingBottom={4}>
-        <Text variant={'h3'}>{title}</Text>
+        <Text variant={'h3'} {...titleProps}>
+          {title}
+        </Text>
       </Box>
 
       <AliceCarousel

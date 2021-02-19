@@ -103,7 +103,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           />
         </Section>
         <Section
-          aria-labelledby="lifeEventsTitle"
+          aria-labelledby="lifeEventsAriaTitle"
           backgroundBleed={{
             bleedAmount: 150,
             bleedDirection: 'bottom',
@@ -113,6 +113,9 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
         >
           <LifeEventsCardsSection
             title={n('lifeEventsTitle')}
+            titleProps={{
+              id: 'lifeEventsAriaTitle',
+            }}
             linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
             lifeEvents={page.lifeEvents}
           />
