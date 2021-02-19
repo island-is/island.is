@@ -8,19 +8,16 @@ import {
   PensionFund,
 } from '@island.is/vmst-client'
 import { Application } from '@island.is/application/core'
+import { NationalRegistryFamilyMember } from '@island.is/api/schema'
 
-// 'yes' will not be hard coded once the state machine has been moved into the api module
-const BOOLEAN_TRUE = 'yes'
-
-// Id used when applicant does not wish to pay into a private pension fund
-const NO_PRIVATE_PENSION_FUND_ID = 'X000'
+import { apiConstants, formConstants } from './constants'
 
 const extractAnswer = <T>(
   object: unknown,
   path: string,
   defaultValue: unknown | undefined = undefined,
 ): T => {
-  const value = get(object, path, undefined)
+  const value = get(object, path, defaultValue)
 
   if (defaultValue === undefined && typeof value === 'undefined') {
     throw new Error(
@@ -31,7 +28,7 @@ const extractAnswer = <T>(
   return value
 }
 
-const getPersonalAllowance = (
+export const getPersonalAllowance = (
   application: Application,
   fromSpouse = false,
 ): number => {
@@ -47,14 +44,15 @@ const getPersonalAllowance = (
 
   const willUsePersonalAllowance =
     extractAnswer(application.answers, usePersonalAllowanceGetter) ===
-    BOOLEAN_TRUE
+    formConstants.boolean.true
 
   if (!willUsePersonalAllowance) {
     return 0
   }
 
   const willUseMax =
-    extractAnswer(application.answers, useMaxGetter) === BOOLEAN_TRUE
+    extractAnswer(application.answers, useMaxGetter) ===
+    formConstants.boolean.true
 
   if (willUseMax) {
     return 100
@@ -65,9 +63,9 @@ const getPersonalAllowance = (
   return usage
 }
 
-const getEmployer = (
+export const getEmployer = (
   application: Application,
-  isSelfEmployed: boolean,
+  isSelfEmployed = false,
 ): Employer => ({
   email: isSelfEmployed
     ? extractAnswer(application.answers, 'applicant.email')
@@ -76,6 +74,88 @@ const getEmployer = (
     ? application.applicant
     : extractAnswer(application.answers, 'employer.nationalRegistryId'),
 })
+
+export const getOtherParentId = (application: Application): string => {
+  const otherParent = extractAnswer<string>(application.answers, 'otherParent')
+  const otherParentId = extractAnswer<string>(
+    application.answers,
+    'otherParentId',
+    '',
+  )
+
+  if (otherParent === formConstants.spouseSelection.spouse) {
+    const familyMembers: NationalRegistryFamilyMember[] | null = extractAnswer(
+      application.externalData,
+      'family.data',
+      null,
+    )
+
+    if (familyMembers === null) {
+      throw new Error(
+        'transformApplicationToParentalLeaveDTO: Cannot find spouse. Missing data for family members.',
+      )
+    }
+
+    const spouse = familyMembers.find(
+      (member) =>
+        member.familyRelation === formConstants.spouseSelection.spouse,
+    )
+
+    if (!spouse) {
+      throw new Error(
+        'transformApplicationToParentalLeaveDTO: Cannot find spouse. No family member with this relation.',
+      )
+    }
+
+    return spouse.nationalId
+  }
+
+  return otherParentId
+}
+
+export const getPensionFund = (
+  application: Application,
+  isPrivate = false,
+): PensionFund => {
+  const getter = isPrivate
+    ? 'payments.privatePensionFund'
+    : 'payments.pensionFund'
+
+  const value = get(application.answers, getter, isPrivate ? null : undefined)
+
+  if (isPrivate) {
+    return {
+      id:
+        typeof value === 'string'
+          ? value
+          : apiConstants.pensionFunds.noPrivatePensionFundId,
+      name: '',
+    }
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error(
+      'transformApplicationToParentalLeaveDTO: No pension fund provided.',
+    )
+  }
+
+  return {
+    id: value,
+    name: '',
+  }
+}
+
+export const getPrivatePensionFundRatio = (application: Application) => {
+  const rawPrivatePensionFundRatio: string | undefined = extractAnswer(
+    application.answers,
+    'payments.privatePensionFundPercentage',
+    '0',
+  )
+  const privatePensionFundRatio: number =
+    Number(rawPrivatePensionFundRatio) || 0
+
+  return privatePensionFundRatio
+}
 
 export const transformApplicationToParentalLeaveDTO = (
   application: Application,
@@ -102,52 +182,25 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const isSelfEmployed =
     extractAnswer(application.answers, 'employer.isSelfEmployed') ===
-    BOOLEAN_TRUE
-
-  const employer = getEmployer(application, isSelfEmployed)
+    formConstants.boolean.true
 
   const union: Union = {
     id: extractAnswer(application.answers, 'payments.union'),
     name: '',
   }
 
-  const pensionFund: PensionFund = {
-    id: extractAnswer(application.answers, 'payments.pensionFund'),
-    name: '',
-  }
-
-  const rawPrivatePensionFund: string | null = extractAnswer(
-    application.answers,
-    'payments.privatePensionFund',
-    null,
-  )
-  const privatePensionFund: PensionFund = rawPrivatePensionFund
-    ? {
-        id: rawPrivatePensionFund,
-        name: '',
-      }
-    : {
-        id: NO_PRIVATE_PENSION_FUND_ID,
-        name: '',
-      }
-
-  const rawPrivatePensionFundRatio: string | undefined = extractAnswer(
-    application.answers,
-    'payments.privatePensionFundPercentage',
-    '0',
-  )
-  const privatePensionFundRatio: number =
-    Number(rawPrivatePensionFundRatio) || 0
-
   return {
     applicationId: application.id,
     applicant: application.applicant,
-    otherParentId: extractAnswer(application.answers, 'otherParentId'),
+    otherParentId: getOtherParentId(application),
+    // TODO: secondary parent does not have access to this information
+    // Refactor to take that into account
     expectedDateOfBirth: extractAnswer(
       application.externalData,
       'pregnancyStatus.data.pregnancyDueDate',
     ),
     // TODO: get true date of birth, not expected
+    // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
     dateOfBirth: extractAnswer(
       application.externalData,
       'pregnancyStatus.data.pregnancyDueDate',
@@ -159,12 +212,12 @@ export const transformApplicationToParentalLeaveDTO = (
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union,
-      pensionFund,
-      privatePensionFund,
-      privatePensionFundRatio,
+      pensionFund: getPensionFund(application),
+      privatePensionFund: getPensionFund(application, true),
+      privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
-    employers: [employer],
+    employers: [getEmployer(application, isSelfEmployed)],
     status: 'In Progress',
     // TODO: extract correct rights code from application and connected applications
     // Needs to know if primary/secondary parent, has custody and if self employed and/or employee
