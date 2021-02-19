@@ -29,8 +29,8 @@ export class UserResolver {
   }
 
   @ResolveField('citizenship', () => Citizenship)
-  resolveCitizenship(@Parent() user: User): string {
-    return user.citizenship.name
+  resolveCitizenship(@Parent() user: User): Citizenship {
+    return user.citizenship
   }
 
   @ResolveField('legalResidence', () => String)
