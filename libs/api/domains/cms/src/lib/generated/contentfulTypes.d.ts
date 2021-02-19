@@ -2773,6 +2773,40 @@ export interface ITellUsAStory extends Entry<ITellUsAStoryFields> {
   }
 }
 
+export interface ITestHomepageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Featured */
+  featured?: IFeatured[] | undefined
+
+  /** Slides */
+  slides?: IFrontpageSlider[] | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
+
+  /** Life Events */
+  lifeEvents?: ILifeEventPage[] | undefined
+}
+
+export interface ITestHomepage extends Entry<ITestHomepageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'testHomepage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -3280,6 +3314,7 @@ export type CONTENT_TYPE =
   | 'teamList'
   | 'teamMember'
   | 'tellUsAStory'
+  | 'testHomepage'
   | 'timeline'
   | 'timelineEvent'
   | 'twoColumnText'

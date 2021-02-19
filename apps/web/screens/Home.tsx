@@ -14,8 +14,10 @@ import {
   GetNamespaceQuery,
   GetLifeEventsQuery,
   GetHomepageQuery,
+  GetTestHomepageQuery,
   QueryGetLifeEventsArgs,
   QueryGetHomepageArgs,
+  QueryGetTestHomepageArgs,
   GetNewsQuery,
   FrontpageSlider as FrontpageSliderType,
 } from '@island.is/web/graphql/schema'
@@ -25,6 +27,7 @@ import {
   GET_FRONTPAGE_SLIDES_QUERY,
   GET_LIFE_EVENTS_QUERY,
   GET_HOMEPAGE_QUERY,
+  GET_TEST_HOMEPAGE_QUERY,
   GET_NEWS_QUERY,
 } from './queries'
 import {
@@ -47,7 +50,7 @@ interface HomeProps {
   namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsQuery['getNews']['items']
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
-  page: GetHomepageQuery['getHomepage']
+  page: GetTestHomepageQuery['getTestHomepage']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -191,7 +194,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       data: { getLifeEvents },
     },
     {
-      data: { getHomepage },
+      data: { getTestHomepage },
     },
     namespace,
   ] = await Promise.all([
@@ -234,8 +237,8 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<GetHomepageQuery, QueryGetHomepageArgs>({
-      query: GET_HOMEPAGE_QUERY,
+    apolloClient.query<GetTestHomepageQuery, QueryGetTestHomepageArgs>({
+      query: GET_TEST_HOMEPAGE_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -255,12 +258,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
+  console.log({getTestHomepage})
+
   return {
     news,
     lifeEvents: getLifeEvents,
     frontpageSlides: items,
     categories: getArticleCategories,
-    page: getHomepage,
+    page: getTestHomepage,
     namespace,
     showSearchInHeader: false,
   }
