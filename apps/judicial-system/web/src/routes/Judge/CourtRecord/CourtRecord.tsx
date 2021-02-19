@@ -396,6 +396,7 @@ export const CourtRecord: React.FC = () => {
                 />
               </div>
               <Input
+                data-testid="accusedPleaAnnouncement"
                 name="accusedPleaAnnouncement"
                 label={`Afstaða ${formatAccusedByGender(
                   workingCase.accusedGender || CaseGender.OTHER,
