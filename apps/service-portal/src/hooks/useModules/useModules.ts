@@ -11,7 +11,7 @@ import { featureFlaggedModules, ModuleKeys } from '../../store/modules'
 import { environment } from '../../environments'
 
 const featureFlagClient = createClient({
-  sdkKey: environment.configcatSdkKey,
+  sdkKey: environment.featureFlagSdkKey,
 })
 
 const useModules = () => {

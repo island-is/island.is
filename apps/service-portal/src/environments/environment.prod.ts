@@ -1,3 +1,5 @@
+import { sdkKeys } from '@island.is/feature-flags'
+
 export default {
   production: true,
   identityServer: {
@@ -13,5 +15,10 @@ export default {
       'https://3c45a55273774b91a897b85e0a1243d1@o406638.ingest.sentry.io/5501494',
   },
   documentProviderAdmins: process.env.NX_DOCUMENT_PROVIDER_ADMINS || '',
-  configcatSdkKey: 'YcfYCOwBTUeI04mWOWpPdA/KgCHhUk0_k2BdiKMaNh3qA',
+  featureFlagSdkKey:
+    window.location.origin === 'https://beta.staging01.devland.is'
+      ? sdkKeys.staging
+      : window.location.origin === 'https://island.is'
+      ? sdkKeys.production
+      : sdkKeys.development,
 }
