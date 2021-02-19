@@ -46,7 +46,7 @@ const getInnerText = (node: any): string => {
     }
   }
 
-  if (typeof node === 'object') {
+  if (typeof node === 'object' && null) {
     const inner = node?.props?.children ?? null
     return getInnerText(inner)
   }
