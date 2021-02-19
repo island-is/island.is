@@ -58,17 +58,27 @@ export class RestServiceCollector implements ServiceCollector {
       `Added all services to index "${this.collectionService.getWorkerIndexName()}"`,
     )
     logger.debug(
-      `Adding index "${this.collectionService.getAliasName()}" to alias at: ${new Date().toISOString()}`,
+      `Making worker index available for collectors on other environments at: ${new Date().toISOString()}`,
     )
-    await this.collectionService.ActivateWorkerIndex()
-    logger.debug(`Done updating values at: ${new Date().toISOString()}`)
+    await this.collectionService.ActivateWorkerIndexForRemoteEnvironments()
+    logger.debug(
+      `Environment alias for ${this.collectionService.getEnvironment()} ready for queries from remote environments at: ${new Date().toISOString()}`,
+    )
 
     logger.info('Processing other environments.')
     await this.collectionService.copyValuesFromOtherEnvironments()
+    logger.debug(
+      `Done processing other environments at: ${new Date().toISOString()}`,
+    )
+
+    await this.collectionService.ActivateWorkerIndexForWeb()
+    logger.info(`Worker index activated.`)
 
     //TODO: if another instance of the collector is running in the same
     //TODO: environment, the line below, will delete it's index.
     await this.collectionService.deleteDanglingIndices()
-    logger.info(`Collecting done on ${this.collectionService.getEnvironment()}`)
+    logger.info(
+      `Service collection done on ${this.collectionService.getEnvironment()}.`,
+    )
   }
 }

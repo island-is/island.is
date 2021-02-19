@@ -1,0 +1,65 @@
+# If you need to change the png image named like this file, you can do so from
+# https://www.websequencediagrams.com  by pasting the content of this file
+# to a new document there.
+
+title Collector running on dev
+
+task->task: make new index name apicatalogue-dev20210219_121308620
+
+task->+XRoad: fetch all 
+XRoad-->-task: Dev providers
+
+task->+Dev provider: fetch from first
+Dev provider-->task: services
+task->Worker index: insert services from first provider
+
+task->Worker index: create alias apicatalogue-devCollectorWorking to woker index
+
+task->+Dev provider: fetch from remaining
+Dev provider-->task: services
+task->Worker index: insert services from remaining providers
+
+task->task: delete alias apicatalogue-dev from old index
+task->Worker index: Create alias apicatalogue-dev to worker index
+task->task: delete alias apicatalogue-devCollectorWorking
+
+task->Remote alias: Check if apicatalogue-stagingCollectorWorking
+Remote alias->task: Yes it exists, do nothing
+task->Remote alias: Check if apicatalogue-prodCollectorWorking
+Remote alias->task: Yes it exists, do nothing
+
+task->task: wait for two seconds
+
+task->Remote alias: Check if apicatalogue-stagingCollectorWorking
+Remote alias->task: Yes it exists, do nothing
+task->Remote alias: Check if apicatalogue-prodCollectorWorking
+Remote alias->task: No it does not, copying all prod services from apicatalogue-prod
+
+Worker index->task: Get ids from all services stored
+task->Worker index: Add all services that only exist on prod
+task->Worker index: Merge all services that exist on dev and prod
+
+task->task: wait for two seconds
+
+task->Remote alias: Check if apicatalogue-stagingCollectorWorking
+Remote alias->task: Yes it exists, do nothing
+
+task->Remote alias: Check if apicatalogue-stagingCollectorWorking
+Remote alias->task: No it does not, copying all staging services from apicatalogue-prod
+
+Worker index->task: Get ids from all services stored
+task->Worker index: Add all services that only exist on staging
+task->Worker index: Merge all services that exist on dev and staging
+
+task->task: remove alias apicatalog from old index
+task->Worker index: Activate index by creating alias apicatalog to it
+
+task->task: delete all dangling indices
+
+
+
+
+
+
+
+
