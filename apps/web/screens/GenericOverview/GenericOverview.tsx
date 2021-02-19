@@ -136,7 +136,11 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
   )
 }
 
-GenericOverview.getInitialProps = async ({ apolloClient, locale }) => {
+GenericOverview.getInitialProps = async ({
+  apolloClient,
+  locale,
+  pathname,
+}) => {
   const [
     {
       data: { getGenericOverviewPage: genericOverviewPage },
@@ -149,7 +153,10 @@ GenericOverview.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_GENERIC_OVERVIEW_PAGE_QUERY,
       fetchPolicy: 'no-cache',
       variables: {
-        input: { lang: locale, pageIdentifier: 'throun' },
+        input: {
+          lang: locale,
+          pageIdentifier: pathname.replace(/^.*\/(.*)$/, '$1'),
+        },
       },
     }),
   ])

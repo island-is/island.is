@@ -107,10 +107,6 @@ const SubPage: Screen<SubPageProps> = ({
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
       fullWidthContent={true}
     >
@@ -140,11 +136,11 @@ const SubPage: Screen<SubPageProps> = ({
               >
                 <Stack space={2}>
                   {subpage.links.map((link) => (
-                    <Text fontWeight="light" color="blue400">
-                      <Link href={link.url} underline="small">
+                    <Link href={link.url} underline="small">
+                      <Text fontWeight="light" color="blue400">
                         {link.text}
-                      </Link>
-                    </Text>
+                      </Text>
+                    </Link>
                   ))}
                 </Stack>
               </GridColumn>
