@@ -72,4 +72,21 @@ export class SharedTemplateApiService {
 
     return this.emailService.sendEmail(template)
   }
+
+  async makeGraphqlQuery(authorization: string, query: string) {
+    const baseApiUrl = getConfigValue(
+      this.configService,
+      'baseApiUrl',
+    ) as string
+
+    return fetch(`${baseApiUrl}/api/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        authorization,
+      },
+      body: JSON.stringify({ query }),
+    })
+  }
 }

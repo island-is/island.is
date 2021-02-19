@@ -141,7 +141,7 @@ const Review: FC<ReviewScreenProps> = ({
           <AccordionItem
             id="id_4"
             label={formatMessage(
-              parentalLeaveFormMessages.base.otherParentTitle,
+              parentalLeaveFormMessages.shared.otherParentTitle,
             )}
             startExpanded={allItemsExpanded}
           >
@@ -190,7 +190,7 @@ const Review: FC<ReviewScreenProps> = ({
                           id="otherParentName"
                           name="otherParentName"
                           label={formatMessage(
-                            parentalLeaveFormMessages.base.otherParentName,
+                            parentalLeaveFormMessages.shared.otherParentName,
                           )}
                           ref={register}
                         />
@@ -211,7 +211,7 @@ const Review: FC<ReviewScreenProps> = ({
                           id="otherParentId"
                           name="otherParentId"
                           label={formatMessage(
-                            parentalLeaveFormMessages.base.otherParentID,
+                            parentalLeaveFormMessages.shared.otherParentID,
                           )}
                           ref={register}
                         />
@@ -235,7 +235,7 @@ const Review: FC<ReviewScreenProps> = ({
           <AccordionItem
             id="id_3"
             label={formatMessage(
-              parentalLeaveFormMessages.base.paymentInformationSubSection,
+              parentalLeaveFormMessages.shared.paymentInformationSubSection,
             )}
             startExpanded={allItemsExpanded}
           >
@@ -247,7 +247,7 @@ const Review: FC<ReviewScreenProps> = ({
                       id="payments.bank"
                       name="payments.bank"
                       label={formatMessage(
-                        parentalLeaveFormMessages.base.paymentInformationBank,
+                        parentalLeaveFormMessages.shared.paymentInformationBank,
                       )}
                       ref={register}
                     />
@@ -274,7 +274,7 @@ const Review: FC<ReviewScreenProps> = ({
                   {editable ? (
                     <SelectController
                       label={formatMessage(
-                        parentalLeaveFormMessages.base.salaryLabelPensionFund,
+                        parentalLeaveFormMessages.shared.salaryLabelPensionFund,
                       )}
                       name="payments.pensionFund"
                       disabled={false}
@@ -296,7 +296,7 @@ const Review: FC<ReviewScreenProps> = ({
                   {editable ? (
                     <SelectController
                       label={formatMessage(
-                        parentalLeaveFormMessages.base.union,
+                        parentalLeaveFormMessages.shared.union,
                       )}
                       name="payments.union"
                       disabled={false}
@@ -320,7 +320,7 @@ const Review: FC<ReviewScreenProps> = ({
 
               <Text variant="h5" marginTop={1} marginBottom={2}>
                 {formatMessage(
-                  parentalLeaveFormMessages.base.privatePensionFundName,
+                  parentalLeaveFormMessages.shared.privatePensionFundName,
                 )}
               </Text>
 
@@ -338,13 +338,13 @@ const Review: FC<ReviewScreenProps> = ({
                   options={[
                     {
                       label: formatMessage(
-                        parentalLeaveFormMessages.base.yesOptionLabel,
+                        parentalLeaveFormMessages.shared.yesOptionLabel,
                       ),
                       value: YES,
                     },
                     {
                       label: formatMessage(
-                        parentalLeaveFormMessages.base.noOptionLabel,
+                        parentalLeaveFormMessages.shared.noOptionLabel,
                       ),
                       value: NO,
                     },
@@ -372,7 +372,7 @@ const Review: FC<ReviewScreenProps> = ({
                       {editable ? (
                         <SelectController
                           label={formatMessage(
-                            parentalLeaveFormMessages.base.privatePensionFund,
+                            parentalLeaveFormMessages.shared.privatePensionFund,
                           )}
                           name="payments.pensionFund"
                           disabled={false}
@@ -394,7 +394,7 @@ const Review: FC<ReviewScreenProps> = ({
                       {editable ? (
                         <SelectController
                           label={formatMessage(
-                            parentalLeaveFormMessages.base.union,
+                            parentalLeaveFormMessages.shared.union,
                           )}
                           name="payments.union"
                           disabled={false}
@@ -447,7 +447,7 @@ const Review: FC<ReviewScreenProps> = ({
 
           <AccordionItem
             id="id_4"
-            label={formatMessage(parentalLeaveFormMessages.base.yourRights)}
+            label={formatMessage(parentalLeaveFormMessages.shared.yourRights)}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
@@ -457,17 +457,19 @@ const Review: FC<ReviewScreenProps> = ({
 
           <AccordionItem
             id="id_4"
-            label={formatMessage(parentalLeaveFormMessages.base.periodsSection)}
+            label={formatMessage(
+              parentalLeaveFormMessages.shared.periodsSection,
+            )}
             startExpanded={allItemsExpanded}
           >
             <Box paddingY={4}>
               <Timeline
                 initDate={dobDate}
                 title={formatMessage(
-                  parentalLeaveFormMessages.base.expectedDateOfBirthTitle,
+                  parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
                 )}
                 titleSmall={formatMessage(
-                  parentalLeaveFormMessages.base.dateOfBirthTitle,
+                  parentalLeaveFormMessages.shared.dateOfBirthTitle,
                 )}
                 periods={formatPeriods(
                   application.answers.periods as Period[],
@@ -531,13 +533,13 @@ const Review: FC<ReviewScreenProps> = ({
                   options={[
                     {
                       label: formatMessage(
-                        parentalLeaveFormMessages.base.yesOptionLabel,
+                        parentalLeaveFormMessages.shared.yesOptionLabel,
                       ),
                       value: YES,
                     },
                     {
                       label: formatMessage(
-                        parentalLeaveFormMessages.base.noOptionLabel,
+                        parentalLeaveFormMessages.shared.noOptionLabel,
                       ),
                       value: NO,
                     },

@@ -114,7 +114,7 @@ const Home: Screen<HomeProps> = ({
     </Box>
   )
   return (
-    <div id="main-content">
+    <div id="main-content" style={{ overflow: 'hidden' }}>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={frontpageSlides as FrontpageSliderType[]}
@@ -125,8 +125,8 @@ const Home: Screen<HomeProps> = ({
         aria-labelledby="lifeEventsTitle"
         paddingTop={4}
         backgroundBleed={{
-          bleedAmount: 100,
-          mobileBleedAmount: 50,
+          bleedAmount: 150,
+          mobileBleedAmount: 250,
           bleedDirection: 'bottom',
           fromColor: 'white',
           toColor: 'purple100',
@@ -135,7 +135,7 @@ const Home: Screen<HomeProps> = ({
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
-          titleId="lifeEventsTitle"
+          linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
           lifeEvents={lifeEvents}
         />
       </Section>

@@ -333,7 +333,10 @@ export const CourtRecord: React.FC = () => {
                 {`Réttindi ${formatAccusedByGender(
                   workingCase.accusedGender || CaseGender.OTHER,
                   NounCases.GENITIVE,
-                )}`}
+                )}`}{' '}
+                <Text as="span" fontWeight="semiBold" color="red600">
+                  *
+                </Text>
               </Text>
             </Box>
             <Box marginBottom={2}>
@@ -406,7 +409,7 @@ export const CourtRecord: React.FC = () => {
                   removeTabsValidateAndSet(
                     'accusedPleaAnnouncement',
                     event,
-                    ['empty'],
+                    [],
                     workingCase,
                     setWorkingCase,
                     accusedPleaAnnouncementErrorMessage,
@@ -417,7 +420,7 @@ export const CourtRecord: React.FC = () => {
                   validateAndSendToServer(
                     'accusedPleaAnnouncement',
                     event.target.value,
-                    ['empty'],
+                    [],
                     workingCase,
                     updateCase,
                     setAccusedPleaAnnouncementMessage,
@@ -427,7 +430,6 @@ export const CourtRecord: React.FC = () => {
                 hasError={accusedPleaAnnouncementErrorMessage !== ''}
                 textarea
                 rows={7}
-                required
               />
             </BlueBox>
           </Box>
@@ -489,10 +491,6 @@ export const CourtRecord: React.FC = () => {
                 },
                 {
                   value: workingCase.policeDemands || '',
-                  validations: ['empty'],
-                },
-                {
-                  value: workingCase.accusedPleaAnnouncement || '',
                   validations: ['empty'],
                 },
                 {

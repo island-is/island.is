@@ -269,7 +269,7 @@ export const m = defineMessages({
   },
   formerInsuranceCountryPlaceholder: {
     id: 'hi.application:formerInsurance.countryPlaceholder',
-    defaultMessage: 'Select a country',
+    defaultMessage: 'Veldu land',
     description: 'Select a country',
   },
   formerInsuranceDetails: {

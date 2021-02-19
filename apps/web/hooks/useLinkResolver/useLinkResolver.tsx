@@ -63,6 +63,14 @@ export const routesTemplate = {
     is: '/stofnanir/[slug]/[subSlug]',
     en: '/en/organizations/[slug]/[subSlug]',
   },
+  lifeevents: {
+    is: '/lifsvidburdir',
+    en: '/en/life-events',
+  },
+  lifeeventpage: {
+    is: '/lifsvidburdir/[slug]',
+    en: '/en/life-events/[slug]',
+  },
   organizationnews: {
     is: '/stofnanir/[organization]/frett/[slug]',
     en: '/en/organizations/[organization]/news/[slug]',
@@ -74,10 +82,6 @@ export const routesTemplate = {
   auction: {
     is: '/stofnanir/syslumenn/uppbod/[id]',
     en: '',
-  },
-  lifeeventpage: {
-    is: '/lifsvidburdur/[slug]',
-    en: '/en/life-event/[slug]',
   },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
