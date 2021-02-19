@@ -6,7 +6,7 @@ import {
 } from '@island.is/service-portal/core'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import useModules from '../../hooks/useModules/useModules'
+import { useModules } from '../../hooks/useModules/useModules'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import Greeting from '../../components/Greeting/Greeting'
 import { User } from 'oidc-client'

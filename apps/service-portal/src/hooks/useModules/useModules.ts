@@ -14,7 +14,7 @@ const featureFlagClient = createClient({
   sdkKey: environment.featureFlagSdkKey,
 })
 
-const useModules = () => {
+export const useModules = () => {
   const [{ modules }, dispatch] = useStore()
 
   async function filterModulesBasedOnFeatureFlags() {
@@ -51,5 +51,3 @@ const useModules = () => {
 
   return { modules }
 }
-
-export default useModules

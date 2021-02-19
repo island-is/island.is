@@ -6,7 +6,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { User } from 'oidc-client'
 import React, { FC, Suspense, useEffect, useState } from 'react'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import useModules from '../../hooks/useModules/useModules'
+import { useModules } from '../../hooks/useModules/useModules'
 
 const GlobalComponent: FC<{
   component: ServicePortalGlobalComponent
