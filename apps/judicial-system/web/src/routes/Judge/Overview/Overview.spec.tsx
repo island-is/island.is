@@ -114,9 +114,8 @@ describe('/domari-krafa with an ID', () => {
     )
 
     // Assert
-    expect(
-      await screen.findByText('B - Einangrun, E - Fjölmiðlabann'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('B - Einangrun.')).toBeInTheDocument()
+    expect(await screen.findByText('E - Fjölmiðlabann.')).toBeInTheDocument()
   })
 
   test('should display the appropriate custody provisions', async () => {
