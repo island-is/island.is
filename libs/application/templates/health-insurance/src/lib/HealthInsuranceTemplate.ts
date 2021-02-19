@@ -38,15 +38,6 @@ const HealthInsuranceSchema = z.object({
     phoneNumber: z.string().optional(),
     citizenship: z.string().optional(),
   }),
-  status: z.object({
-    type: z.enum([
-      StatusTypes.EMPLOYED,
-      StatusTypes.STUDENT,
-      StatusTypes.PENSIONER,
-      StatusTypes.OTHER,
-    ]),
-    confirmationOfStudies: z.array(FileSchema),
-  }),
   children: z.string().nonempty(),
   formerInsurance: z.object({
     registration: z.enum([YES, NO]),

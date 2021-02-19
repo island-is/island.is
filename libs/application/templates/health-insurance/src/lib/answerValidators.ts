@@ -34,6 +34,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = buildValidationError(`${STATUS}.type`)
     const status = newAnswer as Status
 
+    if (!Object.values(StatusTypes).includes(status.type)) {
+      return buildError('You must select one of the above', `${STATUS}.type`)
+    }
     if (
       status.type === StatusTypes.STUDENT &&
       !status.confirmationOfStudies.length
