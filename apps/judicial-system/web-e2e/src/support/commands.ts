@@ -73,11 +73,13 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       return { fixture: 'updateCaseMutationResponse' }
     } else if (graphqlRequest.body.query.includes('RequestSignatureMutation')) {
       graphqlRequest.alias = 'gqlRequsestSignatureMutation'
+
       return { fixture: 'requestSignatureMutationResponse' }
     } else if (
       graphqlRequest.body.query.includes('SignatureConfirmationQuery')
     ) {
       graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
+
       return { fixture: 'signatureConfirmationResponse' }
     }
   }

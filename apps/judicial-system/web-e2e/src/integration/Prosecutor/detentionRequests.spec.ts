@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
 /// <reference path="../../support/index.d.ts" />
 
 describe('/krofur', () => {

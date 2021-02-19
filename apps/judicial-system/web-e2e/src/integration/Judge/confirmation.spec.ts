@@ -16,7 +16,7 @@ describe('/domur/stadfesta/:id', () => {
     )
   })
 
-  it.only('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('courtEndTime').type('1800')
     cy.getByTestid('continueButton').click()
     cy.wait('@gqlRequsestSignatureMutation')
