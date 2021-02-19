@@ -36,6 +36,12 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
         return {
           fixture: 'confirmedCaseJudge',
         }
+      } else if (
+        graphqlRequest.body.variables.input.id === 'test_id_stadfesting'
+      ) {
+        return {
+          fixture: 'confirmingCaseJudge',
+        }
       }
     } else if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
       return {
@@ -62,7 +68,17 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
         }
       }
     } else if (graphqlRequest.body.query.includes('UpdateCaseMutation')) {
+      graphqlRequest.alias = 'gqlUpdateCaseMutatation'
+
       return { fixture: 'updateCaseMutationResponse' }
+    } else if (graphqlRequest.body.query.includes('RequestSignatureMutation')) {
+      graphqlRequest.alias = 'gqlRequsestSignatureMutation'
+      return { fixture: 'requestSignatureMutationResponse' }
+    } else if (
+      graphqlRequest.body.query.includes('SignatureConfirmationQuery')
+    ) {
+      graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
+      return { fixture: 'signatureConfirmationResponse' }
     }
   }
 }

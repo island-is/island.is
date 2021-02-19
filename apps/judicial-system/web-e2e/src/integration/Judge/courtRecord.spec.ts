@@ -4,7 +4,7 @@ describe('/domur/thingbok/:id', () => {
     cy.visit('/domur/thingbok/test_id_stadfest')
   })
 
-  it.only('should require a valid court start time', () => {
+  it('should require a valid court start time', () => {
     cy.getByTestid('courtStartTime').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('courtStartTime').type('122')
