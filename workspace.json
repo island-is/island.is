@@ -2220,7 +2220,7 @@
     "contentful-translation-extension": {
       "root": "libs/contentful-translation-extension",
       "sourceRoot": "libs/contentful-translation-extension/src",
-      "projectType": "",
+      "projectType": "library",
       "schematics": {},
       "architect": {
         "test": {

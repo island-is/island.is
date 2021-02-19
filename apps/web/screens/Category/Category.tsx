@@ -17,7 +17,6 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { Card, Sticky } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {
@@ -65,7 +64,7 @@ const Category: Screen<CategoryProps> = ({
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
-  const { activeLocale, t } = useI18n()
+
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -121,9 +120,20 @@ const Category: Screen<CategoryProps> = ({
   // find current category in categories list
   const category = getCurrentCategory()
 
-  useEffect(() => {
+  const getUrlHash = () => {
     const hashMatch = window.location.hash ?? ''
-    const hashString = hashMatch.replace('#', '')
+    return hashMatch.replace('#', '')
+  }
+
+  useEffect(() => {
+    const hashString = getUrlHash()
+    if (hashString.length > 0) {
+      document.getElementById(hashString).scrollIntoView()
+    }
+  }, [])
+
+  useEffect(() => {
+    const hashString = getUrlHash()
     setHash(hashString)
   }, [Router])
 
