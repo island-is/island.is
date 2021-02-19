@@ -1,5 +1,6 @@
 export { AuthModule } from './auth'
 export { AuditModule } from './audit'
-export { UserModule, UserResolver } from './user'
-export { CaseModule, CaseResolver } from './case'
+export { InstitutionModule } from './institution'
+export { UserModule } from './user'
+export { CaseModule } from './case'
 export { FileModule } from './file'

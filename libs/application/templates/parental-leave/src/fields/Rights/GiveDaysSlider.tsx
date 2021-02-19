@@ -22,12 +22,12 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const [chosenGiveDays, setChosenGiveDays] = useState<number>(currentAnswer)
   const daysStringKey =
     chosenGiveDays > 1
-      ? parentalLeaveFormMessages.giveRightsDays
-      : parentalLeaveFormMessages.giveRightsDay
+      ? parentalLeaveFormMessages.shared.giveRightsDays
+      : parentalLeaveFormMessages.shared.giveRightsDay
   const yourRightsWithGivenDaysStringKey =
     maxDaysToGiveOrReceive - chosenGiveDays === 1
-      ? parentalLeaveFormMessages.yourRightsInMonthsAndDay
-      : parentalLeaveFormMessages.yourRightsInMonthsAndDays
+      ? parentalLeaveFormMessages.shared.yourRightsInMonthsAndDay
+      : parentalLeaveFormMessages.shared.yourRightsInMonthsAndDays
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
@@ -48,7 +48,7 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box marginBottom={6}>
       <Text marginBottom={4} variant="h3">
-        {formatMessage(parentalLeaveFormMessages.giveRightsDaysTitle)}
+        {formatMessage(parentalLeaveFormMessages.shared.giveRightsDaysTitle)}
       </Text>
       <Box marginBottom={12}>
         <Controller
@@ -57,8 +57,8 @@ const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
           render={({ onChange, value }) => (
             <Slider
               label={{
-                singular: formatMessage(parentalLeaveFormMessages.day),
-                plural: formatMessage(parentalLeaveFormMessages.days),
+                singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                plural: formatMessage(parentalLeaveFormMessages.shared.days),
               }}
               min={1}
               max={maxDaysToGiveOrReceive}

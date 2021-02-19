@@ -274,11 +274,13 @@ export const Overview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </AccordionItem>
               <AccordionItem
                 labelVariant="h3"
@@ -341,6 +343,12 @@ export const Overview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={
+              workingCase.state === CaseState.RECEIVED &&
+              workingCase.isCourtDateInThePast
+                ? Constants.REQUEST_LIST_ROUTE
+                : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
+            }
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {

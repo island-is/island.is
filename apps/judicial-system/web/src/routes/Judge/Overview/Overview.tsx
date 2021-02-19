@@ -300,11 +300,13 @@ export const JudgeOverview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (
@@ -365,6 +367,7 @@ export const JudgeOverview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
               {

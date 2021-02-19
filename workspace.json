@@ -1641,7 +1641,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/health-insurance/src/forms/messages.ts"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/health-insurance/src/forms/messages.ts"
           }
         }
       }
@@ -2198,7 +2198,7 @@
     "contentful-translation-extension": {
       "root": "libs/contentful-translation-extension",
       "sourceRoot": "libs/contentful-translation-extension/src",
-      "projectType": "",
+      "projectType": "library",
       "schematics": {},
       "architect": {
         "test": {
@@ -4010,6 +4010,12 @@
           "options": {
             "jestConfig": "libs/service-portal/document-provider/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/document-provider/src/lib/messages.ts"
           }
         }
       }

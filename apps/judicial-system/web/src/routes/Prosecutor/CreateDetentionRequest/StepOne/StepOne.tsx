@@ -206,7 +206,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
-      isExtension={!!workingCase?.parentCase}
+      isExtension={workingCase?.parentCase && true}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
@@ -506,6 +506,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsLoading={createLoading}
             nextIsDisabled={isStepIllegal || createLoading}

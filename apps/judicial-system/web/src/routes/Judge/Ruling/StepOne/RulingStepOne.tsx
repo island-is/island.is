@@ -425,6 +425,7 @@ export const RulingStepOne: React.FC = () => {
               </Box>
             )}
           <FormFooter
+            previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
             nextIsDisabled={isStepIllegal}
           />
