@@ -227,6 +227,7 @@ const CustomHeader = ({
         </Text>
       </div>
       <button
+        data-testid="datepickerIncreaseMonth"
         type="button"
         onClick={increaseMonth}
         className={styles.increaseButton}
