@@ -50,7 +50,7 @@ export const ChangeUser: React.FC = () => {
             id: user.id,
             name: user.name,
             role: user.role,
-            institution: user.institution,
+            institutionId: user.institution?.id,
             title: user.title,
             mobileNumber: user.mobileNumber,
             email: user.email,

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -9,8 +10,13 @@ import {
 } from '@island.is/island-ui/core'
 import InputMask from 'react-input-mask'
 import { ValueType } from 'react-select/src/types'
-import { FormFooter } from '@island.is/judicial-system-web/src/shared-components'
-import { User, UserRole } from '@island.is/judicial-system/types'
+import {
+  FormFooter,
+  Loading,
+} from '@island.is/judicial-system-web/src/shared-components'
+import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import { useQuery } from '@apollo/client'
+import { InstitutionsQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ReactSelectOption } from '../../../types'
 import { validate, Validation } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
@@ -27,6 +33,10 @@ interface FieldValidation {
   setErrorMessage?: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
+interface InstitutionData {
+  institutions: Institution[]
+}
+
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
@@ -37,27 +47,23 @@ export const UserForm: React.FC<Props> = (props) => {
   >()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
-  const institutions = [
+  const { data, loading, error } = useQuery<InstitutionData>(
+    InstitutionsQuery,
     {
-      label: 'Héraðsdómur Reykjavíkur',
-      value: 'Héraðsdómur Reykjavíkur',
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
     },
-    {
-      label: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-    },
-    {
-      label: 'Bráðabirgðadómstóllinn',
-      value: 'Bráðabirgðadómstóllinn',
-    },
-    {
-      label: 'Bráðabirgðalögreglustjórinn',
-      value: 'Bráðabirgðalögreglustjórinn',
-    },
-  ]
+  )
 
-  const usersInstitution = institutions.find(
-    (institution) => institution.label === user?.institution,
+  const institutions = data?.institutions.map((institution) => {
+    return {
+      label: institution.name,
+      value: institution.id,
+    }
+  })
+
+  const usersInstitution = institutions?.find(
+    (institution) => institution.label === user?.institution?.name,
   )
 
   const validations: { [key: string]: FieldValidation } = {
@@ -138,180 +144,212 @@ export const UserForm: React.FC<Props> = (props) => {
   }
 
   return (
-    <>
-      <Box marginBottom={7}>
-        <Text as="h1" variant="h1">
-          Notandi
-        </Text>
-      </Box>
-      <Box marginBottom={2}>
-        <Input
-          name="name"
-          label="Nafn"
-          placeholder="Fullt nafn"
-          defaultValue={user.name}
-          onChange={(event) =>
-            storeAndRemoveErrorIfValid('name', event.target.value)
-          }
-          onBlur={(event) => validateAndSetError('name', event.target.value)}
-          hasError={nameErrorMessage !== undefined}
-          errorMessage={nameErrorMessage}
-          required
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <InputMask
-          mask="999999-9999"
-          maskPlaceholder={null}
-          onChange={(event) =>
-            storeAndRemoveErrorIfValid(
-              'nationalId',
-              event.target.value.replace('-', ''),
-            )
-          }
-          onBlur={(event) =>
-            validateAndSetError('nationalId', event.target.value)
-          }
-          readOnly={user.id.length > 0 ? true : false}
-        >
-          <Input
-            data-testid="nationalId"
-            name="nationalId"
-            label="Kennitala"
-            placeholder="Kennitala"
-            defaultValue={user.nationalId}
-            required
-            hasError={nationalIdErrorMessage !== undefined}
-            errorMessage={nationalIdErrorMessage}
+    <div>
+      {institutions && (
+        <>
+          <Box marginBottom={7}>
+            <Text as="h1" variant="h1">
+              Notandi
+            </Text>
+          </Box>
+          <Box marginBottom={2}>
+            <Input
+              name="name"
+              label="Nafn"
+              placeholder="Fullt nafn"
+              defaultValue={user.name}
+              onChange={(event) =>
+                storeAndRemoveErrorIfValid('name', event.target.value)
+              }
+              onBlur={(event) =>
+                validateAndSetError('name', event.target.value)
+              }
+              hasError={nameErrorMessage !== undefined}
+              errorMessage={nameErrorMessage}
+              required
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <InputMask
+              mask="999999-9999"
+              maskPlaceholder={null}
+              onChange={(event) =>
+                storeAndRemoveErrorIfValid(
+                  'nationalId',
+                  event.target.value.replace('-', ''),
+                )
+              }
+              onBlur={(event) =>
+                validateAndSetError('nationalId', event.target.value)
+              }
+              readOnly={user.id.length > 0 ? true : false}
+            >
+              <Input
+                data-testid="nationalId"
+                name="nationalId"
+                label="Kennitala"
+                placeholder="Kennitala"
+                defaultValue={user.nationalId}
+                required
+                hasError={nationalIdErrorMessage !== undefined}
+                errorMessage={nationalIdErrorMessage}
+              />
+            </InputMask>
+          </Box>
+          <Box>
+            <Box marginBottom={2} className={styles.roleContainer}>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleProsecutor"
+                  label="Saksóknari"
+                  checked={user.role === UserRole.PROSECUTOR}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.PROSECUTOR })
+                  }
+                  large
+                  filled
+                />
+              </Box>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleJudge"
+                  label="Dómari"
+                  checked={user.role === UserRole.JUDGE}
+                  onChange={() => setUser({ ...user, role: UserRole.JUDGE })}
+                  large
+                  filled
+                />
+              </Box>
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="roleRegistrar"
+                  label="Dómritari"
+                  checked={user.role === UserRole.REGISTRAR}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.REGISTRAR })
+                  }
+                  large
+                  filled
+                />
+              </Box>
+            </Box>
+          </Box>
+          <Box marginBottom={2}>
+            <Select
+              name="institution"
+              label="Veldu stofnun"
+              defaultValue={usersInstitution}
+              options={institutions}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setUser({
+                  ...user,
+                  institution: data?.institutions.find(
+                    (institution) =>
+                      institution.id ===
+                      ((selectedOption as ReactSelectOption).value as string),
+                  ),
+                })
+              }
+              required
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <Input
+              name="title"
+              label="Titill"
+              defaultValue={user.title}
+              onChange={(event) =>
+                storeAndRemoveErrorIfValid('title', event.target.value)
+              }
+              onBlur={(event) =>
+                validateAndSetError('title', event.target.value)
+              }
+              required
+              hasError={titleErrorMessage !== undefined}
+              errorMessage={titleErrorMessage}
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <InputMask
+              mask="999-9999"
+              maskPlaceholder={null}
+              onChange={(event) =>
+                storeAndRemoveErrorIfValid(
+                  'mobileNumber',
+                  event.target.value.replace('-', ''),
+                )
+              }
+              onBlur={(event) =>
+                validateAndSetError('mobileNumber', event.target.value)
+              }
+            >
+              <Input
+                data-testid="mobileNumber"
+                name="mobileNumber"
+                label="Símanúmer"
+                placeholder="Símanúmer"
+                defaultValue={user.mobileNumber}
+                required
+                hasError={mobileNumberErrorMessage !== undefined}
+                errorMessage={mobileNumberErrorMessage}
+              />
+            </InputMask>
+          </Box>
+          <Box marginBottom={2}>
+            <Input
+              name="email"
+              label="Netfang"
+              placeholder=""
+              defaultValue={user.email}
+              onChange={(event) =>
+                storeAndRemoveErrorIfValid('email', event.target.value)
+              }
+              onBlur={(event) =>
+                validateAndSetError('email', event.target.value)
+              }
+              required
+              hasError={emailErrorMessage !== undefined}
+              errorMessage={emailErrorMessage}
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <Checkbox
+              name="active"
+              label="Virkja notandann"
+              checked={user.active}
+              onChange={({ target }) =>
+                setUser({ ...user, active: target.checked })
+              }
+              large
+              filled
+            />
+          </Box>
+          <FormFooter
+            onNextButtonClick={() => props.onSave(user)}
+            nextIsDisabled={!isValid()}
+            nextIsLoading={props.loading}
+            nextButtonText="Vista"
           />
-        </InputMask>
-      </Box>
-      <Box>
-        <Box marginBottom={2} className={styles.roleContainer}>
-          <Box className={styles.roleColumn}>
-            <RadioButton
-              name="role"
-              id="roleProsecutor"
-              label="Saksóknari"
-              checked={user.role === UserRole.PROSECUTOR}
-              onChange={() => setUser({ ...user, role: UserRole.PROSECUTOR })}
-              large
-              filled
-            />
-          </Box>
-          <Box className={styles.roleColumn}>
-            <RadioButton
-              name="role"
-              id="roleJudge"
-              label="Dómari"
-              checked={user.role === UserRole.JUDGE}
-              onChange={() => setUser({ ...user, role: UserRole.JUDGE })}
-              large
-              filled
-            />
-          </Box>
-          <Box className={styles.roleColumn}>
-            <RadioButton
-              name="role"
-              id="roleRegistrar"
-              label="Dómritari"
-              checked={user.role === UserRole.REGISTRAR}
-              onChange={() => setUser({ ...user, role: UserRole.REGISTRAR })}
-              large
-              filled
-            />
-          </Box>
+        </>
+      )}
+      {loading && (
+        <Box>
+          <Loading />
         </Box>
-      </Box>
-      <Box marginBottom={2}>
-        <Select
-          name="institution"
-          label="Veldu stofnun"
-          defaultValue={usersInstitution}
-          options={institutions}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-            setUser({
-              ...user,
-              institution: (selectedOption as ReactSelectOption).label,
-            })
-          }
-          required
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Input
-          name="title"
-          label="Titill"
-          defaultValue={user.title}
-          onChange={(event) =>
-            storeAndRemoveErrorIfValid('title', event.target.value)
-          }
-          onBlur={(event) => validateAndSetError('title', event.target.value)}
-          required
-          hasError={titleErrorMessage !== undefined}
-          errorMessage={titleErrorMessage}
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <InputMask
-          mask="999-9999"
-          maskPlaceholder={null}
-          onChange={(event) =>
-            storeAndRemoveErrorIfValid(
-              'mobileNumber',
-              event.target.value.replace('-', ''),
-            )
-          }
-          onBlur={(event) =>
-            validateAndSetError('mobileNumber', event.target.value)
-          }
-        >
-          <Input
-            data-testid="mobileNumber"
-            name="mobileNumber"
-            label="Símanúmer"
-            placeholder="Símanúmer"
-            defaultValue={user.mobileNumber}
-            required
-            hasError={mobileNumberErrorMessage !== undefined}
-            errorMessage={mobileNumberErrorMessage}
+      )}
+      {error && (
+        <div data-testid="user-form-error">
+          <AlertMessage
+            title="Ekki tókst að sækja gögn úr gagnagrunni"
+            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+            type="error"
           />
-        </InputMask>
-      </Box>
-      <Box marginBottom={2}>
-        <Input
-          name="email"
-          label="Netfang"
-          placeholder=""
-          defaultValue={user.email}
-          onChange={(event) =>
-            storeAndRemoveErrorIfValid('email', event.target.value)
-          }
-          onBlur={(event) => validateAndSetError('email', event.target.value)}
-          required
-          hasError={emailErrorMessage !== undefined}
-          errorMessage={emailErrorMessage}
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Checkbox
-          name="active"
-          label="Virkja notandann"
-          checked={user.active}
-          onChange={({ target }) =>
-            setUser({ ...user, active: target.checked })
-          }
-          large
-          filled
-        />
-      </Box>
-      <FormFooter
-        onNextButtonClick={() => props.onSave(user)}
-        nextIsDisabled={!isValid()}
-        nextIsLoading={props.loading}
-        nextButtonText="Vista"
-      />
-    </>
+        </div>
+      )}
+    </div>
   )
 }
 
