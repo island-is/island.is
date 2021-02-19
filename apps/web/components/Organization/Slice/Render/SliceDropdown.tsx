@@ -40,7 +40,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
         ? options.find((x) => x.slug === hashString).value
         : options[0].value,
     )
-  }, [Router])
+  }, [Router, options])
 
   const selectedSlice = slices.find((x) => x.id === selectedId)
 
