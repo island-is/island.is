@@ -227,13 +227,43 @@ export class SamgongustofaService {
                 )
                 .then(function (basicInfo) {
                   // If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
-                  if (
+                  /*if (
                     !(
                       basicInfo['vehicle']['updatelocks'][0] == '' &&
                       basicInfo['vehicle']['stolens'][0] == '' &&
                       basicInfo['vehicle']['ownerregistrationerrors'][0] == ''
                     )
                   ) {
+                    newVehicleArr[i]['isRecyclable'] = false
+                  }*/
+                  // If there is any information in updatelocks and there is nothing in enddate (lock is acive)then we may not deregister it
+                  if (
+                    !(basicInfo['vehicle']['updatelocks'][0] == '') &&
+                    basicInfo['vehicle']['updatelocks']['updatelock'][
+                      'enddate'
+                    ][0] == ''
+                  ) {
+                    this.logger.info(
+                      `--- Car ${carObj['permno']} has updatelocks and no enddate - not recyclable  `,
+                    )
+                    newVehicleArr[i]['isRecyclable'] = false
+                    // If there is any information in stolens and there is nothing in enddate (lock is acive)then we may not deregister it
+                  } else if (
+                    !(basicInfo['vehicle']['stolens'][0] == '') &&
+                    basicInfo['vehicle']['stolens']['stolen']['enddate'][0] ==
+                      ''
+                  ) {
+                    this.logger.info(
+                      `--- Car ${carObj['permno']} has been stolen and no enddate - not recyclable  `,
+                    )
+                    newVehicleArr[i]['isRecyclable'] = false
+                    // If there is any information in ownerregistrationerrors and there is nothing in enddate (lock is acive)then we may not deregister it
+                  } else if (
+                    !(basicInfo['vehicle']['ownerregistrationerrors'][0] == '')
+                  ) {
+                    this.logger.info(
+                      `--- Car ${carObj['permno']} has ownerregistrationerror and no enddate - not recyclable  `,
+                    )
                     newVehicleArr[i]['isRecyclable'] = false
                   }
                   return newVehicleArr[i]

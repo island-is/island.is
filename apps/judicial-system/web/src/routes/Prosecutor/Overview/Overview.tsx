@@ -175,7 +175,9 @@ export const Overview: React.FC = () => {
                 },
                 {
                   title: 'Embætti',
-                  value: 'Lögreglan á Höfuðborgarsvæðinu',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
                 },
                 {
                   title: 'Ósk um fyrirtökudag og tíma',

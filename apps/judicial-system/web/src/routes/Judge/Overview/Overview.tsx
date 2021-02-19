@@ -191,7 +191,9 @@ export const JudgeOverview: React.FC = () => {
               data={[
                 {
                   title: 'Embætti',
-                  value: 'Lögreglan á Höfuðborgarsvæðinu',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
                 },
                 {
                   title: 'Ósk um fyrirtökudag og tíma',
