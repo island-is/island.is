@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
 import * as AWS from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
-import { environment as elasticEnvironment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
@@ -15,6 +14,7 @@ import {
   IndicesDelete,
   IndicesUpdateAliases,
 } from '@elastic/elasticsearch/api/requestParams'
+import { ElasticConfigService } from './elasticconfig.service'
 
 @Injectable()
 export class ElasticService {
@@ -22,11 +22,19 @@ export class ElasticService {
   private elasticNode: string
   private aliasName: string
 
-  constructor() {
-    const { elastic } = elasticEnvironment
-    this.elasticNode = elastic.node
-    this.aliasName = process.env.XROAD_COLLECTOR_ALIAS || 'apicatalogue'
+  constructor(private config: ElasticConfigService) {
+    this.elasticNode = config.getElasticNode()
+    this.aliasName = config.getAliasName()
     this.client = null
+
+    //To trigger error if values are not set
+    logger.info(
+      `--- elastic config ${JSON.stringify(
+        { elasticNode: this.getElasticNode(), aliasName: this.getAliasName() },
+        null,
+        4,
+      )}`,
+    )
   }
 
   private getClient() {
@@ -36,14 +44,21 @@ export class ElasticService {
     return this.client
   }
 
-  init(aliasName: string = this.getAliasName(), baseUrl?: string) {
+  /**
+   * Set the alias name and prefix url.
+   *
+   * @param {string} [aliasName=this.getAliasName()] - Name of the index to use as default.
+   * @param {string} [elasticNote] - Prefix on url for every elastic client request.
+   * @memberof ElasticService
+   */
+  init(aliasName: string = this.getAliasName(), elasticNote?: string) {
     this.aliasName = aliasName
     logger.info(
       `ElasticSearch default search alias name ${this.getAliasName()}`,
     )
-    if (baseUrl) {
-      this.elasticNode = baseUrl
-      logger.info(`ElasticSearch base url ${baseUrl}`)
+    if (elasticNote) {
+      this.elasticNode = elasticNote
+      logger.info(`ElasticSearch base url ${this.getElasticNode()}`)
     }
   }
 
@@ -139,13 +154,16 @@ export class ElasticService {
     )
   }
 
-  /**
-   * Before calling this function, initWorker must have been set
-   */
   getAliasName() {
     if (!this.aliasName) throw new Error('alias name not set')
 
     return this.aliasName
+  }
+
+  getElasticNode() {
+    if (!this.elasticNode) throw new Error('elastic node not set')
+
+    return this.elasticNode
   }
 
   async updateIndexAliases(updateOptions: IndicesUpdateAliases) {
@@ -361,13 +379,13 @@ export class ElasticService {
 
     if (!hasAWS) {
       return new Client({
-        node: this.elasticNode,
+        node: this.getElasticNode(),
       })
     }
 
     return new Client({
       ...AwsConnector(AWS.config),
-      node: this.elasticNode,
+      node: this.getElasticNode(),
     })
   }
 

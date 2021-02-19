@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config'
 import configuration from './config/configuration'
 import { CollectionConfigService } from './CollectionConfig.service'
 import { CollectionService } from './collection.service'
+import { ElasticConfigService } from 'libs/api-catalogue/elastic/src/lib/elasticconfig.service'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CollectionService } from './collection.service'
   ],
   controllers: [],
   providers: [
+    ElasticConfigService,
     CollectionConfigService,
     ElasticService,
     CollectionService,
