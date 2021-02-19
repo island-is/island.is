@@ -157,9 +157,9 @@ export const CourtRecord: React.FC = () => {
             theCase.accusedName,
             theCase.court,
             theCase.requestedCustodyEndDate,
-            !!theCase.requestedCustodyRestrictions?.includes(
+            theCase.requestedCustodyRestrictions?.includes(
               CaseCustodyRestrictions.ISOLATION,
-            ),
+            ) || false,
             theCase.parentCase !== undefined,
             theCase.parentCase?.decision,
           ),
