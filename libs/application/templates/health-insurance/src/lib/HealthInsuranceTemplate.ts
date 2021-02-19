@@ -9,6 +9,7 @@ import {
 import * as z from 'zod'
 import { NO, YES } from '../constants'
 import { StatusTypes } from '../types'
+import { answerValidators } from './answerValidators'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -37,13 +38,15 @@ const HealthInsuranceSchema = z.object({
     phoneNumber: z.string().optional(),
     citizenship: z.string().optional(),
   }),
-  status: z.enum([
-    StatusTypes.EMPLOYED,
-    StatusTypes.STUDENT,
-    StatusTypes.PENSIONER,
-    StatusTypes.OTHER,
-  ]),
-  confirmationOfStudies: z.array(FileSchema),
+  status: z.object({
+    type: z.enum([
+      StatusTypes.EMPLOYED,
+      StatusTypes.STUDENT,
+      StatusTypes.PENSIONER,
+      StatusTypes.OTHER,
+    ]),
+    confirmationOfStudies: z.array(FileSchema),
+  }),
   children: z.string().nonempty(),
   formerInsurance: z.object({
     registration: z.enum([YES, NO]),
@@ -117,6 +120,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     }
     return 'applicant'
   },
+  answerValidators
 }
 
 export default HealthInsuranceTemplate

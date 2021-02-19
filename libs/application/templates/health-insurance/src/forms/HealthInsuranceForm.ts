@@ -216,7 +216,7 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.statusAndChildren,
           children: [
             buildRadioField({
-              id: 'status',
+              id: 'status.type',
               title: '',
               description: m.statusDescription,
               width: 'half',
@@ -249,16 +249,20 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.confirmationOfStudies,
               description: m.confirmationOfStudiesTooltip,
               component: 'TextWithTooltip',
-              condition: (answers) => answers.status === StatusTypes.STUDENT,
+              condition: (answers) =>
+                (answers.status as { type: string })?.type ===
+                StatusTypes.STUDENT,
             }),
             buildFileUploadField({
-              id: 'confirmationOfStudies',
+              id: 'status.confirmationOfStudies',
               title: '',
               introduction: '',
               maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
-              condition: (answers) => answers.status === StatusTypes.STUDENT,
+              condition: (answers) =>
+                (answers.status as { type: string })?.type ===
+                StatusTypes.STUDENT,
             }),
             buildRadioField({
               id: 'children',
