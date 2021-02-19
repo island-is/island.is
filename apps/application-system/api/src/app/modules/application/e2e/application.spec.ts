@@ -461,7 +461,12 @@ describe('Application system API', () => {
     const fileService: FileService = app.get<FileService>(FileService)
     jest
       .spyOn(fileService, 'requestFileSignature')
-      .mockImplementation(() => Promise.resolve({controlCode: expectedControlCode, documentToken: expectedDocumentToken}))
+      .mockImplementation(() =>
+        Promise.resolve({
+          controlCode: expectedControlCode,
+          documentToken: expectedDocumentToken,
+        }),
+      )
 
     const postResponse = await server.post('/applications').send({
       applicant: nationalId,
@@ -483,10 +488,10 @@ describe('Application system API', () => {
 
     // Assert
     expect(newState.body.attachments).toEqual({
-      'fileSignature': {
-        'controlCode': expectedControlCode,
-        'documentToken': expectedDocumentToken
-      }
+      fileSignature: {
+        controlCode: expectedControlCode,
+        documentToken: expectedDocumentToken,
+      },
     })
   })
 })

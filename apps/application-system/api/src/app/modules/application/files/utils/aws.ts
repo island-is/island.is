@@ -2,7 +2,7 @@ import * as AWS from 'aws-sdk'
 import { environment } from '../../../../../environments'
 
 const s3 = new AWS.S3()
-const one_minute = 60
+const oneMinute = 60
 const bucket = environment.fsS3Bucket ?? 'development-legal-residence-change'
 
 export async function getFile(
@@ -44,7 +44,7 @@ export async function getPresignedUrl(fileName: string): Promise<string> {
   const presignedUrlParams = {
     Bucket: bucket,
     Key: fileName,
-    Expires: one_minute * 120, // TODO: Select length for presigned url's in island.is
+    Expires: oneMinute * 120, // TODO: Select length for presigned url's in island.is
   }
 
   return await new Promise((resolve, reject) => {

@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
-import { SigningService, SIGNING_OPTIONS } from 'libs/dokobit-signing/src'
+import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
 import * as aws from './utils/aws'
 import * as pdf from './utils/pdf'
 import { Application } from './../application.model'
-import { ApplicationTypes, PdfTypes } from 'libs/application/core/src'
+import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
 
 describe('FileService', () => {
@@ -32,11 +32,11 @@ describe('FileService', () => {
     answers: {
       email: 'email@email.is ',
       phoneNumber: applicantsPhoneNumber,
-      parentB : {
+      parentB: {
         email: 'emailb@email.b.is',
-        phoneNumber: parentBPhoneNumber
+        phoneNumber: parentBPhoneNumber,
       },
-      expiry: 'permanent'
+      expiry: 'permanent',
     },
     externalData: {
       parentNationalRegistry: {
@@ -46,7 +46,7 @@ describe('FileService', () => {
           ssn: '0022993322',
           postalCode: '101',
           address: 'Borgartún',
-          city: 'Reykjavík'
+          city: 'Reykjavík',
         },
         status: 'success',
         date: new Date(),
@@ -55,10 +55,9 @@ describe('FileService', () => {
         data: { nationalId: applicantSsn, fullName: applicantName },
         status: 'success',
         date: new Date(),
-      }
+      },
     },
   } as unknown) as Application
-
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({

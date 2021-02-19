@@ -5,6 +5,25 @@ import {
 } from '@island.is/application/templates/children-residence-change'
 import { User } from '@island.is/api/domains/national-registry'
 
+export function applicantData(
+  answers: FormValue,
+  externalData: FormValue,
+): ParentResidenceChange {
+  const nationalRegistry = externalData.nationalRegistry as FormValue
+  const nationalRegistryData = (nationalRegistry.data as unknown) as User
+
+  return {
+    id: nationalRegistryData.nationalId,
+    name: nationalRegistryData.fullName,
+    ssn: nationalRegistryData.nationalId,
+    phoneNumber: answers.phoneNumber as string,
+    email: answers.email as string,
+    address: nationalRegistryData.address?.streetAddress as string,
+    postalCode: nationalRegistryData.address?.postalCode as string,
+    city: nationalRegistryData.address?.city as string,
+  }
+}
+
 export function variablesForResidenceChange(
   answers: FormValue,
   externalData: FormValue,
@@ -23,23 +42,4 @@ export function variablesForResidenceChange(
   const expiry = answers.expiry as string
 
   return { parentA, parentB, childrenAppliedFor, expiry }
-}
-
-export function applicantData(
-  answers: FormValue,
-  externalData: FormValue,
-): ParentResidenceChange {
-  const nationalRegistry = externalData.nationalRegistry as FormValue
-  const nationalRegistryData = (nationalRegistry.data as unknown) as User
-
-  return {
-    id: nationalRegistryData.nationalId,
-    name: nationalRegistryData.fullName,
-    ssn: nationalRegistryData.nationalId,
-    phoneNumber: answers.phoneNumber as string,
-    email: answers.email as string,
-    address: nationalRegistryData.address?.streetAddress as string,
-    postalCode: nationalRegistryData.address?.postalCode as string,
-    city: nationalRegistryData.address?.city as string,
-  }
 }
