@@ -5,6 +5,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { UserRole } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { Institution } from '../institution'
 import { CreateUserDto, UpdateUserDto } from './dto'
 import { User } from './user.model'
 
@@ -23,6 +24,7 @@ export class UserService {
     if (user.role === UserRole.ADMIN) {
       return this.userModel.findAll({
         order: ['name'],
+        include: [{ model: Institution, as: 'institution' }],
       })
     }
 
@@ -31,6 +33,16 @@ export class UserService {
       where: {
         active: true,
       },
+      include: [{ model: Institution, as: 'institution' }],
+    })
+  }
+
+  findById(id: string): Promise<User> {
+    this.logger.debug(`Finding user ${id}`)
+
+    return this.userModel.findOne({
+      where: { id },
+      include: [{ model: Institution, as: 'institution' }],
     })
   }
 
@@ -50,7 +62,6 @@ export class UserService {
           mobileNumber: '',
           email: '',
           role: UserRole.ADMIN,
-          institution: '',
           active: true,
         } as User
       }
@@ -60,6 +71,7 @@ export class UserService {
 
     return this.userModel.findOne({
       where: { nationalId },
+      include: [{ model: Institution, as: 'institution' }],
     })
   }
 

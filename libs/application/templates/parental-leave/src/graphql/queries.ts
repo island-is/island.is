@@ -17,3 +17,12 @@ export const GetPensionFunds = gql`
     }
   }
 `
+
+export const GetPrivatePensionFunds = gql`
+  query GetPrivatePensionFunds {
+    getPrivatePensionFunds {
+      id
+      name
+    }
+  }
+`

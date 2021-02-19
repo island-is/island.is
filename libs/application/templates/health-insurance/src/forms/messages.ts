@@ -48,9 +48,21 @@ export const m = defineMessages({
   internalRevenueSubTitle: {
     id: 'hi.application:externalData.internalRevenue.subtitle',
     defaultMessage:
-      'Skatturinn annast álagningu skatta, tolla og annarra gjalda auk þess að viðhafa eftirlit með réttmæti skattskila.  Skatturinn gegnir margþættu tollgæsluhlutverki á landamærum og veitir samfélaginu vernd gegn ólögmætum inn- og útflutningi vöru',
+      'Skatturinn annast álagningu skatta, tolla og annarra gjalda auk þess að viðhafa eftirlit með réttmæti skattskila. Skatturinn gegnir margþættu tollgæsluhlutverki á landamærum og veitir samfélaginu vernd gegn ólögmætum inn- og útflutningi vöru.',
     description:
       'Handles the collection of taxes and duties as well as oversees the legitimacy of tax returns. The Directorate of Internal Revenue also plays a multifaceted customs role at the border and provides society with protection against illegal import and export of goods.',
+  },
+  socialInsuranceAdministrationTitle: {
+    id: 'hi.application:externalData.insuranceAdministration.title',
+    defaultMessage: 'Tryggingastofnun ríkisins',
+    description: 'Insurance administration',
+  },
+  socialInsuranceAdministrationSubtitle: {
+    id: 'hi.application:externalData.insuranceAdministration.subTitle',
+    defaultMessage:
+      'Hlutverk TR er að framfylgja lögum um almannatryggingar, lögum um félagslega aðstoð og lögum um málefni langveikra barna auk þess að sinna öðrum verkefnum sem stofnuninni eru falin hverju sinni.',
+    description:
+      'Handles the public pension system, as well as child´s pension, spouse´s pension, disability grant, age-related disability supplement, guaranteed income and household supplement.', // todo add ' in child's and spouse's
   },
   confirmationOfResidencyTitle: {
     id: 'hi.application:confirmationOfResidency.title',
@@ -107,7 +119,7 @@ export const m = defineMessages({
   editNationalRegistryData: {
     id: 'hi.application:nationalRegistryData.edit',
     defaultMessage:
-      'Tilkynna flutning **[lögheimilis](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)**',
+      'Tilkynna **[flutning lögheimilis](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)**',
     description:
       'Need to update your address? Go to **[Change of Address](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)**',
   },
@@ -124,9 +136,9 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Vinsamlegast uppfærið netfang og símanúmer á **[Mínum síðum](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)** ef með þarf ',
+      'Vinsamlegast uppfærið netfang og símanúmer á **[Mínum síðum](https://island.is/minarsidur/stillingar)** ef með þarf ',
     description:
-      'Please update your E-mail and Phone number on **[My Pages](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)** if not correct.',
+      'Please update your E-mail and Phone number on **[My Pages](https://island.is/minarsidur/stillingar)** if not correct.',
   },
   statusAndChildren: {
     id: 'hi.application:statusAndChildrend.section',
@@ -145,7 +157,7 @@ export const m = defineMessages({
   },
   statusEmployedInformation: {
     id: 'hi.application:status.employed.information',
-    defaultMessage: 'Þú varst í vinnu hjá fyrirtæki eða í eigin þágu.',
+    defaultMessage: 'Þú varst í vinnu hjá fyrirtæki eða sjálfstætt starfandi.',
     description: 'You were employed by a company or self-employed',
   },
   statusOther: {
@@ -165,7 +177,7 @@ export const m = defineMessages({
   },
   statusPensionerInformation: {
     id: 'hi.application:pensioner.information',
-    defaultMessage: 'Þú færð lífeyri eða örorkubækur frá Íslandi.',
+    defaultMessage: 'Þú færð lífeyri eða örorkubætur frá Íslandi.',
     description:
       'You are receiving old age pension or disability pension from Iceland',
   },
@@ -189,7 +201,7 @@ export const m = defineMessages({
   confirmationOfStudiesTooltip: {
     id: 'hi.application:student.confirmationOfStudiesTooltip',
     defaultMessage:
-      'Þú þarft að senda inn afrit af útskriftarskírteini eða staðfestingu á námsferli fyrir hverja önn. Skráningar- eða inntökustaðfesting nægir ekki',
+      'Þú þarft að senda inn afrit af útskriftarskírteini eða staðfestingu á námsferli fyrir hverja önn.\n Skráningar- eða inntökustaðfesting nægir ekki',
     description:
       'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. Admission or enrollement letters are not sufficient.',
   },
@@ -207,7 +219,7 @@ export const m = defineMessages({
   childrenInfoMessageText: {
     id: 'hi.application:children.infoMessageText',
     defaultMessage:
-      'Börn skráð hjá þér munu sjálfkrafa verða sjúkratryggð á sama tíma og þú',
+      'Börn skráð á þér munu sjálfkrafa verða sjúkratryggð á sama tíma og þú',
     description:
       'Any children registered to you will automatically get health insurance once you get insured.',
   },
@@ -228,8 +240,10 @@ export const m = defineMessages({
   },
   fileUploadDescription: {
     id: 'hi.application:fileUpload.description',
-    defaultMessage: 'Viðurkenndar skráartegundir: .pdf, .docx, .rtf',
-    description: 'Accepted documents: .pdf, .docx, .rtf',
+    defaultMessage:
+      'Hámark 10 MB á skrá. Samþykktar skráartegundir eru .pdf .docx og .jpg',
+    description:
+      'Max 10 MB per file. Accepted documents is .pdf .docx and .jpg',
   },
   fileUploadButton: {
     id: 'hi.application:fileUpload.button',
@@ -253,6 +267,11 @@ export const m = defineMessages({
     description:
       'Were you registered with a national health insurance institution in your former country of insurance?',
   },
+  formerInsuranceCountryPlaceholder: {
+    id: 'hi.application:formerInsurance.countryPlaceholder',
+    defaultMessage: 'Veldu land',
+    description: 'Select a country',
+  },
   formerInsuranceDetails: {
     id: 'hi.application:formerInsurance.details',
     defaultMessage: 'Vinsamlegast gefið upplýsingar um fyrra tryggingarland.',
@@ -269,7 +288,7 @@ export const m = defineMessages({
   formerInsuranceEntitlementTooltip: {
     id: 'hi.application:formerInsurance.entitlementTooltip',
     defaultMessage:
-      'Líklega Já ef þú ert enn í vinnu eða ert að fá atvinnuleysisbætur, lífeyri, fæðingarorlof eða annars konar bætur í peningum frá fyrra tryggingalandi. ',
+      'Líklega Já ef þú ert enn í vinnu eða ert að fá atvinnuleysisbætur, lífeyri, fæðingarorlof eða annars konar bætur í peningum frá fyrra tryggingarlandi. ',
     description:
       'Most likely yes if you are still employed/receiving unemployment benefits, pension, benefits in cash or paternity/maternity benefits from your former country of insurance.',
   },
@@ -350,24 +369,15 @@ export const m = defineMessages({
   },
   successfulSubmissionMessage: {
     id: 'hi.application:successfulSubmission.message',
-    defaultMessage:
-      'Númer umsókninnar er **{applicationNumber}**. Tölvupóstur til staðfestingar hefur verið sendur. ',
-    description:
-      'Your application number is **{applicationNumber}**. A confirmation e-mail has also been sent. ',
+    defaultMessage: 'Númer umsókninnar er **{applicationNumber}**.',
+    description: 'Your application number is **{applicationNumber}**.',
   },
   nextStepReviewTime: {
     id: 'hi.application:nextStep.duration',
     defaultMessage:
-      'Tekið getur allt að 2-6 vikur að meðhöndla umsókn. Eftir því hversu fljótt fyrra tryggingarland þitt svarar fyrirspurn okkar getur það tekið lengur.',
+      'Tekið getur allt að 2-6 vikur að fara yfir umsókn. Lengd svartíma fer eftir því hversu fljótt fyrra tryggingarland þitt svarar fyrirspurn okkar og getur það tekið lengri tíma.',
     description:
-      'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance to responds to our request, it could take a longer.',
-  },
-  nextStepStatusCheck: {
-    id: 'hi.application:nextStep.currentStatus',
-    defaultMessage:
-      'Þú getur alltaf séð núverandi stöðu umsóknar þinnar á Mínum síðum.',
-    description:
-      'You can always see the current status of your application in My Pages.',
+      'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance is to responds on our request, it may take longer time.',
   },
   missingInfoSection: {
     id: 'hi.application:missingInfo.section',
@@ -412,8 +422,9 @@ export const m = defineMessages({
   waitingPeriodDescription: {
     id: 'hi.application:waitingPeriod.description',
     defaultMessage:
-      'Samkvæmt Þjóðskrá ert þú ekki að flytja til Íslands frá EES landi, Sviss, Grænlandi eða Færeyjum. Það er sex mánaða biðtími áður en sjúkratrygging tekur gildi. Ráðlegt er að kaupa einkatryggingu þangað til opinber sjúkratrygging tekur gildi. Þaðeru nokkrar læknisfræðilegar undanþágur frá þessu ákvæði.',
-    description: 'Error message for user if selecting a country outside of EU',
+      'Þegar flutt er til Íslands frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.\n Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar **[læknisfræðilegar undanþágur](https://islandd.is/umsokn-um-sjukratryggingu)** eru frá sex mánaða biðtímanum.', //TODO, should link to the Læknisfræðilegar undanþágur section
+    description:
+      'When moving to Iceland or being a citizen from a country outside the **[EU/EEA](https://www.sjukra.is/english/health-insurance-abroad/european-health-insurance-card/european-countries/)**, Greenland or the Faroe Islands there is a six-month waiting period before qualifying for national health insurance. You will need to wait. You will be automatically covered by the national health insurance six months from the day you registered your legal residence with Registers Iceland. We advise you to buy private health insurance until you are covered. There are some **[medical exceptions](https://island.is/en/apply-for-health-insurance)** to the waiting period.',
   },
   waitingPeriodButtonText: {
     id: 'hi.application:waitingPeriod.buttonText',
@@ -437,61 +448,67 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description: 'How to register',
   },
-  activeApplicationTitle: {
+  activeDraftApplicationTitle: {
+    id: 'hi.application:activeDraftApplication.title',
+    defaultMessage: 'Opna ókláraða umsókn',
+    description: 'Open your previous draft',
+  },
+  activeDraftApplicationDescription: {
+    id: 'hi.application:activeDraftApplication.description',
+    defaultMessage:
+      'Þú átt nú þegar umsókn sem ekki hefur verið send inn. Vinsamlegast farðu í fyrri umsókn til að halda áfram.',
+    description: 'Information for those that alreade have a started draft',
+  },
+  activeDraftApplicationButtonText: {
+    id: 'hi.application:activeDraftApplication.buttonText',
+    defaultMessage: 'Opna umsókn',
+    description: 'Open draft',
+  },
+  pendingApplicationTitle: {
     id: 'hi.application:activeApplication.title',
     defaultMessage: 'Virk umsókn',
     description: 'Active application',
   },
-  activeApplicationDescription: {
-    id: 'hi.application:activeApplication.description',
-    defaultMessage:
-      'Þú hefur nú þegar sótt um sjúkratryggingu. Við umsókn voru sendar upplýsingar á netfang sem gefið var upp. Þú getur alltaf séð stöðu umsóknar á Mínum síðum',
-    description:
-      'You have already submitted an application for health insurance. We will notify you on the e-mail address you provided in the application when the status changes. You can always see your application status in My Pages.',
-  },
-  activeApplicationButtonText: {
-    id: 'hi.application:activeApplication.buttonText',
-    defaultMessage: 'Sjá stöðu',
-    description: 'See status',
-  },
-  oldPendingApplicationDescription: {
+  pendingApplicationDescription: {
     id: 'hi.application:oldPendingApplication.description',
     defaultMessage:
       'Þú hefur nú þegar sótt um sjúkratryggingu. Númer umsókninnar er **{applicationNumber}**. Vinsamlegast hafið samband við Sjúkratryggingar Íslands ef spurningar vakna.',
     description:
       'You have already submitted an application for health insurance. Your application number is **{applicationNumber}**. Please contact the Icelandic Health Insurance if you have any questions.',
   },
-  oldPendingApplicationButtonText: {
+  pendingApplicationButtonText: {
     id: 'hi.application:oldPendingApplication.buttonText',
     defaultMessage: 'Hafa samband',
     description: 'Contact info',
   },
   alreadyInsuredTitle: {
     id: 'hi.application:alreadyInsured.title',
-    defaultMessage: 'Already insured',
+    defaultMessage: 'Þú ert nú þegar sjúkratryggður',
     description: 'Already insured',
   },
   alreadyInsuredDescription: {
     id: 'hi.application:alreadyInsured.description',
     defaultMessage:
-      'It seems like you already have a health insurance in Iceland',
-    description: 'already insured',
+      'Þú ert nú þegar með virka sjúkratryggingu hjá Sjúkratryggingum Íslands og þarft því ekki að sækja um.\n Nánari upplýsingar er að finna á heimasíðu Sjúkratrygginga Íslands.',
+    description:
+      'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at sjukra.is/english',
   },
   alreadyInsuredButtonText: {
     id: 'hi.application:alreadyInsured.buttonText',
-    defaultMessage: 'OK',
-    description: 'ok',
+    defaultMessage: 'Opna vefsíðu',
+    description: 'A button to go to sjukra website',
   },
   externalDataCheckbox: {
     id: 'hi.application:externalDataCheckbox',
     defaultMessage:
-      'Ég samþykki að gögn séu sótt, notkunarskilmálana og persónuverndarstefnuna',
+      'Ég samþykki að gagna sé aflað og **[persónuverndarstefnuna](https://island.is/umsokn-um-sjukratryggingu/personuverndarstefna)**', //todo, fix so that the checkox label can use markdown
     description:
-      'I confirm that I have read the Terms of use and the Privacy policy',
+      'I confirm that I have read the Terms of use and the **[Privacy policy](https://island.is/en/apply-for-health-insurance/privacy-policy)**',
   },
   externalDataSubtitle: {
     id: 'hi.application:externalDataSubtitle',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    defaultMessage:
+      'Gögn frá eftirtöldum aðilum verða sótt rafrænt með þínu samþykki',
     description:
       'Data from the following sources will be retrieved with your consent',
   },

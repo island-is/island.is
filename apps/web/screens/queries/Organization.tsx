@@ -72,7 +72,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       }
       footerItems {
         title
-        content
+        content {
+          ...HtmlFields
+        }
         link {
           text
           url
@@ -88,7 +90,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
     getOrganizationSubpage(input: $input) {
       title
       slug
-      description
+      description {
+        ...HtmlFields
+      }
       links {
         text
         url
@@ -137,6 +141,18 @@ export const GET_ORGANIZATION_TAGS_QUERY = gql`
         id
         title
       }
+    }
+  }
+`
+
+export const GET_HOMESTAYS_QUERY = gql`
+  query GetHomestays($input: GetHomestaysInput!) {
+    getHomestays(input: $input) {
+      registrationNumber
+      address
+      name
+      city
+      manager
     }
   }
 `

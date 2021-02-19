@@ -130,7 +130,7 @@ export const menu = factory<Menu>({
 export const groupedMenu = factory<GroupedMenu>({
   id: faker.random.uuid(),
   title: () => title(),
-  menus: () => menu.list(2),
+  menus: () => menu.list(5),
 })
 
 export const alertBannerVariant = () =>

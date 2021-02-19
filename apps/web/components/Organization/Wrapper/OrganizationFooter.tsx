@@ -8,8 +8,9 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import { MarkdownText } from '@island.is/web/components'
 import * as styles from './OrganizationFooter.treat'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
   organizationPage: OrganizationPage
@@ -55,27 +56,34 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
                   className={index === 0 ? styles.footerItemFirst : null}
                 >
                   <Box marginBottom={5}>
-                    <Box marginBottom={1}>
-                      <Text
-                        color="white"
-                        fontWeight={index === 0 ? 'semiBold' : 'regular'}
-                      >
-                        {item.link ? (
-                          <Link
-                            href={item.link.url}
-                            underline="normal"
-                            underlineVisibility="always"
-                          >
-                            {item.title}
-                          </Link>
-                        ) : (
-                          item.title
-                        )}
-                      </Text>
+                    <Box marginBottom={2}>
+                      {item.link ? (
+                        <Link
+                          href={item.link.url}
+                          underline="small"
+                          underlineVisibility="always"
+                          color="white"
+                        >
+                          {item.title}
+                        </Link>
+                      ) : (
+                        <Text
+                          fontWeight={index === 0 ? 'semiBold' : 'regular'}
+                          color="white"
+                        >
+                          {item.title}
+                        </Text>
+                      )}
                     </Box>
-                    <MarkdownText color="white" variant="small">
-                      {item.content}
-                    </MarkdownText>
+                    {richText(item.content as SliceType[], {
+                      renderNode: {
+                        [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          <Text variant="small" color="white">
+                            {children}
+                          </Text>
+                        ),
+                      },
+                    })}
                   </Box>
                 </GridColumn>
               ))}

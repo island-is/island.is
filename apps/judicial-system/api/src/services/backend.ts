@@ -6,6 +6,7 @@ import {
   Case,
   CreateCase,
   CreateUser,
+  Institution,
   Notification,
   RequestSignatureResponse,
   SendNotification,
@@ -28,8 +29,16 @@ class BackendAPI extends RESTDataSource {
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
+  getInstitutions(): Promise<Institution[]> {
+    return this.get('institutions')
+  }
+
   getUsers(): Promise<User[]> {
-    return this.get(`users`)
+    return this.get('users')
+  }
+
+  getUser(id: string): Promise<User> {
+    return this.get(`user/${id}`)
   }
 
   createUser(createUser: CreateUser): Promise<User> {

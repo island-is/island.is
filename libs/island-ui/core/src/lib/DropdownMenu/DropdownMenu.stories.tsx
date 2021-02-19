@@ -20,7 +20,8 @@ Default.args = {
     },
     {
       title: 'Fyrirtæki',
-      onClick: () => {
+      onClick: (menu) => {
+        menu.hide()
         console.log('click')
       },
     },

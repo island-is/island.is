@@ -33,7 +33,7 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly institution: string
+  readonly institutionId: string
 
   @IsOptional()
   @IsBoolean()

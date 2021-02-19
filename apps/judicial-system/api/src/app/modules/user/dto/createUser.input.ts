@@ -32,7 +32,7 @@ export class CreateUserInput implements CreateUser {
 
   @Allow()
   @Field()
-  readonly institution!: string
+  readonly institutionId!: string
 
   @Allow()
   @Field()
