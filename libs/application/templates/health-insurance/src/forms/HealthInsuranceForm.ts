@@ -156,7 +156,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address?.postalCode || '000', //Todo remove || '000'
+                }).address?.postalCode
             }),
             buildTextField({
               id: 'applicant.city',
@@ -260,6 +260,7 @@ export const HealthInsuranceForm: Form = buildForm({
               maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
+              uploadButtonLabel: m.fileUploadButton.defaultMessage,
               condition: (answers) =>
                 (answers.status as { type: string })?.type ===
                 StatusTypes.STUDENT,
