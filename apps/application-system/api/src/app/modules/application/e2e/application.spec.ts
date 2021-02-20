@@ -459,14 +459,12 @@ describe('Application system API', () => {
     const type = 'ChildrenResidenceChange'
 
     const fileService: FileService = app.get<FileService>(FileService)
-    jest
-      .spyOn(fileService, 'requestFileSignature')
-      .mockImplementation(() =>
-        Promise.resolve({
-          controlCode: expectedControlCode,
-          documentToken: expectedDocumentToken,
-        }),
-      )
+    jest.spyOn(fileService, 'requestFileSignature').mockImplementation(() =>
+      Promise.resolve({
+        controlCode: expectedControlCode,
+        documentToken: expectedDocumentToken,
+      }),
+    )
 
     const postResponse = await server.post('/applications').send({
       applicant: nationalId,

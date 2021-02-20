@@ -16,7 +16,7 @@ export class UploadSignedFileInput {
   @IsString()
   documentToken!: string
 
-  @Field((type) => UploadSignedFileDtoTypeEnum)
+  @Field(() => UploadSignedFileDtoTypeEnum)
   @IsEnum(UploadSignedFileDtoTypeEnum)
   type!: UploadSignedFileDtoTypeEnum
 }

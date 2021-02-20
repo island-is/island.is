@@ -8,11 +8,11 @@ registerEnumType(RequestFileSignatureDtoTypeEnum, {
 
 @InputType()
 export class RequestFileSignatureInput {
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   id!: string
 
-  @Field((type) => RequestFileSignatureDtoTypeEnum)
+  @Field(() => RequestFileSignatureDtoTypeEnum)
   @IsEnum(RequestFileSignatureDtoTypeEnum)
   type!: RequestFileSignatureDtoTypeEnum
 }
