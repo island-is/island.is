@@ -15,7 +15,7 @@ describe('skilavottordTestTest', () => {
 
 const recyclingRequestModel = {
   id: '1234',
-  vehicleId: 'AB-123',
+  vehicleId: 'ZUG18',
   recyclingPartnerId: '1',
   recyclingParter: {},
   requestType: '',
@@ -92,7 +92,7 @@ describe('SamgongustofaApiTest', () => {
       const checkVehileResp = await samgongustofaService.getVehicleInformation(
         kennitala,
       )
-      expect(checkVehileResp).toBe(true)
+      expect(checkVehileResp[0].permno).toBe('ZUG18')
     })
   })
 })
