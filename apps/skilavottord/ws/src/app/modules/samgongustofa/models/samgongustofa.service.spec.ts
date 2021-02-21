@@ -9,7 +9,6 @@ import { of } from 'rxjs'
 
 describe('skilavottordTestTest', () => {
   it('should work', () => {
-    // expect(apiDomainsHealthInsurance()).toEqual('api-domains-health-insurance')
     expect(SamgongustofaService.test()).toEqual('test')
   })
 })
@@ -46,12 +45,6 @@ describe('SamgongustofaApiTest', () => {
           provide: LOGGER_PROVIDER,
           useValue: logger,
         },
-        // {
-        //   provide: HttpService,
-        //   useClass: jest.fn(() => ({
-        //     post: () => ({}),
-        //   })),
-        // },
         {
           provide: RecyclingRequestService,
           useClass: jest.fn(() => ({
@@ -69,17 +62,17 @@ describe('SamgongustofaApiTest', () => {
     httpService = moduleRef.get<HttpService>(HttpService)
   })
 
-  const sxml1 = getAllVehiclesForPersidnoResponse()
-  const axiosGeneralLookupResponse1: AxiosResponse = {
-    data: sxml1,
+  const getAllVehicleSoapRespXml = getAllVehiclesForPersidnoResponse()
+  const getAllVehilceResp: AxiosResponse = {
+    data: getAllVehicleSoapRespXml,
     status: 200,
     statusText: 'OK',
     headers: {},
     config: {},
   }
-  const sxml2 = getBasicVehicleInformationResponse()
-  const axiosGeneralLookupResponse2: AxiosResponse = {
-    data: sxml2,
+  const getBasicVehicleInfoRespXml = getBasicVehicleInformationResponse()
+  const getBasicVehicleResp: AxiosResponse = {
+    data: getBasicVehicleInfoRespXml,
     status: 200,
     statusText: 'OK',
     headers: {},
@@ -91,15 +84,8 @@ describe('SamgongustofaApiTest', () => {
       const kennitala = '1111111111'
       const httpServiceSpy = jest
         .spyOn(httpService, 'post')
-        .mockImplementationOnce(() => of(axiosGeneralLookupResponse1))
-        .mockImplementationOnce(() => of(axiosGeneralLookupResponse2))
-
-      //   httpServiceSpy.mockImplementationOnce(() =>
-      //     of(axiosGeneralLookupResponse1),
-      //   )
-      //   httpServiceSpy.mockImplementationOnce(() =>
-      //     of(axiosGeneralLookupResponse2),
-      //   )
+        .mockImplementationOnce(() => of(getAllVehilceResp))
+        .mockImplementationOnce(() => of(getBasicVehicleResp))
       jest
         .spyOn(recyclingRequestService as any, 'findAllWithPermno')
         .mockImplementation(() => Promise.resolve(recyclingRequestModel))
@@ -110,19 +96,6 @@ describe('SamgongustofaApiTest', () => {
     })
   })
 })
-
-// httpService.post.mockImplementation(() => mockObservable)
-// https://stackoverflow.com/questions/59562092/mock-a-topromise-function-in-jest-got-topromise-is-not-a-function
-// https://stackoverflow.com/questions/59860854/how-to-test-httpservice-post-calls-using-jest
-// RecyclingRequestModel
-//   id: string
-//   vehicleId: string
-//   recyclingPartnerId: string
-//   recyclingParter: RecyclingPartnerModel
-//   requestType: string
-//   nameOfRequestor: string
-//   createdAt: Date
-//   updatedAt: Date
 
 //fyrra soapskeyti
 function getAllVehiclesForPersidnoResponse(): string {
@@ -526,6 +499,5 @@ function getBasicVehicleInformationResponse(): string {
       </ns1:basicVehicleInformationResponse>
    </soapenv:Body>
 </soapenv:Envelope>
-
 `
 }
