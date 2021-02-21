@@ -62,9 +62,9 @@ const REDIRECT_COOKIE: Cookie = {
   },
 }
 
-const loginIS = new IslandisLogin({
-  audienceUrl,
-})
+// const loginIS = new IslandisLogin({
+//   audienceUrl,
+// })
 
 @Controller(`${BASE_PATH}/api/auth`)
 export class AuthController {
@@ -75,7 +75,7 @@ export class AuthController {
     this.logger.info('--- /citizen/callback starting ---')
     let verifyResult: VerifyResult
     try {
-      verifyResult = await loginIS.verify(token)
+      // verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
       return res.redirect('/error')
@@ -142,7 +142,7 @@ export class AuthController {
     this.logger.info('--- /company/callback starting ---')
     let verifyResult: VerifyResult
     try {
-      verifyResult = await loginIS.verify(token)
+      // verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
       return res.redirect('/error')

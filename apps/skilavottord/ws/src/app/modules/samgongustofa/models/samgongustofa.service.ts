@@ -1,12 +1,15 @@
 import { VehicleInformation } from './samgongustofa.model'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
-import xml2js from 'xml2js'
+import * as xml2js from 'xml2js'
 import { environment } from '../../../../environments'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
 
 @Injectable()
 export class SamgongustofaService {
+  static test(): string {
+    return 'test'
+  }
   vehicleInformationList: VehicleInformation[]
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -21,7 +24,6 @@ export class SamgongustofaService {
         `---- Starting getVehicleInformation call on ${nationalId} ----`,
       )
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
-
       const parser = new xml2js.Parser()
 
       // First soap call to get all vehicles own by person with nationalId in input
@@ -46,9 +48,11 @@ export class SamgongustofaService {
       }
 
       this.logger.info('Start allVehiclesForPersidno Soap request.')
+      console.log('----url:' + soapUrl)
       const allCarsResponse = await this.httpService
         .post(soapUrl, xmlAllCarsBodyStr, { headers: headersRequest })
         .toPromise()
+      console.log('---------------------1')
       if (allCarsResponse.status != 200) {
         this.logger.error(allCarsResponse.statusText)
         throw new Error(allCarsResponse.statusText)
@@ -56,19 +60,33 @@ export class SamgongustofaService {
       this.logger.info(
         'allVehiclesForPersidno Soap request successed and start parsing xml to json',
       )
-
       const loggerReplacement = this.logger
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
       this.vehicleInformationList = await parser
         .parseStringPromise(allCarsResponse.data.replace(/(\t\n|\t|\n)/gm, ''))
         .then(function (allCarsResult) {
           // check if SOAP returns 200 status code but with Fault message
+          // console.log(
+          // '111111111111111111111111111111111111' +
+          // JSON.stringify(allCarsResult, null, 2),
+          // )
+          // console.log('xxxxxxxxxxxxxxxxxx333333-')
+          // console.log(
+          //   '333333333333333333333333-' +
+          //     JSON.stringify(
+          //       allCarsResult['soapenv:Envelope']['soapenv:Body'][0],
+          //       null,
+          //       2,
+          //     ),
+          // )
+          console.log('111111111111111111111111111111111111')
           if (
             Object.prototype.hasOwnProperty.call(
               allCarsResult['soapenv:Envelope']['soapenv:Body'][0],
               'soapenv:Fault',
             )
           ) {
+            console.log('222222222222222222222222222222222222')
             loggerReplacement.error(
               allCarsResult['soapenv:Envelope']['soapenv:Body'][0][
                 'soapenv:Fault'
@@ -80,6 +98,8 @@ export class SamgongustofaService {
               ][0]['faultstring'][0],
             )
           }
+          console.log('333333333333333333333333333333333333')
+          // console.log(JSON.stringify(allCarsResponse, null, 2))
           // parse xml to Json Result
           return parser
             .parseStringPromise(
@@ -88,6 +108,11 @@ export class SamgongustofaService {
               ][0]['allVehiclesForPersidnoReturn'][0]['_'],
             )
             .then(function (allCars) {
+              console.log(
+                '444444444444444444444444444444444444:' +
+                  'allVehilesForPersidnoResponce done',
+              )
+              // console.log(JSON.stringify(allCars, null, 2))
               if (allCars['persidnolookup']['vehicleList'][0] == '') {
                 return []
               }
@@ -151,6 +176,7 @@ export class SamgongustofaService {
             })
         })
         .catch(function (err) {
+          console.log('------------------------------------:')
           loggerReplacement.error(
             `Getting error while parsing first xml to json on allVehiclesForPersidno request: ${err}`,
           )
@@ -167,6 +193,7 @@ export class SamgongustofaService {
         this.logger.info(
           `Starting extracting details information on ${carObj['permno']}`,
         )
+
         if (carObj['status'] == 'inUse' && carObj['isRecyclable']) {
           // Vehicle information's Soap body
           const xmlBasicInfoBodyStr = `<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:usx="https://xml.samgongustofa.is/scripts/WebObjects.dll/XML.woa/1/ws/.USXMLWS">
@@ -201,6 +228,8 @@ export class SamgongustofaService {
             )
             .then(function (basicResult) {
               // check if SOAP returns 200 status code but with Fault message
+              console.log('555555555555555555555555555555555555555555555:')
+              // console.log(JSON.stringify(basicResult, null, 2))
               if (
                 Object.prototype.hasOwnProperty.call(
                   basicResult['soapenv:Envelope']['soapenv:Body'][0],
@@ -219,6 +248,9 @@ export class SamgongustofaService {
                 )
               }
               // parse xml to Json Result
+              console.log('666666666666666666666666666666666666666666666:')
+              // console.log(JSON.stringify(basicResult, null, 2))
+              console.log('777777777777777777777777777777777777777777777:')
               return parser
                 .parseStringPromise(
                   basicResult['soapenv:Envelope']['soapenv:Body'][0][
@@ -234,6 +266,9 @@ export class SamgongustofaService {
                       basicInfo['vehicle']['ownerregistrationerrors'][0] == ''
                     )
                   ) {
+                    console.log(
+                      '----------------------isRecyclable er false........:',
+                    )
                     newVehicleArr[i]['isRecyclable'] = false
                   }
                   return newVehicleArr[i]
@@ -254,6 +289,7 @@ export class SamgongustofaService {
         }
       }
 
+      console.log('888888888888888888888888888888888888888888888:')
       for (let i = 0; i < this.vehicleInformationList.length; i++) {
         const vehicle = this.vehicleInformationList[i]
         try {
