@@ -268,7 +268,7 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'auction',
       'fields.organization.sys.contentType.sys.id': 'organization',
-      'fields.organization.fields.slug': organization,
+      'fields.organization.fields.slug': organization ?? '',
       'fields.date[gte]': fromDate.toISOString(),
       'fields.date[lte]': toDate.toISOString(),
       order: 'fields.date',
