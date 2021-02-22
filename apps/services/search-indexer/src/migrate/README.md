@@ -7,10 +7,9 @@ on `initContainer` inside the cluster. The migration file has several tasks:
   - Manage files inside S3 buckets
   - Create packages inside AWS ES
   - Associate and disassociate packages with AWS ES domains
-  - Cleanup old packages inside AWS ES
 - Keep ES indexes up to date
-  - Create new indexes
-  - Migrate data from one index to another
+  - Create new index versions
+  - Migrate data from datasources
   - Manage aliases
   - Rollback to last deployed version on failure
 
@@ -29,8 +28,8 @@ You can run the migration with
 yarn nx run services-search-indexer:migrate
 ```
 
-This migrates the ES indexes to the latest version defined in the
-`./config/template-{LOCALE}.json` files. It also imports all kibana saved
+This migrates the ES indexes to the latest version defined by the
+`content-search-index-manager` library. It also imports all kibana saved
 objects that are in `./config/kibana` folder.
 
 #### Sync Kibana

@@ -1,25 +1,17 @@
 import React from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
-import {
-  UserHelpForm,
-  UserHelpFormData,
-} from '../../../components/Forms/UserHelpForm'
+import { UserHelpForm } from '../../../components/Forms/UserHelpForm'
+import { useGetOrganisation } from '../../../shared/useGetOrganisation'
+import { SettingsFormsLoader } from '../../../components/SettingsFormsLoader'
 
 const EditUserHelpContact: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
+  const { organisation } = useGetOrganisation('123456-0000')
 
-  const handleSubmit = (data: UserHelpFormData) => {
-    submitFormData(data)
-  }
-
-  const submitFormData = async (formData: UserHelpFormData) => {
-    //TODO: Set up submit
-    console.log(formData)
-    toast.success('Notendaaðstoð vistuð')
-  }
+  const { helpdesk: helpDesk } = organisation || {}
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={4}>
@@ -27,7 +19,11 @@ const EditUserHelpContact: ServicePortalModuleComponent = ({ userInfo }) => {
           {formatMessage(m.SettingsEditUserHelpContactTitle)}
         </Text>
       </Box>
-      <UserHelpForm onSubmit={handleSubmit} />
+      {helpDesk ? (
+        <UserHelpForm organisationId={organisation?.id} helpDesk={helpDesk} />
+      ) : (
+        <SettingsFormsLoader numberOfLoaders={3} />
+      )}
     </Box>
   )
 }

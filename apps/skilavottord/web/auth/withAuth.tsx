@@ -7,8 +7,7 @@ import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 type AuthType = 'citizen' | 'recyclingPartner'
 
-const USER_MOCKED =
-  process.env.NODE_ENV === 'development' && process.env.API_MOCKS === 'true'
+const USER_MOCKED = process.env.API_MOCKS === 'true'
 
 const withAuth = (WrappedComponent: NextComponentType, authType: AuthType) =>
   class extends Component {
