@@ -48,7 +48,6 @@ export class SamgongustofaService {
       }
 
       this.logger.info('Start allVehiclesForPersidno Soap request.')
-      console.log('----url:' + soapUrl)
       const allCarsResponse = await this.httpService
         .post(soapUrl, xmlAllCarsBodyStr, { headers: headersRequest })
         .toPromise()
@@ -233,14 +232,50 @@ export class SamgongustofaService {
                 .then(function (basicInfo) {
                   // If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
-                    !(
-                      basicInfo['vehicle']['updatelocks'][0] == '' &&
-                      basicInfo['vehicle']['stolens'][0] == '' &&
-                      basicInfo['vehicle']['ownerregistrationerrors'][0] == ''
-                    )
+                    typeof basicInfo.vehicle.ownerregistrationerrors[0]
+                      .ownerregistrationerror != 'undefined'
                   ) {
-                    newVehicleArr[i]['isRecyclable'] = false
+                    //Handle registrationerror
+                    loggerReplacement.info(
+                      'vehicle has ownerregistrationerrors',
+                    )
+                    newVehicleArr[i].isRecyclable = false
                   }
+                  if (
+                    //Handle stolen
+                    typeof basicInfo.vehicle.stolens[0].stolen != 'undefined'
+                  ) {
+                    for (let stolenEndDate of basicInfo.vehicle.stolens[0]
+                      .stolen) {
+                      if (!stolenEndDate.enddate[0].trim()) {
+                        loggerReplacement.info('vehicle is stolen')
+                        newVehicleArr[i].isRecyclable = false
+                        break
+                      }
+                    }
+                  }
+                  if (
+                    typeof basicInfo.vehicle.updatelocks[0].updatelock !=
+                    'undefined'
+                  ) {
+                    //Handle lock
+                    for (let lockEndDate of basicInfo.vehicle.updatelocks[0]
+                      .updatelock) {
+                      if (!lockEndDate.enddate[0].trim()) {
+                        loggerReplacement.info('vehicle is locked')
+                        newVehicleArr[i].isRecyclable = false
+                        break
+                      }
+                    }
+                  }
+                  if (newVehicleArr[i].isRecyclable) {
+                    loggerReplacement.info(
+                      'vehicle is clean. stolen, locked, registrationerror tjekked',
+                    )
+                  }
+                  loggerReplacement.info(
+                    'isRecycleble=' + newVehicleArr[i].isRecyclable,
+                  )
                   return newVehicleArr[i]
                 })
                 .catch(function (err) {

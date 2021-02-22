@@ -413,7 +413,7 @@ function getBasicVehicleInformationResponse(): string {
              <updatelocks>
                            <updatelock>
                                         <startdate>28.09.2017</startdate>
-                                        <enddate></enddate>
+                                        <enddate>28.09.2017</enddate>
                                         <type>2 Lögreglulás</type>
                            </updatelock>
                            <updatelock>
