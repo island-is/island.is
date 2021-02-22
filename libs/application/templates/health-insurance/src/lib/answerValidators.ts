@@ -69,6 +69,15 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     // Check country is a string and not empty
+    if (!formerInsurance.country) {
+      const buildError = buildValidationError(
+        `${FORMER_INSURANCE}.country`,
+      )
+      return buildError(
+        'Please select a country',
+        `${FORMER_INSURANCE}.country`,
+      )
+    }
 
     // Check national ID is string and not empty
 
