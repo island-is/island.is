@@ -79,7 +79,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
       )
     }
 
+    // Check file upload if coutnry is Greenland / Faroe
+
     // Check national ID is string and not empty
+    if (!formerInsurance.personalId) {
+      const buildError = buildValidationError(
+        `${FORMER_INSURANCE}.personalId`,
+      )
+      return buildError(
+        'Please fill in your ID number in previous country',
+        `${FORMER_INSURANCE}.personalId`,
+      )
+    }
 
     // Check entitlement is Yes / No if !requireWaitingPeriod
 
