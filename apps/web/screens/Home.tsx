@@ -6,11 +6,8 @@ import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   ContentLanguage,
-  GetFrontpageSliderListQuery,
   QueryGetArticleCategoriesArgs,
   GetArticleCategoriesQuery,
-  GetNamespaceQuery,
-  GetLifeEventsQuery,
   GetFrontpageQuery,
   QueryGetFrontpageArgs,
   GetNewsQuery,
@@ -38,28 +35,23 @@ import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
-  frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
-  namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsQuery['getNews']['items']
-  lifeEvents: GetLifeEventsQuery['getLifeEvents']
   page: GetFrontpageQuery['getFrontpage']
 }
 
 const Home: Screen<HomeProps> = ({
   categories,
-  frontpageSlides,
-  namespace,
   news,
-  lifeEvents,
   page,
 }) => {
+  const namespace = JSON.parse(page.namespace.fields)
   const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()
 
-  if (!lifeEvents || !lifeEvents.length) {
+  if (!page.lifeEvents || !page.lifeEvents.length) {
     return null
   }
 
@@ -111,7 +103,7 @@ const Home: Screen<HomeProps> = ({
     <div id="main-content" style={{ overflow: 'hidden' }}>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
-          slides={frontpageSlides as FrontpageSliderType[]}
+          slides={page.slides as FrontpageSliderType[]}
           searchContent={searchContent}
         />
       </Section>
@@ -130,7 +122,7 @@ const Home: Screen<HomeProps> = ({
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
           linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
-          lifeEvents={lifeEvents}
+          lifeEvents={page.lifeEvents}
         />
       </Section>
       <Section
@@ -214,11 +206,8 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
 
   return {
     news,
-    lifeEvents: getFrontpage.lifeEvents,
-    frontpageSlides: getFrontpage.slides,
     categories: getArticleCategories,
     page: getFrontpage,
-    namespace: JSON.parse(getFrontpage.namespace.fields),
     showSearchInHeader: false,
   }
 }
