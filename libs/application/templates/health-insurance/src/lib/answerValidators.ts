@@ -5,6 +5,7 @@ import {
   AnswerValidationError,
 } from '@island.is/application/core'
 import { StatusTypes, Status } from '../types'
+import { NO, YES } from '../constants'
 
 const buildValidationError = (
   path: string,
@@ -27,6 +28,7 @@ const buildValidationError = (
 }
 
 const STATUS = 'status'
+const FORMER_INSURANCE = 'formerInsurance'
 
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
@@ -46,6 +48,33 @@ export const answerValidators: Record<string, AnswerValidator> = {
         `${STATUS}.type`,
       )
     }
+
+    return undefined
+  },
+  [FORMER_INSURANCE]: (newAnswer: unknown, application: Application) => {
+    const formerInsurance = newAnswer as any //TODO: create FormerInsurance
+
+    // Check registration is Yes / No
+    if (
+      formerInsurance.registration !== YES &&
+      formerInsurance.registration !== NO
+    ) {
+      const buildError = buildValidationError(
+        `${FORMER_INSURANCE}.registration`,
+      )
+      return buildError(
+        'You must select one of the above',
+        `${FORMER_INSURANCE}.registration`,
+      )
+    }
+
+    // Check country is a string and not empty
+
+    // Check national ID is string and not empty
+
+    // Check entitlement is Yes / No if !requireWaitingPeriod
+
+    // Check entitelmentReason is a string and not empty if entitlement === YES
 
     return undefined
   },
