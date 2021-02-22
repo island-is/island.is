@@ -5,6 +5,13 @@ export enum UserRole {
   ADMIN = 'ADMIN',
 }
 
+export interface Institution {
+  id: string
+  created: string
+  modified: string
+  name: string
+}
+
 export interface User {
   id: string
   created: string
@@ -15,7 +22,7 @@ export interface User {
   mobileNumber: string
   email: string
   role: UserRole
-  institution: string
+  institution?: Institution
   active: boolean
 }
 
@@ -26,7 +33,7 @@ export interface CreateUser {
   mobileNumber: string
   email: string
   role: UserRole
-  institution: string
+  institutionId: string
   active: boolean
 }
 
@@ -36,7 +43,7 @@ export interface UpdateUser {
   mobileNumber?: string
   email?: string
   role?: UserRole
-  institution?: string
+  institutionId?: string
   active?: boolean
 }
 

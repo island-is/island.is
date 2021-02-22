@@ -11,6 +11,7 @@ import { Period } from './types'
 import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
 import { daysInMonth, defaultMonths } from './config'
 import { YES } from './constants'
+import { SchemaFormValues } from './lib/dataSchema'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -104,19 +105,22 @@ export const getAvailableRights = (application: Application) => {
   const requestRights = getValueViaPath(
     application.answers,
     'requestRights',
-  ) as any
-  const giveRights = getValueViaPath(application.answers, 'giveRights') as any
+  ) as SchemaFormValues['requestRights']
+  const giveRights = getValueViaPath(
+    application.answers,
+    'giveRights',
+  ) as SchemaFormValues['giveRights']
 
   let requestedDays = 0
   let givenDays = 0
   let months = defaultMonths
 
-  if (requestRights?.isRequestingRights === YES) {
+  if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     requestedDays = requestRights.requestDays
     months = months + daysToMonths(requestedDays)
   }
 
-  if (giveRights?.isGivingRights === YES) {
+  if (giveRights?.isGivingRights === YES && giveRights.giveDays) {
     givenDays = giveRights.giveDays
     months = months + daysToMonths(givenDays)
   }

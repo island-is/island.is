@@ -12,6 +12,7 @@
     "dev-services": "nx dev-services",
     "analyze": "cross-env ANALYZE=true nx build",
     "e2e": "nx e2e",
+    "e2e-ci": "node ./scripts/e2e-ci.js",
     "codegen": "nx codegen",
     "translations": "nx translations",
     "affected:apps": "nx affected:apps",
@@ -258,7 +259,7 @@
     "@jeremybarbet/contentful-extension-scripts": "0.22.6",
     "@nestjs/schematics": "7.1.2",
     "@nestjs/testing": "7.4.4",
-    "@nrwl/cypress": "10.2.1",
+    "@nrwl/cypress": "11.2.12",
     "@nrwl/eslint-plugin-nx": "10.2.1",
     "@nrwl/express": "10.2.1",
     "@nrwl/jest": "10.2.1",
@@ -327,7 +328,7 @@
     "cross-env": "7.0.2",
     "cross-spawn": "7.0.3",
     "csstype": "2.6.13",
-    "cypress": "4.1.0",
+    "cypress": "6.5.0",
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.0.0",
@@ -355,11 +356,12 @@
   },
   "resolutions": {
     "@testing-library/dom": "7.29.1",
-    "webpack": "4.44.1",
-    "serialize-javascript": "4.0.0",
+    "axios": "0.21.1",
+    "immer": "8.0.1",
     "node-forge": "0.10.0",
     "object-path": "0.11.5",
-    "xml-crypto": "2.0.0",
-    "axios": "0.21.1"
+    "serialize-javascript": "4.0.0",
+    "webpack": "4.44.1",
+    "xml-crypto": "2.0.0"
   }
 }

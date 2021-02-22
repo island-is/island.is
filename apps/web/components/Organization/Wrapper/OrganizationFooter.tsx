@@ -56,23 +56,24 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
                   className={index === 0 ? styles.footerItemFirst : null}
                 >
                   <Box marginBottom={5}>
-                    <Box marginBottom={1}>
-                      <Text
-                        color="white"
-                        fontWeight={index === 0 ? 'semiBold' : 'regular'}
-                      >
-                        {item.link ? (
-                          <Link
-                            href={item.link.url}
-                            underline="normal"
-                            underlineVisibility="always"
-                          >
-                            {item.title}
-                          </Link>
-                        ) : (
-                          item.title
-                        )}
-                      </Text>
+                    <Box marginBottom={2}>
+                      {item.link ? (
+                        <Link
+                          href={item.link.url}
+                          underline="small"
+                          underlineVisibility="always"
+                          color="white"
+                        >
+                          {item.title}
+                        </Link>
+                      ) : (
+                        <Text
+                          fontWeight={index === 0 ? 'semiBold' : 'regular'}
+                          color="white"
+                        >
+                          {item.title}
+                        </Text>
+                      )}
                     </Box>
                     {richText(item.content as SliceType[], {
                       renderNode: {

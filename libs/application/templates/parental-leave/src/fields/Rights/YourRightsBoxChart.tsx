@@ -54,25 +54,25 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
 
   const requestDaysStringKey =
     requestDaysAnswer === 1
-      ? parentalLeaveFormMessages.requestRightsDay
-      : parentalLeaveFormMessages.requestRightsDays
+      ? parentalLeaveFormMessages.shared.requestRightsDay
+      : parentalLeaveFormMessages.shared.requestRightsDays
 
   const yourRightsWithGivenDaysStringKey =
     maxDays - giveDaysAnswer === 1
-      ? parentalLeaveFormMessages.yourRightsInMonthsAndDay
-      : parentalLeaveFormMessages.yourRightsInMonthsAndDays
+      ? parentalLeaveFormMessages.shared.yourRightsInMonthsAndDay
+      : parentalLeaveFormMessages.shared.yourRightsInMonthsAndDays
 
   const giveDaysStringKey =
     giveDaysAnswer === 1
-      ? parentalLeaveFormMessages.giveRightsDay
-      : parentalLeaveFormMessages.giveRightsDays
+      ? parentalLeaveFormMessages.shared.giveRightsDay
+      : parentalLeaveFormMessages.shared.giveRightsDays
 
   const boxChartKeys =
     requestRightsAnswer === YES
       ? [
           {
             label: () => ({
-              ...parentalLeaveFormMessages.yourRightsInMonths,
+              ...parentalLeaveFormMessages.shared.yourRightsInMonths,
               values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
@@ -101,7 +101,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
       : [
           {
             label: () => ({
-              ...parentalLeaveFormMessages.yourRightsInMonths,
+              ...parentalLeaveFormMessages.shared.yourRightsInMonths,
               values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
@@ -125,7 +125,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
       <BoxChart
         application={application}
         titleLabel={() => ({
-          ...parentalLeaveFormMessages.monthsTotal,
+          ...parentalLeaveFormMessages.shared.monthsTotal,
           values: { months: numberOfBoxes },
         })}
         boxes={numberOfBoxes}
@@ -144,7 +144,9 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
         <Box marginTop={5}>
           <Text>
             {' '}
-            {formatMessage(parentalLeaveFormMessages.rightsTotalSmallPrint)}
+            {formatMessage(
+              parentalLeaveFormMessages.shared.rightsTotalSmallPrint,
+            )}
           </Text>
         </Box>
       )}

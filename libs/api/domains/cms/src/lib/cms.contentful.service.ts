@@ -268,6 +268,7 @@ export class CmsContentfulService {
       'fields.organization.fields.slug': organization,
       'fields.date[gte]': fromDate,
       'fields.date[lte]': toDate,
+      order: 'fields.date',
     }
 
     const result = await this.contentfulRepository

@@ -266,7 +266,9 @@ export const formatRequestedCustodyRestrictions = (
     ? requestedCustodyRestrictions &&
       requestedCustodyRestrictions.reduce(
         (acc, restriction, index) =>
-          `${acc}${index > 0 ? ', ' : ''}${getRestrictionByValue(restriction)}`,
+          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(
+            restriction,
+          )}.`,
         '',
       )
     : ''

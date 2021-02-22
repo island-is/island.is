@@ -1,7 +1,13 @@
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -34,7 +40,7 @@ interface HelpDeskContact {
 }
 
 export interface FormData {
-  applicant: Applicant
+  organisation: Applicant
   administrativeContact: AdministrativeContact
   technicalContact: TechnicalContact
   helpDeskContact: HelpDeskContact
@@ -44,9 +50,14 @@ export interface FormData {
 interface Props {
   data: FormData
   onSubmit: (data: FormData) => void
+  isFetching: boolean
 }
 
-export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
+export const DocumentProviderBasicInfo: FC<Props> = ({
+  data,
+  onSubmit,
+  isFetching,
+}) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
   return (
@@ -59,36 +70,42 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             </Text>
           </Box>
           <Box marginBottom={2}>
-            <Controller
-              control={control}
-              name="applicant.name"
-              defaultValue={data?.applicant?.name}
-              rules={{
-                required: {
-                  value: true,
-                  message: formatMessage(m.SingleProviderInstitutionNameError),
-                },
-              }}
-              render={({ onChange, value, name }) => (
-                <Input
-                  name={name}
-                  value={value}
-                  onChange={onChange}
-                  label={formatMessage(m.SingleProviderInstitutionNameLabel)}
-                  placeholder={formatMessage(
-                    m.SingleProviderInstitutionNamePlaceholder,
-                  )}
-                  hasError={errors.applicant?.name}
-                  errorMessage={errors.applicant?.name?.message}
-                />
-              )}
-            />
+            {isFetching ? (
+              <SkeletonLoader borderRadius="large" height={80} />
+            ) : (
+              <Controller
+                control={control}
+                name="applicant.name"
+                defaultValue={data?.organisation?.name}
+                rules={{
+                  required: {
+                    value: true,
+                    message: formatMessage(
+                      m.SingleProviderInstitutionNameError,
+                    ),
+                  },
+                }}
+                render={({ onChange, value, name }) => (
+                  <Input
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    label={formatMessage(m.SingleProviderInstitutionNameLabel)}
+                    placeholder={formatMessage(
+                      m.SingleProviderInstitutionNamePlaceholder,
+                    )}
+                    hasError={errors.applicant?.name}
+                    errorMessage={errors.applicant?.name?.message}
+                  />
+                )}
+              />
+            )}
           </Box>
           <Box marginBottom={2}>
             <Controller
               control={control}
               name="applicant.nationalId"
-              defaultValue={data?.applicant?.nationalId}
+              defaultValue={data?.organisation?.nationalId}
               rules={{
                 required: {
                   value: true,
@@ -124,7 +141,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.email"
-              defaultValue={data?.applicant?.email}
+              defaultValue={data?.organisation?.email}
               rules={{
                 required: {
                   value: true,
@@ -156,7 +173,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.phoneNumber"
-              defaultValue={data?.applicant?.phoneNumber}
+              defaultValue={data?.organisation?.phoneNumber}
               rules={{
                 required: {
                   value: true,
@@ -204,7 +221,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.address"
-              defaultValue={data?.applicant?.address}
+              defaultValue={data?.organisation?.address}
               rules={{
                 required: {
                   value: true,
@@ -232,13 +249,11 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.zipCode"
-              defaultValue={data?.applicant?.zipCode}
+              defaultValue={data?.organisation?.zipCode}
               rules={{
                 required: {
                   value: true,
-                  message: formatMessage(
-                    m.SingleProviderInstitutionZipcodeError,
-                  ),
+                  message: formatMessage(m.DashBoardDescription),
                 },
               }}
               render={({ onChange, value, name }) => (
@@ -246,10 +261,8 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label={formatMessage(m.SingleProviderInstitutionZipcodeLabel)}
-                  placeholder={formatMessage(
-                    m.SingleProviderInstitutionZipcodePlaceholder,
-                  )}
+                  label={formatMessage(m.DashBoardDescription)}
+                  placeholder={formatMessage(m.DashBoardDescription)}
                   hasError={errors.applicant?.zipCode}
                   errorMessage={errors.applicant?.zipCode?.message}
                 />
