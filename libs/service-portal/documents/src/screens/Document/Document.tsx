@@ -45,7 +45,7 @@ export const Document: FC = () => {
   const { formatMessage } = useLocale()
   const { id } = useParams<{ id: string }>()
   const { pathname } = useLocation()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isUnsupported, setIsUnsupported] = useState(false)
   const { data, called, error, loading } = useQuery<
     Query,
     QueryGetDocumentArgs
@@ -99,7 +99,8 @@ export const Document: FC = () => {
         // Sentry: Unsupported document
         Sentry.captureMessage('Unsupported document', Sentry.Severity.Error)
         // Open unsupported document modal
-        setIsModalOpen(true)
+        setIsUnsupported(true)
+        return
       }
 
       // Document fetched successfully and it is a PDF file
@@ -108,16 +109,14 @@ export const Document: FC = () => {
 
       // Open document in browser
       const src = getPdfURL(doc.content)
-      window.location.assign(src)
+      window.location.replace(src)
     }
   }, [called, loading, error, doc])
-
-  const handleOnModalClose = () => setIsModalOpen(false)
 
   return (
     <>
       {/* Display loader while we're fetching the document or while we're opening the document */}
-      {(!called || loading || doc) && (
+      {(!called || loading || (doc && !isUnsupported)) && (
         <Box
           className={styles.loadingWrapper}
           position="fixed"
@@ -144,36 +143,24 @@ export const Document: FC = () => {
         </Box>
       )}
       {/* Unsupported document modal */}
-      {isModalOpen && (
-        <>
-          <Modal id="document-modal" onCloseModal={handleOnModalClose}>
-            <Stack space={2}>
-              <Text variant="h1">
-                {formatMessage({
-                  id: 'sp.documents:document-notSupported-title',
-                  defaultMessage: 'Ekki stuðningur við þetta skjal',
-                })}
-              </Text>
-              <Text>
-                {formatMessage({
-                  id: 'sp.documents:document-notSupported-description',
-                  defaultMessage: `Því miður bjóða mínar síður ekki upp
+      {isUnsupported && (
+        <Stack space={2}>
+          <Text variant="h1">
+            {formatMessage({
+              id: 'sp.documents:document-notSupported-title',
+              defaultMessage: 'Ekki stuðningur við þetta skjal',
+            })}
+          </Text>
+          <Text>
+            {formatMessage({
+              id: 'sp.documents:document-notSupported-description',
+              defaultMessage: `Því miður bjóða mínar síður ekki upp
                     á stuðning við þetta skjal eins og er.
                     Þú getur farið á vef viðkomandi stofnunar
                     til þess að skoða skjalið.`,
-                })}
-              </Text>
-            </Stack>
-            <Box marginTop={5} className={styles.modalButtonWrapper}>
-              <Button fluid variant="primary" onClick={handleOnModalClose}>
-                {formatMessage({
-                  id: 'sp.documents:document-notSupported-closeModalBtnText',
-                  defaultMessage: 'Loka glugga',
-                })}
-              </Button>
-            </Box>
-          </Modal>
-        </>
+            })}
+          </Text>
+        </Stack>
       )}
     </>
   )

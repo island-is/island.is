@@ -24,6 +24,8 @@ interface Props {
   document: Document
 }
 
+const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+
 const DocumentLine: FC<Props> = ({ document }) => {
   const externalUrl = getEdgecaseDocument(document)?.url
 
@@ -72,7 +74,7 @@ const DocumentLine: FC<Props> = ({ document }) => {
                   )
                 }
                 className={styles.link}
-                target="_blank"
+                target={isFirefox ? '_self' : '_blank'}
               >
                 {document.subject}
               </a>
