@@ -19,7 +19,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import BackgroundImage from '../BackgroundImage/BackgroundImage'
-import { renderHtml } from '../richTextRendering'
+import { Slice as SliceType, richText } from '../..'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -49,7 +49,7 @@ export interface TellUsAStoryFormState {
 
 type FormState = 'edit' | 'submitting' | 'error' | 'success'
 type DocumentType = {
-  __typename: string
+  __typename: 'Html'
   id: string
   document: Document | { [key: string]: Document }
 }
@@ -178,7 +178,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                 {introTitle}
               </Text>
               {introDescription && (
-                <Box>{renderHtml(introDescription.document as Document)}</Box>
+                <Box>{richText([introDescription] as SliceType[])}</Box>
               )}
             </GridColumn>
             {!!introImage && (
@@ -353,9 +353,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
                       </Text>
                       {instructionsDescription && (
                         <Box>
-                          {renderHtml(
-                            instructionsDescription.document as Document,
-                          )}
+                          {richText([instructionsDescription] as SliceType[])}
                         </Box>
                       )}
                     </GridColumn>
@@ -441,7 +439,7 @@ export const TellUsAStoryForm: React.FC<TellUsAStoryFormProps> = ({
             </Text>
             {tellUsAStorySuccessMessage && (
               <Box paddingBottom={3}>
-                {renderHtml(tellUsAStorySuccessMessage.document as Document)}
+                {richText([tellUsAStorySuccessMessage] as SliceType[])}
               </Box>
             )}
           </Box>
