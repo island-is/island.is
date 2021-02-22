@@ -21,9 +21,6 @@ export const OidcSignIn: FC = () => {
 
         setClientAuthToken(user.access_token)
 
-        console.log('user', user)
-        console.log('user state', user.state)
-
         const url =
           typeof user.state === 'string'
             ? user.state.replace(/\/minarsidur\/?/i, '/')

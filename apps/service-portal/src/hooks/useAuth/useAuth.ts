@@ -20,7 +20,6 @@ const useAuth = () => {
         payload: user,
       })
     } else {
-      console.log('sign in redirect', window.location.pathname)
       userManager.signinRedirect({
         state: window.location.pathname,
       })
