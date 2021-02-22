@@ -39,11 +39,7 @@ interface HomeProps {
   page: GetFrontpageQuery['getFrontpage']
 }
 
-const Home: Screen<HomeProps> = ({
-  categories,
-  news,
-  page,
-}) => {
+const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   const namespace = JSON.parse(page.namespace.fields)
   const { activeLocale, t } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
