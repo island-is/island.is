@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
+import * as AmazonS3URI from 'amazon-s3-uri'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
 import { ConfigType } from '@nestjs/config'
@@ -9,7 +10,6 @@ const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 @Injectable()
 export class FileStorageService {
   private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
-  private uploadBucket?: string
 
   constructor(
     @Inject(fileStorageConfiguration.KEY)
@@ -45,27 +45,22 @@ export class FileStorageService {
   }
 
   async copyObjectFromUploadBucket(
-    key: string,
+    sourceKey: string,
     destinationBucket: string,
-    region: string,
-    sourceBucket: string,
+    destinationKey: string,
   ): Promise<string> {
-    const params = {
-      Key: key,
-      Bucket: destinationBucket,
-      CopySource: `${sourceBucket}/${key}`,
+    if (!this.config.uploadBucket) {
+      throw new Error('Upload bucket not configured.')
     }
 
-    return new Promise((resolve, reject) => {
-      this.s3.copyObject(params, (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          const url = `https://${destinationBucket}.s3-${region}.amazonaws.com/${key}`
+    const params = {
+      Key: destinationKey,
+      Bucket: destinationBucket,
+      CopySource: `${this.config.uploadBucket}/${sourceKey}`,
+    }
+    const region = this.s3.config.region
 
-          resolve(url)
-        }
-      })
-    })
+    await this.s3.copyObject(params).promise()
+    return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
   }
 }
