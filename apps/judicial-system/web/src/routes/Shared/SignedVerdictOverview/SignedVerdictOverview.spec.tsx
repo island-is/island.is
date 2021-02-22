@@ -343,7 +343,7 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
-          'Ekki hægt að framlengja gæsluvarðhald sem er lokið.',
+          'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
         ),
       ).toBeInTheDocument()
     })

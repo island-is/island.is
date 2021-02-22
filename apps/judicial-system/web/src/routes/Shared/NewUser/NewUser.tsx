@@ -17,7 +17,7 @@ const user: User = {
   mobileNumber: '',
   email: '',
   role: UserRole.PROSECUTOR,
-  institution: '',
+  institution: undefined,
   active: true,
 }
 
@@ -40,7 +40,7 @@ export const NewUser: React.FC = () => {
             name: user.name,
             nationalId: user.nationalId,
             role: user.role,
-            institution: user.institution,
+            institutionId: user.institution?.id,
             title: user.title,
             mobileNumber: user.mobileNumber,
             email: user.email,

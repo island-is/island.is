@@ -18,6 +18,7 @@ import {
   generateRulingPdf,
   writeFile,
 } from '../../formatters'
+import { Institution } from '../institution'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -126,9 +127,21 @@ export class CaseService {
         },
       },
       include: [
-        { model: User, as: 'prosecutor' },
-        { model: User, as: 'judge' },
-        { model: User, as: 'registrar' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'judge',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'registrar',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],
@@ -141,9 +154,21 @@ export class CaseService {
     return this.caseModel.findOne({
       where: { id },
       include: [
-        { model: User, as: 'prosecutor' },
-        { model: User, as: 'judge' },
-        { model: User, as: 'registrar' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'judge',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'registrar',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],

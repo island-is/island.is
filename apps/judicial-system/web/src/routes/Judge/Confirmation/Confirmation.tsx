@@ -536,9 +536,13 @@ export const Confirmation: React.FC = () => {
                     workingCase.otherRestrictions,
                   )
                     .split('\n')
-                    .map((str) => (
-                      <Text>{str}</Text>
-                    ))}
+                    .map((str, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{str}</Text>
+                        </div>
+                      )
+                    })}
                 </Text>
               </Box>
               <Text>

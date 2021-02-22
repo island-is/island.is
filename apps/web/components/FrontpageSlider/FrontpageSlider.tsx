@@ -20,7 +20,7 @@ import {
   GridColumn,
   Link,
 } from '@island.is/island-ui/core'
-import { renderHtml } from '@island.is/island-ui/contentful'
+import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { Document } from '@contentful/rich-text-types'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { useI18n } from '../../i18n'
@@ -232,7 +232,16 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
 
                           {intro ? (
                             <Box marginBottom={4}>
-                              {renderHtml(intro.document as Document)}
+                              {richText(
+                                [
+                                  {
+                                    __typename: 'Html',
+                                    id: intro.id,
+                                    document: intro.document,
+                                  },
+                                ] as SliceType[],
+                                undefined,
+                              )}
                             </Box>
                           ) : (
                             <Text>
