@@ -78,6 +78,8 @@ import { Auction } from './models/auction.model'
 import { GetAuctionInput } from './dto/getAuction.input'
 import { GetTestHomepageInput } from './dto/getTestHomepage.input'
 import { TestHomepage } from './models/testHomepage.model'
+import { Frontpage } from './models/frontpage.model'
+import { GetFrontpageInput } from './dto/getFrontpage.input'
 
 const { cacheTime } = environment
 
@@ -86,14 +88,14 @@ const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 @Resolver()
 @Directive(cacheControlDirective())
 export class CmsResolver {
-  constructor(
+  constructor (
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsElasticsearchService: CmsElasticsearchService,
   ) {}
 
   @Directive(cacheControlDirective())
   @Query(() => Namespace, { nullable: true })
-  getNamespace(
+  getNamespace (
     @Args('input') input: GetNamespaceInput,
   ): Promise<Namespace | null> {
     return this.cmsContentfulService.getNamespace(
@@ -104,7 +106,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => AboutPage)
-  getAboutPage(
+  getAboutPage (
     @Args('input') input: GetAboutPageInput,
   ): Promise<AboutPage | null> {
     return this.cmsContentfulService.getAboutPage(input)
@@ -112,7 +114,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => AboutSubPage, { nullable: true })
-  getAboutSubPage(
+  getAboutSubPage (
     @Args('input') input: GetAboutSubPageInput,
   ): Promise<AboutSubPage | null> {
     return this.cmsContentfulService.getAboutSubPage(input)
@@ -121,7 +123,7 @@ export class CmsResolver {
   // TODO: Change this so this won't link to non existing entries e.g. articles
   @Directive(cacheControlDirective())
   @Query(() => ContentSlug, { nullable: true })
-  getContentSlug(
+  getContentSlug (
     @Args('input') input: GetContentSlugInput,
   ): Promise<ContentSlug | null> {
     return this.cmsContentfulService.getContentSlug(input)
@@ -129,7 +131,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => AlertBanner, { nullable: true })
-  getAlertBanner(
+  getAlertBanner (
     @Args('input') input: GetAlertBannerInput,
   ): Promise<AlertBanner | null> {
     return this.cmsContentfulService.getAlertBanner(input)
@@ -137,7 +139,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => GenericPage, { nullable: true })
-  getGenericPage(
+  getGenericPage (
     @Args('input') input: GetGenericPageInput,
   ): Promise<GenericPage | null> {
     return this.cmsContentfulService.getGenericPage(input)
@@ -145,7 +147,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => GenericOverviewPage, { nullable: true })
-  getGenericOverviewPage(
+  getGenericOverviewPage (
     @Args('input') input: GetGenericOverviewPageInput,
   ): Promise<GenericOverviewPage | null> {
     return this.cmsContentfulService.getGenericOverviewPage(input)
@@ -153,7 +155,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => AdgerdirPage, { nullable: true })
-  getAdgerdirPage(
+  getAdgerdirPage (
     @Args('input') input: GetAdgerdirPageInput,
   ): Promise<AdgerdirPage | null> {
     return this.cmsContentfulService.getAdgerdirPage(
@@ -164,7 +166,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => ErrorPage, { nullable: true })
-  getErrorPage(
+  getErrorPage (
     @Args('input') input: GetErrorPageInput,
   ): Promise<ErrorPage | null> {
     return this.cmsContentfulService.getErrorPage(input)
@@ -172,7 +174,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Organization, { nullable: true })
-  getOrganization(
+  getOrganization (
     @Args('input') input: GetOrganizationInput,
   ): Promise<Organization | null> {
     return this.cmsContentfulService.getOrganization(
@@ -183,7 +185,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => OrganizationPage, { nullable: true })
-  getOrganizationPage(
+  getOrganizationPage (
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
     return this.cmsContentfulService.getOrganizationPage(
@@ -194,7 +196,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => OrganizationSubpage, { nullable: true })
-  getOrganizationSubpage(
+  getOrganizationSubpage (
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
     return this.cmsContentfulService.getOrganizationSubpage(
@@ -206,7 +208,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [Auction])
-  getAuctions(
+  getAuctions (
     @Args('input') input: GetAuctionsInput,
   ): Promise<Auction[] | null> {
     return this.cmsContentfulService.getAuctions(
@@ -219,13 +221,13 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Auction)
-  getAuction(@Args('input') input: GetAuctionInput): Promise<Auction | null> {
+  getAuction (@Args('input') input: GetAuctionInput): Promise<Auction | null> {
     return this.cmsContentfulService.getAuction(input.id, input.lang)
   }
 
   @Directive(cacheControlDirective())
   @Query(() => AdgerdirPages)
-  getAdgerdirPages(
+  getAdgerdirPages (
     @Args('input') input: GetAdgerdirPagesInput,
   ): Promise<AdgerdirPages> {
     return this.cmsContentfulService.getAdgerdirPages(input?.lang ?? 'is-IS')
@@ -233,7 +235,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Organizations)
-  getOrganizations(
+  getOrganizations (
     @Args('input') input: GetOrganizationsInput,
   ): Promise<Organizations> {
     return this.cmsContentfulService.getOrganizations(input?.lang ?? 'is-IS')
@@ -241,7 +243,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => AdgerdirTags, { nullable: true })
-  getAdgerdirTags(
+  getAdgerdirTags (
     @Args('input') input: GetAdgerdirTagsInput,
   ): Promise<AdgerdirTags | null> {
     return this.cmsContentfulService.getAdgerdirTags(input?.lang ?? 'is-IS')
@@ -249,7 +251,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => OrganizationTags, { nullable: true })
-  getOrganizationTags(
+  getOrganizationTags (
     @Args('input') input: GetOrganizationTagsInput,
   ): Promise<OrganizationTags | null> {
     return this.cmsContentfulService.getOrganizationTags(input?.lang ?? 'is-IS')
@@ -257,7 +259,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => FrontpageSliderList, { nullable: true })
-  getFrontpageSliderList(
+  getFrontpageSliderList (
     @Args('input') input: GetFrontpageSliderListInput,
   ): Promise<FrontpageSliderList | null> {
     return this.cmsContentfulService.getFrontpageSliderList(
@@ -267,7 +269,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => AdgerdirFrontpage, { nullable: true })
-  getAdgerdirFrontpage(
+  getAdgerdirFrontpage (
     @Args('input') input: GetAdgerdirFrontpageInput,
   ): Promise<AdgerdirFrontpage | null> {
     return this.cmsContentfulService.getAdgerdirFrontpage(
@@ -277,7 +279,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => LifeEventPage, { nullable: true })
-  getLifeEventPage(
+  getLifeEventPage (
     @Args('input') input: GetLifeEventPageInput,
   ): Promise<LifeEventPage | null> {
     return this.cmsContentfulService.getLifeEventPage(input.slug, input.lang)
@@ -285,7 +287,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [LifeEventPage])
-  getLifeEvents(
+  getLifeEvents (
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
     return this.cmsContentfulService.getLifeEvents(input.lang)
@@ -293,7 +295,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [LifeEventPage])
-  getLifeEventsInCategory(
+  getLifeEventsInCategory (
     @Args('input') input: GetLifeEventsInCategoryInput,
   ): Promise<LifeEventPage[]> {
     return this.cmsContentfulService.getLifeEventsInCategory(
@@ -304,7 +306,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Url, { nullable: true })
-  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
+  getUrl (@Args('input') input: GetUrlInput): Promise<Url | null> {
     return this.cmsContentfulService.getUrl(
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
@@ -313,7 +315,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => TellUsAStory)
-  getTellUsAStory(
+  getTellUsAStory (
     @Args('input') input: GetTellUsAStoryInput,
   ): Promise<TellUsAStory> {
     return this.cmsContentfulService.getTellUsAStory(input)
@@ -321,21 +323,27 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Homepage)
-  getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
+  getHomepage (@Args('input') input: GetHomepageInput): Promise<Homepage> {
     return this.cmsContentfulService.getHomepage(input)
   }
 
   @Directive(cacheControlDirective())
   @Query(() => TestHomepage)
-  getTestHomepage(
+  getTestHomepage (
     @Args('input') input: GetTestHomepageInput,
   ): Promise<TestHomepage> {
     return this.cmsContentfulService.getTestHomepage(input)
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => Frontpage)
+  getFrontpage (@Args('input') input: GetFrontpageInput): Promise<Frontpage> {
+    return this.cmsContentfulService.getFrontpage(input)
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => [ArticleCategory])
-  getArticleCategories(
+  getArticleCategories (
     @Args('input') input: GetArticleCategoriesInput,
   ): Promise<ArticleCategory[]> {
     return this.cmsElasticsearchService.getArticleCategories(
@@ -346,7 +354,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
-  getSingleArticle(
+  getSingleArticle (
     @Args('input') { lang, slug }: GetSingleArticleInput,
   ): Promise<Article | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
@@ -357,7 +365,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [Article])
-  getArticles(@Args('input') input: GetArticlesInput): Promise<Article[]> {
+  getArticles (@Args('input') input: GetArticlesInput): Promise<Article[]> {
     return this.cmsElasticsearchService.getArticles(
       getElasticsearchIndex(input.lang),
       input,
@@ -366,7 +374,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => News, { nullable: true })
-  getSingleNews(
+  getSingleNews (
     @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
@@ -377,7 +385,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => [String])
-  getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
+  getNewsDates (@Args('input') input: GetNewsDatesInput): Promise<string[]> {
     return this.cmsElasticsearchService.getNewsDates(
       getElasticsearchIndex(input.lang),
       input,
@@ -386,7 +394,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => NewsList)
-  getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
+  getNews (@Args('input') input: GetNewsInput): Promise<NewsList> {
     return this.cmsElasticsearchService.getNews(
       getElasticsearchIndex(input.lang),
       input,
@@ -395,7 +403,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Menu, { nullable: true })
-  getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
+  getMenu (@Args('input') input: GetMenuInput): Promise<Menu | null> {
     return this.cmsElasticsearchService.getSingleMenuByName(
       getElasticsearchIndex(input.lang),
       { ...input },
@@ -404,7 +412,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => GroupedMenu, { nullable: true })
-  getGroupedMenu(
+  getGroupedMenu (
     @Args('input') input: GetSingleMenuInput,
   ): Promise<GroupedMenu | null> {
     return this.cmsElasticsearchService.getSingleMenu<GroupedMenu>(
@@ -415,7 +423,7 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => SubpageHeader, { nullable: true })
-  getSubpageHeader(
+  getSubpageHeader (
     @Args('input') input: GetSubpageHeaderInput,
   ): Promise<SubpageHeader | null> {
     return this.cmsContentfulService.getSubpageHeader(input)
@@ -424,10 +432,10 @@ export class CmsResolver {
 
 @Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor (private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => [News])
-  async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
+  async news (@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
     const newsList = await this.cmsElasticsearchService.getNews(
       getElasticsearchIndex(input.lang),
       input,
@@ -438,20 +446,20 @@ export class LatestNewsSliceResolver {
 
 @Resolver(() => Article)
 export class ArticleResolver {
-  constructor(private cmsContentfulService: CmsContentfulService) {}
+  constructor (private cmsContentfulService: CmsContentfulService) {}
 
   @ResolveField(() => [Article])
-  async relatedArticles(@Parent() article: Article) {
+  async relatedArticles (@Parent() article: Article) {
     return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
   }
 }
 
 @Resolver(() => AboutSubPage)
 export class AboutSubPageResolver {
-  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+  constructor (private cmsElasticsearchService: CmsElasticsearchService) {}
 
   @ResolveField(() => AboutPage)
-  async parent(@Parent() { parent }: AboutSubPage) {
+  async parent (@Parent() { parent }: AboutSubPage) {
     if (parent) {
       const { lang, id } = parent
       return this.cmsElasticsearchService.getSingleAboutPage(

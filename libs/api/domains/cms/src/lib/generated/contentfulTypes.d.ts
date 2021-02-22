@@ -710,6 +710,43 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
   }
 }
 
+export interface IFrontpageFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Featured */
+  featured?: IFeatured[] | undefined
+
+  /** Slides */
+  slides?: IFrontpageSlider[] | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
+
+  /** Life Events */
+  lifeEvents?: ILifeEventPage[] | undefined
+}
+
+/** This is the frontpage for Island.is.
+Contains life events, frontpage sliders, featured, etc... */
+
+export interface IFrontpage extends Entry<IFrontpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'frontpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFrontpageSliderFields {
   /** Titill */
   title: string
@@ -3254,6 +3291,7 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'footerItem'
+  | 'frontpage'
   | 'frontpageSlider'
   | 'frontpageSliderList'
   | 'genericOverviewPage'

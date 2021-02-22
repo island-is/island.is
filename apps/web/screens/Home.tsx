@@ -5,29 +5,20 @@ import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  QueryGetFrontpageSliderListArgs,
   ContentLanguage,
   GetFrontpageSliderListQuery,
   QueryGetArticleCategoriesArgs,
   GetArticleCategoriesQuery,
-  QueryGetNamespaceArgs,
   GetNamespaceQuery,
   GetLifeEventsQuery,
-  GetHomepageQuery,
-  GetTestHomepageQuery,
-  QueryGetLifeEventsArgs,
-  QueryGetHomepageArgs,
-  QueryGetTestHomepageArgs,
+  GetFrontpageQuery,
+  QueryGetFrontpageArgs,
   GetNewsQuery,
   FrontpageSlider as FrontpageSliderType,
 } from '@island.is/web/graphql/schema'
 import {
-  GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
-  GET_FRONTPAGE_SLIDES_QUERY,
-  GET_LIFE_EVENTS_QUERY,
-  GET_HOMEPAGE_QUERY,
-  GET_TEST_HOMEPAGE_QUERY,
+  GET_FRONTPAGE_QUERY,
   GET_NEWS_QUERY,
 } from './queries'
 import {
@@ -50,7 +41,7 @@ interface HomeProps {
   namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsQuery['getNews']['items']
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
-  page: GetTestHomepageQuery['getTestHomepage']
+  page: GetFrontpageQuery['getFrontpage']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -177,11 +168,6 @@ const Home: Screen<HomeProps> = ({
 
 Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
-    //{
-    //  data: {
-    //    getFrontpageSliderList: { items },
-    //  },
-    //},
     {
       data: { getArticleCategories },
     },
@@ -190,25 +176,10 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         getNews: { items: news },
       },
     },
-    //{
-    //  data: { getLifeEvents },
-    //},
     {
-      data: { getTestHomepage },
+      data: { getFrontpage },
     },
-    //namespace,
   ] = await Promise.all([
-    //apolloClient.query<
-    //  GetFrontpageSliderListQuery,
-    //  QueryGetFrontpageSliderListArgs
-    //>({
-    //  query: GET_FRONTPAGE_SLIDES_QUERY,
-    //  variables: {
-    //    input: {
-    //      lang: locale as ContentLanguage,
-    //    },
-    //  },
-    //}),
     apolloClient.query<
       GetArticleCategoriesQuery,
       QueryGetArticleCategoriesArgs
@@ -229,42 +200,23 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    //apolloClient.query<GetLifeEventsQuery, QueryGetLifeEventsArgs>({
-    //  query: GET_LIFE_EVENTS_QUERY,
-    //  variables: {
-    //    input: {
-    //      lang: locale as ContentLanguage,
-    //    },
-    //  },
-    //}),
-    apolloClient.query<GetTestHomepageQuery, QueryGetTestHomepageArgs>({
-      query: GET_TEST_HOMEPAGE_QUERY,
+    apolloClient.query<GetFrontpageQuery, QueryGetFrontpageArgs>({
+      query: GET_FRONTPAGE_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
         },
       },
     }),
-    //apolloClient
-    //  .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-    //    query: GET_NAMESPACE_QUERY,
-    //    variables: {
-    //      input: {
-    //        namespace: 'Homepage',
-    //        lang: locale,
-    //      },
-    //    },
-    //  })
-    //  .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {
     news,
-    lifeEvents: getTestHomepage.lifeEvents,
-    frontpageSlides: getTestHomepage.slides,
+    lifeEvents: getFrontpage.lifeEvents,
+    frontpageSlides: getFrontpage.slides,
     categories: getArticleCategories,
-    page: getTestHomepage,
-    namespace: JSON.parse(getTestHomepage.namespace.fields),
+    page: getFrontpage,
+    namespace: JSON.parse(getFrontpage.namespace.fields),
     showSearchInHeader: false,
   }
 }
