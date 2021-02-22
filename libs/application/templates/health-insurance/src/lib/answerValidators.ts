@@ -5,9 +5,12 @@ import {
   AnswerValidationError,
   getValueViaPath,
 } from '@island.is/application/core'
-import { StatusTypes, Status } from '../types'
+import { StatusTypes, Status, FormerInsurance, Applicant } from '../types'
 import { NO, YES } from '../constants'
-import { requireConfirmationOfResidency, requireWaitingPeriod } from '../healthInsuranceUtils'
+import {
+  requireConfirmationOfResidency,
+  requireWaitingPeriod,
+} from '../healthInsuranceUtils'
 
 const buildValidationError = (
   path: string,
@@ -35,94 +38,93 @@ const FORMER_INSURANCE = 'formerInsurance'
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
   [STATUS]: (newAnswer: unknown, application: Application) => {
-    const buildError = buildValidationError(`${STATUS}.type`)
+    const field = `${STATUS}.type`
+    const buildError = buildValidationError(field)
     const status = newAnswer as Status
 
     if (!Object.values(StatusTypes).includes(status.type)) {
-      return buildError('You must select one of the above', `${STATUS}.type`)
+      return buildError('You must select one of the above', field)
     }
     if (
       status.type === StatusTypes.STUDENT &&
       !status.confirmationOfStudies.length
     ) {
-      return buildError(
-        'Please attach a confirmation of studies below',
-        `${STATUS}.type`,
-      )
+      return buildError('Please attach a confirmation of studies below', field)
     }
 
     return undefined
   },
   [FORMER_INSURANCE]: (newAnswer: unknown, application: Application) => {
-    const formerInsurance = newAnswer as any //TODO: create FormerInsurance
+    const formerInsurance = newAnswer as FormerInsurance
+    const applicant = getValueViaPath(
+      application.answers,
+      'applicant',
+    ) as Applicant
 
-    // Check registration is Yes / No
+    // Registration must be Yes / No
     if (
       formerInsurance.registration !== YES &&
       formerInsurance.registration !== NO
     ) {
-      const buildError = buildValidationError(
-        `${FORMER_INSURANCE}.registration`,
-      )
-      return buildError(
-        'You must select one of the above',
-        `${FORMER_INSURANCE}.registration`,
-      )
+      const field = `${FORMER_INSURANCE}.registration`
+      const buildError = buildValidationError(field)
+      return buildError('You must select one of the above', field)
     }
 
-    // Check country is a string and not empty
+    // Check that country is a string and not empty
     if (!formerInsurance.country) {
-      const buildError = buildValidationError(`${FORMER_INSURANCE}.country`)
-      return buildError(
-        'Please select a country',
-        `${FORMER_INSURANCE}.country`,
-      )
+      const field = `${FORMER_INSURANCE}.country`
+      const buildError = buildValidationError(field)
+      return buildError('Please select a country', field)
     }
 
-    // Check file upload if coutnry is Greenland / Faroe
+    // Check file upload if country is Greenland / Faroe
     if (
       requireConfirmationOfResidency(formerInsurance.country) &&
       !formerInsurance.confirmationOfResidencyDocument.length
     ) {
-      const buildError = buildValidationError(`${FORMER_INSURANCE}.personalId`)
+      const field = `${FORMER_INSURANCE}.personalId`
+      const buildError = buildValidationError(field)
       return buildError(
         'Please attach a confirmation of residency below',
-        `${FORMER_INSURANCE}.personalId`,
+        field,
       )
     }
 
-    // Check national ID is string and not empty
-    if (!formerInsurance.personalId) {
-      const buildError = buildValidationError(`${FORMER_INSURANCE}.personalId`)
-      return buildError(
-        'Please fill in your ID number in previous country',
-        `${FORMER_INSURANCE}.personalId`,
-      )
-    }
-
-    // Check entitlement is Yes / No if !requireWaitingPeriod
-    const citizenship = (getValueViaPath(application.answers, 'applicant') as any)?.citizenship
-    if (!requireWaitingPeriod(formerInsurance.country, citizenship)) {
-      if (formerInsurance.entitlement !== YES && formerInsurance.entitlement !== NO) {
-        const buildError = buildValidationError(`${FORMER_INSURANCE}.entitlement`)
+    if (
+      !requireWaitingPeriod(formerInsurance.country, applicant?.citizenship)
+    ) {
+      // Check that national ID is string and not empty
+      if (!formerInsurance.personalId) {
+        const field = `${FORMER_INSURANCE}.personalId`
+        const buildError = buildValidationError(field)
         return buildError(
-          'You must select one of the above',
-          `${FORMER_INSURANCE}.entitlement`,
+          'Please fill in your ID number in previous country',
+          field,
         )
       }
-      // Check entitelmentReason is a string and not empty if entitlement === YES
-      if (formerInsurance.entitlement === YES && !formerInsurance.entitlementReason) {
-        const buildError = buildValidationError(`${FORMER_INSURANCE}.entitlementReason`)
-        return buildError(
-          'Please fill in a reason',
-          `${FORMER_INSURANCE}.entitlementReason`,
-        )
+      // Check that entitlement is Yes / No
+      if (
+        formerInsurance.entitlement !== YES &&
+        formerInsurance.entitlement !== NO
+      ) {
+        const field = `${FORMER_INSURANCE}.entitlement`
+        const buildError = buildValidationError(field)
+        return buildError('You must select one of the above', field)
       }
+      // Check that entitelmentReason is a string and not empty (field is conditionally renderd if entitlement === YES)
+      if (
+        formerInsurance.entitlement === YES &&
+        !formerInsurance.entitlementReason
+      ) {
+        const field = `${FORMER_INSURANCE}.entitlementReason`
+        const buildError = buildValidationError(field)
+        return buildError('Please fill in a reason', field)
+      }
+      // user that requires waiting period, should not be allowed to continue
     } else {
       const buildError = buildValidationError(`${FORMER_INSURANCE}`)
-      return buildError(
-        '',
-      )
+      return buildError('')
     }
 
     return undefined

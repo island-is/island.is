@@ -103,7 +103,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     }
     return 'applicant'
   },
-  answerValidators
+  answerValidators,
 }
 
 export default HealthInsuranceTemplate

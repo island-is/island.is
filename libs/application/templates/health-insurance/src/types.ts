@@ -30,6 +30,27 @@ interface FileType {
   url: string
 }
 
+export interface FormerInsurance {
+  registration: string
+  country: string
+  personalId: string
+  confirmationOfResidencyDocument: FileType[]
+  institution?: string
+  entitlement: string
+  entitlementReason: string
+}
+
+export interface Applicant {
+  name: string
+  nationalId: string
+  address: string
+  postalCode: string
+  city: string
+  email: string
+  phoneNumber: string
+  citizenship: string
+}
+
 export interface AdditionalInfoType {
   remarks: string
   files?: string[]

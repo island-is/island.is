@@ -156,7 +156,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address?.postalCode
+                }).address?.postalCode,
             }),
             buildTextField({
               id: 'applicant.city',
