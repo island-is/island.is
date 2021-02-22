@@ -73,11 +73,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               title: m.otherParent.general.pageTitle,
               childInputIds: ['phoneNumber', 'email'],
               component: 'ContactInfo',
-              
-            },
-            {
-                someprop: 'heeeeeellloo!'
-              }),
+            }),
           ],
         }),
       ],

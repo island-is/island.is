@@ -6,16 +6,13 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { otherParent } from '../../lib/messages'
 import { extractParentFromApplication } from '../../lib/utils'
 
-const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
-  const { id } = field
+const ContactInfo = ({ error, application }: FieldBaseProps) => {
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
   const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
   const parent = extractParentFromApplication(application)
-  // TODO: add validation
-  console.log({error})
   return (
     <>
       <Box marginTop={3}>

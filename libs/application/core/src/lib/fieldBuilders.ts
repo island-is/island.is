@@ -324,8 +324,15 @@ export function buildCustomField(
   },
   props?: RecordObject,
 ): CustomField {
-  console.log({data})
-  const { condition, defaultValue, id, title, description, component, childInputIds } = data
+  const {
+    condition,
+    defaultValue,
+    id,
+    title,
+    description,
+    component,
+    childInputIds,
+  } = data
   return {
     children: undefined,
     defaultValue,
