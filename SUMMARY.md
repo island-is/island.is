@@ -55,6 +55,7 @@
   - [Environment Setup](handbook/technical-overview/devops/environment-setup.md)
   - [Logging](handbook/technical-overview/devops/logging.md)
   - [Metrics](handbook/technical-overview/devops/metrics.md)
+  - [NextJS Custom Server](handbook/technical-overview/devops/next-server.md)
   - [Observability](handbook/technical-overview/devops/observability.md)
   - [Operations Base Principles](handbook/technical-overview/devops/operations-base-principles.md)
   - [Security](handbook/technical-overview/devops/security.md)
@@ -75,6 +76,7 @@
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
+- [Workspace Settings](handbook/repository/workspace-settings.md)
 
 ## Apps
 

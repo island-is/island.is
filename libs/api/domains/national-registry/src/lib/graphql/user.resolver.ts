@@ -9,7 +9,7 @@ import {
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
-import { NationalRegistryUser } from './models'
+import { NationalRegistryUser, Citizenship } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { User } from '../types'
 
@@ -28,9 +28,9 @@ export class UserResolver {
     return this.nationalRegistryService.getUser(user.nationalId)
   }
 
-  @ResolveField('citizenship', () => String)
-  resolveCitizenship(@Parent() user: User): string {
-    return user.citizenship.name
+  @ResolveField('citizenship', () => Citizenship)
+  resolveCitizenship(@Parent() user: User): Citizenship {
+    return user.citizenship
   }
 
   @ResolveField('legalResidence', () => String)

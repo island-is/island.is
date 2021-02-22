@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useMemo } from 'react'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
+import localeDE from 'date-fns/locale/de'
 import cn from 'classnames'
 import {
   AlertMessage,
@@ -393,7 +394,7 @@ export const DetentionRequests: React.FC = () => {
                   </td>
                   <td className={styles.td}>
                     <Text as="span">
-                      {format(parseISO(c.created), 'P', {
+                      {format(parseISO(c.created), 'd.M.y', {
                         locale: localeIS,
                       })}
                     </Text>
@@ -412,7 +413,7 @@ export const DetentionRequests: React.FC = () => {
                       )}
                     </Box>
                   </td>
-                  <td className={styles.td}>
+                  <td className={styles.td} data-testid="tdTag">
                     <Tag
                       variant={
                         mapCaseStateToTagVariant(
@@ -445,6 +446,7 @@ export const DetentionRequests: React.FC = () => {
                         c.state === CaseState.SUBMITTED ||
                         c.state === CaseState.RECEIVED) && (
                         <Box
+                          data-testid="deleteCase"
                           component="button"
                           aria-label="Viltu afturkalla kröfu?"
                           className={styles.deleteButton}

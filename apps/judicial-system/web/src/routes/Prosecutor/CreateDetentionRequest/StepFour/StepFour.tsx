@@ -164,6 +164,7 @@ export const StepFour: React.FC = () => {
             </Box>
             <Box marginBottom={3}>
               <Input
+                data-testid="caseFacts"
                 name="caseFacts"
                 label="Málsatvik"
                 placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
@@ -210,6 +211,7 @@ export const StepFour: React.FC = () => {
             </Box>
             <Box marginBottom={7}>
               <Input
+                data-testid="legalArguments"
                 name="legalArguments"
                 label="Lagarök"
                 placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
@@ -284,6 +286,7 @@ export const StepFour: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
+            previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
             nextIsDisabled={isStepIllegal}
           />

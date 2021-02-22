@@ -14,14 +14,16 @@ import {
   CaseQuery,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
-import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
-  institution: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+  institution: {
+    name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+  },
 } as User
 
 export const mockJudge = {
@@ -29,7 +31,9 @@ export const mockJudge = {
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
-  institution: 'Héraðsdómur Reykjavíkur',
+  institution: {
+    name: 'Héraðsdómur Reykjavíkur',
+  },
 } as User
 
 export const mockRegistrar = {
@@ -37,6 +41,11 @@ export const mockRegistrar = {
   role: UserRole.REGISTRAR,
   name: 'Alfred Thaddeus Crane Pennyworth',
   title: 'dómritari',
+} as User
+
+export const mockAdmin = {
+  role: UserRole.ADMIN,
+  name: 'Adrian Administrator',
 } as User
 
 const testCase1 = {
@@ -427,11 +436,11 @@ const testCase8 = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: UserQuery,
+      query: CurrentUserQuery,
     },
     result: {
       data: {
-        user: mockJudge,
+        currentUser: mockJudge,
       },
     },
   },
@@ -440,11 +449,24 @@ export const mockJudgeQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: UserQuery,
+      query: CurrentUserQuery,
     },
     result: {
       data: {
-        user: mockProsecutor,
+        currentUser: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockAdminQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockAdmin,
       },
     },
   },

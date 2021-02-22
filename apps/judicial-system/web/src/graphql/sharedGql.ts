@@ -33,6 +33,9 @@ export const CaseQuery = gql`
         id
         name
         title
+        institution {
+          name
+        }
       }
       courtCaseNumber
       courtDate

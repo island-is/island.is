@@ -47,10 +47,10 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
         <Timeline
           initDate={dobDate}
           title={formatMessage(
-            parentalLeaveFormMessages.base.expectedDateOfBirthTitle,
+            parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
           )}
           titleSmall={formatMessage(
-            parentalLeaveFormMessages.base.dateOfBirthTitle,
+            parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
           periods={formatPeriods(
             application.answers.periods as Period[],
