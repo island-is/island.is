@@ -7,12 +7,6 @@ import { RecyclingRequestModel } from '../../recycling.request/model/recycling.r
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 
-describe('skilavottordTestTest', () => {
-  it('should work', () => {
-    expect(SamgongustofaService.test()).toEqual('test')
-  })
-})
-
 const recyclingRequestModel = {
   id: '1234',
   vehicleId: 'ZUG18',
@@ -23,76 +17,82 @@ const recyclingRequestModel = {
   createdAt: new Date('2021-10-05T14:48:00.000Z'),
   updatedAt: new Date('2021-10-05T14:48:00.000Z'),
 }
-describe('SamgongustofaApiTest', () => {
-  let recyclingRequestService: RecyclingRequestService
-  let samgongustofaService: SamgongustofaService
-  let httpService: HttpService
 
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [HttpModule],
-      providers: [
-        SamgongustofaService,
-        // {
-        //   provide: LOGGER_PROVIDER,
-        //   useClass: jest.fn(() => ({
-        //     error: () => ({}),
-        //     info: () => ({}),
-        //     debug: () => ({}),
-        //   })),
-        // },
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: logger,
-        },
-        {
-          provide: RecyclingRequestService,
-          useClass: jest.fn(() => ({
-            findAllWithPermno: () => ({}),
-          })),
-        },
-      ],
-    }).compile()
-    samgongustofaService = moduleRef.get<SamgongustofaService>(
-      SamgongustofaService,
-    )
-    recyclingRequestService = moduleRef.get<RecyclingRequestService>(
-      RecyclingRequestService,
-    )
-    httpService = moduleRef.get<HttpService>(HttpService)
+describe('skilavottordApiTest', () => {
+  it('should work', () => {
+    expect(SamgongustofaService.test()).toEqual('test')
   })
+  describe('getVehicleInformationTest', () => {
+    let recyclingRequestService: RecyclingRequestService
+    let samgongustofaService: SamgongustofaService
+    let httpService: HttpService
 
-  const getAllVehicleSoapRespXml = getAllVehiclesForPersidnoResponse()
-  const getAllVehilceResp: AxiosResponse = {
-    data: getAllVehicleSoapRespXml,
-    status: 200,
-    statusText: 'OK',
-    headers: {},
-    config: {},
-  }
-  const getBasicVehicleInfoRespXml = getBasicVehicleInformationResponse()
-  const getBasicVehicleResp: AxiosResponse = {
-    data: getBasicVehicleInfoRespXml,
-    status: 200,
-    statusText: 'OK',
-    headers: {},
-    config: {},
-  }
-
-  describe('samgongustofaGetVehicleInformation', () => {
-    it('get vehicle info', async () => {
-      const kennitala = '1111111111'
-      const httpServiceSpy = jest
-        .spyOn(httpService, 'post')
-        .mockImplementationOnce(() => of(getAllVehilceResp))
-        .mockImplementationOnce(() => of(getBasicVehicleResp))
-      jest
-        .spyOn(recyclingRequestService as any, 'findAllWithPermno')
-        .mockImplementation(() => Promise.resolve(recyclingRequestModel))
-      const checkVehileResp = await samgongustofaService.getVehicleInformation(
-        kennitala,
+    beforeEach(async () => {
+      const moduleRef = await Test.createTestingModule({
+        imports: [HttpModule],
+        providers: [
+          SamgongustofaService,
+          // {
+          //   provide: LOGGER_PROVIDER,
+          //   useClass: jest.fn(() => ({
+          //     error: () => ({}),
+          //     info: () => ({}),
+          //     debug: () => ({}),
+          //   })),
+          // },
+          {
+            provide: LOGGER_PROVIDER,
+            useValue: logger,
+          },
+          {
+            provide: RecyclingRequestService,
+            useClass: jest.fn(() => ({
+              findAllWithPermno: () => ({}),
+            })),
+          },
+        ],
+      }).compile()
+      samgongustofaService = moduleRef.get<SamgongustofaService>(
+        SamgongustofaService,
       )
-      expect(checkVehileResp[0].permno).toBe('ZUG18')
+      recyclingRequestService = moduleRef.get<RecyclingRequestService>(
+        RecyclingRequestService,
+      )
+      httpService = moduleRef.get<HttpService>(HttpService)
+    })
+
+    const getAllVehicleSoapRespXml = getAllVehiclesForPersidnoResponse()
+    const getAllVehilceResp: AxiosResponse = {
+      data: getAllVehicleSoapRespXml,
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {},
+    }
+    const getBasicVehicleInfoRespXml = getBasicVehicleInformationResponse()
+    const getBasicVehicleResp: AxiosResponse = {
+      data: getBasicVehicleInfoRespXml,
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {},
+    }
+
+    describe('samgongustofaGetVehicleInformation', () => {
+      it('get vehicle info', async () => {
+        const kennitala = '1111111111'
+        const httpServiceSpy = jest
+          .spyOn(httpService, 'post')
+          .mockImplementationOnce(() => of(getAllVehilceResp))
+          .mockImplementationOnce(() => of(getBasicVehicleResp))
+        jest
+          .spyOn(recyclingRequestService as any, 'findAllWithPermno')
+          .mockImplementation(() => Promise.resolve(recyclingRequestModel))
+        const checkVehileResp = await samgongustofaService.getVehicleInformation(
+          kennitala,
+        )
+        expect(checkVehileResp[0].permno).toBe('ZUG18')
+      })
     })
   })
 })
