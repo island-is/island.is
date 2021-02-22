@@ -41,9 +41,9 @@ import {
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
-import { CaseService } from './case.service'
 import { CaseValidationPipe } from './pipes'
-import { CaseInterceptor, CasesInterceptor } from './interceptors'
+import { CaseInterceptor } from './interceptors'
+import { CaseService } from './case.service'
 
 // Allows prosecutors to perform any action
 const prosecutorRule = UserRole.PROSECUTOR as RolesRule
