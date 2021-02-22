@@ -43,6 +43,6 @@ export const mapHomestay = (homestay: IHomestay): Homestay => ({
   city: homestay.sveitarfelag,
   guests: homestay.gestafjoldi,
   rooms: homestay.fjoldiHerbergja,
-  propertyId: homestay.fastanumber,
+  propertyId: homestay.fastanumer,
   apartmentId: homestay.ibudanumer,
 })

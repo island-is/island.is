@@ -7,6 +7,6 @@ export interface IHomestay {
   sveitarfelag?: string
   gestafjoldi?: number
   fjoldiHerbergja?: number
-  fastanumber?: string
+  fastanumer?: string
   ibudanumer?: string
 }
