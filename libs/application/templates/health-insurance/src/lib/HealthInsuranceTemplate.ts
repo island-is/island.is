@@ -39,7 +39,6 @@ const HealthInsuranceSchema = z.object({
     citizenship: z.string().optional(),
   }),
   children: z.string().nonempty(),
-  confirmationOfResidencyDocument: z.array(FileSchema),
   hasAdditionalInfo: z.enum([YES, NO]),
   additionalFiles: z.array(FileSchema),
   additionalRemarks: z.string().optional(),
