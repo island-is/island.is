@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { StatusTypes, Status } from '../types'
 import { NO, YES } from '../constants'
+import { requireConfirmationOfResidency } from '../healthInsuranceUtils'
 
 const buildValidationError = (
   path: string,
@@ -70,9 +71,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     // Check country is a string and not empty
     if (!formerInsurance.country) {
-      const buildError = buildValidationError(
-        `${FORMER_INSURANCE}.country`,
-      )
+      const buildError = buildValidationError(`${FORMER_INSURANCE}.country`)
       return buildError(
         'Please select a country',
         `${FORMER_INSURANCE}.country`,
@@ -80,12 +79,20 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     // Check file upload if coutnry is Greenland / Faroe
+    if (
+      requireConfirmationOfResidency(formerInsurance.country) &&
+      !formerInsurance.confirmationOfResidencyDocument.length
+    ) {
+      const buildError = buildValidationError(`${FORMER_INSURANCE}.personalId`)
+      return buildError(
+        'Please attach a confirmation of residency below',
+        `${FORMER_INSURANCE}.personalId`,
+      )
+    }
 
     // Check national ID is string and not empty
     if (!formerInsurance.personalId) {
-      const buildError = buildValidationError(
-        `${FORMER_INSURANCE}.personalId`,
-      )
+      const buildError = buildValidationError(`${FORMER_INSURANCE}.personalId`)
       return buildError(
         'Please fill in your ID number in previous country',
         `${FORMER_INSURANCE}.personalId`,

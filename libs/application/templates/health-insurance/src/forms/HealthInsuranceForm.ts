@@ -339,7 +339,7 @@ export const HealthInsuranceForm: Form = buildForm({
               },
             }),
             buildFileUploadField({
-              id: 'confirmationOfResidencyDocument',
+              id: 'formerInsurance.confirmationOfResidencyDocument',
               title: '',
               maxSize: FILE_SIZE_LIMIT,
               introduction: m.confirmationOfResidencyFileUpload,
