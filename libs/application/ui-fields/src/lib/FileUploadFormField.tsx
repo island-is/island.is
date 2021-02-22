@@ -4,8 +4,11 @@ import {
   FileUploadField,
   formatText,
 } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
-import { FileUploadController } from '@island.is/shared/form-fields'
+import { Box } from '@island.is/island-ui/core'
+import {
+  FieldDescription,
+  FileUploadController,
+} from '@island.is/shared/form-fields'
 
 import { useLocale } from '@island.is/localization'
 
@@ -27,21 +30,27 @@ const FileUploadFormField: FC<Props> = ({ application, field, error }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box>
-      <Text>{formatText(introduction, application, formatMessage)}</Text>
+    <div>
+      {introduction && (
+        <FieldDescription
+          description={formatText(introduction, application, formatMessage)}
+        />
+      )}
 
-      <FileUploadController
-        id={id}
-        application={application}
-        error={error}
-        header={uploadHeader}
-        description={uploadDescription}
-        buttonLabel={uploadButtonLabel}
-        multiple={uploadMultiple}
-        accept={uploadAccept}
-        maxSize={maxSize}
-      />
-    </Box>
+      <Box paddingTop={2}>
+        <FileUploadController
+          id={id}
+          application={application}
+          error={error}
+          header={uploadHeader}
+          description={uploadDescription}
+          buttonLabel={uploadButtonLabel}
+          multiple={uploadMultiple}
+          accept={uploadAccept}
+          maxSize={maxSize}
+        />
+      </Box>
+    </div>
   )
 }
 
