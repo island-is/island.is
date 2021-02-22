@@ -7,7 +7,7 @@ import { OpenApi, Service } from '@island.is/api-catalogue/types'
 import union from 'lodash/union'
 import { IndicesUpdateAliases } from '@elastic/elasticsearch/api/requestParams'
 import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
-import { CollectionConfigService } from './CollectionConfig.service'
+import { CollectionConfigService } from './collection-config.service'
 
 @Injectable()
 export class CollectionService {
@@ -138,13 +138,70 @@ export class CollectionService {
       forceRefresh,
     )
   }
+
   /**
-   *  Add the worker index to the alias,
+   * Makes the main alias point to the new worker index so the web can query
+   * the new index.  Then the old index.
+   *
+   */
+  async ActivateWorkerIndexForWeb() {
+    logger.info('Activating Worker index')
+
+    //Get the old index
+    const oldIndices = await this.elasticService.fetchIndexNamesFromAlias(
+      this.getAliasName(),
+    )
+
+    logger.debug(`old indices: ${oldIndices}`)
+
+    interface Options extends IndicesUpdateAliases {
+      body: {
+        actions: RequestBody[]
+      }
+    }
+
+    const updateOptions: Options = {
+      body: {
+        actions: [],
+      },
+    }
+
+    // Make updateAliases remove all older indices from this alias
+    oldIndices?.forEach((name) => {
+      updateOptions.body.actions.push({
+        remove: {
+          index: name,
+          alias: this.getWorkerPrefix(),
+        },
+      })
+    })
+    updateOptions.body.actions.push({
+      add: {
+        index: this.getWorkerIndexName(),
+        alias: this.getAliasName(), //alias
+      },
+    })
+
+    logger.debug(
+      `updateAliases updateOptions ${JSON.stringify(updateOptions, null, 4)}`,
+    )
+    await this.elasticService.updateIndexAliases(updateOptions)
+
+    // Delete unused indices.
+    if (oldIndices && oldIndices.length) {
+      logger.info(`deleting indices ${JSON.stringify(oldIndices, null, 4)}`)
+      await this.deleteIndices(oldIndices)
+    }
+  }
+
+  /**
+   *  Add a environment alias to the worker index and
+   *  removes CollectorWorking alias from worker index so collectors in other
+   *  environments know it's save to copy data from the this environment alias.
    *  removes the old index from the alias and finally deletes the old index.
    */
-  async ActivateWorkerIndex() {
-    logger.info(`Updating alias: "${this.getWorkerPrefix()}"`)
-
+  async ActivateWorkerIndexForRemoteEnvironments() {
+    logger.info(`Activating alias: "${this.getWorkerPrefix()}"`)
     const allIndices = await this.elasticService.fetchAllIndices()
     if (allIndices && allIndices.includes(this.getAliasName())) {
       logger.info(
@@ -159,12 +216,6 @@ export class CollectionService {
         })
     }
 
-    const oldIndices = await this.elasticService.fetchIndexNamesFromAlias(
-      this.getWorkerPrefix(),
-    )
-
-    logger.debug(`old indices: ${oldIndices}`)
-
     interface Options extends IndicesUpdateAliases {
       body: {
         actions: RequestBody[]
@@ -176,39 +227,22 @@ export class CollectionService {
         actions: [
           {
             add: {
-              index: this.getWorkerIndexName(),
-              alias: this.getWorkerPrefix(),
+              index: this.getWorkerIndexName(), //something like alias-dev20210219_121308620
+              alias: this.getWorkerPrefix(), //alias-dev or alias-staging or alias-prod
             },
           },
           {
-            add: {
+            remove: {
               index: this.getWorkerIndexName(),
-              alias: this.getAliasName(),
+              alias: this.getCollectorWorkingName(this.getEnvironment()), //alias-devCollectorWorking or alias-stagingCollectorWorking or ...
             },
           },
         ],
       },
     }
 
-    // Make updateAliases remove all older indices from this alias
-    oldIndices?.forEach((name) => {
-      updateOptions.body.actions.push({
-        remove: {
-          index: name,
-          alias: this.getWorkerPrefix(),
-        },
-      })
-    })
-
-    logger.debug(
-      `updateAliases updateOptions ${JSON.stringify(updateOptions, null, 4)}`,
-    )
     await this.elasticService.updateIndexAliases(updateOptions)
-
-    // Delete unused indices.
-    if (oldIndices && oldIndices.length) {
-      await this.deleteIndices(oldIndices)
-    }
+    logger.debug(`Activation done!`)
   }
   async deleteIndices(indexNames: string[]) {
     return await this.elasticService.deleteIndices({ index: indexNames })
@@ -385,7 +419,7 @@ export class CollectionService {
     }
 
     logger.debug(`Done cloning environments: "${destEnvironments}"`)
-
+    logger.info(`Adding fake CollectorWorking for staging and dev`)
     // add fake alias to to fool isCollectorRunning
     await this.updateIndexAliases(
       this.getWorkerIndexName(),
@@ -746,18 +780,17 @@ export class CollectionService {
       )
     }
 
-    // Removing CollectorWorking alias from worker index to report to collectors
-    // on other environments that collection NOT currently running.
-    await this.updateIndexAliases(this.getWorkerIndexName(), null, [
-      this.getCollectorWorkingName(this.getEnvironment()),
-    ])
     logger.info(`Copying values from other environments finished`)
   }
 
   /**
-   * Deletes all indices with names, that start with
-   * current alias name + current environment name and
-   * do NOT belong to the associated alias.
+   * Scoop up all, (if any) old indices which might have been created
+   *  by older failed task executions.
+   *
+   * The function deletes all indices with names, that start with
+   * current alias name + current environment name
+   * and do NOT belong to the associated alias.
+   *
    *
    * See: getWorkerPrefix() for more info on naming convention.
    *
