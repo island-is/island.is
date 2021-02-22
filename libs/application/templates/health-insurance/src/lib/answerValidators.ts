@@ -3,10 +3,11 @@ import {
   Application,
   AnswerValidator,
   AnswerValidationError,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { StatusTypes, Status } from '../types'
 import { NO, YES } from '../constants'
-import { requireConfirmationOfResidency } from '../healthInsuranceUtils'
+import { requireConfirmationOfResidency, requireWaitingPeriod } from '../healthInsuranceUtils'
 
 const buildValidationError = (
   path: string,
@@ -100,6 +101,21 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     // Check entitlement is Yes / No if !requireWaitingPeriod
+    const citizenship = (getValueViaPath(application.answers, 'applicant') as any)?.citizenship
+    if (!requireWaitingPeriod(formerInsurance.country, citizenship)) {
+      if (formerInsurance.entitlement !== YES && formerInsurance.entitlement !== NO) {
+        const buildError = buildValidationError(`${FORMER_INSURANCE}.entitlement`)
+        return buildError(
+          'You must select one of the above',
+          `${FORMER_INSURANCE}.entitlement`,
+        )
+      }
+    } else {
+      const buildError = buildValidationError(`${FORMER_INSURANCE}`)
+      return buildError(
+        '',
+      )
+    }
 
     // Check entitelmentReason is a string and not empty if entitlement === YES
 
