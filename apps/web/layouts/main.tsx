@@ -251,10 +251,6 @@ const Layout: NextComponentType<
             content="https://island.is/island-fb-1200x630.png"
             key="twitterImage"
           />
-          <script
-            defer
-            src="https://unpkg.com/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"
-          ></script>
         </Head>
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
