@@ -25,6 +25,10 @@ To run use
 yarn start services-xroad-collector
 ```
 
+## The execution process
+
+![Sequence diagram of the collection process](./docs//collector_running_on_dev.png)
+
 [api-catalogue-services]: ../../../libs/api-catalogue/services/README.md
 
 ## Code owners and maintainers
