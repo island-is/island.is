@@ -122,7 +122,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
         flexWrap="wrap"
         flexDirection={['column', 'column', 'column', 'row']}
       >
-        {description && (
+        {(description || link) && (
           <Box marginRight={[0, 0, 0, 2]} marginBottom={[1, 1, 1, 0]}>
             <LinkContext.Provider
               value={{
