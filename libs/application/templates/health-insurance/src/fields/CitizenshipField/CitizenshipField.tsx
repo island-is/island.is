@@ -12,7 +12,9 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
     'nationalRegistry',
   ) as ExternalDataNationalRegistry)?.data?.citizenship as Citizenship
 
-  const [countryData, setCountryData] = useState<string>()
+  const [countryData, setCountryData] = useState<string>(
+    JSON.stringify(citizenship),
+  )
   const { register } = useFormContext()
 
   function getCountryInformation(countryCode: string) {
@@ -20,7 +22,7 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
       .then((res) => res.json())
       .then((data: CountryDataResult) => {
         if (!data.status) {
-          const { name, alpha2Code: countryCode, regionalBlocs } = data
+          const { name, regionalBlocs } = data
           const regions = regionalBlocs.map((blocs) => blocs.acronym)
           setCountryData(JSON.stringify({ name, countryCode, regions }))
         }
@@ -28,7 +30,7 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
   }
 
   useEffect(() => {
-    getCountryInformation((citizenship as Citizenship).code)
+    getCountryInformation((citizenship as Citizenship)?.code)
   }, [citizenship])
 
   return (

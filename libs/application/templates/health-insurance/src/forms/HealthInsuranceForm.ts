@@ -171,7 +171,7 @@ export const HealthInsuranceForm: Form = buildForm({
             buildCustomField({
               id: 'applicant.citizenship',
               title: '',
-              component: 'CitizenshipField'
+              component: 'CitizenshipField',
             }),
             buildDescriptionField({
               id: 'editNationalRegistryData',
