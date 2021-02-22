@@ -12,7 +12,7 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
   } = props
   const applicantNationalId = get(application.answers, 'applicant.nationalId')
   const applicantName = get(application.answers, 'applicant.name')
-  const email = 'gudjonm@advania.is' //TODO change this to island@island.is
+  const email = process.env.DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
 
   const subject =
     locale === 'is'
