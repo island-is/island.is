@@ -94,7 +94,7 @@ export class FileService {
     applicationId: string,
     applicantName: string,
     phoneNumber?: string,
-  ) {
+  ): Promise<SigningServiceResponse> {
     const s3FileName = `${BucketTypePrefix[type]}/${applicationId}/${Signature.Unsigned}.pdf`
     const s3File = await getFile(s3FileName)
     const fileContent = s3File.Body?.toString('binary')

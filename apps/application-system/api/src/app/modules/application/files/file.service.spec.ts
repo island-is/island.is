@@ -6,6 +6,7 @@ import * as pdf from './utils/pdf'
 import { Application } from './../application.model'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
+import { NotFoundException } from '@nestjs/common'
 
 describe('FileService', () => {
   let service: FileService
@@ -143,5 +144,44 @@ describe('FileService', () => {
     expect(response.documentToken).toEqual(
       signingServiceRequestSignatureResponse.documentToken,
     )
+  })
+
+  it('should throw error for request file signature since phone number is missing', async () => {
+    let app = application
+    app.answers = {}
+
+    const act = async () =>
+      await service.requestFileSignature(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    expect(act).rejects.toThrowError(NotFoundException)
+
+    expect(aws.getFile).toHaveBeenCalledWith(
+      `children-residence-change/${applicationId}/unsigned.pdf`,
+    )
+
+    expect(signingService.requestSignature).not.toHaveBeenCalled()
+  })
+
+  it('should throw error for request file signature since file content is missing', async () => {
+    jest
+      .spyOn(aws, 'getFile')
+      .mockImplementation(() => Promise.resolve({ Body: '' }))
+
+    const act = async () =>
+      await service.requestFileSignature(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    expect(act).rejects.toThrowError(NotFoundException)
+
+    expect(aws.getFile).toHaveBeenCalledWith(
+      `children-residence-change/${applicationId}/unsigned.pdf`,
+    )
+
+    expect(signingService.requestSignature).not.toHaveBeenCalled()
   })
 })
