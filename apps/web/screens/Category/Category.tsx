@@ -43,6 +43,7 @@ import {
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -128,7 +129,7 @@ const Category: Screen<CategoryProps> = ({
   useEffect(() => {
     const hashString = getUrlHash()
     if (hashString.length > 0) {
-      document.getElementById(hashString).scrollIntoView()
+      scrollTo(hashString, { marginTop: 24, smooth: true })
     }
   }, [])
 

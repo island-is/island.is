@@ -24,9 +24,26 @@ const guessVisibleSection = (
   }, ids[0])
 }
 
-const useScrollSpy = (
+export const scrollTo = (
+  id: string,
+  {
+    marginTop = 0,
+    smooth = false,
+  }: { marginTop?: number; smooth?: boolean } = {},
+) => {
+  const rect = document.getElementById(id).getBoundingClientRect()
+  window.scrollTo({
+    top: Math.floor(rect.top) + window.scrollY - marginTop,
+    behavior: smooth ? 'smooth' : 'auto',
+  })
+}
+
+export const useScrollSpy = (
   ids: string[],
-  { marginTop = 100 }: { marginTop?: number } = {},
+  {
+    marginTop = 80,
+    smooth = false,
+  }: { marginTop?: number; smooth?: boolean } = {},
 ): [string | undefined, (id: string) => void] => {
   const [current, setCurrent] = useState(ids[0])
 
@@ -45,8 +62,8 @@ const useScrollSpy = (
     (id: string) => {
       setCurrent(id)
       setIgnore(true)
-      const rect = document.getElementById(id).getBoundingClientRect()
-      window.scrollTo(0, Math.floor(rect.top) + window.scrollY - marginTop)
+
+      scrollTo(id, { marginTop: marginTop, smooth: smooth })
     },
     [setCurrent, setIgnore],
   )
