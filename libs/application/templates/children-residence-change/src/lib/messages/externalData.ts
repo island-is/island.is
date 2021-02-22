@@ -21,7 +21,8 @@ export const externalData = {
       description: 'External information retrieval subtitle',
     },
     checkboxLabel: {
-      id: 'crc.application:section.backgroundInformation.externalData.checkboxLabel',
+      id:
+        'crc.application:section.backgroundInformation.externalData.checkboxLabel',
       defaultMessage: 'Ég samþykki gagnaöflun',
       description: 'External information retrieval checkbox label',
     },
