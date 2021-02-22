@@ -50,14 +50,15 @@ export class UserResolver {
       currUser.nationalId === '2808714009' ||
       currUser.nationalId === '3108654949' ||
       currUser.nationalId === '2512942099' ||
-      currUser.nationalId === '0306942609'
+      currUser.nationalId === '0306942609' ||
+      currUser.nationalId === '1207952879'
     ) {
       currUser.partnerId = '221' // This is partner Id for Fura, to be fixed later
     } else if (
       currUser.role === 'recyclingCompany' ||
       currUser.role === 'developer'
     ) {
-      currUser.partnerId = '110' // This is partner Id for Vaka, to be fixed later
+      currUser.partnerId = '110' // This is partner Id for Vaka, to be fixed later (no need list vaka users)
     } else {
       currUser.partnerId = null // Normal citizen user
     }

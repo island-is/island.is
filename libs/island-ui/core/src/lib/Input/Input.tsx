@@ -243,7 +243,11 @@ export const Input = forwardRef(
           )}
         </Box>
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={id}>
+          <div
+            className={styles.errorMessage}
+            id={id}
+            data-testid="inputErrorMessage"
+          >
             {errorMessage}
           </div>
         )}

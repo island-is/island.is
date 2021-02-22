@@ -21,7 +21,9 @@ export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
-  institution: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+  institution: {
+    name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+  },
 } as User
 
 export const mockJudge = {
@@ -29,7 +31,9 @@ export const mockJudge = {
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
-  institution: 'Héraðsdómur Reykjavíkur',
+  institution: {
+    name: 'Héraðsdómur Reykjavíkur',
+  },
 } as User
 
 export const mockRegistrar = {
