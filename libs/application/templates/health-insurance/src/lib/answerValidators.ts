@@ -110,14 +110,20 @@ export const answerValidators: Record<string, AnswerValidator> = {
           `${FORMER_INSURANCE}.entitlement`,
         )
       }
+      // Check entitelmentReason is a string and not empty if entitlement === YES
+      if (formerInsurance.entitlement === YES && !formerInsurance.entitlementReason) {
+        const buildError = buildValidationError(`${FORMER_INSURANCE}.entitlementReason`)
+        return buildError(
+          'Please fill in a reason',
+          `${FORMER_INSURANCE}.entitlementReason`,
+        )
+      }
     } else {
       const buildError = buildValidationError(`${FORMER_INSURANCE}`)
       return buildError(
         '',
       )
     }
-
-    // Check entitelmentReason is a string and not empty if entitlement === YES
 
     return undefined
   },
