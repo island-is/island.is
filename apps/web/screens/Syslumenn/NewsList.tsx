@@ -6,7 +6,6 @@ import Head from 'next/head'
 import { Screen } from '../../types'
 import {
   Select as NativeSelect,
-  Bullet,
   OrganizationWrapper,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -143,56 +142,56 @@ const NewsList: Screen<NewsListProps> = ({
   ]
 
   const sidebar = (
-    <Stack space={3}>
-      <Hidden below="md">
-        <Box
-          background="purple100"
-          borderRadius="large"
-          padding={4}
-          marginTop={4}
-        >
-          <Stack space={3}>
-            <Text variant="h4" as="h1" color="purple600">
-              {n('newsTitle', 'Fréttir og tilkynningar')}
-            </Text>
-            <Divider weight="purple200" />
-            <NativeSelect
-              name="year"
-              value={selectedYear ? selectedYear.toString() : allYearsString}
-              options={yearOptions}
-              onChange={(e) => {
-                const selectedValue =
-                  e.target.value !== allYearsString ? e.target.value : null
-                Router.push(makeHref(selectedValue))
-              }}
-              color="purple400"
-            />
-            {selectedYear && (
-              <div>
-                <Link href={makeHref(selectedYear)}>
-                  <Text as="span">{allMonthsString}</Text>
-                </Link>
-                <Text as="span">
-                  {selectedMonth === undefined && <Bullet align="right" />}
+    <Hidden below="md">
+      <Box
+        background="purple100"
+        borderRadius="large"
+        padding={4}
+        marginTop={4}
+      >
+        <Stack space={3}>
+          <Text variant="h4" as="h1" color="purple600">
+            {n('newsTitle', 'Fréttir og tilkynningar')}
+          </Text>
+          <Divider weight="purple200" />
+          <NativeSelect
+            name="year"
+            value={selectedYear ? selectedYear.toString() : allYearsString}
+            options={yearOptions}
+            onChange={(e) => {
+              const selectedValue =
+                e.target.value !== allYearsString ? e.target.value : null
+              Router.push(makeHref(selectedValue))
+            }}
+            color="purple400"
+          />
+          {selectedYear && (
+            <div>
+              <Link href={makeHref(selectedYear)}>
+                <Text
+                  as="span"
+                  fontWeight={!selectedMonth ? 'semiBold' : 'regular'}
+                >
+                  {allMonthsString}
                 </Text>
-              </div>
-            )}
-            {months.map((month) => (
-              <div key={month}>
-                <Link href={makeHref(selectedYear, month)}>
-                  <Text as="span">
-                    {capitalize(getMonthByIndex(month - 1))}
-                  </Text>
-                </Link>
-                <Text as="span">
-                  {selectedMonth === month && <Bullet align="right" />}
+              </Link>
+            </div>
+          )}
+          {months.map((month) => (
+            <div key={month}>
+              <Link href={makeHref(selectedYear, month)}>
+                <Text
+                  as="span"
+                  fontWeight={selectedMonth === month ? 'semiBold' : 'regular'}
+                >
+                  {capitalize(getMonthByIndex(month - 1))}
                 </Text>
-              </div>
-            ))}
-          </Stack>
-        </Box>
-      </Hidden>
-    </Stack>
+              </Link>
+            </div>
+          ))}
+        </Stack>
+      </Box>
+    </Hidden>
   )
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
@@ -220,11 +219,6 @@ const NewsList: Screen<NewsListProps> = ({
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,
-          titleLink: {
-            href: linkResolver('organizationpage', [organizationPage.slug])
-              .href,
-            active: false,
-          },
         }}
       >
         <Stack space={[3, 3, 4]}>

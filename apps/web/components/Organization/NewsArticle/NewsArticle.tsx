@@ -10,7 +10,10 @@ import {
 import { Main, SidebarBox, Sticky } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-import { GetNamespaceQuery, GetSingleNewsItemQuery } from '../../graphql/schema'
+import {
+  GetNamespaceQuery,
+  GetSingleNewsItemQuery,
+} from '../../../graphql/schema'
 import {
   richText,
   Slice as SliceType,

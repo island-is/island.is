@@ -94,11 +94,6 @@ const NewsItem: Screen<NewsItemProps> = ({
         navigationData={{
           title: n('navigationTitle', 'Efnisyfirlit'),
           items: navList,
-          titleLink: {
-            href: linkResolver('organizationpage', [organizationPage.slug])
-              .href,
-            active: false,
-          },
         }}
       >
         <NewsArticle newsItem={newsItem} namespace={namespace} />

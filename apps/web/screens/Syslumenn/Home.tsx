@@ -115,7 +115,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         aria-labelledby="latestNewsTitle"
       >
         <LatestNewsSection
-          label="Fréttir og tilkynningar"
+          label={n('newsAndAnnouncements', 'Fréttir og tilkynningar')}
           labelId="latestNewsTitle"
           items={news}
           linkType="organizationnews"
