@@ -28,12 +28,13 @@ if (process.env.INIT_SCHEMA === 'true') {
     name: 'upload',
     useFactory: () => ({
       prefix: `{${bullModuleName}}`,
-      createClient: () => createRedisCluster({
-        name: bullModuleName,
-        ssl: environment.production,
-        nodes: environment.redis.urls,
-        noPrefix: true,
-      }),
+      createClient: () =>
+        createRedisCluster({
+          name: bullModuleName,
+          ssl: environment.production,
+          nodes: environment.redis.urls,
+          noPrefix: true,
+        }),
     }),
   })
 }

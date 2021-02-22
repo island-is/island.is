@@ -23,10 +23,7 @@ type UploadFileAnswer = {
 }
 
 // Transform an uploaded file to an form answer.
-const transformToAnswer = ({
-  name,
-  key,
-}: UploadFile): UploadFileAnswer => {
+const transformToAnswer = ({ name, key }: UploadFile): UploadFileAnswer => {
   return { name, key }
 }
 

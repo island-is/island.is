@@ -114,7 +114,7 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
         </div>
       ) : (
         <button
-          type={"button"}
+          type={'button'}
           onClick={(e) => {
             e.stopPropagation()
             if (!isUploading) onRemoveClick(file)
