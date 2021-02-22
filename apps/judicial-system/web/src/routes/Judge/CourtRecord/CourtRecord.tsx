@@ -146,8 +146,8 @@ export const CourtRecord: React.FC = () => {
         !theCase.policeDemands &&
         theCase.accusedName &&
         theCase.court &&
-        theCase.requestedCustodyEndDate &&
-        theCase.requestedCustodyRestrictions
+        theCase.requestedCustodyEndDate
+        // Note that theCase.requestedCustodyRestrictions can be undefined
       ) {
         theCase = {
           ...theCase,
@@ -159,7 +159,7 @@ export const CourtRecord: React.FC = () => {
             theCase.requestedCustodyEndDate,
             theCase.requestedCustodyRestrictions?.includes(
               CaseCustodyRestrictions.ISOLATION,
-            ),
+            ) || false,
             theCase.parentCase !== undefined,
             theCase.parentCase?.decision,
           ),
@@ -396,6 +396,7 @@ export const CourtRecord: React.FC = () => {
                 />
               </div>
               <Input
+                data-testid="accusedPleaAnnouncement"
                 name="accusedPleaAnnouncement"
                 label={`Afstaða ${formatAccusedByGender(
                   workingCase.accusedGender || CaseGender.OTHER,

@@ -302,7 +302,11 @@ export const RulingStepOne: React.FC = () => {
             />
           </Box>
           {workingCase.decision !== CaseDecision.REJECTING && (
-            <Box component="section" marginBottom={7}>
+            <Box
+              component="section"
+              marginBottom={7}
+              data-testid="caseDecisionSection"
+            >
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   {workingCase.type === CaseType.CUSTODY &&
@@ -375,6 +379,7 @@ export const RulingStepOne: React.FC = () => {
                       data-testid="custodyEndTime"
                       name="custodyEndTime"
                       label="Tímasetning"
+                      placeholder="Veldu tíma"
                       ref={custodyEndTimeRef}
                       defaultValue={
                         workingCase.custodyEndDate?.includes('T')

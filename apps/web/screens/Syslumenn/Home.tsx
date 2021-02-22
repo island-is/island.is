@@ -88,10 +88,6 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
       mainContent={
         <Box paddingTop={2}>

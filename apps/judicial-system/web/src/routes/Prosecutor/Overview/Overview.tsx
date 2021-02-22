@@ -175,7 +175,9 @@ export const Overview: React.FC = () => {
                 },
                 {
                   title: 'Embætti',
-                  value: 'Lögreglan á Höfuðborgarsvæðinu',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
                 },
                 {
                   title: 'Ósk um fyrirtökudag og tíma',
@@ -220,7 +222,11 @@ export const Overview: React.FC = () => {
               }}
             />
           </Box>
-          <Box component="section" marginBottom={5}>
+          <Box
+            component="section"
+            marginBottom={5}
+            data-testid="prosecutorDemands"
+          >
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Dómkröfur
@@ -270,11 +276,13 @@ export const Overview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </AccordionItem>
               <AccordionItem
                 labelVariant="h3"

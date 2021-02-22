@@ -43,12 +43,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
     setCardHeight('auto')
     setStagePadding({
       paddingLeft: 0,
-      paddingRight:
-        width >= theme.breakpoints.md
-          ? 124
-          : width > theme.breakpoints.xs
-          ? 50
-          : 20,
+      paddingRight: width >= theme.breakpoints.md ? 124 : 20,
     })
   }, [ref])
 
