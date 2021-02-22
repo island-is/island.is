@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import parseISO from 'date-fns/parseISO'
 import { ValueType } from 'react-select/src/types'
 import { useHistory, useParams } from 'react-router-dom'
@@ -54,6 +54,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
   case?: Case
@@ -69,6 +70,7 @@ export const StepTwo: React.FC = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { id } = useParams<{ id: string }>()
+  const { user } = useContext(UserContext)
 
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
     '',
@@ -148,7 +150,11 @@ export const StepTwo: React.FC = () => {
   ]
 
   const prosecutors = userData?.users
-    .filter((user: User, _: number) => user.role === UserRole.PROSECUTOR)
+    .filter(
+      (aUser: User, _: number) =>
+        aUser.role === UserRole.PROSECUTOR &&
+        aUser.institution?.id === user?.institution?.id,
+    )
     .map((prosecutor: User, _: number) => {
       return { label: prosecutor.name, value: prosecutor.id }
     })
@@ -367,6 +373,7 @@ export const StepTwo: React.FC = () => {
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
+                    maxDate={new Date()}
                     errorMessage={arrestDateErrorMessage}
                     hasError={arrestDateErrorMessage !== ''}
                     selected={
@@ -527,6 +534,7 @@ export const StepTwo: React.FC = () => {
             )}
           </Box>
           <FormFooter
+            previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsDisabled={isStepIllegal || transitionLoading}
             nextIsLoading={transitionLoading}

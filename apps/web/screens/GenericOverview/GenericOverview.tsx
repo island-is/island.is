@@ -21,7 +21,11 @@ import {
   QueryGetGenericOverviewPageArgs,
 } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
-import { Image, renderHtml } from '@island.is/island-ui/contentful'
+import {
+  Image,
+  Slice as SliceType,
+  richText,
+} from '@island.is/island-ui/contentful'
 
 interface GenericOverviewProps {
   genericOverviewPage: GetGenericOverviewPageQuery['getGenericOverviewPage']
@@ -77,7 +81,16 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
         </Text>
         {Boolean(intro) && (
           <Box marginBottom={[4, 6, 10]}>
-            {renderHtml(intro.document as Document)}
+            {richText(
+              [
+                {
+                  __typename: 'Html',
+                  id: intro.id,
+                  document: intro.document,
+                },
+              ] as SliceType[],
+              undefined,
+            )}
           </Box>
         )}
       </Stack>
@@ -113,7 +126,16 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
                       </Text>
                       {Boolean(intro) && (
                         <Box marginBottom={4}>
-                          {renderHtml(intro.document as Document)}
+                          {richText(
+                            [
+                              {
+                                __typename: 'Html',
+                                id: intro.id,
+                                document: intro.document,
+                              },
+                            ] as SliceType[],
+                            undefined,
+                          )}{' '}
                         </Box>
                       )}
                       <Link
@@ -136,7 +158,11 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
   )
 }
 
-GenericOverview.getInitialProps = async ({ apolloClient, locale }) => {
+GenericOverview.getInitialProps = async ({
+  apolloClient,
+  locale,
+  pathname,
+}) => {
   const [
     {
       data: { getGenericOverviewPage: genericOverviewPage },
@@ -149,7 +175,10 @@ GenericOverview.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_GENERIC_OVERVIEW_PAGE_QUERY,
       fetchPolicy: 'no-cache',
       variables: {
-        input: { lang: locale, pageIdentifier: 'throun' },
+        input: {
+          lang: locale,
+          pageIdentifier: pathname.replace(/^.*\/(.*)$/, '$1'),
+        },
       },
     }),
   ])

@@ -1,42 +1,35 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { DocumentProvidersSearch } from '../../components/DocumentProviders/DocumentProviders'
+import { gql, useQuery } from '@apollo/client'
+import { Organisation } from '@island.is/api/schema'
+import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 
-const DocumentProviders: ServicePortalModuleComponent = ({ userInfo }) => {
-  interface Data {
-    name: string
-    id: string
+export type OrganisationPreview = Pick<
+  Organisation,
+  'name' | 'id' | 'nationalId'
+>
+
+const getOrganisationsPreviewQuery = gql`
+  query GetOrganisationsPreviewQuery {
+    getProviderOrganisations {
+      name
+      id
+      nationalId
+    }
   }
+`
+
+const DocumentProviders: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
+  const { data, error } = useQuery(getOrganisationsPreviewQuery, {
+    fetchPolicy: 'cache-and-network',
+  })
 
-  useEffect(() => {
-    //TODO: Set up real data
-    handleFetch()
-  }, [])
-
-  const [data, setData] = useState<Data[]>([])
-
-  const handleFetch = () => {
-    //TODO: Set up real data
-    setData([
-      {
-        name: 'Þjóðskrá Íslands',
-        id: 'dsadg232-dsadsa12-dsadas56',
-      },
-      {
-        name: 'Ríkisskattstjóri',
-        id: 'dsdsdsa22-dsadsa12-dsadas56',
-      },
-      {
-        name: 'Heilbrigðisstofnun Vesturlands',
-        id: '3232dsadsa-dsadsa12-dsadas56',
-      },
-    ])
-  }
-
+  const organisationsPreview: OrganisationPreview[] =
+    data?.getProviderOrganisations || []
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={[2, 3]}>
@@ -48,7 +41,9 @@ const DocumentProviders: ServicePortalModuleComponent = ({ userInfo }) => {
         <Text as="p">{formatMessage(m.documentProvidersDescription)}</Text>
       </Box>
 
-      {data.length !== 0 && <DocumentProvidersSearch data={data} />}
+      {!error && (
+        <DocumentProvidersSearch organisationsPreview={organisationsPreview} />
+      )}
     </Box>
   )
 }

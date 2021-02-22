@@ -28,15 +28,27 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>
-          {`Þinghald frá kl. ${formatDate(
-            workingCase.courtStartTime,
-            TIME_FORMAT,
-          )} til kl. ${formatDate(
-            workingCase.courtEndTime,
-            TIME_FORMAT,
-          )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-        </Text>
+        {workingCase.courtEndTime ? (
+          <Text>
+            {`Þinghald frá kl. ${formatDate(
+              workingCase.courtStartTime,
+              TIME_FORMAT,
+            )} til kl. ${formatDate(
+              workingCase.courtEndTime,
+              TIME_FORMAT,
+            )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
+          </Text>
+        ) : (
+          <>
+            <Text>
+              {`Þinghald frá kl. ${formatDate(
+                workingCase.courtStartTime,
+                TIME_FORMAT,
+              )}`}
+            </Text>
+            <Text>Þinghaldi er ekki lokið</Text>
+          </>
+        )}
       </Box>
       <AccordionListItem title="Krafa lögreglu" breakSpaces>
         <Text>{workingCase.policeDemands}</Text>

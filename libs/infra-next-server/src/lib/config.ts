@@ -3,7 +3,7 @@ import { prepareConfig } from '@nrwl/next/src/utils/config'
 export const getNextConfig = (appDir: string, dev: boolean) => {
   const config = { dev }
 
-  if (dev) {
+  if (dev || process.env.API_MOCKS) {
     const options = {
       root: `${appDir}`,
       outputPath: `dist/${appDir}`,

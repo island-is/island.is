@@ -41,6 +41,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   placeholderText,
   locale = 'en',
   minDate,
+  maxDate,
   selected,
   disabled = false,
   hasError = false,
@@ -87,6 +88,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           selected={selected ?? startDate}
           locale={currentLanguage.locale}
           minDate={minDate}
+          maxDate={maxDate}
           dateFormat={currentLanguage.format}
           showPopperArrow={false}
           popperPlacement="bottom-start"
@@ -225,6 +227,7 @@ const CustomHeader = ({
         </Text>
       </div>
       <button
+        data-testid="datepickerIncreaseMonth"
         type="button"
         onClick={increaseMonth}
         className={styles.increaseButton}
