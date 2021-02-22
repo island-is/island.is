@@ -1,18 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import transform from 'lodash/transform'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
-import NextLink from 'next/link'
 import Head from 'next/head'
-import { Screen } from '../types'
-import { Select as NativeSelect, Bullet } from '@island.is/web/components'
+import { Screen } from '../../types'
+import {
+  Select as NativeSelect,
+  OrganizationWrapper,
+} from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
   Box,
   Text,
   Stack,
-  Breadcrumbs,
   BreadCrumbItem,
   Divider,
   Pagination,
@@ -21,14 +21,15 @@ import {
   Option,
   Link,
   GridColumn,
+  NavigationItem,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GET_NAMESPACE_QUERY,
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
-} from './queries'
-import { SidebarLayout } from './Layouts/SidebarLayout'
+  GET_ORGANIZATION_PAGE_QUERY,
+} from '../queries'
 import {
   GetNewsDatesQuery,
   QueryGetNewsDatesArgs,
@@ -37,15 +38,18 @@ import {
   ContentLanguage,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-} from '../graphql/schema'
-import { NewsCard } from '../components/NewsCard'
+  Query,
+  QueryGetOrganizationPageArgs,
+} from '../../graphql/schema'
+import { NewsCard } from '../../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
-import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { useLinkResolver } from '../../hooks/useLinkResolver'
+import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 
 const PERPAGE = 10
 
 interface NewsListProps {
+  organizationPage: Query['getOrganizationPage']
   newsList: GetNewsQuery['getNews']['items']
   total: number
   datesMap: { [year: string]: number[] }
@@ -57,6 +61,7 @@ interface NewsListProps {
 }
 
 const NewsList: Screen<NewsListProps> = ({
+  organizationPage,
   newsList,
   total,
   datesMap,
@@ -111,54 +116,39 @@ const NewsList: Screen<NewsListProps> = ({
     }, {})
 
     return {
-      pathname: linkResolver('newsoverview').href,
+      pathname: linkResolver('organizationnewsoverview', [
+        organizationPage.slug,
+      ]).href,
       query,
     }
   }
 
-  // Fish the selected tag name from existing news items
-  // instead of making a request for all tags
-  const selectedTag =
-    newsList.length &&
-    selectedTagId &&
-    transform(
-      newsList,
-      (tag, item) => {
-        const found = item.genericTags.find((t) => t.id === selectedTagId)
-
-        if (found) {
-          tag.id = found.id
-          tag.title = found.title
-          // exit early since we have what we need
-          return false
-        }
-
-        return true
-      },
-      { id: '', title: '' },
-    )
-
   const breadCrumbs: BreadCrumbItem[] = [
     {
       title: 'Ísland.is',
+      href: linkResolver('homepage').href,
       typename: 'homepage',
-      href: '/',
     },
     {
-      title: n('newsTitle', 'Fréttir og tilkynningar'),
-      typename: 'newsoverview',
-      href: '/',
+      title: n('organizations', 'Stofnanir'),
+      href: linkResolver('organizations').href,
+      typename: 'organizations',
+    },
+    {
+      title: organizationPage.title,
+      href: linkResolver('organizationpage', [organizationPage.slug]).href,
+      typename: 'organizationpage',
     },
   ]
-  const breadCrumbTags: BreadCrumbItem = !!selectedTag && {
-    isTag: true,
-    title: selectedTag.title,
-    typename: 'newsoverview',
-  }
 
   const sidebar = (
-    <Stack space={3}>
-      <Box background="purple100" borderRadius="large" padding={4}>
+    <Hidden below="md">
+      <Box
+        background="purple100"
+        borderRadius="large"
+        padding={4}
+        marginTop={4}
+      >
         <Stack space={3}>
           <Text variant="h4" as="h1" color="purple600">
             {n('newsTitle', 'Fréttir og tilkynningar')}
@@ -178,26 +168,42 @@ const NewsList: Screen<NewsListProps> = ({
           {selectedYear && (
             <div>
               <Link href={makeHref(selectedYear)}>
-                <Text as="span">{allMonthsString}</Text>
+                <Text
+                  as="span"
+                  fontWeight={!selectedMonth ? 'semiBold' : 'regular'}
+                >
+                  {allMonthsString}
+                </Text>
               </Link>
-              <Text as="span">
-                {selectedMonth === undefined && <Bullet align="right" />}
-              </Text>
             </div>
           )}
           {months.map((month) => (
             <div key={month}>
               <Link href={makeHref(selectedYear, month)}>
-                <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
+                <Text
+                  as="span"
+                  fontWeight={selectedMonth === month ? 'semiBold' : 'regular'}
+                >
+                  {capitalize(getMonthByIndex(month - 1))}
+                </Text>
               </Link>
-              <Text as="span">
-                {selectedMonth === month && <Bullet align="right" />}
-              </Text>
             </div>
           ))}
         </Stack>
       </Box>
-    </Stack>
+    </Hidden>
+  )
+
+  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink.text,
+      href: primaryLink.url,
+      active: primaryLink.url.includes('/stofnanir/syslumenn/frett'),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
+    }),
   )
 
   return (
@@ -205,29 +211,28 @@ const NewsList: Screen<NewsListProps> = ({
       <Head>
         <title>{n('pageTitle')} | Ísland.is</title>
       </Head>
-      <SidebarLayout sidebarContent={sidebar}>
+      <OrganizationWrapper
+        pageTitle={organizationPage.title}
+        organizationPage={organizationPage}
+        breadcrumbItems={breadCrumbs}
+        sidebarContent={sidebar}
+        navigationData={{
+          title: n('navigationTitle', 'Efnisyfirlit'),
+          items: navList,
+        }}
+      >
         <Stack space={[3, 3, 4]}>
-          <Breadcrumbs
-            items={
-              breadCrumbTags ? [...breadCrumbs, breadCrumbTags] : breadCrumbs
-            }
-            renderLink={(link, { typename }) => {
-              return (
-                <NextLink {...linkResolver(typename as LinkType)} passHref>
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
-
+          <Text variant="h1" as="h1" marginBottom={2}>
+            {n('newsTitle', 'Fréttir og tilkynningar')}
+          </Text>
           {selectedYear && (
             <Hidden below="lg">
-              <Text variant="h1" as="h1">
+              <Text variant="h2" as="h2">
                 {selectedYear}
               </Text>
             </Hidden>
           )}
-          <GridColumn hiddenAbove="sm" paddingBottom={1}>
+          <GridColumn hiddenAbove="sm" paddingTop={4} paddingBottom={1}>
             <Select
               label={yearString}
               placeholder={yearString}
@@ -274,7 +279,12 @@ const NewsList: Screen<NewsListProps> = ({
               slug={newsItem.slug}
               image={newsItem.image}
               titleAs="h2"
-              href={linkResolver('news', [newsItem.slug]).href}
+              href={
+                linkResolver('organizationnews', [
+                  organizationPage.slug,
+                  newsItem.slug,
+                ]).href
+              }
               date={newsItem.date}
               readMoreText={n('readMore', 'Lesa nánar')}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
@@ -288,7 +298,9 @@ const NewsList: Screen<NewsListProps> = ({
                 renderLink={(page, className, children) => (
                   <Link
                     href={{
-                      pathname: linkResolver('newsoverview').href,
+                      pathname: linkResolver('organizationnewsoverview', [
+                        organizationPage.slug,
+                      ]).href,
                       query: { ...Router.query, page },
                     }}
                   >
@@ -299,7 +311,7 @@ const NewsList: Screen<NewsListProps> = ({
             </Box>
           )}
         </Stack>
-      </SidebarLayout>
+      </OrganizationWrapper>
     </>
   )
 }
@@ -325,9 +337,12 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
-  const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
+  const tag = (query.tag as string) ?? SYSLUMENN_NEWS_TAG_ID
 
   const [
+    {
+      data: { getOrganizationPage },
+    },
     {
       data: { getNewsDates: newsDatesList },
     },
@@ -338,6 +353,15 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: 'syslumenn',
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
     apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
       query: GET_NEWS_DATES_QUERY,
       variables: {
@@ -377,6 +401,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
+    organizationPage: getOrganizationPage,
     newsList,
     total,
     selectedYear: year,
@@ -388,4 +413,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(NewsList)
+export default withMainLayout(NewsList, {
+  headerButtonColorScheme: 'negative',
+  headerColorScheme: 'white',
+})
