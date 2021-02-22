@@ -260,7 +260,10 @@ export class CmsContentfulService {
     month?: number,
   ): Promise<Auction[]> {
     // If year and date is not specified, we query for the next month
-    const fromDate = year !== undefined && month !== undefined ? new Date(year, month, 1) : new Date()
+    const fromDate =
+      year !== undefined && month !== undefined
+        ? new Date(year, month, 1)
+        : new Date()
     const toDate = new Date(fromDate.getTime())
 
     toDate.setMonth(toDate.getMonth() + 1)
