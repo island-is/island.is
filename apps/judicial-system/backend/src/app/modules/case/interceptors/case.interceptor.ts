@@ -23,7 +23,7 @@ export class CaseInterceptor implements NestInterceptor {
       map((retCase: Case) => {
         if (isCaseBlockedFromUser(retCase, user)) {
           throw new ForbiddenException(
-            `Role ${user?.role} cannot get a case in state ${retCase.state}`,
+            'The user does not have access to this case',
           )
         }
 

@@ -264,14 +264,13 @@ export class CaseController {
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('cases')
-  @UseInterceptors(CasesInterceptor)
   @ApiOkResponse({
     type: Case,
     isArray: true,
     description: 'Gets all existing cases',
   })
-  getAll(): Promise<Case[]> {
-    return this.caseService.getAll()
+  getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
+    return this.caseService.getAll(user)
   }
 
   @RolesRules(prosecutorRule, judgeRule, registrarRule)

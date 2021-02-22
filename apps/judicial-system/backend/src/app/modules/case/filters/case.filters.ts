@@ -1,12 +1,28 @@
+import { Op, WhereOptions } from 'sequelize'
+
 import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
 
 import { Case } from '../models'
+
+function getBlockedStates(role: UserRole) {
+  const blockedStates = [CaseState.DELETED]
+
+  if (role !== UserRole.PROSECUTOR) {
+    blockedStates.push(CaseState.NEW)
+  }
+
+  return blockedStates
+}
+
+function prosecutorInstitutionMustMatchUserInstitution(role: UserRole) {
+  return role === UserRole.PROSECUTOR
+}
 
 export function isStateHiddenFromRole(
   state: CaseState,
   role: UserRole,
 ): boolean {
-  return state === CaseState.NEW && role !== UserRole.PROSECUTOR
+  return getBlockedStates(role).includes(state)
 }
 
 export function isProsecutorInstitutionHiddenFromUser(
@@ -14,8 +30,8 @@ export function isProsecutorInstitutionHiddenFromUser(
   user: User,
 ): boolean {
   return (
+    prosecutorInstitutionMustMatchUserInstitution(user?.role) &&
     prosecutorInstitutionId &&
-    user?.role === UserRole.PROSECUTOR &&
     prosecutorInstitutionId !== user?.institution?.id
   )
 }
@@ -28,4 +44,28 @@ export function isCaseBlockedFromUser(theCase: Case, user: User): boolean {
       user,
     )
   )
+}
+
+export function getCasesQueryFilter(user: User): WhereOptions {
+  const blockStates = {
+    [Op.not]: {
+      state: getBlockedStates(user?.role),
+    },
+  }
+
+  return prosecutorInstitutionMustMatchUserInstitution(user?.role)
+    ? {
+        [Op.and]: [
+          blockStates,
+          {
+            [Op.or]: [
+              { prosecutor_id: { [Op.is]: null } },
+              {
+                '$prosecutor.institution_id$': user?.institution?.id,
+              },
+            ],
+          },
+        ],
+      }
+    : blockStates
 }

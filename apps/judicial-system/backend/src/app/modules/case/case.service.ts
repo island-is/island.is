@@ -21,6 +21,7 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
 @Injectable()
@@ -116,16 +117,12 @@ export class CaseService {
     ])
   }
 
-  getAll(): Promise<Case[]> {
+  getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
-      where: {
-        state: {
-          [Op.not]: CaseState.DELETED,
-        },
-      },
+      where: getCasesQueryFilter(user),
       include: [
         {
           model: User,
