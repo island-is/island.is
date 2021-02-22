@@ -209,9 +209,9 @@ export class CmsResolver {
   ): Promise<Auction[] | null> {
     return this.cmsContentfulService.getAuctions(
       input.organization,
+      input.lang,
       input.year,
       input.month,
-      input.lang,
     )
   }
 

@@ -255,19 +255,22 @@ export class CmsContentfulService {
 
   async getAuctions(
     organization: string,
-    year: number,
-    month: number,
     lang: string,
+    year?: number,
+    month?: number,
   ): Promise<Auction[]> {
-    const fromDate = new Date(year, month, 1).toISOString()
-    const toDate = new Date(year, month + 1, 1).toISOString()
+    // If year and date is not specified, we query for the next month
+    const fromDate = year !== undefined && month !== undefined ? new Date(year, month, 1) : new Date()
+    const toDate = new Date(fromDate.getTime())
+
+    toDate.setMonth(toDate.getMonth() + 1)
 
     const params = {
       ['content_type']: 'auction',
       'fields.organization.sys.contentType.sys.id': 'organization',
       'fields.organization.fields.slug': organization,
-      'fields.date[gte]': fromDate,
-      'fields.date[lte]': toDate,
+      'fields.date[gte]': fromDate.toISOString(),
+      'fields.date[lte]': toDate.toISOString(),
       order: 'fields.date',
     }
 
