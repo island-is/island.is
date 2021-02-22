@@ -320,4 +320,9 @@ export class SamgongustofaService {
       throw new Error('Failed on getting vehicles information...')
     }
   }
+
+  /* test */
+  static test(): any {
+    return 'test'
+  }
 }
