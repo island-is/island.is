@@ -58,7 +58,6 @@ import {
   mapOrganizationPage,
 } from './models/organizationPage.model'
 import { Auction, mapAuction } from './models/auction.model'
-import { mapTestHomepage, TestHomepage } from './models/testHomepage.model'
 import { mapFrontpage, Frontpage } from './models/frontpage.model'
 
 const makePage = (
@@ -568,20 +567,6 @@ export class CmsContentfulService {
       .catch(errorHandler('getHomepage'))
 
     return result.items.map(mapHomepage)[0]
-  }
-
-  async getTestHomepage ({ lang }: { lang: string }): Promise<TestHomepage> {
-    const params = {
-      ['content_type']: 'testHomepage',
-      include: 10,
-      order: '-sys.createdAt',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ITestHomepageFields>(lang, params)
-      .catch(errorHandler('getTestHomepage'))
-
-    return result.items.map(mapTestHomepage)[0]
   }
 
   async getFrontpage ({ lang }: { lang: string }): Promise<Frontpage> {
