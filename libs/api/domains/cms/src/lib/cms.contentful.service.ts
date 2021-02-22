@@ -95,9 +95,9 @@ const ArticleFields = [
 
 @Injectable()
 export class CmsContentfulService {
-  constructor (private contentfulRepository: ContentfulRepository) {}
+  constructor(private contentfulRepository: ContentfulRepository) {}
 
-  async getAdgerdirFrontpage (lang = 'is-IS'): Promise<AdgerdirFrontpage> {
+  async getAdgerdirFrontpage(lang = 'is-IS'): Promise<AdgerdirFrontpage> {
     const params = {
       ['content_type']: 'vidspyrna-frontpage',
       include: 10,
@@ -110,7 +110,7 @@ export class CmsContentfulService {
     return result.items.map(mapAdgerdirFrontpage)[0] ?? null
   }
 
-  async getAdgerdirPages (lang = 'is-IS'): Promise<AdgerdirPages> {
+  async getAdgerdirPages(lang = 'is-IS'): Promise<AdgerdirPages> {
     const params = {
       ['content_type']: 'vidspyrnaPage',
       include: 10,
@@ -126,7 +126,7 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizations (lang = 'is-IS'): Promise<Organizations> {
+  async getOrganizations(lang = 'is-IS'): Promise<Organizations> {
     const params = {
       ['content_type']: 'organization',
       include: 10,
@@ -144,7 +144,7 @@ export class CmsContentfulService {
     }
   }
 
-  async getAdgerdirTags (lang = 'is-IS'): Promise<AdgerdirTags> {
+  async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {
     const params = {
       ['content_type']: 'vidspyrnaTag',
       include: 10,
@@ -160,7 +160,7 @@ export class CmsContentfulService {
     }
   }
 
-  async getOrganizationTags (lang = 'is-IS'): Promise<OrganizationTags> {
+  async getOrganizationTags(lang = 'is-IS'): Promise<OrganizationTags> {
     const params = {
       ['content_type']: 'organizationTag',
       include: 10,
@@ -176,7 +176,7 @@ export class CmsContentfulService {
     }
   }
 
-  async getFrontpageSliderList (lang = 'is-IS'): Promise<FrontpageSliderList> {
+  async getFrontpageSliderList(lang = 'is-IS'): Promise<FrontpageSliderList> {
     const params = {
       ['content_type']: 'frontpageSliderList',
       include: 10,
@@ -190,7 +190,7 @@ export class CmsContentfulService {
     return result.items.map(mapFrontpageSliderList)[0] ?? null
   }
 
-  async getAdgerdirPage (slug: string, lang: string): Promise<AdgerdirPage> {
+  async getAdgerdirPage(slug: string, lang: string): Promise<AdgerdirPage> {
     const params = {
       ['content_type']: 'vidspyrnaPage',
       include: 10,
@@ -204,7 +204,7 @@ export class CmsContentfulService {
     return result.items.map(mapAdgerdirPage)[0] ?? null
   }
 
-  async getOrganization (slug: string, lang: string): Promise<Organization> {
+  async getOrganization(slug: string, lang: string): Promise<Organization> {
     const params = {
       ['content_type']: 'organization',
       include: 10,
@@ -218,7 +218,7 @@ export class CmsContentfulService {
     return result.items.map(mapOrganization)[0] ?? null
   }
 
-  async getOrganizationPage (
+  async getOrganizationPage(
     slug: string,
     lang: string,
   ): Promise<OrganizationPage> {
@@ -235,7 +235,7 @@ export class CmsContentfulService {
     return result.items.map(mapOrganizationPage)[0] ?? null
   }
 
-  async getOrganizationSubpage (
+  async getOrganizationSubpage(
     organizationSlug: string,
     slug: string,
     lang: string,
@@ -254,7 +254,7 @@ export class CmsContentfulService {
     return result.items.map(mapOrganizationSubpage)[0] ?? null
   }
 
-  async getAuctions (
+  async getAuctions(
     organization: string,
     year: number,
     month: number,
@@ -279,7 +279,7 @@ export class CmsContentfulService {
     return result.items.map(mapAuction)
   }
 
-  async getAuction (id: string, lang: string): Promise<Auction> {
+  async getAuction(id: string, lang: string): Promise<Auction> {
     const params = {
       ['content_type']: 'auction',
       'sys.id': id,
@@ -292,7 +292,7 @@ export class CmsContentfulService {
     return result.items.map(mapAuction)[0]
   }
 
-  async getArticle (slug: string, lang: string): Promise<Article | null> {
+  async getArticle(slug: string, lang: string): Promise<Article | null> {
     const params = {
       ['content_type']: 'article',
       'fields.slug': slug,
@@ -307,7 +307,7 @@ export class CmsContentfulService {
     return result.items.map(mapArticle)[0] ?? null
   }
 
-  async getErrorPage ({
+  async getErrorPage({
     lang,
     errorCode,
   }: GetErrorPageInput): Promise<ErrorPage> {
@@ -322,7 +322,7 @@ export class CmsContentfulService {
     return result.items.map(mapErrorPage)[0] ?? null
   }
 
-  async getRelatedArticles (slug: string, lang: string): Promise<Article[]> {
+  async getRelatedArticles(slug: string, lang: string): Promise<Article[]> {
     const params = {
       ['content_type']: 'article',
       'fields.slug': slug,
@@ -353,7 +353,7 @@ export class CmsContentfulService {
     return sortBy(results, (a) => sortedIds.indexOf(a.id))
   }
 
-  async getNews (lang: string, slug: string): Promise<News | null> {
+  async getNews(lang: string, slug: string): Promise<News | null> {
     const params = {
       ['content_type']: 'news',
       include: 10,
@@ -367,7 +367,7 @@ export class CmsContentfulService {
     return result.items.map(mapNews)[0] ?? null
   }
 
-  async getAboutPage ({ lang }: GetAboutPageInput): Promise<AboutPage | null> {
+  async getAboutPage({ lang }: GetAboutPageInput): Promise<AboutPage | null> {
     const params = {
       ['content_type']: 'page',
       include: 10,
@@ -381,7 +381,7 @@ export class CmsContentfulService {
     return result.items.map(mapAboutPage)[0] ?? null
   }
 
-  async getAboutSubPage ({
+  async getAboutSubPage({
     lang,
     url,
   }: {
@@ -401,7 +401,7 @@ export class CmsContentfulService {
     return result.items.map(mapAboutSubPage)[0] ?? null
   }
 
-  async getContentSlug ({
+  async getContentSlug({
     id,
     lang,
   }: GetContentSlugInput): Promise<ContentSlug | null> {
@@ -417,7 +417,7 @@ export class CmsContentfulService {
     return result.items.map(mapContentSlug)[0] ?? null
   }
 
-  async getGenericPage ({
+  async getGenericPage({
     lang,
     slug,
   }: GetGenericPageInput): Promise<GenericPage> {
@@ -434,7 +434,7 @@ export class CmsContentfulService {
     return result.items.map(mapGenericPage)[0] ?? null
   }
 
-  async getGenericOverviewPage ({
+  async getGenericOverviewPage({
     lang,
     pageIdentifier,
   }: GetGenericOverviewPageInput): Promise<GenericOverviewPage> {
@@ -451,7 +451,7 @@ export class CmsContentfulService {
     return result.items.map(mapGenericOverviewPage)[0] ?? null
   }
 
-  async getNamespace (
+  async getNamespace(
     namespace: string,
     lang: string,
   ): Promise<Namespace | null> {
@@ -467,7 +467,7 @@ export class CmsContentfulService {
     return result.items.map(mapNamespace)[0] ?? null
   }
 
-  async getMenu (name: string, lang: string): Promise<Menu | null> {
+  async getMenu(name: string, lang: string): Promise<Menu | null> {
     const params = {
       ['content_type']: 'menu',
       'fields.title': name,
@@ -480,7 +480,7 @@ export class CmsContentfulService {
     return result.items.map(mapMenu)[0] ?? null
   }
 
-  async getLifeEventPage (
+  async getLifeEventPage(
     slug: string,
     lang: string,
   ): Promise<LifeEventPage | null> {
@@ -496,7 +496,7 @@ export class CmsContentfulService {
     return result.items.map(mapLifeEventPage)[0] ?? null
   }
 
-  async getLifeEvents (lang: string): Promise<LifeEventPage[]> {
+  async getLifeEvents(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
       order: 'sys.createdAt',
@@ -509,7 +509,7 @@ export class CmsContentfulService {
     return result.items.map(mapLifeEventPage)
   }
 
-  async getAlertBanner ({
+  async getAlertBanner({
     lang,
     id,
   }: GetAlertBannerInput): Promise<AlertBanner | null> {
@@ -525,7 +525,7 @@ export class CmsContentfulService {
     return result.items.map(mapAlertBanner)[0] ?? null
   }
 
-  async getUrl (slug: string, lang: string): Promise<Url | null> {
+  async getUrl(slug: string, lang: string): Promise<Url | null> {
     const params = {
       ['content_type']: 'url',
       'fields.urlsList[all]': slug,
@@ -538,7 +538,7 @@ export class CmsContentfulService {
     return result.items.map(mapUrl)[0] ?? null
   }
 
-  async getLifeEventsInCategory (
+  async getLifeEventsInCategory(
     lang: string,
     slug: string,
   ): Promise<LifeEventPage[]> {
@@ -555,7 +555,7 @@ export class CmsContentfulService {
     return result.items.map(mapLifeEventPage)
   }
 
-  async getHomepage ({ lang }: { lang: string }): Promise<Homepage> {
+  async getHomepage({ lang }: { lang: string }): Promise<Homepage> {
     const params = {
       ['content_type']: 'homepage',
       include: 10,
@@ -569,7 +569,7 @@ export class CmsContentfulService {
     return result.items.map(mapHomepage)[0]
   }
 
-  async getFrontpage ({ lang }: { lang: string }): Promise<Frontpage> {
+  async getFrontpage({ lang }: { lang: string }): Promise<Frontpage> {
     const params = {
       ['content_type']: 'frontpage',
       include: 10,
@@ -583,7 +583,7 @@ export class CmsContentfulService {
     return result.items.map(mapFrontpage)[0]
   }
 
-  async getTellUsAStory ({ lang }: { lang: string }): Promise<TellUsAStory> {
+  async getTellUsAStory({ lang }: { lang: string }): Promise<TellUsAStory> {
     const params = {
       ['content_type']: 'tellUsAStory',
       include: 10,
@@ -597,7 +597,7 @@ export class CmsContentfulService {
     return result.items.map(mapTellUsAStory)[0]
   }
 
-  async getSubpageHeader ({
+  async getSubpageHeader({
     lang,
     id,
   }: GetSubpageHeaderInput): Promise<SubpageHeader> {
