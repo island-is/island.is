@@ -54,15 +54,17 @@ export class RestServiceCollector implements ServiceCollector {
       }
     }
 
-    logger.debug(
-      `Added all services to index "${this.collectionService.getWorkerIndexName()}"`,
+    logger.info(
+      `\n╔══════════════════════════════════════════════════════╗\n` +
+        `║          Added all services to worker index          ║\n` +
+        `╚══════════════════════════════════════════════════════╝`,
     )
     logger.debug(
-      `Making worker index available for collectors on other environments at: ${new Date().toISOString()}`,
+      `Making worker index "${this.collectionService.getWorkerIndexName()}" available for collectors from other environments`,
     )
     await this.collectionService.ActivateWorkerIndexForRemoteEnvironments()
     logger.debug(
-      `Environment alias for ${this.collectionService.getEnvironment()} ready for queries from remote environments at: ${new Date().toISOString()}`,
+      `Environment alias for "${this.collectionService.getEnvironment()}" ready for queries from remote environments`,
     )
 
     logger.info('Processing other environments.')

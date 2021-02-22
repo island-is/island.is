@@ -182,9 +182,7 @@ export class CollectionService {
       },
     })
 
-    logger.debug(
-      `updateAliases updateOptions ${JSON.stringify(updateOptions, null, 4)}`,
-    )
+    logger.debug(`updateAliases updateOptions`)
     await this.elasticService.updateIndexAliases(updateOptions)
 
     // Delete unused indices.
@@ -677,12 +675,32 @@ export class CollectionService {
     logger.debug(`externalUnique   : ${externalUnique}`)
 
     // fetching services not existing in current environment
-    const uniqueExternalServices = await this.elasticService.fetchServices(
+    const allUniqueExternalServices = await this.elasticService.fetchServices(
       externalIndex,
       externalUnique,
     )
+
+    logger.debug(
+      `Removing services that are not collected locally by remote collector`,
+    )
+
+    // Locally collected services are usually stored in the first item in the
+    // environments array. If collector does not have a local service but it
+    // exists in the remote environment that external service will be stored in
+    // the first item of the array.  We will need to remove those services,
+    // because later in the process of this running instance, we will collect
+    // them our selves to ensure that we are as much up to date as possible.
+    const uniqueExternalServices = allUniqueExternalServices.filter(
+      (e) => environment === e.environments[0].environment,
+    )
+
     logger.debug(
       `Adding to worker index, ${uniqueExternalServices.length} services that only exist in external index.`,
+    )
+    logger.debug(
+      `Removed, ${
+        allUniqueExternalServices.length - uniqueExternalServices.length
+      } services that were not locally collected by the remote collector.`,
     )
 
     // Adding to current environment services that do not exist in it

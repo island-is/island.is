@@ -8,7 +8,7 @@ import configuration from './config/configuration'
                                            
 import { CollectionConfigService } from './collection-config.service'
 import { CollectionService } from './collection.service'
-import { ElasticConfigService } from 'libs/api-catalogue/elastic/src/lib/elasticconfig.service'
+import { ElasticConfigService } from 'libs/api-catalogue/elastic/src/lib/elastic-config.service'
 
 @Module({
   imports: [

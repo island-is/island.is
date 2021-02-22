@@ -14,7 +14,7 @@ import {
   IndicesDelete,
   IndicesUpdateAliases,
 } from '@elastic/elasticsearch/api/requestParams'
-import { ElasticConfigService } from './elasticconfig.service'
+import { ElasticConfigService } from './elastic-config.service'
 
 @Injectable()
 export class ElasticService {
@@ -226,13 +226,8 @@ export class ElasticService {
         param.refresh = 'true'
       }
 
-      const res = await this.getClient()
-        .bulk(param)
-        .then(() => true)
-        .catch(() => false)
-      if (res) {
-        return res
-      }
+      await this.getClient().bulk(param)
+      return true
     } else {
       logger.debug('nothing to bulk insert')
     }
@@ -404,7 +399,7 @@ export class ElasticService {
     limit: number = 100,
   ): Promise<Service[]> {
     const maxSize = serviceIds ? serviceIds.length : limit
-    logger.info(`Fetching ${maxSize} services from ${index}`)
+    logger.info(`Fetching upto ${maxSize} services from ${index}`)
     const requestBody = {
       size: maxSize,
       _source: true,
