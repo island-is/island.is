@@ -47,7 +47,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
                 type="email"
                 label={formatMessage(otherParent.inputs.emailLabel)}
                 value={value}
-                hasError={!!emailError}
+                hasError={emailError !== undefined}
                 errorMessage={emailError as string}
                 required={true}
                 onChange={(e) => {
@@ -74,7 +74,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
                 label={formatMessage(otherParent.inputs.phoneNumberLabel)}
                 value={value}
                 required={true}
-                hasError={!!phoneNumberError}
+                hasError={phoneNumberError !== undefined}
                 errorMessage={phoneNumberError as string}
                 onChange={(e) => {
                   onChange(e.target.value)
