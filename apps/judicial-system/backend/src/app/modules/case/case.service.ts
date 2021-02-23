@@ -1,5 +1,3 @@
-import { Op } from 'sequelize'
-
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -10,7 +8,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { CaseState, User as TUser } from '@island.is/judicial-system/types'
+import { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {

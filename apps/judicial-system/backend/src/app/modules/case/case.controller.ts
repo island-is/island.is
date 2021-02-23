@@ -37,7 +37,6 @@ import {
   RulesType,
 } from '@island.is/judicial-system/auth'
 
-import { Institution } from '../institution'
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
