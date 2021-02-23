@@ -9,15 +9,9 @@ import {
   DocumentDetails,
   QueryGetDocumentArgs,
   Query,
-} from 'libs/api/schema/src'
+} from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
-import {
-  Text,
-  Stack,
-  Button,
-  Box,
-  LoadingIcon,
-} from '@island.is/island-ui/core'
+import { Text, Stack, Box, LoadingIcon } from '@island.is/island-ui/core'
 import { useLocale } from 'libs/localization/src'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
