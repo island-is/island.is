@@ -57,7 +57,10 @@ export const store = createStore(() => {
     category: () => faker.random.arrayElement(articleCategories),
   })
 
-  const frontpage = createFrontpage()
+  const frontpage = {
+    ...createFrontpage(),
+    ...{ namespace: { namespace: 'homepage', fields: '{}' } },
+  }
 
   const frontPageSliders = frontPageSlider.list(3)
 
