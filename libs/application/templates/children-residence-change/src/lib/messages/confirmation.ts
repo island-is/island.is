@@ -11,7 +11,7 @@ export const confirmation = {
     description: {
       id: 'crc.application:section.confirmation.description#markdown',
       defaultMessage:
-        '- Hitt foreldrið verður að samþykkja breytingar á lögheimili með rafrænni undirritun.\n- Eftir að hitt foreldrið undirritar samning um breytingu á lögheimili fer málið til afgreiðslu hjá sýslumanni.\n- Sýslumaður mun hafa samband ef þörf er á frekari upplýsingum eða ef óskað hefur verið eftir viðtali.\n- Staðfesting sýslumanns verður send í rafræn skjöl á Island.is.\n- Málsnúmer: __{applicationNumber}__',
+        '- Hitt foreldrið verður að samþykkja breytingar á lögheimili með rafrænni undirritun.\\n- Eftir að hitt foreldrið undirritar samning um breytingu á lögheimili fer málið til afgreiðslu hjá sýslumanni.\\n- Sýslumaður mun hafa samband ef þörf er á frekari upplýsingum eða ef óskað hefur verið eftir viðtali.\\n- Staðfesting sýslumanns verður send í rafræn skjöl á Island.is.\\n- Málsnúmer: __{applicationNumber}__',
       description: 'Confirmation description',
     },
   }),
