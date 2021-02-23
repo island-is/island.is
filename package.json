@@ -355,6 +355,7 @@
     "webpack-bundle-analyzer": "3.9.0"
   },
   "resolutions": {
+    "@graphql-tools/git-loader": "6.2.6",
     "@testing-library/dom": "7.29.1",
     "axios": "0.21.1",
     "immer": "8.0.1",

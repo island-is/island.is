@@ -53,7 +53,10 @@ describe('Confirmation route', () => {
       }),
     ).toBeDisabled()
 
-    userEvent.type(await screen.findByLabelText('Þinghaldi lauk *'), '15:55')
+    userEvent.type(
+      await screen.findByLabelText('Þinghaldi lauk (kk:mm) *'),
+      '15:55',
+    )
 
     expect(
       await screen.findByRole('button', {

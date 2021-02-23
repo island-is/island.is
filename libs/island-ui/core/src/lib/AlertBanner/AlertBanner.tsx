@@ -5,6 +5,7 @@ import { Box } from '../Box/Box'
 import * as styles from './AlertBanner.treat'
 import { Icon, IconTypes } from '../Icon/Icon'
 import { Text } from '../Text/Text'
+import { LinkContext } from '../context/LinkContext/LinkContext'
 import { Link } from '../Link/Link'
 
 export type AlertBannerVariants =
@@ -93,46 +94,68 @@ export const AlertBanner: FC<AlertBannerProps> = ({
     <Box
       background={variant.background}
       borderColor={variant.borderColor}
-      paddingLeft={[5, 5, 6]}
-      paddingRight={[5, 5, 6]}
+      paddingLeft={[3, 3, 3, 6]}
+      paddingRight={[3, 3, 3, 6]}
       paddingY={2}
       borderBottomWidth="standard"
       display="flex"
-      alignItems="center"
+      alignItems={['flexStart', 'flexStart', 'flexStart', 'center']}
       position="relative"
-      flexDirection={['column', 'column', 'row']}
-      textAlign={['center', 'center', 'left']}
+      flexDirection={['column', 'column', 'column', 'row']}
     >
       {variant.icon && (
-        <Box display="flex" marginRight={2} marginBottom={[2, 2, 0]}>
+        <Box
+          display="flex"
+          marginRight={[0, 0, 0, 2]}
+          marginBottom={[2, 2, 2, 0]}
+        >
           <Icon type={variant.icon} color={variant.iconColor} />
         </Box>
       )}
       {title && (
-        <Box marginRight={2} marginBottom={[1, 1, 0]}>
+        <Box marginRight={[0, 0, 0, 2]} marginBottom={[1, 1, 1, 0]}>
           <Text variant="h4">{title}</Text>
         </Box>
       )}
       <Box
         display="flex"
         flexWrap="wrap"
-        flexDirection={['column', 'column', 'row']}
-        textAlign={['center', 'center', 'left']}
+        flexDirection={['column', 'column', 'column', 'row']}
       >
-        {description && (
-          <Box marginRight={2} marginBottom={[1, 1, 0]}>
-            <Text>{description}</Text>
+        {(description || link) && (
+          <Box marginRight={[0, 0, 0, 2]} marginBottom={[1, 1, 1, 0]}>
+            <LinkContext.Provider
+              value={{
+                linkRenderer: (href, children) => (
+                  <Link
+                    href={href}
+                    color="blue400"
+                    underline="small"
+                    underlineVisibility="always"
+                  >
+                    {children}
+                  </Link>
+                ),
+              }}
+            >
+              <Text>
+                {description}
+                {description && link && ` `}
+                {link && <a href={link.href}>{link.title}</a>}
+              </Text>
+            </LinkContext.Provider>
           </Box>
-        )}
-        {link && (
-          <Text color="blue400">
-            <Link href={link.href}>{link.title}</Link>
-          </Text>
         )}
       </Box>
       {dismissable && (
-        <Box position="absolute" className={styles.closeBtn}>
+        <Box
+          display="flex"
+          alignItems="flexEnd"
+          flexDirection="column"
+          flexGrow={1}
+        >
           <button
+            className={styles.closeBtn}
             onClick={() => {
               setDismissed(true)
               if (onDismiss) {
