@@ -254,8 +254,8 @@ export class CmsContentfulService {
   }
 
   async getAuctions(
-    organization: string,
     lang: string,
+    organization?: string,
     year?: number,
     month?: number,
   ): Promise<Auction[]> {
