@@ -27,13 +27,13 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
 
   const daysStringKey =
     chosenRequestDays > 1
-      ? parentalLeaveFormMessages.requestRightsDays
-      : parentalLeaveFormMessages.requestRightsDay
+      ? parentalLeaveFormMessages.shared.requestRightsDays
+      : parentalLeaveFormMessages.shared.requestRightsDay
 
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
-        ...parentalLeaveFormMessages.yourRightsInMonths,
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
@@ -47,7 +47,7 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   return (
     <Box marginBottom={6}>
       <Text marginBottom={4} variant="h3">
-        {formatMessage(parentalLeaveFormMessages.requestRightsDaysTitle)}
+        {formatMessage(parentalLeaveFormMessages.shared.requestRightsDaysTitle)}
       </Text>
       <Box marginBottom={12}>
         <Controller
@@ -56,8 +56,8 @@ const RequestDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
           render={({ onChange, value }) => (
             <Slider
               label={{
-                singular: formatMessage(parentalLeaveFormMessages.day),
-                plural: formatMessage(parentalLeaveFormMessages.days),
+                singular: formatMessage(parentalLeaveFormMessages.shared.day),
+                plural: formatMessage(parentalLeaveFormMessages.shared.days),
               }}
               min={1}
               max={maxDays}

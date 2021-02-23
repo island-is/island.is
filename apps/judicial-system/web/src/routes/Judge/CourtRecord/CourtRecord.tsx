@@ -146,8 +146,8 @@ export const CourtRecord: React.FC = () => {
         !theCase.policeDemands &&
         theCase.accusedName &&
         theCase.court &&
-        theCase.requestedCustodyEndDate &&
-        theCase.requestedCustodyRestrictions
+        theCase.requestedCustodyEndDate
+        // Note that theCase.requestedCustodyRestrictions can be undefined
       ) {
         theCase = {
           ...theCase,
@@ -159,7 +159,7 @@ export const CourtRecord: React.FC = () => {
             theCase.requestedCustodyEndDate,
             theCase.requestedCustodyRestrictions?.includes(
               CaseCustodyRestrictions.ISOLATION,
-            ),
+            ) || false,
             theCase.parentCase !== undefined,
             theCase.parentCase?.decision,
           ),
@@ -333,7 +333,10 @@ export const CourtRecord: React.FC = () => {
                 {`Réttindi ${formatAccusedByGender(
                   workingCase.accusedGender || CaseGender.OTHER,
                   NounCases.GENITIVE,
-                )}`}
+                )}`}{' '}
+                <Text as="span" fontWeight="semiBold" color="red600">
+                  *
+                </Text>
               </Text>
             </Box>
             <Box marginBottom={2}>
@@ -393,6 +396,7 @@ export const CourtRecord: React.FC = () => {
                 />
               </div>
               <Input
+                data-testid="accusedPleaAnnouncement"
                 name="accusedPleaAnnouncement"
                 label={`Afstaða ${formatAccusedByGender(
                   workingCase.accusedGender || CaseGender.OTHER,
@@ -406,7 +410,7 @@ export const CourtRecord: React.FC = () => {
                   removeTabsValidateAndSet(
                     'accusedPleaAnnouncement',
                     event,
-                    ['empty'],
+                    [],
                     workingCase,
                     setWorkingCase,
                     accusedPleaAnnouncementErrorMessage,
@@ -417,7 +421,7 @@ export const CourtRecord: React.FC = () => {
                   validateAndSendToServer(
                     'accusedPleaAnnouncement',
                     event.target.value,
-                    ['empty'],
+                    [],
                     workingCase,
                     updateCase,
                     setAccusedPleaAnnouncementMessage,
@@ -427,7 +431,6 @@ export const CourtRecord: React.FC = () => {
                 hasError={accusedPleaAnnouncementErrorMessage !== ''}
                 textarea
                 rows={7}
-                required
               />
             </BlueBox>
           </Box>
@@ -474,6 +477,7 @@ export const CourtRecord: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
+            previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={
               isNextDisabled([
@@ -488,10 +492,6 @@ export const CourtRecord: React.FC = () => {
                 },
                 {
                   value: workingCase.policeDemands || '',
-                  validations: ['empty'],
-                },
-                {
-                  value: workingCase.accusedPleaAnnouncement || '',
                   validations: ['empty'],
                 },
                 {

@@ -20,6 +20,7 @@ FROM src as builder
 ARG APP
 ENV APP=${APP}
 ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
@@ -62,6 +63,7 @@ COPY --from=builder /build/${APP_HOME}/next.config.js /webapp
 COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder /build/${APP_HOME}/public /webapp/public
 COPY --from=builder /build/${APP_DIST_HOME}/.next /webapp/.next
+COPY --from=builder /build/${APP_DIST_HOME}/main.js* /webapp
 
 ENTRYPOINT [ "node", "main.js" ]
 

@@ -53,7 +53,7 @@ export const Users: React.FC = () => {
           items={[
             {
               href: Constants.USER_NEW_ROUTE,
-              title: 'Notenda',
+              title: 'Notanda',
             },
             {
               title: 'Stofnun',
@@ -125,7 +125,7 @@ export const Users: React.FC = () => {
                   <Text as="span">{userRoleToString(user.role)}</Text>
                 </td>
                 <td className={styles.td}>
-                  <Text as="span">{user.institution}</Text>
+                  <Text as="span">{user.institution?.name}</Text>
                 </td>
                 <td className={styles.td}>
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
@@ -141,10 +141,7 @@ export const Users: React.FC = () => {
         </Box>
       )}
       {error && (
-        <div
-          className={styles.userError}
-          data-testid="detention-requests-error"
-        >
+        <div className={styles.userError} data-testid="users-error">
           <AlertMessage
             title="Ekki tókst að sækja gögn úr gagnagrunni"
             message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."

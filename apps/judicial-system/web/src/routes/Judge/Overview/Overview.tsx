@@ -191,7 +191,9 @@ export const JudgeOverview: React.FC = () => {
               data={[
                 {
                   title: 'Embætti',
-                  value: 'Lögreglan á Höfuðborgarsvæðinu',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
                 },
                 {
                   title: 'Ósk um fyrirtökudag og tíma',
@@ -252,7 +254,7 @@ export const JudgeOverview: React.FC = () => {
                 </Text>
               </Box>
               <Box>
-                <Box marginBottom={2}>
+                <Box marginBottom={2} data-testid="lawsBroken">
                   <Box marginBottom={1}>
                     <Text variant="eyebrow" color="blue400">
                       Lagaákvæði sem brot varða við
@@ -264,7 +266,7 @@ export const JudgeOverview: React.FC = () => {
                     </span>
                   </Text>
                 </Box>
-                <Box marginBottom={2}>
+                <Box marginBottom={2} data-testid="custodyProvisions">
                   <Box marginBottom={1}>
                     <Text variant="eyebrow" color="blue400">
                       Lagaákvæði sem krafan er byggð á
@@ -282,7 +284,10 @@ export const JudgeOverview: React.FC = () => {
                 </Box>
               </Box>
             </div>
-            <div className={styles.infoSection}>
+            <div
+              className={styles.infoSection}
+              data-testid="custodyRestrictions"
+            >
               <Box marginBottom={1}>
                 <Text variant="h3" as="h3">
                   {`Takmarkanir og tilhögun ${
@@ -297,11 +302,13 @@ export const JudgeOverview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (
@@ -315,7 +322,7 @@ export const JudgeOverview: React.FC = () => {
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
                       <Text variant="eyebrow" color="blue400">
-                        Málsatvik rakin
+                        Málsatvik
                       </Text>
                     </Box>
                     <Text>
@@ -362,6 +369,7 @@ export const JudgeOverview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
             nextIsDisabled={isNextDisabled([
               {

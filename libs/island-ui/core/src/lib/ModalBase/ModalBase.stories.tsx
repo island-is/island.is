@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Text } from '../Text/Text'
@@ -25,5 +25,39 @@ export const CustomModalExample = () => {
         </Box>
       )}
     </ModalBase>
+  )
+}
+export const CustomModalUsingState = () => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  return (
+    <>
+      <Button
+        variant="ghost"
+        onClick={() => {
+          setIsVisible(true)
+        }}
+      >
+        Open modal using state
+      </Button>
+      <ModalBase
+        baseId="myDialog"
+        isVisible={isVisible}
+        onVisibilityChange={(visibility) => {
+          if (visibility !== isVisible) {
+            setIsVisible(visibility)
+          }
+        }}
+      >
+        {({ closeModal }) => (
+          <Box padding={4}>
+            <Text>We use onVisibilityChange to keep isVisible in sync</Text>
+            <Button onClick={closeModal} variant="text">
+              Close modal
+            </Button>
+          </Box>
+        )}
+      </ModalBase>
+    </>
   )
 }

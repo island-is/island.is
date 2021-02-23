@@ -65,7 +65,7 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
     } else {
       setPercent(100)
     }
-  }, [chosenDuration, monthsToUse])
+  }, [months, chosenDuration, monthsToUse])
   return (
     <Box>
       <FieldDescription
@@ -138,20 +138,24 @@ const Duration: FC<FieldBaseProps> = ({ field, application }) => {
                 showMinMaxLabels
                 showToolTip
                 label={{
-                  singular: formatMessage(parentalLeaveFormMessages.base.month),
-                  plural: formatMessage(parentalLeaveFormMessages.base.months),
+                  singular: formatMessage(
+                    parentalLeaveFormMessages.shared.month,
+                  ),
+                  plural: formatMessage(
+                    parentalLeaveFormMessages.shared.months,
+                  ),
                 }}
                 rangeDates={{
                   start: {
                     date: formatDateFns(currentStartDateAnswer),
                     message: formatMessage(
-                      parentalLeaveFormMessages.base.rangeStartDate,
+                      parentalLeaveFormMessages.shared.rangeStartDate,
                     ),
                   },
                   end: {
                     date: formatDateFns(chosenEndDate),
                     message: formatMessage(
-                      parentalLeaveFormMessages.base.rangeEndDate,
+                      parentalLeaveFormMessages.shared.rangeEndDate,
                     ),
                   },
                 }}

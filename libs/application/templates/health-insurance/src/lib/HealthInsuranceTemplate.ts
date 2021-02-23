@@ -8,11 +8,8 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
-import {
-  isEUCountry,
-  requireConfirmationOfResidency,
-} from '../healthInsuranceUtils'
 import { StatusTypes } from '../types'
+import { answerValidators } from './answerValidators'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -41,34 +38,10 @@ const HealthInsuranceSchema = z.object({
     phoneNumber: z.string().optional(),
     citizenship: z.string().optional(),
   }),
-  status: z.enum([
-    StatusTypes.EMPLOYED,
-    StatusTypes.STUDENT,
-    StatusTypes.PENSIONER,
-    StatusTypes.OTHER,
-  ]),
-  confirmationOfStudies: z.array(FileSchema).nonempty(),
   children: z.string().nonempty(),
-  formerInsurance: z.object({
-    registration: z.enum([YES, NO]),
-    country: z
-      .string()
-      .refine((value) =>
-        value
-          ? isEUCountry(value) || requireConfirmationOfResidency(value)
-          : false,
-      ),
-    personalId: z.string().nonempty(),
-    institution: z.string(),
-    entitlement: z.enum([YES, NO]),
-    entitlementReason: z.string().nonempty(),
-  }),
-  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
-  additionalInfo: z.object({
-    hasAdditionalInfo: z.enum([YES, NO]),
-    files: z.array(FileSchema),
-    remarks: z.string(),
-  }),
+  hasAdditionalInfo: z.enum([YES, NO]),
+  additionalFiles: z.array(FileSchema),
+  additionalRemarks: z.string().optional(),
   confirmCorrectInfo: z.boolean().refine((v) => v),
 })
 
@@ -129,6 +102,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     }
     return 'applicant'
   },
+  answerValidators,
 }
 
 export default HealthInsuranceTemplate
