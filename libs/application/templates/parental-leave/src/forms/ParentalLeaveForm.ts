@@ -78,11 +78,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'family',
                   type: 'FamilyInformationProvider',
                   title:
-                    parentalLeaveFormMessages.shared
-                      .userProfileInformationTitle,
+                    parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:
-                    parentalLeaveFormMessages.shared
-                      .userProfileInformationSubTitle,
+                    parentalLeaveFormMessages.shared.familyInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   id: 'pregnancyStatus',
