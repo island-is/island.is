@@ -6,6 +6,7 @@ import {
   ArticleSubgroup,
   Author,
   Featured,
+  Frontpage,
   FrontpageSlider,
   GenericPage,
   GroupedMenu,
@@ -80,6 +81,13 @@ export const articleCategory = factory<ArticleCategory>({
   slug: slugify('title'),
   id: () => faker.random.uuid(),
   description: () => faker.lorem.sentence(),
+})
+
+export const frontpage = factory<Frontpage>({
+  title: () => title(),
+  featured: () => featured.list(3),
+  slides: () => frontPageSlider.list(2),
+  lifeEvents: () => lifeEvent.list(6),
 })
 
 export const article = factory<SystemMetadata<Article>>({
