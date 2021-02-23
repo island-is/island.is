@@ -1626,6 +1626,35 @@
         }
       }
     },
+    "application-templates-institution-application": {
+      "root": "libs/application/templates/institution-application",
+      "sourceRoot": "libs/application/templates/institution-application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/institution-application/tsconfig.lib.json",
+              "libs/application/templates/institution-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/institution-application/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/institution-application/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-meta-application": {
       "root": "libs/application/templates/meta-application",
       "sourceRoot": "libs/application/templates/meta-application/src",
