@@ -150,9 +150,9 @@ export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
   readonly introduction?: FormText
-  readonly uploadHeader?: string
-  readonly uploadDescription?: string
-  readonly uploadButtonLabel?: string
+  readonly uploadHeader?: FormText
+  readonly uploadDescription?: FormText
+  readonly uploadButtonLabel?: FormText
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
