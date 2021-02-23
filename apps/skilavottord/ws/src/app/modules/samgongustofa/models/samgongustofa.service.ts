@@ -266,7 +266,7 @@ export class SamgongustofaService {
                   }
                   if (newVehicleArr[i].isRecyclable) {
                     loggerReplacement.info(
-                      'vehicle is clean. stolen, locked, registrationerror tjekked',
+                      'vehicle is clean. not stolen, not locked, no registrationerror',
                     )
                   }
                   loggerReplacement.info(
