@@ -47,13 +47,18 @@ const Modal: React.FC<ModalProps> = ({
         <Box display="flex">
           {secondaryButtonText && (
             <Box marginRight={3}>
-              <Button onClick={handleSecondaryButtonClick} variant="ghost">
+              <Button
+                data-testid="modalSecondaryButton"
+                variant="ghost"
+                onClick={handleSecondaryButtonClick}
+              >
                 {secondaryButtonText}
               </Button>
             </Box>
           )}
           {primaryButtonText !== '' && (
             <Button
+              data-testid="modalPrimaryButton"
               onClick={handlePrimaryButtonClick}
               loading={isPrimaryButtonLoading}
             >

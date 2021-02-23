@@ -42,7 +42,10 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     // @ts-ignore
     formValue.productionEndPointObject?.prodEndPointExists || '',
   )
-  const [updateEndpoint] = useMutation(updateEndpointMutation)
+  const [updateEndpoint, { loading }] = useMutation(updateEndpointMutation, {
+    onError: () =>
+      setprodEndPointError(m.prodEndPointErrorMessage.defaultMessage),
+  })
 
   const nationalId = getValueViaPath(
     application.answers,
@@ -69,21 +72,21 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
         },
       })
 
-      if (!result.data) {
+      if (!result) {
         setprodEndPointError(m.prodEndPointErrorMessage.defaultMessage)
+      } else {
+        //TODO: Needs new call to API
+        setendPointVariables([
+          {
+            id: '1',
+            name: 'Audience',
+            value: result.data.updateEndpoint.audience,
+          },
+          { id: '2', name: 'Scope', value: result.data.updateEndpoint.scope },
+        ])
+        setprodEndPointExists('true')
+        clearErrors()
       }
-
-      //TODO: Needs new call to API
-      setendPointVariables([
-        {
-          id: '1',
-          name: 'Audience',
-          value: result.data.updateEndpoint.audience,
-        },
-        { id: '2', name: 'Scope', value: result.data.updateEndpoint.scope },
-      ])
-      setprodEndPointExists('true')
-      clearErrors()
     }
   }
 
@@ -141,6 +144,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           onClick={() => {
             trigger(['productionEndPointObject.prodEndPoint']).then((answer) =>
               onUpdateEndpoint(answer),

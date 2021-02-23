@@ -21,6 +21,10 @@ const RECYCLINGCOMPANY = [
   '1110892489', // Ari Halldór Hjaltason
   '0409842919', // Gísli Rúnar Svanbergsson
   '3108002360', // Viktoría Sól Reynisdóttir
+  '2309695079', // Valdemar Örn Haraldsson
+  '0910872009', // Tómas Kári Kristinsson
+  '0601756089', // Greta Björg Egilsdóttir
+  '0709804529', // Halldór Örn Kristjánsson
   /* Hringrás   */
   '1811673949', // Tryggvi Daníel Sigurðsson admin later
   '2405843609', // Þórdís Jónsdóttir
@@ -30,6 +34,7 @@ const RECYCLINGCOMPANY = [
   '3108654949', // Ólafía Sigurjónsdóttir
   '2512942099', // Marjón Pétur Benediktsson
   '0306942609', // Karítas Þorvaldsdóttir
+  '1207952879', // Anton Örn  Kærnested
 ]
 
 const RECYCLINGFUND = [

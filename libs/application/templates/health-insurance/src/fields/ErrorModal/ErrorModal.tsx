@@ -23,7 +23,7 @@ import useModalContent from '../../hooks/useModalContent'
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
   const { typeId, externalData } = application
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const history = useHistory()
   const content = useModalContent(externalData)
 
@@ -69,7 +69,11 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   colorScheme="destructive"
                   onClick={() => {
                     closeModal()
-                    history.push(`../apply-for-health-insurance`)
+                    history.push(
+                      lang === 'is'
+                        ? '../umsokn-um-sjukratryggingu'
+                        : '../en/apply-for-health-insurance',
+                    )
                   }}
                   fluid
                 >
