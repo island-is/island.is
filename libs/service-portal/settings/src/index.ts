@@ -22,7 +22,9 @@ export const settingsModule: ServicePortalModule = {
 
       const userProfile = res.data?.getUserProfile
       emailVerified = !!userProfile?.emailVerified
-    } catch (err) {}
+    } catch (err) {
+      // TODO: Handle error?
+    }
 
     const routes: ServicePortalRoute[] = [
       {
