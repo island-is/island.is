@@ -125,20 +125,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           progress={progress}
           className={styles.progressMeter}
         />
-        <Box
-          display="inlineFlex"
-          marginLeft={[0, 0, 'auto']}
-          paddingTop={[2, 2, 0]}
-        >
-          <span>
-            <Button
-              variant={cta.variant === 'secondary' ? 'text' : 'primary'}
-              onClick={cta.onClick}
-              icon="arrowForward"
-            >
-              {cta.label}
-            </Button>
-          </span>
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+          <Button
+            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+            onClick={cta.onClick}
+            icon="arrowForward"
+          >
+            {cta.label}
+          </Button>
         </Box>
       </Box>
     )
