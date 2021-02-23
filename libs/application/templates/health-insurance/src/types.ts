@@ -19,6 +19,38 @@ export enum NordicCountries {
   SVALBARD = 'Svalbard and Jan Mayen', // because this is in the list of countries we get from api
 }
 
+export interface Status {
+  type: StatusTypes
+  confirmationOfStudies: FileType[]
+}
+
+interface FileType {
+  name: string
+  key: string
+  url: string
+}
+
+export interface FormerInsurance {
+  registration: string
+  country: string
+  personalId: string
+  confirmationOfResidencyDocument: FileType[]
+  institution?: string
+  entitlement: string
+  entitlementReason: string
+}
+
+export interface Applicant {
+  name: string
+  nationalId: string
+  address: string
+  postalCode: string
+  city: string
+  email: string
+  phoneNumber: string
+  citizenship: string
+}
+
 export interface AdditionalInfoType {
   remarks: string
   files?: string[]
