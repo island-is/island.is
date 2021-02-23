@@ -226,7 +226,7 @@ export class SamgongustofaService {
                   ][0]['basicVehicleInformationReturn'][0]['_'],
                 )
                 .then(function (basicInfo) {
-                  // If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
+                  //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   /*if (
                     !(
                       basicInfo['vehicle']['updatelocks'][0] == '' &&

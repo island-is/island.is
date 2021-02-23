@@ -42,7 +42,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     // @ts-ignore
     (formValue.prodProviderId as string) || '',
   )
-  const [createProvider] = useMutation(createProviderMutation)
+  const [createProvider, { loading }] = useMutation(createProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const nationalId = getValueViaPath(
@@ -95,7 +95,6 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
     }).then((response) => {
       application.answers = response.data?.updateApplication?.answers
     })
-
     clearErrors('prodProviderId')
   }
 
@@ -118,6 +117,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           disabled={currentAnswer !== ''}
           onClick={() => {
             onCreateProvider()
