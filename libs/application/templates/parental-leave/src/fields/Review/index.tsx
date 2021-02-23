@@ -13,7 +13,6 @@ import {
   GridColumn,
   GridRow,
   Input,
-  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -24,14 +23,17 @@ import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 
 import Timeline from '../components/Timeline'
-import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import {
+  formatPeriods,
+  getExpectedDateOfBirth,
+  getOtherParentOptions,
+} from '../../parentalLeaveUtils'
 import { Period } from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO } from '../../constants'
-import useOtherParentOptions from '../../hooks/useOtherParentOptions'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
@@ -50,11 +52,6 @@ const Review: FC<ReviewScreenProps> = ({
 
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
-
-  const {
-    options: otherParentOptions,
-    loading: loadingSpouseName,
-  } = useOtherParentOptions()
 
   const [
     statefulOtherParentConfirmed,
@@ -148,27 +145,23 @@ const Review: FC<ReviewScreenProps> = ({
             <Box paddingY={4}>
               <Box>
                 {editable ? (
-                  loadingSpouseName ? (
-                    <SkeletonLoader repeat={3} space={1} height={48} />
-                  ) : (
-                    <RadioController
-                      id="otherParent"
-                      disabled={false}
-                      name="otherParent"
-                      defaultValue={
-                        getValueViaPath(
-                          application.answers,
-                          'otherParent',
-                        ) as string[]
-                      }
-                      options={otherParentOptions}
-                      onSelect={(s: string) => {
-                        setStatefulOtherParentConfirmed(
-                          s as ValidOtherParentAnswer,
-                        )
-                      }}
-                    />
-                  )
+                  <RadioController
+                    id="otherParent"
+                    disabled={false}
+                    name="otherParent"
+                    defaultValue={
+                      getValueViaPath(
+                        application.answers,
+                        'otherParent',
+                      ) as string[]
+                    }
+                    options={getOtherParentOptions(application)}
+                    onSelect={(s: string) => {
+                      setStatefulOtherParentConfirmed(
+                        s as ValidOtherParentAnswer,
+                      )
+                    }}
+                  />
                 ) : (
                   <Text>
                     {
