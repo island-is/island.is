@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
-import { Modal } from '@island.is/service-portal/core'
 import { GET_DOCUMENT } from '@island.is/service-portal/graphql'
 import { documentsOpenDocument } from '@island.is/plausible'
 import * as styles from './Document.treat'
@@ -12,7 +11,7 @@ import {
 } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { Text, Stack, Box, LoadingIcon } from '@island.is/island-ui/core'
-import { useLocale } from 'libs/localization/src'
+import { useLocale } from '@island.is/localization'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)
