@@ -11,7 +11,7 @@ export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
   spec,
 }: OpenApiDocumentationProps) => {
   return (
-    <Box width="full" paddingTop="containerGutter">
+    <Box width="full" background="white">
       <RedocStandalone
         spec={spec}
         options={{
