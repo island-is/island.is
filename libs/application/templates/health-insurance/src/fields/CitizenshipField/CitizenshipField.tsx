@@ -1,36 +1,36 @@
 import React, { FC, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Input } from '@island.is/island-ui/core'
-import { Country, ExternalDataNationalRegistry } from '../../types'
-import { useFormContext } from 'react-hook-form'
+import { Citizenship } from '@island.is/api/schema'
+import { CountryDataResult, ExternalDataNationalRegistry } from '../../types'
 
 const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const citizenship = (getValueViaPath(
     application.externalData,
     'nationalRegistry',
-  ) as ExternalDataNationalRegistry)?.data?.citizenship
+  ) as ExternalDataNationalRegistry)?.data?.citizenship as Citizenship
 
-  const [countryData, setCountryData] = useState<string[]>([citizenship])
+  const [countryData, setCountryData] = useState<string>(
+    JSON.stringify(citizenship),
+  )
   const { register } = useFormContext()
 
-  function getCountryInformation(countryName: string) {
-    fetch(`https://restcountries.eu/rest/v2/name/${countryName}?fullText=true`)
+  function getCountryInformation(countryCode: string) {
+    fetch(`https://restcountries.eu/rest/v2/alpha/${countryCode}`)
       .then((res) => res.json())
-      .then((data: Country[]) => {
-        if (data.length) {
-          setCountryData(
-            data.map(({ name, alpha2Code: countryCode, regionalBlocs }) => {
-              const regions = regionalBlocs.map((blocs) => blocs.acronym)
-              return JSON.stringify({ name, countryCode, regions })
-            }),
-          )
+      .then((data: CountryDataResult) => {
+        if (!data.status) {
+          const { name, regionalBlocs } = data
+          const regions = regionalBlocs.map((blocs) => blocs.acronym)
+          setCountryData(JSON.stringify({ name, countryCode, regions }))
         }
       })
   }
 
   useEffect(() => {
-    getCountryInformation(citizenship)
+    getCountryInformation((citizenship as Citizenship)?.code)
   }, [citizenship])
 
   return (
@@ -38,7 +38,7 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
       <Input
         id={id}
         name={id}
-        value={countryData[0]}
+        value={countryData}
         onChange={() => register}
         ref={register}
       />

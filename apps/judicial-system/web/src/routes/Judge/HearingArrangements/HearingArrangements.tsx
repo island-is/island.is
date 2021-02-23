@@ -360,7 +360,7 @@ export const HearingArrangements: React.FC = () => {
                     <Input
                       name="courtTime"
                       label="Tímasetning"
-                      placeholder="Settu inn tíma"
+                      placeholder="Veldu tíma"
                       errorMessage={courtTimeErrorMessage}
                       hasError={courtTimeErrorMessage !== ''}
                       defaultValue={
@@ -376,6 +376,7 @@ export const HearingArrangements: React.FC = () => {
               </GridRow>
             </Box>
             <Input
+              data-testid="courtroom"
               name="courtroom"
               label="Dómsalur"
               defaultValue={workingCase.courtRoom}
@@ -469,6 +470,7 @@ export const HearingArrangements: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
               workingCase.state === CaseState.DRAFT || isStepIllegal
             }
@@ -476,7 +478,9 @@ export const HearingArrangements: React.FC = () => {
             onNextButtonClick={async () => {
               const notificationSent = await sendNotification(workingCase.id)
 
-              if (notificationSent) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // @ts-ignore
+              if (notificationSent && !window.Cypress) {
                 setModalVisible(true)
               } else {
                 history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)

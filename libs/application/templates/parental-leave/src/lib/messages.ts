@@ -3,7 +3,8 @@ import { defineMessages, MessageDescriptor } from 'react-intl'
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const parentalLeaveFormMessages: MessageDir = {
-  base: {
+  // Messages shared across the Parental Leave application templates
+  shared: defineMessages({
     name: {
       id: 'pl.application:name',
       defaultMessage: 'Umsókn um fæðingarorlof',
@@ -147,22 +148,22 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Parental leave rights',
     },
     yourRights: {
-      id: 'pl.application:rights.section',
+      id: 'pl.application:your.rights',
       defaultMessage: 'Réttindin þín',
       description: 'Your rights',
     },
     yourRightsInMonths: {
-      id: 'pl.application:rights.months',
+      id: 'pl.application:your.rights.inMonths',
       defaultMessage: '{months} mánuðir sjálfstæður réttur',
       description: '{months} months individual rights',
     },
     yourRightsInMonthsAndDay: {
-      id: 'pl.application:rights.months',
+      id: 'pl.application:your.rights.inMonthsAndDay',
       defaultMessage: '{months} mánuðir og {day} dagur sjálfstæður réttur',
       description: '{months} months and {day} day individual rights',
     },
     yourRightsInMonthsAndDays: {
-      id: 'pl.application:rights.months',
+      id: 'pl.application:your.rights.inMonthsAndDays',
       defaultMessage: '{months} mánuðir og {day} dagar sjálfstæður réttur',
       description: '{months} months {day} days individual rights',
     },
@@ -209,12 +210,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'How many days would you like to request?',
     },
     requestRightsDay: {
-      id: 'pl.application:request.rights.months',
+      id: 'pl.application:request.rights.day',
       defaultMessage: '{day} dagur óskað eftir af rétti hins foreldrisins',
       description: "{day} day requested from the other parent's rights",
     },
     requestRightsDays: {
-      id: 'pl.application:request.rights.months',
+      id: 'pl.application:request.rights.days',
       defaultMessage: '{day} dagar óskað eftir af rétti hins foreldrisins',
       description: "{day} days requested from the other parent's rights",
     },
@@ -273,7 +274,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Do you want to transfer up to one month of your parental leave rights to the other parent?',
     },
     giveRightsDaysTitle: {
-      id: 'pl.application:request.rights.daysTitle',
+      id: 'pl.application:give.rights.daysTitle',
       defaultMessage: 'Hve marga daga viltu gefa?',
       description: 'How many days would you like to give?',
     },
@@ -283,12 +284,12 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: `You can give the other parent up to 45 days of your rights`,
     },
     giveRightsDay: {
-      id: 'pl.application:request.rights.months',
+      id: 'pl.application:give.rights.day',
       defaultMessage: '{day} dagur yfirfærður til hins foreldrisins',
       description: '{day} day given to the other parent',
     },
     giveRightsDays: {
-      id: 'pl.application:request.rights.months',
+      id: 'pl.application:give.rights.days',
       defaultMessage: '{day} dagar yfirfærður til hins foreldrisins',
       description: '{day} days given to the other parent',
     },
@@ -448,7 +449,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'I want to customize my leave into multiple periods and/or to stretch it out over time at less than 100% time off.',
     },
-  },
+  }),
 
   applicant: defineMessages({
     subSection: {
@@ -490,6 +491,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'You need to answer this question to continue.',
     },
   }),
+
   personalAllowance: defineMessages({
     useYours: {
       id: 'pl.application:use.personal.allowance',
@@ -542,6 +544,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Type a number from 0 to 100',
     },
   }),
+
   leavePlan: defineMessages({
     subSection: {
       id: 'pl.application:periods.subsection',
@@ -571,6 +574,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Change the periods',
     },
   }),
+
   firstPeriodStart: defineMessages({
     title: {
       id: 'pl.application:periods.first.period.title',
@@ -607,6 +611,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'If the child is born on another date than the expected date of birth, the parental leave and its duration will !!!!NOT!!!! adjust to the real date of birth',
     },
   }),
+
   endDate: defineMessages({
     title: {
       id: 'pl.application:end.date.title',
@@ -629,6 +634,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Pick the end date',
     },
   }),
+
   startDate: defineMessages({
     title: {
       id: 'pl.application:start.date.title',
@@ -651,6 +657,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Pick the start date',
     },
   }),
+
   duration: defineMessages({
     title: {
       id: 'pl.application:duration.title',
@@ -686,6 +693,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'For this length of time you will get payments up to',
     },
   }),
+
   employer: defineMessages({
     subSection: {
       id: 'pl.application:employer.subsection',
@@ -717,6 +725,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Confirm employer email',
     },
   }),
+
   selfEmployed: defineMessages({
     title: {
       id: 'pl.application:selfEmployed.title',
@@ -730,6 +739,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Add translation',
     },
   }),
+
   ratio: defineMessages({
     title: {
       id: 'pl.application:ratio.title',
@@ -755,6 +765,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Pick your percent',
     },
   }),
+
   paymentPlan: defineMessages({
     subSection: {
       id: 'pl.application:paymentPlan.subSection',
@@ -774,6 +785,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Payments amount to 80% of the average of the parent’s total wages during a specific period before the birth of the child.',
     },
   }),
+
   shareInformation: defineMessages({
     subSection: {
       id: 'pl.application:shareInformation.subSection',
@@ -808,6 +820,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'No, I do not want to share my information.',
     },
   }),
+
   rightOfAccess: defineMessages({
     title: {
       id: 'pl.application:rightOfAccess.title',
@@ -928,6 +941,7 @@ export const parentalLeaveFormMessages: MessageDir = {
       description: 'Vinnumálastofnun will review and approve your application.',
     },
   }),
+
   confirmation: defineMessages({
     epxandAll: {
       id: 'pl.application:confirmation.buttons.expandAll',
@@ -957,6 +971,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Please review your information before submitting the application.',
     },
   }),
+
   finalScreen: defineMessages({
     title: {
       id: 'pl.application:finalscreen.title',
@@ -1056,7 +1071,8 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
 })
 
-export const dataSchema = defineMessages({
+// TODO: Add the translations to the dataSchema.ts
+export const dataSchemaMessages = defineMessages({
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',

@@ -239,7 +239,7 @@ export const StepThree: React.FC = () => {
                         data-testid="requestedCustodyEndTime"
                         name="requestedCustodyEndTime"
                         label="Tímasetning (kk:mm)"
-                        placeholder="Settu inn tíma"
+                        placeholder="Veldu tíma"
                         defaultValue={requestedCustodyEndTime}
                         errorMessage={requestedCustodyEndTimeErrorMessage}
                         hasError={requestedCustodyEndTimeErrorMessage !== ''}
@@ -314,7 +314,7 @@ export const StepThree: React.FC = () => {
                       data-testid="requestedCustodyEndTime"
                       name="requestedCustodyEndTime"
                       label="Tímasetning (kk:mm)"
-                      placeholder="Settu inn tíma"
+                      placeholder="Veldu tíma"
                       defaultValue={requestedCustodyEndTime}
                       errorMessage={requestedCustodyEndTimeErrorMessage}
                       hasError={requestedCustodyEndTimeErrorMessage !== ''}
@@ -476,6 +476,7 @@ export const StepThree: React.FC = () => {
             </Box>
           )}
           <FormFooter
+            previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
               isStepIllegal ||

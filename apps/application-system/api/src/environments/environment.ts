@@ -1,9 +1,11 @@
 import { Environment } from './environment.interface'
 
+const baseApiUrl = 'http://localhost:4444'
+
 export default {
   production: false,
   environment: 'local',
-  baseApiUrl: 'http://localhost:4444',
+  baseApiUrl,
   redis: {
     urls: [
       'localhost:7000',
@@ -27,6 +29,7 @@ export default {
     },
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
+    baseApiUrl,
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
