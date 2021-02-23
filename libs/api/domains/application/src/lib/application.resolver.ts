@@ -18,7 +18,6 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -30,7 +29,14 @@ export class ApplicationResolver {
     @Args('input') input: GetApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.findOne(input.id, user.authorization)
+    return this.applicationService.findApplication(input.id, user.authorization)
+  }
+
+  @Query(() => [Application], { nullable: true })
+  async getApplications(
+    @CurrentUser() user: User,
+  ): Promise<Application[] | null> {
+    return this.applicationService.findApplications(user.authorization)
   }
 
   @Query(() => [Application], { nullable: true })
@@ -38,41 +44,9 @@ export class ApplicationResolver {
     @Args('input') input: GetApplicationsByTypeInput,
     @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAllByType(
+    return this.applicationService.findApplicationsByType(
+      user.authorization,
       input.typeId,
-      user.authorization,
-    )
-  }
-
-  @Query(() => [Application], { nullable: true })
-  async getApplicationsByApplicant(
-    @CurrentUser() user: User,
-    @Args('typeId', {
-      type: () => ApplicationResponseDtoTypeIdEnum,
-      nullable: true,
-    })
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ): Promise<Application[] | null> {
-    return this.applicationService.findAllByApplicant(
-      user.nationalId,
-      user.authorization,
-      typeId,
-    )
-  }
-
-  @Query(() => [Application], { nullable: true })
-  async getApplicationsByAssignee(
-    @CurrentUser() user: User,
-    @Args('typeId', {
-      type: () => ApplicationResponseDtoTypeIdEnum,
-      nullable: true,
-    })
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ): Promise<Application[] | null> {
-    return this.applicationService.findAllByAssignee(
-      user.nationalId,
-      user.authorization,
-      typeId,
     )
   }
 

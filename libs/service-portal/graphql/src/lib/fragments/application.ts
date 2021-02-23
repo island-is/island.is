@@ -6,7 +6,9 @@ export const ApplicationFragment = gql`
     created
     modified
     applicant
+    isApplicant
     assignees
+    isAssignee
     state
     typeId
     name

@@ -92,10 +92,17 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
+  @Get('applications')
+  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
+  @UseInterceptors(ApplicationSerializer)
+  async findApplications(): Promise<ApplicationResponseDto[]> {
+    return await this.applicationService.findAll()
+  }
+
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
-  async findOne(
+  async findApplication(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<ApplicationResponseDto> {
     const application = await this.applicationService.findById(id)
@@ -109,70 +116,13 @@ export class ApplicationController {
     return application
   }
 
-  // TODO REMOVE
-  @Get()
+  @Get('applications/:typeId')
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
-  async findAll(
-    @Query('typeId') typeId: string,
+  async findApplicationsByType(
+    @Param('typeId') typeId: string,
   ): Promise<ApplicationResponseDto[]> {
-    if (typeId) {
-      return this.applicationService.findAllByType(typeId as ApplicationTypes)
-    } else {
-      return this.applicationService.findAll()
-    }
-  }
-
-  @Get('applicants/:nationalRegistryId/applications')
-  @ApiQuery({
-    name: 'typeId',
-    required: false,
-    type: String,
-  })
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findApplicantApplications(
-    @Param('nationalRegistryId') nationalRegistryId: string,
-    @Query('typeId') typeId?: string,
-  ): Promise<ApplicationResponseDto[]> {
-    const whereOptions: WhereOptions = {
-      applicant: nationalRegistryId,
-    }
-
-    if (typeId) {
-      whereOptions.typeId = typeId
-    }
-
-    return this.applicationService.findAll({
-      where: whereOptions,
-    })
-  }
-
-  @Get('assignees/:nationalRegistryId/applications')
-  @ApiQuery({
-    name: 'typeId',
-    required: false,
-    type: String,
-  })
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findAssigneeApplications(
-    @Param('nationalRegistryId') nationalRegistryId: string,
-    @Query('typeId') typeId?: string,
-  ): Promise<Application[]> {
-    const whereOptions: WhereOptions = {
-      assignees: {
-        [Op.contains]: [nationalRegistryId],
-      },
-    }
-
-    if (typeId) {
-      whereOptions.typeId = typeId
-    }
-
-    return this.applicationService.findAll({
-      where: whereOptions,
-    })
+    return this.applicationService.findAll({ where: { typeId } })
   }
 
   @Post('applications')

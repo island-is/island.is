@@ -8,9 +8,9 @@ interface Props {
 
 const ProgressBar: FC<Props> = ({ progress }) => {
   return (
-    <Box background="mint200" borderRadius="large" className={styles.wrapper}>
+    <Box background="blue100" borderRadius="large" className={styles.wrapper}>
       <Box
-        background="mint400"
+        background="blue400"
         borderRadius="large"
         style={{ width: `${progress}%` }}
         className={styles.bar}

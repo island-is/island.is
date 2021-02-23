@@ -88,7 +88,10 @@ export const settingsModule: ServicePortalModule = {
       })
 
       // If the user profile is empty, we render the onboarding modal
-      if (process.env.NODE_ENV !== 'development' && res.data?.getUserProfile === null)
+      if (
+        process.env.NODE_ENV !== 'development' &&
+        res.data?.getUserProfile === null
+      )
         routes.push({
           render: () =>
             lazy(() =>

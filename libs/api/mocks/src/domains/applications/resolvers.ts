@@ -1,4 +1,3 @@
-import orderBy from 'lodash/orderBy'
 import { Resolvers } from '../../types'
 import { store } from './store'
 import { application, externalData } from './factories'
@@ -11,9 +10,9 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    getApplicationsByApplicant: (parent, args) => {
+    getApplicationsByType: (parent, args) => {
       return store.applications.filter(
-        (a) => a.typeId === args.typeId && a.applicant === '0000000000',
+        (a) => a.typeId === args.input.typeId && a.applicant === '0000000000',
       )
     },
     getApplication: (parent, args) => {

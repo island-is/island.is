@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
+// import { AuthModule } from '@island.is/auth-nest-tools'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
@@ -13,8 +14,6 @@ import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
-
-// import { AuthModule } from '@island.is/auth-nest-tools'
 
 let BullModule: DynamicModule
 

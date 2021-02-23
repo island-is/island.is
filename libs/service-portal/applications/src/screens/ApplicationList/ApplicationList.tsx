@@ -4,70 +4,69 @@ import {
   ActionCardLoader,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
-import { Text, Box, Stack } from '@island.is/island-ui/core'
-import { useApplicantApplications } from '@island.is/service-portal/graphql'
-import { useAssigneeApplications } from '@island.is/service-portal/graphql'
+import {
+  Text,
+  Box,
+  Stack,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
+import { useApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import * as Sentry from '@sentry/react'
 
-const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { data: applications, loading, error } = useApplicantApplications()
+import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
+import { m } from '../../lib/messages'
+import { environment } from '../../environments'
 
-  const {
-    data: assigneeApplications,
-    loading: assigneeApplicationsLoading,
-    error: assigneeApplicationsError,
-  } = useAssigneeApplications()
+const ApplicationList: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.applications')
+  Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
+
+  const { formatMessage, lang } = useLocale()
+  const { data: applications, loading, error } = useApplications()
+  const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
 
   return (
     <>
       <Box marginBottom={5}>
-        <Text variant="h1" as="h1">
-          Umsóknir
-        </Text>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+            <Stack space={2}>
+              <Text variant="h1" as="h1">
+                {formatMessage(m.name)}
+              </Text>
+
+              <Text as="p" variant="intro">
+                {formatMessage(m.introText)}
+              </Text>
+            </Stack>
+          </GridColumn>
+        </GridRow>
       </Box>
+
       {loading && <ActionCardLoader repeat={3} />}
+
       {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
           <Text variant="h3" as="h3">
-            Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
+            {formatMessage(m.error)}
           </Text>
         </Box>
       )}
-      <Stack space={2}>
-        {applications?.map((application: Application) => (
-          <ApplicationCard
-            key={application.id}
-            name={application.name || application.typeId}
-            date={format(new Date(application.modified), 'MMMM')}
-            isComplete={application.progress === 1}
-            url={`http://localhost:4200/applications${application.id}`} // TODO update to correct path
-            progress={application.progress ? application.progress * 100 : 0}
-          />
-        ))}
-      </Stack>
 
-      <Box marginTop={5} marginBottom={5}>
-        <Text variant="h1" as="h1">
-          Umsóknir til samþykktar
-        </Text>
-      </Box>
-      {assigneeApplicationsLoading && <ActionCardLoader repeat={3} />}
-      {assigneeApplicationsError && (
-        <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h3" as="h3">
-            Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
-          </Text>
-        </Box>
-      )}
+      {/* TODO add translations */}
       <Stack space={2}>
-        {assigneeApplications?.map((application: Application) => (
+        {(applications ?? []).map((application: Application) => (
           <ApplicationCard
             key={application.id}
             name={application.name || application.typeId}
-            date={format(new Date(application.modified), 'MMMM')}
+            date={format(new Date(application.modified), dateFormat)}
+            isApplicant={application.isApplicant}
+            isAssignee={application.isAssignee}
             isComplete={application.progress === 1}
-            url={`http://localhost:4200/applications${application.id}`} // TODO update to correct path
+            url={`${environment.applicationSystem.baseFormUrl}/umsoknir/${application.id}`}
             progress={application.progress ? application.progress * 100 : 0}
           />
         ))}

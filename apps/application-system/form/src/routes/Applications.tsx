@@ -5,7 +5,7 @@ import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
-  APPLICANT_APPLICATIONS,
+  GET_APPLICATIONS_BY_TYPE,
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -22,14 +22,14 @@ import { useLocale } from '@island.is/localization'
 import useAuth from '../hooks/useAuth'
 
 export const Applications: FC = () => {
-  const { type } = useParams()
+  const { type } = useParams<{ type: string }>()
   const history = useHistory()
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   const { data, loading, error: applicationsError } = useQuery(
-    APPLICANT_APPLICATIONS,
+    GET_APPLICATIONS_BY_TYPE,
     {
       variables: {
         typeId: type,
@@ -62,7 +62,7 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
-    if (data && isEmpty(data.getApplicationsByApplicant)) {
+    if (data && isEmpty(data.getApplicationsByType)) {
       createApplication()
     }
   }, [data])
@@ -89,14 +89,14 @@ export const Applications: FC = () => {
 
   return (
     <Page>
-      {!loading && !isEmpty(data?.getApplicationsByApplicant) && (
+      {!loading && !isEmpty(data?.getApplicationsByType) && (
         <Box padding="containerGutter">
           <Box marginTop={5} marginBottom={5}>
             <Text variant="h1">{formatMessage(coreMessages.applications)}</Text>
           </Box>
 
           <Stack space={2}>
-            {data?.getApplicationsByApplicant?.map(
+            {(data?.getApplicationsByType ?? []).map(
               (application: Application) => (
                 <ActionCard
                   key={application.id}

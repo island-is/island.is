@@ -30,12 +30,27 @@ const handleError = async (error: any) => {
 export class ApplicationService {
   constructor(private applicationApi: ApplicationsApi) {}
 
-  async findOne(id: string, authorization: string) {
+  async findApplication(id: string, authorization: string) {
     return await this.applicationApi
-      .applicationControllerFindOne({
+      .applicationControllerFindApplication({
         id,
         authorization,
       })
+      .catch(handleError)
+  }
+
+  async findApplications(authorization: string) {
+    return await this.applicationApi
+      .applicationControllerFindApplications({ authorization })
+      .catch(handleError)
+  }
+
+  async findApplicationsByType(
+    authorization: string,
+    typeId: ApplicationResponseDtoTypeIdEnum,
+  ) {
+    return await this.applicationApi
+      .applicationControllerFindApplicationsByType({ authorization, typeId })
       .catch(handleError)
   }
 
@@ -43,43 +58,6 @@ export class ApplicationService {
     return this.applicationApi
       .applicationControllerCreate({
         createApplicationDto: input,
-        authorization,
-      })
-      .catch(handleError)
-  }
-
-  async findAllByType(
-    typeId: ApplicationResponseDtoTypeIdEnum,
-    authorization: string,
-  ) {
-    return await this.applicationApi
-      .applicationControllerFindAll({ typeId, authorization })
-      .catch(handleError)
-  }
-
-  async findAllByApplicant(
-    nationalRegistryId: string,
-    authorization: string,
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ) {
-    return await this.applicationApi
-      .applicationControllerFindApplicantApplications({
-        nationalRegistryId,
-        typeId,
-        authorization,
-      })
-      .catch(handleError)
-  }
-
-  async findAllByAssignee(
-    nationalRegistryId: string,
-    authorization: string,
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ) {
-    return await this.applicationApi
-      .applicationControllerFindAssigneeApplications({
-        nationalRegistryId,
-        typeId,
         authorization,
       })
       .catch(handleError)
