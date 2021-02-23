@@ -1,8 +1,8 @@
 import { ZodObject } from 'zod'
 import { Condition } from './Condition'
-import { Field, RecordObject } from './Fields'
 import { MessageDescriptor } from 'react-intl'
 import { BoxProps } from '@island.is/island-ui/core'
+import { Field, RecordObject } from '@island.is/application/core'
 import { Application } from './Application'
 
 export type StaticText = (MessageDescriptor & { values?: object }) | string
