@@ -9,7 +9,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { m } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths, maxMonths } from '../../config'
 import { YES, NO } from '../../constants'
 
@@ -30,7 +30,7 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
-        ...m.yourRightsInMonths,
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
@@ -47,8 +47,18 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
             statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
           options={[
-            { label: formatMessage(m.requestRightsYes), value: YES },
-            { label: formatMessage(m.requestRightsNo), value: NO },
+            {
+              label: formatMessage(
+                parentalLeaveFormMessages.shared.requestRightsYes,
+              ),
+              value: YES,
+            },
+            {
+              label: formatMessage(
+                parentalLeaveFormMessages.shared.requestRightsNo,
+              ),
+              value: NO,
+            },
           ]}
           onSelect={(newAnswer) => {
             setStatefulAnswer(newAnswer as ValidAnswers)

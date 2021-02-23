@@ -182,11 +182,11 @@ export const ApplicationForm: Form = buildForm({
           title: m.serviceCurrent,
           children: [
             buildMultiField({
-              id: 'service.current.fields',
+              id: 'serviceFields',
               title: m.serviceCurrent,
               children: [
                 buildRadioField({
-                  id: 'service.digital',
+                  id: 'serviceFields.digital',
                   title: m.serviceDigital,
                   largeButtons: true,
                   width: 'half',
@@ -196,13 +196,13 @@ export const ApplicationForm: Form = buildForm({
                   ],
                 }),
                 buildTextField({
-                  id: 'service.link',
+                  id: 'serviceFields.link',
                   title: m.serviceLink,
                   placeholder: 'https://www.someUrl.is',
                   condition: (formValue: FormValue) => {
                     return (
-                      (formValue as { service: { digital: string } })?.service
-                        ?.digital === 'yes'
+                      (formValue as { serviceFields: { digital: string } })
+                        ?.serviceFields?.digital === 'yes'
                     )
                   },
                 }),
@@ -260,7 +260,7 @@ export const ApplicationForm: Form = buildForm({
           title: m.payment,
           children: [
             buildRadioField({
-              id: 'payment.radio',
+              id: 'payment.acceptsPayment',
               title: m.paymentRadio,
               largeButtons: true,
               width: 'half',

@@ -21,6 +21,7 @@
     "no-cond-assign": ["warn", "except-parens"],
     "no-const-assign": "warn",
     "no-control-regex": "warn",
+    "no-console": "warn",
     "no-delete-var": "warn",
     "no-dupe-args": "warn",
     "no-dupe-keys": "warn",
@@ -188,6 +189,7 @@
     ],
     "getter-return": "warn",
     "import/first": "error",
+    "import/order": "error",
     "import/no-amd": "error",
     "import/no-webpack-loader-syntax": "error",
     "react/forbid-foreign-prop-types": [

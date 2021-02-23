@@ -84,6 +84,15 @@ describe('answerValidators', () => {
     })
   })
 
+  it('should return error if the endDate is before or less than 14 days from the DOB when the startDate is undefined', () => {
+    const newAnswers = [{ endDate: '2021-01-20' }]
+
+    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
+      message: `End date cannot be less than the ${minPeriodDays} days from the date of birth.`,
+      path: 'periods[0].endDate',
+    })
+  })
+
   it('should return error for endDate before minimum days', () => {
     const newAnswers = [
       { startDate: '2021-01-29', endDate: '2021-02-04', ratio: '100' },
@@ -106,6 +115,17 @@ describe('answerValidators', () => {
     expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
       message: `The minimum is ${minPeriodDays} days of leave, you've chosen ${diff} days at ${ratio}% which ends up as only ${diffWithRatio} days leave.`,
       path: 'periods[0].ratio',
+    })
+  })
+
+  it('should return error if the period selected is more than the allowed period', () => {
+    const startDate = '2021-01-29'
+    const endDate = '2021-08-16'
+    const newAnswers = [{ startDate, endDate }]
+
+    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
+      message: `You cannot apply for a period longer than the allowed period of 6 months.`,
+      path: 'periods[0].endDate',
     })
   })
 })

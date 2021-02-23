@@ -61,7 +61,8 @@ export const CreateCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision
@@ -74,6 +75,10 @@ export const CreateCaseMutation = gql`
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
       judge {
+        name
+        title
+      }
+      registrar {
         name
         title
       }
@@ -98,16 +103,9 @@ export const CasesQuery = gql`
       custodyEndDate
       decision
       isCustodyEndDateInThePast
-    }
-  }
-`
-
-export const UsersQuery = gql`
-  query UsersQuery {
-    users {
-      id
-      name
-      role
+      parentCase {
+        id
+      }
     }
   }
 `
@@ -154,7 +152,8 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
-      accusedPlea
+      accusedPleaDecision
+      accusedPleaAnnouncement
       litigationPresentations
       ruling
       decision
@@ -173,6 +172,80 @@ export const ExtendCaseMutation = gql`
       parentCase {
         id
       }
+    }
+  }
+`
+export const CreateUserMutation = gql`
+  mutation CreateUserMutation($input: CreateUserInput!) {
+    createUser(input: $input) {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution {
+        id
+        name
+      }
+      active
+    }
+  }
+`
+
+export const UsersQuery = gql`
+  query UsersQuery {
+    users {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution {
+        id
+        name
+      }
+      active
+    }
+  }
+`
+
+export const UserQuery = gql`
+  query UserQuery($input: UserQueryInput!) {
+    user(input: $input) {
+      id
+      name
+      nationalId
+      mobileNumber
+      role
+      title
+      email
+      institution {
+        id
+        name
+      }
+      active
+    }
+  }
+`
+
+export const UpdateUserMutation = gql`
+  mutation UpdateUserMutation($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      id
+      modified
+    }
+  }
+`
+
+export const InstitutionsQuery = gql`
+  query InstitutionsQuery {
+    institutions {
+      id
+      name
     }
   }
 `

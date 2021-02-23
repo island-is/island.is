@@ -282,7 +282,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     const html = formatPrisonCourtDateEmailNotification(
-      existingCase.prosecutor?.institution,
+      existingCase.prosecutor?.institution?.name,
       existingCase.court,
       existingCase.courtDate,
       existingCase.accusedName,
@@ -311,8 +311,6 @@ export class NotificationService {
       return
     }
 
-    const pdf = await generateRequestPdf(existingCase)
-
     const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       existingCase.type,
@@ -324,20 +322,11 @@ export class NotificationService {
       existingCase.courtRoom,
     )
 
-    const attachments = [
-      {
-        filename: `${existingCase.policeCaseNumber}.pdf`,
-        content: pdf,
-        encoding: 'binary',
-      },
-    ]
-
     return this.sendEmail(
       existingCase.defenderName,
       existingCase.defenderEmail,
       subject,
       html,
-      attachments,
     )
   }
 
@@ -455,7 +444,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     const html = formatPrisonRevokedEmailNotification(
-      existingCase.prosecutor?.institution,
+      existingCase.prosecutor?.institution?.name,
       existingCase.court,
       existingCase.courtDate,
       existingCase.accusedName,

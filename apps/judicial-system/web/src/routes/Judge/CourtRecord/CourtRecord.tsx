@@ -4,6 +4,7 @@ import {
   GridContainer,
   GridRow,
   Input,
+  RadioButton,
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -13,18 +14,27 @@ import {
   PageLayout,
   TimeInputField,
   CaseNumbers,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
+  capitalize,
   formatAccusedByGender,
+  formatProsecutorDemands,
   NounCases,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
-import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  AccusedPleaDecision,
+  Case,
+  CaseCustodyRestrictions,
+  CaseGender,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -39,7 +49,9 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   validateAndSetTime,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import * as styles from './CourtRecord.treat'
 
 interface CaseData {
   case?: Case
@@ -53,7 +65,10 @@ export const CourtRecord: React.FC = () => {
   ] = useState('')
   const [courtAttendeesErrorMessage, setCourtAttendeesMessage] = useState('')
   const [policeDemandsErrorMessage, setPoliceDemandsMessage] = useState('')
-  const [accusedPleaErrorMessage, setAccusedPleaMessage] = useState('')
+  const [
+    accusedPleaAnnouncementErrorMessage,
+    setAccusedPleaAnnouncementMessage,
+  ] = useState('')
   const [
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
@@ -89,8 +104,16 @@ export const CourtRecord: React.FC = () => {
     const defaultCourtAttendees = (wc: Case): string => {
       let attendees = ''
 
+      if (wc.judge) {
+        attendees += `${wc.judge.name} ${wc.judge.title}\n`
+      }
+
+      if (wc.registrar) {
+        attendees += `${wc.registrar.name} ${wc.registrar.title}\n`
+      }
+
       if (wc.prosecutor && wc.accusedName) {
-        attendees += `${wc.prosecutor?.name} ${wc.prosecutor?.title}\n${
+        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
           wc.accusedName
         } ${formatAccusedByGender(wc?.accusedGender || CaseGender.OTHER)}`
       }
@@ -117,6 +140,29 @@ export const CourtRecord: React.FC = () => {
             theCase.id,
             parseString('courtAttendees', theCase.courtAttendees),
           )
+        }
+      }
+      if (
+        !theCase.policeDemands &&
+        theCase.accusedName &&
+        theCase.court &&
+        theCase.requestedCustodyEndDate
+        // Note that theCase.requestedCustodyRestrictions can be undefined
+      ) {
+        theCase = {
+          ...theCase,
+          policeDemands: formatProsecutorDemands(
+            theCase.type,
+            theCase.accusedNationalId,
+            theCase.accusedName,
+            theCase.court,
+            theCase.requestedCustodyEndDate,
+            theCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            ) || false,
+            theCase.parentCase !== undefined,
+            theCase.parentCase?.decision,
+          ),
         }
       }
 
@@ -179,7 +225,7 @@ export const CourtRecord: React.FC = () => {
                       <Input
                         data-testid="courtStartTime"
                         name="courtStartTime"
-                        label="Þinghald hófst"
+                        label="Þinghald hófst (kk:mm)"
                         placeholder="Veldu tíma"
                         defaultValue={formatDate(
                           workingCase.courtStartTime,
@@ -287,7 +333,10 @@ export const CourtRecord: React.FC = () => {
                 {`Réttindi ${formatAccusedByGender(
                   workingCase.accusedGender || CaseGender.OTHER,
                   NounCases.GENITIVE,
-                )}`}
+                )}`}{' '}
+                <Text as="span" fontWeight="semiBold" color="red600">
+                  *
+                </Text>
               </Text>
             </Box>
             <Box marginBottom={2}>
@@ -299,44 +348,91 @@ export const CourtRecord: React.FC = () => {
                 gr. sömu laga
               </Text>
             </Box>
-            <Input
-              data-testid="accusedPlea"
-              name="accusedPlea"
-              label={`Afstaða ${formatAccusedByGender(
-                workingCase.accusedGender || CaseGender.OTHER,
-                NounCases.GENITIVE,
-              )}`}
-              defaultValue={workingCase.accusedPlea}
-              placeholder={`Hvað hafði ${formatAccusedByGender(
-                workingCase.accusedGender || CaseGender.OTHER,
-              )} að segja um kröfuna? Mótmælti eða samþykkti?`}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'accusedPlea',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  accusedPleaErrorMessage,
-                  setAccusedPleaMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'accusedPlea',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setAccusedPleaMessage,
-                )
-              }
-              errorMessage={accusedPleaErrorMessage}
-              hasError={accusedPleaErrorMessage !== ''}
-              textarea
-              rows={7}
-              required
-            />
+            <BlueBox>
+              <div className={styles.accusedPleaDecision}>
+                <RadioButton
+                  name="accusedPleaDecision"
+                  id="accused-plea-decision-accepting"
+                  label={`${capitalize(
+                    formatAccusedByGender(workingCase.accusedGender),
+                  )} hafnar kröfunni`}
+                  checked={
+                    workingCase.accusedPleaDecision ===
+                    AccusedPleaDecision.REJECT
+                  }
+                  onChange={() => {
+                    setAndSendToServer(
+                      'accusedPleaDecision',
+                      AccusedPleaDecision.REJECT,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }}
+                  large
+                  filled
+                />
+                <RadioButton
+                  name="accusedPleaDecision"
+                  id="accused-plea-decision-rejecting"
+                  label={`${capitalize(
+                    formatAccusedByGender(workingCase.accusedGender),
+                  )} samþykkir kröfuna`}
+                  checked={
+                    workingCase.accusedPleaDecision ===
+                    AccusedPleaDecision.ACCEPT
+                  }
+                  onChange={() => {
+                    setAndSendToServer(
+                      'accusedPleaDecision',
+                      AccusedPleaDecision.ACCEPT,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }}
+                  large
+                  filled
+                />
+              </div>
+              <Input
+                data-testid="accusedPleaAnnouncement"
+                name="accusedPleaAnnouncement"
+                label={`Afstaða ${formatAccusedByGender(
+                  workingCase.accusedGender || CaseGender.OTHER,
+                  NounCases.GENITIVE,
+                )}`}
+                defaultValue={workingCase.accusedPleaAnnouncement}
+                placeholder={`Hvað hafði ${formatAccusedByGender(
+                  workingCase.accusedGender || CaseGender.OTHER,
+                )} að segja um kröfuna? Mótmælti eða samþykkti?`}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'accusedPleaAnnouncement',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                    accusedPleaAnnouncementErrorMessage,
+                    setAccusedPleaAnnouncementMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'accusedPleaAnnouncement',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                    setAccusedPleaAnnouncementMessage,
+                  )
+                }
+                errorMessage={accusedPleaAnnouncementErrorMessage}
+                hasError={accusedPleaAnnouncementErrorMessage !== ''}
+                textarea
+                rows={7}
+              />
+            </BlueBox>
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
@@ -381,27 +477,29 @@ export const CourtRecord: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
+            previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
-            nextIsDisabled={isNextDisabled([
-              {
-                value:
-                  formatDate(workingCase.courtStartTime, TIME_FORMAT) || '',
-                validations: ['empty', 'time-format'],
-              },
-              {
-                value: workingCase.courtAttendees || '',
-                validations: ['empty'],
-              },
-              {
-                value: workingCase.policeDemands || '',
-                validations: ['empty'],
-              },
-              { value: workingCase.accusedPlea || '', validations: ['empty'] },
-              {
-                value: workingCase.litigationPresentations || '',
-                validations: ['empty'],
-              },
-            ])}
+            nextIsDisabled={
+              isNextDisabled([
+                {
+                  value:
+                    formatDate(workingCase.courtStartTime, TIME_FORMAT) || '',
+                  validations: ['empty', 'time-format'],
+                },
+                {
+                  value: workingCase.courtAttendees || '',
+                  validations: ['empty'],
+                },
+                {
+                  value: workingCase.policeDemands || '',
+                  validations: ['empty'],
+                },
+                {
+                  value: workingCase.litigationPresentations || '',
+                  validations: ['empty'],
+                },
+              ]) || workingCase.accusedPleaDecision === null
+            }
           />
         </>
       ) : null}

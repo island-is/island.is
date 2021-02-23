@@ -18,7 +18,7 @@ import {
   UpdateContactInput,
   UpdateHelpdeskInput,
 } from './dto'
-import { OrganisationsApi } from '../../gen/fetch'
+import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -32,6 +32,7 @@ export class DocumentProviderService {
     private documentProviderClientTest: DocumentProviderClientTest,
     private documentProviderClientProd: DocumentProviderClientProd,
     private organisationsApi: OrganisationsApi,
+    private providersApi: ProvidersApi,
   ) {}
 
   async getOrganisations(): Promise<Organisation[]> {
@@ -145,6 +146,7 @@ export class DocumentProviderService {
   async updateEndpointOnTest(
     endpoint: string,
     providerId: string,
+    xroad: boolean,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -152,7 +154,7 @@ export class DocumentProviderService {
     // )
 
     const result = await this.documentProviderClientTest
-      .updateEndpoint(providerId, endpoint)
+      .updateEndpoint(providerId, endpoint, xroad)
       .catch(handleError)
 
     const audienceAndScope = new AudienceAndScope(result.audience, result.scope)
@@ -194,12 +196,35 @@ export class DocumentProviderService {
       result.clientSecret,
       result.providerId,
     )
+
+    // Get the current organisation from nationalId
+    const organisation = await this.getOrganisation(nationalId)
+
+    if (!organisation) {
+      throw new ApolloError('Could not find organisation.')
+    }
+
+    // Create provider for organisation
+    const createProviderDto = {
+      externalProviderId: credentials.providerId,
+      organisationId: organisation.id,
+    }
+
+    const provider = await this.providersApi.providerControllerCreateProvider({
+      createProviderDto,
+    })
+
+    if (!provider) {
+      throw new ApolloError('Could not create provider.')
+    }
+
     return credentials
   }
 
   async updateEndpoint(
     endpoint: string,
     providerId: string,
+    xroad: boolean,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -207,10 +232,35 @@ export class DocumentProviderService {
     // )
 
     const result = await this.documentProviderClientProd
-      .updateEndpoint(providerId, endpoint)
+      .updateEndpoint(providerId, endpoint, xroad)
       .catch(handleError)
 
     const audienceAndScope = new AudienceAndScope(result.audience, result.scope)
+
+    // Find provider by externalProviderId
+    const provider = await this.providersApi.providerControllerFindByExternalId(
+      { id: providerId },
+    )
+
+    // Update the provider
+    const dto = {
+      id: provider.id,
+      updateProviderDto: {
+        endpoint,
+        endpointType: 'REST',
+        apiScope: audienceAndScope.scope,
+        xroad,
+      },
+    }
+
+    const updatedProvider = await this.providersApi.providerControllerUpdateProvider(
+      dto,
+    )
+
+    if (!updatedProvider) {
+      throw new ApolloError('Could not update provider.')
+    }
+
     return audienceAndScope
   }
 }

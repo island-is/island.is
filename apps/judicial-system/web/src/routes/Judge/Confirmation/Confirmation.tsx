@@ -49,7 +49,6 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useHistory, useParams } from 'react-router-dom'
-import * as style from './Confirmation.treat'
 import {
   CaseQuery,
   SendNotificationMutation,
@@ -68,6 +67,7 @@ import {
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import * as style from './Confirmation.treat'
 
 interface SigningModalProps {
   workingCase: Case
@@ -136,8 +136,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
           judge: resCase.judge,
         })
       } catch (e) {
-        console.log(e)
-
         // TODO: Handle error
       }
 
@@ -180,8 +178,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
         // TODO: Handle error
       }
     } catch (e) {
-      console.log(e)
-
       // TODO: Handle error
     }
   }, [sendNotificationMutation, workingCase.id])
@@ -438,7 +434,7 @@ export const Confirmation: React.FC = () => {
               <Text variant="h3">
                 {workingCase.judge
                   ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                  : `${user?.name} ${user?.title}`}
+                  : `Enginn dómari skráður`}
               </Text>
             </Box>
             <Text>
@@ -540,9 +536,13 @@ export const Confirmation: React.FC = () => {
                     workingCase.otherRestrictions,
                   )
                     .split('\n')
-                    .map((str) => (
-                      <Text>{str}</Text>
-                    ))}
+                    .map((str, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{str}</Text>
+                        </div>
+                      )
+                    })}
                 </Text>
               </Box>
               <Text>
@@ -588,7 +588,7 @@ export const Confirmation: React.FC = () => {
                     <Input
                       data-testid="courtEndTime"
                       name="courtEndTime"
-                      label="Þinghaldi lauk"
+                      label="Þinghaldi lauk (kk:mm)"
                       placeholder="Veldu tíma"
                       defaultValue={formatDate(
                         workingCase.courtEndTime,
@@ -611,11 +611,18 @@ export const Confirmation: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
             nextIsDisabled={isStepIllegal}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
+            hideNextButton={workingCase.judge?.id !== user?.id}
+            infoBoxText={
+              workingCase.judge?.id !== user?.id
+                ? 'Einungis skráður dómari getur undirritað úrskurð'
+                : undefined
+            }
           />
           {modalVisible && (
             <SigningModal

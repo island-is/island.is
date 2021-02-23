@@ -77,6 +77,18 @@ export type ModalBaseProps = {
    * Aria label for the modal
    */
   modalLabel?: string
+  /**
+   * Remove the modal from dom when closed
+   */
+  removeOnClose?: boolean
+  /**
+   * toggle visibility, useful for controlling visibility from useState. Should be used with onVisibilityChange
+   */
+  isVisible?: boolean
+  /**
+   * Clicking outside the Dialog closes it unless hideOnClickOutside is set to false.
+   */
+  hideOnClickOutside?: boolean
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -90,6 +102,9 @@ export const ModalBase: FC<ModalBaseProps> = ({
   renderDisclosure = (disclosure) => disclosure,
   backdropWhite,
   modalLabel,
+  removeOnClose,
+  isVisible,
+  hideOnClickOutside,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -104,9 +119,17 @@ export const ModalBase: FC<ModalBaseProps> = ({
   }, [toggleClose])
 
   useEffect(() => {
+    if (isVisible) {
+      modal.show()
+    } else if (isVisible === false) {
+      modal.hide()
+    }
+  }, [isVisible])
+
+  useEffect(() => {
     onVisibilityChange && onVisibilityChange(modal.visible)
   }, [modal.visible])
-
+  const renderModal = !removeOnClose || (removeOnClose && modal.visible)
   return (
     <>
       {disclosure ? (
@@ -119,15 +142,24 @@ export const ModalBase: FC<ModalBaseProps> = ({
           }
         </DialogDisclosure>
       ) : null}
-      <DialogBackdrop {...modal} as={BackdropDiv} backdropWhite={backdropWhite}>
-        <BaseDialog
+      {renderModal && (
+        <DialogBackdrop
           {...modal}
-          className={cn(styles.modal, className)}
-          aria-label={modalLabel}
+          as={BackdropDiv}
+          backdropWhite={backdropWhite}
         >
-          {typeof children === 'function' ? children({ closeModal }) : children}
-        </BaseDialog>
-      </DialogBackdrop>
+          <BaseDialog
+            {...modal}
+            className={cn(styles.modal, className)}
+            aria-label={modalLabel}
+            hideOnClickOutside={hideOnClickOutside}
+          >
+            {typeof children === 'function'
+              ? children({ closeModal })
+              : children}
+          </BaseDialog>
+        </DialogBackdrop>
+      )}
     </>
   )
 }

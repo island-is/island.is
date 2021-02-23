@@ -30,6 +30,7 @@ export type Context = {
 export interface Option {
   value: string
   label: FormText
+  subLabel?: string
   tooltip?: FormText
   excludeOthers?: boolean
 }
@@ -120,6 +121,7 @@ export interface SelectField extends BaseField {
   options: MaybeWithApplication<Option[]>
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   placeholder?: FormText
+  backgroundColor?: InputBackgroundColor
 }
 
 export interface AsyncSelectField extends BaseField {

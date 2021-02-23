@@ -17,18 +17,19 @@ export class HealthInsuranceProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError('An error occured. Please try again.')
+          return this.handleError(response.errors)
         }
 
         return Promise.resolve(response.data?.healthInsuranceIsHealthInsured)
       })
-      .catch(() => {
-        return this.handleError('An error occured. Please try again.')
+      .catch((error) => {
+        return this.handleError(error)
       })
   }
 
-  handleError(message: string) {
-    return Promise.reject(message)
+  handleError(error: any) {
+    console.log('Provider error - HealthInsurance:', error)
+    return Promise.resolve({})
   }
 
   onProvideError(result: string): FailedDataProviderResult {

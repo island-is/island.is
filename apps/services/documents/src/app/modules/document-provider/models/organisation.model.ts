@@ -8,7 +8,7 @@ import {
   HasMany,
   HasOne,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Provider } from './provider.model'
 import { TechnicalContact } from './technicalContact.model'
 import { AdministrativeContact } from './administrativeContact.model'
@@ -66,19 +66,19 @@ export class Organisation extends Model<Organisation> {
   phoneNumber?: string
 
   @HasMany(() => Provider)
-  @ApiProperty()
+  @ApiPropertyOptional({ type: [Provider] })
   providers?: Provider[]
 
   @HasOne(() => AdministrativeContact)
-  @ApiProperty()
+  @ApiPropertyOptional()
   administrativeContact?: AdministrativeContact
 
   @HasOne(() => TechnicalContact)
-  @ApiProperty()
+  @ApiPropertyOptional()
   technicalContact?: TechnicalContact
 
   @HasOne(() => Helpdesk)
-  @ApiProperty()
+  @ApiPropertyOptional()
   helpdesk?: Helpdesk
 
   @CreatedAt

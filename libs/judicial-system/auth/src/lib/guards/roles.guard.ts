@@ -23,6 +23,11 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
     const user: User = request.user
 
+    // Deny if no user
+    if (!user) {
+      return false
+    }
+
     // Pick the first matching rule
     const rule = rolesRules.find((rule) =>
       typeof rule === 'string' ? rule === user.role : rule?.role === user.role,

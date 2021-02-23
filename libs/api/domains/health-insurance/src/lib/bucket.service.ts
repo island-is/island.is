@@ -30,10 +30,17 @@ export class BucketService {
       throw new Error(error.message)
     }
   }
+  /* */
+  async getFileFromUrl(urlToFile: string): Promise<S3.GetObjectOutput> {
+    const spurl = urlToFile.split('/')
+    const fn = spurl[spurl.length - 1]
+    // console.log(fn)
+    return this.getFile(fn)
+  }
 
   /* */
-  async getFile(fileToGet: string): Promise<S3.GetObjectOutput> {
-    this.logger.info('get bucket file:' + fileToGet)
+  async getFile(filename: string): Promise<S3.GetObjectOutput> {
+    this.logger.info('get bucket file:' + filename)
     return new Promise((resolve, reject) => {
       s3.createBucket(
         {
@@ -42,7 +49,7 @@ export class BucketService {
         function () {
           const params = {
             Bucket: BUCKET_NAME,
-            Key: fileToGet,
+            Key: filename,
           }
           s3.getObject(params, function (err, data) {
             if (err) {
@@ -56,14 +63,14 @@ export class BucketService {
     })
   }
 
-  /* for test */
-  async getNumberOfFiles(): Promise<number> {
-    this.logger.info('getNumberOfFiles in bucket,  ...')
-    const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
-    let num = 0
-    for (const x of list.Contents!) {
-      num++
-    }
-    return num
-  }
+  // /* for test */
+  // async getNumberOfFiles(): Promise<number> {
+  //   this.logger.info('getNumberOfFiles in bucket,  ...')
+  //   const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
+  //   let num = 0
+  //   for (const x of list.Contents!) {
+  //     num++
+  //   }
+  //   return num
+  // }
 }

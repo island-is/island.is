@@ -7,7 +7,7 @@ import Timeline from '../components/Timeline'
 import { Period } from '../../types'
 import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { m, mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 
 const PeriodsRepeater: FC<RepeaterProps> = ({
   removeRepeaterItem,
@@ -38,12 +38,20 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   const editable = application.state === 'draft'
   return (
     <Box>
-      <FieldDescription description={formatMessage(mm.leavePlan.description)} />
+      <FieldDescription
+        description={formatMessage(
+          parentalLeaveFormMessages.leavePlan.description,
+        )}
+      />
       <Box marginY={3}>
         <Timeline
           initDate={dobDate}
-          title={formatMessage(m.expectedDateOfBirthTitle)}
-          titleSmall={formatMessage(m.dateOfBirthTitle)}
+          title={formatMessage(
+            parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
+          )}
+          titleSmall={formatMessage(
+            parentalLeaveFormMessages.shared.dateOfBirthTitle,
+          )}
           periods={formatPeriods(
             application.answers.periods as Period[],
             editable ? otherParentPeriods : [],
@@ -54,7 +62,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
       </Box>
       {editable && (
         <Button size="small" icon="add" onClick={expandRepeater}>
-          {formatMessage(mm.leavePlan.addAnother)}
+          {formatMessage(parentalLeaveFormMessages.leavePlan.addAnother)}
         </Button>
       )}
     </Box>

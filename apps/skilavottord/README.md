@@ -10,8 +10,20 @@ The recycling fund can then see a list of recycled cars.
 
 ## URLs
 
-- [Dev](https://skilavottord.dev01.devland.is)
+### Dev
+
+- [Dev - role: user](https://beta.dev01.devland.is/app/skilavottord/my-cars)
+- [Dev - role: company](https://beta.dev01.devland.is/app/skilavottord/deregister-vehicle)
+- [Dev - role: fund](https://beta.dev01.devland.is/app/skilavottord/recycled-vehicles)
+
+  See role description further down.
+
+### Staging
+
 - Staging: N/A
+
+### Prod
+
 - Prod: N/A
 
 ## Getting started
@@ -26,9 +38,9 @@ yarn start skilavottord-web
 
 Navigate to:
 
-- [localhost:4200/my-cars](http://localhost:4200/my-cars)
-- [localhost:4200/deregister-vehicle](http://localhost:4200/deregister-vehicle)
-- [localhost:4200/recycled-vehicles](http://localhost:4200/recycled-vehicles)
+- [localhost:4200/app/skilavottord/my-cars](http://localhost:4200/app/skilavottord/my-cars)
+- [localhost:4200/app/skilavottord/deregister-vehicle](http://localhost:4200/app/skilavottord/deregister-vehicle)
+- [localhost:4200/app/skilavottord/recycled-vehicles](http://localhost:4200/app/skilavottord/recycled-vehicles)
 
 ### Backend
 
@@ -68,26 +80,26 @@ yarn start skilavottord-ws
 
 ### GraphQL playground
 
-Visit [localhost:3333/api/graphql](http://localhost:3333/api/graphql)
+Visit [localhost:3333/app/skilavottord/api/graphql](http://localhost:3333/app/skilavottord/api/graphql)
 
 ## Application
 
 ### User frontend
 
-URL: [https://skilavottord.dev01.devland.is/my-cars](https://skilavottord.dev01.devland.is/my-cars)
+URL: [https://island.is/app/skilavottord/my-cars](https://island.is/app/skilavottord/my-cars)
 
 This site shows a list of vehicles that a user own. The user can mark their car for recycling and get information on where to leave the car.
 While the car is in the recycling process the page will show an update of the status accordingly.
 
 ### Company frontend
 
-URL: [https://skilavottord.dev01.devland.is/deregister-vehicle](https://skilavottord.dev01.devland.is/deregister-vehicle)
+URL: [https://island.is/app/skilavottord/deregister-vehicle](https://island.is/app/skilavottord/deregister-vehicle)
 
 If a user is registered as an employee of a recycling company, they can log in here to deregister vehicles that user's have previously prepared for recycling.
 
 ### Fund frontend
 
-URL: [https://skilavottord.dev01.devland.is/recycled-vehicles](https://skilavottord.dev01.devland.is/deregister-vehicle)
+URL: [https://island.is/app/skilavottord/recycled-vehicles](https://island.is/app/skilavottord/deregister-vehicle)
 
 If a user is registered as an employee of Fjársýsla ríkisins, they can log in here to see a list of all vehicles that has completed the process of being deregistered and recycled.
 

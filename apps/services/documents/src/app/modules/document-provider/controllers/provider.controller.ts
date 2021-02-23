@@ -32,7 +32,23 @@ export class ProviderController {
     const provider = await this.documentProviderService.findProviderById(id)
 
     if (!provider) {
-      throw new NotFoundException("This provider doesn't exist")
+      throw new NotFoundException(`A provider with id ${id} does not exist`)
+    }
+
+    return provider
+  }
+
+  @Get('/external/:id')
+  @ApiOkResponse({ type: Provider })
+  async findByExternalId(@Param('id') id: string): Promise<Provider> {
+    const provider = await this.documentProviderService.findProviderByExternalProviderId(
+      id,
+    )
+
+    if (!provider) {
+      throw new NotFoundException(
+        `A provider with externalProviderId ${id} does not exist`,
+      )
     }
 
     return provider

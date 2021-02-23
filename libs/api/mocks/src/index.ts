@@ -5,8 +5,7 @@ import { createGraphqlHandler, startMocking } from '@island.is/shared/mocking'
 import { resolvers } from './resolvers'
 import { schema } from './schema'
 
-const API_MOCKS_REQUESTED = process.env.API_MOCKS || process.env.NX_API_MOCKS
-if (process.env.NODE_ENV !== 'production' && API_MOCKS_REQUESTED) {
+if (process.env.API_MOCKS === 'true') {
   startMocking([createGraphqlHandler({ resolvers, schema })])
 }
 

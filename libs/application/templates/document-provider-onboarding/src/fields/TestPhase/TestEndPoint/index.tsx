@@ -43,7 +43,13 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     // @ts-ignore
     formValue.endPointObject?.endPointExists || '',
   )
-  const [updateEndpoint] = useMutation(updateTestEndpointMutation)
+  const [updateEndpoint, { loading }] = useMutation(
+    updateTestEndpointMutation,
+    {
+      onError: () =>
+        setTestEndPointError(m.testEndPointErrorMessage.defaultMessage),
+    },
+  )
 
   const nationalId = getValueViaPath(
     application.answers,
@@ -69,23 +75,24 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-
-      if (!result.data) {
+      if (!result) {
         setTestEndPointError(m.testEndPointErrorMessage.defaultMessage)
+      } else {
+        setendPointVariables([
+          {
+            id: '1',
+            name: 'Audience',
+            value: result.data.updateTestEndpoint.audience,
+          },
+          {
+            id: '2',
+            name: 'Scope',
+            value: result.data.updateTestEndpoint.scope,
+          },
+        ])
+        setendpointExists('true')
+        clearErrors()
       }
-
-      setendPointVariables([
-        {
-          id: '1',
-          name: 'Audience',
-          value: result.data.updateTestEndpoint.audience,
-        },
-        { id: '2', name: 'Scope', value: result.data.updateTestEndpoint.scope },
-      ])
-
-      setendpointExists('true')
-
-      clearErrors()
     }
   }
 
@@ -112,6 +119,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
+                disabled={loading}
                 name={'endPointObject.endPoint'}
                 id={'endPointObject.endPoint'}
                 ref={register}
@@ -141,6 +149,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           onClick={() => {
             trigger(['endPointObject.endPoint']).then((answer) =>
               onUpdateEndpoint(answer),
