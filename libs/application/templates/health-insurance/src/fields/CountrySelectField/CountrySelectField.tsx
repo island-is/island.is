@@ -17,6 +17,7 @@ const CountrySelectField: FC<Props> = ({
   field,
   application,
   isReviewField,
+  error,
 }) => {
   const { id } = field
   const [options, setOptions] = useState<Option[]>([])
@@ -68,6 +69,7 @@ const CountrySelectField: FC<Props> = ({
         options={options}
         disabled={isReviewField}
         backgroundColor="blue"
+        error={error}
       />
     </Stack>
   )
