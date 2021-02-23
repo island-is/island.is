@@ -3,7 +3,10 @@ import * as AmazonS3URI from 'amazon-s3-uri'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
 import { ConfigType } from '@nestjs/config'
-import { fileStorageConfiguration } from './file-storage.configuration'
+import {
+  FILE_STORAGE_CONFIG,
+  FileStorageConfig,
+} from './file-storage.configuration'
 
 const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 
@@ -12,8 +15,8 @@ export class FileStorageService {
   private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
   constructor(
-    @Inject(fileStorageConfiguration.KEY)
-    private readonly config: ConfigType<typeof fileStorageConfiguration>,
+    @Inject(FILE_STORAGE_CONFIG)
+    private readonly config: FileStorageConfig,
   ) {}
 
   generatePresignedPost(filename: string): Promise<AWS.S3.PresignedPost> {

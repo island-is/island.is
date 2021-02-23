@@ -1,6 +1,6 @@
-import { registerAs } from '@nestjs/config'
+export interface ApplicationConfig {
+  attachmentBucket?: string
+  presignBucket?: string
+}
 
-export const applicationConfiguration = registerAs('application', () => ({
-  attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-  region: process.env.APPLICATION_ATTACHMENT_REGION || 'eu-west-1',
-}))
+export const APPLICATION_CONFIG = 'APPLICATION_CONFIG'

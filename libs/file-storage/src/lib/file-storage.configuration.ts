@@ -1,5 +1,5 @@
-import { registerAs } from '@nestjs/config'
+export interface FileStorageConfig {
+  uploadBucket?: string
+}
 
-export const fileStorageConfiguration = registerAs('fileStorage', () => ({
-  uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-}))
+export const FILE_STORAGE_CONFIG = 'FILE_STORAGE_CONFIG'

@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { BullModule as NestBullModule } from '@nestjs/bull'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { FileStorageModule } from '@island.is/file-storage'
+import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 
@@ -11,10 +11,10 @@ import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
-import { ConfigModule } from '@nestjs/config'
-import { applicationConfiguration } from './application.configuration'
-
-const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from './application.configuration'
 
 // import { AuthModule } from '@island.is/auth-nest-tools'
 
@@ -41,23 +41,21 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
-    // AuthModule.register({
-    //   audience: environment.identityServer.audience,
-    //   issuer: environment.identityServer.issuer,
-    //   jwksUri: `${environment.identityServer.jwksUri}`,
-    // }),
-    TemplateAPIModule.register({
-      xRoadBasePathWithEnv: XROAD_BASE_PATH_WITH_ENV,
-      clientLocationOrigin: environment.clientLocationOrigin,
-      emailOptions: environment.emailOptions,
-      jwtSecret: environment.auth.jwtSecret,
-    }),
-    ConfigModule.forFeature(applicationConfiguration),
+    // AuthModule.register(environment.auth),
+    TemplateAPIModule.register(environment.templateApi),
     SequelizeModule.forFeature([Application]),
-    FileStorageModule,
+    FileStorageModule.register(environment.fileStorage),
     BullModule,
   ],
   controllers: [ApplicationController],
-  providers: [ApplicationService, UploadProcessor, FileService],
+  providers: [
+    ApplicationService,
+    UploadProcessor,
+    FileService,
+    {
+      provide: APPLICATION_CONFIG,
+      useValue: environment.application as ApplicationConfig,
+    },
+  ],
 })
 export class ApplicationModule {}

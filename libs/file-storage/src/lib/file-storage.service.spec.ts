@@ -1,15 +1,23 @@
 import { Test } from '@nestjs/testing'
 import { FileStorageService } from './file-storage.service'
-import { ConfigModule } from '@nestjs/config'
-import { fileStorageConfiguration } from './file-storage.configuration'
+import {
+  FILE_STORAGE_CONFIG,
+  FileStorageConfig,
+} from './file-storage.configuration'
 
 describe('FileStorageService', () => {
   let service: FileStorageService
 
   beforeEach(async () => {
+    const config: FileStorageConfig = { uploadBucket: 'test-bucket' }
     const module = await Test.createTestingModule({
-      imports: [ConfigModule.forFeature(fileStorageConfiguration)],
-      providers: [FileStorageService],
+      providers: [
+        FileStorageService,
+        {
+          provide: FILE_STORAGE_CONFIG,
+          useValue: config,
+        },
+      ],
     }).compile()
 
     service = module.get(FileStorageService)
