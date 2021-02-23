@@ -2,7 +2,7 @@ import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 import { EFTA, EU } from './constants'
-import { Country, NordicCountries } from './types'
+import { NordicCountries } from './types'
 
 export const hasHealthInsurance = (externalData: ExternalData) => {
   const isInsured = externalData?.healthInsurance?.data
