@@ -362,6 +362,7 @@
     "object-path": "0.11.5",
     "serialize-javascript": "4.0.0",
     "webpack": "4.44.1",
-    "xml-crypto": "2.0.0"
+    "xml-crypto": "2.0.0",
+    "@graphql-tools/git-loader": "6.2.6"
   }
 }
