@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { User } from '@island.is/judicial-system/types'
+import { Institution, User } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import { useHistory, useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
+  InstitutionsQuery,
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
@@ -19,24 +20,34 @@ interface SaveData {
   user: User
 }
 
+interface InstitutionData {
+  institutions: Institution[]
+}
+
 export const ChangeUser: React.FC = () => {
   const { id } = useParams<{ id: string }>()
 
-  const [user, setUser] = useState<User>()
+  const history = useHistory()
 
-  const { data, loading } = useQuery<UserData>(UserQuery, {
-    variables: { input: { id: id } },
+  const { data: userData, loading: userLoading } = useQuery<UserData>(
+    UserQuery,
+    {
+      variables: { input: { id: id } },
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
+
+  const { data: institutionData, loading: institutionLoading } = useQuery<
+    InstitutionData
+  >(InstitutionsQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const history = useHistory()
-
-  useEffect(() => {
-    if (data && id) {
-      setUser(data.user)
-    }
-  }, [data, id, setUser])
+  const [updateCaseMutation, { loading: saveLoading }] = useMutation<SaveData>(
+    UpdateUserMutation,
+  )
 
   useEffect(() => {
     document.title = 'Breyta notanda - Réttarvörslugátt'
@@ -63,17 +74,20 @@ export const ChangeUser: React.FC = () => {
     history.push(Constants.USER_LIST_ROUTE)
   }
 
-  const [updateCaseMutation, { loading: saveLoading }] = useMutation<SaveData>(
-    UpdateUserMutation,
-  )
-
   return (
     <PageLayout
       showSidepanel={false}
-      isLoading={loading}
-      notFound={!data?.user}
+      isLoading={userLoading || institutionLoading}
+      notFound={!userData?.user || !institutionData?.institutions}
     >
-      {user && <UserForm user={user} onSave={saveUser} loading={saveLoading} />}
+      {userData?.user && institutionData?.institutions && (
+        <UserForm
+          user={userData?.user}
+          institutions={institutionData?.institutions}
+          onSave={saveUser}
+          loading={saveLoading}
+        />
+      )}
     </PageLayout>
   )
 }
