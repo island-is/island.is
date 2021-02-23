@@ -87,22 +87,26 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     const hasCTA = cta.label && !progressMeter.active
 
     return (
-      <Stack space="gutter">
-        {tag.label && (
-          <Tag outlined variant={tag.variant}>
-            {tag.label}
-          </Tag>
+      <>
+        {!!tag.label && (
+          <Box>
+            <Tag outlined variant={tag.variant}>
+              {tag.label}
+            </Tag>
+          </Box>
         )}
-        {hasCTA && (
-          <Button
-            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
-            size="small"
-            onClick={cta.onClick}
-          >
-            {cta.label}
-          </Button>
+        {!!hasCTA && (
+          <Box paddingTop={tag.label ? 'gutter' : 0}>
+            <Button
+              variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+              size="small"
+              onClick={cta.onClick}
+            >
+              {cta.label}
+            </Button>
+          </Box>
         )}
-      </Stack>
+      </>
     )
   }
 
@@ -126,13 +130,15 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           marginLeft={[0, 0, 'auto']}
           paddingTop={[2, 2, 0]}
         >
-          <Button
-            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
-            onClick={cta.onClick}
-            icon="arrowForward"
-          >
-            {cta.label}
-          </Button>
+          <span>
+            <Button
+              variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+              onClick={cta.onClick}
+              icon="arrowForward"
+            >
+              {cta.label}
+            </Button>
+          </span>
         </Box>
       </Box>
     )
@@ -143,22 +149,27 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       display="flex"
       flexDirection="column"
       borderColor="blue200"
-      borderRadius="standard"
+      borderRadius="large"
       borderWidth="standard"
-      paddingX={4}
+      paddingX={[3, 3, 4]}
       paddingY={3}
     >
-      <Box alignItems="center" display="flex">
+      <Box
+        alignItems={['flexStart', 'center']}
+        display="flex"
+        flexDirection={['column', 'row']}
+      >
         <Box>
           <Text variant="h3">{heading}</Text>
           <Text paddingTop={1}>{text}</Text>
         </Box>
 
         <Box
-          alignItems="flexEnd"
           display="flex"
+          alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
-          marginLeft="auto"
+          marginTop={['gutter', 0]}
+          marginLeft={[0, 'auto']}
         >
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
