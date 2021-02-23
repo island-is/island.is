@@ -8,8 +8,7 @@ import {
   DatePicker,
 } from '@island.is/island-ui/core'
 import { Case, CaseType, UpdateCase } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
@@ -47,6 +46,7 @@ import {
   alternativeTravelBanRestrictions,
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
+import useDateTime from 'apps/judicial-system/web/src/utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case
@@ -54,7 +54,6 @@ interface CaseData {
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const { id } = useParams<{ id: string }>()
 
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
@@ -82,6 +81,15 @@ export const StepThree: React.FC = () => {
 
   const resCase = data?.case
 
+  const { isValidDate: isValidRequestedCustodyEndDate } = useDateTime(
+    workingCase?.requestedCustodyEndDate,
+  )
+
+  const { isValidTime: isValidRequestedCustodyEndTime } = useDateTime(
+    undefined,
+    requestedCustodyEndTime,
+  )
+
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
@@ -95,26 +103,6 @@ export const StepThree: React.FC = () => {
       setWorkingCase(resCase)
     }
   }, [workingCase, setWorkingCase, resCase])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.lawsBroken || '',
-        validations: ['empty'],
-      },
-      {
-        value: workingCase?.requestedCustodyEndDate || '',
-        validations: ['empty'],
-      },
-      {
-        value: requestedCustodyEndTime || '',
-        validations: ['empty', 'time-format'],
-      },
-    ]
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, setIsStepIllegal, requestedCustodyEndTime])
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -479,7 +467,9 @@ export const StepThree: React.FC = () => {
             previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              isStepIllegal ||
+              !validate(workingCase.lawsBroken || '', 'empty').isValid ||
+              !isValidRequestedCustodyEndDate ||
+              !isValidRequestedCustodyEndTime ||
               !workingCase.custodyProvisions ||
               workingCase.custodyProvisions?.length === 0
             }
