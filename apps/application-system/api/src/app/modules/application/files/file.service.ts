@@ -7,7 +7,6 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { Signature } from './utils/types'
 import { BucketTypePrefix, DokobitFileName } from './utils/constants'
 import {
   applicantData,
@@ -47,7 +46,7 @@ export class FileService {
 
         const fileName = `${
           BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
-        }/${application.id}/${Signature.Unsigned}.pdf`
+        }/${application.id}.pdf`
 
         await uploadFile(pdfBuffer, fileName)
 
@@ -64,7 +63,7 @@ export class FileService {
     await this.signingService
       .getSignedDocument(DokobitFileName[type], documentToken)
       .then((file) => {
-        const s3FileName = `${BucketTypePrefix[type]}/${application.id}/${Signature.PartiallySigned}.pdf`
+        const s3FileName = `${BucketTypePrefix[type]}/${application.id}.pdf`
         uploadFile(Buffer.from(file, 'binary'), s3FileName)
       })
   }
@@ -95,7 +94,7 @@ export class FileService {
     applicantName: string,
     phoneNumber?: string,
   ): Promise<SigningServiceResponse> {
-    const s3FileName = `${BucketTypePrefix[type]}/${applicationId}/${Signature.Unsigned}.pdf`
+    const s3FileName = `${BucketTypePrefix[type]}/${applicationId}.pdf`
     const s3File = await getFile(s3FileName)
     const fileContent = s3File.Body?.toString('binary')
 

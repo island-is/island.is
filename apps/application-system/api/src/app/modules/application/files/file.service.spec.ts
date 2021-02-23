@@ -116,7 +116,7 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    const fileName = `children-residence-change/${application.id}/unsigned.pdf`
+    const fileName = `children-residence-change/${application.id}.pdf`
 
     expect(aws.uploadFile).toHaveBeenCalledWith(Buffer.from('buffer'), fileName)
 
@@ -133,7 +133,7 @@ describe('FileService', () => {
     )
 
     expect(aws.getFile).toHaveBeenCalledWith(
-      `children-residence-change/${application.id}/unsigned.pdf`,
+      `children-residence-change/${application.id}.pdf`,
     )
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
@@ -163,7 +163,7 @@ describe('FileService', () => {
     expect(act).rejects.toThrowError(NotFoundException)
 
     expect(aws.getFile).toHaveBeenCalledWith(
-      `children-residence-change/${applicationId}/unsigned.pdf`,
+      `children-residence-change/${applicationId}.pdf`,
     )
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
@@ -183,7 +183,7 @@ describe('FileService', () => {
     expect(act).rejects.toThrowError(NotFoundException)
 
     expect(aws.getFile).toHaveBeenCalledWith(
-      `children-residence-change/${applicationId}/unsigned.pdf`,
+      `children-residence-change/${applicationId}.pdf`,
     )
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
