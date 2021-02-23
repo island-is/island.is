@@ -241,7 +241,7 @@ export class SamgongustofaService {
                     //Handle stolen
                     typeof basicInfo.vehicle.stolens[0].stolen != 'undefined'
                   ) {
-                    for (let stolenEndDate of basicInfo.vehicle.stolens[0]
+                    for (const stolenEndDate of basicInfo.vehicle.stolens[0]
                       .stolen) {
                       if (!stolenEndDate.enddate[0].trim()) {
                         loggerReplacement.info('vehicle is stolen')
@@ -255,7 +255,7 @@ export class SamgongustofaService {
                     'undefined'
                   ) {
                     //Handle lock
-                    for (let lockEndDate of basicInfo.vehicle.updatelocks[0]
+                    for (const lockEndDate of basicInfo.vehicle.updatelocks[0]
                       .updatelock) {
                       if (!lockEndDate.enddate[0].trim()) {
                         loggerReplacement.info('vehicle is locked')

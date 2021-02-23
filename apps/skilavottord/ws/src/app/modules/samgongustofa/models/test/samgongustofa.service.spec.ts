@@ -1,11 +1,13 @@
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { SamgongustofaService } from '../samgongustofa.service'
-import { HttpModule, HttpService, CACHE_MANAGER } from '@nestjs/common'
+import { HttpModule, HttpService } from '@nestjs/common'
 import { RecyclingRequestService } from '../../../recycling.request/recycling.request.service'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 import { MockData } from './mock-data'
+
+/*global document, window, alert, console, require*/
 
 const recyclingRequestModel = {
   id: '1234',
@@ -16,6 +18,21 @@ const recyclingRequestModel = {
   nameOfRequestor: '',
   createdAt: new Date('2021-10-05T14:48:00.000Z'),
   updatedAt: new Date('2021-10-05T14:48:00.000Z'),
+}
+
+const getAllVehilceResp: AxiosResponse = {
+  data: MockData.allVehiclesForPersidnoResponse,
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  config: {},
+}
+const getBasicVehicleResp: AxiosResponse = {
+  data: MockData.basicVehicleInformationResponse,
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  config: {},
 }
 
 describe('skilavottordApiTest', () => {
@@ -60,21 +77,6 @@ describe('skilavottordApiTest', () => {
       )
       httpService = moduleRef.get<HttpService>(HttpService)
     })
-
-    const getAllVehilceResp: AxiosResponse = {
-      data: MockData.allVehiclesForPersidnoResponse,
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      config: {},
-    }
-    const getBasicVehicleResp: AxiosResponse = {
-      data: MockData.basicVehicleInformationResponse,
-      status: 200,
-      statusText: 'OK',
-      headers: {},
-      config: {},
-    }
 
     describe('samgongustofaGetVehicleInformation', () => {
       it('get vehicle info', async () => {
