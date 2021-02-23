@@ -83,13 +83,6 @@ export const articleCategory = factory<ArticleCategory>({
   description: () => faker.lorem.sentence(),
 })
 
-export const frontpage = factory<Frontpage>({
-  title: () => title(),
-  featured: () => featured.list(3),
-  slides: () => frontPageSlider.list(2),
-  lifeEvents: () => lifeEvent.list(6),
-})
-
 export const article = factory<SystemMetadata<Article>>({
   typename: 'Article',
   id: () => faker.random.uuid(),
@@ -206,4 +199,11 @@ export const homepage = factory<Homepage>({
 export const genericPage = factory<GenericPage>({
   slug: slugify('title'),
   title: () => title(),
+})
+
+export const frontpage = factory<Frontpage>({
+  title: () => title(),
+  featured: () => featured.list(3),
+  slides: () => frontPageSlider.list(2),
+  lifeEvents: () => lifeEvent.list(6),
 })
