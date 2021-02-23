@@ -4,7 +4,7 @@ import {
   ParentResidenceChange,
   PersonResidenceChange,
 } from '@island.is/application/templates/children-residence-change'
-import { PdfConstants as Constants } from './constants'
+import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
 export async function generateResidenceChangePdf(
@@ -14,12 +14,12 @@ export async function generateResidenceChangePdf(
   expiry: string,
 ): Promise<Buffer> {
   const doc = new PDFDocument({
-    size: Constants.PAGE_SIZE,
+    size: PdfConstants.PAGE_SIZE,
     margins: {
-      top: Constants.VERTICAL_MARGIN,
-      bottom: Constants.VERTICAL_MARGIN,
-      left: Constants.HORIZONTAL_MARGIN,
-      right: Constants.HORIZONTAL_MARGIN,
+      top: PdfConstants.VERTICAL_MARGIN,
+      bottom: PdfConstants.VERTICAL_MARGIN,
+      left: PdfConstants.HORIZONTAL_MARGIN,
+      right: PdfConstants.HORIZONTAL_MARGIN,
     },
   })
 
@@ -38,15 +38,15 @@ export async function generateResidenceChangePdf(
 
   const addParentToDoc = (header: string, parent: ParentResidenceChange) => {
     addToDoc(
-      Constants.BOLD_FONT,
-      Constants.SUB_HEADER_FONT_SIZE,
-      Constants.NORMAL_LINE_GAP,
+      PdfConstants.BOLD_FONT,
+      PdfConstants.SUB_HEADER_FONT_SIZE,
+      PdfConstants.NORMAL_LINE_GAP,
       header,
     )
     addToDoc(
-      Constants.NORMAL_FONT,
-      Constants.VALUE_FONT_SIZE,
-      Constants.NO_LINE_GAP,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.VALUE_FONT_SIZE,
+      PdfConstants.NO_LINE_GAP,
       `Nafn: ${parent.name}`,
     )
 
@@ -54,7 +54,7 @@ export async function generateResidenceChangePdf(
       .text(`Kennitala: ${parent.ssn}`)
       .text(`Netfang: ${parent.email}`)
       .text(`Símanúmer: ${parent.phoneNumber}`)
-      .lineGap(Constants.LARGE_LINE_GAP)
+      .lineGap(PdfConstants.LARGE_LINE_GAP)
       .text(`Heimilisfang: ${parentHomeAddress(parent)}`)
   }
 
@@ -63,40 +63,40 @@ export async function generateResidenceChangePdf(
   doc
     .image(
       DistrictCommissionerLogo,
-      doc.page.width - Constants.HORIZONTAL_MARGIN - Constants.IMAGE_WIDTH,
-      Constants.VERTICAL_MARGIN,
-      { fit: [Constants.IMAGE_WIDTH, Constants.IMAGE_HEIGHT], align: 'right' },
+      doc.page.width - PdfConstants.HORIZONTAL_MARGIN - PdfConstants.IMAGE_WIDTH,
+      PdfConstants.VERTICAL_MARGIN,
+      { fit: [PdfConstants.IMAGE_WIDTH, PdfConstants.IMAGE_HEIGHT], align: 'right' },
     )
     .moveDown()
 
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Samningur foreldra með sameiginlega forsjá um breytt lögheimili barna',
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.LARGE_LINE_GAP,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.LARGE_LINE_GAP,
     'skv. 32.gr. barnalaga nr. 76/2003',
   )
 
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Barn/börn undir 18 ára aldri sem erindið varðar',
   )
 
   childrenAppliedFor.map((c, i) =>
     addToDoc(
-      Constants.NORMAL_FONT,
-      Constants.VALUE_FONT_SIZE,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.VALUE_FONT_SIZE,
       i === childrenAppliedFor.length - 1
-        ? Constants.LARGE_LINE_GAP
-        : Constants.NO_LINE_GAP,
+        ? PdfConstants.LARGE_LINE_GAP
+        : PdfConstants.NO_LINE_GAP,
       `Nafn og kennitala barns: ${c.name}, ${c.ssn}`,
     ),
   )
@@ -105,38 +105,38 @@ export async function generateResidenceChangePdf(
   addParentToDoc('Foreldri B', parentB)
 
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Lögheimilsbreyting:',
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.VALUE_FONT_SIZE,
-    Constants.NO_LINE_GAP,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
     `Fyrra lögheimili: ${parentHomeAddress(parentA)}`,
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.VALUE_FONT_SIZE,
-    Constants.LARGE_LINE_GAP,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.LARGE_LINE_GAP,
     `Fyrra lögheimili: ${parentHomeAddress(parentB)}`,
   )
 
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Gildistími samnings',
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.VALUE_FONT_SIZE,
-    Constants.NO_LINE_GAP,
-    expiry === Constants.PERMANENT
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    expiry === PdfConstants.PERMANENT
       ? 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.'
       : `Samningurinn gildir til ${expiry}`,
   )

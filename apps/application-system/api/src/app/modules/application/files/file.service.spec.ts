@@ -15,19 +15,35 @@ describe('FileService', () => {
     controlCode: 'code',
     documentToken: 'token',
   }
-  const applicantsPhoneNumber = '111-2222'
-  const parentBPhoneNumber = '222-1111'
-  const applicantName = 'Test name'
-  const applicantSsn = '0113215029'
+
   const applicationId = '1111-2222-3333-4444'
+
+  const parentA = {
+    nationalId: '0113215029',
+    ssn: '0113215029',
+    fullName: 'Test name',
+    phoneNumber: '111-2222',
+    email: 'email@email.is'
+  }
+
+  const parentB = {
+    id: 'id',
+    name: 'parent b',
+    ssn: '0022993322',
+    postalCode: '101',
+    address: 'Borgartún',
+    city: 'Reykjavík',
+    phoneNumber: '222-1111',
+    email: 'email2@email2.is'
+  }
 
   const createApplication = (
     answers: object = {
-      email: 'email@email.is ',
-      phoneNumber: applicantsPhoneNumber,
+      email: parentA.email,
+      phoneNumber: parentA.phoneNumber,
       parentB: {
-        email: 'emailb@email.b.is',
-        phoneNumber: parentBPhoneNumber,
+        email: parentB.email,
+        phoneNumber: parentB.phoneNumber,
       },
       expiry: 'permanent',
     },
@@ -35,7 +51,7 @@ describe('FileService', () => {
     (({
       id: applicationId,
       state: 'draft',
-      applicant: applicantSsn,
+      applicant: parentA.ssn,
       assignees: [],
       typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
       modified: new Date(),
@@ -44,19 +60,12 @@ describe('FileService', () => {
       answers,
       externalData: {
         parentNationalRegistry: {
-          data: {
-            id: 'id',
-            name: 'parent b',
-            ssn: '0022993322',
-            postalCode: '101',
-            address: 'Borgartún',
-            city: 'Reykjavík',
-          },
+          data: { ...parentB},
           status: 'success',
           date: new Date(),
         },
         nationalRegistry: {
-          data: { nationalId: applicantSsn, fullName: applicantName },
+          data: { ...parentA},
           status: 'success',
           date: new Date(),
         },
@@ -137,9 +146,9 @@ describe('FileService', () => {
     )
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
-      applicantsPhoneNumber,
+      parentA.phoneNumber,
       'Lögheimilisbreyting barns',
-      applicantName,
+      parentA.fullName,
       'Ísland',
       'Lögheimilisbreyting-barns.pdf',
       'body',

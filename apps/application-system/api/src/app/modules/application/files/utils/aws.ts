@@ -3,7 +3,7 @@ import { environment } from '../../../../../environments'
 
 const s3 = new AWS.S3()
 const oneMinute = 60
-const bucket = environment.fsS3Bucket ?? 'development-legal-residence-change'
+const bucket = environment.fsS3Bucket ?? ''
 
 export async function getFile(
   fileName: string,
