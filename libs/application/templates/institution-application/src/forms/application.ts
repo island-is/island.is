@@ -37,7 +37,7 @@ export const application: Form = buildForm({
               description: m.applicantContactSubtitle,
             }),
             buildTextField({
-              id: 'contact.phone',
+              id: 'contact.phoneNumber',
               title: m.applicantContactPhone,
               variant: 'tel',
               format: '###-####',
@@ -116,10 +116,15 @@ export const application: Form = buildForm({
       children: [
         buildMultiField({
           id: 'applicationOverview',
-          title: 'Yfirlit umsóknar',
+          title: 'Yfirlit og staðfesting umsóknar',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rhoncus, est vel eleifend aliquet, purus nibh pretium risus, eget imperdiet turpis nisi sit amet arcu. In non auctor erat. Quisque at nunc sed nisi elementum blandit id nec nisl. Vestibulum consectetur arcu sed porta congue. Cras vulputate placerat vulputate',
           children: [
+            buildCustomField({
+              id: 'reviewScreen',
+              title: '',
+              component: 'ReviewScreen',
+            }),
             buildSubmitField({
               id: 'submit',
               title: 'Staðfesta umsókn',
