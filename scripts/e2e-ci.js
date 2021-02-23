@@ -73,7 +73,7 @@ const CMD = {
   ],
   TEST: `yarn nx run ${argv.name}:e2e:production --headless --production${
       argv.ci ? 
-        ` --record --group=${argv.name}` :
+        ` --record --group=${argv.name} --ci-build-id=saevar-manual-004` :
         ''
     }${
       argv['skip-cache'] ?
@@ -131,9 +131,13 @@ const main = async () => {
     const testResult = await pexec(CMD.TEST)
     console.log(testResult.stdout)
     console.log(testResult.stderr)
-    console.log(`Test process exited with status ${testResult.status}`)
-    if (testResult.status) {
-      exitCode = testResult.status
+
+    // Tests can fail without the command exiting with code 1
+    // So to be sure that all tests where successful we check
+    // for the string 'All specs passed!'
+    if (!testResult.stdout.includes('All specs passed!')) {
+      console.log('Tests have failed. See output above for further details.')
+      exitCode = 1
     }
   } catch (err) {
     exitCode = 1
