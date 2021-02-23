@@ -89,7 +89,7 @@ describe('skilavottordApiTest', () => {
         const checkVehileResp = await samgongustofaService.getVehicleInformation(
           kennitala,
         )
-        expect(checkVehileResp[0].permno).toBe('ZUG18')
+        expect(checkVehileResp[0].permno).toBe('BAT01')
       })
     })
   })

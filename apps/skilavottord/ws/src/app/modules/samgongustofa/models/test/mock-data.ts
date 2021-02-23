@@ -7,18 +7,18 @@ export class MockData {
          <allVehiclesForPersidnoReturn xsi:type="soapenc:string" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
          <![CDATA[<?xml version="1.0" encoding="UTF-8" ?>
 <persidnolookup>
-             <persidno>1505664449</persidno>
-             <name>Rúnar Sigurður Guðlaugsson</name>
-             <address>Ölduslóð 30</address>
-             <poststation>220 Hafnarfirði</poststation>
+             <persidno>1111111111</persidno>
+             <name>Batman Jónsson</name>
+             <address>Bankastræti 0</address>
+             <poststation>101 Reykjavík</poststation>
              <vehicleList>
                            <vehicle>
                                         <isCurrent>1</isCurrent>
-                                        <permno>ZUG18</permno>
-                                        <regno>ZUG18</regno>
+                                        <permno>BAT01</permno>
+                                        <regno>BAT01</regno>
                                         <vin>WBA2C710207A74485</vin>
-                                        <type>BMW 2</type>
-                                        <color>Hvítur</color>
+                                        <type>Batmobile</type>
+                                        <color>Svartur</color>
                                         <firstregdate>28.02.2018</firstregdate>
                                         <modelyear></modelyear>
                                         <productyear></productyear>
@@ -30,7 +30,7 @@ export class MockData {
                                         <otherowners>0</otherowners>
                                         <termination>Núverandi eigandi</termination>
                                         <buyerpersidno></buyerpersidno>
-                                        <ownerpersidno>1505664449</ownerpersidno>
+                                        <ownerpersidno>1111111111</ownerpersidno>
                                         <vehiclestatus>Í lagi</vehiclestatus>
                                         <usegroup>Almenn notkun</usegroup>
                                         <vehgroup>Fólksbifreið (M1)</vehgroup>
@@ -49,8 +49,8 @@ export class MockData {
          <basicVehicleInformationReturn xsi:type="soapenc:string" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"><![CDATA[<?xml version="1.0" encoding="UTF-8" ?>
 <vehicle>
              <message></message>
-             <permno>ZUG18</permno>
-             <regno>ZUG18</regno>
+             <permno>BAT01</permno>
+             <regno>BAT01</regno>
              <vin>VBKEXA4088M456073</vin>
              <typeno>VBKEXA405001</typeno>
              <typeapproval>1161</typeapproval>
@@ -73,7 +73,7 @@ export class MockData {
              <reregdate></reregdate>
              <ownregdate>25.04.2012</ownregdate>
              <manufacturer>KTM - Sportmotorcycle</manufacturer>
-             <country>Austurríki</country>
+             <country>Transilvanía</country>
              <formercountry></formercountry>
           <importerpersidno>4802992569</importerpersidno>
              <importername>KTM Ísland ehf.</importername>
@@ -208,7 +208,7 @@ export class MockData {
                                         <purchasedate>18.04.2012</purchasedate>
                                         <ownregdate>25.04.2012</ownregdate>
                                         <receptiondate>25.04.2012</receptiondate>
-                                        <persidno>6906892009</persidno>
+                                        <persidno>1111111111</persidno>
                                         <fullname>Vátryggingafélag Íslands hf.</fullname>
                                         <address>Ármúla 3</address>
                                         <postalcode>108</postalcode>
@@ -223,11 +223,11 @@ export class MockData {
                                         <purchasedate>25.05.2009</purchasedate>
                                         <ownregdate>03.06.2009</ownregdate>
                                         <receptiondate>02.06.2009</receptiondate>
-                                        <persidno>2609585349</persidno>
-                                        <fullname>Jón Sigurðsson</fullname>
-                                        <address>Funalind 13</address>
-                                        <postalcode>201</postalcode>
-                                        <city>Kópavogi</city>
+                                        <persidno>1111111111</persidno>
+                                        <fullname>Jón Jónsson</fullname>
+                                        <address>Bankastræti 0</address>
+                                        <postalcode>101</postalcode>
+                                        <city>Reykjavík</city>
                                        <ownerinsurancecode>6090</ownerinsurancecode>
                                         <co-owners>
                                         </co-owners>
@@ -238,10 +238,10 @@ export class MockData {
                                         <purchasedate>31.08.2007</purchasedate>
                                         <ownregdate>31.08.2007</ownregdate>
                                         <receptiondate>31.08.2007</receptiondate>
-                                        <persidno>5008002080</persidno>
-                                        <fullname>Aron Reynisson ehf</fullname>
-                                        <address>Höfðabakka 9</address>
-                                        <postalcode>110</postalcode>
+                                        <persidno>1111111111</persidno>
+                                        <fullname>Aron Aronsson</fullname>
+                                        <address>Bankastræti 0</address>
+                                        <postalcode>101</postalcode>
                                         <city>Reykjavík</city>
                                        <ownerinsurancecode>6080</ownerinsurancecode>
                                         <co-owners>
@@ -255,9 +255,9 @@ export class MockData {
                                         <serial>0</serial>
                                         <startdate>29.08.2007</startdate>
                                         <enddate>03.06.2009</enddate>
-                                        <persidno>4802992569</persidno>
+                                        <persidno>1111111111</persidno>
                                         <fullname>KTM Ísland ehf.</fullname>
-                                        <address>Gylfaflöt 16-18</address>
+                                        <address>Bankastræti 0</address>
                                         <postalcode>112</postalcode>
                                         <city>Reykjavík</city>
                            </operator>
@@ -265,7 +265,7 @@ export class MockData {
              <plates>
                            <plate>
                                         <date>31.08.2007</date>
-                                        <regno>ZUG18</regno>
+                                        <regno>BAT01</regno>
                                         <reggroup>N1</reggroup>
                                         <reggroupname>Almenn merki</reggroupname>
                            </plate>
@@ -346,9 +346,9 @@ export class MockData {
                            <inspection>
                                         <date>29.09.2010</date>
                                         <reinspectiondate></reinspectiondate>
-                                        <station>Frumherji Hesthálsi</station>
+                                        <station>Frumherji</station>
                                         <type>Aðalskoðun</type>
-                                        <officer>Haukur Óskarsson</officer>
+                                        <officer>Óskar Óskarsson</officer>
                                         <result>Lagfæring</result>
                                         <odometer>4530</odometer>
                                         <remarks>
@@ -365,7 +365,7 @@ export class MockData {
                                         <reinspectiondate></reinspectiondate>
                                         <station>KTM Ísland ehf.</station>
                                         <type>Fulltrúaskoðun</type>
-                                        <officer>Karl Gunnlaugson</officer>
+                                        <officer>Karl Karlsson</officer>
                                         <result>Án athugasemda</result>
                                         <odometer>1</odometer>
                                         <remarks>
