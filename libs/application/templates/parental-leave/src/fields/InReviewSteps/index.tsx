@@ -7,13 +7,7 @@ import {
   getValueViaPath,
   MessageFormatter,
 } from '@island.is/application/core'
-import {
-  Box,
-  Button,
-  DialogPrompt,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import ReviewSection, { reviewSectionState } from './ReviewSection'
 import Review from '../Review'
 
