@@ -50,9 +50,9 @@ import {
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as styles from './CourtRecord.treat'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
+import * as styles from './CourtRecord.treat'
 
 interface CaseData {
   case?: Case

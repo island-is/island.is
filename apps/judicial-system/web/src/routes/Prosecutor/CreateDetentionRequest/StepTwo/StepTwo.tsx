@@ -53,7 +53,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import useDateTime from 'apps/judicial-system/web/src/utils/hooks/useDateTime'
+import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case

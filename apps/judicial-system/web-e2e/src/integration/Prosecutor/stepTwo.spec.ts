@@ -37,7 +37,7 @@ describe('/krafa/fyrirtaka/:id', () => {
     cy.getByTestid('select-court').contains('Héraðsdómur Reykjavíkur')
   })
 
-  it.only('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('datepicker').first().click()
     cy.contains('15').click()
     cy.getByTestid('arrestTime').clear().type('1333')

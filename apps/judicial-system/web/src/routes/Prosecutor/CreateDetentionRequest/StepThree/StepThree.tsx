@@ -46,7 +46,7 @@ import {
   alternativeTravelBanRestrictions,
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import useDateTime from 'apps/judicial-system/web/src/utils/hooks/useDateTime'
+import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case
