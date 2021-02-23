@@ -69,7 +69,10 @@ describe('/domari-krafa/thingbok', () => {
     )
 
     // Act
-    userEvent.type(await screen.findByLabelText('Þinghald hófst *'), '12:31')
+    userEvent.type(
+      await screen.findByLabelText('Þinghald hófst (kk:mm) *'),
+      '12:31',
+    )
 
     expect(document.title).toEqual('Þingbók - Réttarvörslugátt')
 
