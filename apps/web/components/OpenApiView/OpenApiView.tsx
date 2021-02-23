@@ -20,12 +20,18 @@ import { OpenApiDocumentation } from '../OpenApiDocumentation'
 export interface OpenApiViewProps {
   strings: GetNamespaceQuery['getNamespace']
   openApiInput: GetOpenApiInput
+  backupSpec: string
 }
 
-export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
+export const OpenApiView = ({
+  strings,
+  openApiInput,
+  backupSpec,
+}: OpenApiViewProps) => {
   const n = useNamespace(strings)
 
   const [documentation, setDocumentation] = useState<OpenApi>(null)
+  const [usingBackupSpec, setUsingBackupSpec] = useState<boolean>(false)
 
   const { data, loading, error } = useQuery(GET_OPEN_API_QUERY, {
     variables: {
@@ -34,19 +40,27 @@ export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
   })
 
   useEffect(() => {
-    const onCompleted = (data) => {
-      const converted = YamlParser.safeLoad(data.getOpenApi.spec)
+    const onCompleted = (specification) => {
+      const converted = YamlParser.safeLoad(specification)
 
       setDocumentation(converted as OpenApi)
     }
     if (onCompleted) {
       if (onCompleted && !loading && !error) {
-        onCompleted(data)
+        if (data?.getOpenApi?.spec.length) {
+          console.log('using fresh: ' + data?.getOpenApi?.spec.length)
+          setUsingBackupSpec(false)
+          onCompleted(data.getOpenApi.spec)
+        } else if (backupSpec) {
+          console.log('using stale')
+          onCompleted(backupSpec)
+          setUsingBackupSpec(true)
+        }
       } else {
         setDocumentation(null)
       }
     }
-  }, [loading, data, error])
+  }, [loading, data, error, backupSpec])
 
   return (
     <Box paddingTop={[3, 3, 4]} paddingBottom={[0, 0, 6]}>
@@ -72,7 +86,10 @@ export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
         {!loading &&
           !error &&
           (documentation ? (
-            <OpenApiDocumentation spec={documentation} />
+            <OpenApiDocumentation
+              spec={documentation}
+              liveSpecification={!usingBackupSpec}
+            />
           ) : (
             // documentation missing
             <AlertBanner

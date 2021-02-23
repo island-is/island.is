@@ -228,6 +228,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
               <OpenApiView
                 strings={openApiContent}
                 openApiInput={selectedGetOpenApiInput}
+                backupSpec={selectedServiceDetail.openApiString}
               />
             )
           }

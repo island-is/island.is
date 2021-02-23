@@ -53,6 +53,11 @@ export interface ServiceDetail {
   links: ExternalLinks
 
   /**
+   * The entire open api document from the service.
+   */
+  openApiString: string
+
+  /**
    * X-Road identifying the service in different X-Road environments.
    */
   xroadIdentifier: XroadIdentifier

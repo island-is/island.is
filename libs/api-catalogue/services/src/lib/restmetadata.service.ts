@@ -34,7 +34,10 @@ export class RestMetadataService {
    * from an Service Provider (X-Road Subsystem)
    * @param provider
    */
-  async getServices(provider: Provider): Promise<Array<Service>> {
+  async getServices(
+    provider: Provider,
+    environment: Environment,
+  ): Promise<Array<Service>> {
     logger.info(`Getting services for ${providerToString(provider)}`)
     const services: Array<Service> = []
     const serviceMap = await this.getServiceCodes(provider)
@@ -55,7 +58,7 @@ export class RestMetadataService {
         type: [TypeCategory.REST],
         environments: [
           {
-            environment: Environment.DEVELOPMENT, // TODO: Needs to be environment aware
+            environment: environment,
             details: [],
           },
         ],
@@ -79,7 +82,8 @@ export class RestMetadataService {
           service.data = union(service.data, spec.info['x-category'])
           service.pricing = union(service.pricing, spec.info['x-pricing'])
 
-          // TODO: This needs to be environment aware
+          // First environment in the array should always
+          // be the same environment the collector ran in.
           service.environments[0].details.push({
             version: parseVersionNumber(sorted[i].serviceCode!),
             title: spec.info.title,
@@ -95,6 +99,7 @@ export class RestMetadataService {
               featureRequest: spec.info['x-links']?.featureRequest ?? '',
             },
             xroadIdentifier: sorted[i],
+            openApiString: JSON.stringify(spec),
           })
         } else {
           logger.error(
