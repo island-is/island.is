@@ -37,13 +37,12 @@ export class UploadProcessor {
 
     const { key: sourceKey } = AmazonS3URI(attachmentUrl)
     const destinationKey = `${applicationId}/${sourceKey}`
-    const url = await this.fileStorageService.copyObjectFromUploadBucket(
+    const resultUrl = await this.fileStorageService.copyObjectFromUploadBucket(
       sourceKey,
       destinationBucket,
       destinationKey,
     )
 
-    const resultUrl = `https://${destinationBucket}.s3-${this.config.region}.amazonaws.com/${destinationKey}`
     return {
       attachmentKey: sourceKey,
       resultUrl,
