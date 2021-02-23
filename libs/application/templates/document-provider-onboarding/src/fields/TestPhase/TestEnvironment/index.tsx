@@ -40,7 +40,9 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     (formValue.testProviderId as string) || '',
   )
   const [environmentError, setEnvironmentError] = useState<string | null>(null)
-  const [createTestProvider] = useMutation(createTestProviderMutation)
+  const [createTestProvider, { loading }] = useMutation(
+    createTestProviderMutation,
+  )
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const nationalId = getValueViaPath(
@@ -93,7 +95,6 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
     }).then((response) => {
       application.answers = response.data?.updateApplication?.answers
     })
-
     clearErrors('testProviderId')
   }
 
@@ -130,6 +131,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           disabled={currentAnswer !== ''}
           onClick={() => {
             onRegister()
