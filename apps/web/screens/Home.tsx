@@ -40,6 +40,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -223,6 +224,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
+          tag: FRONTPAGE_NEWS_TAG_ID,
         },
       },
     }),
