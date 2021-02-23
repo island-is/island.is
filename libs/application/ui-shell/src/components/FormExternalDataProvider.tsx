@@ -22,6 +22,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 
 import { verifyExternalData } from '../utils'
+import Markdown from 'markdown-to-jsx'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -175,9 +176,11 @@ const FormExternalDataProvider: FC<{
                   hasError={error !== undefined}
                   name={`${id}`}
                   label={
-                    checkboxLabel
-                      ? formatMessage(checkboxLabel)
-                      : formatMessage(coreMessages.externalDataAgreement)
+                    <Markdown>
+                      {checkboxLabel
+                        ? formatMessage(checkboxLabel)
+                        : formatMessage(coreMessages.externalDataAgreement)}
+                    </Markdown>
                   }
                   value={id}
                 />

@@ -16,13 +16,14 @@ export const useModalContent = (externalData: ExternalData) => {
   const [content, setContent] = useState<ContentType>()
   const history = useHistory()
   const { lang } = useLocale()
-  const applications = externalData?.applications.data as Applications[]
-  const sortedApplications = applications.length
-    ? applications.sort((a, b) =>
-        new Date(a.created) > new Date(b.created) ? 1 : -1,
-      )
-    : []
-  const firstCreatedApplicationId = sortedApplications[0]?.id
+
+  const getFirstCreatedApplicationId = () => {
+    const applications = externalData?.applications.data as Applications[]
+    const sortedApplications = applications.sort((a, b) =>
+      new Date(a.created) > new Date(b.created) ? 1 : -1,
+    )
+    return sortedApplications[0]?.id
+  }
 
   const contentList = {
     hasHealthInsurance: {
@@ -39,8 +40,6 @@ export const useModalContent = (externalData: ExternalData) => {
       title: m.activeDraftApplicationTitle,
       description: m.activeDraftApplicationDescription,
       buttonText: m.activeDraftApplicationButtonText,
-      buttonAction: () =>
-        history.push(`../umsokn/${firstCreatedApplicationId}`),
     },
     pendingApplication: {
       title: m.pendingApplicationTitle,
@@ -79,7 +78,12 @@ export const useModalContent = (externalData: ExternalData) => {
     } else if (hasIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
     } else if (hasActiveDraftApplication(externalData)) {
-      setContent(contentList.activeDraftApplication)
+      const firstCreatedApplicationId = getFirstCreatedApplicationId()
+      setContent({
+        ...contentList.activeDraftApplication,
+        buttonAction: () =>
+          history.push(`../umsokn/${firstCreatedApplicationId}`),
+      })
     }
   }, [externalData])
 
