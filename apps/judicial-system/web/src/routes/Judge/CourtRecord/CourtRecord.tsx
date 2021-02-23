@@ -16,7 +16,6 @@ import {
   CaseNumbers,
   BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   capitalize,
@@ -52,6 +51,8 @@ import {
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as styles from './CourtRecord.treat'
+import useDateTime from '../../../utils/hooks/useDateTime'
+import { validate } from '../../../utils/validate'
 
 interface CaseData {
   case?: Case
@@ -78,6 +79,10 @@ export const CourtRecord: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
+  const { isValidTime: isValidCourtStartTime } = useDateTime(
+    undefined,
+    formatDate(workingCase?.courtStartTime, TIME_FORMAT),
+  )
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = useCallback(
@@ -480,25 +485,12 @@ export const CourtRecord: React.FC = () => {
             previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={
-              isNextDisabled([
-                {
-                  value:
-                    formatDate(workingCase.courtStartTime, TIME_FORMAT) || '',
-                  validations: ['empty', 'time-format'],
-                },
-                {
-                  value: workingCase.courtAttendees || '',
-                  validations: ['empty'],
-                },
-                {
-                  value: workingCase.policeDemands || '',
-                  validations: ['empty'],
-                },
-                {
-                  value: workingCase.litigationPresentations || '',
-                  validations: ['empty'],
-                },
-              ]) || workingCase.accusedPleaDecision === null
+              !isValidCourtStartTime ||
+              !validate(workingCase.courtAttendees || '', 'empty').isValid ||
+              !validate(workingCase.policeDemands || '', 'empty').isValid ||
+              !validate(workingCase.litigationPresentations || '', 'empty')
+                .isValid ||
+              workingCase.accusedPleaDecision === null
             }
           />
         </>
