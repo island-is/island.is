@@ -41,7 +41,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
           paddingBottom={[4, 5, 10]}
         >
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '4/11']}>
+            <GridColumn span={['10/10', '10/10', '3/10']}>
               <Box className={styles.popularTitleWrap}>
                 <Text
                   variant="h2"
@@ -58,7 +58,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
                 )}
               </Box>
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '7/11']}>
+            <GridColumn span={['10/10', '10/10', '7/10']}>
               <Stack space={2}>
                 {slice.articles.map(({ title, slug, processEntry }) => {
                   const url = linkResolver('Article' as LinkType, [slug])
