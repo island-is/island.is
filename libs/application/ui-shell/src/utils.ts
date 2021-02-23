@@ -57,7 +57,7 @@ export function extractAnswersToSubmitFromScreen(
     return pick(data, [repeaterId])
   }
   if (
-    screen.type === 'CUSTOM' &&
+    screen.type === FieldTypes.CUSTOM &&
     screen.childInputIds &&
     screen.childInputIds.length > 1
   ) {
