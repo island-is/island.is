@@ -30,8 +30,7 @@ import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -54,6 +53,7 @@ import {
 import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import useDateTime from 'apps/judicial-system/web/src/utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case
@@ -62,7 +62,6 @@ interface CaseData {
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
   const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
     '',
@@ -75,6 +74,13 @@ export const RulingStepOne: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
+  const { isValidDate: isValidCustodyEndDate } = useDateTime(
+    workingCase?.custodyEndDate,
+  )
+  const { isValidTime: isValidCustodyEndTime } = useDateTime(
+    undefined,
+    custodyEndTimeRef.current?.value,
+  )
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = useCallback(
@@ -130,25 +136,6 @@ export const RulingStepOne: React.FC = () => {
       setWorkingCase(theCase)
     }
   }, [workingCase, setWorkingCase, data, updateCase])
-
-  useEffect(() => {
-    let requiredFields: { value: string; validations: Validation[] }[] = [
-      { value: workingCase?.ruling || '', validations: ['empty'] },
-    ]
-    if (workingCase?.decision !== CaseDecision.REJECTING) {
-      requiredFields = requiredFields.concat([
-        { value: workingCase?.custodyEndDate || '', validations: ['empty'] },
-        {
-          value: custodyEndTimeRef.current?.value || '',
-          validations: ['empty', 'time-format'],
-        },
-      ])
-    }
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields) || !workingCase.decision)
-    }
-  }, [workingCase, isStepIllegal])
 
   return (
     <PageLayout
@@ -428,7 +415,12 @@ export const RulingStepOne: React.FC = () => {
           <FormFooter
             previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
-            nextIsDisabled={isStepIllegal}
+            nextIsDisabled={
+              !workingCase.decision ||
+              validate(workingCase.ruling || '', 'empty').isValid ||
+              (workingCase.decision !== CaseDecision.REJECTING &&
+                (!isValidCustodyEndDate || !isValidCustodyEndTime))
+            }
           />
         </>
       ) : null}
