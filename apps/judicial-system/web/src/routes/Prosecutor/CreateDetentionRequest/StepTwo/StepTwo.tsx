@@ -30,7 +30,6 @@ import {
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   setAndSendDateToServer,
   validateAndSendTimeToServer,
@@ -38,7 +37,6 @@ import {
   setAndSendToServer,
   getTimeFromDate,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
   PageLayout,
@@ -55,6 +53,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import useDateTime from 'apps/judicial-system/web/src/utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case
@@ -64,13 +63,22 @@ export const StepTwo: React.FC = () => {
   const history = useHistory()
 
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [arrestTime, setArrestTime] = useState<string | undefined>('')
   const [requestedCourtTime, setRequestedCourtTime] = useState<string>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { id } = useParams<{ id: string }>()
   const { user } = useContext(UserContext)
+
+  // Validate date and time fields
+  const { isValidTime: isValidArrestTime } = useDateTime(undefined, arrestTime)
+  const { isValidDate: isValidRequestedCourtDate } = useDateTime(
+    workingCase?.requestedCourtDate,
+  )
+  const { isValidTime: isValidRequestedCourtTime } = useDateTime(
+    undefined,
+    requestedCourtTime,
+  )
 
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
     '',
@@ -201,30 +209,6 @@ export const StepTwo: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.requestedCourtDate || '',
-        validations: ['empty'],
-      },
-      {
-        value: requestedCourtTime || '',
-        validations: ['empty', 'time-format'],
-      },
-    ]
-
-    if (workingCase?.arrestDate) {
-      requiredFields.push({
-        value: arrestTime || '',
-        validations: ['empty', 'time-format'],
-      })
-    }
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, setIsStepIllegal, arrestTime, requestedCourtTime])
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -536,7 +520,12 @@ export const StepTwo: React.FC = () => {
           <FormFooter
             previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
             onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={isStepIllegal || transitionLoading}
+            nextIsDisabled={
+              transitionLoading ||
+              (workingCase.arrestDate && !isValidArrestTime) ||
+              !isValidRequestedCourtDate ||
+              !isValidRequestedCourtTime
+            }
             nextIsLoading={transitionLoading}
           />
           {modalVisible && (

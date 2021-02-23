@@ -6,7 +6,6 @@ describe('/krafa/fyrirtaka/:id', () => {
 
   it('should require a valid arrest time', () => {
     cy.getByTestid('datepicker').first().click()
-    cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
     cy.getByTestid('arrestTime').type('13:').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 12:34 eða 1:23')
@@ -38,9 +37,8 @@ describe('/krafa/fyrirtaka/:id', () => {
     cy.getByTestid('select-court').contains('Héraðsdómur Reykjavíkur')
   })
 
-  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+  it.only('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('datepicker').first().click()
-    cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
     cy.getByTestid('arrestTime').clear().type('1333')
     cy.getByTestid('datepicker').last().click()
