@@ -20,6 +20,7 @@ import {
   TableOfContents,
   Button,
   Tag,
+  LinkContext,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -112,13 +113,26 @@ const createArticleNavigation = (
   return nav
 }
 
-const RelatedArticles: FC<{
+const RelatedContent: FC<{
   title: string
-  articles: Array<{ slug: string; title: string }>
-}> = ({ title, articles }) => {
+  articles: Array<{ title: string; slug: string }>
+  otherContent: Array<{ text: string; url: string }>
+}> = ({ title, articles, otherContent }) => {
   const { linkResolver } = useLinkResolver()
 
-  if (articles.length === 0) return null
+  if (articles.length < 1 && otherContent.length < 1) return null
+
+  const relatedLinks = (articles ?? [])
+    .map((article) => ({
+      title: article.title,
+      url: linkResolver('article', [article.slug]).href,
+    }))
+    .concat(
+      (otherContent ?? []).map((article) => ({
+        title: article.text,
+        url: article.url,
+      })),
+    )
 
   return (
     <Box background="purple100" borderRadius="large" padding={[3, 3, 4]}>
@@ -126,14 +140,10 @@ const RelatedArticles: FC<{
         <Text variant="eyebrow" as="h2">
           {title}
         </Text>
-        {articles.map((article) => (
-          <Link
-            key={article.slug}
-            {...linkResolver('article', [article.slug])}
-            underline="normal"
-          >
-            <Text key={article.slug} as="span">
-              {article.title}
+        {relatedLinks.map((link) => (
+          <Link key={link.url} href={link.url} underline="normal">
+            <Text key={link.url} as="span">
+              {link.title}
             </Text>
           </Link>
         ))}
@@ -223,6 +233,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
+
   return (
     <Stack space={3}>
       {!!article.category && (
@@ -254,9 +265,10 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
         <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
       {article.relatedArticles.length > 0 && (
-        <RelatedArticles
+        <RelatedContent
           title={n('relatedMaterial')}
           articles={article.relatedArticles}
+          otherContent={article.relatedContent}
         />
       )}
     </Stack>
@@ -336,6 +348,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
+  const categoryHref = linkResolver('articlecategory', [article.category.slug])
+    .href
+  const organizationTitle = article.organization[0]?.title
+  const organizationShortTitle = article.organization[0]?.shortTitle
 
   return (
     <>
@@ -406,34 +422,44 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         >
           {!!article.category && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-              <Text truncate>
-                <Link
-                  href={linkResolver('articlecategory', [
-                    article.category.slug,
-                  ])}
-                >
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="small"
-                    type="button"
-                    variant="text"
-                  >
-                    {article.category.title}
-                  </Button>
-                </Link>
-              </Text>
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <Link href={href} pureChildren skipTab>
+                      {children}
+                    </Link>
+                  ),
+                }}
+              >
+                <Text truncate>
+                  <a href={categoryHref}>
+                    <Button
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                    >
+                      {article.category.title}
+                    </Button>
+                  </a>
+                </Text>
+              </LinkContext.Provider>
             </Box>
           )}
           {article.organization.length > 0 && (
             <Box minWidth={0}>
-              <Tag
-                variant="purple"
-                truncate
-                href={article.organization[0].link}
-              >
-                {article.organization[0].title}
-              </Tag>
+              {article.organization[0].link ? (
+                <Link href={article.organization[0].link} skipTab>
+                  <Tag variant="purple" truncate>
+                    {organizationShortTitle || organizationTitle}
+                  </Tag>
+                </Link>
+              ) : (
+                <Tag variant="purple" truncate disabled>
+                  {organizationShortTitle || organizationTitle}
+                </Tag>
+              )}
             </Box>
           )}
         </Box>
@@ -519,9 +545,10 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
           <Box display={['block', 'block', 'none']} printHidden>
             {article.relatedArticles.length > 0 && (
-              <RelatedArticles
+              <RelatedContent
                 title={n('relatedMaterial')}
                 articles={article.relatedArticles}
+                otherContent={article.relatedContent}
               />
             )}
           </Box>

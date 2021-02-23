@@ -7,14 +7,16 @@ import {
   Text,
   Stack,
   Box,
+  Link,
   Breadcrumbs,
   AccordionCard,
   TopicCard,
   FocusableBox,
   Navigation,
+  LinkContext,
+  Button,
 } from '@island.is/island-ui/core'
 import { Card, Sticky } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {
@@ -62,7 +64,7 @@ const Category: Screen<CategoryProps> = ({
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
-  const { activeLocale, t } = useI18n()
+
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -118,9 +120,20 @@ const Category: Screen<CategoryProps> = ({
   // find current category in categories list
   const category = getCurrentCategory()
 
-  useEffect(() => {
+  const getUrlHash = () => {
     const hashMatch = window.location.hash ?? ''
-    const hashString = hashMatch.replace('#', '')
+    return hashMatch.replace('#', '')
+  }
+
+  useEffect(() => {
+    const hashString = getUrlHash()
+    if (hashString.length > 0) {
+      document.getElementById(hashString).scrollIntoView()
+    }
+  }, [])
+
+  useEffect(() => {
+    const hashString = getUrlHash()
     setHash(hashString)
   }, [Router])
 
@@ -274,7 +287,11 @@ const Category: Screen<CategoryProps> = ({
           </Sticky>
         }
       >
-        <Box paddingBottom={[2, 2, 4]}>
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['none', 'none', 'block']}
+          printHidden
+        >
           <Breadcrumbs
             items={[
               {
@@ -291,16 +308,40 @@ const Category: Screen<CategoryProps> = ({
             }}
           />
         </Box>
-        <Box paddingBottom={[5, 5, 10]}>
-          <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
-            {category.title}
-          </Text>
-          <Text variant="intro" as="p">
-            {category.description}
-          </Text>
+        <Box
+          paddingBottom={[2, 2, 4]}
+          display={['flex', 'flex', 'none']}
+          justifyContent="spaceBetween"
+          alignItems="center"
+          printHidden
+        >
+          <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+            <LinkContext.Provider
+              value={{
+                linkRenderer: (href, children) => (
+                  <Link href={href} pureChildren skipTab>
+                    {children}
+                  </Link>
+                ),
+              }}
+            >
+              <Text truncate>
+                <Link {...linkResolver('homepage')} passHref>
+                  <Button
+                    preTextIcon="arrowBack"
+                    preTextIconType="filled"
+                    size="small"
+                    type="button"
+                    variant="text"
+                  >
+                    Ísland.is
+                  </Button>
+                </Link>
+              </Text>
+            </LinkContext.Provider>
+          </Box>
         </Box>
-
-        <Box display={['block', 'block', 'none']} marginBottom={4}>
+        <Box display={['block', 'block', 'none']}>
           <Navigation
             baseId="mobileNav"
             colorScheme="purple"
@@ -319,6 +360,14 @@ const Category: Screen<CategoryProps> = ({
             title={n('sidebarHeader')}
             activeItemTitle={category.title}
           />
+        </Box>
+        <Box paddingBottom={[5, 5, 10]}>
+          <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
+            {category.title}
+          </Text>
+          <Text variant="intro" as="p">
+            {category.description}
+          </Text>
         </Box>
         <Stack space={2}>
           {sortedGroups.map(({ groupSlug }, index) => {

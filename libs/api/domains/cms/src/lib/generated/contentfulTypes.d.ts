@@ -182,6 +182,9 @@ export interface IArticleFields {
   /** Related Articles */
   relatedArticles?: IArticle[] | undefined
 
+  /** Related Content */
+  relatedContent?: ILink[] | undefined
+
   /** Baby Articles */
   subArticles?: ISubArticle[] | undefined
 
@@ -294,6 +297,45 @@ export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
     contentType: {
       sys: {
         id: 'articleSubgroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAuctionFields {
+  /** Title */
+  title: string
+
+  /** Date */
+  date?: string | undefined
+
+  /** Type */
+  type: 'first' | 'continued' | 'vehicles'
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Content Old */
+  contentOld?: string | undefined
+
+  /** Organization */
+  organization: IOrganization
+}
+
+/** Used for syslumenn auctions */
+
+export interface IAuction extends Entry<IAuctionFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'auction'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -615,6 +657,9 @@ export interface IFeaturedArticlesFields {
 
   /** Articles */
   articles?: IArticle[] | undefined
+
+  /** Link */
+  link?: ILink | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -642,7 +687,10 @@ export interface IFooterItemFields {
   link?: ILink | undefined
 
   /** Content */
-  content?: string | undefined
+  content?: Document | undefined
+
+  /** Content Old */
+  contentOld?: string | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -1626,8 +1674,11 @@ export interface IOneColumnTextFields {
   /** Title */
   title: string
 
+  /** Content Old */
+  contentOld?: string | undefined
+
   /** Content */
-  content?: string | undefined
+  content?: Document | undefined
 
   /** Link */
   link?: ILink | undefined
@@ -1683,46 +1734,6 @@ export interface IOrganization extends Entry<IOrganizationFields> {
     contentType: {
       sys: {
         id: 'organization'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IOrganizationNewsFields {
-  /** Organization */
-  organization?: IOrganization | undefined
-
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Date */
-  date: string
-
-  /** Introduction */
-  introduction?: string | undefined
-
-  /** Featured Image */
-  featuredImage: Asset
-
-  /** Content */
-  content?: Document | undefined
-}
-
-export interface IOrganizationNews extends Entry<IOrganizationNewsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'organizationNews'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1817,20 +1828,23 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
+  /** Description Old */
+  descriptionOld?: string | undefined
+
   /** Description */
-  description?: string | undefined
+  description?: Document | undefined
 
   /** Links */
   links?: ILink[] | undefined
 
-  /** Sidebar Cards */
-  sidebarCards?: IStaffCard[] | undefined
-
   /** Slices */
   slices?: (IOffices | IOneColumnText | ITwoColumnText)[] | undefined
 
-  /** Menu Item */
-  menuItem?: ILink | undefined
+  /** Slice Custom Renderer */
+  sliceCustomRenderer?: 'SliceDropdown' | undefined
+
+  /** Slice Extra Text */
+  sliceExtraText?: string | undefined
 
   /** Parent Subpage */
   parentSubpage?: IOrganizationSubpage | undefined
@@ -2835,8 +2849,11 @@ export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
 
+  /** Left Content Old */
+  leftContentOld?: string | undefined
+
   /** Left Content */
-  leftContent?: string | undefined
+  leftContent?: Document | undefined
 
   /** Left Link */
   leftLink?: ILink | undefined
@@ -2844,8 +2861,11 @@ export interface ITwoColumnTextFields {
   /** Right Title */
   rightTitle?: string | undefined
 
+  /** Right Content Old */
+  rightContentOld?: string | undefined
+
   /** Right Content */
-  rightContent?: string | undefined
+  rightContent?: Document | undefined
 
   /** Right Link */
   rightLink?: ILink | undefined
@@ -3187,6 +3207,7 @@ export type CONTENT_TYPE =
   | 'articleCategory'
   | 'articleGroup'
   | 'articleSubgroup'
+  | 'auction'
   | 'author'
   | 'bigBulletList'
   | 'card'
@@ -3230,7 +3251,6 @@ export type CONTENT_TYPE =
   | 'offices'
   | 'oneColumnText'
   | 'organization'
-  | 'organizationNews'
   | 'organizationOffice'
   | 'organizationPage'
   | 'organizationSubpage'

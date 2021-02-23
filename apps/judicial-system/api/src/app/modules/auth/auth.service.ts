@@ -9,7 +9,9 @@ import { environment } from '../../../environments'
 @Injectable()
 export class AuthService {
   async findUser(nationalId: string): Promise<User | undefined> {
-    const res = await fetch(`${environment.backendUrl}/api/user/${nationalId}`)
+    const res = await fetch(
+      `${environment.backendUrl}/api/user/?nationalId=${nationalId}`,
+    )
 
     if (!res.ok) {
       return undefined

@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { Confirmation } from './Confirmation'
 import {
   CaseAppealDecision,
   UpdateCase,
@@ -15,6 +14,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import userEvent from '@testing-library/user-event'
+import { Confirmation } from './Confirmation'
 
 describe('Confirmation route', () => {
   test(`should not allow users to continue unless every required field has been filled out`, async () => {
@@ -53,13 +53,52 @@ describe('Confirmation route', () => {
       }),
     ).toBeDisabled()
 
-    userEvent.type(await screen.findByLabelText('Þinghaldi lauk *'), '15:55')
+    userEvent.type(
+      await screen.findByLabelText('Þinghaldi lauk (kk:mm) *'),
+      '15:55',
+    )
 
     expect(
       await screen.findByRole('button', {
         name: /Staðfesta og hefja undirritun/i,
       }),
     ).not.toBeDisabled()
+  })
+
+  test(`should not allow users to continue if the user is not the assigned judge`, async () => {
+    // Arrange
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              courtStartTime: '2020-09-16T15:55:000Z',
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <MemoryRouter
+          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_6`]}
+        >
+          <UserProvider>
+            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
+              <Confirmation />
+            </Route>
+          </UserProvider>
+        </MemoryRouter>
+      </MockedProvider>,
+    )
+
+    expect(
+      await screen.findByText(
+        'Einungis skráður dómari getur undirritað úrskurð',
+      ),
+    ).toBeInTheDocument()
   })
 
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {

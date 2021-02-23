@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import {
   Box,
   GridContainer,
@@ -8,17 +8,22 @@ import {
   AlertBanner,
   LinkContext,
 } from '@island.is/island-ui/core'
-import * as styles from './PageLayout.treat'
-import Loading from '../Loading/Loading'
-import Logo from '../Logo/Logo'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
 import { Sections } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '../UserProvider/UserProvider'
+import Logo from '../Logo/Logo'
+import Loading from '../Loading/Loading'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
-  activeSection: number
+  activeSection?: number
   isLoading: boolean
   notFound: boolean
   caseType?: CaseType
@@ -27,6 +32,7 @@ interface PageProps {
   parentCaseDecision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
   isExtension?: boolean
+  showSidepanel?: boolean
 }
 
 const PageLayout: React.FC<PageProps> = ({
@@ -39,7 +45,10 @@ const PageLayout: React.FC<PageProps> = ({
   decision,
   parentCaseDecision,
   isCustodyEndDateInThePast,
+  showSidepanel = true,
 }) => {
+  const { user } = useContext(UserContext)
+
   const caseResult = () => {
     if (
       decision === CaseDecision.REJECTING ||
@@ -131,6 +140,7 @@ const PageLayout: React.FC<PageProps> = ({
       ],
     },
   ]
+
   return children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
@@ -155,25 +165,27 @@ const PageLayout: React.FC<PageProps> = ({
               </GridColumn>
             </Box>
           </GridColumn>
-          <GridColumn span={['0', '0', '3/12', '3/12']}>
-            <Box marginLeft={2}>
-              <Logo />
-              <FormStepper
-                // Remove the extension parts of the formstepper if the user is not applying for an extension
-                sections={
-                  activeSection === Sections.EXTENSION ||
-                  activeSection === Sections.JUDGE_EXTENSION
-                    ? sections
-                    : sections.filter((_, index) => index <= 2)
-                }
-                formName={
-                  caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
-                }
-                activeSection={activeSection}
-                activeSubSection={activeSubSection}
-              />
-            </Box>
-          </GridColumn>
+          {showSidepanel && (
+            <GridColumn span={['0', '0', '3/12', '3/12']}>
+              <Box marginLeft={2}>
+                <Logo />
+                <FormStepper
+                  // Remove the extension parts of the formstepper if the user is not applying for an extension
+                  sections={
+                    activeSection === Sections.EXTENSION ||
+                    activeSection === Sections.JUDGE_EXTENSION
+                      ? sections
+                      : sections.filter((_, index) => index <= 2)
+                  }
+                  formName={
+                    caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+                  }
+                  activeSection={activeSection}
+                  activeSubSection={activeSubSection}
+                />
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
       </GridContainer>
     </Box>
@@ -193,11 +205,22 @@ const PageLayout: React.FC<PageProps> = ({
     >
       {notFound && (
         <AlertBanner
-          title="Mál fannst ekki"
-          description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
+          title={
+            user?.role === UserRole.ADMIN
+              ? 'Notandi fannst ekki'
+              : 'Mál fannst ekki'
+          }
+          description={
+            user?.role === UserRole.ADMIN
+              ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
+              : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+          }
           variant="error"
           link={{
-            href: Constants.REQUEST_LIST_ROUTE,
+            href:
+              user?.role === UserRole.ADMIN
+                ? Constants.USER_LIST_ROUTE
+                : Constants.REQUEST_LIST_ROUTE,
             title: 'Fara á yfirlitssíðu',
           }}
         />

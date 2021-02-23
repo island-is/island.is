@@ -30,7 +30,6 @@ import {
   TIME_FORMAT,
   formatRequestedCustodyRestrictions,
 } from '@island.is/judicial-system/formatters'
-import * as styles from './Overview.treat'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -43,6 +42,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as styles from './Overview.treat'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -114,8 +114,6 @@ export const Overview: React.FC = () => {
             prosecutor: resCase.prosecutor,
           })
         } catch (e) {
-          console.log(e)
-
           return false
         }
         break
@@ -159,7 +157,7 @@ export const Overview: React.FC = () => {
                 workingCase.parentCase ? 'framlengingu á' : ''
               } ${
                 workingCase.type === CaseType.CUSTODY
-                  ? 'gæslu'
+                  ? `gæsluvarðhald${workingCase.parentCase ? 'i' : ''}`
                   : `farbann${workingCase.parentCase ? 'i' : ''}`
               }`}
             </Text>
@@ -177,7 +175,9 @@ export const Overview: React.FC = () => {
                 },
                 {
                   title: 'Embætti',
-                  value: 'Lögreglan á Höfuðborgarsvæðinu',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
                 },
                 {
                   title: 'Ósk um fyrirtökudag og tíma',
@@ -222,7 +222,11 @@ export const Overview: React.FC = () => {
               }}
             />
           </Box>
-          <Box component="section" marginBottom={5}>
+          <Box
+            component="section"
+            marginBottom={5}
+            data-testid="prosecutorDemands"
+          >
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Dómkröfur
@@ -232,36 +236,32 @@ export const Overview: React.FC = () => {
           </Box>
           <Box component="section" marginBottom={10}>
             <Accordion>
-              <AccordionItem labelVariant="h3" id="id_2" label="Lagaákvæði">
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text as="h4" variant="h4">
-                      Lagaákvæði sem brot varða við
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.lawsBroken}
-                    </span>
-                  </Text>
-                </Box>
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text as="h4" variant="h4">
-                      Lagaákvæði sem krafan er byggð á
-                    </Text>
-                  </Box>
-                  {workingCase.custodyProvisions &&
-                    workingCase.custodyProvisions.map(
-                      (custodyProvision: CaseCustodyProvisions, index) => {
-                        return (
-                          <div key={index}>
-                            <Text>{laws[custodyProvision]}</Text>
-                          </div>
-                        )
-                      },
-                    )}
-                </Box>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_2"
+                label="Lagaákvæði sem brot varða við"
+              >
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase.lawsBroken}
+                  </span>
+                </Text>
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_2"
+                label="Lagaákvæði sem krafan er byggð á"
+              >
+                {workingCase.custodyProvisions &&
+                  workingCase.custodyProvisions.map(
+                    (custodyProvision: CaseCustodyProvisions, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{laws[custodyProvision]}</Text>
+                        </div>
+                      )
+                    },
+                  )}
               </AccordionItem>
               <AccordionItem
                 labelVariant="h3"
@@ -276,11 +276,13 @@ export const Overview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </AccordionItem>
               <AccordionItem
                 labelVariant="h3"
@@ -290,7 +292,7 @@ export const Overview: React.FC = () => {
                 {workingCase.caseFacts && (
                   <Box marginBottom={2}>
                     <Box marginBottom={2}>
-                      <Text variant="h5">Málsatvik rakin</Text>
+                      <Text variant="h5">Málsatvik</Text>
                     </Box>
                     <Text>
                       <span className={styles.breakSpaces}>
@@ -343,6 +345,12 @@ export const Overview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={
+              workingCase.state === CaseState.RECEIVED &&
+              workingCase.isCourtDateInThePast
+                ? Constants.REQUEST_LIST_ROUTE
+                : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
+            }
             nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {

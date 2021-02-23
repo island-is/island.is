@@ -28,6 +28,14 @@ To create a service, you can get started with NestJS like this:
 yarn generate @nrwl/nest:app services/my-service
 ```
 
+{% hint style="info" %}
+You might want to check out our reference [NextJS](https://github.com/island-is/island.is/tree/main/apps/reference-next-app) and [NestJS](https://github.com/island-is/island.is/tree/main/apps/reference-backend) projects.
+{% endhint %}
+
+{% hint style="info" %}
+For NextJS projects, be sure to configure our [custom NextJS server](../technical-overview/devops/next-server.md).
+{% endhint %}
+
 ## Generate a library
 
 To generate a React library.

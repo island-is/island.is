@@ -2,6 +2,14 @@ export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
   REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
+  ADMIN = 'ADMIN',
+}
+
+export interface Institution {
+  id: string
+  created: string
+  modified: string
+  name: string
 }
 
 export interface User {
@@ -14,8 +22,29 @@ export interface User {
   mobileNumber: string
   email: string
   role: UserRole
-  institution: string
+  institution?: Institution
   active: boolean
+}
+
+export interface CreateUser {
+  nationalId: string
+  name: string
+  title: string
+  mobileNumber: string
+  email: string
+  role: UserRole
+  institutionId: string
+  active: boolean
+}
+
+export interface UpdateUser {
+  name?: string
+  title?: string
+  mobileNumber?: string
+  email?: string
+  role?: UserRole
+  institutionId?: string
+  active?: boolean
 }
 
 export enum CaseType {
@@ -79,6 +108,11 @@ export enum CaseDecision {
   ACCEPTING_ALTERNATIVE_TRAVEL_BAN = 'ACCEPTING_ALTERNATIVE_TRAVEL_BAN',
 }
 
+export enum AccusedPleaDecision {
+  ACCEPT = 'ACCEPT',
+  REJECT = 'REJECT',
+}
+
 export type Gender = 'karl' | 'kona' | 'annað'
 
 export interface Case {
@@ -118,7 +152,8 @@ export interface Case {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
-  accusedPlea?: string
+  accusedPleaDecision?: AccusedPleaDecision
+  accusedPleaAnnouncement?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision
@@ -131,6 +166,7 @@ export interface Case {
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
   judge?: User
+  registrar?: User
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
@@ -192,7 +228,8 @@ export interface UpdateCase {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
-  accusedPlea?: string
+  accusedPleaDecision?: AccusedPleaDecision
+  accusedPleaAnnouncement?: string
   litigationPresentations?: string
   ruling?: string
   decision?: CaseDecision
@@ -203,6 +240,7 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  judgeId?: string
 }
 
 export interface TransitionCase {

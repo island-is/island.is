@@ -30,10 +30,6 @@ const createMockApplication = (
   externalData: data.externalData || {},
 })
 
-const mockApiTemplateUtils = {
-  performAction: () => Promise.resolve(''),
-}
-
 type TestEvents = { type: 'APPROVE' } | { type: 'REJECT' } | { type: 'SUBMIT' }
 
 const testApplicationTemplate: ApplicationTemplate<
@@ -162,25 +158,16 @@ describe('ApplicationTemplate', () => {
 
   describe('changeState', () => {
     it('should be able to change from draft to inReview on SUBMIT', () => {
-      const [hasChanged, newState] = templateHelper.changeState(
-        'SUBMIT',
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState] = templateHelper.changeState('SUBMIT')
       expect(newState).toBe('inReview')
       expect(hasChanged).toBe(true)
     })
     it('should return the same state if passing an event that cannot progress the application to any other state', () => {
-      const [hasChanged, newState] = templateHelper.changeState(
-        'APPROVE',
-        mockApiTemplateUtils,
-      )
+      const [hasChanged, newState] = templateHelper.changeState('APPROVE')
       expect(newState).toBe('draft')
       expect(hasChanged).toBe(false)
 
-      const anotherState = templateHelper.changeState(
-        'REJECT',
-        mockApiTemplateUtils,
-      )
+      const anotherState = templateHelper.changeState('REJECT')
       expect(anotherState[0]).toBe(false)
       expect(anotherState[1]).toBe('draft')
     })

@@ -12,6 +12,11 @@ import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 
 const isRunningInDevelopment = process.env.NODE_ENV === 'development'
 
+enum PensionFundType {
+  required = 'L',
+  private = 'X',
+}
+
 @Injectable()
 export class DirectorateOfLabourRepository {
   constructor(private unionApi: UnionApi, private pensionApi: PensionApi) {
@@ -37,7 +42,7 @@ export class DirectorateOfLabourRepository {
     throw new Error('Could not fetch unions')
   }
 
-  async getPensionFunds(): Promise<PensionFund[]> {
+  private async getAllPensionFunds(): Promise<PensionFund[]> {
     if (isRunningInDevelopment) {
       return [
         {
@@ -54,6 +59,22 @@ export class DirectorateOfLabourRepository {
     }
 
     throw new Error('Could not fetch pension funds')
+  }
+
+  async getPensionFunds(): Promise<PensionFund[]> {
+    const pensionFunds = await this.getAllPensionFunds()
+
+    return pensionFunds.filter((pensionFund) =>
+      pensionFund.id.startsWith(PensionFundType.required),
+    )
+  }
+
+  async getPrivatePensionFunds(): Promise<PensionFund[]> {
+    const pensionFunds = await this.getAllPensionFunds()
+
+    return pensionFunds.filter((pensionFund) =>
+      pensionFund.id.startsWith(PensionFundType.private),
+    )
   }
 
   async getParentalLeavesEntitlements(

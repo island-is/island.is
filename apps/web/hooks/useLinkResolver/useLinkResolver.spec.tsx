@@ -19,7 +19,7 @@ describe('Link resolver', () => {
   it('should return correct path to type with variable', () => {
     const nextLinks = linkResolver('lifeeventpage', ['cat'], 'is')
     expect(nextLinks).toEqual({
-      href: '/lifsvidburdur/cat',
+      href: '/lifsvidburdir/cat',
     })
   })
 
@@ -45,7 +45,7 @@ describe('Link resolver', () => {
   it('should handle content type with uppercase', () => {
     const nextLinks = linkResolver('lifeEventPage' as LinkType, ['cat'], 'is')
     expect(nextLinks).toEqual({
-      href: '/lifsvidburdur/cat',
+      href: '/lifsvidburdir/cat',
     })
   })
 

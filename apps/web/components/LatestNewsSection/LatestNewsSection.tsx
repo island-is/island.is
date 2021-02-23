@@ -16,7 +16,7 @@ import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContex
 import { useNamespace } from '@island.is/web/hooks'
 
 import { NewsCard } from '../NewsCard'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -25,12 +25,18 @@ interface LatestNewsProps {
   label: string
   labelId?: string
   items: GetNewsQuery['getNews']['items']
+  linkType?: LinkType
+  overview?: LinkType
+  parameters?: Array<string>
 }
 
 export const LatestNewsSection: React.FC<LatestNewsProps> = ({
   items = [],
   label,
   labelId = '',
+  linkType = 'news',
+  overview = 'newsoverview',
+  parameters = [],
 }) => {
   const newsItems = items.slice(0, 3)
   const { t } = useI18n()
@@ -49,8 +55,8 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
         </GridColumn>
         <GridColumn paddingBottom={0} span="6/12" hiddenBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={2}>
-            <Text variant="h5" as="p" paddingBottom={2}>
-              <Link {...linkResolver('newsoverview')} skipTab>
+            <Link {...linkResolver(overview, [...parameters])} skipTab>
+              <Text variant="h5" as="p" paddingBottom={2}>
                 <Button
                   icon="arrowForward"
                   iconType="filled"
@@ -59,8 +65,8 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 >
                   {n('seeMore')}
                 </Button>
-              </Link>
-            </Text>
+              </Text>
+            </Link>
           </Box>
         </GridColumn>
       </GridRow>
@@ -80,7 +86,9 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                   readMoreText={t.readMore}
                   image={newsItem.image}
                   tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-                  href={linkResolver('news', [newsItem.slug]).href}
+                  href={
+                    linkResolver(linkType, [...parameters, newsItem.slug]).href
+                  }
                 />
               </GridColumn>
             )
@@ -98,7 +106,7 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
               slug={newsItem.slug}
               image={newsItem.image}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
-              href={linkResolver('news', [newsItem.slug]).href}
+              href={linkResolver(linkType, [...parameters, newsItem.slug]).href}
             />
           ))}
         </Swiper>

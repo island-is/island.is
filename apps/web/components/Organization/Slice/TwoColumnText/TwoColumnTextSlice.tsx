@@ -7,7 +7,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { MarkdownText } from '@island.is/web/components'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
   slice: TwoColumnText
@@ -39,10 +39,10 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <MarkdownText>{slice.leftContent}</MarkdownText>
+              {richText(slice.leftContent as SliceType[])}
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              <MarkdownText>{slice.leftContent}</MarkdownText>
+              {richText(slice.rightContent as SliceType[])}
             </GridColumn>
           </GridRow>
         </Box>

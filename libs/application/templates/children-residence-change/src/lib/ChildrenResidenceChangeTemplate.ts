@@ -8,6 +8,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { error } from './messages/index'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -19,14 +20,30 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
 }
+
 const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  selectChild: z.array(z.string()).nonempty(),
-  email: z.string().email(),
-  phoneNumber: z.string().min(7),
-  confirmResidenceChangeInfo: z.array(z.string()).nonempty(),
-  approveTerms: z.array(z.string()).nonempty(),
-  reason: z.string().nonempty(),
+  approveExternalData: z.boolean().refine((v) => v, {
+    message: error.validation.approveChildrenResidenceChange.defaultMessage,
+  }),
+  selectChild: z
+    .array(z.string())
+    .min(1, { message: error.validation.selectChild.defaultMessage }),
+  email: z.string().email(error.validation.invalidEmail.defaultMessage),
+  phoneNumber: z
+    .string()
+    .min(7, { message: error.validation.invalidPhoneNumber.defaultMessage }),
+  confirmResidenceChangeInfo: z
+    .array(z.string())
+    .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
+  // selectDuration: z
+  //   .enum(['temporary', 'permanent'])
+  //   .optional()
+  //   .refine((v) => v, {
+  //     message: 'Velja þarf valmöguleika',
+  //   }),
+  approveTerms: z
+    .array(z.string())
+    .length(3, error.validation.approveTerms.defaultMessage),
 })
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<

@@ -1,0 +1,10 @@
+{
+  "data": {
+    "signatureConfirmation": {
+      "documentSigned": true,
+      "code": null,
+      "message": null,
+      "__typename": "SignatureConfirmationResponse"
+    }
+  }
+}

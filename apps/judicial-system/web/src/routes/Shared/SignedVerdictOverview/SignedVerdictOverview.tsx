@@ -137,6 +137,33 @@ export const SignedVerdictOverview: React.FC = () => {
     )}`
   }
 
+  const getInfoText = (workingCase: Case): string | undefined => {
+    if (user?.role !== UserRole.PROSECUTOR) {
+      // Only prosecutors should see the explanation.
+      return undefined
+    } else if (workingCase.decision === CaseDecision.REJECTING) {
+      return `Ekki hægt að framlengja ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      } sem var hafnað.`
+    } else if (
+      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
+      return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
+    } else if (workingCase.childCase) {
+      return 'Framlengingarkrafa hefur þegar verið útbúin.'
+    } else if (workingCase.isCustodyEndDateInThePast) {
+      // This must be after the rejected and alternatice decision cases as the custody
+      // end date only applies to cases that were accepted by the judge. This must also
+      // be after the already extended case as the custody end date may expire after
+      // the case has been extended.
+      return `Ekki hægt að framlengja ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      } sem er lokið.`
+    } else {
+      return undefined
+    }
+  }
+
   /**
    * We assume that the signed verdict page is only opened for
    * cases in state REJECTED or ACCEPTED.
@@ -256,7 +283,12 @@ export const SignedVerdictOverview: React.FC = () => {
                   title: 'Málsnúmer héraðsdóms',
                   value: workingCase.courtCaseNumber,
                 },
-                { title: 'Embætti', value: 'Lögreglan á Höfuðborgarsvæðinu' },
+                {
+                  title: 'Embætti',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
+                },
                 { title: 'Dómstóll', value: workingCase.court },
                 { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                 { title: 'Dómari', value: workingCase.judge?.name },
@@ -292,18 +324,21 @@ export const SignedVerdictOverview: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             hideNextButton={
               user?.role !== UserRole.PROSECUTOR ||
               workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
               workingCase.decision === CaseDecision.REJECTING ||
-              workingCase.isCustodyEndDateInThePast
+              workingCase.isCustodyEndDateInThePast ||
+              (workingCase.childCase && true)
             }
             nextButtonText={`Framlengja ${
               workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
             }`}
             onNextButtonClick={() => handleNextButtonClick()}
             nextIsLoading={isCreatingExtension}
+            infoBoxText={getInfoText(workingCase)}
           />
         </>
       ) : null}

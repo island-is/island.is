@@ -27,6 +27,9 @@ module.exports = withTreat(
       publicRuntimeConfig: {
         backendUrl: '',
       },
+      env: {
+        API_MOCKS: process.env.API_MOCKS,
+      },
     }),
   ),
 )

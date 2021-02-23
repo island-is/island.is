@@ -15,6 +15,7 @@ import {
   LifeEventPage,
   Link,
   Menu,
+  MenuLinkWithChildren,
   News,
   ReferenceLink,
   SectionWithImage,
@@ -30,6 +31,11 @@ import {
   title,
 } from '@island.is/shared/mocking'
 import { SystemMetadata } from '@island.is/shared/types'
+
+export const referenceLink = factory<ReferenceLink>({
+  slug: () => faker.lorem.slug(),
+  type: () => 'article',
+})
 
 export const image = factory<SystemMetadata<Image>>({
   typename: 'Image',
@@ -108,17 +114,23 @@ export const link = factory<Link>({
   url: () => faker.internet.url(),
 })
 
+export const menuLink = factory<MenuLinkWithChildren>({
+  title: () => title(),
+  link: () => referenceLink(),
+  childLinks: () => [],
+})
+
 export const menu = factory<Menu>({
   id: faker.random.uuid(),
   title: () => title(),
   links: () => link.list(4),
-  menuLinks: () => [],
+  menuLinks: () => menuLink.list(4),
 })
 
 export const groupedMenu = factory<GroupedMenu>({
   id: faker.random.uuid(),
   title: () => title(),
-  menus: () => menu.list(2),
+  menus: () => menu.list(5),
 })
 
 export const alertBannerVariant = () =>
@@ -170,11 +182,6 @@ export const frontPageSlider = factory<FrontpageSlider>({
   subtitle: () => faker.lorem.sentence(),
   link: null,
   content: () => faker.lorem.paragraph(),
-})
-
-export const referenceLink = factory<ReferenceLink>({
-  slug: () => faker.lorem.slug(),
-  type: () => 'article',
 })
 
 export const featured = factory<Featured>({
