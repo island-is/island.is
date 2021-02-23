@@ -32,6 +32,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
       baseId="healthInsuranceErrorModal"
       initialVisibility={true}
       className={`${styles.dialog} ${styles.background} ${styles.center}`}
+      hideOnClickOutside={false}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <Box
