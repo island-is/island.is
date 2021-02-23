@@ -73,7 +73,7 @@ const CMD = {
   ],
   TEST: `yarn nx run ${argv.name}:e2e:production --headless --production${
       argv.ci ? 
-        ` --record --group=${argv.name} --ci-build-id=saevar-manual-004` :
+        ` --record --group=${argv.name}` :
         ''
     }${
       argv['skip-cache'] ?
