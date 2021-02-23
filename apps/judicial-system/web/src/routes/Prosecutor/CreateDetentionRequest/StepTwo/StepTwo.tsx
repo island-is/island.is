@@ -373,6 +373,7 @@ export const StepTwo: React.FC = () => {
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
+                    maxDate={new Date()}
                     errorMessage={arrestDateErrorMessage}
                     hasError={arrestDateErrorMessage !== ''}
                     selected={

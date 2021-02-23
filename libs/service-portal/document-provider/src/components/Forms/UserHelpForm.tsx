@@ -1,28 +1,33 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-
-export interface UserHelpFormData {
-  name: string
-  email: string
-}
+import { Helpdesk } from '@island.is/api/schema'
+import { useUpdateHelpDesk, HelpDeskInput } from '../../shared'
 interface Props {
-  onSubmit: (data: UserHelpFormData) => void
+  helpDesk: Helpdesk
+  organisationId: string
 }
-export const UserHelpForm: FC<Props> = ({ onSubmit }) => {
+export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
   const { handleSubmit, control, errors } = useForm()
   const { formatMessage } = useLocale()
+
+  const { updateHelpDesk, loading } = useUpdateHelpDesk(organisationId)
+
+  const onSubmit = (formData: Helpdesk) => {
+    if (formData) {
+      const input: HelpDeskInput = { ...formData, id: helpDesk?.id }
+      updateHelpDesk(input)
+    }
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
           name="email"
-          defaultValue=""
+          defaultValue={helpDesk?.email || ''}
           rules={{
             required: {
               value: true,
@@ -51,8 +56,8 @@ export const UserHelpForm: FC<Props> = ({ onSubmit }) => {
         />
         <Controller
           control={control}
-          name="tel"
-          defaultValue=""
+          name="phoneNumber"
+          defaultValue={helpDesk?.phoneNumber || ''}
           rules={{
             required: {
               value: true,
@@ -74,8 +79,8 @@ export const UserHelpForm: FC<Props> = ({ onSubmit }) => {
               name={name}
               value={value}
               onChange={onChange}
-              hasError={errors.tel}
-              errorMessage={errors.tel?.message}
+              hasError={errors.phoneNumber}
+              errorMessage={errors.phoneNumber?.message}
             ></Input>
           )}
         />
@@ -88,13 +93,18 @@ export const UserHelpForm: FC<Props> = ({ onSubmit }) => {
         marginTop={4}
       >
         <Box marginTop={[1, 0]}>
-          <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
+          {/* <Link to={ServicePortalPath.DocumentProviderSettingsRoot}>
             <Button variant="ghost">
               {formatMessage(m.SettingsEditHelpContactBackButton)}
             </Button>
-          </Link>
+          </Link> */}
         </Box>
-        <Button type="submit" variant="primary" icon="arrowForward">
+        <Button
+          type="submit"
+          variant="primary"
+          icon="arrowForward"
+          loading={loading}
+        >
           {formatMessage(m.SettingsEditHelpContactSaveButton)}
         </Button>
       </Box>

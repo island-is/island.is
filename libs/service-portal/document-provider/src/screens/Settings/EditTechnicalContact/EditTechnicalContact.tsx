@@ -1,25 +1,17 @@
 import React from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
-import {
-  TechnicalContactForm,
-  TechnicalContactFormData,
-} from '../../../components/Forms/TechnicalContactForm'
+import { TechnicalContactForm } from '../../../components/Forms/TechnicalContactForm'
+import { useGetOrganisation } from '../../../shared/useGetOrganisation'
+import { SettingsFormsLoader } from '../../../components/SettingsFormsLoader'
 
-const EditTechnicalContact: ServicePortalModuleComponent = ({ userInfo }) => {
+const EditTechnicalContact: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
+  const { organisation } = useGetOrganisation('123456-0000')
 
-  const handleSubmit = (data: TechnicalContactFormData) => {
-    submitFormData(data)
-  }
-
-  const submitFormData = async (formData: TechnicalContactFormData) => {
-    //TODO: Set up submit
-    console.log(formData)
-    toast.success('Tæknilegur tengiliður vistaður')
-  }
+  const { technicalContact } = organisation || {}
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={4}>
@@ -27,7 +19,14 @@ const EditTechnicalContact: ServicePortalModuleComponent = ({ userInfo }) => {
           {formatMessage(m.SettingsEditTechnicalContactTitle)}
         </Text>
       </Box>
-      <TechnicalContactForm onSubmit={handleSubmit} />
+      {technicalContact ? (
+        <TechnicalContactForm
+          organisationId={organisation?.id}
+          technicalContact={technicalContact}
+        />
+      ) : (
+        <SettingsFormsLoader numberOfLoaders={4} />
+      )}
     </Box>
   )
 }

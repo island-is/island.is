@@ -41,12 +41,11 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
   }
 
   const [response, setResponse] = useState<Response[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [automatedTestsError, setautomatedTestsError] = useState<string | null>(
     null,
   )
   const { register, errors, trigger, getValues } = useForm()
-  const [runEndpointTests] = useMutation(runEndpointTestsMutation)
+  const [runEndpointTests, { loading }] = useMutation(runEndpointTestsMutation)
 
   const nationalId = getValueViaPath(
     application.answers,
@@ -56,7 +55,6 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
 
   const validateEndpoint = async () => {
     setautomatedTestsError(null)
-    setIsLoading(true)
 
     const testProviderId = getValueViaPath(
       application.answers,
@@ -76,12 +74,10 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
     })
 
     if (!results.data) {
-      setIsLoading(false)
       setautomatedTestsError(m.automatedTestsErrorMessage.defaultMessage)
     }
 
     setResponse(results.data.runEndpointTests)
-    setIsLoading(false)
   }
   //TODO finish loading state
   return (
@@ -132,7 +128,7 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                disabled={isLoading}
+                disabled={loading}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']} paddingTop={[3, 0]}>
@@ -156,7 +152,7 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
-                disabled={isLoading}
+                disabled={loading}
               />
             </GridColumn>
           </GridRow>
@@ -166,6 +162,7 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
             <Button
               variant="ghost"
               size="small"
+              loading={loading}
               onClick={() => {
                 trigger(['nationalId', 'docId']).then((isValid) =>
                   isValid ? validateEndpoint() : setResponse([]),

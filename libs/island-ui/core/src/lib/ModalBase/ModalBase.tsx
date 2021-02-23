@@ -85,6 +85,10 @@ export type ModalBaseProps = {
    * toggle visibility, useful for controlling visibility from useState. Should be used with onVisibilityChange
    */
   isVisible?: boolean
+  /**
+   * Clicking outside the Dialog closes it unless hideOnClickOutside is set to false.
+   */
+  hideOnClickOutside?: boolean
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -100,6 +104,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
   modalLabel,
   removeOnClose,
   isVisible,
+  hideOnClickOutside,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -147,6 +152,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
             {...modal}
             className={cn(styles.modal, className)}
             aria-label={modalLabel}
+            hideOnClickOutside={hideOnClickOutside}
           >
             {typeof children === 'function'
               ? children({ closeModal })

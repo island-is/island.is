@@ -39,5 +39,8 @@ module.exports = withSourceMaps(
       apiUrl: `${WEB_PUBLIC_URL}/api`,
       SENTRY_DSN,
     },
+    env: {
+      API_MOCKS: process.env.API_MOCKS,
+    },
   }),
 )

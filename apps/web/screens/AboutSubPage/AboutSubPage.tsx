@@ -25,7 +25,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import Head from 'next/head'
 import {
   Background,
-  renderHtml,
+  richText,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import { SidebarLayout } from '../Layouts/SidebarLayout'
@@ -136,7 +136,7 @@ export const AboutSubPage: Screen<AboutSubPageProps> = ({
                   <Text>{page.subDescription}</Text>
                 )}
                 {Boolean(page.intro) && (
-                  <Box>{renderHtml(page.intro.document as Document)}</Box>
+                  <Box>{richText([page.intro] as SliceType[])}</Box>
                 )}
               </Stack>
             </GridColumn>
