@@ -8,7 +8,7 @@ describe('extractFunctions', () => {
       'application.system:no.value.in.contentful': {
         defaultMessage: 'Takk',
         description: `Some field's description`,
-        deprecated: false
+        deprecated: false,
       },
     }
 
@@ -64,7 +64,7 @@ describe('extractFunctions', () => {
       'application.system:new.field.missing.from.contentful': {
         defaultMessage: 'Takk',
         description: `Some field's description`,
-        deprecated: false
+        deprecated: false,
       },
     }
 
@@ -84,17 +84,17 @@ describe('extractFunctions', () => {
       'application.system:applications': {
         defaultMessage: 'Þínar umsóknir',
         description: `Some field's description`,
-        deprecated: false
+        deprecated: false,
       },
       'application.system:heading': {
         defaultMessage: 'Daginn',
         description: `Heading's copy`,
-        deprecated: false
+        deprecated: false,
       },
       'application.system:back': {
         defaultMessage: 'Til baka',
         description: 'Back button copy',
-        deprecated: false
+        deprecated: false,
       },
     }
 
