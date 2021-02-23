@@ -136,9 +136,9 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Vinsamlegast uppfærið netfang og símanúmer á **[Mínum síðum](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)** ef með þarf ',
+      'Vinsamlegast uppfærið netfang og símanúmer á **[Mínum síðum](https://island.is/minarsidur/stillingar)** ef með þarf ',
     description:
-      'Please update your E-mail and Phone number on **[My Pages](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)** if not correct.',
+      'Please update your E-mail and Phone number on **[My Pages](https://island.is/minarsidur/stillingar)** if not correct.',
   },
   statusAndChildren: {
     id: 'hi.application:statusAndChildrend.section',
@@ -269,7 +269,7 @@ export const m = defineMessages({
   },
   formerInsuranceCountryPlaceholder: {
     id: 'hi.application:formerInsurance.countryPlaceholder',
-    defaultMessage: 'Select a country',
+    defaultMessage: 'Veldu land',
     description: 'Select a country',
   },
   formerInsuranceDetails: {

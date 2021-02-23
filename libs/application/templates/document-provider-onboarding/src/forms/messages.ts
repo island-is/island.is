@@ -553,7 +553,7 @@ export const m = defineMessages({
   },
   testEndpointInputErrorMessage: {
     id: 'dpo.application:testEnviroment.subMessage',
-    defaultMessage: '"Þú verður að skrá inn endapunkt"',
+    defaultMessage: 'Þú verður að skrá inn endapunkt',
     description: '',
   },
 
@@ -730,7 +730,7 @@ export const m = defineMessages({
   },
   prodEndpointInputErrorMessage: {
     id: 'dpo.application:testEnviroment.subMessage',
-    defaultMessage: '"Þú verður að skrá inn endapunkt"',
+    defaultMessage: 'Þú verður að skrá inn endapunkt',
     description: '',
   },
 

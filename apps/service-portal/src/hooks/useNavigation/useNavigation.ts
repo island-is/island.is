@@ -24,7 +24,7 @@ const filterNavigationTree = (
     ) !== undefined || item.systemRoute === true
 
   // Only display the document-provider module for those who have access
-  if (item.path === '/skjalaveita') {
+  if (item.path === '/skjalaveitur') {
     if (!env.documentProviderAdmins?.includes(userInfo.profile.nationalId))
       return false
   }

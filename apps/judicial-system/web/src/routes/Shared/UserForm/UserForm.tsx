@@ -10,13 +10,14 @@ import {
 import InputMask from 'react-input-mask'
 import { ValueType } from 'react-select/src/types'
 import { FormFooter } from '@island.is/judicial-system-web/src/shared-components'
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { Institution, User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '../../../types'
 import { validate, Validation } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
 
 interface Props {
   user: User
+  institutions: Institution[]
   onSave: (user: User) => void
   loading: boolean
 }
@@ -37,27 +38,15 @@ export const UserForm: React.FC<Props> = (props) => {
   >()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
-  const institutions = [
-    {
-      label: 'Héraðsdómur Reykjavíkur',
-      value: 'Héraðsdómur Reykjavíkur',
-    },
-    {
-      label: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-      value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
-    },
-    {
-      label: 'Bráðabirgðadómstóllinn',
-      value: 'Bráðabirgðadómstóllinn',
-    },
-    {
-      label: 'Bráðabirgðalögreglustjórinn',
-      value: 'Bráðabirgðalögreglustjórinn',
-    },
-  ]
+  const selectInstitutions = props.institutions.map((institution) => {
+    return {
+      label: institution.name,
+      value: institution.id,
+    }
+  })
 
-  const usersInstitution = institutions.find(
-    (institution) => institution.label === user?.institution,
+  const usersInstitution = selectInstitutions.find(
+    (institution) => institution.label === user.institution?.name,
   )
 
   const validations: { [key: string]: FieldValidation } = {
@@ -138,7 +127,7 @@ export const UserForm: React.FC<Props> = (props) => {
   }
 
   return (
-    <>
+    <div>
       <Box marginBottom={7}>
         <Text as="h1" variant="h1">
           Notandi
@@ -217,6 +206,16 @@ export const UserForm: React.FC<Props> = (props) => {
               label="Dómritari"
               checked={user.role === UserRole.REGISTRAR}
               onChange={() => setUser({ ...user, role: UserRole.REGISTRAR })}
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <Checkbox
+              name="active"
+              label="Virkur notandi"
+              checked={user.active}
+              onChange={({ target }) =>
+                setUser({ ...user, active: target.checked })
+              }
               large
               filled
             />
@@ -228,11 +227,15 @@ export const UserForm: React.FC<Props> = (props) => {
           name="institution"
           label="Veldu stofnun"
           defaultValue={usersInstitution}
-          options={institutions}
+          options={selectInstitutions}
           onChange={(selectedOption: ValueType<ReactSelectOption>) =>
             setUser({
               ...user,
-              institution: (selectedOption as ReactSelectOption).label,
+              institution: props.institutions.find(
+                (institution) =>
+                  institution.id ===
+                  ((selectedOption as ReactSelectOption).value as string),
+              ),
             })
           }
           required
@@ -311,7 +314,7 @@ export const UserForm: React.FC<Props> = (props) => {
         nextIsLoading={props.loading}
         nextButtonText="Vista"
       />
-    </>
+    </div>
   )
 }
 

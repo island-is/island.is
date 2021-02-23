@@ -40,6 +40,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -113,7 +114,7 @@ const Home: Screen<HomeProps> = ({
     </Box>
   )
   return (
-    <div id="main-content">
+    <div id="main-content" style={{ overflow: 'hidden' }}>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={frontpageSlides as FrontpageSliderType[]}
@@ -124,8 +125,8 @@ const Home: Screen<HomeProps> = ({
         aria-labelledby="lifeEventsTitle"
         paddingTop={4}
         backgroundBleed={{
-          bleedAmount: 100,
-          mobileBleedAmount: 50,
+          bleedAmount: 150,
+          mobileBleedAmount: 250,
           bleedDirection: 'bottom',
           fromColor: 'white',
           toColor: 'purple100',
@@ -134,7 +135,7 @@ const Home: Screen<HomeProps> = ({
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
-          titleId="lifeEventsTitle"
+          linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
           lifeEvents={lifeEvents}
         />
       </Section>
@@ -223,6 +224,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
+          tag: FRONTPAGE_NEWS_TAG_ID,
         },
       },
     }),

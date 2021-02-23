@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import parseISO from 'date-fns/parseISO'
 import { ValueType } from 'react-select/src/types'
 import { useHistory, useParams } from 'react-router-dom'
@@ -54,6 +54,7 @@ import {
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 
 interface CaseData {
   case?: Case
@@ -69,6 +70,7 @@ export const StepTwo: React.FC = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const { id } = useParams<{ id: string }>()
+  const { user } = useContext(UserContext)
 
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
     '',
@@ -148,7 +150,11 @@ export const StepTwo: React.FC = () => {
   ]
 
   const prosecutors = userData?.users
-    .filter((user: User, _: number) => user.role === UserRole.PROSECUTOR)
+    .filter(
+      (aUser: User, _: number) =>
+        aUser.role === UserRole.PROSECUTOR &&
+        aUser.institution?.id === user?.institution?.id,
+    )
     .map((prosecutor: User, _: number) => {
       return { label: prosecutor.name, value: prosecutor.id }
     })
@@ -303,7 +309,10 @@ export const StepTwo: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Ákærandi
+                Ákærandi{' '}
+                <Box component="span" data-testid="prosecutor-tooltip">
+                  <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
+                </Box>
               </Text>
             </Box>
             <Select
@@ -320,6 +329,7 @@ export const StepTwo: React.FC = () => {
                   updateCase,
                 )
               }
+              required
             />
           </Box>
           <Box component="section" marginBottom={5}>
@@ -367,6 +377,7 @@ export const StepTwo: React.FC = () => {
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
+                    maxDate={new Date()}
                     errorMessage={arrestDateErrorMessage}
                     hasError={arrestDateErrorMessage !== ''}
                     selected={
@@ -437,7 +448,12 @@ export const StepTwo: React.FC = () => {
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 Ósk um fyrirtökudag og tíma{' '}
-                <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
+                <Box
+                  data-testid="requested-court-date-tooltip"
+                  component="span"
+                >
+                  <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
+                </Box>
               </Text>
             </Box>
             <GridRow>

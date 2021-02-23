@@ -7,7 +7,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
-import { ReviewFieldProps, Country } from '../../types'
+import { ReviewFieldProps, CountryDataResult } from '../../types'
 
 interface Props extends ReviewFieldProps {
   isReviewField?: boolean
@@ -17,6 +17,7 @@ const CountrySelectField: FC<Props> = ({
   field,
   application,
   isReviewField,
+  error,
 }) => {
   const { id } = field
   const [options, setOptions] = useState<Option[]>([])
@@ -25,7 +26,7 @@ const CountrySelectField: FC<Props> = ({
   function getCountryOptions() {
     fetch(`https://restcountries.eu/rest/v2/all`)
       .then((res) => res.json())
-      .then((data: Country[]) => {
+      .then((data: CountryDataResult[]) => {
         if (data.length) {
           setOptions(
             data.map(({ name, alpha2Code: countryCode, regionalBlocs }) => {
@@ -68,6 +69,7 @@ const CountrySelectField: FC<Props> = ({
         options={options}
         disabled={isReviewField}
         backgroundColor="blue"
+        error={error}
       />
     </Stack>
   )
