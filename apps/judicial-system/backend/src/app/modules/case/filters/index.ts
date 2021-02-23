@@ -1,1 +1,1 @@
-export { isCaseBlockedFromUser } from './case.filters'
+export { isCaseBlockedFromUser, getCasesQueryFilter } from './case.filters'

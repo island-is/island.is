@@ -157,7 +157,7 @@ export const Overview: React.FC = () => {
                 workingCase.parentCase ? 'framlengingu á' : ''
               } ${
                 workingCase.type === CaseType.CUSTODY
-                  ? 'gæslu'
+                  ? `gæsluvarðhald${workingCase.parentCase ? 'i' : ''}`
                   : `farbann${workingCase.parentCase ? 'i' : ''}`
               }`}
             </Text>

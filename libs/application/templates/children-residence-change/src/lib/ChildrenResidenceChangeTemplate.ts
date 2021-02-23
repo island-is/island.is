@@ -8,6 +8,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { error } from './messages/index'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -22,27 +23,27 @@ enum Roles {
 
 const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
-    message: 'Samþykkja þarf gagnaöflun til að halda áfram',
+    message: error.validation.approveChildrenResidenceChange.defaultMessage,
   }),
   selectChild: z
     .array(z.string())
-    .min(1, { message: 'Velja þarf að lágmarki eitt barn' }),
-  email: z
-    .string()
-    .email('Netfang þarf að vera löglegt, t.d. netfang@netfang.is'),
+    .min(1, { message: error.validation.selectChild.defaultMessage }),
+  email: z.string().email(error.validation.invalidEmail.defaultMessage),
   phoneNumber: z
     .string()
-    .min(7, { message: 'Símanúmer þarf að vera 7 tölustafir' }),
+    .min(7, { message: error.validation.invalidPhoneNumber.defaultMessage }),
   confirmResidenceChangeInfo: z
     .array(z.string())
-    .length(1, 'Samþykkja þarf breytingu'),
+    .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
   // selectDuration: z
   //   .enum(['temporary', 'permanent'])
   //   .optional()
   //   .refine((v) => v, {
   //     message: 'Velja þarf valmöguleika',
   //   }),
-  approveTerms: z.array(z.string()).length(3, 'Samþykkja þarf alla skilmála'),
+  approveTerms: z
+    .array(z.string())
+    .length(3, error.validation.approveTerms.defaultMessage),
 })
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<

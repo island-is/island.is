@@ -140,7 +140,7 @@ export const JudgeOverview: React.FC = () => {
             <Text as="h1" variant="h1">
               {`Yfirlit ${
                 workingCase.type === CaseType.CUSTODY
-                  ? 'kröfu'
+                  ? 'gæsluvarðhaldskröfu'
                   : 'farbannskröfu'
               }`}
             </Text>
