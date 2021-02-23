@@ -34,7 +34,7 @@ const RECYCLINGCOMPANY = [
   '3108654949', // Ólafía Sigurjónsdóttir
   '2512942099', // Marjón Pétur Benediktsson
   '0306942609', // Karítas Þorvaldsdóttir
-  '1207952879', // Anton Örn Kærnested
+  '1207952879', // Anton Örn  Kærnested
 ]
 
 const RECYCLINGFUND = [

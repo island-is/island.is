@@ -20,6 +20,7 @@ FROM src as builder
 ARG APP
 ENV APP=${APP}
 ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 

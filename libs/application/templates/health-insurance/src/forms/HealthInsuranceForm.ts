@@ -156,7 +156,7 @@ export const HealthInsuranceForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 (application.externalData.nationalRegistry?.data as {
                   address?: Address
-                }).address?.postalCode || '000', //Todo remove || '000'
+                }).address?.postalCode,
             }),
             buildTextField({
               id: 'applicant.city',
@@ -216,7 +216,7 @@ export const HealthInsuranceForm: Form = buildForm({
           title: m.statusAndChildren,
           children: [
             buildRadioField({
-              id: 'status',
+              id: 'status.type',
               title: '',
               description: m.statusDescription,
               width: 'half',
@@ -249,16 +249,21 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.confirmationOfStudies,
               description: m.confirmationOfStudiesTooltip,
               component: 'TextWithTooltip',
-              condition: (answers) => answers.status === StatusTypes.STUDENT,
+              condition: (answers) =>
+                (answers.status as { type: string })?.type ===
+                StatusTypes.STUDENT,
             }),
             buildFileUploadField({
-              id: 'confirmationOfStudies',
+              id: 'status.confirmationOfStudies',
               title: '',
               introduction: '',
               maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
-              condition: (answers) => answers.status === StatusTypes.STUDENT,
+              uploadButtonLabel: m.fileUploadButton.defaultMessage,
+              condition: (answers) =>
+                (answers.status as { type: string })?.type ===
+                StatusTypes.STUDENT,
             }),
             buildRadioField({
               id: 'children',
@@ -334,7 +339,7 @@ export const HealthInsuranceForm: Form = buildForm({
               },
             }),
             buildFileUploadField({
-              id: 'confirmationOfResidencyDocument',
+              id: 'formerInsurance.confirmationOfResidencyDocument',
               title: '',
               maxSize: FILE_SIZE_LIMIT,
               introduction: m.confirmationOfResidencyFileUpload,
@@ -422,7 +427,7 @@ export const HealthInsuranceForm: Form = buildForm({
               component: 'Review',
             }),
             buildRadioField({
-              id: 'additionalInfo.hasAdditionalInfo',
+              id: 'hasAdditionalInfo',
               title: '',
               description: m.additionalInfo,
               largeButtons: true,
@@ -433,28 +438,26 @@ export const HealthInsuranceForm: Form = buildForm({
               ],
             }),
             buildTextField({
-              id: 'additionalInfo.remarks',
+              id: 'additionalRemarks',
               title: m.additionalRemarks,
               variant: 'textarea',
               placeholder: m.additionalRemarksPlaceholder,
               backgroundColor: 'blue',
               condition: {
-                questionId: 'additionalInfo.hasAdditionalInfo',
-                isMultiCheck: false,
+                questionId: 'hasAdditionalInfo',
                 comparator: Comparators.GTE,
                 value: YES,
               },
             }),
             buildFileUploadField({
-              id: 'additionalInfo.files',
+              id: 'additionalFiles',
               title: '',
               introduction: '',
               maxSize: FILE_SIZE_LIMIT,
               uploadHeader: m.fileUploadHeader.defaultMessage,
               uploadDescription: m.fileUploadDescription.defaultMessage,
               condition: {
-                questionId: 'additionalInfo.hasAdditionalInfo',
-                isMultiCheck: false,
+                questionId: 'hasAdditionalInfo',
                 comparator: Comparators.EQUALS,
                 value: YES,
               },
