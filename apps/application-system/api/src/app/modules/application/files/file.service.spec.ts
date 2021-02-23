@@ -23,7 +23,7 @@ describe('FileService', () => {
     ssn: '0113215029',
     fullName: 'Test name',
     phoneNumber: '111-2222',
-    email: 'email@email.is'
+    email: 'email@email.is',
   }
 
   const parentB = {
@@ -34,7 +34,7 @@ describe('FileService', () => {
     address: 'Borgartún',
     city: 'Reykjavík',
     phoneNumber: '222-1111',
-    email: 'email2@email2.is'
+    email: 'email2@email2.is',
   }
 
   const createApplication = (
@@ -60,12 +60,12 @@ describe('FileService', () => {
       answers,
       externalData: {
         parentNationalRegistry: {
-          data: { ...parentB},
+          data: { ...parentB },
           status: 'success',
           date: new Date(),
         },
         nationalRegistry: {
-          data: { ...parentA},
+          data: { ...parentA },
           status: 'success',
           date: new Date(),
         },

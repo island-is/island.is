@@ -63,9 +63,14 @@ export async function generateResidenceChangePdf(
   doc
     .image(
       DistrictCommissionerLogo,
-      doc.page.width - PdfConstants.HORIZONTAL_MARGIN - PdfConstants.IMAGE_WIDTH,
+      doc.page.width -
+        PdfConstants.HORIZONTAL_MARGIN -
+        PdfConstants.IMAGE_WIDTH,
       PdfConstants.VERTICAL_MARGIN,
-      { fit: [PdfConstants.IMAGE_WIDTH, PdfConstants.IMAGE_HEIGHT], align: 'right' },
+      {
+        fit: [PdfConstants.IMAGE_WIDTH, PdfConstants.IMAGE_HEIGHT],
+        align: 'right',
+      },
     )
     .moveDown()
 
