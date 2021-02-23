@@ -4,11 +4,42 @@ import isEmpty from 'lodash/isEmpty'
 export interface Message {
   defaultMessage: string
   description: string
+  markdown?: boolean
+  deprecated: boolean
 }
 
 export type MessageDict = Record<string, Message>
 export type Locales = { id: string }[]
 export const DEFAULT_LOCALE = 'is-IS'
+
+/**
+ * Line breaks are escaped inside message.ts (formatjs defineMessages objects). Without escaped,
+ * the formatjs extract script strip them away, we then unescaped them and replace them for both
+ * defaults and strings objects before uploading to Contentful.
+ */
+const unescapeLineBreaks = (message: Message | undefined) => {
+  if (!message) {
+    return ''
+  }
+
+  if (message?.markdown) {
+    return message?.defaultMessage?.replace(/\\n/g, '\n')
+  }
+
+  return message?.defaultMessage ?? ''
+}
+
+export const createDefaultsObject = (messages: MessageDict) =>
+  Object.keys(messages).reduce(
+    (acc, cur) => ({
+      ...acc,
+      [cur]: {
+        ...messages?.[cur],
+        defaultMessage: unescapeLineBreaks(messages?.[cur]),
+      },
+    }),
+    {},
+  )
 
 export const createStringsObject = (locales: Locales, messages: MessageDict) =>
   locales.reduce(
@@ -18,7 +49,9 @@ export const createStringsObject = (locales: Locales, messages: MessageDict) =>
         (acc2, cur2) => ({
           ...acc2,
           [cur2]:
-            cur.id === DEFAULT_LOCALE ? messages?.[cur2]?.defaultMessage : '',
+            cur.id === DEFAULT_LOCALE
+              ? unescapeLineBreaks(messages?.[cur2])
+              : '',
         }),
         {},
       ),
@@ -39,6 +72,7 @@ export const updateDefaultsObject = (
         ...acc,
         [cur]: {
           ...messages?.[cur],
+          defaultMessage: unescapeLineBreaks(messages?.[cur]),
           deprecated: false,
         },
       }),
@@ -83,7 +117,7 @@ export const updateStringsObject = (
             ...stringsAcc,
             [stringsCur]:
               cur.id === DEFAULT_LOCALE && isEmpty(value)
-                ? messages?.[stringsCur]?.defaultMessage ?? ''
+                ? unescapeLineBreaks(messages?.[stringsCur])
                 : value,
           }
         }, {}),
@@ -97,7 +131,7 @@ export const updateStringsObject = (
               ...messagesAcc,
               [messagesCur]:
                 cur.id === DEFAULT_LOCALE
-                  ? messages?.[messagesCur]?.defaultMessage ?? ''
+                  ? unescapeLineBreaks(messages?.[messagesCur])
                   : '',
             }),
             {},
