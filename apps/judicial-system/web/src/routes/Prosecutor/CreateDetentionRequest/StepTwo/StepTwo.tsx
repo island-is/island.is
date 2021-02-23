@@ -309,7 +309,10 @@ export const StepTwo: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Ákærandi
+                Ákærandi{' '}
+                <Box component="span" data-testid="prosecutor-tooltip">
+                  <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
+                </Box>
               </Text>
             </Box>
             <Select
@@ -326,6 +329,7 @@ export const StepTwo: React.FC = () => {
                   updateCase,
                 )
               }
+              required
             />
           </Box>
           <Box component="section" marginBottom={5}>
@@ -444,7 +448,12 @@ export const StepTwo: React.FC = () => {
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 Ósk um fyrirtökudag og tíma{' '}
-                <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
+                <Box
+                  data-testid="requested-court-date-tooltip"
+                  component="span"
+                >
+                  <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
+                </Box>
               </Text>
             </Box>
             <GridRow>
