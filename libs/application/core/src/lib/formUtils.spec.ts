@@ -154,6 +154,38 @@ describe('formatText', () => {
       ),
     ).toBe('Oh you are awesome too!')
   })
+  it('should pass values of StaticText object into formatMessage', () => {
+    const valueSpy = jest.fn()
+    const expectedValues = {
+      hello: 'world',
+    }
+
+    expect(valueSpy).toHaveBeenCalledTimes(0)
+
+    const formatMessageWithValueSpy: (
+      descriptor: StaticText,
+      values?: unknown,
+    ) => string = (descriptor, values) => {
+      if (values) {
+        valueSpy(values)
+      }
+
+      return descriptor as string
+    }
+
+    formatText(
+      {
+        id: 'test',
+        description: 'Some description',
+        values: expectedValues,
+      },
+      application,
+      formatMessageWithValueSpy,
+    )
+
+    expect(valueSpy).toHaveBeenCalledTimes(1)
+    expect(valueSpy).toHaveBeenLastCalledWith(expectedValues)
+  })
 })
 
 describe('extractRepeaterIndexFromField', () => {

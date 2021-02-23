@@ -5,7 +5,8 @@ import { MessageDescriptor } from 'react-intl'
 import { BoxProps } from '@island.is/island-ui/core'
 import { Application } from './Application'
 
-export type StaticText = (MessageDescriptor & { values?: object }) | string
+export type StaticTextObject = MessageDescriptor & { values?: object }
+export type StaticText = StaticTextObject | string
 
 export type FormText =
   | StaticText

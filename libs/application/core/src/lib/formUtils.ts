@@ -12,6 +12,7 @@ import {
   FormTextArray,
   Section,
   StaticText,
+  StaticTextObject,
   SubSection,
 } from '../types/Form'
 
@@ -193,7 +194,10 @@ export function mergeAnswers(
   })
 }
 
-export type MessageFormatter = (descriptor: StaticText, values?: any) => string
+export type MessageFormatter = (
+  descriptor: StaticText,
+  values?: StaticTextObject['values'],
+) => string
 
 type ValueOf<T> = T[keyof T]
 
@@ -224,7 +228,16 @@ export function formatText<T extends FormTextArray | FormText>(
     return handleMessageFormatting(message) as T extends FormTextArray
       ? string[]
       : string
+  } else if (typeof text === 'object') {
+    const staticTextObject = text as StaticTextObject
+    if (staticTextObject.values) {
+      return formatMessage(
+        staticTextObject,
+        staticTextObject.values,
+      ) as T extends FormTextArray ? string[] : string
+    }
   }
+
   return formatMessage(text) as T extends FormTextArray ? string[] : string
 }
 
