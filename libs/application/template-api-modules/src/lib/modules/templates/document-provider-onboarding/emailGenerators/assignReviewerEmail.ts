@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging'
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 import { AssignmentEmailTemplateGenerator } from '../../../../types'
@@ -13,6 +14,7 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
   const applicantNationalId = get(application.answers, 'applicant.nationalId')
   const applicantName = get(application.answers, 'applicant.name')
   const email = process.env.DOCUMENT_PROVIDER_ONBOARDING_REVIEWER
+  logger.info(`Generating assign reviewer email for '${email}'`)
 
   const subject =
     locale === 'is'
