@@ -17,6 +17,7 @@ import {
   Modal,
   TimeInputField,
   CaseNumbers,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
@@ -55,6 +56,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
+import useDateTime from '../../../utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case
@@ -77,6 +79,12 @@ export const HearingArrangements: React.FC = () => {
 
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
+
+  const { isValidDate: isValidCourtDate } = useDateTime(workingCase?.courtDate)
+  const { isValidTime: isValidCourtTime } = useDateTime(
+    undefined,
+    courtTimeRef.current?.value,
+  )
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -169,14 +177,6 @@ export const HearingArrangements: React.FC = () => {
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: workingCase?.courtDate || '',
-        validations: ['empty'],
-      },
-      {
-        value: courtTimeRef.current?.value || '',
-        validations: ['empty', 'time-format'],
-      },
       {
         value: workingCase?.courtRoom || '',
         validations: ['empty'],
@@ -300,112 +300,116 @@ export const HearingArrangements: React.FC = () => {
               </Text>
             </Box>
             <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span="7/12">
-                  <DatePicker
-                    id="courtDate"
-                    label="Veldu dagsetningu"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    errorMessage={courtDateErrorMessage}
-                    hasError={courtDateErrorMessage !== ''}
-                    minDate={new Date()}
-                    selected={
-                      workingCase.courtDate
-                        ? parseISO(workingCase.courtDate.toString())
-                        : null
-                    }
-                    handleCloseCalendar={(date: Date | null) => {
-                      setAndSendDateToServer(
-                        'courtDate',
-                        workingCase.courtDate,
-                        date,
-                        workingCase,
-                        true,
-                        setWorkingCase,
-                        updateCase,
-                        setCourtDateErrorMessage,
-                      )
-                    }}
-                    required
-                  />
-                </GridColumn>
-                <GridColumn span="5/12">
-                  <TimeInputField
-                    disabled={!workingCase.courtDate}
-                    onChange={(evt) =>
-                      validateAndSetTime(
-                        'courtDate',
-                        workingCase.courtDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        setWorkingCase,
-                        courtTimeErrorMessage,
-                        setCourtTimeErrorMessage,
-                      )
-                    }
-                    onBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'courtDate',
-                        workingCase.courtDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        updateCase,
-                        setCourtTimeErrorMessage,
-                      )
-                    }
-                  >
-                    <Input
-                      name="courtTime"
-                      label="Tímasetning"
-                      placeholder="Veldu tíma"
-                      errorMessage={courtTimeErrorMessage}
-                      hasError={courtTimeErrorMessage !== ''}
-                      defaultValue={
-                        workingCase.courtDate?.includes('T')
-                          ? formatDate(workingCase.courtDate, TIME_FORMAT)
-                          : undefined
-                      }
-                      ref={courtTimeRef}
-                      required
-                    />
-                  </TimeInputField>
-                </GridColumn>
-              </GridRow>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="7/12">
+                      <DatePicker
+                        id="courtDate"
+                        label="Veldu dagsetningu"
+                        placeholderText="Veldu dagsetningu"
+                        locale="is"
+                        errorMessage={courtDateErrorMessage}
+                        hasError={courtDateErrorMessage !== ''}
+                        minDate={new Date()}
+                        selected={
+                          workingCase.courtDate
+                            ? parseISO(workingCase.courtDate.toString())
+                            : null
+                        }
+                        handleCloseCalendar={(date: Date | null) => {
+                          setAndSendDateToServer(
+                            'courtDate',
+                            workingCase.courtDate,
+                            date,
+                            workingCase,
+                            true,
+                            setWorkingCase,
+                            updateCase,
+                            setCourtDateErrorMessage,
+                          )
+                        }}
+                        required
+                      />
+                    </GridColumn>
+                    <GridColumn span="5/12">
+                      <TimeInputField
+                        disabled={!workingCase.courtDate}
+                        onChange={(evt) =>
+                          validateAndSetTime(
+                            'courtDate',
+                            workingCase.courtDate,
+                            evt.target.value,
+                            ['empty', 'time-format'],
+                            workingCase,
+                            setWorkingCase,
+                            courtTimeErrorMessage,
+                            setCourtTimeErrorMessage,
+                          )
+                        }
+                        onBlur={(evt) =>
+                          validateAndSendTimeToServer(
+                            'courtDate',
+                            workingCase.courtDate,
+                            evt.target.value,
+                            ['empty', 'time-format'],
+                            workingCase,
+                            updateCase,
+                            setCourtTimeErrorMessage,
+                          )
+                        }
+                      >
+                        <Input
+                          name="courtTime"
+                          label="Tímasetning"
+                          placeholder="Veldu tíma"
+                          errorMessage={courtTimeErrorMessage}
+                          hasError={courtTimeErrorMessage !== ''}
+                          defaultValue={
+                            workingCase.courtDate?.includes('T')
+                              ? formatDate(workingCase.courtDate, TIME_FORMAT)
+                              : undefined
+                          }
+                          ref={courtTimeRef}
+                          required
+                        />
+                      </TimeInputField>
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Input
+                  data-testid="courtroom"
+                  name="courtroom"
+                  label="Dómsalur"
+                  defaultValue={workingCase.courtRoom}
+                  placeholder="Skráðu inn dómsal"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtRoom',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtroomErrorMessage,
+                      setCourtroomErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtRoom',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtroomErrorMessage,
+                    )
+                  }
+                  errorMessage={courtroomErrorMessage}
+                  hasError={courtroomErrorMessage !== ''}
+                  required
+                />
+              </BlueBox>
             </Box>
-            <Input
-              data-testid="courtroom"
-              name="courtroom"
-              label="Dómsalur"
-              defaultValue={workingCase.courtRoom}
-              placeholder="Skráðu inn dómsal"
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtRoom',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  courtroomErrorMessage,
-                  setCourtroomErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtRoom',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtroomErrorMessage,
-                )
-              }
-              errorMessage={courtroomErrorMessage}
-              hasError={courtroomErrorMessage !== ''}
-              required
-            />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
@@ -472,7 +476,10 @@ export const HearingArrangements: React.FC = () => {
           <FormFooter
             previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              workingCase.state === CaseState.DRAFT || isStepIllegal
+              workingCase.state === CaseState.DRAFT ||
+              isStepIllegal ||
+              !isValidCourtDate ||
+              !isValidCourtTime
             }
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
