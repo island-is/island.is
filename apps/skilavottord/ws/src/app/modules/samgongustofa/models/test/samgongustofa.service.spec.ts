@@ -1,9 +1,9 @@
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
-import { SamgongustofaService } from './samgongustofa.service'
+import { SamgongustofaService } from '../samgongustofa.service'
 import { HttpModule, HttpService, CACHE_MANAGER } from '@nestjs/common'
-import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
-import { RecyclingRequestModel } from '../../recycling.request/model/recycling.request.model'
+import { RecyclingRequestService } from '../../../recycling.request/recycling.request.service'
+import { RecyclingRequestModel } from '../../../recycling.request/model/recycling.request.model'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 
