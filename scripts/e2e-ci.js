@@ -130,6 +130,11 @@ const main = async () => {
   try {
     const testResult = await pexec(CMD.TEST)
     console.log(testResult.stdout)
+    console.log(testResult.stderr)
+    console.log(`Test process exited with status ${testResult.status}`)
+    if (testResult.status) {
+      exitCode = testResult.status
+    }
   } catch (err) {
     exitCode = 1
     console.log(err.stdout)
