@@ -1,17 +1,6 @@
 import { style } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const modalButtonWrapper = style({
-  ...themeUtils.responsiveStyle({
-    sm: {
-      width: '100%',
-    },
-    lg: {
-      width: 'fit-content',
-    },
-  }),
-})
-
 export const line = style({
   ...themeUtils.responsiveStyle({
     sm: {
@@ -20,7 +9,7 @@ export const line = style({
   }),
 })
 
-export const button = style({
+export const link = style({
   color: theme.color.blue400,
   fontWeight: theme.typography.semiBold,
   lineHeight: theme.typography.baseLineHeight,
@@ -33,17 +22,6 @@ export const button = style({
   ':hover': {
     textDecoration: 'underline',
   },
-})
-
-export const sender = style({
-  fontWeight: theme.typography.regular,
-  fontSize: 12,
-  ...themeUtils.responsiveStyle({
-    sm: {
-      fontWeight: theme.typography.light,
-      fontSize: 18,
-    },
-  }),
 })
 
 export const date = style({
@@ -61,18 +39,4 @@ export const date = style({
       fontSize: 18,
     },
   }),
-})
-
-export const isLoadingContainer = style({
-  opacity: 0.85,
-  '@keyframes': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 0.85,
-    },
-  },
-  animationTimingFunction: 'ease-out',
-  animationDuration: '0.25s',
 })

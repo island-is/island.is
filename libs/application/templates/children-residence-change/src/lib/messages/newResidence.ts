@@ -17,7 +17,7 @@ export const newResidence = {
       id:
         'crc.application:section.arrangement.newResidence.description#markdown',
       defaultMessage:
-        'Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að lögheimili barns færist frá þér til hins foreldrisins, eða öfugt.\n\nVinsamlegast staðfestu að lögheimilisflutningur sé eins og fram kemur hér fyrir neðan:',
+        'Sem foreldrar með sameiginlega forsjá getið þið óskað eftir því að lögheimili barns færist frá þér til hins foreldrisins, eða öfugt.\\n\\nVinsamlegast staðfestu að lögheimilisflutningur sé eins og fram kemur hér fyrir neðan:',
       description: 'New legal residence page description',
     },
   }),
