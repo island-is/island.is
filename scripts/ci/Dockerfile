@@ -59,11 +59,6 @@ FROM output-base-env as output-express
 COPY --from=builder /build/${APP_DIST_HOME} /webapp
 COPY --from=output-express-builder /build/server/index.js /webapp/server.js
 
-# TODO: Move out of main business logic
-USER root
-RUN apk add xvfb fontconfig wkhtmltopdf
-USER runner
-
 ENTRYPOINT [ "node" ]
 CMD [ "server.js" ]
 
