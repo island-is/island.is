@@ -80,11 +80,12 @@ export const HearingArrangements: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
 
-  const { isValidDate: isValidCourtDate } = useDateTime(workingCase?.courtDate)
-  const { isValidTime: isValidCourtTime } = useDateTime(
-    undefined,
-    courtTimeRef.current?.value,
-  )
+  const { isValidDate: isValidCourtDate } = useDateTime({
+    date: workingCase?.courtDate,
+  })
+  const { isValidTime: isValidCourtTime } = useDateTime({
+    time: courtTimeRef.current?.value,
+  })
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -478,8 +479,8 @@ export const HearingArrangements: React.FC = () => {
             nextIsDisabled={
               workingCase.state === CaseState.DRAFT ||
               isStepIllegal ||
-              !isValidCourtDate ||
-              !isValidCourtTime
+              !isValidCourtDate?.isValid ||
+              !isValidCourtTime?.isValid
             }
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {

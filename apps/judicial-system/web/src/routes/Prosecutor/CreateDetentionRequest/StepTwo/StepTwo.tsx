@@ -71,14 +71,13 @@ export const StepTwo: React.FC = () => {
   const { user } = useContext(UserContext)
 
   // Validate date and time fields
-  const { isValidTime: isValidArrestTime } = useDateTime(undefined, arrestTime)
-  const { isValidDate: isValidRequestedCourtDate } = useDateTime(
-    workingCase?.requestedCourtDate,
-  )
-  const { isValidTime: isValidRequestedCourtTime } = useDateTime(
-    undefined,
-    requestedCourtTime,
-  )
+  const { isValidTime: isValidArrestTime } = useDateTime({ time: arrestTime })
+  const { isValidDate: isValidRequestedCourtDate } = useDateTime({
+    date: workingCase?.requestedCourtDate,
+  })
+  const { isValidTime: isValidRequestedCourtTime } = useDateTime({
+    time: requestedCourtTime,
+  })
 
   const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
     '',
@@ -522,9 +521,9 @@ export const StepTwo: React.FC = () => {
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsDisabled={
               transitionLoading ||
-              (workingCase.arrestDate && !isValidArrestTime) ||
-              !isValidRequestedCourtDate ||
-              !isValidRequestedCourtTime
+              (workingCase.arrestDate && !isValidArrestTime?.isValid) ||
+              !isValidRequestedCourtDate?.isValid ||
+              !isValidRequestedCourtTime?.isValid
             }
             nextIsLoading={transitionLoading}
           />

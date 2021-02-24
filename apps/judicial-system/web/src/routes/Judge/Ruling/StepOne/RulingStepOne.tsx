@@ -74,13 +74,12 @@ export const RulingStepOne: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const { isValidDate: isValidCustodyEndDate } = useDateTime(
-    workingCase?.custodyEndDate,
-  )
-  const { isValidTime: isValidCustodyEndTime } = useDateTime(
-    undefined,
-    custodyEndTimeRef.current?.value,
-  )
+  const { isValidDate: isValidCustodyEndDate } = useDateTime({
+    date: workingCase?.custodyEndDate,
+  })
+  const { isValidTime: isValidCustodyEndTime } = useDateTime({
+    time: custodyEndTimeRef.current?.value,
+  })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = useCallback(
@@ -419,7 +418,8 @@ export const RulingStepOne: React.FC = () => {
               !workingCase.decision ||
               !validate(workingCase.ruling || '', 'empty').isValid ||
               (workingCase.decision !== CaseDecision.REJECTING &&
-                (!isValidCustodyEndDate || !isValidCustodyEndTime))
+                (!isValidCustodyEndDate?.isValid ||
+                  !isValidCustodyEndTime?.isValid))
             }
           />
         </>

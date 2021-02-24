@@ -79,10 +79,9 @@ export const CourtRecord: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const { isValidTime: isValidCourtStartTime } = useDateTime(
-    undefined,
-    formatDate(workingCase?.courtStartTime, TIME_FORMAT),
-  )
+  const { isValidTime: isValidCourtStartTime } = useDateTime({
+    time: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
+  })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = useCallback(
@@ -485,7 +484,7 @@ export const CourtRecord: React.FC = () => {
             previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={
-              !isValidCourtStartTime ||
+              !isValidCourtStartTime?.isValid ||
               !validate(workingCase.courtAttendees || '', 'empty').isValid ||
               !validate(workingCase.policeDemands || '', 'empty').isValid ||
               !validate(workingCase.litigationPresentations || '', 'empty')

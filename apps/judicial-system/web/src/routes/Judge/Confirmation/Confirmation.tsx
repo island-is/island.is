@@ -61,6 +61,7 @@ import {
   SignatureConfirmationQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import {
+  getTimeFromDate,
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -282,10 +283,9 @@ export const Confirmation: React.FC = () => {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
-  const { isValidTime: isValidCourtEndTime } = useDateTime(
-    undefined,
-    formatDate(workingCase?.courtEndTime, TIME_FORMAT),
-  )
+  const { isValidTime: isValidCourtEndTime } = useDateTime({
+    time: getTimeFromDate(workingCase?.courtEndTime),
+  })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const updateCase = useCallback(
@@ -602,7 +602,7 @@ export const Confirmation: React.FC = () => {
             previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={!isValidCourtEndTime}
+            nextIsDisabled={!isValidCourtEndTime?.isValid}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
             hideNextButton={workingCase.judge?.id !== user?.id}

@@ -81,14 +81,13 @@ export const StepThree: React.FC = () => {
 
   const resCase = data?.case
 
-  const { isValidDate: isValidRequestedCustodyEndDate } = useDateTime(
-    workingCase?.requestedCustodyEndDate,
-  )
+  const { isValidDate: isValidRequestedCustodyEndDate } = useDateTime({
+    date: workingCase?.requestedCustodyEndDate,
+  })
 
-  const { isValidTime: isValidRequestedCustodyEndTime } = useDateTime(
-    undefined,
-    requestedCustodyEndTime,
-  )
+  const { isValidTime: isValidRequestedCustodyEndTime } = useDateTime({
+    time: requestedCustodyEndTime,
+  })
 
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
@@ -468,8 +467,8 @@ export const StepThree: React.FC = () => {
             nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
               !validate(workingCase.lawsBroken || '', 'empty').isValid ||
-              !isValidRequestedCustodyEndDate ||
-              !isValidRequestedCustodyEndTime ||
+              !isValidRequestedCustodyEndDate?.isValid ||
+              !isValidRequestedCustodyEndTime?.isValid ||
               !workingCase.custodyProvisions ||
               workingCase.custodyProvisions?.length === 0
             }
