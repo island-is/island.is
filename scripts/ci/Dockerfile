@@ -18,13 +18,14 @@ ADD . .
 
 FROM src as builder
 ARG APP
+ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
-FROM node:12.19.0-alpine3.11 as output-base
+FROM node:12.19.0-alpine3.11 as output-base-env
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -40,19 +41,31 @@ ENV NODE_ENV=production
 
 WORKDIR /webapp
 
-COPY --from=deps /build/node_modules /webapp/node_modules
-
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 USER runner
 
-FROM output-base as output-express
-# image with build of an Express.js app
+FROM output-base-env as output-base
 
+COPY --from=deps /build/node_modules /webapp/node_modules
+
+FROM builder as output-express-builder
+
+RUN ./node_modules/.bin/ncc build /build/${APP_DIST_HOME}/main.js -o /build/server
+
+FROM output-base-env as output-express
+
+# RUN ls -lah /build/${APP_DIST_HOME}
 COPY --from=builder /build/${APP_DIST_HOME} /webapp
+COPY --from=output-express-builder /build/server/index.js /webapp/server.js
+
+# TODO: Move out of main business logic
+USER root
+RUN apk add xvfb fontconfig wkhtmltopdf
+USER runner
 
 ENTRYPOINT [ "node" ]
-CMD [ "main.js" ]
+CMD [ "server.js" ]
 
 FROM output-base as output-next
 # image with build of an Next.js app

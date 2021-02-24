@@ -320,6 +320,7 @@
     "@types/yup": "0.29.6",
     "@typescript-eslint/eslint-plugin": "2.19.2",
     "@typescript-eslint/parser": "2.19.2",
+    "@vercel/ncc": "0.27.0",
     "@zeit/next-source-maps": "0.0.3",
     "babel-jest": "26.2.2",
     "babel-loader": "8.0.6",
