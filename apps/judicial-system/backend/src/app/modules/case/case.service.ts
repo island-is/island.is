@@ -9,6 +9,7 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { User as TUser } from '@island.is/judicial-system/types'
+import { AuthenticateApi } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'
 import {
@@ -25,6 +26,8 @@ import { Case, SignatureConfirmationResponse } from './models'
 @Injectable()
 export class CaseService {
   constructor(
+    @Inject(AuthenticateApi)
+    private readonly authenticateApi: AuthenticateApi,
     @Inject(SigningService)
     private readonly signingService: SigningService,
     @Inject(EmailService)
@@ -115,8 +118,18 @@ export class CaseService {
     ])
   }
 
-  getAll(user: TUser): Promise<Case[]> {
+  async getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
+
+    try {
+      const token = await this.authenticateApi.authenticate({
+        username: 'rvg',
+        password: 'Einarsstaðir23',
+      })
+      this.logger.info('Got court authentication token', { token })
+    } catch (error) {
+      this.logger.info('Error while getting court authentication token', error)
+    }
 
     return this.caseModel.findAll({
       order: [['created', 'DESC']],

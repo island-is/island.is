@@ -7,12 +7,9 @@ import {
   AuthenticateApi,
   CreateCustodyCaseApi,
   CreateThingbokApi,
-  UploadStreamApi,
 } from '../../gen/fetch'
 
 export interface CourtClientModuleConfig {
-  username: string
-  password: string
   xRoadPath: string
   xRoadClient: string
 }
@@ -33,7 +30,6 @@ export class CourtClientModule {
       AuthenticateApi,
       CreateCustodyCaseApi,
       CreateThingbokApi,
-      UploadStreamApi,
     ]
 
     return {
