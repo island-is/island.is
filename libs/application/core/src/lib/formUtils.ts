@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Refactoring old `any`s creates issues that I will tackle in another PR
+// So disabling the check for now
+
 import deepmerge from 'deepmerge'
 import isArray from 'lodash/isArray'
 

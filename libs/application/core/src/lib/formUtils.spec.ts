@@ -130,7 +130,7 @@ describe('formatText', () => {
     state: '',
     typeId: ApplicationTypes.EXAMPLE,
   }
-  const formatMessage: (descriptor: StaticText, values?: any) => string = (
+  const formatMessage: (descriptor: StaticText, values?: unknown) => string = (
     descriptor,
   ) => descriptor as string
   it('should return plain text as is', () => {
