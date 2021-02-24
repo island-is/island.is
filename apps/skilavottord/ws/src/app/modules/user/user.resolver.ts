@@ -50,8 +50,7 @@ export class UserResolver {
       currUser.nationalId === '2808714009' ||
       currUser.nationalId === '3108654949' ||
       currUser.nationalId === '2512942099' ||
-      currUser.nationalId === '0306942609' ||
-      currUser.nationalId === '1207952879'
+      currUser.nationalId === '0306942609'
     ) {
       currUser.partnerId = '221' // This is partner Id for Fura, to be fixed later
     } else if (
