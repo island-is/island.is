@@ -1,11 +1,9 @@
 import * as AWS from 'aws-sdk'
-import { environment } from '../../../../../environments'
 
 const s3 = new AWS.S3()
-const oneMinute = 60
-const bucket = environment.fsS3Bucket ?? ''
 
 export async function getFile(
+  bucket: string,
   fileName: string,
 ): Promise<AWS.S3.GetObjectOutput> {
   const downloadParams = {
@@ -21,6 +19,7 @@ export async function getFile(
 
 export async function uploadFile(
   content: Buffer,
+  bucket: string,
   fileName: string,
 ): Promise<void> {
   const uploadParams = {
@@ -35,12 +34,16 @@ export async function uploadFile(
   await s3
     .upload(uploadParams)
     .promise()
-    .catch(() => {
+    .catch((err) => {
       return null
     })
 }
 
-export async function getPresignedUrl(fileName: string): Promise<string> {
+export async function getPresignedUrl(
+  bucket: string,
+  fileName: string,
+): Promise<string> {
+  const oneMinute = 60
   const presignedUrlParams = {
     Bucket: bucket,
     Key: fileName,

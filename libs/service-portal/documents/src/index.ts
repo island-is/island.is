@@ -19,5 +19,10 @@ export const documentsModule: ServicePortalModule = {
       path: ServicePortalPath.ElectronicDocumentsRoot,
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
+    {
+      name: 'Skjal',
+      path: ServicePortalPath.ElectronicDocumentsFileDownload,
+      render: () => lazy(() => import('./screens/Document/Document')),
+    },
   ],
 }

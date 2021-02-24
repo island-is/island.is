@@ -7,6 +7,10 @@ import { Application } from './../application.model'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from '../application.configuration'
 
 describe('FileService', () => {
   let service: FileService
@@ -15,6 +19,8 @@ describe('FileService', () => {
     controlCode: 'code',
     documentToken: 'token',
   }
+
+  const bucket = 'bucket'
 
   const applicationId = '1111-2222-3333-4444'
 
@@ -73,6 +79,7 @@ describe('FileService', () => {
     } as unknown) as Application)
 
   beforeEach(async () => {
+    const config: ApplicationConfig = { presignBucket: bucket }
     const module = await Test.createTestingModule({
       imports: [LoggingModule],
       providers: [
@@ -85,6 +92,7 @@ describe('FileService', () => {
           },
         },
         SigningService,
+        { provide: APPLICATION_CONFIG, useValue: config },
       ],
     }).compile()
 
@@ -127,9 +135,13 @@ describe('FileService', () => {
 
     const fileName = `children-residence-change/${application.id}.pdf`
 
-    expect(aws.uploadFile).toHaveBeenCalledWith(Buffer.from('buffer'), fileName)
+    expect(aws.uploadFile).toHaveBeenCalledWith(
+      Buffer.from('buffer'),
+      bucket,
+      fileName,
+    )
 
-    expect(aws.getPresignedUrl).toHaveBeenCalledWith(fileName)
+    expect(aws.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
 
     expect(response).toEqual('url')
   })
@@ -142,6 +154,7 @@ describe('FileService', () => {
     )
 
     expect(aws.getFile).toHaveBeenCalledWith(
+      bucket,
       `children-residence-change/${application.id}.pdf`,
     )
 
@@ -172,6 +185,7 @@ describe('FileService', () => {
     expect(act).rejects.toThrowError(NotFoundException)
 
     expect(aws.getFile).toHaveBeenCalledWith(
+      bucket,
       `children-residence-change/${applicationId}.pdf`,
     )
 
@@ -192,6 +206,7 @@ describe('FileService', () => {
     expect(act).rejects.toThrowError(NotFoundException)
 
     expect(aws.getFile).toHaveBeenCalledWith(
+      bucket,
       `children-residence-change/${applicationId}.pdf`,
     )
 
