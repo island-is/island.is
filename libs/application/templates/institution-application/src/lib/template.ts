@@ -63,7 +63,7 @@ const template: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um Umsokn',
-          progress: 0.33,
+          progress: 0.43,
           roles: [
             {
               id: 'applicant',
@@ -80,16 +80,20 @@ const template: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: 'approved',
           },
         },
+      },
+      approved: {
+        meta: {
+          name: 'Approved',
+          progress: 1,
+        },
+        type: 'final' as const,
       },
     },
   },
   mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      return 'reviewer'
-    }
     return 'applicant'
   },
 }
