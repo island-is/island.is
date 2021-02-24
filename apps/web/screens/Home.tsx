@@ -191,6 +191,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          pageIdentifier: 'frontpage',
         },
       },
     }),

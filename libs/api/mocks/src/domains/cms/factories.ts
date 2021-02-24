@@ -202,6 +202,7 @@ export const genericPage = factory<GenericPage>({
 })
 
 export const frontpage = factory<Frontpage>({
+  id: () => faker.random.uuid(),
   title: () => title(),
   featured: () => featured.list(3),
   slides: () => frontPageSlider.list(2),

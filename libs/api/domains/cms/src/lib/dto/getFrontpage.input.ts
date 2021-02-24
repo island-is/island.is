@@ -5,5 +5,9 @@ import { IsString } from 'class-validator'
 export class GetFrontpageInput {
   @Field()
   @IsString()
+  pageIdentifier: string
+
+  @Field()
+  @IsString()
   lang: string
 }
