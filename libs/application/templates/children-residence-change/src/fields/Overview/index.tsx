@@ -47,7 +47,7 @@ const Overview = ({ application }: FieldBaseProps) => {
 
   return (
     <>
-      <Box marginTop={3}>
+      <Box marginTop={0}>
         <AlertMessage
           type="info"
           title={formatMessage(m.contract.alert.title)}
