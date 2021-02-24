@@ -149,7 +149,7 @@ export interface TextField extends BaseField {
 export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
-  readonly introduction: FormText
+  readonly introduction?: FormText
   readonly uploadHeader?: string
   readonly uploadDescription?: string
   readonly uploadButtonLabel?: string

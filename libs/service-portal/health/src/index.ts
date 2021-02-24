@@ -1,7 +1,6 @@
 import {
   ServicePortalModule,
   ServicePortalPath,
-  userHasAccessToScope,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
