@@ -127,8 +127,15 @@ const Category: Screen<CategoryProps> = ({
 
   useEffect(() => {
     const hashString = getUrlHash()
+    const hashArr = hashString.split(',')
+
+    console.log("trigger this ", hashString, hashString.length, hashArr)
+
     if (hashString.length > 0) {
-      document.getElementById(hashString).scrollIntoView()
+      const hashArr = hashString.split(',')
+      const hashLen = hashArr.length
+      console.log(hashArr[hashLen - 1])
+     // document.getElementById(hashString).scrollIntoView()
     }
   }, [])
 
