@@ -9,6 +9,7 @@ import {
   buildSubSection,
   buildMultiField,
   buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
@@ -136,7 +137,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildMultiField({
           id: 'residenceChangeOverview',
           title: m.contract.general.pageTitle,
-          description: '',
           children: [
             buildCustomField({
               id: 'residenceChangeReview',
@@ -145,11 +145,10 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'assign',
-              placement: 'footer',
               title: '',
               actions: [
                 {
-                  event: 'ASSIGN',
+                  event: DefaultEvents.ASSIGN,
                   name: 'Skrifa undir umsókn',
                   type: 'primary',
                 },
