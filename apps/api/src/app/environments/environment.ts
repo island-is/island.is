@@ -17,6 +17,9 @@ export default {
       useTestAccount: true,
     },
   },
+  fileStorage: {
+    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
+  },
   nationalRegistry: {
     baseSoapUrl: 'https://localhost:8443',
     user: process.env.SOFFIA_USER ?? '',

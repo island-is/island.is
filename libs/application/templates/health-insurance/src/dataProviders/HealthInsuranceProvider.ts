@@ -29,7 +29,7 @@ export class HealthInsuranceProvider extends BasicDataProvider {
 
   handleError(error: any) {
     console.log('Provider error - HealthInsurance:', error)
-    return Promise.resolve(error)
+    return Promise.resolve({})
   }
 
   onProvideError(result: string): FailedDataProviderResult {

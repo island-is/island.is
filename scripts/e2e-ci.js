@@ -130,6 +130,15 @@ const main = async () => {
   try {
     const testResult = await pexec(CMD.TEST)
     console.log(testResult.stdout)
+    console.log(testResult.stderr)
+
+    // Tests can fail without the command exiting with code 1
+    // So to be sure that all tests where successful we check
+    // for the string 'All specs passed!'
+    if (!testResult.stdout.includes('All specs passed!')) {
+      console.log('Tests have failed. See output above for further details.')
+      exitCode = 1
+    }
   } catch (err) {
     exitCode = 1
     console.log(err.stdout)

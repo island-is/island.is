@@ -22,9 +22,9 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
       .then((res) => res.json())
       .then((data: CountryDataResult) => {
         if (!data.status) {
-          const { name, regionalBlocs } = data
+          const { regionalBlocs } = data
           const regions = regionalBlocs.map((blocs) => blocs.acronym)
-          setCountryData(JSON.stringify({ name, countryCode, regions }))
+          setCountryData(JSON.stringify({ ...citizenship, regions }))
         }
       })
   }
