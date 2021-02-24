@@ -128,13 +128,30 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overview',
+      id: 'overviewAndSignature',
       title: m.section.overview,
       children: [
-        buildCustomField({
-          id: 'residenceChangeReview',
-          title: m.contract.general.pageTitle,
-          component: 'Overview',
+        buildSubSection({
+          id: 'residenceChangeReason',
+          title: m.contract.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReview',
+              title: m.contract.general.pageTitle,
+              component: 'Overview',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'signatureSection',
+          title: m.signature.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: 'signature',
+              title: m.signature.general.pageTitle,
+              component: 'Signature',
+            }),
+          ],
         }),
       ],
     }),

@@ -3,6 +3,11 @@ import { defineMessages } from 'react-intl'
 // Contract
 export const contract = {
   general: defineMessages({
+    sectionTitle: {
+      id: 'crc.application:section.contract.overview.sectionTitle',
+      defaultMessage: 'Samningur',
+      description: 'Contract section title',
+    },
     pageTitle: {
       id: 'crc.application:section.contract.overview.pageTitle',
       defaultMessage: 'Samningur',
