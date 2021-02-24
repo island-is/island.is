@@ -358,6 +358,7 @@
     "@testing-library/dom": "7.29.1",
     "axios": "0.21.1",
     "immer": "8.0.1",
+    "marked": "2.0.0",
     "node-forge": "0.10.0",
     "object-path": "0.11.5",
     "serialize-javascript": "4.0.0",
