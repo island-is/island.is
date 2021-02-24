@@ -5,6 +5,11 @@ import { MessageDescriptor } from 'react-intl'
 import { BoxProps } from '@island.is/island-ui/core'
 import { Application } from './Application'
 
+export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+export type SetBeforeSubmitCallback = (
+  callback: BeforeSubmitCallback | null,
+) => void
+
 export type StaticText = (MessageDescriptor & { values?: object }) | string
 
 export type FormText =
@@ -106,6 +111,7 @@ export interface FieldBaseProps {
   error?: string
   field: Field
   application: Application
+  setBeforeSubmitCallback: SetBeforeSubmitCallback
   showFieldName?: boolean
   goToScreen?: (id: string) => void
   refetch?: () => void
