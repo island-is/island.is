@@ -3,6 +3,8 @@ import gql from 'graphql-tag'
 export const GET_FRONTPAGE_QUERY = gql`
   query GetFrontpage($input: GetFrontpageInput!) {
     getFrontpage(input: $input) {
+      __typename
+      id
       featured {
         title
         attention

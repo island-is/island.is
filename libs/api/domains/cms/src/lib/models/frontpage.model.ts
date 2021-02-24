@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IFrontpage } from '../generated/contentfulTypes'
 import { Featured, mapFeatured } from './featured.model'
 import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
@@ -7,6 +7,9 @@ import { mapNamespace, Namespace } from './namespace.model'
 
 @ObjectType()
 export class Frontpage {
+  @Field(() => ID)
+  id: string
+
   @Field({ nullable: true })
   title?: string
 
@@ -23,7 +26,8 @@ export class Frontpage {
   lifeEvents?: Array<LifeEventPage>
 }
 
-export const mapFrontpage = ({ fields }: IFrontpage): Frontpage => ({
+export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
+  id: sys.id,
   title: fields.title ?? '',
   featured: (fields.featured ?? []).map(mapFeatured),
   slides: (fields.slides ?? []).map(mapFrontpageSlider),
