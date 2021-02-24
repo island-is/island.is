@@ -158,8 +158,8 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      - name: Running tests
-        run: ./scripts/ci/run-in-parallel.sh 30_test
+      # - name: Running tests
+      #   run: ./scripts/ci/run-in-parallel.sh 30_test
 
   e2e:
     needs:
