@@ -38,15 +38,15 @@ const dataSchema = z.object({
       .optional(),
     phoneNumber: z.string().optional(),
   }),
-  project: z.object({
-    name: z.string().optional(),
-    description: z.string().optional(),
-    goal: z.string().optional(),
-    scope: z.string().optional(),
-    stakeholders: z.string().optional(),
-    responsibilities: z.string().optional(),
-    financing: z.string().optional(),
-  }),
+  project: z
+    .object({
+      name: z.string().optional(),
+      background: z.string().optional(),
+      goals: z.string().optional(),
+      scope: z.string().optional(),
+      finance: z.string().optional(),
+    })
+    .optional(),
 })
 
 const template: ApplicationTemplate<
