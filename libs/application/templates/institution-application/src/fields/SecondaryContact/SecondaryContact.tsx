@@ -1,13 +1,12 @@
-import React, { FC, useState, useMemo } from 'react'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Text, Stack, Input, Checkbox } from '@island.is/island-ui/core'
+import React, { FC } from 'react'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Text, Stack, Input, Icon, Button } from '@island.is/island-ui/core'
 import {useFormContext } from 'react-hook-form'
-import { CheckboxController } from '@island.is/shared/form-fields'
-import { Button } from 'libs/island-ui/core/src/lib/ButtonDeprecated/Button'
 import { YES, NO } from '../../constants'
+import * as styles from './SecondaryContact.treat'
 
-const SecondaryContact: FC<FieldBaseProps> = ({ application, field, error }) => {
-  const { register, errors, setValue, getValues, unregister } = useFormContext()
+const SecondaryContact: FC<FieldBaseProps> = ({ field, error }) => {
+  const { register, errors, setValue, getValues } = useFormContext()
   const { id } = field
   const isEnabled = getValues('hasSecondaryContact') === YES
  
@@ -18,22 +17,32 @@ const SecondaryContact: FC<FieldBaseProps> = ({ application, field, error }) => 
   }
 
   const disableSecondaryContact = () => {
-    // unregister([`${id}.name`, `${id}.phoneNumber`, `${id}.email`])
     setValue('hasSecondaryContact', NO)
     setValue(`${id}.name`, undefined)
     setValue(`${id}.phoneNumber`, undefined)
     setValue(`${id}.email`, undefined)
   }
-  console.log('peniz-error',error);
-  console.log('peniz-errors',errors);
-  console.log('peniz-values',getValues());
+  console.log('2ndaryContact-error',error);
+  console.log('2ndaryContact-errors',errors);
+  console.log('2ndaryContact-values',getValues());
   console.log('rendering')
   return <>
   {isEnabled ? 
-      <Box marginTop={6}>
+      <Box marginTop={4}>
         <Stack space={3}>
-          <Box marginBottom={2}>
-            <Button onClick={disableSecondaryContact} icon="close"></Button>
+        
+          <Box marginBottom={2} display="flex" position="relative" alignItems="center">
+            <Box
+                className={styles.deleteIcon}
+                onClick={disableSecondaryContact}
+              >
+                <Icon
+                  color="dark200"
+                  icon="removeCircle"
+                  size="medium"
+                  type="outline"
+                />
+              </Box>
             <Text variant="h4">Upplysingar tengiliðs 2</Text>
           </Box>
           <Input
@@ -44,6 +53,7 @@ const SecondaryContact: FC<FieldBaseProps> = ({ application, field, error }) => 
             backgroundColor="blue"
             ref={register}
             errorMessage={errors[id]?.name}
+            required
           />
           <Input
             type="tel"
@@ -65,7 +75,10 @@ const SecondaryContact: FC<FieldBaseProps> = ({ application, field, error }) => 
           />
         </Stack>
       </Box> : 
-        <Button icon="plus" onClick={enableSecondaryContact}>Bæta við tengilið</Button>}
+        <Box marginTop={4}>
+          <Button icon="add" variant="ghost" size="small" onClick={enableSecondaryContact}>Bæta við tengilið</Button>
+        </Box>
+  }
         </>
       
   
