@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 
 import {
   DrivingLicenseResponse,

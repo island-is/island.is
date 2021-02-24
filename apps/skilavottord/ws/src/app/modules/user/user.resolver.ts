@@ -2,7 +2,8 @@ import { Query, Resolver } from '@nestjs/graphql'
 import { User } from './models'
 import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
 import { Role } from '../auth/auth.types'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 
 @Resolver(() => User)

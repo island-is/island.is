@@ -7,7 +7,8 @@ import {
   ListDocumentsResponse,
 } from './models'
 import { DocumentOauthConnection } from './document.connection'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
