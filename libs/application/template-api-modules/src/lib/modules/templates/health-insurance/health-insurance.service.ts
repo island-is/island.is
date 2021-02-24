@@ -11,18 +11,22 @@ export class HealthInsuranceService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async sendApplication({
+  async sendApplyHealthInsuranceApplication({
     application,
     authorization,
   }: TemplateApiModuleActionProps) {
     try {
       logger.info(
-        `Start send Health Insurance application for ${application.applicant}`,
+        `Start send Health Insurance application for ${application.id}`,
       )
       const vistaSkjal = transformApplicationToHealthInsuranceDTO(application)
-
       logger.info(`Finished transform Application to Health Insurance DTO`)
+
       logger.info(`Start query`)
+      const attachmentsStr = `["${vistaSkjal.attachmentsFileNames?.join(
+        '","',
+      )}"]`
+
       const query = `mutation {
         healthInsuranceApplyInsurance(
         inputs: {
@@ -66,10 +70,9 @@ export class HealthInsuranceService {
               : ''
           }
           ${
-            vistaSkjal.attachmentsFileNames
-              ? 'attachmentsFileNames:"' +
-                vistaSkjal.attachmentsFileNames +
-                '",'
+            vistaSkjal.attachmentsFileNames &&
+            vistaSkjal.attachmentsFileNames.length > 0
+              ? 'attachmentsFileNames:' + attachmentsStr + ','
               : ''
           }
         }) {

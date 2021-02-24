@@ -87,7 +87,7 @@ const HealthInsuranceTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           onEntry: {
-            apiModuleAction: API_MODULE.sendApplication,
+            apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
           },
           progress: 1,
           roles: [

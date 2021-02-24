@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import format from 'date-fns/format'
+import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 import {
   GetSjukratryggdurTypeDto,
@@ -50,7 +50,7 @@ export class HealthInsuranceAPI {
 
   // check whether the person is health insured
   public async isHealthInsured(nationalId: string): Promise<boolean> {
-    logger.info(`--- Starting isHealthInsured api call for ${nationalId} ---`)
+    logger.info(`--- Starting isHealthInsured api call ---`)
 
     const args = {
       sendandi: '',
@@ -64,7 +64,7 @@ export class HealthInsuranceAPI {
 
     if (!res.SjukratryggdurType) {
       logger.error(
-        `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
+        `Something went totally wrong in 'Sjukratryggdur' call with result: ${JSON.stringify(
           res,
           null,
           2,
@@ -72,16 +72,14 @@ export class HealthInsuranceAPI {
       )
       throw new NotFoundException(`Unexpected results: ${JSON.stringify(res)}`)
     } else {
-      logger.info(`--- Finished isHealthInsured api call for ${nationalId} ---`)
+      logger.info(`--- Finished isHealthInsured api call ---`)
       return res.SjukratryggdurType.sjukratryggdur == 1
     }
   }
 
   // get user's pending applications
   public async getPendingApplication(nationalId: string): Promise<number[]> {
-    logger.info(
-      `--- Starting getPendingApplication api call for ${nationalId} ---`,
-    )
+    logger.info(`--- Starting getPendingApplication api call ---`)
 
     const args = {
       sendandi: '',
@@ -119,9 +117,7 @@ export class HealthInsuranceAPI {
         pendingCases.push(value.skjalanumer)
       })
 
-    logger.info(
-      `--- Finished getPendingApplication api call for ${nationalId} ---`,
-    )
+    logger.info(`--- Finished getPendingApplication api call ---`)
     return pendingCases
   }
 
@@ -130,9 +126,7 @@ export class HealthInsuranceAPI {
     appNumber: number,
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
-    logger.info(
-      `--- Starting applyInsurance api call for ${inputObj.nationalId} ---`,
-    )
+    logger.info(`--- Starting applyInsurance api call ---`)
 
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
@@ -156,7 +150,6 @@ export class HealthInsuranceAPI {
         // 'dagssidustubusetu' could not be empty string
         // We dont have a method to get it yet
         // So we use 'dagssidustubusetuthjodskra' for now
-        // TODO: Fix this issue
         dagssidustubusetu: format(
           new Date(inputObj.residenceDateUserThink),
           'yyyy-MM-dd',
@@ -164,7 +157,6 @@ export class HealthInsuranceAPI {
         // There is 'Employed' status in frontend
         // but we don't have it yet in request
         // So we convert it to 'Other/O'
-        // TODO: Fix this issue
         stadaeinstaklings: inputObj.userStatus,
         bornmedumsaekjanda: inputObj.isChildrenFollowed,
         fyrrautgafuland: inputObj.previousCountry,
@@ -177,13 +169,12 @@ export class HealthInsuranceAPI {
 
     // Add attachments from S3 bucket
     // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
-
-    if (inputObj.attachmentsFileNames) {
+    const arrAttachments = inputObj.attachmentsFileNames
+    if (arrAttachments && arrAttachments.length > 0) {
       logger.info(`Start getting attachments`)
       const fylgiskjol: Fylgiskjol = {
         fylgiskjal: [],
       }
-      const arrAttachments = inputObj.attachmentsFileNames.split(',')
       for (let i = 0; i < arrAttachments.length; i++) {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
@@ -194,6 +185,19 @@ export class HealthInsuranceAPI {
       }
       vistaSkjalBody.sjukratryggingumsokn.fylgiskjol = fylgiskjol
       logger.info(`Finished getting attachments`)
+    }
+
+    // Student has to have status confirmation document
+    if (
+      inputObj.userStatus == 'S' &&
+      !vistaSkjalBody.sjukratryggingumsokn.fylgiskjol
+    ) {
+      logger.error(
+        `Student applys for health insurance must have confirmation document`,
+      )
+      throw new Error(
+        `Student applys for health insurance must have confirmation document`,
+      )
     }
 
     const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>${this.OBJtoXML(
@@ -262,7 +266,7 @@ export class HealthInsuranceAPI {
     }
 
     return new Promise((resolve, reject) => {
-      // call 'faumsoknirsjukratrygginga' function/endpoint
+      // call 'functionName' function/endpoint
       client[functionName](args, function (err: any, result: any) {
         if (err) {
           logger.error(JSON.stringify(err, null, 2))

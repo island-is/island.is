@@ -6,7 +6,6 @@ import {
   IsOptional,
   IsDate,
   IsIn,
-  MaxDate,
   IsEmail,
 } from 'class-validator'
 
@@ -110,7 +109,7 @@ export class VistaSkjalInput {
   @IsIn([0, 1])
   isHealthInsuredInPreviousCountry!: number
 
-  @Field(() => String, { nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  attachmentsFileNames?: string
+  attachmentsFileNames?: string[]
 }

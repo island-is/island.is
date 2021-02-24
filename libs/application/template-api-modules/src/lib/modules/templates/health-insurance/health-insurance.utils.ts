@@ -32,7 +32,7 @@ export const transformApplicationToHealthInsuranceDTO = (
    * other: 'O'
    */
   let userStatus = ''
-  switch (extractAnswer(application.answers, 'status')) {
+  switch (extractAnswer(application.answers, 'status.type')) {
     case 'pensioner':
       userStatus = 'P'
       break
@@ -47,10 +47,25 @@ export const transformApplicationToHealthInsuranceDTO = (
   // Extract attachments
   const arrFiles: string[] = Object.keys(application.attachments) ?? []
   if (userStatus == 'S' && arrFiles.length <= 0) {
+    logger.error(
+      `Student's application must have confirmation of student document`,
+    )
     throw new Error(
       `Student's application must have confirmation of student document`,
     )
   }
+
+  // Extract national registry date
+  // It could be null
+  const registryDate = extractAnswer(
+    application.externalData,
+    'nationalRegistry.data.lastUpdated',
+  )
+  // if (!registryDate){
+  //   throw new Error(
+  //     `Could not find registry date`,
+  //   )
+  // }
 
   return {
     applicationNumber: application.id,
@@ -64,15 +79,21 @@ export const transformApplicationToHealthInsuranceDTO = (
     postalAddress:
       extractAnswer(application.answers, 'applicant.postalCode') ?? undefined,
     citizenship:
-      extractAnswer(application.answers, 'applicant.citizenship') ?? undefined,
+      extractAnswerFromJson(application.answers, 'applicant.citizenship')
+        .name ?? undefined,
     email: extractAnswer(application.answers, 'applicant.email') ?? '',
     phoneNumber:
       extractAnswer(application.answers, 'applicant.phoneNumber') ?? '',
-    // TODO: Get from frontend when ready
-    // application.externalData.nationalRegistry.data.address.lastUpdated
-    residenceDateFromNationalRegistry: new Date(Date.now()),
-    // TODO: Get from frontend when ready
-    residenceDateUserThink: new Date(Date.now()),
+    // IF registry date is null then used applicationDate insteads for now
+    // TODO: talk with Program
+    residenceDateFromNationalRegistry:
+      registryDate instanceof Date
+        ? new Date(registryDate)
+        : application.modified,
+    residenceDateUserThink:
+      registryDate instanceof Date
+        ? new Date(registryDate)
+        : application.modified,
     userStatus: userStatus,
     isChildrenFollowed:
       extractAnswer(application.answers, 'children') == 'no' ? 0 : 1,
@@ -88,9 +109,8 @@ export const transformApplicationToHealthInsuranceDTO = (
       extractAnswer(application.answers, 'formerInsurance.entitlement') == 'yes'
         ? 1
         : 0,
-    // TODO: additionalRemarks
     additionalInformation:
-      extractAnswer(application.answers, 'additionalInfo.remarks') ?? '',
-    attachmentsFileNames: arrFiles.toString(),
+      extractAnswer(application.answers, 'additionalRemarks') ?? '',
+    attachmentsFileNames: arrFiles,
   }
 }
