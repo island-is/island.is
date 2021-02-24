@@ -6,11 +6,13 @@ import {
   FieldBaseProps,
   getValueViaPath,
   RecordObject,
+  SetBeforeSubmitCallback
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 
 const FormField: FC<{
   application: Application
+  setBeforeSubmitCallback: SetBeforeSubmitCallback
   autoFocus?: boolean
   field: FieldDef
   showFieldName?: boolean
@@ -19,6 +21,7 @@ const FormField: FC<{
   refetch: () => void
 }> = ({
   application,
+  setBeforeSubmitCallback,
   autoFocus,
   errors,
   field,
@@ -38,6 +41,7 @@ const FormField: FC<{
 
   const fieldProps: FieldBaseProps = {
     application,
+    setBeforeSubmitCallback,
     autoFocus,
     error,
     field: field as Field,
