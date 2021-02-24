@@ -55,9 +55,9 @@ export class RestServiceCollector implements ServiceCollector {
     }
 
     logger.info(
-      `\n                                      ╔══════════════════════════════════════════════════════╗\n` +
-        `                                      ║          Added all services to worker index          ║\n` +
-        `                                      ╚══════════════════════════════════════════════════════╝\n`,
+      `\n                                       ----------------------------------------------------\n` +
+        `                                      |      Added all local services to worker index      |\n` +
+        `                                       ----------------------------------------------------\n`,
     )
     logger.debug(
       `Making worker index "${this.collectionService.getWorkerIndexName()}" available for collectors from other environments`,
@@ -68,13 +68,12 @@ export class RestServiceCollector implements ServiceCollector {
     )
 
     logger.info('Processing other environments.')
-    await this.collectionService.copyValuesFromOtherEnvironments()
+    await this.collectionService.copyServicesFromOtherEnvironments()
     logger.debug(
       `Done processing other environments at: ${new Date().toISOString()}`,
     )
 
     await this.collectionService.ActivateWorkerIndexForWeb()
-    logger.info(`Worker index activated.`)
 
     //TODO: if another instance of the collector is running in the same
     //TODO: environment, the line below, will delete it's index.

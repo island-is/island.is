@@ -3,18 +3,26 @@ import { ElasticService } from '@island.is/api-catalogue/elastic'
 
 import { Environment } from '@island.is/api-catalogue/consts'
 import { logger } from '@island.is/logging'
-import { OpenApi, Service } from '@island.is/api-catalogue/types'
+import { Service } from '@island.is/api-catalogue/types'
 import union from 'lodash/union'
 import { IndicesUpdateAliases } from '@elastic/elasticsearch/api/requestParams'
 import { RequestBody } from '@elastic/elasticsearch/lib/Transport'
 import { CollectionConfigService } from './collection-config.service'
+
+interface UpdateIndexAliasesOptions extends IndicesUpdateAliases {
+  body: {
+    actions: RequestBody[]
+  }
+}
 
 @Injectable()
 export class CollectionService {
   private environment: Environment
   private aliasName: string
   private workerIndexName: string | null = null
-  elasticNode: string
+  private elasticNode: string
+  private waitCheckIntervalMs: number
+  private waitCheckAbortMs: number
 
   constructor(
     private collectionConfigService: CollectionConfigService,
@@ -28,6 +36,8 @@ export class CollectionService {
     this.environment = config.environment
     this.aliasName = config.aliasName
     this.elasticNode = config.elasticNode
+    this.waitCheckIntervalMs = config.waitCheckIntervalMs
+    this.waitCheckAbortMs = config.waitCheckAbortMs
     this.workerIndexName = null
 
     this.elasticService.init(this.getAliasName(), this.elasticNode)
@@ -60,13 +70,54 @@ export class CollectionService {
     return this.workerIndexName as string
   }
 
-  private getCollectorWorkingName(environment: Environment) {
-    return `${this.getPrefix(environment)}CollectorWorking`
+  /**
+   *
+   * Gets the name of the working alias.
+   *
+   * @private
+   * @param {Environment} environment
+   * @param {boolean} [remote=false] - if false gets the local name.  If true gets the remote cluster alias name
+   * @returns
+   * @memberof CollectionService
+   */
+  private getCollectorWorkingName(
+    environment: Environment,
+    remote = false,
+  ) {
+    const ret = `${this.getPrefix(environment)}CollectorWorking`
+    if (remote) return `${this.getClusterPrefix(environment)}${ret}`
+    else return ret
   }
 
-  private getPrefix(environment: Environment) {
-    return `${this.getAliasName()}-${environment}`
+  /**
+   * Gets the name of the environment alias e.g. apicatalogue_dev
+   *
+   * @private
+   * @param {Environment} environment
+   * @param {boolean} [remote=false] - If false, local name is returned.
+   * If true, postfix of the remote cluster will be added to name before
+   * returning it.
+   * @returns
+   */
+  private getPrefix(environment: Environment, remote = false) {
+    const ret = `${this.getAliasName()}-${environment}`
+    if (remote) return `${this.getClusterPrefix(environment)}${ret}`
+
+    return ret
   }
+
+  /**
+   * Gets the prefix needed to query a index on a remote cluster.
+   *
+   * @private
+   * @param {Environment} environment
+   */
+  private getClusterPrefix(environment: Environment) {
+    //TODO: remove next line when we have environment and comment in the next line after that
+    return ''
+    //return `${environment}:`
+  }
+
   private getWorkerPrefix() {
     return this.getPrefix(this.getEnvironment())
   }
@@ -115,6 +166,7 @@ export class CollectionService {
   /**
    *  Add CollectorWorking alias to worker index to report to collectors
    *  on other environments that collection currently running.
+   *  Deletes all existing w
    * @memberof ElasticService
    */
   async createCollectorWorkingAlias() {
@@ -145,7 +197,7 @@ export class CollectionService {
    *
    */
   async ActivateWorkerIndexForWeb() {
-    logger.info('Activating Worker index')
+    logger.info('Activating Worker index for the web')
 
     //Get the old index
     const oldIndices = await this.elasticService.fetchIndexNamesFromAlias(
@@ -154,13 +206,7 @@ export class CollectionService {
 
     logger.debug(`old indices: ${oldIndices}`)
 
-    interface Options extends IndicesUpdateAliases {
-      body: {
-        actions: RequestBody[]
-      }
-    }
-
-    const updateOptions: Options = {
+    const updateOptions: UpdateIndexAliasesOptions = {
       body: {
         actions: [],
       },
@@ -214,13 +260,7 @@ export class CollectionService {
         })
     }
 
-    interface Options extends IndicesUpdateAliases {
-      body: {
-        actions: RequestBody[]
-      }
-    }
-
-    const updateOptions: Options = {
+    const updateOptions: UpdateIndexAliasesOptions = {
       body: {
         actions: [
           {
@@ -229,19 +269,43 @@ export class CollectionService {
               alias: this.getWorkerPrefix(), //alias-dev or alias-staging or alias-prod
             },
           },
-          {
-            remove: {
-              index: this.getWorkerIndexName(),
-              alias: this.getCollectorWorkingName(this.getEnvironment()), //alias-devCollectorWorking or alias-stagingCollectorWorking or ...
-            },
-          },
         ],
       },
     }
 
-    await this.elasticService.updateIndexAliases(updateOptions)
+    // Finding all indices that contain the CollectorWorking alias e.g. "apicatalogue2-devCollectorWorking`
+    const danglingIndicesWithWorkingAlias = await this.elasticService.fetchIndexNamesFromAlias(
+      this.getCollectorWorkingName(this.getEnvironment()),
+    )
+
+    logger.debug('removing old Working aliases')
+
+    danglingIndicesWithWorkingAlias?.forEach((name) => {
+      updateOptions.body.actions.push({
+        remove: {
+          index: name,
+          alias: this.getCollectorWorkingName(this.getEnvironment()),
+        },
+      })
+    })
+
+    try {
+      await this.elasticService.updateIndexAliases(updateOptions)
+    } catch (err) {
+      if (err?.meta?.body?.error?.type === 'index_not_found_exception') {
+        logger.warn(
+          `Worker index was never created, probably because because no services were fetched from X-Road and added to it.`,
+        )
+      } else {
+        logger.warn(
+          `Unable to remove worker alias from indices, or add alias to working index.`,
+        )
+      }
+      throw err
+    }
     logger.debug(`Activation done!`)
   }
+
   async deleteIndices(indexNames: string[]) {
     return await this.elasticService.deleteIndices({ index: indexNames })
   }
@@ -268,12 +332,7 @@ export class CollectionService {
       return false
     }
 
-    interface Options extends IndicesUpdateAliases {
-      body: {
-        actions: RequestBody[]
-      }
-    }
-    const updateOptions: Options = {
+    const updateOptions: UpdateIndexAliasesOptions = {
       body: {
         actions: [],
       },
@@ -304,235 +363,237 @@ export class CollectionService {
       return false
     }
   }
-  /*
-    todo: remove when mocks are not needed.
-  */
-  async createMockHelperAddServices(
-    sourceIndex: string,
-    destEnvironment: Environment,
-  ) {
-    logger.info(`- Create mock services for ${destEnvironment} started - `)
 
-    const services = await this.elasticService.fetchServices(
-      this.getAliasName(),
-      null,
-      1000,
-    )
-    logger.info(`Mocking ${services.length} services`)
+  // /*
+  //   todo: remove when mocks are not needed.
+  // */
+  // async createMockHelperAddServices(
+  //   sourceIndex: string,
+  //   destEnvironment: Environment,
+  // ) {
+  //   logger.info(`- Create mock services for ${destEnvironment} started - `)
 
-    let instance: string
-    switch (destEnvironment) {
-      case Environment.DEV:
-        instance = 'IS-DEV'
-        break
-      case Environment.STAGING:
-        instance = 'IS-TEST'
-        break
-      case Environment.PROD:
-        instance = 'IS'
-        break
-    }
+  //   const services = await this.elasticService.fetchServices(
+  //     this.getAliasName(),
+  //     null,
+  //     1000,
+  //   )
+  //   logger.info(`Mocking ${services.length} services`)
 
-    const destIndex = this.getPrefix(destEnvironment)
+  //   let instance: string
+  //   switch (destEnvironment) {
+  //     case Environment.DEV:
+  //       instance = 'IS-DEV'
+  //       break
+  //     case Environment.STAGING:
+  //       instance = 'IS-TEST'
+  //       break
+  //     case Environment.PROD:
+  //       instance = 'IS'
+  //       break
+  //   }
 
-    logger.debug(`Mocking is deleting index ${destIndex}`)
-    try {
-      await this.elasticService.deleteIndex(destIndex)
-    } catch (err) {
-      logger.debug('No need to delete, index was not found')
-    }
-    logger.debug(
-      `copying all services from index "${sourceIndex}" to index "${destIndex}"`,
-    )
+  //   const destIndex = this.getPrefix(destEnvironment)
 
-    //Modifying the dest service a little to see difference.
-    services.forEach((e: Service, index) => {
-      const dest: Service = Object.assign(e)
-      dest.title += `-${destEnvironment}`
+  //   logger.debug(`Mocking is deleting index ${destIndex}`)
+  //   try {
+  //     await this.elasticService.deleteIndex(destIndex)
+  //   } catch (err) {
+  //     logger.debug('No need to delete, index was not found')
+  //   }
+  //   logger.debug(
+  //     `copying all services from index "${sourceIndex}" to index "${destIndex}"`,
+  //   )
 
-      if (dest?.environments?.length && dest.environments[0].details?.length) {
-        dest.environments[0].details[0].xroadIdentifier.instance = instance
-        dest.environments[0].environment = destEnvironment
+  //   //Modifying the dest service a little to see difference.
+  //   services.forEach((e: Service, index) => {
+  //     const dest: Service = Object.assign(e)
+  //     dest.title += `-${destEnvironment}`
 
-        if (dest.environments[0].details[0].openApiString?.length) {
-          const apiObject: OpenApi = JSON.parse(
-            dest.environments[0].details[0].openApiString,
-          )
-          apiObject.info.title += ` - ${destEnvironment}`
-          dest.environments[0].details[0].openApiString = JSON.stringify(
-            apiObject,
-          )
-        }
-      }
+  //     if (dest?.environments?.length && dest.environments[0].details?.length) {
+  //       dest.environments[0].details[0].xroadIdentifier.instance = instance
+  //       dest.environments[0].environment = destEnvironment
 
-      services[index] = dest
-      JSON.stringify(services, null, 5)
-    })
+  //       if (dest.environments[0].details[0].openApiString?.length) {
+  //         const apiObject: OpenApi = JSON.parse(
+  //           dest.environments[0].details[0].openApiString,
+  //         )
+  //         apiObject.info.title += ` - ${destEnvironment}`
+  //         dest.environments[0].details[0].openApiString = JSON.stringify(
+  //           apiObject,
+  //         )
+  //       }
+  //     }
 
-    logger.debug(
-      `Bulk inserting ${services.length} services into "${destIndex}" index with forceRefresh = true`,
-    )
+  //     services[index] = dest
+  //     JSON.stringify(services, null, 5)
+  //   })
 
-    await this.elasticService.bulk(services, destIndex, true)
+  //   logger.debug(
+  //     `Bulk inserting ${services.length} services into "${destIndex}" index with forceRefresh = true`,
+  //   )
 
-    logger.info(`- Create mock services for ${destEnvironment} ended  - `)
-  }
+  //   await this.elasticService.bulk(services, destIndex, true)
 
-  /*
-    todo: remove when mocks are not needed.
-  */
-  async createMocksHelperDeleteByIds(
-    deleteEnvironment: Environment,
-    deleteIds: string[],
-  ) {
-    const deleteIndexName = this.getPrefix(deleteEnvironment)
-    logger.debug(
-      `Removing ${deleteIds.length} services from ${deleteEnvironment} :${deleteIds}`,
-    )
-    await this.elasticService.deleteByIds(deleteIds, deleteIndexName)
-  }
-  /**
-   * Copies values from source index to other environment indexes
-   * and modifies the copied data a little.
-   * //todo:  remove when mocks are not needed
-   * @param {string} sourceIndex
-   * @param {Environment[]} destEnvironments
-   * @memberof ElasticService
-   */
-  async createMocks(
-    sourceIndex: string,
-    destEnvironments: Environment[],
-    deleteServicesToTestMergeLogic: boolean,
-  ) {
-    logger.debug(
-      '  ---------------------- Creating mocks started  ---------------------- ',
-    )
+  //   logger.info(`- Create mock services for ${destEnvironment} ended  - `)
+  // }
 
-    //Copying values from source index and inserting
-    // modified data into destination indices
-    for (let i = 0; i < destEnvironments.length; i++) {
-      const environment = destEnvironments[i]
+  // /*
+  //   todo: remove when mocks are not needed.
+  // */
+  // async createMocksHelperDeleteByIds(
+  //   deleteEnvironment: Environment,
+  //   deleteIds: string[],
+  // ) {
+  //   const deleteIndexName = this.getPrefix(deleteEnvironment)
+  //   logger.debug(
+  //     `Removing ${deleteIds.length} services from ${deleteEnvironment} :${deleteIds}`,
+  //   )
+  //   await this.elasticService.deleteByIds(deleteIds, deleteIndexName)
+  // }
+  // /**
+  //  * Copies values from source index to other environment indexes
+  //  * and modifies the copied data a little.
+  //  * //todo:  remove when mocks are not needed
+  //  * @param {string} sourceIndex
+  //  * @param {Environment[]} destEnvironments
+  //  * @memberof ElasticService
+  //  */
+  // async createMocks(
+  //   sourceIndex: string,
+  //   destEnvironments: Environment[],
+  //   deleteServicesToTestMergeLogic: boolean,
+  // ) {
+  //   logger.debug(
+  //     '  ---------------------- Creating mocks started  ---------------------- ',
+  //   )
 
-      await this.createMockHelperAddServices(sourceIndex, environment)
-    }
+  //   //Copying values from source index and inserting
+  //   // modified data into destination indices
+  //   for (let i = 0; i < destEnvironments.length; i++) {
+  //     const environment = destEnvironments[i]
 
-    logger.debug(`Done cloning environments: "${destEnvironments}"`)
-    logger.info(`Adding fake CollectorWorking for staging and dev`)
-    // add fake alias to to fool isCollectorRunning
-    await this.updateIndexAliases(
-      this.getWorkerIndexName(),
-      [
-        this.getCollectorWorkingName(Environment.STAGING),
-        this.getCollectorWorkingName(Environment.PROD),
-      ],
-      null,
-    )
+  //     await this.createMockHelperAddServices(sourceIndex, environment)
+  //   }
 
-    //A function which creates a trigger to delete alias
-    const deleteAliasAfter = (
-      els: CollectionService,
-      indexName: string,
-      aliasName: string,
-      delay: number,
-    ) => {
-      logger.debug(
-        `Adding Timer, triggered at "${new Date(
-          Date.now() + delay,
-        ).toISOString()}" for the removal of alias ${aliasName} from index ${indexName}.`,
-      )
+  //   logger.debug(`Done cloning environments: "${destEnvironments}"`)
+  //   logger.info(`Adding fake CollectorWorking for staging and dev`)
+  //   // add fake alias to to fool isCollectorRunning
+  //   await this.updateIndexAliases(
+  //     this.getWorkerIndexName(),
+  //     [
+  //       this.getCollectorWorkingName(Environment.STAGING),
+  //       this.getCollectorWorkingName(Environment.PROD),
+  //     ],
+  //     null,
+  //   )
 
-      return new Promise(function (resolve) {
-        setTimeout(async () => {
-          logger.debug('removing worker alias ' + aliasName)
-          const success = await els.updateIndexAliases(indexName, null, [
-            aliasName,
-          ])
-          logger.debug(
-            success
-              ? `successfully removed "${aliasName}"`
-              : `failed removing "${aliasName}"`,
-          )
-          resolve
-        }, delay)
-      })
-    }
+  //   //A function which creates a trigger to delete alias
+  //   const deleteAliasAfter = (
+  //     els: CollectionService,
+  //     indexName: string,
+  //     aliasName: string,
+  //     delay: number,
+  //   ) => {
+  //     logger.debug(
+  //       `Adding Timer, triggered at "${new Date(
+  //         Date.now() + delay,
+  //       ).toISOString()}" for the removal of alias ${aliasName} from index ${indexName}.`,
+  //     )
 
-    logger.debug('-- Setting upp fake workers on different environments -- ')
-    //delete staging working alias from worker index after 5 seconds
-    deleteAliasAfter(
-      this,
-      this.getWorkerIndexName(),
-      this.getCollectorWorkingName(Environment.STAGING),
-      5 * 1000,
-    )
+  //     return new Promise(function (resolve) {
+  //       setTimeout(async () => {
+  //         logger.debug('removing worker alias ' + aliasName)
+  //         const success = await els.updateIndexAliases(indexName, null, [
+  //           aliasName,
+  //         ])
+  //         logger.debug(
+  //           success
+  //             ? `successfully removed "${aliasName}"`
+  //             : `failed removing "${aliasName}"`,
+  //         )
+  //         resolve
+  //       }, delay)
+  //     })
+  //   }
 
-    //delete prod working alias from worker index after 20 seconds
-    deleteAliasAfter(
-      this,
-      this.getWorkerIndexName(),
-      this.getCollectorWorkingName(Environment.PROD),
-      20 * 1000,
-    )
+  //   logger.debug('-- Setting upp fake workers on different environments -- ')
+  //   //delete staging working alias from worker index after 5 seconds
+  //   deleteAliasAfter(
+  //     this,
+  //     this.getWorkerIndexName(),
+  //     this.getCollectorWorkingName(Environment.STAGING),
+  //     5 * 1000,
+  //   )
 
-    logger.info('  -  Ids existing after mocking  -')
-    for (let i = 0; i < destEnvironments.length; i++) {
-      const environment = destEnvironments[i]
-      const index =
-        environment === Environment.DEV
-          ? this.getWorkerIndexName()
-          : this.getPrefix(environment)
-      const ids = await this.elasticService.fetchAllIds(index)
-      logger.debug(`The ${ids.length} ids from ${index}`)
-      logger.info(`are: ${ids}`)
-    }
+  //   //delete prod working alias from worker index after 20 seconds
+  //   deleteAliasAfter(
+  //     this,
+  //     this.getWorkerIndexName(),
+  //     this.getCollectorWorkingName(Environment.PROD),
+  //     20 * 1000,
+  //   )
 
-    if (deleteServicesToTestMergeLogic) {
-      logger.info(
-        ` Removing services from different environments to test merging logic.
-      Delete logic is:
-             Removing services on environments marked with 0
-        
-      dev
-     / staging
-    | / prod
-    || /
-    dsp
-    000 SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU
-    001 SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p
-    010 SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx
-    011 SVMtREVWX0dPVl8xMDAxM19WaW5udWVmdGlybGl0aWQtUHJvdGVjdGVkX3NseXNhc2tyYW5pbmc
-    100 SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE
-    101 SVMtREVWX0dPVl8xMDAwM19WTVNULVBhcmVudGFsTGVhdmUtUHJvdGVjdGVkX1BhcmVudGFsTGVhdmVBcHBsaWNhdGlvbg
-    110 SVMtREVWX0dPVl8xMDAwN19TSlVLUkEtUHJvdGVjdGVkX2Rldi5zaXJlc3R3cy5zanVrcmEuaXM
-    111 others should exist on all environments
-    
-    `,
-      )
+  //   logger.info('  -  Ids existing after mocking  -')
+  //   for (let i = 0; i < destEnvironments.length; i++) {
+  //     const environment = destEnvironments[i]
+  //     const index =
+  //       environment === Environment.DEV
+  //         ? this.getWorkerIndexName()
+  //         : this.getPrefix(environment)
+  //     const ids = await this.elasticService.fetchAllIds(index)
+  //     logger.debug(`The ${ids.length} ids from ${index}`)
+  //     logger.info(`are: ${ids}`)
+  //   }
 
-      this.createMocksHelperDeleteByIds(Environment.DEV, [
-        'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
-        'SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p',
-        'SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx',
-        'SVMtREVWX0dPVl8xMDAxM19WaW5udWVmdGlybGl0aWQtUHJvdGVjdGVkX3NseXNhc2tyYW5pbmc',
-      ])
-      this.createMocksHelperDeleteByIds(Environment.STAGING, [
-        'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
-        'SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p',
-        'SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE',
-        'SVMtREVWX0dPVl8xMDAwM19WTVNULVBhcmVudGFsTGVhdmUtUHJvdGVjdGVkX1BhcmVudGFsTGVhdmVBcHBsaWNhdGlvbg',
-      ])
-      this.createMocksHelperDeleteByIds(Environment.PROD, [
-        'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
-        'SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx',
-        'SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE',
-        'SVMtREVWX0dPVl8xMDAwN19TSlVLUkEtUHJvdGVjdGVkX2Rldi5zaXJlc3R3cy5zanVrcmEuaXM',
-      ])
-    }
+  //   if (deleteServicesToTestMergeLogic) {
+  //     logger.info(
+  //       ` Removing services from different environments to test merging logic.
+  //     Delete logic is:
+  //            Removing services on environments marked with 0
 
-    logger.debug(
-      '  ---------------------- Creating mocks finished ---------------------- ',
-    )
-  }
+  //     dev
+  //    / staging
+  //   | / prod
+  //   || /
+  //   dsp
+  //   000 SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU
+  //   001 SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p
+  //   010 SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx
+  //   011 SVMtREVWX0dPVl8xMDAxM19WaW5udWVmdGlybGl0aWQtUHJvdGVjdGVkX3NseXNhc2tyYW5pbmc
+  //   100 SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE
+  //   101 SVMtREVWX0dPVl8xMDAwM19WTVNULVBhcmVudGFsTGVhdmUtUHJvdGVjdGVkX1BhcmVudGFsTGVhdmVBcHBsaWNhdGlvbg
+  //   110 SVMtREVWX0dPVl8xMDAwN19TSlVLUkEtUHJvdGVjdGVkX2Rldi5zaXJlc3R3cy5zanVrcmEuaXM
+  //   111 others should exist on all environments
+
+  //   `,
+  //     )
+
+  //     this.createMocksHelperDeleteByIds(Environment.DEV, [
+  //       'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
+  //       'SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p',
+  //       'SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx',
+  //       'SVMtREVWX0dPVl8xMDAxM19WaW5udWVmdGlybGl0aWQtUHJvdGVjdGVkX3NseXNhc2tyYW5pbmc',
+  //     ])
+  //     this.createMocksHelperDeleteByIds(Environment.STAGING, [
+  //       'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
+  //       'SVMtREVWX0dPVl8xMDAwNV9Mb2dyZWdsYW4tUHJvdGVjdGVkX1JhZnJhZW50T2t1c2tpcnRlaW5p',
+  //       'SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE',
+  //       'SVMtREVWX0dPVl8xMDAwM19WTVNULVBhcmVudGFsTGVhdmUtUHJvdGVjdGVkX1BhcmVudGFsTGVhdmVBcHBsaWNhdGlvbg',
+  //     ])
+  //     this.createMocksHelperDeleteByIds(Environment.PROD, [
+  //       'SVMtREVWX0dPVl8xMDAwMV9UZXN0U2VydmljZV9URVNU',
+  //       'SVMtREVWX0dPVl8xMDAxMV9VVEwtUHJvdGVjdGVkX0RWQUxBUkxFWUZJLVYx',
+  //       'SVMtREVWX0dPVl8xMDAwMF9pc2xhbmQtaXMtcHJvdGVjdGVkX3Roam9kc2tyYS12U2FldmFybWE',
+  //       'SVMtREVWX0dPVl8xMDAwN19TSlVLUkEtUHJvdGVjdGVkX2Rldi5zaXJlc3R3cy5zanVrcmEuaXM',
+  //     ])
+  //   }
+
+  //   logger.debug(
+  //     '  ---------------------- Creating mocks finished ---------------------- ',
+  //   )
+  // }
+
   /**
    * Gets environments other than current environment
    *
@@ -556,7 +617,7 @@ export class CollectionService {
    */
   async isCollectorRunning(environment: Environment): Promise<boolean> {
     // todo: check if alias this.getCollectorWorkingName(environment) exists on given environment
-    const aliasName = this.getCollectorWorkingName(environment)
+    const aliasName = this.getCollectorWorkingName(environment, true)
     const indices = await this.elasticService.fetchIndexNamesFromAlias(
       aliasName,
     ) //todo: this should be done from remote cluster
@@ -569,7 +630,7 @@ export class CollectionService {
     logger.debug(
       `Waiting for alias "${aliasName}" connected to indices. Collector is ${
         value ? '' : 'not '
-      }running`,
+      }running there`,
       indices,
     )
     return value
@@ -580,14 +641,14 @@ export class CollectionService {
    *
    * @param {Environment[]} environments
    * @param {Date} stopWaiting                  - When to cancel waiting for other environments.
-   * @param {number} [checkInterval=(2 * 1000)] - How long between checks in milliseconds. Default set to 2 seconds.
+   * @param {number} [checkInterval]            - How long between checks in milliseconds. Default set to 2 seconds.
    * @returns {(Promise<Environment | null>)}   - Returns Environment if collector is not running in that environment.
                                                 - null: If collector is still running in all given environments and max wait time is reached.
    */
   private async waitForCollectorToFinishOnOtherCluster(
     environments: Environment[],
     stopWaiting: Date,
-    checkInterval: number = 2 * 1000,
+    checkInterval: number = this.waitCheckIntervalMs,
   ): Promise<Environment | null> {
     if (!environments || !environments.length) {
       return null
@@ -602,7 +663,7 @@ export class CollectionService {
     let now = Date.now()
 
     logger.info(
-      `Waiting for collectors on other environments to finish. Will stop waiting at "${stopWaiting.toISOString()}"`,
+      `Waiting for collectors on other environments to finish. Will absolutely stop waiting at "${stopWaiting.toISOString()}"`,
     )
 
     while (now < stopWaiting.getTime()) {
@@ -621,22 +682,6 @@ export class CollectionService {
     return null
   }
 
-  copyRemoteIndexToLocalIndex(
-    remoteEnvironment: Environment,
-    remoteIndexName: string,
-    localIndexName: string,
-  ) {
-    logger.warn(
-      `This function should copy services from ` +
-        `alias named "${remoteIndexName}" ` +
-        `located on cluster, running the ${remoteEnvironment} environment.`,
-    )
-    logger.warn(
-      `The services should be copied to ` +
-        `a local index called "${localIndexName}".`,
-    )
-  }
-
   /**
    * Copies values from a environment located on a different cluster
    *
@@ -644,31 +689,69 @@ export class CollectionService {
    * @param {Environment} environment
    */
   private async copyRemoteValues(environment: Environment) {
-    //todo: copy values from other environment cluster
-    this.copyRemoteIndexToLocalIndex(
-      environment,
-      this.getAliasName(),
-      this.getPrefix(environment),
-    )
+    //todo: copy values from other environment cluster by adding the prefix [dev:|staging:|prod:]
 
-    const externalIndex = this.getPrefix(environment)
-    logger.info(`Copying values from index ${externalIndex}`)
-    const externalIds = await this.elasticService.fetchAllIds(externalIndex)
+    // TODO: We are temporarily using these indices on the dev environment that are
+    // TODO:   named                    this should be a alias to worker on other environments
+    // TODO:   --------------------     ---------------------
+    // TODO:   apicatalogue2-staging     staging:apicatalogue2-staging  (this is an alias to worker index on staging)
+    // TODO:   apicatalogue2-prod        staging:apicatalogue2-prod     (this is an alias to worker index on prod)
 
-    if (!externalIds || !externalIds.length) {
-      return //nothing to do
+    // TODO:   To test this should be
+    // TODO:   Alias (not index)        Worker index with a name like
+    // TODO:   apicatalogue2-staging -> apicatalogue2-staging20210223_172541371
+    // TODO:   apicatalogue2-prod    -> apicatalogue2-prod20210223_172542771
+
+    /*
+    When environments have been opened for cross cluster search this is how things should look
+
+    environment  alias                 points to worker                         Can be remotely queried using 
+                                       index with name like                     the name from other clusters
+    -----------  --------------------  --------------------------------------   -----------------------------
+    dev          apicatalogue-dev      apicatalogue-dev20210219_123915251       dev:apicatalogue-dev
+    staging      apicatalogue-staging  apicatalogue-staging20210219_153915200   staging:apicatalogue-staging
+    prod         apicatalogue-prod     apicatalogue-prod20210219_153915200      prod:apicatalogue-prod
+
+
+    */
+
+    // hér er ég staddur hér þarf ég að tékka hvort
+    //  alias apicatalogue2-staging er til en í framtíðinni tékk ég á staging:apicatalogue2-staging
+    //  og ef hann er til þá sækjum við id
+    //  kannski bara í
+
+    const externalIndex = this.getPrefix(environment, true)
+    logger.info(`Copying services from alias ${externalIndex}`)
+
+    let externalIds
+    try {
+      externalIds = await this.elasticService.fetchAllIds(externalIndex)
+    } catch (err) {
+      logger.warn(
+        `Unable to query alias ${externalIndex} canceling copy on ${environment}`,
+      )
+      return
     }
 
-    // get id of all services in current environment
+    if (!externalIds || !externalIds.length) {
+      logger.warn(
+        `Cannot find any ids on alias "${externalIndex}" so nothing to copy.`,
+      )
+      return
+    }
+
+    // Get id of all services in current environment
     const localIds = await this.elasticService.fetchAllIds(
       this.getWorkerIndexName(),
     )
-    //Find services that will need to be merged from external to current environment
+
+    // Find services that will need to be merged or added
+    // from external to current environment
+
     const commonIds = externalIds.filter((id) => localIds.includes(id))
 
     //find services that will need to be created in current environment
     const externalUnique = externalIds.filter((id) => !localIds.includes(id))
-
     logger.debug(`localIds   : ${localIds}`)
     logger.debug(`externalIds   : ${externalIds}`)
     logger.debug(`commonIds   : ${commonIds}`)
@@ -734,8 +817,13 @@ export class CollectionService {
     //Replacing the local local service objects with the merged ones.
     //todo: Maybe this should be done in chunks, not sure how intelligent the elasticsearch client is.
     this.bulkWorker(mergedServices, false)
-
-    logger.info(`Copying values from environment ${environment} finished`)
+    logger.info(
+      `\n                                      ---------------------------------------------------------\n` +
+        `                                     |   Copying services from environment ${' '.repeat(
+          7 - environment.length,
+        )}${environment} finished    |\n` +
+        `                                      ---------------------------------------------------------\n`,
+    )
   }
   /**
    * Merges two service objects into a new one
@@ -761,21 +849,20 @@ export class CollectionService {
    *
    *  @param {number} [waitMax=(120 * 1000)] - How long to wait until we give up in milliseconds. Default set to 120 seconds.
    */
-  async copyValuesFromOtherEnvironments(waitMax: number = 120 * 1000) {
-    //TODO: remove createMocks when you are able to copy from other clusters
-    await this.createMocks(
-      this.getWorkerIndexName(),
-      [Environment.STAGING, Environment.PROD],
-      false,
-    )
+  async copyServicesFromOtherEnvironments(
+    waitMax: number = this.waitCheckAbortMs,
+  ) {
+    // //TODO: remove createMocks when you are able to copy from other clusters
+    // await this.createMocks(
+    //   this.getWorkerIndexName(),
+    //   [Environment.STAGING, Environment.PROD],
+    //   false,
+    // )
 
-    logger.info(
-      `Copying values from other environments to`,
-      this.getEnvironment(),
-    )
-
+    logger.info(`- Copying services from other environments -`)
     const otherEnvironments = this.getOtherEnvironments()
 
+    logger.info(`Environment to copy to:    "${this.getEnvironment()}"`)
     logger.info(`Environments to copy from: "${otherEnvironments}"`)
 
     const endWait = new Date(Date.now() + waitMax)
@@ -798,7 +885,7 @@ export class CollectionService {
       )
     }
 
-    logger.info(`Copying values from other environments finished`)
+    logger.info(`Copying services from other environments finished`)
   }
 
   /**

@@ -8,6 +8,8 @@ export interface CollectorConfig {
   aliasName: string
   elasticNode: string
   production: boolean
+  waitCheckIntervalMs: number
+  waitCheckAbortMs: number
 }
 
 @Injectable()
@@ -16,6 +18,8 @@ export class CollectionConfigService {
   private aliasName: string
   private elasticNode: string
   private production: boolean
+  private waitCheckIntervalMs: number
+  private waitCheckAbortMs: number
 
   constructor(private configService: ConfigService) {
     this.init()
@@ -27,6 +31,8 @@ export class CollectionConfigService {
     this.aliasName = config.aliasName
     this.elasticNode = config.elasticNode
     this.production = config.production
+    this.waitCheckIntervalMs = config.waitCheckIntervalMs
+    this.waitCheckAbortMs = config.waitCheckAbortMs
   }
 
   private loadConfig(): CollectorConfig {
@@ -49,6 +55,18 @@ export class CollectionConfigService {
       throw new Error('boolean value production not set')
     }
 
+    const waitCheckIntervalMs = this.configService.get<number>(
+      'waitCheckIntervalMs',
+    )
+    if (!waitCheckIntervalMs) {
+      throw new Error('number value not set for waitCheckIntervalMs ')
+    }
+
+    const waitCheckAbortMs = this.configService.get<number>('waitCheckAbortMs')
+    if (!waitCheckAbortMs) {
+      throw new Error('number value not set for waitCheckIntervalMs ')
+    }
+
     const environment: Environment =
       Environment[
         Object.keys(Environment).find(
@@ -67,6 +85,8 @@ export class CollectionConfigService {
       aliasName: aliasName,
       elasticNode: elasticNode,
       production: production,
+      waitCheckIntervalMs: waitCheckIntervalMs,
+      waitCheckAbortMs: waitCheckAbortMs,
     }
 
     logger.info('Config values:', ret)
@@ -78,6 +98,8 @@ export class CollectionConfigService {
       aliasName: this.aliasName,
       elasticNode: this.elasticNode,
       production: this.production,
+      waitCheckIntervalMs: this.waitCheckIntervalMs,
+      waitCheckAbortMs: this.waitCheckAbortMs,
     }
   }
 }
