@@ -7,6 +7,8 @@ import {
   buildExternalDataProvider,
   buildCustomField,
   buildSubSection,
+  buildMultiField,
+  buildSubmitField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
@@ -131,10 +133,29 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       id: 'overview',
       title: m.section.overview,
       children: [
-        buildCustomField({
-          id: 'residenceChangeReview',
+        buildMultiField({
+          id: 'residenceChangeOverview',
           title: m.contract.general.pageTitle,
-          component: 'Overview',
+          description: '',
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReview',
+              title: m.contract.general.pageTitle,
+              component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'assign',
+              placement: 'footer',
+              title: '',
+              actions: [
+                {
+                  event: 'ASSIGN',
+                  name: 'Skrifa undir umsókn',
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
