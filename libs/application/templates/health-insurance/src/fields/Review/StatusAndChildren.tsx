@@ -37,8 +37,8 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
             {formatText(m.statusDescription, application, formatMessage)}
           </Text>
           <RadioController
-            id={'status'}
-            name={'status'}
+            id="status.type"
+            name="status.type"
             disabled={!isEditable}
             largeButtons={true}
             split={'1/2'}
@@ -106,7 +106,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
               />
               <FileUploadController
                 application={application}
-                id="confirmationOfStudies"
+                id="status.confirmationOfStudies"
                 maxSize={FILE_SIZE_LIMIT}
                 header={formatText(
                   m.fileUploadHeader,
@@ -137,8 +137,8 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
               )}
             />
             <RadioController
-              id={'children'}
-              name={'children'}
+              id="children"
+              name="children"
               disabled={!isEditable}
               defaultValue={
                 getValueViaPath(application.answers, 'children') as string[]

@@ -78,19 +78,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError('Please select a country', field)
     }
 
-    // Check file upload if country is Greenland / Faroe
-    if (
-      requireConfirmationOfResidency(formerInsurance.country) &&
-      !formerInsurance.confirmationOfResidencyDocument.length
-    ) {
-      const field = `${FORMER_INSURANCE}.personalId`
-      const buildError = buildValidationError(field)
-      return buildError(
-        'Please attach a confirmation of residency below',
-        field,
-      )
-    }
-
     if (
       !requireWaitingPeriod(formerInsurance.country, applicant?.citizenship)
     ) {
@@ -100,6 +87,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
         const buildError = buildValidationError(field)
         return buildError(
           'Please fill in your ID number in previous country',
+          field,
+        )
+      }
+      // Check file upload if country is Greenland / Faroe
+      if (
+        requireConfirmationOfResidency(formerInsurance.country) &&
+        !formerInsurance.confirmationOfResidencyDocument.length
+      ) {
+        const field = `${FORMER_INSURANCE}.personalId`
+        const buildError = buildValidationError(field)
+        return buildError(
+          'Please attach a confirmation of residency below',
           field,
         )
       }
