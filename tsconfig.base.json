@@ -190,8 +190,8 @@
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
       ],
-      "@island.is/judicial-system/court": [
-        "libs/judicial-system/court/src/index.ts"
+      "@island.is/judicial-system/court-client": [
+        "libs/judicial-system/court-client/src/index.ts"
       ],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
