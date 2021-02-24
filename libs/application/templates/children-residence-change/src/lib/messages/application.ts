@@ -7,6 +7,11 @@ export const application = defineMessages({
     defaultMessage: 'Breytt lögheimili barna',
     description: 'Name of the Children Residence Change application',
   },
+  signature: {
+    id: 'crc.application:application.signature',
+    defaultMessage: 'Skrifa undir umsókn',
+    description: 'Button text for signing application',
+  },
 })
 
 // All sections in the application

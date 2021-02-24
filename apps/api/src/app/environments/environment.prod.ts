@@ -20,6 +20,9 @@ export default {
       },
     },
   },
+  fileStorage: {
+    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
+  },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL,
     user: process.env.SOFFIA_USER,
