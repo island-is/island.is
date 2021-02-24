@@ -536,9 +536,13 @@ export const Confirmation: React.FC = () => {
                     workingCase.otherRestrictions,
                   )
                     .split('\n')
-                    .map((str) => (
-                      <Text>{str}</Text>
-                    ))}
+                    .map((str, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{str}</Text>
+                        </div>
+                      )
+                    })}
                 </Text>
               </Box>
               <Text>
@@ -584,7 +588,7 @@ export const Confirmation: React.FC = () => {
                     <Input
                       data-testid="courtEndTime"
                       name="courtEndTime"
-                      label="Þinghaldi lauk"
+                      label="Þinghaldi lauk (kk:mm)"
                       placeholder="Veldu tíma"
                       defaultValue={formatDate(
                         workingCase.courtEndTime,

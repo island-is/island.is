@@ -1,26 +1,17 @@
 import React from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
-import {
-  ResponsibleContactFormData,
-  ResponsibleContactForm,
-} from '../../../components/Forms/ResponsibleContactForm'
+import { ResponsibleContactForm } from '../../../components/Forms/ResponsibleContactForm'
+import { useGetOrganisation } from '../../../shared/useGetOrganisation'
+import { SettingsFormsLoader } from '../../../components/SettingsFormsLoader'
 
-const EditResponsibleContact: ServicePortalModuleComponent = ({}) => {
+const EditResponsibleContact: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
+  const { organisation } = useGetOrganisation('123456-0000')
 
-  const handleSubmit = (data: ResponsibleContactFormData) => {
-    submitFormData(data)
-  }
-
-  const submitFormData = async (formData: ResponsibleContactFormData) => {
-    //TODO: Set up submit
-    console.log(formData)
-    toast.success('Ábyrgðarmaður vistaður')
-  }
-
+  const { administrativeContact } = organisation || {}
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={4}>
@@ -28,7 +19,14 @@ const EditResponsibleContact: ServicePortalModuleComponent = ({}) => {
           {formatMessage(m.SettingsEditResponsibleContactTitle)}
         </Text>
       </Box>
-      <ResponsibleContactForm onSubmit={handleSubmit} />
+      {administrativeContact ? (
+        <ResponsibleContactForm
+          organisationId={organisation?.id}
+          administrativeContact={administrativeContact}
+        />
+      ) : (
+        <SettingsFormsLoader numberOfLoaders={4} />
+      )}
     </Box>
   )
 }

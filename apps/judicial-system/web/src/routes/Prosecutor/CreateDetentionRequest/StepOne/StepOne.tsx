@@ -206,7 +206,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
-      isExtension={!!workingCase?.parentCase}
+      isExtension={workingCase?.parentCase && true}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
       caseType={workingCase?.type}
@@ -453,6 +453,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             </Box>
             <Box marginBottom={2}>
               <Input
+                data-testid="defenderName"
                 name="defenderName"
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
@@ -474,6 +475,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
               />
             </Box>
             <Input
+              data-testid="defenderEmail"
               name="defenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"

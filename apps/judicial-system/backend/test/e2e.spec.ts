@@ -612,7 +612,10 @@ describe('Case', () => {
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create(getCaseData())
+    await Case.create({
+      ...getCaseData(),
+      state: CaseState.DRAFT,
+    })
       .then((value) => {
         dbCase = caseToCCase(value)
 

@@ -47,6 +47,16 @@ export class DocumentProviderService {
       .catch(handleError)
   }
 
+  async organisationExists(nationalId: string): Promise<boolean> {
+    const organisation = await this.organisationsApi
+      .organisationControllerFindByNationalId({ nationalId })
+      .catch(() => {
+        //Find returns 404 error if organisation is not found. Do nothing.
+      })
+
+    return !organisation ? false : true
+  }
+
   async createOrganisation(
     input: CreateOrganisationInput,
   ): Promise<Organisation> {

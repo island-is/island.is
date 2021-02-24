@@ -117,21 +117,25 @@ export const getAvailableRights = (application: Application) => {
 
   let requestedDays = 0
   let givenDays = 0
+  let days = defaultMonths * daysInMonth
   let months = defaultMonths
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     requestedDays = requestRights.requestDays
+    days = days + requestedDays
     months = months + daysToMonths(requestedDays)
   }
 
   if (giveRights?.isGivingRights === YES && giveRights.giveDays) {
     givenDays = giveRights.giveDays
+    days = days + givenDays
     months = months + daysToMonths(givenDays)
   }
 
   return {
     requestedDays,
     givenDays,
+    days,
     months: Number(months.toFixed(1)), // TODO: do we want to truncate decimals?
   }
 }

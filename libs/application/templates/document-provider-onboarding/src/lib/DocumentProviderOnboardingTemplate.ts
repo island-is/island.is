@@ -173,18 +173,15 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DocumentProviderApplication').then((val) =>
-                  Promise.resolve(val.DocumentProviderOnboarding),
+                import('../forms/PendingReview').then((val) =>
+                  Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
-              write: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.IN_REVIEW },
-          [DefaultEvents.REJECT]: { target: States.DRAFT },
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.IN_REVIEW]: {
@@ -305,13 +302,13 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     //This logic makes it so the application is not accessible to anybody but involved parties
 
-    //This if statement might change depending on the "umboðskerfi"
-    // if (
-    //   process.env.NODE_ENV === 'development' &&
-    //   application.state === 'inReview'
-    // ) {
-    //   return Roles.ASSIGNEE
-    // }
+    // This if statement might change depending on the "umboðskerfi"
+    if (
+      process.env.NODE_ENV === 'development' &&
+      application.state === 'inReview'
+    ) {
+      return Roles.ASSIGNEE
+    }
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
