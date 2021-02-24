@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { JwtStrategy } from './jwt.strategy'
 
-export interface Config {
+export interface AuthConfig {
   audience: string
   issuer: string
   jwksUri: string
@@ -9,7 +9,7 @@ export interface Config {
 
 @Module({})
 export class AuthModule {
-  static register(options: Config): DynamicModule {
+  static register(options: AuthConfig): DynamicModule {
     return {
       module: AuthModule,
       providers: [
