@@ -12,6 +12,7 @@ import {
   Form,
   FormModes,
   FormValue,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -24,10 +25,6 @@ export const ExampleForm: Form = buildForm({
       id: 'intro',
       title: m.introSection,
       children: [
-        buildTextField({
-          id: 'person.name',
-          title: m.name,
-        }),
         buildDescriptionField({
           id: 'field',
           title: m.introField,
@@ -43,20 +40,28 @@ export const ExampleForm: Form = buildForm({
           title: m.about,
           children: [
             buildTextField({
+              id: 'person.name',
+              title: m.name,
+            }),
+            buildTextField({
               id: 'person.nationalId',
               title: m.nationalId,
+              width: 'half',
             }),
             buildTextField({
               id: 'person.age',
               title: m.age,
+              width: 'half',
             }),
             buildTextField({
               id: 'person.email',
               title: m.email,
+              width: 'half',
             }),
             buildTextField({
               id: 'person.phoneNumber',
               title: m.phoneNumber,
+              width: 'half',
               condition: {
                 questionId: 'person.age',
                 isMultiCheck: false,
@@ -65,6 +70,12 @@ export const ExampleForm: Form = buildForm({
               },
             }),
           ],
+        }),
+        buildFileUploadField({
+          id: 'attachments',
+          title: 'Viðhengi',
+          introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
+          uploadMultiple: true,
         }),
       ],
     }),

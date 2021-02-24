@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import * as AWS from 'aws-sdk'
 import { PdfTypes } from '@island.is/application/core'
@@ -9,14 +9,20 @@ import {
   PersonResidenceChange,
 } from '@island.is/application/templates/children-residence-change'
 import { User } from '@island.is/api/domains/national-registry'
-import { environment } from '../../../../environments'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from '../application.configuration'
 
 @Injectable()
 export class FileService {
   s3: AWS.S3
   private one_minute = 60
 
-  constructor() {
+  constructor(
+    @Inject(APPLICATION_CONFIG)
+    private readonly config: ApplicationConfig,
+  ) {
     this.s3 = new AWS.S3()
   }
 
@@ -89,7 +95,7 @@ export class FileService {
     )
 
     const fileName = `children-residence-change/${parentA.ssn}/${applicationId}.pdf`
-    const bucket = environment.fsS3Bucket || ''
+    const bucket = this.config.presignBucket || ''
 
     return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
   }
