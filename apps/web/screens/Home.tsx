@@ -47,10 +47,6 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   const gn = useNamespace(globalNamespace)
   const { linkResolver } = useLinkResolver()
 
-  if (!page.lifeEvents || !page.lifeEvents.length) {
-    return null
-  }
-
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
