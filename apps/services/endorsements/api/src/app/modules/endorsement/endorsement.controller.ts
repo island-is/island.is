@@ -1,4 +1,5 @@
-import { CurrentUser, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -11,7 +12,7 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiOAuth2, ApiParam, ApiTags } from '@nestjs/swagger'
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
 import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'

@@ -2,7 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
 
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Application, getValueViaPath } from '@island.is/application/core'
 
 import { SharedTemplateApiService } from '../../shared'

@@ -1,7 +1,8 @@
 import { Base64 } from 'js-base64'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
 import { environment } from '../../../../environments'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class FjarsyslaService {
