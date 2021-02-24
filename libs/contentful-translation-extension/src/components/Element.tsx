@@ -14,11 +14,14 @@ export const Element = ({
         </a>
       )
 
-    case 'heading_one':
-      return <h1 {...attributes}>{children}</h1>
-
     case 'heading_two':
       return <h2 {...attributes}>{children}</h2>
+
+    case 'heading_three':
+      return <h3 {...attributes}>{children}</h3>
+
+    case 'heading_four':
+      return <h4 {...attributes}>{children}</h4>
 
     case 'ul_list':
       return <ul {...attributes}>{children}</ul>
@@ -30,7 +33,6 @@ export const Element = ({
       return <li {...attributes}>{children}</li>
 
     case 'paragraph':
-      // Warning: validateDOMNesting(...): <p> cannot appear as a descendant of <p>.
       return <p {...attributes}>{children}</p>
 
     default:

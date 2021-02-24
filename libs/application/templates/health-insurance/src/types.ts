@@ -75,7 +75,8 @@ export interface ContentType {
   buttonAction: () => void
 }
 
-export type Country = {
+export type CountryDataResult = {
+  status?: number
   name: string
   alpha2Code: string
   regionalBlocs: CountryReginalBlocs[]

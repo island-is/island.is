@@ -30,8 +30,22 @@ describe('/krafa/fyrirtaka/:id', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
+  it('should have a info bubble that explains the what the requested court date means', () => {
+    cy.getByTestid('requested-court-date-tooltip').trigger('mouseover')
+    cy.contains(
+      'Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma.',
+    )
+  })
+
   it('should set the default prosecutor as the user who created the case', () => {
     cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
+  })
+
+  it('should have a info bubble that explains the what setting a prosecutor does', () => {
+    cy.getByTestid('prosecutor-tooltip').trigger('mouseover')
+    cy.contains(
+      'Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis.',
+    )
   })
 
   it('should set the default court as Héraðsdómur Reykjavíkur when a case is created', () => {

@@ -12,6 +12,7 @@ export const Application = () => {
   const { formatMessage } = useLocale()
 
   useNamespaces([
+    'crc.application',
     'dl.application',
     'pl.application',
     'hi.application',
