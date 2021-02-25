@@ -40,6 +40,7 @@ const FormField: FC<{
     application,
     autoFocus,
     error,
+    errors,
     field: field as Field,
     goToScreen,
     showFieldName,

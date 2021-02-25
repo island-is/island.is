@@ -20,6 +20,7 @@ import { Overlay } from '../../private/Overlay/Overlay'
 import { Text } from '../../Text/Text'
 import { TextVariants } from '../../Text/Text.treat'
 import { AccordionContext } from '../../Accordion/Accordion'
+import { Icon } from '../../IconRC/Icon'
 import * as styles from './AccordionItem.treat'
 import { Colors } from '@island.is/island-ui/theme'
 
@@ -172,29 +173,28 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     styles.iconWrapVariants[iconVariant],
                   )}
                 >
-                  <svg
-                    className={cn(
-                      styles.plusIcon,
-                      styles.iconVariants[iconVariant],
-                      {
-                        [styles.plusIconActive]: expanded,
-                      },
-                    )}
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <div
+                    className={cn(styles.icon, styles.removeIcon, {
+                      [styles.showRemoveIcon]: expanded,
+                    })}
                   >
-                    <path
-                      d="M11.4286 11.4286H18.5714C19.3571 11.4286 20 10.7857 20 9.99998C20 9.21427 19.3571 8.57141 18.5714 8.57141H11.4286H8.57143H1.42857C0.642857 8.57141 0 9.21427 0 9.99998C0 10.7857 0.642857 11.4286 1.42857 11.4286H8.57143H11.4286Z"
-                      className={cn(styles.plusIconX, {
-                        [styles.plusIconXActive]: expanded,
-                      })}
+                    <Icon
+                      icon="remove"
+                      size={iconVariant === 'default' ? 'large' : 'small'}
+                      color="currentColor"
                     />
-                    <path
-                      d="M8.57157 11.4286L8.57157 18.5714C8.57157 19.3571 9.21442 20 10.0001 20C10.7859 20 11.4287 19.3571 11.4287 18.5714L11.4287 11.4286L11.4287 8.57143L11.4287 1.42857C11.4287 0.642857 10.7859 -2.81002e-08 10.0001 -6.24449e-08C9.21442 -9.67895e-08 8.57157 0.642857 8.57157 1.42857L8.57157 8.57143L8.57157 11.4286Z"
-                      className={styles.plusIconY}
+                  </div>
+                  <div
+                    className={cn(styles.icon, styles.addIcon, {
+                      [styles.hideAddIcon]: expanded,
+                    })}
+                  >
+                    <Icon
+                      icon="add"
+                      size={iconVariant === 'default' ? 'large' : 'small'}
+                      color="currentColor"
                     />
-                  </svg>
+                  </div>
                 </div>
               </Column>
             </Columns>
