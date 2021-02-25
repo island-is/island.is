@@ -53,8 +53,11 @@ describe('getOtherParentId', () => {
   })
 
   it('should return spouse if spouse is selected', () => {
-    const expectedSpouse: FamilyMember = {
-      familyRelation: 'spouse',
+    const expectedSpouse: Pick<
+      FamilyMember,
+      'fullName' | 'familyRelation' | 'nationalId'
+    > = {
+      familyRelation: 'spouse' as FamilyMember['familyRelation'],
       fullName: 'Spouse Spouseson',
       nationalId: '1234567890',
     }

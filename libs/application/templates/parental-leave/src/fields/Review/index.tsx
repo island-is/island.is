@@ -74,6 +74,11 @@ const Review: FC<ReviewScreenProps> = ({
     ) as ValidAnswers,
   )
 
+  const otherParentOptions = useMemo(
+    () => buildFieldOptions(getOtherParentOptions(application), application),
+    [application],
+  )
+
   const dob = getExpectedDateOfBirth(application)
   const { data, error, loading } = useQuery(getEstimatedPayments, {
     variables: {
@@ -109,11 +114,6 @@ const Review: FC<ReviewScreenProps> = ({
       ratio: 50,
     },
   ]
-
-  const otherParentOptions = useMemo(
-    () => buildFieldOptions(getOtherParentOptions(application), application),
-    [application],
-  )
 
   return (
     <div>
