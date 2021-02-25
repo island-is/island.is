@@ -229,7 +229,7 @@ export const CourtRecord: React.FC = () => {
                       <Input
                         data-testid="courtStartTime"
                         name="courtStartTime"
-                        label="Þinghald hófst"
+                        label="Þinghald hófst (kk:mm)"
                         placeholder="Veldu tíma"
                         defaultValue={formatDate(
                           workingCase.courtStartTime,

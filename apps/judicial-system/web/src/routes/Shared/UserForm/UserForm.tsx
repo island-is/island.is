@@ -206,6 +206,16 @@ export const UserForm: React.FC<Props> = (props) => {
               label="Dómritari"
               checked={user.role === UserRole.REGISTRAR}
               onChange={() => setUser({ ...user, role: UserRole.REGISTRAR })}
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <Checkbox
+              name="active"
+              label="Virkur notandi"
+              checked={user.active}
+              onChange={({ target }) =>
+                setUser({ ...user, active: target.checked })
+              }
               large
               filled
             />

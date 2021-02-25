@@ -83,7 +83,10 @@ describe('/domari-krafa/urskurdur', () => {
       }),
     )
 
-    userEvent.type(await screen.findByLabelText('Tímasetning *'), '12:31')
+    userEvent.type(
+      await screen.findByLabelText('Tímasetning (kk:mm) *'),
+      '12:31',
+    )
 
     expect(
       await screen.findByRole('button', {

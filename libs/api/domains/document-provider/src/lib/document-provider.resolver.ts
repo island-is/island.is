@@ -45,6 +45,13 @@ export class DocumentProviderResolver {
     return this.documentProviderService.getOrganisation(nationalId)
   }
 
+  @Query(() => Boolean)
+  async organisationExists(
+    @Args('nationalId') nationalId: string,
+  ): Promise<boolean> {
+    return await this.documentProviderService.organisationExists(nationalId)
+  }
+
   @Mutation(() => Organisation, { nullable: true })
   async createOrganisation(
     @Args('input') input: CreateOrganisationInput,
