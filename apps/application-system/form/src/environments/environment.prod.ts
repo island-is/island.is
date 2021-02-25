@@ -1,16 +1,10 @@
-declare global {
-  interface Window {
-    ENV: {
-      PUBLIC_IDENTITY_SERVER_ISSUER_URL?: string
-    }
-  }
-}
+import { getStaticEnv } from '@island.is/utils/environment'
 
 export default {
   production: true,
   baseApiUrl: window.location.origin,
   identityServer: {
-    authority: window.ENV.PUBLIC_IDENTITY_SERVER_ISSUER_URL,
+    authority: getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL'),
   },
   sentry: {
     dsn:

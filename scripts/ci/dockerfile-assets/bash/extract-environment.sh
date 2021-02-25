@@ -9,13 +9,12 @@ set -e
 work_dir="/usr/share/nginx/html"
 file="$work_dir/index.html"
 
-script_start="<script id=\"environment\" type=\"application\/json\">"
-script_end="<\/script>"
-placeholder="$script_start.*$script_end"
+placeholder="<!-- environment placeholder -->"
 
 function extract_environment() {
+  env_prefix="SI_PUBLIC_"
   environment="{}"
-  env_names=$(grep -ohr "PUBLIC_\w*" "$work_dir/" | cut -d '.' -f3 | sort | uniq)
+  env_names=$(grep -ohr "$env_prefix\w*" "$work_dir/" | sort | uniq)
 
   for env_name in $env_names; do
     env_value=${!env_name}
@@ -35,6 +34,8 @@ function find_placeholder() {
 function insert_environment() {
   environment="$1"
 
+  script_start="<script id=\"environment\" type=\"application\/json\">"
+  script_end="<\/script>"
   escaped_environment=$(echo "$environment" | sed -e 's/[\/&]/\\&/g')
   script="$script_start window.ENV = $escaped_environment $script_end"
 

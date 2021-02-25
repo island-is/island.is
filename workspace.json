@@ -5407,6 +5407,32 @@
         }
       }
     },
+    "utils-environment": {
+      "root": "libs/utils/environment",
+      "sourceRoot": "libs/utils/environment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/utils/environment/tsconfig.lib.json",
+              "libs/utils/environment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/utils/environment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/utils/environment/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "vmst-client": {
       "root": "libs/vmst-client",
       "sourceRoot": "libs/vmst-client/src",
