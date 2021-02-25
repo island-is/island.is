@@ -24,7 +24,7 @@ import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 const handleError = (error: any) => {
   logger.error(JSON.stringify(error))
   if (error.response?.data) {
-    throw new ApolloError(error.response.data, error.response.statusText)
+    throw new ApolloError(error.response.data, error.status)
   } else {
     throw new ApolloError('Failed to resolve request', error.status)
   }
