@@ -34,10 +34,10 @@ function find_placeholder() {
 function insert_environment() {
   environment="$1"
 
-  script_start="<script id=\"environment\" type=\"application\/json\">"
+  script_start="<script id=\"__SI_ENVIRONMENT__\" type=\"application\/json\">"
   script_end="<\/script>"
   escaped_environment=$(echo "$environment" | sed -e 's/[\/&]/\\&/g')
-  script="$script_start window.ENV = $escaped_environment $script_end"
+  script="$script_start $escaped_environment $script_end"
 
   sed -i "s/$placeholder/$script/g" "$file"
 }
