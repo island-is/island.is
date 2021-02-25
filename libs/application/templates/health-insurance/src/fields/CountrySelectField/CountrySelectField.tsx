@@ -68,7 +68,7 @@ const CountrySelectField: FC<Props> = ({
         )}
         options={options}
         disabled={isReviewField}
-        backgroundColor="blue"
+        backgroundColor={isReviewField ? 'white' : 'blue'}
         error={error}
       />
     </Stack>

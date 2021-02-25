@@ -19,9 +19,9 @@ export const useModalContent = (externalData: ExternalData) => {
 
   const getFirstCreatedApplicationId = () => {
     const applications = externalData?.applications.data as Applications[]
-    const sortedApplications = applications.sort((a, b) =>
-      new Date(a.created) > new Date(b.created) ? 1 : -1,
-    )
+    const sortedApplications = applications
+      .slice()
+      .sort((a, b) => (new Date(a.created) > new Date(b.created) ? 1 : -1))
     return sortedApplications[0]?.id
   }
 

@@ -44,6 +44,7 @@ const FormField: FC<{
     setBeforeSubmitCallback,
     autoFocus,
     error,
+    errors,
     field: field as Field,
     goToScreen,
     showFieldName,
