@@ -48,7 +48,11 @@ const dataSchema = z.object({
     })
     .optional(),
 })
-
+enum TEMPLATE_API_ACTIONS {
+  // Has to match name of action in template API module
+  // (will be refactored when state machine is a part of API module)
+  sendApplication = 'sendApplication'
+}
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -72,7 +76,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(val.application),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary', },
               ],
               write: 'all',
             },
@@ -88,6 +92,9 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          onEntry: {
+            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+          },
         },
         type: 'final' as const,
       },

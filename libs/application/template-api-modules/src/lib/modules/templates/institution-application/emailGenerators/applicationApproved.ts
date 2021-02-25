@@ -2,6 +2,7 @@ import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
 import { EmailTemplateGenerator } from '../../../../types'
+import { m } from '@island.is/application/templates/institution-application'
 
 export const generateApplicationEmail: EmailTemplateGenerator = (
   props,
@@ -11,28 +12,43 @@ export const generateApplicationEmail: EmailTemplateGenerator = (
     options: { locale },
   } = props
 
-  const applicantEmail = get(application.answers, 'person.email')
+  const institutionApplicant = get(application.answers, 'applicant.institution')
+  const applicantEmail = get(application.answers, 'contact.email')
+  const applicantName = get(application.answers, 'contact.name')
+  const applicantPhone = get(application.answers, 'contact.phoneNumber')
 
+  const projectName = get(application.answers, 'project.name')
+  const projectGoal = get(application.answers, 'project.goals')
+  const projectScope = get(application.answers, 'project.scope')
+  const projectFinance = get(application.answers, 'project.finance')
+  const projectBackground = get(application.answers, 'project.background')
+
+  console.log(application.answers)
+  console.log('applicant Email', applicantEmail)
   // TODO translate using locale
   const subject =
     locale === 'is'
       ? 'Umsókn samþykkt: ReferenceTemplate'
       : 'Application approved: Reference Template'
+
+  const secondaryContact = ``
+
   const body =
-    locale === 'is'
-      ? dedent(`Góðan dag.
+    dedent(`
+        Umsókn hefur send verið inn frá ${institutionApplicant}.
 
-        Umsókn þín um ReferenceTemplate hefur verið samþykkt.
+        # Nafn ${applicantName}
+        # Tölvupóstfang ${applicantEmail}
+        # Sími ${applicantPhone}
 
-        Með kveðju,
-        starfsfólk ReferenceTemplateStofnunarinnar
-      `)
-      : dedent(`Hello.
+        Nafn verkefnis:
+        ${projectName}
 
-        Your application for ReferenceTemplate has been approved.
+        Bakgrunnur verkefnis:
+        ${projectBackground}
 
-        Best regards,
-        ReferenceTemplateInstitution
+        Markmið verkefnis ávinningur og markhópur
+
       `)
 
   return {
