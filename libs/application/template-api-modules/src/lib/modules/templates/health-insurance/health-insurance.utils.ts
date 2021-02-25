@@ -69,7 +69,7 @@ export const transformApplicationToHealthInsuranceDTO = (
   // There is 2 fields to add information in frontend
   // But there is only one tag in API
   // Merge 2 fields together
-  const addInfo: string = `${
+  const addInfo = `${
     extractAnswer(application.answers, 'additionalRemarks') ?? ''
   }. ${
     extractAnswer(application.answers, 'formerInsurance.entitlementReason') ??
