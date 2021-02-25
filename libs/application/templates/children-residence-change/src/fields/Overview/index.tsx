@@ -1,9 +1,20 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
-import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
-import { CREATE_PDF_PRESIGNED_URL } from '@island.is/application/graphql'
+import {
+  Box,
+  Text,
+  AlertMessage,
+  Button,
+  ModalBase,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
+import {
+  CREATE_PDF_PRESIGNED_URL,
+  REQUEST_FILE_SIGNATURE,
+  UPLOAD_SIGNED_FILE,
+} from '@island.is/application/graphql'
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
@@ -13,40 +24,117 @@ import {
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { DescriptionText } from '../components'
+import * as style from './Overview.treat'
 
-const Overview = ({ application }: FieldBaseProps) => {
+const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
+  const [modalOpen, setModalOpen] = useState(false)
   const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
   const children = extractChildrenFromApplication(application)
   const answers = extractAnswersFromApplication(application)
   const { formatMessage } = useIntl()
+  const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
   const [
     createPdfPresignedUrl,
-    { loading: loadingUrl, data: response },
-  ] = useMutation(CREATE_PDF_PRESIGNED_URL, {
-    onError: (e) => console.log('error', e),
-  })
+    { loading: loadingUrl, data: pdfResponse },
+  ] = useMutation(CREATE_PDF_PRESIGNED_URL)
+  const [
+    requestFileSignature,
+    { data: requestFileSignatureData },
+  ] = useMutation(REQUEST_FILE_SIGNATURE)
+  const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
 
   useEffect(() => {
     createPdfPresignedUrl({
       variables: {
         input: {
           id: application.id,
-          type: PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+          type: pdfType,
         },
       },
     })
   }, [application.id, createPdfPresignedUrl])
 
-  const pdfUrl =
-    response?.createPdfPresignedUrl?.attachments?.[
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE
-    ]
+  const pdfUrl = pdfResponse?.createPdfPresignedUrl?.attachments?.[pdfType]
 
+
+
+  setBeforeSubmitCallback(async () => {
+    if (!pdfUrl) {
+      return [false, 'no pdf url']
+    }
+    setModalOpen(true)
+    const requestResponse = await requestFileSignature({
+      variables: {
+        input: {
+          id: application.id,
+          type: pdfType,
+        },
+      },
+    })
+    if (requestResponse?.data) {
+      const documentToken = requestResponse.data.requestFileSignature?.attachments?.fileSignature?.documentToken
+      const signedFileReponse = await uploadSignedFile({
+        variables: {
+          input: {
+            id: application.id,
+            documentToken,
+            type: pdfType,
+          },
+        },
+      })
+      if (signedFileReponse.data) {
+        return [true, null]
+      }
+    }
+    return [false, 'Failed to update application']
+  })
+
+  const controlCode =
+    requestFileSignatureData?.requestFileSignature?.attachments?.fileSignature
+      ?.controlCode
   return (
     <>
+      <ModalBase
+        baseId="myDialog"
+        isVisible={modalOpen}
+        hideOnClickOutside={false}
+        className={style.modal}
+      >
+        <Box
+          className={style.modalContent}
+          boxShadow="large"
+          borderRadius="standard"
+          background="white"
+          paddingX={[3, 3, 5, 12]}
+          paddingY={[3, 3, 4, 10]}
+        >
+          <Text variant="h1" marginBottom={2}>
+            Rafræn undirritun
+          </Text>
+          {controlCode ? (
+            <>
+              <Text variant="h2" marginBottom={2}>
+                Öryggistala:{' '}
+                <span className={style.controlCode}>{controlCode}</span>
+              </Text>
+              <Text>
+                Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
+                öryggistala birtist í símanum þínum.
+              </Text>
+            </>
+          ) : (
+            <>
+              <Box marginBottom={2}>
+                <SkeletonLoader width="50%" height={30} />
+              </Box>
+              <SkeletonLoader repeat={2} space={1} />
+            </>
+          )}
+        </Box>
+      </ModalBase>
       <Box marginTop={3}>
         <AlertMessage
           type="info"

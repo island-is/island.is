@@ -6,7 +6,7 @@ import {
   FieldBaseProps,
   getValueViaPath,
   RecordObject,
-  SetBeforeSubmitCallback
+  SetBeforeSubmitCallback,
 } from '@island.is/application/core'
 import { useFields } from './FieldContext'
 

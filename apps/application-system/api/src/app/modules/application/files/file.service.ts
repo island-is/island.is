@@ -81,8 +81,8 @@ export class FileService {
         return await this.handleChildrenResidenceChangeSignature(
           type,
           application.id,
-          name,
-          phoneNumber,
+          'Vilhjalmur Ari Gunnarsson',
+          '6947125',
         )
       }
     }
