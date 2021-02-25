@@ -4,6 +4,7 @@
 
 import deepmerge from 'deepmerge'
 import isArray from 'lodash/isArray'
+import HtmlParser from 'react-html-parser'
 
 import { Field, RecordObject } from '../types/Fields'
 import { Application, FormValue } from '../types/Application'
@@ -243,6 +244,14 @@ export function formatText<T extends FormTextArray | FormText>(
   }
 
   return formatMessage(text) as T extends FormTextArray ? string[] : string
+}
+
+export function formatAndParseAsHTML(
+  text: FormText,
+  application: Application,
+  formatMessage: MessageFormatter,
+): React.ReactElement[] {
+  return HtmlParser(formatText(text, application, formatMessage))
 }
 
 // periods[3].startDate -> 3

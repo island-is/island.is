@@ -1,9 +1,11 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   Application,
   getValueViaPath,
   ValidAnswers,
+  formatAndParseAsHTML,
+  buildFieldOptions,
 } from '@island.is/application/core'
 import {
   Accordion,
@@ -108,6 +110,11 @@ const Review: FC<ReviewScreenProps> = ({
     },
   ]
 
+  const otherParentOptions = useMemo(
+    () => buildFieldOptions(getOtherParentOptions(application), application),
+    [application],
+  )
+
   return (
     <div>
       <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
@@ -155,7 +162,14 @@ const Review: FC<ReviewScreenProps> = ({
                         'otherParent',
                       ) as string[]
                     }
-                    options={getOtherParentOptions(application)}
+                    options={otherParentOptions.map((option) => ({
+                      ...option,
+                      label: formatAndParseAsHTML(
+                        option.label,
+                        application,
+                        formatMessage,
+                      ),
+                    }))}
                     onSelect={(s: string) => {
                       setStatefulOtherParentConfirmed(
                         s as ValidOtherParentAnswer,
