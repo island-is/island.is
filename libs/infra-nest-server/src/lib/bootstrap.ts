@@ -1,3 +1,4 @@
+import '@island.is/infra-tracing'
 import { NestFactory } from '@nestjs/core'
 import cookieParser from 'cookie-parser'
 import {
