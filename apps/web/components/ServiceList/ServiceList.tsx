@@ -6,7 +6,7 @@ import {
   CategoryCard,
 } from '@island.is/island-ui/core'
 import { Service } from '@island.is/api/schema'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { GetNamespaceQuery, Namespace } from '@island.is/web/graphql/schema'
 import { capitalize } from '@island.is/web/utils/capitalize'
 import { useNamespace } from '@island.is/web/hooks'
 
@@ -32,7 +32,7 @@ export const ServiceList: React.FC<ServiceListProps> = ({
   services = [],
   tagDisplayNames = {},
 }) => {
-  const n = useNamespace(tagDisplayNames)
+  const n = useNamespace(tagDisplayNames as Namespace)
 
   const CategoriesToTags = (service: Service) => {
     const tags: Tag[] = []

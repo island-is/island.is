@@ -309,7 +309,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               buttonProps={{
                 onClick: () => {
                   closeMenu()
-                  onSubmit(inputValue)
+                  onSubmit(inputValue as string)
                 },
                 onFocus,
                 onBlur,
@@ -338,7 +338,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               {isOpen && !isEmpty(search) && (
                 <Results
                   search={search}
-                  highlightedIndex={highlightedIndex}
+                  highlightedIndex={highlightedIndex as number}
                   getItemProps={getItemProps}
                   autosuggest={autosuggest}
                   onRouting={() => {
@@ -405,7 +405,7 @@ const Results: FC<{
                   className={styles.suggestion}
                   onClick={(e) => {
                     onClick(e)
-                    onRouting()
+                    onRouting && onRouting()
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
@@ -440,7 +440,7 @@ const Results: FC<{
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
-                        onRouting()
+                        onRouting && onRouting()
                       }}
                     >
                       <Link {...linkResolver(__typename as LinkType, [slug])}>

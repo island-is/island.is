@@ -1,6 +1,6 @@
 import React, { ElementType, useState } from 'react'
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 
 type BackgroundBleed = {
@@ -56,9 +56,9 @@ export const Section: React.FC<SectionProps> = ({
 
     return {
       backgroundImage: `linear-gradient(to ${backgroundBleed.bleedDirection}, ${
-        theme.color[backgroundBleed.fromColor]
+        theme.color[backgroundBleed.fromColor as Colors]
       } calc(100% - ${amount}px), ${
-        theme.color[backgroundBleed.toColor]
+        theme.color[backgroundBleed.toColor as Colors]
       } calc(100% - ${amount}px))`,
     }
   }
@@ -70,7 +70,7 @@ export const Section: React.FC<SectionProps> = ({
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
       background={background}
-      style={generateBackgroundBleed()}
+      style={generateBackgroundBleed() ?? undefined}
       {...rest}
     >
       {children}

@@ -58,7 +58,7 @@ const useHeadingLinks = ({
       setActiveIndex(idx)
     },
     [offsets, canUpdate],
-    null,
+    undefined,
     false,
     150,
   )
@@ -134,7 +134,7 @@ export const Sidebar: FC<SidebarProps> = ({
   const updateBulletPlacement = useCallback(() => {
     itemsRef.current = itemsRef.current.slice(0, links.length)
 
-    const parentTop = parentRef.current.getBoundingClientRect().top
+    const parentTop = parentRef?.current?.getBoundingClientRect().top ?? 0
     const selectedItem = itemsRef.current[currentIndex]
 
     if (selectedItem) {

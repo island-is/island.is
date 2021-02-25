@@ -1,10 +1,8 @@
 import React, { FC, useState } from 'react'
 import { useNamespace } from '../../hooks'
-import capitalize from 'lodash/capitalize'
 import {
   Box,
   Inline,
-  Tag,
   Text,
   Divider,
   Link,
@@ -13,23 +11,23 @@ import {
   GridRow,
   GridColumn,
   Option,
-  Tooltip,
-  DialogPrompt,
 } from '@island.is/island-ui/core'
 import {
   Service,
   ServiceDetail,
   GetNamespaceQuery,
+  Namespace,
 } from '@island.is/web/graphql/schema'
 import TagList from './TagList'
 import XroadValue from './XroadValue'
 import ServiceInfoLink from './ServiceInfoLink'
 import ServiceTag from './ServiceTag'
+import { ValueType } from 'react-select/src/types'
 
 export interface ServiceInformationProps {
   service: Service
   strings: GetNamespaceQuery['getNamespace']
-  onSelectChange?: (value: ServiceDetail) => void
+  onSelectChange?: (value: ServiceDetail | undefined) => void
 }
 
 export const ServiceInformation: FC<ServiceInformationProps> = ({
@@ -37,7 +35,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
   strings,
   onSelectChange,
 }: ServiceInformationProps) => {
-  const n = useNamespace(strings)
+  const n = useNamespace(strings as Namespace)
 
   // TODO When environment is chosen set the version options, default is set to newest version.
   const enviromentOptions: Array<Option> = service.environments.map((x) => {
@@ -59,41 +57,55 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
     }),
   )
 
-  const [selectedVersionOption, setSelectedVersionOption] = useState<Option>(
-    versionOptions[0],
-  )
+  const [selectedVersionOption, setSelectedVersionOption] = useState<
+    Option | undefined
+  >(versionOptions[0])
 
-  const [serviceDetail, setServiceDetail] = useState<ServiceDetail>(
+  const [serviceDetail, setServiceDetail] = useState<ServiceDetail | undefined>(
     service.environments[0].details[0],
   )
 
-  const onSelectVersion = (versionOption: Option) => {
-    const tempServiceDetail = service.environments
-      .find((e) => e.environment === selectedEnviromentOption.value)
-      .details.find((e) => e.version === versionOption.value)
+  const onSelectVersion = (versionOption: ValueType<Option>) => {
+    const tempService = (service?.environments || []).find(
+      (e) => e.environment === (selectedEnviromentOption as Option).value,
+    )
+
+    const tempServiceDetail = (tempService?.details || []).find(
+      (e) => e.version === (versionOption as Option).value,
+    )
 
     setServiceDetail(tempServiceDetail)
-    setSelectedVersionOption(versionOption)
-    onSelectChange(tempServiceDetail)
+    setSelectedVersionOption(versionOption as Option)
+
+    onSelectChange && onSelectChange(tempServiceDetail)
   }
 
-  const onSelectEnviroment = (enviromentOption: Option) => {
-    const tempServiceDetail = service.environments
-      .find((e) => e.environment === enviromentOption.value)
-      .details.find((e) => e.version === selectedVersionOption.value)
-    setServiceDetail(tempServiceDetail)
-    setSelectedEnviromentOption(enviromentOption)
-    setVersionOptions(
-      service.environments
-        .find((e) => e.environment === enviromentOption.value)
-        .details.map((x) => {
-          return {
-            label: x.version,
-            value: x.version,
-          }
-        }),
+  const onSelectEnviroment = (enviromentOption: ValueType<Option>) => {
+    const tempService = service.environments.find(
+      (e) => e.environment === (enviromentOption as Option).value,
     )
-    onSelectChange(tempServiceDetail)
+
+    const tempServiceDetail = (tempService?.details || []).find(
+      (e) => e.version === (selectedVersionOption as Option).value,
+    )
+
+    setServiceDetail(tempServiceDetail)
+    setSelectedEnviromentOption(enviromentOption as Option)
+
+    const tmp = service.environments.find(
+      (e) => e.environment === (enviromentOption as Option).value,
+    )
+
+    const tempVersionOptions = (tmp?.details || []).map((x) => {
+      return {
+        label: x.version,
+        value: x.version,
+      }
+    })
+
+    setVersionOptions(tempVersionOptions)
+
+    onSelectChange && onSelectChange(tempServiceDetail)
   }
 
   return (
@@ -107,7 +119,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
                 <ServiceTag
                   category="pricing"
                   item={service.pricing[0]}
-                  namespace={strings}
+                  namespace={strings as Namespace}
                 />
               </Box>
             )}
@@ -164,9 +176,9 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
               'flexEnd',
             ]}
           >
-            <Link href={serviceDetail.links.bugReport}>
+            <Link href={serviceDetail?.links?.bugReport ?? ''}>
               <Button
-                disabled={!serviceDetail.links.bugReport}
+                disabled={!serviceDetail?.links?.bugReport ?? ''}
                 colorScheme="light"
                 iconType="filled"
                 size="small"
@@ -178,9 +190,9 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
               </Button>
             </Link>
             <Box marginLeft={[3, 3, 3, 3, 2]}>
-              <Link href={serviceDetail.links.featureRequest}>
+              <Link href={serviceDetail?.links?.featureRequest ?? ''}>
                 <Button
-                  disabled={!serviceDetail.links.featureRequest}
+                  disabled={!serviceDetail?.links?.featureRequest ?? ''}
                   colorScheme="light"
                   iconType="filled"
                   size="small"
@@ -204,7 +216,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
         flexDirection="column"
       >
         {/* Xroad values */}
-        {serviceDetail.xroadIdentifier && (
+        {!!serviceDetail?.xroadIdentifier && (
           <Box paddingX={3} marginBottom={2}>
             <Inline space={1}>
               <Text color="blue600">
@@ -247,21 +259,23 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
         <Box paddingBottom={3}>
           <Divider />
         </Box>
-        <TagList
-          data={serviceDetail.data}
-          type={serviceDetail.type}
-          access={service.access}
-          namespace={strings}
-        />
+        {!!serviceDetail && (
+          <TagList
+            data={serviceDetail.data}
+            type={serviceDetail.type}
+            access={service.access}
+            namespace={strings as Namespace}
+          />
+        )}
       </Box>
       <Inline space={3}>
-        {serviceDetail.links.documentation && (
+        {!!serviceDetail?.links?.documentation && (
           <ServiceInfoLink
             href={serviceDetail.links.documentation}
             link={n('linkDocumentation')}
           />
         )}
-        {serviceDetail.links.responsibleParty && (
+        {!!serviceDetail?.links?.responsibleParty && (
           <ServiceInfoLink
             href={serviceDetail.links.responsibleParty}
             link={n('linkResponsible')}
