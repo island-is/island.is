@@ -1733,7 +1733,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/core/src/**/*.{js,ts,tsx}'"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-letter/src/lib/messages.ts'"
           }
         }
       }
