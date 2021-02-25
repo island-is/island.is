@@ -1,11 +1,15 @@
 #!/bin/bash
+#
+# Provide environment variables for static frontends by checking referenced
+# variables in the code and inject them into index.html
+#
 
 set -e
 
 work_dir="/usr/share/nginx/html"
 file="$work_dir/index.html"
 
-script_start="<script id=\"environment\">"
+script_start="<script id=\"environment\" type=\"application\/json\">"
 script_end="<\/script>"
 placeholder="$script_start.*$script_end"
 
