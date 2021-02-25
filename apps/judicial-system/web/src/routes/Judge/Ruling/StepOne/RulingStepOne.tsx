@@ -1,9 +1,6 @@
 import {
   Accordion,
   Box,
-  DatePicker,
-  GridColumn,
-  GridRow,
   Input,
   RadioButton,
   Text,
@@ -14,9 +11,9 @@ import {
   FormFooter,
   PageLayout,
   PoliceRequestAccordionItem,
-  TimeInputField,
   BlueBox,
   CaseNumbers,
+  DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -55,7 +52,6 @@ import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
 
-import * as styles from './RulingStepOne.treat'
 interface CaseData {
   case?: Case
 }
@@ -302,88 +298,71 @@ export const RulingStepOne: React.FC = () => {
                     : 'Farbann'}
                 </Text>
               </Box>
-              <BlueBox>
-                <div className={styles.custodyEndDateContainer}>
-                  <DatePicker
-                    id="custodyEndDate"
-                    label={
-                      workingCase.type === CaseType.CUSTODY &&
-                      workingCase.decision === CaseDecision.ACCEPTING
-                        ? 'Gæsluvarðhald til'
-                        : 'Farbann til'
-                    }
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    selected={
-                      workingCase.custodyEndDate
-                        ? parseISO(workingCase.custodyEndDate?.toString())
-                        : null
-                    }
-                    errorMessage={custodyEndDateErrorMessage}
-                    hasError={custodyEndDateErrorMessage !== ''}
-                    handleCloseCalendar={(date) =>
-                      setAndSendDateToServer(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        date,
-                        workingCase,
-                        true,
-                        setWorkingCase,
-                        updateCase,
-                        setCustodyEndDateErrorMessage,
+              <DateTime
+                datepickerId="custodyEndDate"
+                datepickerLabel={
+                  workingCase.type === CaseType.CUSTODY &&
+                  workingCase.decision === CaseDecision.ACCEPTING
+                    ? 'Gæsluvarðhald til'
+                    : 'Farbann til'
+                }
+                selectedDate={
+                  workingCase.custodyEndDate
+                    ? parseISO(workingCase.custodyEndDate?.toString())
+                    : null
+                }
+                datepickerErrorMessage={custodyEndDateErrorMessage}
+                handleCloseCalander={(date) =>
+                  setAndSendDateToServer(
+                    'custodyEndDate',
+                    workingCase.custodyEndDate,
+                    date,
+                    workingCase,
+                    true,
+                    setWorkingCase,
+                    updateCase,
+                    setCustodyEndDateErrorMessage,
+                  )
+                }
+                dateIsRequired
+                timeName="custodyEndTime"
+                timeRef={custodyEndTimeRef}
+                timeDefaultValue={
+                  workingCase.custodyEndDate?.includes('T')
+                    ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                    : workingCase.requestedCustodyEndDate?.includes('T')
+                    ? formatDate(
+                        workingCase.requestedCustodyEndDate,
+                        TIME_FORMAT,
                       )
-                    }
-                    required
-                  />
-
-                  <TimeInputField
-                    onChange={(evt) =>
-                      validateAndSetTime(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        setWorkingCase,
-                        custodyEndTimeErrorMessage,
-                        setCustodyEndTimeErrorMessage,
-                      )
-                    }
-                    onBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        updateCase,
-                        setCustodyEndTimeErrorMessage,
-                      )
-                    }
-                  >
-                    <Input
-                      data-testid="custodyEndTime"
-                      name="custodyEndTime"
-                      label="Tímasetning (kk:mm)"
-                      placeholder="Veldu tíma"
-                      ref={custodyEndTimeRef}
-                      defaultValue={
-                        workingCase.custodyEndDate?.includes('T')
-                          ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                          : workingCase.requestedCustodyEndDate?.includes('T')
-                          ? formatDate(
-                              workingCase.requestedCustodyEndDate,
-                              TIME_FORMAT,
-                            )
-                          : undefined
-                      }
-                      hasError={custodyEndTimeErrorMessage !== ''}
-                      errorMessage={custodyEndTimeErrorMessage}
-                      required
-                    />
-                  </TimeInputField>
-                </div>
-              </BlueBox>
+                    : undefined
+                }
+                timeOnChange={(evt) =>
+                  validateAndSetTime(
+                    'custodyEndDate',
+                    workingCase.custodyEndDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    setWorkingCase,
+                    custodyEndTimeErrorMessage,
+                    setCustodyEndTimeErrorMessage,
+                  )
+                }
+                timeOnBlur={(evt) =>
+                  validateAndSendTimeToServer(
+                    'custodyEndDate',
+                    workingCase.custodyEndDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    updateCase,
+                    setCustodyEndTimeErrorMessage,
+                  )
+                }
+                timeErrorMessage={custodyEndTimeErrorMessage}
+                timeIsRequired
+              />
             </Box>
           )}
           {workingCase.type === CaseType.CUSTODY &&

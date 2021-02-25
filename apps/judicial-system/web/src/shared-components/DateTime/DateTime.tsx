@@ -6,6 +6,7 @@ import { TimeInputField, BlueBox } from '../../shared-components'
 
 interface Props {
   datepickerId: string
+  datepickerLabel?: string
   datepickerErrorMessage?: string
   datepickerIcon?: Icon
   minDate?: Date
@@ -33,6 +34,7 @@ interface Props {
 const DateTime: React.FC<Props> = (props) => {
   const {
     datepickerId,
+    datepickerLabel = 'Veldu dagsetningu',
     datepickerErrorMessage,
     datepickerIcon,
     minDate,
@@ -58,7 +60,7 @@ const DateTime: React.FC<Props> = (props) => {
       <div data-testid="date-time" className={styles.dateTimeContainer}>
         <DatePicker
           id={datepickerId}
-          label="Veldu dagsetningu"
+          label={datepickerLabel}
           placeholderText="Veldu dagsetningu"
           locale="is"
           errorMessage={datepickerErrorMessage}
