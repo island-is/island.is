@@ -38,15 +38,29 @@ const dataSchema = z.object({
       .optional(),
     phoneNumber: z.string().optional(),
   }),
-  project: z
-    .object({
-      name: z.string().optional(),
-      background: z.string().optional(),
-      goals: z.string().optional(),
-      scope: z.string().optional(),
-      finance: z.string().optional(),
-    })
-    .optional(),
+  project: z.object({
+    name: z.string().optional(),
+    background: z.string().optional(),
+    goals: z.string().optional(),
+    scope: z.string().optional(),
+    finance: z.string().optional(),
+    stakeholders: z.string().optional(),
+    role: z.string().optional(),
+  }),
+  constraints: z.object({
+    hasTechnical: z.boolean().optional(),
+    technical: z.string().optional(),
+    hasFinancial: z.boolean().optional(),
+    financial: z.string().optional(),
+    hasTime: z.boolean().optional(),
+    time: z.string().optional(),
+    hasShopping: z.boolean().optional(),
+    shopping: z.string().optional(),
+    hasMoral: z.boolean().optional(),
+    moral: z.string().optional(),
+    hasOther: z.boolean().optional(),
+    other: z.string().optional(),
+  }),
 })
 enum TEMPLATE_API_ACTIONS {
   // Has to match name of action in template API module

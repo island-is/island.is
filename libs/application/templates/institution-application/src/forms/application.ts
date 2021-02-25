@@ -104,9 +104,47 @@ export const application: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'projectRestrictionSection',
+          id: 'projectConstraintsSection',
           title: m.projectRestrictionSubsectionLabel,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'constraints',
+              title: 'Skorður verkefnis',
+              description: 'Vinsamlegast fylltu ut skordur',
+              children: [
+                buildCustomField({
+                  id: 'constraints',
+                  title: '',
+                  component: 'Constraints',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'stakholdersSection',
+          title: 'Hagsmunaaðillar',
+          children: [
+            buildMultiField({
+              id: 'stakeholders',
+              title: 'Hlutverk og hagsmunaaðilar',
+              description: '',
+              children: [
+                buildTextField({
+                  id: 'project.stakeholders',
+                  title: 'Hagsmunaaðilar',
+                  placeholder: 'asnjdnajsdn',
+                  variant: 'textarea',
+                }),
+                buildTextField({
+                  id: 'project.role',
+                  title: 'Skilgreind hlutverk',
+                  placeholder: 'asnjdnajsdn',
+                  variant: 'textarea',
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),
