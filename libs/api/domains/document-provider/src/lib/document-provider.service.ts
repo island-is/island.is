@@ -23,7 +23,11 @@ import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 // eslint-disable-next-line
 const handleError = (error: any) => {
   logger.error(JSON.stringify(error))
-  throw new ApolloError('Failed to resolve request', error.status)
+  if (error.response?.data) {
+    throw new ApolloError(error.response.data, error.response.statusText)
+  } else {
+    throw new ApolloError('Failed to resolve request', error.status)
+  }
 }
 
 @Injectable()
