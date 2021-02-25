@@ -6,15 +6,20 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { otherParent } from '../../lib/messages'
 import { extractParentFromApplication } from '../../lib/utils'
 
-const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
-  const { id } = field
+const emailId = 'email'
+const phoneNumberId = 'phoneNumber'
+
+export const contactInfoIds = [emailId, phoneNumberId]
+
+const ContactInfo = ({ errors, application }: FieldBaseProps) => {
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
   const { formatMessage } = useIntl()
-  const { setValue } = useFormContext()
+  const { setValue, register } = useFormContext()
   const parent = extractParentFromApplication(application)
-  // TODO: add validation
+  const emailError = errors?.email
+  const phoneNumberError = errors?.phoneNumber
   return (
     <>
       <Box marginTop={3}>
@@ -30,22 +35,24 @@ const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
       </Box>
       <Box marginTop={5}>
         <Controller
-          name="email"
-          defaultValue={getValue('contactInfo')?.[0]}
+          name={emailId}
+          defaultValue={getValue(phoneNumberId)}
           render={({ value, onChange }) => {
             return (
               <Input
-                id={`${id}[0]`}
-                name={`${id}[0]`}
+                ref={register}
+                id={emailId}
+                name={emailId}
                 backgroundColor="blue"
-                type="text"
+                type="email"
                 label={formatMessage(otherParent.inputs.emailLabel)}
                 value={value}
-                hasError={!!error}
+                hasError={emailError !== undefined}
+                errorMessage={emailError as string}
                 required={true}
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(`${id}[0]`, e.target.value)
+                  setValue(emailId, e.target.value)
                 }}
               />
             )
@@ -54,22 +61,24 @@ const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
       </Box>
       <Box marginTop={2}>
         <Controller
-          name="phonenumber"
-          defaultValue={getValue('contactInfo')?.[1]}
+          name={phoneNumberId}
+          defaultValue={getValue(phoneNumberId)}
           render={({ value, onChange }) => {
             return (
               <Input
-                id={`${id}[1]`}
-                name={`${id}[1]`}
+                ref={register}
+                id={phoneNumberId}
+                name={phoneNumberId}
                 backgroundColor="blue"
                 type="tel"
                 label={formatMessage(otherParent.inputs.phoneNumberLabel)}
                 value={value}
                 required={true}
-                hasError={!!error}
+                hasError={phoneNumberError !== undefined}
+                errorMessage={phoneNumberError as string}
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(`${id}[1]`, e.target.value)
+                  setValue(phoneNumberId, e.target.value)
                 }}
               />
             )
