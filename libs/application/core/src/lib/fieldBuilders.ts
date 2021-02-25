@@ -352,9 +352,9 @@ export function buildFileUploadField(data: {
   id: string
   title: FormText
   introduction: FormText
-  uploadHeader?: string
-  uploadDescription?: string
-  uploadButtonLabel?: string
+  uploadHeader?: FormText
+  uploadDescription?: FormText
+  uploadButtonLabel?: FormText
   uploadMultiple?: boolean
   uploadAccept?: string
   maxSize?: number
