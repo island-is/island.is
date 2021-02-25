@@ -18,12 +18,12 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
-import { Menu } from '../Menu/Menu'
+import { Menu, MenuProps } from '../Menu/Menu'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
-  megaMenuData
+  megaMenuData: MenuProps
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace

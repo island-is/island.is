@@ -1,4 +1,11 @@
-import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
+import React, {
+  FC,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  ChangeEvent,
+} from 'react'
 import intersection from 'lodash/intersection'
 import AnimateHeight from 'react-animate-height'
 import cn from 'classnames'
@@ -57,7 +64,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   const [indexesFilteredByTag, setIndexesFilteredByTag] = useState<
     Array<number>
   >([])
-  const timerRef = useRef(null)
+  const timerRef = useRef<number | undefined>(undefined)
 
   const visibleItems = startingItems.length ? startingItems : items
 
@@ -72,13 +79,13 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     return () => window.removeEventListener('resize', handleResize)
   }, [handleResize])
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent & { target: HTMLInputElement }) => {
     e.preventDefault()
     setFilterString(e.target.value)
   }
 
   const onFilterStringChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ title, description }, index) => {
       const str = `${title} ${description}`
@@ -92,7 +99,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   }, [visibleItems, filterString])
 
   const onFilterTagChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ tag }, index) => {
       if (tag && tag.some(({ id }) => tagIds.includes(id as string))) {
@@ -110,13 +117,15 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   }, [onFilterStringChange, onFilterTagChange])
 
   const onUpdateFilters = useCallback(() => {
-    clearTimeout(timerRef.current)
+    timerRef.current && clearTimeout(timerRef.current)
     setIsLoading(true)
 
     if (!filterString) {
       doUpdate()
     } else {
-      timerRef.current = setTimeout(doUpdate, FILTER_TIMER)
+      if (typeof window === 'object') {
+        timerRef.current = window.setTimeout(doUpdate, FILTER_TIMER)
+      }
     }
   }, [filterString, doUpdate])
 
@@ -271,9 +280,9 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
 
               return (
                 <Card
-                  link={{ href: link }}
+                  link={{ href: link as string }}
                   key={index}
-                  description={description}
+                  description={description as string}
                   title={title}
                   tags={tags}
                 />

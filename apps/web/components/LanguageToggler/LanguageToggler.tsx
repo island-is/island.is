@@ -37,8 +37,19 @@ export const LanguageToggler: FC<{
     locale(t.otherLanguageCode)
 
     if (!contentfulId) {
-      const { type } = typeResolver(Router.asPath.split('?')[0], true)
+      const typeResolverResponse = typeResolver(
+        Router.asPath.split('?')[0],
+        true,
+      )
+
+      let type = typeResolverResponse?.type
+
+      if (!type) {
+        return Router.push(linkResolver('homepage').href)
+      }
+
       const pagePath = linkResolver(type, [], otherLanguage).href
+
       if (pagePath === '/404') {
         // if we can't resolve the path go to homepage
         return Router.push(linkResolver('homepage').href)
@@ -76,7 +87,7 @@ export const LanguageToggler: FC<{
     <Button
       colorScheme={buttonColorScheme}
       variant="utility"
-      onClick={otherLanguage === 'en' ? null : onClick}
+      onClick={otherLanguage === 'en' ? () => {} : onClick}
       aria-label={t.otherLanguageAria}
       lang={otherLanguage === 'en' ? 'en' : 'is'}
     >

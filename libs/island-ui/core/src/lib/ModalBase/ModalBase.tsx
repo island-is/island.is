@@ -70,7 +70,7 @@ export type ModalBaseProps = {
   onVisibilityChange?: (isVisible: boolean) => void
   renderDisclosure?: (
     disclosure: ReactElement,
-    disclosureProps?: DisclosureProps,
+    disclosureProps?: DisclosureProps & { onClick: () => {} },
   ) => ReactElement
   backdropWhite?: boolean
   /**

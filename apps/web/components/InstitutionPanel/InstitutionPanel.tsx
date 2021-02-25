@@ -27,7 +27,7 @@ export const InstitutionPanel = ({
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
   return (
-    <Link {...linkProps}>
+    <Link {...linkProps} href={linkProps ? linkProps.href : '/'}>
       <Box
         background="purple100"
         borderRadius="large"

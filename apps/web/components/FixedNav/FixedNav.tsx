@@ -33,7 +33,7 @@ export const FixedNav: FC = () => {
       setShow(canShow && !goingDown)
     },
     [setShow],
-    null,
+    undefined,
     false,
     150,
   )

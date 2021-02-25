@@ -25,11 +25,12 @@ export const ChatPanel = () => {
       el.addEventListener('load', () => {
         const settings = {
           chatPanel: {
-            ...config.chatPanel,
+            ...(config && config.chatPanel),
             styling: {
-              ...config.chatPanel.styling,
+              ...(config?.chatPanel && config.chatPanel.styling),
               settings: {
-                ...config.chatPanel.styling.settings,
+                ...(config?.chatPanel?.styling?.settings &&
+                  config.chatPanel.styling.settings),
                 conversationId:
                   window.sessionStorage.getItem(CONVERSATION_KEY) ?? null,
               },
@@ -44,7 +45,9 @@ export const ChatPanel = () => {
           window.boost.chatPanel.show()
         }
 
-        const onConversationIdChanged = (e) => {
+        const onConversationIdChanged = (e: {
+          detail: { conversationId: string }
+        }) => {
           window.sessionStorage.setItem(
             CONVERSATION_KEY,
             e.detail.conversationId,

@@ -7,12 +7,18 @@ const LottiePlayer = dynamic(() => import('../LottiePlayer/LottiePlayer'), {
   ssr: false,
 })
 
-const LottieIllustration = ({ animationData, selectedIndex }) => {
+const LottieIllustration = ({
+  animationData,
+  selectedIndex,
+}: {
+  animationData: Array<JSON | null>
+  selectedIndex: number
+}) => {
   const [loaded, set] = useState(false)
 
   return (
     <Box position="relative">
-      {animationData.map((animation: JSON, index: number) => (
+      {animationData.map((animation: JSON | null, index: number) => (
         <LottiePlayer
           key={index}
           animationData={animation}

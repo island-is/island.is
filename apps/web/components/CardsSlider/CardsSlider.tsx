@@ -1,7 +1,18 @@
-import React, { FC, useState, useRef, useCallback, MutableRefObject, Ref, RefObject } from 'react'
+import React, {
+  FC,
+  useState,
+  useRef,
+  useCallback,
+  MutableRefObject,
+  Ref,
+  RefObject,
+} from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import cn from 'classnames'
-import AliceCarousel, { EventObject, Props as AliceProps} from 'react-alice-carousel'
+import AliceCarousel, {
+  EventObject,
+  Props as AliceProps,
+} from 'react-alice-carousel'
 import 'react-alice-carousel/lib/alice-carousel.css'
 import { Inline, Text, Box, Hidden, Button } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -28,7 +39,7 @@ const initialSlideState = {
 
 interface AliceRef extends HTMLElement {
   stageComponent: HTMLElement
-} 
+}
 
 export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   const { width } = useWindowSize()
@@ -54,7 +65,8 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   useIsomorphicLayoutEffect(() => {
     setTimeout(() => {
       if (cardHeight === 'auto' && ref.current) {
-        const el = ref && ref?.current?.stageComponent?.offsetParent as HTMLElement
+        const el =
+          ref && (ref?.current?.stageComponent?.offsetParent as HTMLElement)
         if (el) {
           setCardHeight(`${el.offsetHeight}px`)
         }

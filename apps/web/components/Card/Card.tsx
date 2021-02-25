@@ -33,7 +33,7 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 
 export interface CardProps {
   title: string
-  image?: { title: string; url: string }
+  image?: { title: string; url: string } | undefined
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
@@ -164,11 +164,7 @@ export const Card: FC<CardProps> = ({
     )
   }
 
-  return (
-    <Frame>
-      {items}
-    </Frame>
-  )
+  return <Frame>{items}</Frame>
 }
 
 export const Frame: FC = ({ children }) => {

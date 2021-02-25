@@ -50,7 +50,7 @@ export const IntroductionSection: FC<Props> = ({
       <GridRow>
         <GridColumn
           span={['12/12', '12/12', '4/12']}
-          offset={[null, null, '1/12']}
+          offset={['0', '0', '1/12']}
         >
           <Box
             display="inlineFlex"
@@ -59,12 +59,12 @@ export const IntroductionSection: FC<Props> = ({
             alignItems="center"
             justifyContent="center"
           >
-            <Illustration width="100%" aria-hidden="true" />
+            <Illustration />
           </Box>
         </GridColumn>
         <GridColumn
           span={['12/12', '12/12', '5/12']}
-          offset={[null, null, '1/12']}
+          offset={['0', '0', '1/12']}
           paddingTop={4}
         >
           <Text variant="eyebrow" color="purple400" paddingBottom={2}>

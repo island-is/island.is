@@ -11,7 +11,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import { GetNewsQuery } from '@island.is/web/graphql/schema'
+import { GetNewsQuery, Image } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
@@ -81,10 +81,10 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 <NewsCard
                   title={newsItem.title}
                   subtitle={newsItem.subtitle}
-                  introduction={newsItem.intro}
+                  introduction={newsItem.intro as string}
                   slug={newsItem.slug}
                   readMoreText={t.readMore}
-                  image={newsItem.image}
+                  image={newsItem.image as Image}
                   tags={newsItem.genericTags.map(({ title }) => ({ title }))}
                   href={
                     linkResolver(linkType, [...parameters, newsItem.slug]).href
@@ -102,9 +102,9 @@ export const LatestNewsSection: React.FC<LatestNewsProps> = ({
               key={newsItem.slug}
               title={newsItem.title}
               subtitle={newsItem.subtitle}
-              introduction={newsItem.intro}
+              introduction={newsItem.intro as string}
               slug={newsItem.slug}
-              image={newsItem.image}
+              image={newsItem.image as Image}
               tags={newsItem.genericTags.map(({ title }) => ({ title }))}
               href={linkResolver(linkType, [...parameters, newsItem.slug]).href}
             />

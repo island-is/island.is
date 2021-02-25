@@ -17,7 +17,7 @@ interface MegaMenuLink {
   sub?: [MegaMenuLink]
 }
 
-interface Props {
+export interface MenuProps {
   asideTopLinks: MegaMenuLink[]
   asideBottomTitle: string
   asideBottomLinks: MegaMenuLink[]
@@ -25,7 +25,7 @@ interface Props {
   buttonColorScheme?: ButtonTypes['colorScheme']
 }
 
-export const Menu: FC<Props> = ({
+export const Menu: FC<MenuProps> = ({
   asideTopLinks,
   asideBottomTitle,
   asideBottomLinks,
@@ -57,6 +57,7 @@ export const Menu: FC<Props> = ({
                 variant="utility"
                 icon="search"
                 onClick={(e) => {
+                  console.log('onClick', onClick)
                   onClick(e)
                   setTimeout(() => {
                     if (searchInput.current) {
@@ -74,7 +75,7 @@ export const Menu: FC<Props> = ({
         <Link
           href={activeLocale === 'en' ? '/en' : '/'}
           onClick={() => {
-            closeModal()
+            closeModal && closeModal()
           }}
         >
           <span>{logo}</span>
