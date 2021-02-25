@@ -184,6 +184,7 @@ describe('healthInsuranceTest', () => {
       isHealthInsuredInPreviousCountry: 0,
     }
     const appNumber = 570
+    const kennitala = '0123456789'
     it('apply Health Insurance application tjekk', async () => {
       /*eslint-disable */
       const res = {
@@ -201,9 +202,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, inputs, kennitala),
+      ).toStrictEqual(vistaskjal)
     })
     it('apply Health Insurance application return true with comment', async () => {
       /*eslint-disable */
@@ -223,9 +224,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, inputs, kennitala),
+      ).toStrictEqual(vistaskjal)
     })
 
     it('should normalize thrown errors', async () => {
@@ -234,7 +235,7 @@ describe('healthInsuranceTest', () => {
       })
 
       expect(async () => {
-        await hapi.applyInsurance(570, inputs)
+        await hapi.applyInsurance(570, inputs, kennitala)
       }).rejects.toThrowError('Some unexpected error')
     })
 
@@ -262,9 +263,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, inputs, kennitala),
+      ).toStrictEqual(vistaskjal)
     })
 
     it('apply Health Insurance application return false', async () => {
@@ -283,9 +284,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, inputs, kennitala),
+      ).toStrictEqual(vistaskjal)
     })
   })
 })

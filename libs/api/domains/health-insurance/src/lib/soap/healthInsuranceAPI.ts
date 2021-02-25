@@ -125,12 +125,13 @@ export class HealthInsuranceAPI {
   public async applyInsurance(
     appNumber: number,
     inputObj: VistaSkjalInput,
+    nationalId: string,
   ): Promise<VistaSkjalModel> {
     logger.info(`--- Starting applyInsurance api call ---`)
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
-          kennitala: inputObj.nationalId,
+          kennitala: nationalId,
           erlendkennitala: inputObj.foreignNationalId,
           nafn: inputObj.name,
           heimili: inputObj.address ?? '',

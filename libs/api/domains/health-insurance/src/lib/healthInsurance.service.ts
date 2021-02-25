@@ -26,7 +26,10 @@ export class HealthInsuranceService {
   }
 
   // Apply for Health insurance ( number 570 is identify number for health insurance application)
-  async applyInsurance(inputs: VistaSkjalInput): Promise<VistaSkjalModel> {
-    return this.healthInsuranceAPI.applyInsurance(570, inputs)
+  async applyInsurance(
+    inputs: VistaSkjalInput,
+    nationalId: string,
+  ): Promise<VistaSkjalModel> {
+    return this.healthInsuranceAPI.applyInsurance(570, inputs, nationalId)
   }
 }

@@ -52,7 +52,8 @@ export class HealthInsuranceResolver {
   async healthInsuranceApplyInsurance(
     @Args({ name: 'inputs', type: () => VistaSkjalInput })
     inputs: VistaSkjalInput,
+    @CurrentUser() user: AuthUser,
   ): Promise<VistaSkjalModel> {
-    return this.healthInsuranceService.applyInsurance(inputs)
+    return this.healthInsuranceService.applyInsurance(inputs, user.nationalId)
   }
 }

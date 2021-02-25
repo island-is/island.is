@@ -79,7 +79,7 @@ export const transformApplicationToHealthInsuranceDTO = (
   return {
     applicationNumber: application.id,
     applicationDate: application.modified,
-    nationalId: application.applicant,
+    nationalId: '0123456789', // NOT send naltionalId through graphQL
     foreignNationalId:
       extractAnswer(application.answers, 'formerInsurance.personalId') ?? '',
     name: extractAnswer(application.answers, 'applicant.name') ?? '',
