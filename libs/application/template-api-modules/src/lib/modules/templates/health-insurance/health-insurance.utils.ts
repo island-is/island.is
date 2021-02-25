@@ -66,6 +66,16 @@ export const transformApplicationToHealthInsuranceDTO = (
     registryDate = registryDate.split(' ')[0].replace(pattern, '$3-$2-$1')
   }
 
+  // There is 2 fields to add information in frontend
+  // But there is only one tag in API
+  // Merge 2 fields together
+  const addInfo: string = `${
+    extractAnswer(application.answers, 'additionalRemarks') ?? ''
+  }. ${
+    extractAnswer(application.answers, 'formerInsurance.entitlementReason') ??
+    ''
+  }`
+
   return {
     applicationNumber: application.id,
     applicationDate: application.modified,
@@ -90,15 +100,6 @@ export const transformApplicationToHealthInsuranceDTO = (
         : undefined,
     // Could not get this yet, so sent in empty
     residenceDateUserThink: undefined,
-    // TODO: change
-    // residenceDateFromNationalRegistry:
-    //   registryDate instanceof Date
-    //     ? new Date(registryDate)
-    //     : application.modified,
-    // residenceDateUserThink:
-    //   registryDate instanceof Date
-    //     ? new Date(registryDate)
-    //     : application.modified,
     userStatus: userStatus,
     isChildrenFollowed:
       extractAnswer(application.answers, 'children') == 'no' ? 0 : 1,
@@ -114,8 +115,7 @@ export const transformApplicationToHealthInsuranceDTO = (
       extractAnswer(application.answers, 'formerInsurance.entitlement') == 'yes'
         ? 1
         : 0,
-    additionalInformation:
-      extractAnswer(application.answers, 'additionalRemarks') ?? '',
+    additionalInformation: addInfo,
     attachmentsFileNames: arrFiles,
   }
 }

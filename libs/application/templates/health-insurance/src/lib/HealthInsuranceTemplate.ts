@@ -8,10 +8,6 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
-import {
-  isEUCountry,
-  requireConfirmationOfResidency,
-} from '../healthInsuranceUtils'
 import { API_MODULE } from '../shared'
 import { StatusTypes } from '../types'
 import { answerValidators } from './answerValidators'
