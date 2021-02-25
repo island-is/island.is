@@ -4,5 +4,6 @@ export {
 export {
   default as SecondaryContact,
 } from './SecondaryContact/SecondaryContact'
+export { default as Constraints } from './Constraints/Constraints'
 
 export { default as ReviewScreen } from './ReviewScreen/ReviewScreen'
