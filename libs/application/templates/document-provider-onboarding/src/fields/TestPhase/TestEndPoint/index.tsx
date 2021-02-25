@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
+import { errorUtil } from 'zod/lib/src/helpers/errorUtil'
 
 export const updateTestEndpointMutation = gql`
   mutation UpdateTestEndpoint($input: UpdateEndpointInput!) {
@@ -46,8 +47,21 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const [updateEndpoint, { loading }] = useMutation(
     updateTestEndpointMutation,
     {
-      onError: () =>
-        setTestEndPointError(m.testEndPointErrorMessage.defaultMessage),
+      onError: (error) => {
+        if (error.message.includes('Unique key violation')) {
+          setTestEndPointError(
+            formatText(
+              m.testEndPointErrorMessageUniqueKeyViolation,
+              application,
+              formatMessage,
+            ),
+          )
+        } else {
+          setTestEndPointError(
+            formatText(m.testEndPointErrorMessage, application, formatMessage),
+          )
+        }
+      },
     },
   )
 
@@ -75,24 +89,20 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-      if (!result) {
-        setTestEndPointError(m.testEndPointErrorMessage.defaultMessage)
-      } else {
-        setendPointVariables([
-          {
-            id: '1',
-            name: 'Audience',
-            value: result.data.updateTestEndpoint.audience,
-          },
-          {
-            id: '2',
-            name: 'Scope',
-            value: result.data.updateTestEndpoint.scope,
-          },
-        ])
-        setendpointExists('true')
-        clearErrors()
-      }
+      setendPointVariables([
+        {
+          id: '1',
+          name: 'Audience',
+          value: result.data.updateTestEndpoint.audience,
+        },
+        {
+          id: '2',
+          name: 'Scope',
+          value: result.data.updateTestEndpoint.scope,
+        },
+      ])
+      setendpointExists('true')
+      clearErrors()
     }
   }
 
@@ -130,11 +140,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   formatMessage,
                 )}
                 hasError={errors.endPointObject?.endPoint !== undefined}
-                errorMessage={formatText(
-                  m.testEndpointInputErrorMessage,
-                  application,
-                  formatMessage,
-                )}
+                errorMessage={testEndPointError ? testEndPointError : ''}
               />
             )}
           />
