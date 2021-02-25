@@ -42,6 +42,7 @@ import {
   PageLayout,
   TimeInputField,
   Modal,
+  DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -430,84 +431,64 @@ export const StepTwo: React.FC = () => {
                 <Tooltip text='Vinsamlegast sláðu tímann sem þú óskar eftir að málið verður tekið fyrir. Gáttin birtir tímann sem: "Eftir kl." tíminn sem þú slærð inn. Það þarf því ekki að velja nákvæma tímasetningu hvenær óskað er eftir fyrirtöku, heldur bara eftir hvaða tíma myndi henta að taka málið fyrir.' />
               </Text>
             </Box>
-            <GridRow>
-              <GridColumn span="5/8">
-                <DatePicker
-                  id="reqCourtDate"
-                  label="Veldu dagsetningu"
-                  placeholderText="Veldu dagsetningu"
-                  locale="is"
-                  errorMessage={requestedCourtDateErrorMessage}
-                  hasError={requestedCourtDateErrorMessage !== ''}
-                  icon={workingCase.courtDate ? 'lockClosed' : undefined}
-                  minDate={new Date()}
-                  selected={
-                    workingCase.requestedCourtDate
-                      ? parseISO(workingCase.requestedCourtDate.toString())
-                      : null
-                  }
-                  disabled={Boolean(workingCase.courtDate)}
-                  handleCloseCalendar={(date) => {
-                    setAndSendDateToServer(
-                      'requestedCourtDate',
-                      workingCase.requestedCourtDate,
-                      date,
-                      workingCase,
-                      true,
-                      setWorkingCase,
-                      updateCase,
-                      setRequestedCourtDateErrorMessage,
-                    )
-                  }}
-                  required
-                />
-              </GridColumn>
-              <GridColumn span="3/8">
-                <TimeInputField
-                  disabled={
-                    !workingCase.requestedCourtDate ||
-                    Boolean(workingCase.courtDate)
-                  }
-                  onChange={(evt) =>
-                    validateAndSetTime(
-                      'requestedCourtDate',
-                      workingCase.requestedCourtDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      setWorkingCase,
-                      requestedCourtTimeErrorMessage,
-                      setRequestedCourtTimeErrorMessage,
-                      setRequestedCourtTime,
-                    )
-                  }
-                  onBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'requestedCourtDate',
-                      workingCase.requestedCourtDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
-                      updateCase,
-                      setRequestedCourtTimeErrorMessage,
-                    )
-                  }
-                >
-                  <Input
-                    data-testid="requestedCourtDate"
-                    name="requestedCourtDate"
-                    label="Ósk um tíma (kk:mm)"
-                    placeholder="Veldu tíma"
-                    errorMessage={requestedCourtTimeErrorMessage}
-                    hasError={requestedCourtTimeErrorMessage !== ''}
-                    defaultValue={requestedCourtTime}
-                    icon={workingCase.courtDate ? 'lockClosed' : undefined}
-                    iconType="outline"
-                    required
-                  />
-                </TimeInputField>
-              </GridColumn>
-            </GridRow>
+            <DateTime
+              datepickerId="reqCourtDate"
+              datepickerErrorMessage={requestedCourtDateErrorMessage}
+              datepickerIcon={workingCase.courtDate ? 'lockClosed' : undefined}
+              minDate={new Date()}
+              selectedDate={
+                workingCase.requestedCourtDate
+                  ? parseISO(workingCase.requestedCourtDate.toString())
+                  : null
+              }
+              handleCloseCalander={(date) => {
+                setAndSendDateToServer(
+                  'requestedCourtDate',
+                  workingCase.requestedCourtDate,
+                  date,
+                  workingCase,
+                  true,
+                  setWorkingCase,
+                  updateCase,
+                  setRequestedCourtDateErrorMessage,
+                )
+              }}
+              disabledDate={Boolean(workingCase.courtDate)}
+              dateIsRequired
+              timeOnChange={(evt) =>
+                validateAndSetTime(
+                  'requestedCourtDate',
+                  workingCase.requestedCourtDate,
+                  evt.target.value,
+                  ['empty', 'time-format'],
+                  workingCase,
+                  setWorkingCase,
+                  requestedCourtTimeErrorMessage,
+                  setRequestedCourtTimeErrorMessage,
+                  setRequestedCourtTime,
+                )
+              }
+              timeOnBlur={(evt) =>
+                validateAndSendTimeToServer(
+                  'requestedCourtDate',
+                  workingCase.requestedCourtDate,
+                  evt.target.value,
+                  ['empty', 'time-format'],
+                  workingCase,
+                  updateCase,
+                  setRequestedCourtTimeErrorMessage,
+                )
+              }
+              timeName="requestedCourtDate"
+              timeErrorMessage={requestedCourtTimeErrorMessage}
+              timeDefaultValue={requestedCourtTime}
+              timeIcon={workingCase.courtDate ? 'lockClosed' : undefined}
+              disabledTime={
+                !workingCase.requestedCourtDate ||
+                Boolean(workingCase.courtDate)
+              }
+              timeIsRequired
+            />
             {workingCase.courtDate && (
               <Box marginTop={1}>
                 <Text variant="eyebrow">

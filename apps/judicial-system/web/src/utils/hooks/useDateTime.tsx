@@ -16,6 +16,7 @@ const useDateTime = ({ date, time }: Parameters) => {
     errorMessage: string
   }>()
 
+  // TODO: DATETIME: SPLIT INTO TWO USEEFFECTS
   useEffect(() => {
     const dateHasValue = validate(date || '', 'empty')
     const timeHasValue = validate(time || '', 'empty')
