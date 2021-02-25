@@ -182,6 +182,7 @@ export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
   props?: object
+  childInputIds?: string[]
 }
 
 export type Field =
