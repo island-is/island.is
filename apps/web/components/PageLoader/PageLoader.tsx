@@ -3,16 +3,21 @@ import { useRouter } from 'next/router'
 import LoadingBar from 'react-top-loading-bar'
 import { theme } from '@island.is/island-ui/theme'
 
+interface LoadingBarRef extends HTMLElement {
+  continuousStart: Function
+  complete: Function
+}
+
 export const PageLoader = () => {
   const router = useRouter()
-  const ref = useRef(null)
+  const ref = useRef<LoadingBarRef>(null)
 
   useEffect(() => {
     const start = () => {
-      ref.current.continuousStart()
+      ref?.current?.continuousStart()
     }
     const done = () => {
-      ref.current.complete()
+      ref?.current?.complete()
     }
     router.events.on('routeChangeStart', start)
     router.events.on('routeChangeComplete', done)
