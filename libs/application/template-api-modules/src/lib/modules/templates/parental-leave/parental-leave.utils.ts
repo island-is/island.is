@@ -84,7 +84,7 @@ export const getOtherParentId = (application: Application): string => {
   )
 
   if (otherParent === formConstants.spouseSelection.spouse) {
-    import { FamilyMember } from '@island.is/api/domains/national-registry'
+    const familyMembers: FamilyMember[] | null = extractAnswer(
       application.externalData,
       'family.data',
       null,

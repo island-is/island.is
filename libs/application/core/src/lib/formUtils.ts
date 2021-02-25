@@ -206,33 +206,42 @@ export type MessageFormatter = (
 
 type ValueOf<T> = T[keyof T]
 
+const handleMessageFormatting = (
+  message: StaticText,
+  formatMessage: MessageFormatter,
+) => {
+  if (typeof message === 'string' || !message) {
+    return formatMessage(message)
+  }
+
+  const { values = {}, ...descriptor } = message
+
+  return formatMessage(descriptor, values)
+}
+
 export function formatText<T extends FormTextArray | FormText>(
   text: T,
   application: Application,
   formatMessage: MessageFormatter,
 ): T extends FormTextArray ? string[] : string {
-  const handleMessageFormatting = (message: StaticText) => {
-    if (typeof message === 'string' || !message) {
-      return formatMessage(message)
-    }
-
-    const { values = {}, ...descriptor } = message
-
-    return formatMessage(descriptor, values)
-  }
-
   if (typeof text === 'function') {
     const message = (text as (_: Application) => StaticText | StaticText[])(
       application,
     )
     if (Array.isArray(message)) {
       return message.map((m) =>
-        handleMessageFormatting(m),
+        handleMessageFormatting(m, formatMessage),
       ) as T extends FormTextArray ? string[] : string
     }
-    return handleMessageFormatting(message) as T extends FormTextArray
-      ? string[]
-      : string
+    return handleMessageFormatting(
+      message,
+      formatMessage,
+    ) as T extends FormTextArray ? string[] : string
+  } else if (Array.isArray(text)) {
+    const texts = text as StaticText[]
+    return texts.map((m) =>
+      handleMessageFormatting(m, formatMessage),
+    ) as T extends FormTextArray ? string[] : string
   } else if (typeof text === 'object') {
     const staticTextObject = text as StaticTextObject
     if (staticTextObject.values) {
