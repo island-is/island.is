@@ -28,7 +28,7 @@ export class VistaSkjalInput {
 
   @Field(() => String)
   @IsNotEmpty()
-  @MinLength(10)
+  @MinLength(6)
   @MaxLength(15)
   foreignNationalId!: string
 
