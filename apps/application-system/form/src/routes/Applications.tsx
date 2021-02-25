@@ -37,6 +37,8 @@ export const Applications: FC = () => {
     },
   )
 
+  console.log(data)
+
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
     {

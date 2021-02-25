@@ -19,6 +19,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/health-insurance'),
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: () =>
     import('@island.is/application/templates/children-residence-change'),
+  [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
+    import('@island.is/application/templates/data-protection-complaint'),
 }
 
 export default templates
