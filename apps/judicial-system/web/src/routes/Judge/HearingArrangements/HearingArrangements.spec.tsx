@@ -233,8 +233,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
     ).toEqual('16.09.2020')
 
     expect(
-      ((await screen.findByLabelText('Tímasetning *')) as HTMLInputElement)
-        .value,
+      ((await screen.findByLabelText(
+        'Tímasetning (kk:mm) *',
+      )) as HTMLInputElement).value,
     ).toEqual('19:51')
   })
 })

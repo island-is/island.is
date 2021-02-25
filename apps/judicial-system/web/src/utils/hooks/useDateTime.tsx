@@ -16,15 +16,18 @@ const useDateTime = ({ date, time }: Parameters) => {
     errorMessage: string
   }>()
 
-  // TODO: DATETIME: SPLIT INTO TWO USEEFFECTS
   useEffect(() => {
     const dateHasValue = validate(date || '', 'empty')
+
+    setIsValidDate(dateHasValue)
+  }, [date])
+
+  useEffect(() => {
     const timeHasValue = validate(time || '', 'empty')
     const timeIsFormattedCorrectly = validate(time || '', 'time-format')
 
-    setIsValidDate(dateHasValue)
     setIsValidTime(timeHasValue && timeIsFormattedCorrectly)
-  }, [date, time])
+  }, [time])
 
   return { isValidDate, isValidTime }
 }

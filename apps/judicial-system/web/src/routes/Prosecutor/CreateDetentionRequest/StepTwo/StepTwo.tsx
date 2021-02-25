@@ -455,6 +455,7 @@ export const StepTwo: React.FC = () => {
                 )
               }
               timeName="requestedCourtDate"
+              timeLabel="Ósk um tíma (kk:mm)"
               timeErrorMessage={requestedCourtTimeErrorMessage}
               timeDefaultValue={requestedCourtTime}
               timeIcon={workingCase.courtDate ? 'lockClosed' : undefined}

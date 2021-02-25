@@ -1,14 +1,13 @@
 import React from 'react'
-import { DatePicker, Input } from '@island.is/island-ui/core'
-import * as styles from './DateTime.treat'
-import { Icon } from 'libs/island-ui/core/src/lib/IconRC/iconMap'
+import { DatePicker, IconTypes, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../shared-components'
+import * as styles from './DateTime.treat'
 
 interface Props {
   datepickerId: string
   datepickerLabel?: string
   datepickerErrorMessage?: string
-  datepickerIcon?: Icon
+  datepickerIcon?: IconTypes
   minDate?: Date
   maxDate?: Date
   selectedDate?: Date | null | undefined
@@ -21,9 +20,10 @@ interface Props {
     | undefined
   timeOnBlur: ((event: React.FocusEvent<HTMLInputElement>) => void) | undefined
   timeName: string
+  timeLabel?: string
   timeErrorMessage?: string
   timeDefaultValue?: string
-  timeIcon?: Icon
+  timeIcon?: IconTypes
   timeIsRequired?: boolean
   timeRef?: React.RefObject<HTMLInputElement>
   disabledTime?: boolean
@@ -46,6 +46,7 @@ const DateTime: React.FC<Props> = (props) => {
     timeOnChange,
     timeOnBlur,
     timeName,
+    timeLabel = 'Tímasetning (kk:mm)',
     timeErrorMessage,
     timeDefaultValue,
     timeIcon,
@@ -81,7 +82,7 @@ const DateTime: React.FC<Props> = (props) => {
           <Input
             data-testid={timeName}
             name={timeName}
-            label="Ósk um tíma (kk:mm)"
+            label={timeLabel}
             placeholder="Veldu tíma"
             errorMessage={timeErrorMessage}
             hasError={timeErrorMessage !== ''}
