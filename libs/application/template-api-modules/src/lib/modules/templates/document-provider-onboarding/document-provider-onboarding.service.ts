@@ -95,4 +95,18 @@ export class DocumentProviderOnboardingService {
       application,
     )
   }
+
+  async organisationExists({
+    application,
+    authorization,
+  }: TemplateApiModuleActionProps) {
+    try {
+      const nationalId = get(application.answers, 'applicant.nationalId')
+      const query = `query {organisationExists(nationalId: "${nationalId}")}`
+      await this.sharedTemplateAPIService.makeGraphqlQuery(authorization, query)
+    } catch (error) {
+      logger.error('Failed to check if organisation exists', error)
+      throw error
+    }
+  }
 }
