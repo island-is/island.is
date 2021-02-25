@@ -63,44 +63,6 @@ const Review: FC<FieldBaseProps> = ({ field, application }) => {
             isEditable={isEditable}
           />
         </AccordionItem>
-        {field.id === 'submittedData' &&
-          additionalInfo.hasAdditionalInfo === YES && (
-            <AccordionItem
-              id="id_4"
-              label={formatText(
-                m.additionalRemarks,
-                application,
-                formatMessage,
-              )}
-            >
-              <ReviewAdditionalInfo
-                application={application}
-                field={field}
-                isEditable={isEditable}
-                additionalInfo={additionalInfo}
-              />
-            </AccordionItem>
-          )}
-        {previousMissingInfo.length > 0 &&
-          previousMissingInfo.map((missingInfo, index) => (
-            <AccordionItem
-              id={`id_${5 + index}`}
-              key={`id_${5 + index}`}
-              label={`${formatText(
-                m.missingInfoSection,
-                application,
-                formatMessage,
-              )} ${index + 1}`}
-            >
-              <ReviewMissingInfo
-                application={application}
-                field={field}
-                isEditable={isEditable}
-                missingInfo={missingInfo}
-                index={index}
-              />
-            </AccordionItem>
-          ))}
       </Accordion>
     </Box>
   )
