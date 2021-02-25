@@ -263,6 +263,7 @@ const Screen: FC<ScreenProps> = ({
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
                 answerQuestions={answerQuestions}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 errors={dataSchemaOrApiErrors}
                 multiField={screen}
                 application={application}
