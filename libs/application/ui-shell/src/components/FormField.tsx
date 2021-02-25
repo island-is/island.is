@@ -12,7 +12,7 @@ import { useFields } from './FieldContext'
 
 const FormField: FC<{
   application: Application
-  setBeforeSubmitCallback: SetBeforeSubmitCallback
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
   autoFocus?: boolean
   field: FieldDef
   showFieldName?: boolean

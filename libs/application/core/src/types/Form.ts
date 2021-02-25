@@ -111,10 +111,10 @@ export interface FieldBaseProps {
   error?: string
   field: Field
   application: Application
-  setBeforeSubmitCallback: SetBeforeSubmitCallback
   showFieldName?: boolean
   goToScreen?: (id: string) => void
   refetch?: () => void
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
 }
 
 export type RepeaterProps = {

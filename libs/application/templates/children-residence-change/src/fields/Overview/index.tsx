@@ -58,8 +58,8 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   }, [application.id, createPdfPresignedUrl])
 
   const pdfUrl = pdfResponse?.createPdfPresignedUrl?.attachments?.[pdfType]
-
-  setBeforeSubmitCallback(async () => {
+  
+  setBeforeSubmitCallback && setBeforeSubmitCallback(async () => {
     if (!pdfUrl) {
       return [false, 'no pdf url']
     }
