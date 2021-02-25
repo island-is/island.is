@@ -66,7 +66,8 @@ export const updateHashArray = (
 // gets "active" category that we use to scroll to on inital render
 export const getActiveCategory = (hashArr: string[]): string | null => {
   if (!!hashArr && hashArr.length > 0) {
-    return hashArr[hashArr.length - 1]
+    const activeCategory = hashArr[hashArr.length - 1].replace('#', '')
+    return activeCategory.length > 0 ? activeCategory : null
   }
   return null
 }
