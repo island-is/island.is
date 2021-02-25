@@ -9,7 +9,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 const partyLetters = ['A', 'B', 'C', 'X', 'H', 'I', 'O', 'P', 'Q', 'T', 'R']
 export const LetterApplicationForm: Form = buildForm({
