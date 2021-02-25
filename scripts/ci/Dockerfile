@@ -55,12 +55,10 @@ RUN ./node_modules/.bin/ncc build /build/${APP_DIST_HOME}/main.js -o /build/serv
 
 FROM output-base-env as output-express
 
-# RUN ls -lah /build/${APP_DIST_HOME}
-COPY --from=builder /build/${APP_DIST_HOME} /webapp
-COPY --from=output-express-builder /build/server/index.js /webapp/server.js
+COPY --from=output-express-builder /build/server/index.js /webapp/main.js
 
 ENTRYPOINT [ "node" ]
-CMD [ "server.js" ]
+CMD [ "main.js" ]
 
 FROM output-base as output-next
 # image with build of an Next.js app
