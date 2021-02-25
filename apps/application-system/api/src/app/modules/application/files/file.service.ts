@@ -12,13 +12,19 @@ import {
   applicantData,
   variablesForResidenceChange,
 } from './utils/childrenResidenceChange'
-import { getFile, getPresignedUrl, uploadFile } from './utils/aws'
+import { AwsService } from './aws.service'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from '../application.configuration'
 
 @Injectable()
 export class FileService {
   constructor(
-    @Inject(SigningService)
+    @Inject(APPLICATION_CONFIG)
+    private readonly config: ApplicationConfig,
     private readonly signingService: SigningService,
+    private readonly awsService: AwsService,
   ) {}
 
   async createPdf(
@@ -36,6 +42,11 @@ export class FileService {
           childrenAppliedFor,
           expiry,
         } = variablesForResidenceChange(answers, externalData)
+        const bucket = this.config.presignBucket
+
+        if (!bucket) {
+          throw new Error(' Bucket not configured.')
+        }
 
         const pdfBuffer = await generateResidenceChangePdf(
           childrenAppliedFor,
@@ -48,9 +59,9 @@ export class FileService {
           BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
         }/${application.id}.pdf`
 
-        await uploadFile(pdfBuffer, fileName)
+        await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
 
-        return await getPresignedUrl(fileName)
+        return this.awsService.getPresignedUrl(bucket, fileName)
       }
     }
   }
@@ -60,11 +71,20 @@ export class FileService {
     documentToken: string,
     type: PdfTypes,
   ) {
+    const bucket = this.config.presignBucket
+    if (!bucket) {
+      throw new Error(' Bucket not configured.')
+    }
+
     await this.signingService
       .getSignedDocument(DokobitFileName[type], documentToken)
       .then((file) => {
         const s3FileName = `${BucketTypePrefix[type]}/${application.id}.pdf`
-        uploadFile(Buffer.from(file, 'binary'), s3FileName)
+        this.awsService.uploadFile(
+          Buffer.from(file, 'binary'),
+          bucket,
+          s3FileName,
+        )
       })
   }
 
@@ -94,8 +114,13 @@ export class FileService {
     applicantName: string,
     phoneNumber?: string,
   ): Promise<SigningServiceResponse> {
+    const bucket = this.config.presignBucket
+    if (!bucket) {
+      throw new Error(' Bucket not configured.')
+    }
+
     const s3FileName = `${BucketTypePrefix[type]}/${applicationId}.pdf`
-    const s3File = await getFile(s3FileName)
+    const s3File = await this.awsService.getFile(bucket, s3FileName)
     const fileContent = s3File.Body?.toString('binary')
 
     if (!fileContent || !phoneNumber) {

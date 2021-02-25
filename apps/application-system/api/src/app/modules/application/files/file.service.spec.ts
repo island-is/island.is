@@ -1,20 +1,27 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
 import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
-import * as aws from './utils/aws'
+import { AwsService } from './aws.service'
 import * as pdf from './utils/pdf'
 import { Application } from './../application.model'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from '../application.configuration'
 
 describe('FileService', () => {
   let service: FileService
   let signingService: SigningService
+  let awsService: AwsService
   const signingServiceRequestSignatureResponse = {
     controlCode: 'code',
     documentToken: 'token',
   }
+
+  const bucket = 'bucket'
 
   const applicationId = '1111-2222-3333-4444'
 
@@ -73,6 +80,7 @@ describe('FileService', () => {
     } as unknown) as Application)
 
   beforeEach(async () => {
+    const config: ApplicationConfig = { presignBucket: bucket }
     const module = await Test.createTestingModule({
       imports: [LoggingModule],
       providers: [
@@ -85,18 +93,22 @@ describe('FileService', () => {
           },
         },
         SigningService,
+        AwsService,
+        { provide: APPLICATION_CONFIG, useValue: config },
       ],
     }).compile()
 
+    awsService = module.get(AwsService)
+
     jest
-      .spyOn(aws, 'getFile')
+      .spyOn(awsService, 'getFile')
       .mockImplementation(() => Promise.resolve({ Body: 'body' }))
 
-    jest.spyOn(aws, 'uploadFile').mockImplementation(() => Promise.resolve())
-
     jest
-      .spyOn(aws, 'getPresignedUrl')
-      .mockImplementation(() => Promise.resolve('url'))
+      .spyOn(awsService, 'uploadFile')
+      .mockImplementation(() => Promise.resolve())
+
+    jest.spyOn(awsService, 'getPresignedUrl').mockImplementation(() => 'url')
 
     jest
       .spyOn(pdf, 'generateResidenceChangePdf')
@@ -127,9 +139,13 @@ describe('FileService', () => {
 
     const fileName = `children-residence-change/${application.id}.pdf`
 
-    expect(aws.uploadFile).toHaveBeenCalledWith(Buffer.from('buffer'), fileName)
+    expect(awsService.uploadFile).toHaveBeenCalledWith(
+      Buffer.from('buffer'),
+      bucket,
+      fileName,
+    )
 
-    expect(aws.getPresignedUrl).toHaveBeenCalledWith(fileName)
+    expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
 
     expect(response).toEqual('url')
   })
@@ -141,7 +157,8 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(aws.getFile).toHaveBeenCalledWith(
+    expect(awsService.getFile).toHaveBeenCalledWith(
+      bucket,
       `children-residence-change/${application.id}.pdf`,
     )
 
@@ -171,7 +188,8 @@ describe('FileService', () => {
 
     expect(act).rejects.toThrowError(NotFoundException)
 
-    expect(aws.getFile).toHaveBeenCalledWith(
+    expect(awsService.getFile).toHaveBeenCalledWith(
+      bucket,
       `children-residence-change/${applicationId}.pdf`,
     )
 
@@ -180,7 +198,7 @@ describe('FileService', () => {
 
   it('should throw error for request file signature since file content is missing', async () => {
     jest
-      .spyOn(aws, 'getFile')
+      .spyOn(awsService, 'getFile')
       .mockImplementation(() => Promise.resolve({ Body: '' }))
 
     const act = async () =>
@@ -191,7 +209,8 @@ describe('FileService', () => {
 
     expect(act).rejects.toThrowError(NotFoundException)
 
-    expect(aws.getFile).toHaveBeenCalledWith(
+    expect(awsService.getFile).toHaveBeenCalledWith(
+      bucket,
       `children-residence-change/${applicationId}.pdf`,
     )
 

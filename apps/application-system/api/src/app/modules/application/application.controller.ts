@@ -597,17 +597,20 @@ export class ApplicationController {
       documentToken,
     } = await this.fileService.requestFileSignature(application, type)
 
-    const { updatedApplication } = await this.applicationService.update(
-      application.id,
-      {
-        attachments: {
-          ...application.attachments,
-          fileSignature: {
-            controlCode: controlCode,
-            documentToken: documentToken,
-          },
-        },
+    const externalData: ExternalData = {
+      fileSignature: {
+        data: { controlCode: controlCode, documentToken: documentToken },
+        date: new Date(),
+        status: 'success',
       },
+    }
+
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateExternalData(
+      application.id,
+      application.externalData as ExternalData,
+      externalData,
     )
 
     return updatedApplication

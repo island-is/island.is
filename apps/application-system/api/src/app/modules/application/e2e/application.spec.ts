@@ -485,11 +485,9 @@ describe('Application system API', () => {
       .expect(200)
 
     // Assert
-    expect(newState.body.attachments).toEqual({
-      fileSignature: {
-        controlCode: expectedControlCode,
-        documentToken: expectedDocumentToken,
-      },
+    expect(newState.body.externalData.fileSignature.data).toEqual({
+      controlCode: expectedControlCode,
+      documentToken: expectedDocumentToken,
     })
   })
 })

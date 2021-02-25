@@ -1,9 +1,18 @@
 import { Module } from '@nestjs/common'
 import { FileUploadResolver } from './file-upload.resolver'
-import { FileStorageModule } from '@island.is/file-storage'
+import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
 
-@Module({
-  imports: [FileStorageModule],
-  providers: [FileUploadResolver],
-})
-export class FileUploadModule {}
+interface FileUploadConfig {
+  fileStorage: FileStorageConfig
+}
+
+@Module({})
+export class FileUploadModule {
+  static register(config: FileUploadConfig) {
+    return {
+      module: FileUploadModule,
+      imports: [FileStorageModule.register(config.fileStorage)],
+      providers: [FileUploadResolver],
+    }
+  }
+}

@@ -12,8 +12,11 @@ import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
-
-const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
+import { AwsService } from './files/aws.service'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from './application.configuration'
 
 // import { AuthModule } from '@island.is/auth-nest-tools'
 
@@ -23,36 +26,27 @@ if (process.env.INIT_SCHEMA === 'true') {
   BullModule = NestBullModule.registerQueueAsync()
 } else {
   const bullModuleName = 'application_system_api_bull_module'
-  const redisClient = createRedisCluster({
-    name: bullModuleName,
-    ssl: environment.production,
-    nodes: environment.redis.urls,
-  })
   BullModule = NestBullModule.registerQueueAsync({
     name: 'upload',
     useFactory: () => ({
       prefix: `{${bullModuleName}}`,
-      createClient: () => redisClient,
+      createClient: () =>
+        createRedisCluster({
+          name: bullModuleName,
+          ssl: environment.production,
+          nodes: environment.redis.urls,
+          noPrefix: true,
+        }),
     }),
   })
 }
 
 @Module({
   imports: [
-    // AuthModule.register({
-    //   audience: environment.identityServer.audience,
-    //   issuer: environment.identityServer.issuer,
-    //   jwksUri: `${environment.identityServer.jwksUri}`,
-    // }),
-    TemplateAPIModule.register({
-      xRoadBasePathWithEnv: XROAD_BASE_PATH_WITH_ENV,
-      clientLocationOrigin: environment.clientLocationOrigin,
-      emailOptions: environment.emailOptions,
-      jwtSecret: environment.auth.jwtSecret,
-      baseApiUrl: environment.baseApiUrl,
-    }),
+    // AuthModule.register(environment.auth),
+    TemplateAPIModule.register(environment.templateApi),
     SequelizeModule.forFeature([Application]),
-    FileStorageModule,
+    FileStorageModule.register(environment.fileStorage),
     BullModule,
   ],
   controllers: [ApplicationController],
@@ -65,6 +59,11 @@ if (process.env.INIT_SCHEMA === 'true') {
       useValue: environment.signingOptions,
     },
     SigningService,
+    {
+      provide: APPLICATION_CONFIG,
+      useValue: environment.application as ApplicationConfig,
+    },
+    AwsService,
   ],
 })
 export class ApplicationModule {}

@@ -59,8 +59,6 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
 
   const pdfUrl = pdfResponse?.createPdfPresignedUrl?.attachments?.[pdfType]
 
-
-
   setBeforeSubmitCallback(async () => {
     if (!pdfUrl) {
       return [false, 'no pdf url']
@@ -75,7 +73,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
       },
     })
     if (requestResponse?.data) {
-      const documentToken = requestResponse.data.requestFileSignature?.attachments?.fileSignature?.documentToken
+      const documentToken = requestResponse.data.requestFileSignature?.externalData?.fileSignature?.data?.documentToken
       const signedFileReponse = await uploadSignedFile({
         variables: {
           input: {
@@ -93,8 +91,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   })
 
   const controlCode =
-    requestFileSignatureData?.requestFileSignature?.attachments?.fileSignature
-      ?.controlCode
+    requestFileSignatureData?.requestFileSignature?.externalData?.fileSignature?.data?.controlCode
   return (
     <>
       <ModalBase
