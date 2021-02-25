@@ -5,7 +5,7 @@ import { BoxProps } from '@island.is/island-ui/core'
 import { Field, RecordObject } from '@island.is/application/core'
 import { Application } from './Application'
 
-export type StaticTextObject = MessageDescriptor & { values?: object }
+export type StaticTextObject = MessageDescriptor & { values?: RecordObject }
 export type StaticText = StaticTextObject | string
 
 export type FormText =
