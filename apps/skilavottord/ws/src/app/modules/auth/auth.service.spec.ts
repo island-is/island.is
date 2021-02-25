@@ -42,8 +42,8 @@ describe('AuthService', () => {
   describe('getRole', () => {
     it('should return a correct role', () => {
       const user = user2
-      const role = authService.getUserRole(user)
-      expect(role.role).toBe(user.role)
+      const ur = authService.getUserRole(user)
+      expect(ur.role).toBe(user.role)
     })
   })
 
