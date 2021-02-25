@@ -1,4 +1,4 @@
-# utils-environment
+# Utils Environment
 
 This library was generated with [Nx](https://nx.dev).
 
