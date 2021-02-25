@@ -55,16 +55,17 @@ import {
   linkResolver as LinkResolver,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
+import { MenuProps } from '../components/Menu/Menu'
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
-const absoluteUrl = (req, setLocalhost) => {
+const absoluteUrl = (req: NextPageContext['req'], setLocalhost: string) => {
   let protocol = 'https:'
   let host = req
     ? req.headers['x-forwarded-host'] || req.headers['host']
     : window.location.host
-  if (host.indexOf('localhost') > -1) {
+  if (host && host.indexOf('localhost') > -1) {
     if (setLocalhost) host = setLocalhost
     protocol = 'http:'
   }
@@ -91,9 +92,11 @@ export interface LayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
-  respOrigin
-  megaMenuData
+  respOrigin: string
+  megaMenuData: MenuProps
 }
+
+export type LayoutPropsType = LayoutProps | null
 
 if (environment.sentryDsn) {
   Sentry.init({
@@ -102,7 +105,7 @@ if (environment.sentryDsn) {
     integrations: [
       new RewriteFrames({
         iteratee: (frame) => {
-          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
+          frame.filename = frame?.filename?.replace(`~/.next`, 'app:///_next')
           return frame
         },
       }),
@@ -255,13 +258,13 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
+        {!Cookies.get(alertBannerId) && alertBannerContent?.showAlertBanner && (
           <AlertBanner
-            title={alertBannerContent.title}
-            description={alertBannerContent.description}
+            title={alertBannerContent.title ?? ''}
+            description={alertBannerContent.description ?? ''}
             link={{
-              href: alertBannerContent.link.url,
-              title: alertBannerContent.link.text,
+              href: alertBannerContent.link?.url ?? '',
+              title: alertBannerContent.link?.text ?? '',
             }}
             variant={alertBannerContent.bannerVariant as AlertBannerVariants}
             dismissable={alertBannerContent.isDismissable}
@@ -282,7 +285,7 @@ const Layout: NextComponentType<
         >
           {showHeader && (
             <ColorSchemeContext.Provider
-              value={{ colorScheme: headerColorScheme }}
+              value={{ colorScheme: headerColorScheme as ColorSchemes }}
             >
               <Header
                 buttonColorScheme={headerButtonColorScheme}
@@ -388,7 +391,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
           },
         },
       })
-      .then((res) => res.data.getArticleCategories),
+      .then((res) => res?.data?.getArticleCategories),
     apolloClient
       .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
         query: GET_ALERT_BANNER_QUERY,
@@ -396,7 +399,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
           input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
         },
       })
-      .then((res) => res.data.getAlertBanner),
+      .then((res) => res?.data?.getAlertBanner),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -409,7 +412,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => {
         // map data here to reduce data processing in component
-        return JSON.parse(res.data.getNamespace.fields)
+        return JSON.parse(res?.data?.getNamespace?.fields ?? '')
       }),
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
@@ -418,7 +421,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
           input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
         },
       })
-      .then((res) => res.data.getGroupedMenu),
+      .then((res) => res?.data?.getGroupedMenu),
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
@@ -426,16 +429,16 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
           input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
         },
       })
-      .then((res) => res.data.getGroupedMenu),
+      .then((res) => res?.data?.getGroupedMenu),
   ])
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData?.menus ?? []
 
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
       const href = LinkResolver(
-        x.link.type as LinkType,
-        [x.link.slug],
+        x?.link?.type as LinkType,
+        [x?.link?.slug ?? ''],
         lang as Locale,
       ).href.trim()
 
@@ -448,14 +451,14 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     })
 
   const initialFooterMenu = {
-    footerUpperInfo: [],
+    footerUpperInfo: [] as FooterLinkProps,
     footerUpperContact: [],
     footerLowerMenu: [],
     footerTagsMenu: [],
     footerMiddleMenu: [],
   }
 
-  const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
+  const footerMenu = footerMenuData?.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
@@ -497,13 +500,13 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
-        alertBanner.showAlertBanner &&
+        alertBanner?.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
     },
     ...footerMenu,
     namespace,
-    respOrigin,
+    respOrigin: respOrigin as string,
     megaMenuData: {
       asideTopLinks: formatMegaMenuLinks(
         lang as Locale,
@@ -514,7 +517,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         lang as Locale,
         asideBottomLinksData.menuLinks,
       ),
-      mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories),
+      mainLinks: formatMegaMenuCategoryLinks(lang as Locale, categories ?? []),
     },
   }
 }
@@ -542,8 +545,8 @@ export const withMainLayout = <T,>(
 
   WithMainLayout.getInitialProps = async (ctx) => {
     const [layoutProps, componentProps] = await Promise.all([
-      Layout.getInitialProps(ctx),
-      Component.getInitialProps(ctx),
+      Layout.getInitialProps && Layout.getInitialProps(ctx),
+      Component.getInitialProps && Component.getInitialProps(ctx),
     ])
 
     return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }

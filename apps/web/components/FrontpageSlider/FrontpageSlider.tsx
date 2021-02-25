@@ -62,8 +62,8 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   const [minHeight, setMinHeight] = useState<number>(0)
   const itemRefs = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
-  const [animationData, setAnimationData] = useState([])
-  const timerRef = useRef(null)
+  const [animationData, setAnimationData] = useState<Array<JSON | null>>([])
+  const timerRef = useRef<number | undefined>(undefined)
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
@@ -139,7 +139,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   }, [width, itemRefs])
 
   useIsomorphicLayoutEffect(() => {
-    timerRef.current = setTimeout(onResize, 5000)
+    timerRef.current = window.setTimeout(onResize, 5000)
     window.addEventListener('resize', onResize)
     return () => {
       clearTimeout(timerRef.current)
@@ -183,7 +183,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
             <Box className={styles.tabPanelWrapper}>
               {slides.map(
                 ({ title, subtitle, content, intro, link }, index) => {
-                  const linkUrls = generateUrls(link)
+                  const linkUrls = generateUrls(link as string)
 
                   // If none are found (during SSR) findIndex returns -1. We want 0 instead.
                   const currentIndex = Math.max(

@@ -13,6 +13,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import {
   AllSlicesImageFragment as Image,
   GetNamespaceQuery,
+  News,
 } from '@island.is/web/graphql/schema'
 
 import * as styles from './AboutLatestNews.treat'
@@ -21,24 +22,15 @@ import {
   useLinkResolver,
   LinkResolverResponse,
 } from '@island.is/web/hooks/useLinkResolver'
+import { NamespaceType } from 'apps/web/context'
 
 // This component is used to display latest news on the About page only.
 // It's not how we display the latest news on the front page.
 // We will probably merge the two later.
 
-export interface LatestNewsItem {
-  date: string
-  title: string
-  intro?: string
-  image?: Image
-  slug: string
-  content?: string
-  subtitle?: string
-}
-
 export interface LatestNewsProps {
   title: string
-  news: LatestNewsItem[]
+  news: News[]
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -49,7 +41,7 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const [first, ...rest] = news
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace as NamespaceType)
 
   return (
     <>
@@ -80,9 +72,9 @@ export const AboutLatestNews: FC<LatestNewsProps> = ({
               key={index}
               title={newsItem.title}
               subtitle={newsItem.subtitle}
-              introduction={newsItem.intro}
+              introduction={newsItem.intro as string}
               slug={newsItem.slug}
-              image={newsItem.image}
+              image={newsItem.image as Image}
               {...linkResolver('news', [newsItem.slug])}
               readMoreText={n('readMore', 'Lesa nánar')}
             />
@@ -98,7 +90,7 @@ const BigNewsItem = ({
   link,
   readMore,
 }: {
-  news: LatestNewsItem
+  news: News
   link: LinkResolverResponse
   readMore: string
 }) => {

@@ -62,7 +62,17 @@ const initialSearchState: Readonly<SearchState> = {
   isLoading: false,
 }
 
-const searchReducer = (state, action): SearchState => {
+type Action =
+  | { type: 'startLoading' }
+  | { type: 'suggestions'; suggestions: string[] }
+  | {
+      type: 'searchResults'
+      results: GetSearchResultsQuery['searchResults']
+    }
+  | { type: 'searchString'; term: string; prefix: string }
+  | { type: 'reset' }
+
+const searchReducer = (state: SearchState, action: Action): SearchState => {
   switch (action.type) {
     case 'startLoading': {
       return { ...state, isLoading: true }
@@ -89,7 +99,7 @@ const useSearch = (
 ): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, initialSearchState)
   const client = useApolloClient()
-  const timer = useRef(null)
+  const timer = useRef<number | undefined>(undefined)
 
   useEffect(() => {
     if (!autocomplete) {
@@ -107,13 +117,13 @@ const useSearch = (
 
     dispatch({ type: 'startLoading' })
 
-    const thisTimerId = (timer.current = setTimeout(async () => {
+    const thisTimerId = (timer.current = window.setTimeout(async () => {
       client
         .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
           query: GET_SEARCH_RESULTS_QUERY,
           variables: {
             query: {
-              queryString: term.trim(),
+              queryString: term?.trim() ?? '',
               language: locale as ContentLanguage,
               types: [
                 SearchableContentTypes['WebArticle'],
@@ -124,47 +134,49 @@ const useSearch = (
             },
           },
         })
-        .then(({ data: { searchResults: results } }) => {
-          dispatch({
-            type: 'searchResults',
-            results,
-          })
+        .then(({ data }) => {
+          if (data) {
+            return dispatch({
+              type: 'searchResults',
+              results: data.searchResults,
+            })
+          }
+
+          return false
         })
 
       // the api only completes single terms get only single terms
-      const indexOfLastSpace = term.lastIndexOf(' ')
+      const indexOfLastSpace = term?.lastIndexOf(' ')
       const hasSpace = indexOfLastSpace !== -1
-      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
+      const prefix = hasSpace ? term?.slice(0, indexOfLastSpace) : ''
+      const queryString = hasSpace ? term?.slice(indexOfLastSpace) : term
 
       client
         .query<AutocompleteTermResultsQuery, QueryWebSearchAutocompleteArgs>({
           query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
           variables: {
             input: {
-              singleTerm: queryString.trim(),
+              singleTerm: queryString?.trim() ?? '',
               language: locale as ContentLanguage,
               size: 10, // only show top X completions to prevent long list
             },
           },
         })
-        .then(
-          ({
-            data: {
-              webSearchAutocomplete: { completions: suggestions },
-            },
-          }) => {
-            dispatch({
+        .then(({ data }) => {
+          if (data?.webSearchAutocomplete?.completions) {
+            return dispatch({
               type: 'suggestions',
-              suggestions,
+              suggestions: data.webSearchAutocomplete.completions,
             })
-          },
-        )
+          }
+
+          return false
+        })
 
       dispatch({
         type: 'searchString',
-        term,
-        prefix,
+        term: term ?? '',
+        prefix: prefix ?? '',
       })
     }, DEBOUNCE_TIMER))
 
@@ -297,7 +309,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               buttonProps={{
                 onClick: () => {
                   closeMenu()
-                  onSubmit(inputValue)
+                  onSubmit(inputValue as string)
                 },
                 onFocus,
                 onBlur,
@@ -326,7 +338,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               {isOpen && !isEmpty(search) && (
                 <Results
                   search={search}
-                  highlightedIndex={highlightedIndex}
+                  highlightedIndex={highlightedIndex as number}
                   getItemProps={getItemProps}
                   autosuggest={autosuggest}
                   onRouting={() => {
@@ -393,7 +405,7 @@ const Results: FC<{
                   className={styles.suggestion}
                   onClick={(e) => {
                     onClick(e)
-                    onRouting()
+                    onRouting && onRouting()
                   }}
                 >
                   <Text color={i === highlightedIndex ? 'blue400' : 'dark400'}>
@@ -428,7 +440,7 @@ const Results: FC<{
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
-                        onRouting()
+                        onRouting && onRouting()
                       }}
                     >
                       <Link {...linkResolver(__typename as LinkType, [slug])}>

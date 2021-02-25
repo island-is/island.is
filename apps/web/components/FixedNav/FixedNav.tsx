@@ -27,13 +27,13 @@ export const FixedNav: FC = () => {
         px = window.innerHeight * -1
       }
 
-      const goingDown = currPos.y < prevPos.y
-      const canShow = px > currPos.y
+      const goingDown = (currPos.y ?? 0) < (prevPos.y ?? 0)
+      const canShow = px > (currPos.y ?? 0)
 
       setShow(canShow && !goingDown)
     },
     [setShow],
-    null,
+    undefined,
     false,
     150,
   )

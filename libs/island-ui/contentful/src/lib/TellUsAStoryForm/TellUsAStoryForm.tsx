@@ -56,9 +56,9 @@ type DocumentType = {
 
 export interface TellUsAStoryFormProps {
   introTitle: string
-  introImage?: { url: string; title: string }
-  introDescription?: DocumentType
-  instructionsDescription?: DocumentType
+  introImage?: { url: string; title: string } | null
+  introDescription?: DocumentType | null
+  instructionsDescription?: DocumentType | null
   instructionsTitle: string
   firstSectionTitle: string
   organizationLabel: string
@@ -70,7 +70,7 @@ export interface TellUsAStoryFormProps {
   secondSectionTitle: string
   subjectLabel: string
   subjectPlaceholder: string
-  subjectInputErrorMessage?: string
+  subjectInputErrorMessage?: string | null
   messageLabel: string
   messagePlaceholder: string
   messageInputErrorMessage: string
@@ -85,7 +85,7 @@ export interface TellUsAStoryFormProps {
   publicationAllowedLabel: string
   submitButtonTitle: string
   SuccessMessageTitle: string
-  tellUsAStorySuccessMessage?: DocumentType
+  tellUsAStorySuccessMessage?: DocumentType | null
   errorMessageTitle: string
   locale: string
   state: FormState

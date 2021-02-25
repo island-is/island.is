@@ -69,7 +69,7 @@ describe('Link resolver', () => {
   })
 
   it('should handle content type as undefined', () => {
-    const nextLinks = linkResolver(undefined as LinkType, [], 'is')
+    const nextLinks = linkResolver((undefined as unknown) as LinkType, [], 'is')
     expect(nextLinks).toEqual({
       href: '/404',
     })
@@ -97,7 +97,7 @@ describe('Link resolver', () => {
         }
         return types
       },
-      [],
+      [] as string[],
     )
     expect(types.length === new Set(types).size).toBeTruthy()
   })
@@ -144,7 +144,7 @@ describe('Type resolver', () => {
   })
 
   it('Should handle undefined', () => {
-    const types = typeResolver(undefined)
+    const types = typeResolver(undefined as any)
     expect(types).toBeNull()
   })
 

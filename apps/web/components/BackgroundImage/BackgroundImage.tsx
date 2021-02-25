@@ -23,7 +23,7 @@ const useImageLoader = (url: string): boolean => {
   useEffect(() => {
     const img = new window.Image(100)
     img.onload = img.onerror = () => {
-      if (isMounted) {
+      if (isMounted()) {
         setLoaded(true)
       }
     }
@@ -49,6 +49,10 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
     borderRadius: 'large',
   },
 }) => {
+  if (!image) {
+    return null
+  }
+
   const src = `${image.url}?w=${width}`
   const thumbnail = image.url + '?w=50'
   const alt = image.title ?? ''

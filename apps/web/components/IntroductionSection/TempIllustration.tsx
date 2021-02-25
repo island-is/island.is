@@ -1,8 +1,8 @@
 import * as React from 'react'
 
-function SvgComponent(props) {
+const SvgComponent: React.FC = (props) => {
   return (
-    <svg viewBox="0 0 546 563" {...props}>
+    <svg viewBox="0 0 546 563" width="100%" aria-hidden="true">
       <defs>
         <linearGradient
           id="prefix__linear-gradient"

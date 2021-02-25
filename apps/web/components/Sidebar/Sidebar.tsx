@@ -32,12 +32,12 @@ const useHeadingLinks = ({
   selector,
   disabled = false,
 }: UseHeadingLinksProps) => {
-  const [offsets, setOffsets] = useState([])
-  const [elements, setElements] = useState([])
+  const [offsets, setOffsets] = useState<number[]>([])
+  const [elements, setElements] = useState<Array<HTMLElement>>([])
   const [canUpdate, setCanUpdate] = useState(true)
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
-  const timer = useRef(null)
+  const timer = useRef<number | undefined>(undefined)
 
   const getElements = useCallback(() => getHeadingLinkElements(selector), [
     selector,
@@ -49,7 +49,7 @@ const useHeadingLinks = ({
         return false
       }
 
-      const yPos = Math.abs(currPos.y)
+      const yPos = Math.abs(currPos.y ?? 0)
       const idx = offsets.reduce((acc, offset, index) => {
         return yPos >= offset ? index : acc
       }, 0)
@@ -58,7 +58,7 @@ const useHeadingLinks = ({
       setActiveIndex(idx)
     },
     [offsets, canUpdate],
-    null,
+    undefined,
     false,
     150,
   )
@@ -81,11 +81,11 @@ const useHeadingLinks = ({
     }
   }, [updateOffsets])
 
-  const goTo = (index) => {
+  const goTo = (index: number) => {
     clearTimeout(timer.current)
     setClickedIndex(index)
     setCanUpdate(false)
-    timer.current = setTimeout(() => setCanUpdate(true), 1000)
+    timer.current = window.setTimeout(() => setCanUpdate(true), 1000)
     window.scrollTo(0, offsets[index])
   }
 
@@ -134,7 +134,7 @@ export const Sidebar: FC<SidebarProps> = ({
   const updateBulletPlacement = useCallback(() => {
     itemsRef.current = itemsRef.current.slice(0, links.length)
 
-    const parentTop = parentRef.current.getBoundingClientRect().top
+    const parentTop = parentRef?.current?.getBoundingClientRect().top ?? 0
     const selectedItem = itemsRef.current[currentIndex]
 
     if (selectedItem) {

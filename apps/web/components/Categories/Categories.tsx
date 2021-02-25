@@ -8,7 +8,7 @@ import {
 import { Card } from '../Card/Card'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
-interface Card {
+export interface CategoriesCard {
   title: string
   description: string
   link: LinkResolverResponse
@@ -17,7 +17,7 @@ interface Card {
 interface CategoriesProps {
   title?: string
   titleId?: string
-  cards: Card[]
+  cards: CategoriesCard[]
 }
 
 export const Categories: FC<CategoriesProps> = ({

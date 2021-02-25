@@ -1,5 +1,7 @@
 import React from 'react'
 import dns from 'dns'
+import { NextComponentType } from 'next'
+import { Context } from '@apollo/client'
 
 const checkExternalDependency = (url: string) =>
   new Promise((resolve, reject) => {
@@ -10,11 +12,11 @@ const checkExternalDependency = (url: string) =>
   })
 
 export const withHealthchecks = (externalEndpointDependencies: string[]) => (
-  Component,
+  Component: NextComponentType,
 ) => {
-  const NewComponent = (props) => <Component {...props} />
+  const NewComponent = (props: object) => <Component {...props} />
 
-  NewComponent.getInitialProps = async (context) => {
+  NewComponent.getInitialProps = async (context: Context) => {
     const ctx = context.ctx ?? context
     /*
     Readiness should return 200 if it can resolve hostnames of external dependencies.
@@ -48,7 +50,8 @@ export const withHealthchecks = (externalEndpointDependencies: string[]) => (
       ctx.res.end('')
       return null
     }
-    return Component.getInitialProps(context)
+
+    return Component.getInitialProps && Component.getInitialProps(ctx)
   }
 
   return NewComponent

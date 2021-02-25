@@ -28,16 +28,25 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
       <CardsSlider
         title={title}
         cards={lifeEvents.map((lifeEvent) => {
-          return {
-            title: lifeEvent.title,
-            description: lifeEvent.intro,
-            link: linkResolver('lifeeventpage', [lifeEvent.slug]),
-            image: lifeEvent.thumbnail
+          const imageUrl =
+            lifeEvent?.thumbnail?.url || lifeEvent?.image?.url || ''
+
+          const image =
+            imageUrl && lifeEvent?.thumbnail
               ? {
-                  title: lifeEvent.thumbnail.title,
-                  url: lifeEvent.thumbnail.url,
+                  title: lifeEvent?.thumbnail?.title ?? '',
+                  url: imageUrl,
                 }
-              : { title: lifeEvent.image.title, url: lifeEvent.image.url },
+              : {
+                  title: lifeEvent?.image?.title ?? '',
+                  url: imageUrl,
+                }
+
+          return {
+            title: lifeEvent.title as string,
+            description: lifeEvent.intro as string,
+            link: linkResolver('lifeeventpage', [lifeEvent.slug]),
+            image,
           }
         })}
       />

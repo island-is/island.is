@@ -11,13 +11,13 @@ import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 
-interface MegaMenuLink {
-  href: LinkResolverResponse
+export interface MegaMenuLink {
+  href: LinkResolverResponse['href']
   text: string
   sub?: [MegaMenuLink]
 }
 
-interface Props {
+export interface MenuProps {
   asideTopLinks: MegaMenuLink[]
   asideBottomTitle: string
   asideBottomLinks: MegaMenuLink[]
@@ -25,14 +25,14 @@ interface Props {
   buttonColorScheme?: ButtonTypes['colorScheme']
 }
 
-export const Menu: FC<Props> = ({
+export const Menu: FC<MenuProps> = ({
   asideTopLinks,
   asideBottomTitle,
   asideBottomLinks,
   mainLinks,
   buttonColorScheme = 'default',
 }) => {
-  const searchInput = useRef<HTMLInputElement>()
+  const searchInput = useRef<HTMLInputElement>(null)
   const { activeLocale, t } = useI18n()
 
   return (
@@ -46,7 +46,7 @@ export const Menu: FC<Props> = ({
       myPagesText={t.login}
       renderDisclosure={(
         disclosureDefault,
-        { onClick, ...disclosureProps },
+        { onClick, ...disclosureProps }: any & { onClick: Function },
       ) => {
         return (
           <Box display="flex">
@@ -57,7 +57,7 @@ export const Menu: FC<Props> = ({
                 variant="utility"
                 icon="search"
                 onClick={(e) => {
-                  onClick(e)
+                  onClick && onClick(e)
                   setTimeout(() => {
                     if (searchInput.current) {
                       searchInput.current.focus()
@@ -74,7 +74,7 @@ export const Menu: FC<Props> = ({
         <Link
           href={activeLocale === 'en' ? '/en' : '/'}
           onClick={() => {
-            closeModal()
+            closeModal && closeModal()
           }}
         >
           <span>{logo}</span>

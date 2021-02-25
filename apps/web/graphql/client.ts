@@ -12,7 +12,7 @@ let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 let currentClientLocale = defaultLanguage
 
-function create(initialState?: any) {
+const create = (initialState: any): ApolloClient<NormalizedCacheObject> => {
   // handle server vs client side calls
   const {
     graphqlUrl: graphqlServerUrl,
@@ -37,7 +37,10 @@ function create(initialState?: any) {
   })
 }
 
-export default function initApollo(initialState?: any, clientLocale?: Locale) {
+const initApollo = (
+  initialState?: any,
+  clientLocale?: Locale,
+): ApolloClient<NormalizedCacheObject> => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
@@ -52,9 +55,11 @@ export default function initApollo(initialState?: any, clientLocale?: Locale) {
 
   // Create new instance if client is changing language
   if (currentClientLocale !== clientLocale) {
-    currentClientLocale = clientLocale
+    currentClientLocale = clientLocale as Locale
     apolloClient = create(initialState)
   }
 
   return apolloClient
 }
+
+export default initApollo

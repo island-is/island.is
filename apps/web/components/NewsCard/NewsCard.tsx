@@ -60,8 +60,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
       <div
         className={styles.image}
         role="img"
-        aria-label={image.title}
-        style={{ backgroundImage: `url(${image.url}?fm=webp&w=640&q=80)` }}
+        aria-label={image?.title}
+        style={{ backgroundImage: `url(${image?.url}?fm=webp&w=640&q=80)` }}
       />
       <Box
         className={styles.content}

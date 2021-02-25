@@ -74,7 +74,7 @@ const Story: FC<StoryProps> = ({
         </Text>
         <Text color="white">{intro}</Text>
         {!!(linkedPage || link) && (
-          <ContentLink pageData={linkedPage} fallbackLink={link}>
+          <ContentLink pageData={linkedPage as string} fallbackLink={link}>
             <Button variant="text" colorScheme="negative" icon="arrowForward">
               {readMoreText}
             </Button>
