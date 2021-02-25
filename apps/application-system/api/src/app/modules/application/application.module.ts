@@ -12,6 +12,7 @@ import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
+import { AwsService } from './files/aws.service'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
@@ -62,6 +63,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       provide: APPLICATION_CONFIG,
       useValue: environment.application as ApplicationConfig,
     },
+    AwsService,
   ],
 })
 export class ApplicationModule {}

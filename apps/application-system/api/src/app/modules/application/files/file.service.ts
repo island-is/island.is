@@ -12,7 +12,7 @@ import {
   applicantData,
   variablesForResidenceChange,
 } from './utils/childrenResidenceChange'
-import { getFile, getPresignedUrl, uploadFile } from './utils/aws'
+import { AwsService } from './aws.service'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
@@ -22,9 +22,9 @@ import {
 export class FileService {
   constructor(
     @Inject(APPLICATION_CONFIG)
-    @Inject(SigningService)
     private readonly config: ApplicationConfig,
     private readonly signingService: SigningService,
+    private readonly awsService: AwsService,
   ) {}
 
   async createPdf(
@@ -59,9 +59,9 @@ export class FileService {
           BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
         }/${application.id}.pdf`
 
-        await uploadFile(pdfBuffer, bucket, fileName)
+        await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
 
-        return await getPresignedUrl(bucket, fileName)
+        return this.awsService.getPresignedUrl(bucket, fileName)
       }
     }
   }
@@ -80,7 +80,11 @@ export class FileService {
       .getSignedDocument(DokobitFileName[type], documentToken)
       .then((file) => {
         const s3FileName = `${BucketTypePrefix[type]}/${application.id}.pdf`
-        uploadFile(Buffer.from(file, 'binary'), bucket, s3FileName)
+        this.awsService.uploadFile(
+          Buffer.from(file, 'binary'),
+          bucket,
+          s3FileName,
+        )
       })
   }
 
@@ -116,7 +120,7 @@ export class FileService {
     }
 
     const s3FileName = `${BucketTypePrefix[type]}/${applicationId}.pdf`
-    const s3File = await getFile(bucket, s3FileName)
+    const s3File = await this.awsService.getFile(bucket, s3FileName)
     const fileContent = s3File.Body?.toString('binary')
 
     if (!fileContent || !phoneNumber) {
