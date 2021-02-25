@@ -57,20 +57,16 @@ export const updateHashArray = (
     if (tempArr.includes(categoryId)) {
       tempArr = hashArray.filter((x) => x !== categoryId)
     } else {
-      tempArr = tempArr.concat(categoryId)
+      tempArr = tempArr.concat([categoryId])
     }
   }
   return tempArr
 }
 
 // gets "active" category that we use to scroll to on inital render
-export const getActiveCategory = (hashString: string): string | null => {
-  if (!!hashString && hashString.length > 0) {
-    hashString = hashString.replace('#', '')
-    if (hashString.length > 0) {
-      const hashArr = hashString.split(',')
-      return hashArr[hashArr.length - 1]
-    }
+export const getActiveCategory = (hashArr: string[]): string | null => {
+  if (!!hashArr && hashArr.length > 0) {
+    return hashArr[hashArr.length - 1]
   }
   return null
 }
@@ -81,6 +77,15 @@ export const getHashString = (hashArray: string[]): string => {
     return hashArray.length > 1 ? hashArray.join(',') : hashArray[0]
   }
   return ''
+}
+
+// creates hash array from string
+export const getHashArr = (hashString: string): string[] => {
+  if (!!hashString && hashString.length > 0) {
+    hashString = hashString.replace('#', '')
+    return hashString.length > 0 ? hashString.split(',') : null
+  }
+  return null
 }
 
 interface Category {
@@ -163,16 +168,12 @@ const Category: Screen<CategoryProps> = ({
   // find current category in categories list
   const category = getCurrentCategory()
 
-  const getUrlHash = () => {
-    const hashMatch = window.location.hash ?? ''
-    return hashMatch.replace('#', '')
-  }
-
   useEffect(() => {
-    const urlHash = getUrlHash()
+    const urlHash = window.location.hash ?? ''
     if (urlHash && urlHash.length > 0) {
-      const activeCategory = getActiveCategory(urlHash)
-      setHashArray(urlHash.split(','))
+      const ulrHashArr = getHashArr(urlHash)
+      const activeCategory = getActiveCategory(ulrHashArr)
+      setHashArray(ulrHashArr)
       if (activeCategory) {
         document.getElementById(activeCategory).scrollIntoView()
       }

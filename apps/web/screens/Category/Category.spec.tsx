@@ -1,4 +1,9 @@
-import { getActiveCategory, getHashString, updateHashArray } from './Category'
+import {
+  getActiveCategory,
+  getHashString,
+  updateHashArray,
+  getHashArr,
+} from './Category'
 
 describe('Update hash array', () => {
   const categoryId = 'kisa'
@@ -64,22 +69,22 @@ describe('Update hash array', () => {
 
 describe('Get Active Category', () => {
   it('should return null', () => {
-    const hashString = '#'
+    const hashString = ['#']
     expect(getActiveCategory(hashString)).toBeNull()
   })
 
   it('should return kisa', () => {
-    const hashString = '#hundur,fugl,kisa'
+    const hashString = ['#hundur', 'fugl', 'kisa']
     expect(getActiveCategory(hashString)).toEqual('kisa')
   })
 
   it('should return hundur', () => {
-    const hashString = '#hundur'
+    const hashString = ['#', 'hundur']
     expect(getActiveCategory(hashString)).toEqual('hundur')
   })
 
   it('should return fugl', () => {
-    const hashString = '#hundur,fugl'
+    const hashString = ['#hundur', 'fugl']
     expect(getActiveCategory(hashString)).toEqual('fugl')
   })
 
@@ -118,5 +123,32 @@ describe('Get Hash String from Hash Array', () => {
   it('should return comma separated string', () => {
     const hashArr = ['kisa', 'hundur']
     expect(getHashString(hashArr)).toEqual('kisa,hundur')
+  })
+})
+
+describe('Get Hash String from Hash Array', () => {
+  it('should return null if given empty string', () => {
+    const hash = ''
+    expect(getHashArr(hash)).toBeNull()
+  })
+
+  it('should handle null', () => {
+    const hash = null
+    expect(getHashArr(hash)).toBeNull()
+  })
+
+  it('should handle undefined', () => {
+    const hash = undefined
+    expect(getHashArr(hash)).toBeNull()
+  })
+
+  it('should return the array with string kisa', () => {
+    const hash = 'kisa'
+    expect(getHashArr(hash)).toEqual(['kisa'])
+  })
+
+  it('should turn separated string to an array', () => {
+    const hash = 'kisa,hundur'
+    expect(getHashArr(hash)).toEqual(['kisa', 'hundur'])
   })
 })
