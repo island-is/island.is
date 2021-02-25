@@ -47,6 +47,49 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
+// adds or removes selected category in hash array
+export const updateHashArray = (
+  hashArray: string[],
+  categoryId: string,
+): string[] => {
+  let tempArr = hashArray ?? []
+  if (!!categoryId && categoryId.length > 0) {
+    if (tempArr.includes(categoryId)) {
+      tempArr = hashArray.filter((x) => x !== categoryId)
+    } else {
+      tempArr = tempArr.concat(categoryId)
+    }
+  }
+  return tempArr
+}
+
+// gets "active" category that we use to scroll to on inital render
+export const getActiveCategory = (hashString: string): string | null => {
+  if (!!hashString && hashString.length > 0) {
+    hashString = hashString.replace('#', '')
+    if (hashString.length > 0) {
+      const hashArr = hashString.split(',')
+      return hashArr[hashArr.length - 1]
+    }
+  }
+  return null
+}
+
+// creates hash string from array
+export const getHashString = (hashArray: string[]): string => {
+  if (!!hashArray && hashArray.length > 0) {
+    return hashArray.length > 1 ? hashArray.join(',') : hashArray[0]
+  }
+  return ''
+}
+
+interface Category {
+  title: string
+  description: string
+  expanded: boolean
+  articles: Articles
+}
+
 interface CategoryProps {
   articles: Articles
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -63,7 +106,7 @@ const Category: Screen<CategoryProps> = ({
   slug,
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
-  const [hash, setHash] = useState<string>('')
+  const [hashArray, setHashArray] = useState<string[]>([])
 
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -126,23 +169,15 @@ const Category: Screen<CategoryProps> = ({
   }
 
   useEffect(() => {
-    const hashString = getUrlHash()
-    const hashArr = hashString.split(',')
-
-    console.log("trigger this ", hashString, hashString.length, hashArr)
-
-    if (hashString.length > 0) {
-      const hashArr = hashString.split(',')
-      const hashLen = hashArr.length
-      console.log(hashArr[hashLen - 1])
-     // document.getElementById(hashString).scrollIntoView()
+    const urlHash = getUrlHash()
+    if (urlHash && urlHash.length > 0) {
+      const activeCategory = getActiveCategory(urlHash)
+      setHashArray(urlHash.split(','))
+      if (activeCategory) {
+        document.getElementById(activeCategory).scrollIntoView()
+      }
     }
   }, [])
-
-  useEffect(() => {
-    const hashString = getUrlHash()
-    setHash(hashString)
-  }, [Router])
 
   const sidebarCategoryLinks = categories.map(({ __typename, title, slug }) => {
     return {
@@ -192,26 +227,12 @@ const Category: Screen<CategoryProps> = ({
   }
 
   const handleAccordionClick = (groupSlug: string) => {
-    let newHash = hash.replace('#', '')
-    const hashArray = newHash.split(',')
-
-    if (hash === '') {
-      newHash = `${groupSlug}`
-    } else {
-      if (hashArray.indexOf(groupSlug) > -1) {
-        hashArray.splice(hashArray.indexOf(groupSlug), 1)
-        newHash = hashArray.join(',')
-      } else {
-        newHash = newHash.concat(`,${groupSlug}`)
-      }
-    }
-
-    setHash(newHash)
-
-    Router.replace(
-      linkResolver(category.__typename as LinkType, [slug]).href +
-        `#${newHash}`,
-    )
+    const updatedArr = updateHashArray(hashArray, groupSlug)
+    setHashArray(updatedArr)
+    Router.replace({
+      pathname: linkResolver(category.__typename as LinkType, [slug]).href,
+      hash: getHashString(updatedArr),
+    })
   }
 
   const sortArticles = (articles: Articles) => {
@@ -386,7 +407,7 @@ const Category: Screen<CategoryProps> = ({
             )
 
             const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
-            const expanded = hash.includes(groupSlug)
+            const expanded = hashArray.includes(groupSlug)
 
             return (
               <div
