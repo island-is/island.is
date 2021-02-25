@@ -43,8 +43,16 @@ const FileUploadFormField: FC<Props> = ({ application, field, error }) => {
           application={application}
           error={error}
           header={formatText(uploadHeader, application, formatMessage)}
-          description={formatText(uploadDescription, application, formatMessage)}
-          buttonLabel={formatText(uploadButtonLabel, application, formatMessage)}
+          description={formatText(
+            uploadDescription,
+            application,
+            formatMessage,
+          )}
+          buttonLabel={formatText(
+            uploadButtonLabel,
+            application,
+            formatMessage,
+          )}
           multiple={uploadMultiple}
           accept={uploadAccept}
           maxSize={maxSize}
