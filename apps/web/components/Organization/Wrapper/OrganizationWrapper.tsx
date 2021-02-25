@@ -86,35 +86,38 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             />
           </Box>
         </GridContainer>
-        <Box className={styles.headerWrapper}>
-          <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
-            <Box paddingTop={2}>
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-              >
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  {!!organizationPage.organization.logo.url && (
-                    <img
-                      src={organizationPage.organization.logo.url}
-                      className={styles.headerLogo}
-                      alt=""
-                    />
-                  )}
-                  <Text
-                    variant="h1"
-                    as="h1"
-                    color="white"
-                    marginTop={[0, 0, 3]}
-                  >
-                    {organizationPage.title}
-                  </Text>
-                </Box>
-              </Link>
-            </Box>
-          </SidebarWrapper>
-        </Box>
+        {!!organizationPage && (
+          <Box className={styles.headerWrapper}>
+            <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
+              <Box paddingTop={2}>
+                <Link
+                  href={
+                    linkResolver('organizationpage', [organizationPage?.slug])
+                      .href
+                  }
+                >
+                  <Box display="flex" flexDirection="row" alignItems="center">
+                    {!!organizationPage?.organization?.logo?.url && (
+                      <img
+                        src={organizationPage.organization.logo.url}
+                        className={styles.headerLogo}
+                        alt=""
+                      />
+                    )}
+                    <Text
+                      variant="h1"
+                      as="h1"
+                      color="white"
+                      marginTop={[0, 0, 3]}
+                    >
+                      {organizationPage.title}
+                    </Text>
+                  </Box>
+                </Link>
+              </Box>
+            </SidebarWrapper>
+          </Box>
+        )}
       </Box>
       <Main>
         <Box paddingTop={[0, 0, 8]}>
@@ -125,7 +128,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 <Box
                   className={cn(
                     styles.navigation,
-                    organizationPage.organization.logo.url
+                    organizationPage?.organization?.logo?.url
                       ? styles.navigationWithLogo
                       : styles.navigationWithoutLogo,
                   )}

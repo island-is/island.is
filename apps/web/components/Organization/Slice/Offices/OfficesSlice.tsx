@@ -40,10 +40,10 @@ export const OfficesSlice: React.FC<SliceProps> = ({ slice }) => {
                   key={index}
                 >
                   <OfficeCard
-                    name={office.name}
-                    address={office.address}
-                    city={office.city}
-                    openingHours={office.openingHours}
+                    name={office.name as string}
+                    address={office.address as string}
+                    city={office.city as string}
+                    openingHours={office.openingHours as string}
                   />
                 </GridColumn>
               ))}

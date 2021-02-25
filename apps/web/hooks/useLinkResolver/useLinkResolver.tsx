@@ -247,7 +247,9 @@ export const useLinkResolver = () => {
   const wrappedLinkResolver = (
     linkType: LinkResolverInput['linkType'],
     variables: LinkResolverInput['variables'] = [],
-    locale: LinkResolverInput['locale'] = context?.activeLocale ?? 'is',
+    locale: LinkResolverInput['locale'] = context?.activeLocale
+      ? context.activeLocale
+      : 'is',
   ) => linkResolver(linkType, variables, locale)
   return {
     typeResolver,

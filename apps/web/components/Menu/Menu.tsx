@@ -10,6 +10,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
+import { BoxOptions, DisclosureProps } from 'reakit/ts'
 
 interface MegaMenuLink {
   href: LinkResolverResponse
@@ -32,7 +33,7 @@ export const Menu: FC<MenuProps> = ({
   mainLinks,
   buttonColorScheme = 'default',
 }) => {
-  const searchInput = useRef<HTMLInputElement>()
+  const searchInput = useRef<HTMLInputElement>(null)
   const { activeLocale, t } = useI18n()
 
   return (
@@ -46,7 +47,7 @@ export const Menu: FC<MenuProps> = ({
       myPagesText={t.login}
       renderDisclosure={(
         disclosureDefault,
-        { onClick, ...disclosureProps },
+        { onClick, ...disclosureProps }: any & { onClick: Function },
       ) => {
         return (
           <Box display="flex">
@@ -57,8 +58,7 @@ export const Menu: FC<MenuProps> = ({
                 variant="utility"
                 icon="search"
                 onClick={(e) => {
-                  console.log('onClick', onClick)
-                  onClick(e)
+                  onClick && onClick(e)
                   setTimeout(() => {
                     if (searchInput.current) {
                       searchInput.current.focus()

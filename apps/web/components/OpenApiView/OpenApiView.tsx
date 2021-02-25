@@ -10,12 +10,15 @@ import {
 import {
   GetOpenApiInput,
   GetNamespaceQuery,
+  GetOpenApiQueryVariables,
+  GetOpenApiQuery,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { OpenApi } from '@island.is/api-catalogue/types'
 import { GET_OPEN_API_QUERY } from '@island.is/web/screens/queries'
 import YamlParser from 'js-yaml'
 import { OpenApiDocumentation } from '../OpenApiDocumentation'
+import { Namespace } from 'libs/api/mocks/src/types'
 
 export interface OpenApiViewProps {
   strings: GetNamespaceQuery['getNamespace']
@@ -23,24 +26,27 @@ export interface OpenApiViewProps {
 }
 
 export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
-  const n = useNamespace(strings)
+  const n = useNamespace(strings as Namespace)
 
-  const [documentation, setDocumentation] = useState<OpenApi>(null)
+  const [documentation, setDocumentation] = useState<OpenApi | null>(null)
 
-  const { data, loading, error } = useQuery(GET_OPEN_API_QUERY, {
+  const { data, loading, error } = useQuery<
+    GetOpenApiQuery,
+    GetOpenApiQueryVariables
+  >(GET_OPEN_API_QUERY, {
     variables: {
       input: openApiInput,
     },
   })
 
   useEffect(() => {
-    const onCompleted = (data) => {
+    const onCompleted = (data: GetOpenApiQuery) => {
       const converted = YamlParser.safeLoad(data.getOpenApi.spec)
 
       setDocumentation(converted as OpenApi)
     }
     if (onCompleted) {
-      if (onCompleted && !loading && !error) {
+      if (onCompleted && data && !loading && !error) {
         onCompleted(data)
       } else {
         setDocumentation(null)

@@ -13,7 +13,7 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
-  organizationPage: OrganizationPage
+  organizationPage?: OrganizationPage
 }
 
 export const OrganizationFooter: React.FC<FooterProps> = ({
@@ -33,7 +33,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
               borderColor="blueberry300"
               borderBottomWidth="standard"
             >
-              {!!organizationPage.organization.logo.url && (
+              {!!organizationPage?.organization?.logo?.url && (
                 <Box marginRight={4}>
                   <img
                     src={organizationPage.organization.logo.url}
@@ -42,18 +42,20 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
                   />
                 </Box>
               )}
-              <div id="organizationFooterTitle">
-                <Text variant="h2" color="white">
-                  {organizationPage.title}
-                </Text>
-              </div>
+              {!!organizationPage?.title && (
+                <div id="organizationFooterTitle">
+                  <Text variant="h2" color="white">
+                    {organizationPage.title}
+                  </Text>
+                </div>
+              )}
             </Box>
             <GridRow>
-              {organizationPage.footerItems.map((item, index) => (
+              {(organizationPage?.footerItems || []).map((item, index) => (
                 <GridColumn
                   key={index}
                   span={['12/12', '6/12', '4/12', '1/5']}
-                  className={index === 0 ? styles.footerItemFirst : null}
+                  className={index === 0 ? styles.footerItemFirst : undefined}
                 >
                   <Box marginBottom={5}>
                     <Box marginBottom={2}>

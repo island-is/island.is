@@ -5,15 +5,20 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Option,
   Select,
+  Option,
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
+import { ActionMeta, ValueType } from 'react-select/src/types'
 
 interface SliceProps {
   slices: Slice[]
   sliceExtraText: string
+}
+
+interface OptionItem extends Option {
+  slug: string
 }
 
 export const SliceDropdown: React.FC<SliceProps> = ({
@@ -22,7 +27,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
 }) => {
   const Router = useRouter()
   const [selectedId, setSelectedId] = useState<string>('')
-  const options = []
+  const options: OptionItem[] = []
   for (const slice of slices) {
     if (slice.__typename === 'OneColumnText') {
       options.push({
@@ -35,15 +40,14 @@ export const SliceDropdown: React.FC<SliceProps> = ({
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
-    setSelectedId(
-      hashString
-        ? options.find((x) => x.slug === hashString).value
-        : options[0].value,
-    )
+    const option = options.find((x: OptionItem) => x.slug === hashString)
+    const value = hashString ? option?.value : options[0].value
+    setSelectedId(String(value))
   }, [Router, options])
 
   const selectedSlice = slices.find((x) => x.id === selectedId)
 
+  console.log('options', options)
   return (
     <>
       <GridContainer>
@@ -62,8 +66,11 @@ export const SliceDropdown: React.FC<SliceProps> = ({
               name="select1"
               options={options}
               value={options.find((x) => x.value === selectedId)}
-              onChange={({ value }: Option) => {
-                const slug = options.find((x) => x.value === value).slug
+              onChange={(value: ValueType<Option>) => {
+                const option = options.find(
+                  (x) => x.value === (value as Option).value,
+                )
+                const slug = option?.slug
                 setSelectedId(String(value))
                 Router.replace(
                   window.location.protocol +
@@ -81,7 +88,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
         <OrganizationSlice
           key={selectedSlice.id}
           slice={selectedSlice}
-          namespace={null}
+          namespace={undefined}
         />
       )}
     </>
