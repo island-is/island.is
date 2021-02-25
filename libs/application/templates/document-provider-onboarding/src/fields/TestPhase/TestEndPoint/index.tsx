@@ -12,7 +12,6 @@ import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
-import { errorUtil } from 'zod/lib/src/helpers/errorUtil'
 
 export const updateTestEndpointMutation = gql`
   mutation UpdateTestEndpoint($input: UpdateEndpointInput!) {
