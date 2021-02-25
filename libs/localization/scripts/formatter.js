@@ -11,13 +11,12 @@ exports.format = function (msgs) {
     }
 
     const widthMarkdownWidget = get(id.split('#'), '[1]') === 'markdown'
-    const parsedId = widthMarkdownWidget ? id.replace('#markdown', '') : id
 
     return {
       ...arr,
       [namespace]: {
         ...arr[namespace],
-        [parsedId]: {
+        [id]: {
           ...msg,
           ...(widthMarkdownWidget ? { markdown: true } : undefined),
         },
