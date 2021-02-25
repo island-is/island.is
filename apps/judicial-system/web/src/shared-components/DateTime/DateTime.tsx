@@ -9,6 +9,7 @@ interface Props {
   datepickerErrorMessage?: string
   datepickerIcon?: Icon
   minDate?: Date
+  maxDate?: Date
   selectedDate?: Date | null | undefined
   disabledDate?: boolean
   handleCloseCalander?: ((date: Date | null) => void) | undefined
@@ -32,6 +33,7 @@ const DateTime: React.FC<Props> = (props) => {
     datepickerErrorMessage,
     datepickerIcon,
     minDate,
+    maxDate,
     selectedDate,
     disabledDate,
     handleCloseCalander,
@@ -58,6 +60,7 @@ const DateTime: React.FC<Props> = (props) => {
           hasError={datepickerErrorMessage !== ''}
           icon={datepickerIcon}
           minDate={minDate}
+          maxDate={maxDate}
           selected={selectedDate}
           disabled={disabledDate}
           handleCloseCalendar={handleCloseCalander}

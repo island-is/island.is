@@ -4,17 +4,7 @@ import { ValueType } from 'react-select/src/types'
 import { useHistory, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 
-import {
-  Text,
-  GridRow,
-  GridColumn,
-  Box,
-  DatePicker,
-  Input,
-  Tooltip,
-  Select,
-  Option,
-} from '@island.is/island-ui/core'
+import { Text, Box, Tooltip, Select, Option } from '@island.is/island-ui/core'
 import {
   Case,
   CaseState,
@@ -40,7 +30,6 @@ import {
 import {
   FormFooter,
   PageLayout,
-  TimeInputField,
   Modal,
   DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
@@ -205,7 +194,6 @@ export const StepTwo: React.FC = () => {
     if (!workingCase && data) {
       setArrestTime(getTimeFromDate(data.case?.arrestDate))
       setRequestedCourtTime(getTimeFromDate(data.case?.requestedCourtDate))
-
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
@@ -350,78 +338,56 @@ export const StepTwo: React.FC = () => {
                   Tími handtöku
                 </Text>
               </Box>
-              <GridRow>
-                <GridColumn span="5/8">
-                  <DatePicker
-                    id="arrestDate"
-                    label="Veldu dagsetningu"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    maxDate={new Date()}
-                    errorMessage={arrestDateErrorMessage}
-                    hasError={arrestDateErrorMessage !== ''}
-                    selected={
-                      workingCase.arrestDate
-                        ? new Date(workingCase.arrestDate)
-                        : null
-                    }
-                    handleCloseCalendar={(date) =>
-                      setAndSendDateToServer(
-                        'arrestDate',
-                        workingCase.arrestDate,
-                        date,
-                        workingCase,
-                        false,
-                        setWorkingCase,
-                        updateCase,
-                        setArrestDateErrorMessage,
-                      )
-                    }
-                  />
-                </GridColumn>
-                <GridColumn span="3/8">
-                  <TimeInputField
-                    disabled={!workingCase.arrestDate}
-                    onChange={(evt) =>
-                      validateAndSetTime(
-                        'arrestDate',
-                        workingCase.arrestDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        setWorkingCase,
-                        arrestTimeErrorMessage,
-                        setArrestTimeErrorMessage,
-                        setArrestTime,
-                      )
-                    }
-                    onBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'arrestDate',
-                        workingCase.arrestDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        updateCase,
-                        setArrestTimeErrorMessage,
-                      )
-                    }
-                  >
-                    <Input
-                      data-testid="arrestTime"
-                      name="arrestTime"
-                      label="Tímasetning (kk:mm)"
-                      placeholder="Veldu tíma"
-                      errorMessage={arrestTimeErrorMessage}
-                      hasError={
-                        arrestTimeErrorMessage !== '' &&
-                        workingCase.arrestDate !== null
-                      }
-                      defaultValue={arrestTime}
-                    />
-                  </TimeInputField>
-                </GridColumn>
-              </GridRow>
+              <DateTime
+                datepickerId="arrestDate"
+                maxDate={new Date()}
+                datepickerErrorMessage={arrestDateErrorMessage}
+                selectedDate={
+                  workingCase.arrestDate
+                    ? new Date(workingCase.arrestDate)
+                    : null
+                }
+                handleCloseCalander={(date) =>
+                  setAndSendDateToServer(
+                    'arrestDate',
+                    workingCase.arrestDate,
+                    date,
+                    workingCase,
+                    false,
+                    setWorkingCase,
+                    updateCase,
+                    setArrestDateErrorMessage,
+                  )
+                }
+                disabledTime={!workingCase.arrestDate}
+                timeOnChange={(evt) =>
+                  validateAndSetTime(
+                    'arrestDate',
+                    workingCase.arrestDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    setWorkingCase,
+                    arrestTimeErrorMessage,
+                    setArrestTimeErrorMessage,
+                    setArrestTime,
+                  )
+                }
+                timeOnBlur={(evt) =>
+                  validateAndSendTimeToServer(
+                    'arrestDate',
+                    workingCase.arrestDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    updateCase,
+                    setArrestTimeErrorMessage,
+                  )
+                }
+                timeName="arrestTime"
+                timeErrorMessage={arrestTimeErrorMessage}
+                timeDefaultValue={arrestTime}
+              />
             </Box>
           )}
           <Box component="section" marginBottom={10}>
