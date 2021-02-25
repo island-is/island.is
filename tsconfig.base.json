@@ -108,6 +108,9 @@
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/children-residence-change/src/index.ts"
       ],
+      "@island.is/application/templates/data-protection-complaint": [
+        "libs/application/templates/data-protection-complaint/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
