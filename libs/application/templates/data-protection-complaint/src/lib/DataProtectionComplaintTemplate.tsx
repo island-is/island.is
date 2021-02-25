@@ -64,8 +64,8 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ExampleForm').then((module) =>
-                  Promise.resolve(module.ExampleForm),
+                import('../forms/ComplaintForm').then((module) =>
+                  Promise.resolve(module.ComplaintForm),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
