@@ -175,7 +175,7 @@ const Category: Screen<CategoryProps> = ({
       const activeCategory = getActiveCategory(ulrHashArr)
       setHashArray(ulrHashArr)
       if (activeCategory) {
-        document.getElementById(activeCategory).scrollIntoView()
+        document.getElementById(activeCategory)?.scrollIntoView()
       }
     }
   }, [])
@@ -304,12 +304,13 @@ const Category: Screen<CategoryProps> = ({
               title={n('sidebarHeader')}
               renderLink={(link, { typename, slug }) => {
                 return (
-                  <NextLink
-                    {...linkResolver(typename as LinkType, slug)}
+                  <Link
+                    href={linkResolver(typename as LinkType, slug).href}
+                    onClick={() => setHashArray([])}
                     passHref
                   >
                     {link}
-                  </NextLink>
+                  </Link>
                 )
               }}
             />
@@ -377,12 +378,13 @@ const Category: Screen<CategoryProps> = ({
             isMenuDialog
             renderLink={(link, { typename, slug }) => {
               return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
+                <Link
+                  href={linkResolver(typename as LinkType, slug).href}
+                  onClick={() => setHashArray([])}
                   passHref
                 >
                   {link}
-                </NextLink>
+                </Link>
               )
             }}
             items={sidebarCategoryLinks}
