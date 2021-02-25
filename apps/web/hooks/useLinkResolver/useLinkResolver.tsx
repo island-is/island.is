@@ -8,7 +8,7 @@ export interface LinkResolverResponse {
 interface LinkResolverInput {
   linkType: LinkType
   variables?: string[]
-  locale?: Locale
+  locale: Locale
 }
 
 interface TypeResolverResponse {
@@ -163,7 +163,7 @@ export const linkResolver = (
   We lowercase here to allow components to pass unmodified __typename fields
   The __typename fields seem to have case issues, that will be addressed at a later time
   */
-  const type = linkType?.toLowerCase() ?? ''
+  const type = linkType?.toLowerCase() as LinkType
 
   // special case for external url resolution
   if (type === 'linkurl') {
@@ -247,7 +247,7 @@ export const useLinkResolver = () => {
   const wrappedLinkResolver = (
     linkType: LinkResolverInput['linkType'],
     variables: LinkResolverInput['variables'] = [],
-    locale: LinkResolverInput['locale'] = context.activeLocale,
+    locale: LinkResolverInput['locale'] = context?.activeLocale ?? 'is',
   ) => linkResolver(linkType, variables, locale)
   return {
     typeResolver,

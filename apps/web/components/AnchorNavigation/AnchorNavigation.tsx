@@ -16,7 +16,7 @@ export const AnchorNavigation = ({
 }: AnchorNavigationProps) => {
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)
-  const [bulletRef, setBulletRef] = useState<HTMLElement>(null)
+  const [bulletRef, setBulletRef] = useState<HTMLElement | null>(null)
 
   return (
     <Box

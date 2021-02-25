@@ -1,7 +1,7 @@
-import React, { FC, useState, useRef, useCallback } from 'react'
+import React, { FC, useState, useRef, useCallback, MutableRefObject, Ref, RefObject } from 'react'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import cn from 'classnames'
-import AliceCarousel, { EventObject } from 'react-alice-carousel'
+import AliceCarousel, { EventObject, Props as AliceProps} from 'react-alice-carousel'
 import 'react-alice-carousel/lib/alice-carousel.css'
 import { Inline, Text, Box, Hidden, Button } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -26,6 +26,10 @@ const initialSlideState = {
   isNextSlideDisabled: false,
 } as EventObject
 
+interface AliceRef extends HTMLElement {
+  stageComponent: HTMLElement
+} 
+
 export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   const { width } = useWindowSize()
 
@@ -35,9 +39,9 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
     paddingLeft: 0,
     paddingRight: 0,
   })
-  const ref = useRef(null)
+  const ref = useRef<AliceCarousel & AliceRef>(null)
 
-  const handleOnDragStart = (e) => e.preventDefault()
+  const handleOnDragStart = (e: React.DragEvent) => e.preventDefault()
 
   const onResize = useCallback(() => {
     setCardHeight('auto')
@@ -49,10 +53,10 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
 
   useIsomorphicLayoutEffect(() => {
     setTimeout(() => {
-      if (cardHeight === 'auto') {
-        const el = ref && ref.current?.stageComponent?.offsetParent
+      if (cardHeight === 'auto' && ref.current) {
+        const el = ref && ref?.current?.stageComponent?.offsetParent as HTMLElement
         if (el) {
-          setCardHeight(el.offsetHeight)
+          setCardHeight(`${el.offsetHeight}px`)
         }
       }
     }, 0)
@@ -67,11 +71,11 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
   }, [onResize])
 
   const slideNext = () => {
-    ref.current.slideNext()
+    ref?.current?.slideNext()
   }
 
   const slidePrev = () => {
-    ref.current.slidePrev()
+    ref?.current?.slidePrev()
   }
 
   const onSlideChanged = (e: EventObject) => {

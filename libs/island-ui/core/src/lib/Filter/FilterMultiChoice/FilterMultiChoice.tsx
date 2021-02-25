@@ -26,7 +26,7 @@ type FilterItem = {
   label: string
 }
 
-type FilterMultiChoiceChangeEvent = {
+export type FilterMultiChoiceChangeEvent = {
   /** Id of the category the selected values belongs to. */
   categoryId: string
   /** Array of selected items in the corresponding category. */
