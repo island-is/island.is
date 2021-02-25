@@ -53,12 +53,9 @@ import {
 import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
-<<<<<<< HEAD
 import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
 
-=======
 import * as styles from './RulingStepOne.treat'
->>>>>>> d120ebfa0bb76815287157e86a4b85821e210b77
 interface CaseData {
   case?: Case
 }
