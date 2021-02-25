@@ -9,13 +9,13 @@ import {
   CreateThingbokApi,
 } from '../../gen/fetch'
 
-export interface CourtClientModuleConfig {
+export interface CourtClientModuleOptions {
   xRoadPath: string
   xRoadClient: string
 }
 
 export class CourtClientModule {
-  static register(config: CourtClientModuleConfig): DynamicModule {
+  static register(config: CourtClientModuleOptions): DynamicModule {
     const headers = {
       'X-Road-Client': config.xRoadClient,
     }
