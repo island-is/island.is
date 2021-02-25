@@ -88,13 +88,6 @@ export const getHashArr = (hashString: string): string[] => {
   return null
 }
 
-interface Category {
-  title: string
-  description: string
-  expanded: boolean
-  articles: Articles
-}
-
 interface CategoryProps {
   articles: Articles
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -175,7 +168,8 @@ const Category: Screen<CategoryProps> = ({
       const activeCategory = getActiveCategory(ulrHashArr)
       setHashArray(ulrHashArr)
       if (activeCategory) {
-        document.getElementById(activeCategory)?.scrollIntoView()
+        const elementFound = document.getElementById(activeCategory)
+        if (elementFound) elementFound.scrollIntoView()
       }
     }
   }, [])
