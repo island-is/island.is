@@ -1,1 +1,1 @@
-export { getStaticEnv } from './lib/static-environment'
+export { getStaticEnv } from './lib/staticEnvironment'

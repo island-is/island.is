@@ -1,4 +1,4 @@
-import { getStaticEnv, ENV_PREFIX } from './environment'
+import { getStaticEnv, ENV_PREFIX } from './staticEnvironment'
 
 const setPrefix = (key: string) => `${ENV_PREFIX}${key}`
 
