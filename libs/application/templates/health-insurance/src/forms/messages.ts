@@ -360,7 +360,7 @@ export const m = defineMessages({
   successfulSubmissionTitle: {
     id: 'hi.application:successfulSubmission.title',
     defaultMessage: 'Við höfum móttekið umsókn þína!',
-    description: 'We have received your application',
+    description: 'Your application is sent!',
   },
   successfulSubmissionMissingInfoTitle: {
     id: 'hi.application:successfulSubmission.missingInfoTitle',
@@ -369,7 +369,8 @@ export const m = defineMessages({
   },
   successfulSubmissionMessage: {
     id: 'hi.application:successfulSubmission.message',
-    defaultMessage: 'Númer umsókninnar er **{applicationNumber}**.',
+    defaultMessage:
+      'Þú færð staðfestingapóst með skjalanúmerinu þínu sendann á netfangið þitt',
     description: 'A confirmation e-mail with your case number will be sent',
   },
   nextStepReviewTime: {
