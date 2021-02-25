@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, DatePicker, Input, Text } from '@island.is/island-ui/core'
+import { DatePicker, Input } from '@island.is/island-ui/core'
 import * as styles from './DateTime.treat'
 import { Icon } from 'libs/island-ui/core/src/lib/IconRC/iconMap'
 import { TimeInputField, BlueBox } from '../../shared-components'
@@ -24,7 +24,10 @@ interface Props {
   timeDefaultValue?: string
   timeIcon?: Icon
   timeIsRequired?: boolean
+  timeRef?: React.RefObject<HTMLInputElement>
   disabledTime?: boolean
+
+  blueBox?: boolean
 }
 
 const DateTime: React.FC<Props> = (props) => {
@@ -45,11 +48,13 @@ const DateTime: React.FC<Props> = (props) => {
     timeDefaultValue,
     timeIcon,
     timeIsRequired,
+    timeRef,
     disabledTime,
+    blueBox = true,
   } = props
 
-  return (
-    <BlueBox>
+  const renderDateTime = () => {
+    return (
       <div data-testid="date-time" className={styles.dateTimeContainer}>
         <DatePicker
           id={datepickerId}
@@ -81,12 +86,15 @@ const DateTime: React.FC<Props> = (props) => {
             defaultValue={timeDefaultValue}
             icon={timeIcon}
             iconType="outline"
+            ref={timeRef}
             required={timeIsRequired}
           />
         </TimeInputField>
       </div>
-    </BlueBox>
-  )
+    )
+  }
+
+  return blueBox ? <BlueBox>{renderDateTime()}</BlueBox> : renderDateTime()
 }
 
 export default DateTime

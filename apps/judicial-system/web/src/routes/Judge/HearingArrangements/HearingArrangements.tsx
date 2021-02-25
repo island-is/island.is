@@ -1,9 +1,6 @@
 import {
   AlertMessage,
   Box,
-  DatePicker,
-  GridColumn,
-  GridRow,
   Input,
   Select,
   Text,
@@ -15,9 +12,9 @@ import {
   FormFooter,
   PageLayout,
   Modal,
-  TimeInputField,
   CaseNumbers,
   BlueBox,
+  DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
@@ -303,80 +300,63 @@ export const HearingArrangements: React.FC = () => {
             <Box marginBottom={3}>
               <BlueBox>
                 <Box marginBottom={2}>
-                  <GridRow>
-                    <GridColumn span="7/12">
-                      <DatePicker
-                        id="courtDate"
-                        label="Veldu dagsetningu"
-                        placeholderText="Veldu dagsetningu"
-                        locale="is"
-                        errorMessage={courtDateErrorMessage}
-                        hasError={courtDateErrorMessage !== ''}
-                        minDate={new Date()}
-                        selected={
-                          workingCase.courtDate
-                            ? parseISO(workingCase.courtDate.toString())
-                            : null
-                        }
-                        handleCloseCalendar={(date: Date | null) => {
-                          setAndSendDateToServer(
-                            'courtDate',
-                            workingCase.courtDate,
-                            date,
-                            workingCase,
-                            true,
-                            setWorkingCase,
-                            updateCase,
-                            setCourtDateErrorMessage,
-                          )
-                        }}
-                        required
-                      />
-                    </GridColumn>
-                    <GridColumn span="5/12">
-                      <TimeInputField
-                        disabled={!workingCase.courtDate}
-                        onChange={(evt) =>
-                          validateAndSetTime(
-                            'courtDate',
-                            workingCase.courtDate,
-                            evt.target.value,
-                            ['empty', 'time-format'],
-                            workingCase,
-                            setWorkingCase,
-                            courtTimeErrorMessage,
-                            setCourtTimeErrorMessage,
-                          )
-                        }
-                        onBlur={(evt) =>
-                          validateAndSendTimeToServer(
-                            'courtDate',
-                            workingCase.courtDate,
-                            evt.target.value,
-                            ['empty', 'time-format'],
-                            workingCase,
-                            updateCase,
-                            setCourtTimeErrorMessage,
-                          )
-                        }
-                      >
-                        <Input
-                          name="courtTime"
-                          label="Tímasetning"
-                          placeholder="Veldu tíma"
-                          errorMessage={courtTimeErrorMessage}
-                          hasError={courtTimeErrorMessage !== ''}
-                          defaultValue={
-                            workingCase.courtDate?.includes('T')
-                              ? formatDate(workingCase.courtDate, TIME_FORMAT)
-                              : undefined
-                          }
-                          ref={courtTimeRef}
-                          required
-                        />
-                      </TimeInputField>
-                    </GridColumn>
-                  </GridRow>
+                  <DateTime
+                    datepickerId="courtDate"
+                    datepickerErrorMessage={courtDateErrorMessage}
+                    minDate={new Date()}
+                    selectedDate={
+                      workingCase.courtDate
+                        ? parseISO(workingCase.courtDate.toString())
+                        : null
+                    }
+                    handleCloseCalander={(date: Date | null) => {
+                      setAndSendDateToServer(
+                        'courtDate',
+                        workingCase.courtDate,
+                        date,
+                        workingCase,
+                        true,
+                        setWorkingCase,
+                        updateCase,
+                        setCourtDateErrorMessage,
+                      )
+                    }}
+                    dateIsRequired
+                    disabledTime={!workingCase.courtDate}
+                    timeOnChange={(evt) =>
+                      validateAndSetTime(
+                        'courtDate',
+                        workingCase.courtDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        courtTimeErrorMessage,
+                        setCourtTimeErrorMessage,
+                      )
+                    }
+                    timeOnBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'courtDate',
+                        workingCase.courtDate,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setCourtTimeErrorMessage,
+                      )
+                    }
+                    timeName="courtTime"
+                    timeErrorMessage={courtTimeErrorMessage}
+                    timeDefaultValue={
+                      workingCase.courtDate?.includes('T')
+                        ? formatDate(workingCase.courtDate, TIME_FORMAT)
+                        : undefined
+                    }
+                    timeRef={courtTimeRef}
+                    timeIsRequired
+                    blueBox={false}
+                  />
                 </Box>
                 <Input
                   data-testid="courtroom"
