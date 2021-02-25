@@ -68,15 +68,15 @@ export class VistaSkjalInput {
   @MaxLength(20)
   phoneNumber!: string
 
-  @Field(() => Date)
-  @IsNotEmpty()
+  @Field(() => Date || undefined, { nullable: true })
+  @IsOptional()
   @IsDate()
-  residenceDateFromNationalRegistry!: Date
+  residenceDateFromNationalRegistry?: Date
 
-  @Field(() => Date)
-  @IsNotEmpty()
+  @Field(() => Date || undefined, { nullable: true })
+  @IsOptional()
   @IsDate()
-  residenceDateUserThink!: Date
+  residenceDateUserThink?: Date
 
   @Field(() => String)
   @IsNotEmpty()

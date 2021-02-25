@@ -57,15 +57,14 @@ export const transformApplicationToHealthInsuranceDTO = (
 
   // Extract national registry date
   // It could be null
-  const registryDate = extractAnswer(
+  let registryDate: string | null = extractAnswer(
     application.externalData,
-    'nationalRegistry.data.lastUpdated',
+    'nationalRegistry.data.address.lastUpdated',
   )
-  // if (!registryDate){
-  //   throw new Error(
-  //     `Could not find registry date`,
-  //   )
-  // }
+  if (registryDate) {
+    const pattern = /(\d{2})\.(\d{2})\.(\d{4})/
+    registryDate = registryDate.split(' ')[0].replace(pattern, '$3-$2-$1')
+  }
 
   return {
     applicationNumber: application.id,
@@ -84,16 +83,22 @@ export const transformApplicationToHealthInsuranceDTO = (
     email: extractAnswer(application.answers, 'applicant.email') ?? '',
     phoneNumber:
       extractAnswer(application.answers, 'applicant.phoneNumber') ?? '',
-    // IF registry date is null then used applicationDate insteads for now
-    // TODO: talk with Program
+    // Registry date could be empty
     residenceDateFromNationalRegistry:
-      registryDate instanceof Date
+      registryDate && !isNaN(Date.parse(registryDate))
         ? new Date(registryDate)
-        : application.modified,
-    residenceDateUserThink:
-      registryDate instanceof Date
-        ? new Date(registryDate)
-        : application.modified,
+        : undefined,
+    // Could not get this yet, so sent in empty
+    residenceDateUserThink: undefined,
+    // TODO: change
+    // residenceDateFromNationalRegistry:
+    //   registryDate instanceof Date
+    //     ? new Date(registryDate)
+    //     : application.modified,
+    // residenceDateUserThink:
+    //   registryDate instanceof Date
+    //     ? new Date(registryDate)
+    //     : application.modified,
     userStatus: userStatus,
     isChildrenFollowed:
       extractAnswer(application.answers, 'children') == 'no' ? 0 : 1,

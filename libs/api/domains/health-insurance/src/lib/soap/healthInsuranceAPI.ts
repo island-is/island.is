@@ -127,7 +127,6 @@ export class HealthInsuranceAPI {
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
     logger.info(`--- Starting applyInsurance api call ---`)
-
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
@@ -143,17 +142,17 @@ export class HealthInsuranceAPI {
         },
         numerumsoknar: inputObj.applicationNumber,
         dagsumsoknar: format(new Date(inputObj.applicationDate), 'yyyy-MM-dd'),
-        dagssidustubusetuthjodskra: format(
-          new Date(inputObj.residenceDateFromNationalRegistry),
-          'yyyy-MM-dd',
-        ),
-        // 'dagssidustubusetu' could not be empty string
-        // We dont have a method to get it yet
-        // So we use 'dagssidustubusetuthjodskra' for now
-        dagssidustubusetu: format(
-          new Date(inputObj.residenceDateUserThink),
-          'yyyy-MM-dd',
-        ),
+        // 'dagssidustubusetuthjodskra' could be empty string
+        dagssidustubusetuthjodskra: inputObj.residenceDateFromNationalRegistry
+          ? format(
+              new Date(inputObj.residenceDateFromNationalRegistry),
+              'yyyy-MM-dd',
+            )
+          : '',
+        // 'dagssidustubusetu' could be empty string
+        dagssidustubusetu: inputObj.residenceDateUserThink
+          ? format(new Date(inputObj.residenceDateUserThink), 'yyyy-MM-dd')
+          : '',
         // There is 'Employed' status in frontend
         // but we don't have it yet in request
         // So we convert it to 'Other/O'

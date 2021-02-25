@@ -48,10 +48,20 @@ export class HealthInsuranceService {
           }
           email: "${vistaSkjal.email}",
           phoneNumber:"${vistaSkjal.phoneNumber}",
-          residenceDateFromNationalRegistry: "${
+          ${
             vistaSkjal.residenceDateFromNationalRegistry
-          }",
-          residenceDateUserThink: "${vistaSkjal.residenceDateUserThink}",
+              ? 'residenceDateFromNationalRegistry:"' +
+                vistaSkjal.residenceDateFromNationalRegistry +
+                '",'
+              : ''
+          }
+          ${
+            vistaSkjal.residenceDateUserThink
+              ? 'residenceDateUserThink:"' +
+                vistaSkjal.residenceDateUserThink +
+                '",'
+              : ''
+          }
           userStatus: "${vistaSkjal.userStatus}",
           isChildrenFollowed: ${vistaSkjal.isChildrenFollowed},
           previousCountry: "${vistaSkjal.previousCountry}",
