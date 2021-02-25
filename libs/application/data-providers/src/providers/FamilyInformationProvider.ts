@@ -4,12 +4,12 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 
-import { NationalRegistryFamilyMember } from '@island.is/api/schema'
+import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 export class FamilyInformationProvider extends BasicDataProvider {
   type = 'FamilyInformationProvider'
 
-  async provide(): Promise<NationalRegistryFamilyMember[]> {
+  async provide(): Promise<FamilyMember[]> {
     const query = `
       query NationalRegistryFamilyQuery {
         nationalRegistryFamily {

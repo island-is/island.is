@@ -6,7 +6,7 @@ import {
   Option,
 } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
-import { NationalRegistryFamilyMember } from '@island.is/api/schema'
+import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from './lib/messages'
 
@@ -46,7 +46,7 @@ export function getExpectedDateOfBirth(
 }
 
 export function getNameAndIdOfSpouse(
-  familyMembers?: NationalRegistryFamilyMember[],
+  familyMembers?: FamilyMember[],
 ): [string?, string?] {
   const spouse = familyMembers?.find(
     (member) => member.familyRelation === 'spouse',
@@ -145,7 +145,7 @@ export const getOtherParentOptions = (application: Application) => {
     application.externalData,
     'family.data.nationalRegistryFamily',
     [],
-  ) as NationalRegistryFamilyMember[]
+  ) as FamilyMember[]
 
   const options: Option[] = [
     {

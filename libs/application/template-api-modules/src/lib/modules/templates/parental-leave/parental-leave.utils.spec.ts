@@ -1,7 +1,7 @@
 import set from 'lodash/set'
 
 import { Application, ApplicationTypes } from '@island.is/application/core'
-import { NationalRegistryFamilyMember } from '@island.is/api/schema'
+import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import {
   getOtherParentId,
@@ -53,7 +53,7 @@ describe('getOtherParentId', () => {
   })
 
   it('should return spouse if spouse is selected', () => {
-    const expectedSpouse: NationalRegistryFamilyMember = {
+    const expectedSpouse: FamilyMember = {
       familyRelation: 'spouse',
       fullName: 'Spouse Spouseson',
       nationalId: '1234567890',
