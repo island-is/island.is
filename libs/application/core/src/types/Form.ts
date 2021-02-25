@@ -1,8 +1,8 @@
 import { ZodObject } from 'zod'
 import { Condition } from './Condition'
-import { Field } from './Fields'
 import { MessageDescriptor } from 'react-intl'
 import { BoxProps } from '@island.is/island-ui/core'
+import { Field, RecordObject } from '@island.is/application/core'
 import { Application } from './Application'
 
 export type StaticTextObject = MessageDescriptor & { values?: object }
@@ -105,6 +105,7 @@ export interface DataProviderItem {
 export interface FieldBaseProps {
   autoFocus?: boolean
   error?: string
+  errors?: RecordObject
   field: Field
   application: Application
   showFieldName?: boolean

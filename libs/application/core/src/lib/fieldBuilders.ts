@@ -317,6 +317,7 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
+    childInputIds?: string[]
     title: FormText
     description?: FormText
     component: string
@@ -324,12 +325,21 @@ export function buildCustomField(
   },
   props?: RecordObject,
 ): CustomField {
-  const { condition, defaultValue, id, title, description, component } = data
+  const {
+    condition,
+    defaultValue,
+    id,
+    title,
+    description,
+    component,
+    childInputIds,
+  } = data
   return {
     children: undefined,
     defaultValue,
     condition,
     id,
+    childInputIds,
     title,
     description,
     type: FieldTypes.CUSTOM,
