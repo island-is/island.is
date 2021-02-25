@@ -24,17 +24,18 @@ export class FamilyInformationProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError()
+          return this.handleError(response.errors)
         }
 
         return Promise.resolve(response.data.nationalRegistryFamily)
       })
-      .catch(() => {
-        return this.handleError()
+      .catch((error) => {
+        return this.handleError(error)
       })
   }
 
-  handleError() {
+  handleError(error: Error | unknown) {
+    console.error('Provider error - FamilyInformation:', error)
     return Promise.resolve([])
   }
 
