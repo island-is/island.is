@@ -158,8 +158,8 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      # - name: Running tests
-      #   run: ./scripts/ci/run-in-parallel.sh 30_test
+      - name: Running tests
+        run: ./scripts/ci/run-in-parallel.sh 30_test
 
   e2e:
     needs:
@@ -203,8 +203,8 @@ jobs:
       - name: Increase fs watchers for cypress
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
-      # - name: Running e2e tests
-      #   run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
+      - name: Running e2e tests
+        run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
 
   linting-workspace:
     needs:
