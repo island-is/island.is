@@ -27,6 +27,10 @@ const TwoColumnTextSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.TwoColumnTextSlice),
 )
 
+const AccordionSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.AccordionSlice),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -49,6 +53,8 @@ export const OrganizationSlice: FC<OrganizationSliceProps> = ({
       return <OfficesSlice slice={slice} />
     case 'OneColumnText':
       return <OneColumnTextSlice slice={slice} />
+    case 'AccordionSlice':
+      return <AccordionSlice slice={slice} />
     default:
       return <></>
   }
