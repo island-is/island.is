@@ -588,7 +588,7 @@ export const Confirmation: React.FC = () => {
                     <Input
                       data-testid="courtEndTime"
                       name="courtEndTime"
-                      label="Þinghaldi lauk"
+                      label="Þinghaldi lauk (kk:mm)"
                       placeholder="Veldu tíma"
                       defaultValue={formatDate(
                         workingCase.courtEndTime,

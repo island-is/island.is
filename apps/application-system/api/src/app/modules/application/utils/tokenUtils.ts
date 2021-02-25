@@ -19,7 +19,7 @@ export function verifyToken<T>(token: string): T | null {
   try {
     const decoded = (jwt.verify(
       token,
-      environment.auth.jwtSecret,
+      environment.templateApi.jwtSecret,
     ) as unknown) as T
     return decoded
   } catch (e) {

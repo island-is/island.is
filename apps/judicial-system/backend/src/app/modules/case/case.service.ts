@@ -1,5 +1,3 @@
-import { Op } from 'sequelize'
-
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -10,7 +8,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { CaseState, User as TUser } from '@island.is/judicial-system/types'
+import { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
@@ -21,6 +19,7 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
 @Injectable()
@@ -116,16 +115,12 @@ export class CaseService {
     ])
   }
 
-  getAll(): Promise<Case[]> {
+  getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
-      where: {
-        state: {
-          [Op.not]: CaseState.DELETED,
-        },
-      },
+      where: getCasesQueryFilter(user),
       include: [
         {
           model: User,

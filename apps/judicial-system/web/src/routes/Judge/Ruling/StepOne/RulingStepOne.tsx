@@ -54,7 +54,7 @@ import {
 import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
-
+import * as styles from './RulingStepOne.treat'
 interface CaseData {
   case?: Case
 }
@@ -315,8 +315,8 @@ export const RulingStepOne: React.FC = () => {
                     : 'Farbann'}
                 </Text>
               </Box>
-              <GridRow>
-                <GridColumn span="6/12">
+              <BlueBox>
+                <div className={styles.custodyEndDateContainer}>
                   <DatePicker
                     id="custodyEndDate"
                     label={
@@ -348,8 +348,7 @@ export const RulingStepOne: React.FC = () => {
                     }
                     required
                   />
-                </GridColumn>
-                <GridColumn span="5/12">
+
                   <TimeInputField
                     onChange={(evt) =>
                       validateAndSetTime(
@@ -378,7 +377,7 @@ export const RulingStepOne: React.FC = () => {
                     <Input
                       data-testid="custodyEndTime"
                       name="custodyEndTime"
-                      label="Tímasetning"
+                      label="Tímasetning (kk:mm)"
                       placeholder="Veldu tíma"
                       ref={custodyEndTimeRef}
                       defaultValue={
@@ -396,8 +395,8 @@ export const RulingStepOne: React.FC = () => {
                       required
                     />
                   </TimeInputField>
-                </GridColumn>
-              </GridRow>
+                </div>
+              </BlueBox>
             </Box>
           )}
           {workingCase.type === CaseType.CUSTODY &&
