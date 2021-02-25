@@ -6,7 +6,7 @@ import * as pdf from './utils/pdf'
 import { Application } from './../application.model'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
-import { NotFoundException } from '@nestjs/common'
+import { NotFoundException, BadRequestException } from '@nestjs/common'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
@@ -44,17 +44,7 @@ describe('FileService', () => {
     email: 'email2@email2.is',
   }
 
-  const createApplication = (
-    answers: object = {
-      email: parentA.email,
-      phoneNumber: parentA.phoneNumber,
-      parentB: {
-        email: parentB.email,
-        phoneNumber: parentB.phoneNumber,
-      },
-      expiry: 'permanent',
-    },
-  ) =>
+  const createApplication = (answers?: object) =>
     (({
       id: applicationId,
       state: 'draft',
@@ -64,7 +54,15 @@ describe('FileService', () => {
       modified: new Date(),
       created: new Date(),
       attachments: {},
-      answers,
+      answers: answers ?? {
+        email: parentA.email,
+        phoneNumber: parentA.phoneNumber,
+        parentB: {
+          email: parentB.email,
+          phoneNumber: parentB.phoneNumber,
+        },
+        expiry: 'permanent',
+      },
       externalData: {
         parentNationalRegistry: {
           data: { ...parentB },
@@ -215,5 +213,65 @@ describe('FileService', () => {
     )
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
+  })
+
+  it('should throw error since application type is not supported', async () => {
+    const act = () => service.validateApplicationType(ApplicationTypes.EXAMPLE)
+
+    expect(act).toThrowError(BadRequestException)
+  })
+
+  it('should have an application type that is valid', async () => {
+    const act = () =>
+      service.validateApplicationType(
+        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    expect(act).not.toThrow()
+  })
+
+  it('should throw error since application is not ready for file signature', async () => {
+    const act = () =>
+      service.validateFileSignature(
+        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+        {},
+      )
+
+    expect(act).toThrowError(BadRequestException)
+  })
+
+  it('should be valid for file signature', async () => {
+    const act = () =>
+      service.validateFileSignature(
+        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+        { [PdfTypes.CHILDREN_RESIDENCE_CHANGE]: 'url' },
+      )
+
+    expect(act).not.toThrow()
+  })
+
+  it('should throw error since application is not ready for file upload', async () => {
+    const act = () =>
+      service.validateFileUpload(
+        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+        'token',
+        {},
+      )
+
+    expect(act).toThrowError(BadRequestException)
+  })
+
+  it('should be valid for file upload', async () => {
+    const token = 'token'
+    const act = () =>
+      service.validateFileUpload(
+        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+        token,
+        { fileSignature: { data: { documentToken: token } } },
+      )
+
+    expect(act).not.toThrow()
   })
 })

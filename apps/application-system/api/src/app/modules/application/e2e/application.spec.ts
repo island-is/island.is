@@ -469,7 +469,7 @@ describe('Application system API', () => {
     const postResponse = await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
-      attachments: {},
+      attachments: { [type]: 'url' },
       typeId: 'ChildrenResidenceChange',
       assignees: [],
       answers: {
