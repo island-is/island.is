@@ -15,7 +15,7 @@ placeholder="$script_start.*$script_end"
 
 function extract_environment() {
   environment="{}"
-  env_names=$(grep -ohr "window\.ENV\.\w*" "$work_dir/" | cut -d '.' -f3 | sort | uniq)
+  env_names=$(grep -ohr "PUBLIC_\w*" "$work_dir/" | cut -d '.' -f3 | sort | uniq)
 
   for env_name in $env_names; do
     env_value=${!env_name}

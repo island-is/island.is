@@ -1,7 +1,7 @@
 declare global {
   interface Window {
     ENV: {
-      IDENTITY_SERVER_ISSUER_URL?: string
+      PUBLIC_IDENTITY_SERVER_ISSUER_URL?: string
     }
   }
 }
@@ -9,7 +9,7 @@ declare global {
 export default {
   production: true,
   identityServer: {
-    IDENTITY_SERVER_ISSUER_URL: window.ENV.IDENTITY_SERVER_ISSUER_URL,
+    IDENTITY_SERVER_ISSUER_URL: window.ENV.PUBLIC_IDENTITY_SERVER_ISSUER_URL,
   },
   sentry: {
     dsn:
