@@ -8,8 +8,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/ // TODO: make this use kennitala lib
+import { isCompany } from 'kennitala'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -21,9 +20,7 @@ enum Roles {
   SIGNATUREE = 'signaturee',
 }
 const dataSchema = z.object({
-  companyNationalId: z
-    .string()
-    .refine((x) => (x ? nationalIdRegex.test(x) : false)),
+  companyNationalId: z.string().refine((x) => (x ? isCompany(x) : false)),
   partyLetter: z.string().length(1),
   partyName: z.string(),
   signatures: z.array(z.string()),
