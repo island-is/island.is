@@ -58,40 +58,44 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   }, [application.id, createPdfPresignedUrl])
 
   const pdfUrl = pdfResponse?.createPdfPresignedUrl?.attachments?.[pdfType]
-  
-  setBeforeSubmitCallback && setBeforeSubmitCallback(async () => {
-    if (!pdfUrl) {
-      return [false, 'no pdf url']
-    }
-    setModalOpen(true)
-    const requestResponse = await requestFileSignature({
-      variables: {
-        input: {
-          id: application.id,
-          type: pdfType,
-        },
-      },
-    })
-    if (requestResponse?.data) {
-      const documentToken = requestResponse.data.requestFileSignature?.externalData?.fileSignature?.data?.documentToken
-      const signedFileReponse = await uploadSignedFile({
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      if (!pdfUrl) {
+        return [false, 'no pdf url']
+      }
+      setModalOpen(true)
+      const requestResponse = await requestFileSignature({
         variables: {
           input: {
             id: application.id,
-            documentToken,
             type: pdfType,
           },
         },
       })
-      if (signedFileReponse.data) {
-        return [true, null]
+      if (requestResponse?.data) {
+        const documentToken =
+          requestResponse.data.requestFileSignature?.externalData?.fileSignature
+            ?.data?.documentToken
+        const signedFileReponse = await uploadSignedFile({
+          variables: {
+            input: {
+              id: application.id,
+              documentToken,
+              type: pdfType,
+            },
+          },
+        })
+        if (signedFileReponse.data) {
+          return [true, null]
+        }
       }
-    }
-    return [false, 'Failed to update application']
-  })
+      return [false, 'Failed to update application']
+    })
 
   const controlCode =
-    requestFileSignatureData?.requestFileSignature?.externalData?.fileSignature?.data?.controlCode
+    requestFileSignatureData?.requestFileSignature?.externalData?.fileSignature
+      ?.data?.controlCode
   return (
     <>
       <ModalBase
