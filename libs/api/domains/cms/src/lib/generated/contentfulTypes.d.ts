@@ -51,6 +51,33 @@ export interface IAboutSubPage extends Entry<IAboutSubPageFields> {
   }
 }
 
+export interface IAccordionSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Accordion Items */
+  accordionItems?: IOneColumnText[] | undefined
+}
+
+/** A slice with accordions */
+
+export interface IAccordionSlice extends Entry<IAccordionSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'accordionSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAlertBannerFields {
   /** Show Alert Banner */
   showAlertBanner: boolean
@@ -3201,6 +3228,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 
 export type CONTENT_TYPE =
   | 'aboutSubPage'
+  | 'accordionSlice'
   | 'alertBanner'
   | 'animationsJson'
   | 'article'
