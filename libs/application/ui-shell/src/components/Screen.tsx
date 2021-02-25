@@ -282,6 +282,7 @@ const Screen: FC<ScreenProps> = ({
             ) : (
               <FormField
                 autoFocus
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 errors={dataSchemaOrApiErrors}
                 field={screen}
                 application={application}
