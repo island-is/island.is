@@ -248,6 +248,9 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },
@@ -440,6 +443,9 @@
       "tags": []
     },
     "utils-api": {
+      "tags": []
+    },
+    "utils-environment": {
       "tags": []
     },
     "vmst-client": {

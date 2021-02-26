@@ -127,7 +127,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       children: [
         buildCustomField({
           id: 'approveTerms',
-          title: 'Hvaða áhrif hefur breytingin?',
+          title: m.terms.general.pageTitle,
           component: 'Terms',
         }),
       ],

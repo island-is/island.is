@@ -134,6 +134,7 @@
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
 - [Feature Flags](libs/feature-flags/README.md)
+- [Health Insurance](libs/health-insurance/README.md)
 - [Island UI](libs/island-ui/README.md)
 - [Localization](libs/localization/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
@@ -149,6 +150,7 @@
   - [Shared Types](libs/shared/types/README.md)
 - [Utils](libs/utils/README.md)
   - [API Utils](libs/utils/api/README.md)
+  - [Utils Environment](libs/utils/environment/README.md)
 - [VMST Client](libs/vmst-client/README.md)
 
 ## Misc
