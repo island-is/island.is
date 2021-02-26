@@ -58,6 +58,11 @@ export interface ServiceDetail {
   openApiString: string
 
   /**
+   * Information on when this object was collected / created.
+   */
+  collected: Date
+
+  /**
    * X-Road identifying the service in different X-Road environments.
    */
   xroadIdentifier: XroadIdentifier

@@ -43,6 +43,7 @@ export const GET_API_SERVICE_QUERY = gql`
           pricing
           data
           openApiString
+          collected
           links {
             responsibleParty
             documentation

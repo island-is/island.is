@@ -100,6 +100,7 @@ export class RestMetadataService {
             },
             xroadIdentifier: sorted[i],
             openApiString: JSON.stringify(spec),
+            collected: new Date(),
           })
         } else {
           logger.error(

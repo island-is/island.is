@@ -80,10 +80,7 @@ export class CollectionService {
    * @returns
    * @memberof CollectionService
    */
-  private getCollectorWorkingName(
-    environment: Environment,
-    remote = false,
-  ) {
+  private getCollectorWorkingName(environment: Environment, remote = false) {
     const ret = `${this.getPrefix(environment)}CollectorWorking`
     if (remote) return `${this.getClusterPrefix(environment)}${ret}`
     else return ret
@@ -246,18 +243,30 @@ export class CollectionService {
    */
   async ActivateWorkerIndexForRemoteEnvironments() {
     logger.info(`Activating alias: "${this.getWorkerPrefix()}"`)
+
+    const connectedIndicesToDelete = await this.elasticService.fetchIndexNamesFromAlias(
+      this.getWorkerPrefix(),
+    )
+
     const allIndices = await this.elasticService.fetchAllIndices()
+
     if (allIndices && allIndices.includes(this.getAliasName())) {
+      // We need this check because in earlier versions of the collector
+      // this name was used on a index, not an alias to a index, so if the
+      // index with this name exists, we must delete it.
+
       logger.info(
-        `Found a index named ${this.getAliasName()}.  We need that name for our alias so we are deleting the index.`,
+        `Found a index named ${this.getAliasName()}.  ` +
+          `We need that name for our alias so we are deleting the index.`,
       )
-      await this.elasticService
-        .deleteIndex(this.getAliasName())
-        .catch((err) => {
-          logger.debug(
-            `Unable to delete index named "${this.getAliasName()}".${err}.`,
-          )
-        })
+
+      try {
+        await this.elasticService.deleteIndices({ index: this.getAliasName() })
+      } catch (err) {
+        logger.debug(
+          `Unable to delete one or more of indices   "${connectedIndicesToDelete}".${err}.`,
+        )
+      }
     }
 
     const updateOptions: UpdateIndexAliasesOptions = {
@@ -902,36 +911,64 @@ export class CollectionService {
    */
   async deleteDanglingIndices() {
     logger.debug('Delete dangling indices started')
-    const indices = await this.elasticService.fetchAllIndexNames()
-    if (indices) {
-      const activeIndices = await this.elasticService.fetchIndexNamesFromAlias(
-        this.getWorkerPrefix(),
-      )
-      logger.debug('activeIndices', activeIndices)
 
-      // Get all indices associated with us in this environment
-      // except those, being used in current environment alias.
-      const workers = indices.filter(
-        (e) =>
-          e.startsWith(`${this.getWorkerPrefix()}`) &&
-          !activeIndices?.includes(e),
-      )
-      if (workers.length) {
-        logger.debug(`deleting indices:  ${JSON.stringify(workers, null, 4)}`)
-        try {
-          await this.deleteIndices(workers)
-        } catch (err) {
-          logger.warn(
-            'Canceling deletion of dangling indices ' +
-              'because deleting indices failed with the error: ',
-            err,
-          )
-          return
-        }
-      } else {
-        logger.debug(`No dangling indices to delete.`)
+    // Get all indices associated with us in this environment, that is,
+    // with a name that starts with something like this: apicatalogue-dev
+
+    let workerIndicesToDelete
+    try {
+      workerIndicesToDelete = await this.elasticService
+        .fetchAllIndices({
+          format: 'json',
+          index: `${this.getWorkerPrefix()}*`, // e.g. apicatalogue2-dev*
+        })
+        .then((res) => res.map((e) => e.index))
+      if (!workerIndicesToDelete?.length) {
+        throw new Error(
+          `An error occurred.  No index name is associated with alias ${this.getWorkerPrefix()}`,
+        )
       }
+    } catch (err) {
+      throw err
     }
+
+    logger.debug(
+      `Our indices ${JSON.stringify(workerIndicesToDelete, null, 4)}`,
+    )
+
+    const currentWebIndices = await this.elasticService.fetchIndexNamesFromAlias(
+      this.getAliasName(), // the currently active index, should be only one
+    )
+    workerIndicesToDelete = workerIndicesToDelete.filter(
+      (e) => !currentWebIndices.includes(e),
+    )
+
+    logger.debug(
+      `Indices to be removed ${JSON.stringify(workerIndicesToDelete, null, 4)}`,
+    )
+
+    if (workerIndicesToDelete.length) {
+      logger.debug(
+        `deleting old indices:  ${JSON.stringify(
+          workerIndicesToDelete,
+          null,
+          4,
+        )}`,
+      )
+      try {
+        await this.deleteIndices(workerIndicesToDelete)
+      } catch (err) {
+        logger.warn(
+          'Canceling deletion of dangling indices ' +
+            'because deleting indices failed with the error: ',
+          err,
+        )
+        return
+      }
+    } else {
+      logger.debug(`No dangling indices to delete.`)
+    }
+
     logger.debug('Delete dangling indices finished')
   }
 }

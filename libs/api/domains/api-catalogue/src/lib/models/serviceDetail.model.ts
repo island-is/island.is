@@ -5,7 +5,7 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IsEnum, IsObject, IsString } from 'class-validator'
+import { IsDate, IsEnum, IsObject, IsString } from 'class-validator'
 import { ExternalLinks } from './externalLinks.model'
 import { XroadIdentifier } from './xroadIdentifier.model'
 
@@ -50,4 +50,8 @@ export class ServiceDetail implements IServiceDetail {
   @Field(() => String)
   @IsString()
   openApiString!: string
+
+  @Field(() => String)
+  @IsDate()
+  collected!: Date
 }
