@@ -32,8 +32,8 @@ export const useCaseFormHelper = (
         validation.validations.some((v) => validate(value, v).isValid === false)
       ) {
         valid = false
-      } else if (validation.errorMessage) {
-        validation.setErrorMessage?.(undefined)
+      } else if (validation.errorMessage && validation.setErrorMessage) {
+        validation.setErrorMessage(undefined)
       }
     }
 
