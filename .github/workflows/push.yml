@@ -205,12 +205,12 @@ jobs:
         run: ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: Compress yarn cache
-        run: tar zcvf yarn-cache.tar.gz cache
+        run: tar cvf yarn-cache.tar cache
 
       - uses: actions/upload-artifact@v2
         with:
           name: docker-yarn-cache
-          path: yarn-cache.tar.gz # or path/to/artifact
+          path: yarn-cache.tar # or path/to/artifact
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -296,7 +296,7 @@ jobs:
           name: docker-yarn-cache
 
       - name: Untar yarn cache
-        run: tar zxvf yarn-cache.tar.gz
+        run: tar xvf yarn-cache.tar
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
