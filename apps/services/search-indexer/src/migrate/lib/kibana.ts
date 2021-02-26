@@ -8,7 +8,7 @@ import {
   KibanaSavedObject,
   LocalKibanaSavedObject,
 } from '@island.is/content-search-indexer/types'
-import { environment } from '../environments/environment'
+import { environment } from '../../environments/environment'
 
 const { configPath } = environment
 
