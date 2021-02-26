@@ -94,7 +94,7 @@ jobs:
 
   prepare:
     runs-on: ubuntu-20.04
-    timeout-minutes: 40
+    timeout-minutes: 60
 
     if: needs.pre-checks.outputs.PRE_CHECK
     needs:
