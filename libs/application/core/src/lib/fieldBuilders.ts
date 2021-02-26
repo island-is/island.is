@@ -5,6 +5,7 @@ import type {
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
+import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -438,4 +439,14 @@ export function buildSubmitField(data: {
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
+}
+
+export function buildFieldOptions(
+  maybeOptions: MaybeWithApplication<Option[]>,
+  application: Application,
+): Option[] {
+  if (typeof maybeOptions === 'function') {
+    return maybeOptions(application)
+  }
+  return maybeOptions
 }
