@@ -150,6 +150,7 @@
   - [Shared Types](libs/shared/types/README.md)
 - [Utils](libs/utils/README.md)
   - [API Utils](libs/utils/api/README.md)
+  - [Utils Environment](libs/utils/environment/README.md)
 - [VMST Client](libs/vmst-client/README.md)
 
 ## Misc
