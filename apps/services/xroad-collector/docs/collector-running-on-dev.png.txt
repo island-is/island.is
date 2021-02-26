@@ -43,6 +43,9 @@ task->task: wait for five seconds
 task->Remote alias: Check if apicatalogue-stagingCollectorWorking
 Remote alias->task: Yes it exists, do nothing
 
+task->task: Check if maximum waiting time is reached, answer no
+task->task: wait for five seconds
+
 task->Remote alias: Check if apicatalogue-stagingCollectorWorking
 Remote alias->task: No it does not, copying all staging services from apicatalogue-staging
 

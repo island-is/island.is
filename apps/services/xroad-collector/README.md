@@ -25,12 +25,15 @@ To run use
 yarn start services-xroad-collector
 ```
 
-## The execution process
+## Collection process
 
-![Sequence diagram of the collection process](./docs//collector_running_on_dev.png)
+The description of the collection process can be found [here](docs/collection-process.md)
 
 [api-catalogue-services]: ../../../libs/api-catalogue/services/README.md
 
 ## Code owners and maintainers
 
 - [Advania](https://github.com/orgs/island-is/teams/advania/members)
+
+
+[here](.\docs\collection-process.md)
