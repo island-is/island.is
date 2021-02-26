@@ -5,11 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IArticleCategory } from '../../generated/contentfulTypes'
 import { mapArticleCategory } from '../../models/articleCategory.model'
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms } from './utils'
 
 @Injectable()
@@ -27,7 +23,7 @@ export class ArticleCategorySyncService
     )
   }
 
-  doMapping(entries: doMappingInput<IArticleCategory>) {
+  doMapping(entries: IArticleCategory[]) {
     logger.info('Mapping article category', { count: entries.length })
 
     return entries

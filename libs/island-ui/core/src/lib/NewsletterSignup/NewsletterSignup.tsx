@@ -63,13 +63,17 @@ export const NewsletterSignup: React.FC<Props> = ({
           />
         </Box>
         <Box
+          display="flex"
+          alignItems="center"
           className={styles.buttonWrap}
-          paddingTop={[3, 2, 1]}
+          paddingTop={[3, 2, 0]}
           marginLeft={[0, 0, 8]}
         >
-          <Button onClick={onSubmit} variant="text" icon="arrowForward">
-            {buttonText}
-          </Button>
+          <Box>
+            <Button onClick={onSubmit} variant="text">
+              {buttonText}
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Box>

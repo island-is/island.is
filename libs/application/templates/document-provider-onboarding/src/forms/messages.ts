@@ -537,8 +537,13 @@ export const m = defineMessages({
     description: '',
   },
   testEndPointErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.errorMessage',
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
+    description: '',
+  },
+  testEndPointErrorMessageUniqueKeyViolation: {
+    id: 'dpo.application:testEnviroment.errorMessageUniqueKeyViolation',
+    defaultMessage: 'Þessi endapunktur er nú þegar í notkun',
     description: '',
   },
   testEndpointLabel: {

@@ -3,7 +3,10 @@ import React, { useState } from 'react'
 import {
   Box,
   Button,
+  GridColumn,
+  GridRow,
   Input,
+  Link,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -145,10 +148,33 @@ const Homestay: Screen<HomestayProps> = ({
             <Text variant="h4" color="blue400" marginBottom={1}>
               {homestay.address}
             </Text>
-            <Text>{homestay.registrationNumber}</Text>
-            <Text>{homestay.name}</Text>
-            <Text>{homestay.city}</Text>
-            <Text>{homestay.manager}</Text>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <Text>{homestay.registrationNumber}</Text>
+                <Text>{homestay.name}</Text>
+                <Text>{homestay.city}</Text>
+                <Text>{homestay.manager}</Text>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <Text>
+                  Fasteignanúmer:{' '}
+                  <Link
+                    href={`https://leyfi.island.is/Home/OpenSkraFastNR?fastnr=${homestay.propertyId}`}
+                  >
+                    {homestay.propertyId}
+                  </Link>
+                </Text>
+                <Text>
+                  {n('homestayApartmentNo', 'Íbúð')}: {homestay.apartmentId}
+                </Text>
+                <Text>
+                  {n('homestayGuests', 'Gestir')}: {homestay.guests}
+                </Text>
+                <Text>
+                  {n('homestayRooms', 'Herbergi')}: {homestay.rooms}
+                </Text>
+              </GridColumn>
+            </GridRow>
           </Box>
         )
       })}
