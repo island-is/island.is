@@ -245,6 +245,9 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },

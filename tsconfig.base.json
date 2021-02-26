@@ -166,6 +166,7 @@
       ],
       "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
       "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
+      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],

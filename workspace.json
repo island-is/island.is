@@ -2736,6 +2736,32 @@
         }
       }
     },
+    "health-insurance": {
+      "root": "libs/health-insurance",
+      "sourceRoot": "libs/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/health-insurance/tsconfig.lib.json",
+              "libs/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/health-insurance/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/health-insurance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "infra-express-server": {
       "root": "libs/infra-express-server",
       "sourceRoot": "libs/infra-express-server/src",

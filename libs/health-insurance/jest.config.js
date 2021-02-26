@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'vmst-client',
+  name: 'health-insurance',
   preset: '../../jest.config.js',
   globals: {
     'ts-jest': {
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/vmst-client',
+  coverageDirectory: '../../coverage/libs/health-insurance',
 }
