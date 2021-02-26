@@ -24,4 +24,7 @@ export const dataSchema = z.object({
   approveTerms: z
     .array(z.string())
     .length(3, error.validation.approveTerms.defaultMessage),
+  approveTermsParentB: z
+    .array(z.string())
+    .length(3, error.validation.approveTerms.defaultMessage),
 })
