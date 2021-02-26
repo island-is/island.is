@@ -327,9 +327,6 @@ export const Overview: React.FC = () => {
             </Accordion>
           </Box>
           <Box className={styles.prosecutorContainer}>
-            <Box marginBottom={1}>
-              <Text>F.h.l</Text>
-            </Box>
             <Text variant="h3">
               {workingCase.prosecutor
                 ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`
