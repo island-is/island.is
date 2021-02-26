@@ -340,6 +340,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'In order to apply for this application we need your email and phone number',
     },
+    familyInformationTitle: {
+      id: 'pl.application:familyinformation.title',
+      defaultMessage: 'Upplýsingar um fjölskyldumeðlimi',
+      description: 'Your family information',
+    },
+    familyInformationSubTitle: {
+      id: 'pl.application:familyinformation.subtitle',
+      defaultMessage: 'Nafn, kennitala og tengsl',
+      description: 'Name, national registry id and type of relation',
+    },
     expectedDateOfBirthTitle: {
       id: 'pl.application:expectedDateOfBirth.title',
       defaultMessage: 'Áætlaður fæðingardagur',
