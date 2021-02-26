@@ -5,4 +5,8 @@ export interface IHomestay {
   abyrgdarmadur?: string
   umsoknarAr?: number
   sveitarfelag?: string
+  gestafjoldi?: number
+  fjoldiHerbergja?: number
+  fastanumer?: string
+  ibudanumer?: string
 }
