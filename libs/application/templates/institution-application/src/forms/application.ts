@@ -9,6 +9,7 @@ import {
   FormModes,
   buildCustomField,
   buildSubmitField,
+  buildFileUploadField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -98,6 +99,14 @@ export const application: Form = buildForm({
                   title: m.projectFinance,
                   placeholder: m.projectFinancePlaceholder,
                   variant: 'textarea',
+                }),
+                buildFileUploadField({
+                  id: 'attatchments',
+                  title: '',
+                  introduction: '',
+                  uploadHeader: 'Senda skjal',
+                  uploadDescription: 'Senda skjal',
+                  uploadButtonLabel: 'Senda skjal',
                 }),
               ],
             }),

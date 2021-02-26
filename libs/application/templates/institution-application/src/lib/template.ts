@@ -15,6 +15,14 @@ type Events =
   | { type: 'SUBMIT' }
   | { type: 'ABORT' }
 
+const FileSchema = z
+  .object({
+    name: z.string(),
+    key: z.string(),
+    url: z.string(),
+  })
+  .optional()
+
 const contactSchema = z.object({
   name: z.string().nonempty(),
   email: z
@@ -47,6 +55,7 @@ const dataSchema = z.object({
     stakeholders: z.string().optional(),
     role: z.string().optional(),
   }),
+  attachments: z.array(FileSchema).optional(),
   constraints: z.object({
     hasTechnical: z.boolean().optional(),
     technical: z.string().optional(),
