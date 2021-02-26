@@ -58,6 +58,8 @@ jobs:
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
+          echo "::set-output name=PRE_CHECK::branch-created"
+          exit 0
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
