@@ -10,7 +10,9 @@ ADD package.json yarn.lock ./
 
 RUN mkdir -p /build/scripts
 ADD ./scripts/postinstall.js /build/scripts/
-RUN CI=true yarn install --frozen-lockfile && rm -rf /root/.cache
+ENV NODE_ENV=production
+CMD CI=true yarn install --frozen-lockfile
+# CMD yarn cache dir
 
 FROM deps as src
 # image with the source code
@@ -22,7 +24,8 @@ ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-RUN yarn run build ${APP} --prod
+CMD CI=true yarn install --frozen-lockfile && \
+    yarn run build ${APP} --prod
 
 FROM node:12.19.0-alpine3.11 as output-base
 # this is base image for containers that are to be deployed
@@ -40,7 +43,7 @@ ENV NODE_ENV=production
 
 WORKDIR /webapp
 
-COPY --from=deps /build/node_modules /webapp/node_modules
+# COPY --from=deps /build/node_modules /webapp/node_modules
 
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
@@ -49,7 +52,7 @@ USER runner
 FROM output-base as output-express
 # image with build of an Express.js app
 
-COPY --from=builder /build/${APP_DIST_HOME} /webapp
+# CMD cp -r /build/${APP_DIST_HOME} /webapp
 
 ENTRYPOINT [ "node" ]
 CMD [ "main.js" ]
