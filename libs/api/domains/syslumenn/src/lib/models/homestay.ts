@@ -20,6 +20,18 @@ export class Homestay {
 
   @Field({ nullable: true })
   city?: string
+
+  @Field({ nullable: true })
+  guests?: number
+
+  @Field({ nullable: true })
+  rooms?: number
+
+  @Field({ nullable: true })
+  propertyId?: string
+
+  @Field({ nullable: true })
+  apartmentId?: string
 }
 
 export const mapHomestay = (homestay: IHomestay): Homestay => ({
@@ -28,5 +40,9 @@ export const mapHomestay = (homestay: IHomestay): Homestay => ({
   address: homestay.heimilisfang,
   manager: homestay.abyrgdarmadur,
   year: homestay.umsoknarAr,
-  city: homestay.sveitarfelag ?? '',
+  city: homestay.sveitarfelag,
+  guests: homestay.gestafjoldi,
+  rooms: homestay.fjoldiHerbergja,
+  propertyId: homestay.fastanumer,
+  apartmentId: homestay.ibudanumer,
 })

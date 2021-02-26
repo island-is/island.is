@@ -161,6 +161,9 @@
     "application-templates-parental-leave": {
       "tags": []
     },
+    "application-templates-party-letter": {
+      "tags": []
+    },
     "application-templates-passport": {
       "tags": []
     },
@@ -245,6 +248,9 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },
@@ -296,6 +302,9 @@
       "tags": []
     },
     "judicial-system-consts": {
+      "tags": []
+    },
+    "judicial-system-court-client": {
       "tags": []
     },
     "judicial-system-formatters": {
