@@ -98,4 +98,3 @@ export type {
   DatePickerBackgroundColor,
   DatePickerProps,
 } from './lib/DatePicker/types'
-export type { Icon as IconTypes } from './lib/IconRC/iconMap'

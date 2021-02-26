@@ -1,5 +1,5 @@
 import React from 'react'
-import { DatePicker, IconTypes, Input } from '@island.is/island-ui/core'
+import { DatePicker, DatePickerProps, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../shared-components'
 import * as styles from './DateTime.treat'
 
@@ -7,7 +7,7 @@ interface Props {
   datepickerId: string
   datepickerLabel?: string
   datepickerErrorMessage?: string
-  datepickerIcon?: IconTypes
+  datepickerIcon?: DatePickerProps['icon']
   minDate?: Date
   maxDate?: Date
   selectedDate?: Date | null | undefined
@@ -23,7 +23,7 @@ interface Props {
   timeLabel?: string
   timeErrorMessage?: string
   timeDefaultValue?: string
-  timeIcon?: IconTypes
+  timeIcon?: DatePickerProps['icon']
   timeIsRequired?: boolean
   timeRef?: React.RefObject<HTMLInputElement>
   disabledTime?: boolean
