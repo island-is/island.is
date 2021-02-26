@@ -3,7 +3,6 @@ import {
   buildSection,
   Form,
   FormModes,
-  buildTextField,
   buildCustomField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
