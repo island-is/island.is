@@ -12,19 +12,14 @@ Run `ng test api-catalogue-services` to execute the unit tests via [Jest](https:
 
 ## Usage
 
-This library export ApiCatalogueServiceModule which depends on four
+This library export ApiCatalogueServiceModule which depends on two
 environment variables to exist to configure connection to X-Road Security Server.
 
-Two variables are available from AWS Parameter Store under the /k8s/xroad-collector/ path.
+The variables are available from AWS Parameter Store under the /k8s/xroad-collector/ path.
 The variable are named:
 
-- `XROAD_BASE_PATH`
-- `XROAD_CLIENT_ID`
-
-The other two are set for the environment the service is executed in
-
-- `XROAD_COLLECTOR_ALIAS` - _Name of the alias the service uses_.
-- `ENVIRONMENT` - _Name of the environment. Valid values_: `dev`, `staging` and `prod`.
+- XROAD_BASE_PATH
+- XROAD_CLIENT_ID
 
 ## Developing
 
