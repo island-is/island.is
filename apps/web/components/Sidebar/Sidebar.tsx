@@ -32,12 +32,12 @@ const useHeadingLinks = ({
   selector,
   disabled = false,
 }: UseHeadingLinksProps) => {
-  const [offsets, setOffsets] = useState([])
-  const [elements, setElements] = useState([])
+  const [offsets, setOffsets] = useState<number[]>([])
+  const [elements, setElements] = useState<Array<HTMLElement>>([])
   const [canUpdate, setCanUpdate] = useState(true)
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [clickedIndex, setClickedIndex] = useState<number | null>(null)
-  const timer = useRef(null)
+  const timer = useRef<number | undefined>(undefined)
 
   const getElements = useCallback(() => getHeadingLinkElements(selector), [
     selector,
@@ -81,11 +81,11 @@ const useHeadingLinks = ({
     }
   }, [updateOffsets])
 
-  const goTo = (index) => {
+  const goTo = (index: number) => {
     clearTimeout(timer.current)
     setClickedIndex(index)
     setCanUpdate(false)
-    timer.current = setTimeout(() => setCanUpdate(true), 1000)
+    timer.current = window.setTimeout(() => setCanUpdate(true), 1000)
     window.scrollTo(0, offsets[index])
   }
 

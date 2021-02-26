@@ -29,7 +29,7 @@ export const TimelineSection: FC<TimelineSectionProps> = ({
   return (
     <>
       <GridRow>
-        <GridColumn offset={[null, null, null, '1/9']}>
+        <GridColumn offset={['0', '0', '0', '1/9']}>
           <Box paddingTop={2} paddingBottom={[0, 0, 5]}>
             <Text color="white">{title}</Text>
           </Box>
@@ -46,11 +46,13 @@ const mapEvent = (e: TimelineEventProps): TimelineEvent => ({
   value: e.numerator,
   maxValue: e.denominator,
   valueLabel: e.label,
-  data: e.body && {
-    labels: e.tags,
-    text: e.body,
-    link: e.link,
-  },
+  data: mapData(e),
+})
+
+const mapData = (e: TimelineEventProps) => ({
+  labels: e.tags ?? [],
+  text: e.body ?? '',
+  link: e.link ?? '',
 })
 
 export default TimelineSection

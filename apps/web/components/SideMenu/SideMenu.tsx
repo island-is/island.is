@@ -56,9 +56,9 @@ export const SideMenu: FC<Props> = ({
   handleClose,
 }) => {
   const [mounted, setMounted] = useState(false)
-  const [activeTab, setActiveTab] = useState(0)
-  const ref = useRef(null)
-  const searchInputRef = useRef(null)
+  const [activeTab, setActiveTab] = useState<number>(0)
+  const ref = useRef<HTMLElement | null>(null)
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
   const tabRefs = useRef<Array<HTMLElement | null>>([])
@@ -110,7 +110,8 @@ export const SideMenu: FC<Props> = ({
   }, [])
 
   useEffect(() => {
-    tabRefs.current[activeTab].focus()
+    const tab = tabRefs.current[activeTab]
+    tab && tab.focus()
   }, [activeTab])
 
   useEffect(() => {
@@ -185,7 +186,7 @@ export const SideMenu: FC<Props> = ({
             </Hidden>
 
             <ul className={styles.tabBar} role="tablist">
-              {tabList.map((tab, index) => (
+              {tabList.map((tab: Tab, index: number) => (
                 <li
                   key={index}
                   className={cn(styles.tabContainer, {
@@ -218,7 +219,7 @@ export const SideMenu: FC<Props> = ({
                 </li>
               ))}
             </ul>
-            {tabList.map((tab, index) => {
+            {tabList.map((tab: Tab, index: number) => {
               const hasExternalLinks =
                 tab.externalLinks && tab.externalLinks.length
               return (
@@ -234,7 +235,6 @@ export const SideMenu: FC<Props> = ({
                     {tab.links.map((link, index) => {
                       const props = {
                         ...(link.href && { href: link.href }),
-                        ...(link.as && { as: link.as }),
                       }
 
                       return (
@@ -272,7 +272,7 @@ export const SideMenu: FC<Props> = ({
                         {tab.externalLinksHeading}
                       </Text>
                       <div className={styles.linksContent}>
-                        {tab.externalLinks.map((link, index) => (
+                        {(tab.externalLinks || []).map((link, index) => (
                           <Text
                             key={index}
                             fontWeight="medium"
