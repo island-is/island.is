@@ -20,8 +20,8 @@ interface NewComponentProps<T> {
 
 export const withLocale = <
   C extends BaseContext = NextPageContext,
-  IP = {},
-  P = {}
+  IP = any,
+  P = any
 >(
   locale: Locale,
 ) => (Component: NextComponentType<C, IP, P>) => {

@@ -258,13 +258,13 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
+        {!Cookies.get(alertBannerId) && alertBannerContent?.showAlertBanner && (
           <AlertBanner
-            title={alertBannerContent.title}
-            description={alertBannerContent.description}
+            title={alertBannerContent.title ?? ''}
+            description={alertBannerContent.description ?? ''}
             link={{
-              href: alertBannerContent.link.url,
-              title: alertBannerContent.link.text,
+              href: alertBannerContent.link?.url ?? '',
+              title: alertBannerContent.link?.text ?? '',
             }}
             variant={alertBannerContent.bannerVariant as AlertBannerVariants}
             dismissable={alertBannerContent.isDismissable}
@@ -285,7 +285,7 @@ const Layout: NextComponentType<
         >
           {showHeader && (
             <ColorSchemeContext.Provider
-              value={{ colorScheme: headerColorScheme }}
+              value={{ colorScheme: headerColorScheme as ColorSchemes }}
             >
               <Header
                 buttonColorScheme={headerButtonColorScheme}
@@ -545,8 +545,8 @@ export const withMainLayout = <T,>(
 
   WithMainLayout.getInitialProps = async (ctx) => {
     const [layoutProps, componentProps] = await Promise.all([
-      Layout.getInitialProps(ctx),
-      Component.getInitialProps(ctx),
+      Layout.getInitialProps && Layout.getInitialProps(ctx),
+      Component.getInitialProps && Component.getInitialProps(ctx),
     ])
 
     return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }

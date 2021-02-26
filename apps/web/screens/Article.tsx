@@ -21,7 +21,6 @@ import {
   Button,
   Tag,
   LinkContext,
-  NavigationTreeProps,
   BreadCrumbItem,
 } from '@island.is/island-ui/core'
 import {
@@ -594,6 +593,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         {!!processEntry &&
           mounted &&
           isVisible &&
+          portalRef.current &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
               <ProcessEntry fixed {...processEntry} />
