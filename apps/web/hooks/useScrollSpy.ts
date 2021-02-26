@@ -38,15 +38,22 @@ const useScrollSpy = (
     debounce(() => setIgnore(false), 50),
     [setIgnore],
   )
-  useEvent('scroll', checkScrollStop, process.browser && window)
+
+  const target = process.browser && window
+
+  useEvent('scroll', checkScrollStop, target === false ? null : target)
 
   // function to manually navigate
   const navigate = useCallback(
     (id: string) => {
       setCurrent(id)
       setIgnore(true)
-      const rect = document.getElementById(id).getBoundingClientRect()
-      window.scrollTo(0, Math.floor(rect.top) + window.scrollY - marginTop)
+      const el = document.getElementById(id)
+      const rect = el?.getBoundingClientRect()
+      window.scrollTo(
+        0,
+        Math.floor(rect?.top ?? 0) + window.scrollY - marginTop,
+      )
     },
     [setCurrent, setIgnore],
   )
@@ -55,7 +62,7 @@ const useScrollSpy = (
   const updateCurrent = useCallback(
     throttle(() => {
       if (!ignore) {
-        setCurrent(guessVisibleSection(ids, marginTop))
+        setCurrent(guessVisibleSection(ids, marginTop) as string)
       }
     }, 100),
     [ids, ignore, setCurrent],
@@ -65,8 +72,8 @@ const useScrollSpy = (
   useEffect(updateCurrent, [ids])
 
   // and call the update function on scroll and resize
-  useEvent('scroll', updateCurrent, process.browser && window)
-  useEvent('resize', updateCurrent, process.browser && window)
+  useEvent('scroll', updateCurrent, target === false ? null : target)
+  useEvent('resize', updateCurrent, target === false ? null : target)
 
   return [current, navigate]
 }

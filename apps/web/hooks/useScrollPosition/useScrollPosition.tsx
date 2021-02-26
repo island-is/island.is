@@ -4,12 +4,12 @@ import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect'
 
 interface ScrollProps {
   prevPos: {
-    x: number
-    y: number
+    x: number | undefined
+    y: number | undefined
   }
   currPos: {
-    x: number
-    y: number
+    x: number | undefined
+    y: number | undefined
   }
 }
 
@@ -24,11 +24,11 @@ const getScrollPosition = ({ element, useWindow }: GetScrollPositionProps) => {
   if (!isBrowser) return { x: 0, y: 0 }
 
   const target = element ? element.current : document.body
-  const position = target.getBoundingClientRect()
+  const position = target?.getBoundingClientRect()
 
   return useWindow
     ? { x: window.scrollX, y: window.scrollY }
-    : { x: position.left, y: position.top }
+    : { x: position?.left, y: position?.top }
 }
 
 export const useScrollPosition = (
@@ -40,7 +40,7 @@ export const useScrollPosition = (
 ) => {
   const position = useRef(getScrollPosition({ useWindow }))
 
-  let throttleTimeout = null
+  let throttleTimeout: number | null = null
 
   const callBack = () => {
     const currPos = getScrollPosition({ element, useWindow })
@@ -57,7 +57,7 @@ export const useScrollPosition = (
     const handleScroll = () => {
       if (wait) {
         if (throttleTimeout === null) {
-          throttleTimeout = setTimeout(callBack, wait)
+          throttleTimeout = window.setTimeout(callBack, wait)
         }
       } else {
         callBack()

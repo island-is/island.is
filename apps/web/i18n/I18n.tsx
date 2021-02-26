@@ -13,7 +13,7 @@ const wrapTranslations = <T extends { [key: string]: string }>(
   translations: T,
 ): T => {
   if (process.env.NODE_ENV === 'development' && typeof Proxy !== 'undefined') {
-    const warnedKeys = {}
+    const warnedKeys = {} as { [key: string]: boolean }
     return new Proxy(translations, {
       get(target: T, p: string): string {
         if (p in target) {
@@ -36,12 +36,20 @@ i18n.locale(defaultLanguage)
 interface I18nContextType {
   activeLocale: Locale
   t: any
-  locale: (locale: string, dict?: object) => void
+  locale: (locale: Locale, dict?: { [key: string]: string }) => void
 }
 
 export const I18nContext = createContext<I18nContextType | null>(null)
 
-export default function I18n({ children, locale, translations }) {
+export default function I18n({
+  children,
+  locale,
+  translations,
+}: {
+  children: React.ReactNode
+  locale: Locale
+  translations: { [key: string]: string }
+}) {
   const [activeDict, setActiveDict] = useState(() => translations)
   const activeLocaleRef = useRef(locale || defaultLanguage)
   const [, setTick] = useState(0)
@@ -77,7 +85,7 @@ export default function I18n({ children, locale, translations }) {
         setTick((tick) => tick + 1)
       }
     },
-  }
+  } as I18nContextType
 
   return (
     <I18nContext.Provider value={i18nWrapper}>{children}</I18nContext.Provider>

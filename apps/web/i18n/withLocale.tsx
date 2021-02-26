@@ -1,13 +1,14 @@
 import React from 'react'
 import I18n, { Locale, isLocale, defaultLanguage } from './I18n'
-import { NextPage, NextPageContext, NextComponentType } from 'next'
-import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
+import { NextPage, NextPageContext } from 'next'
+import { ApolloClient } from '@apollo/client'
+import { BaseContext, NextComponentType } from 'next/dist/next-server/lib/utils'
 
 export const getLocaleFromPath = (path = ''): Locale => {
-  const maybeLocale = path.split('/').find(Boolean)
+  const maybeLocale = path.split('/').find(Boolean) as Locale
   return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
 }
 
@@ -17,15 +18,19 @@ interface NewComponentProps<T> {
   translations: { [k: string]: string }
 }
 
-export const withLocale = <Props,>(locale?: Locale) => (
-  Component: NextPage<Props>,
-): NextComponentType => {
+export const withLocale = <
+  C extends BaseContext = NextPageContext,
+  IP = {},
+  P = {}
+>(
+  locale: Locale,
+) => (Component: NextComponentType<C, IP, P>) => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {
     return Component
   }
 
-  const NewComponent: NextPage<NewComponentProps<Props>> = ({
+  const NewComponent: NextPage<NewComponentProps<P>, {}> = ({
     pageProps,
     locale,
     translations,
@@ -73,7 +78,7 @@ const getGlobalStrings = async ({
     })
     .then((content) => {
       // map data here to reduce data processing in component
-      return JSON.parse(content.data.getNamespace.fields)
+      return JSON.parse(content?.data?.getNamespace?.fields ?? '')
     })
 }
 
