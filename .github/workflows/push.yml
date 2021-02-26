@@ -310,7 +310,7 @@ jobs:
 
       - name: Building Docker images
         if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+        run: MAX_JOBS=1 ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   retag-unaffected:
     runs-on: ubuntu-20.04

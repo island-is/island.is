@@ -17,9 +17,9 @@ docker build \
   $PROJECT_ROOT
 
 docker run --name=builder-$SUFFIX -v $PROJECT_ROOT/cache:/usr/local/share/.cache builder-$SUFFIX
-mkdir -p cache-build-$SUFFIX/apps cache-build-$SUFFIX/dist/apps
+mkdir -p $PROJECT_ROOT/cache-build-$SUFFIX/apps $PROJECT_ROOT/cache-build-$SUFFIX/dist/apps
 # docker cp builder:/build/${APP_HOME} ./build/${APP_HOME}
-docker cp builder-$SUFFIX:/build/${APP_DIST_HOME} ./cache-build-$SUFFIX/${APP_DIST_HOME}
+docker cp builder-$SUFFIX:/build/${APP_DIST_HOME} $PROJECT_ROOT/cache-build-$SUFFIX/${APP_DIST_HOME}
 docker rm builder-$SUFFIX
 
 docker build \
@@ -30,6 +30,6 @@ docker build \
   $PROJECT_ROOT
 # docker rm -f output-express || true
 docker create --name=output-express-$SUFFIX -v $PROJECT_ROOT/cache:/usr/local/share/.cache output-express-$SUFFIX
-docker cp ./build/${APP_DIST_HOME} output-express-$SUFFIX:/webapp/
+docker cp $PROJECT_ROOT/cache-build-$SUFFIX/${APP_DIST_HOME} output-express-$SUFFIX:/webapp/
 docker commit output-express-$SUFFIX ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG}
 # exec $DIR/_docker.sh output-express
