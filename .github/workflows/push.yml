@@ -201,13 +201,16 @@ jobs:
       #     key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base
 
       - name: Building NodeJS dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
+        # if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-docker-deps.sh
+
+      - name: Compress yarn cache
+        run: tar zcvf yarn-cache.tar.gz cache
 
       - uses: actions/upload-artifact@v2
         with:
           name: docker-yarn-cache
-          path: cache # or path/to/artifact
+          path: yarn-cache.tar.gz # or path/to/artifact
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -291,6 +294,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: docker-yarn-cache
+
+      - name: Untar yarn cache
+        run: tar zxvf yarn-cache.tar.gz
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
