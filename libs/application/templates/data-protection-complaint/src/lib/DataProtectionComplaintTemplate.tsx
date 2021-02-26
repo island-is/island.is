@@ -8,6 +8,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
+import { NO } from '../shared'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -22,27 +23,11 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 const DataProtectionComplaintSchema = z.object({
-  person: z.object({
-    name: z.string().nonempty().max(256),
-    age: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-      if (isNaN(asNumber)) {
-        return false
-      }
-      return asNumber > 15
-    }),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    phoneNumber: z.string().min(7),
-    email: z.string().email(),
+  second: z.object({
+    walledRadioQuestion: z
+      .string()
+      .refine((p) => p === NO, { message: 'Þú verður að segja nei félagi' }),
   }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
-    .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-    )
-    .nonempty(),
-  dreamJob: z.string().optional(),
 })
 
 const DataProtectionComplaintTemplate: ApplicationTemplate<

@@ -1,1 +1,2 @@
-export * from './CustomRepeater'
+export { CustomRepeater } from './CustomRepeater'
+export { WalledRadio } from './WalledRadio'

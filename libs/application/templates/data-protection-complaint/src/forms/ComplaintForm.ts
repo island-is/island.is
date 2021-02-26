@@ -5,8 +5,13 @@ import {
   Form,
   FormModes,
   buildRadioField,
+  buildTextField,
+  buildMultiField,
+  buildRepeater,
+  buildCustomField,
 } from '@island.is/application/core'
-import { No, YES } from '../shared'
+import { WalledRadio } from '../fields'
+import { NO, YES } from '../shared'
 import { m } from './messages'
 
 export const ComplaintForm: Form = buildForm({
@@ -28,7 +33,7 @@ export const ComplaintForm: Form = buildForm({
             },
             {
               label: 'Nei',
-              value: No,
+              value: NO,
             },
           ],
         }),
@@ -53,10 +58,10 @@ export const ComplaintForm: Form = buildForm({
       id: 'second',
       title: 'Annað skref',
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Til hamingju, þetta er skref tvö',
-          description: 'Flott hjá þér',
+        buildCustomField({
+          component: 'WalledRadio',
+          id: 'second.walledRadioQuestion',
+          title: 'Walled radio title',
         }),
       ],
     }),
@@ -64,10 +69,23 @@ export const ComplaintForm: Form = buildForm({
       id: 'repeaterStep',
       title: 'Repeater skref',
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Til hamingju, þetta er skref repeater',
-          description: 'Flott hjá þér',
+        buildRepeater({
+          id: 'data',
+          title: 'Hvaða gögn þurfa að fylgja umsókninni?',
+          component: 'CustomRepeater',
+          children: [
+            buildMultiField({
+              id: 'data.fields',
+              title: 'Gögn',
+              children: [
+                buildTextField({
+                  id: 'name',
+                  title: 'Nafn',
+                  width: 'half',
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),
