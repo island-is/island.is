@@ -10,7 +10,7 @@ import { GET_URL_QUERY, GET_ERROR_PAGE } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
 import ErrorScreen from '../screens/Error/Error'
-import Layout, { LayoutProps } from '../layouts/main'
+import Layout, { LayoutProps, LayoutPropsType } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
 import { withApollo } from '../graphql/withApollo'
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
@@ -87,8 +87,8 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         // path (which has a page assigned to it) so we redirect to that page
         const url = linkResolver(type as LinkType, [slug], locale).href
         if (!process.browser) {
-          res.writeHead(302, { Location: url })
-          res.end()
+          res?.writeHead(302, { Location: url })
+          res?.end()
         } else {
           return (window.location.href = url)
         }
@@ -97,7 +97,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
     if (err) {
       Sentry.withScope((scope) => {
-        Object.keys(err).forEach((key) => {
+        Object.keys(err).forEach((key: string) => {
           scope.setExtra(key, err[key])
         })
 
@@ -114,10 +114,12 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
     // we'll attempt to get the required data to display page, but if it goes wrong we'll
     // show a simplified error page without any header or footer
-    let layoutProps: LayoutProps = null
+    let layoutProps: LayoutPropsType = null
     let pageProps: any = null
     try {
-      layoutProps = await Layout.getInitialProps({ ...props, locale })
+      layoutProps = Layout.getInitialProps
+        ? await Layout.getInitialProps({ ...props, locale })
+        : null
       pageProps = await getPageProps({
         apolloClient: props.apolloClient,
         locale,
@@ -159,7 +161,7 @@ const getRedirectProps = async ({
   apolloClient,
   locale,
 }: GetRedirectPropsProps) => {
-  const { getUrl } = await apolloClient
+  const getUrl = await apolloClient
     .query<GetUrlQuery, QueryGetUrlArgs>({
       query: GET_URL_QUERY,
       variables: {
@@ -169,7 +171,7 @@ const getRedirectProps = async ({
         },
       },
     })
-    .then((response) => response.data)
+    .then((response) => response.data?.getUrl)
 
   return getUrl?.page ?? null
 }
@@ -185,7 +187,7 @@ const getPageProps = async ({
   apolloClient,
   locale,
 }: GetErrorPageProps) => {
-  const { getErrorPage } = await apolloClient
+  const getErrorPage = await apolloClient
     .query<ErrorPageQuery, QueryGetErrorPageArgs>({
       query: GET_ERROR_PAGE,
       variables: {
@@ -195,7 +197,7 @@ const getPageProps = async ({
         },
       },
     })
-    .then((response) => response.data)
+    .then((response) => response.data?.getErrorPage)
 
   return getErrorPage
 }

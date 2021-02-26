@@ -9,7 +9,7 @@ export const isLocale = (x: string): x is Locale => {
 }
 
 // Log and handle missing translations in development (also when running against mocks).
-const wrapTranslations = <T extends { [key: string]: string }>(
+const wrapTranslations = <T extends Record<string, string | string[]>>(
   translations: T,
 ): T => {
   if (process.env.NODE_ENV === 'development' && typeof Proxy !== 'undefined') {
@@ -17,7 +17,7 @@ const wrapTranslations = <T extends { [key: string]: string }>(
     return new Proxy(translations, {
       get(target: T, p: string): string {
         if (p in target) {
-          return target[p]
+          return target[p] as string
         }
         if (!(p in warnedKeys)) {
           console.warn(`Missing translation for ${p}`)
@@ -48,7 +48,7 @@ export default function I18n({
 }: {
   children: React.ReactNode
   locale: Locale
-  translations: { [key: string]: string }
+  translations: Record<string, string | string[]>
 }) {
   const [activeDict, setActiveDict] = useState(() => translations)
   const activeLocaleRef = useRef(locale || defaultLanguage)

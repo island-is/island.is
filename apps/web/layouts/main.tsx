@@ -96,6 +96,8 @@ export interface LayoutProps {
   megaMenuData: MenuProps
 }
 
+export type LayoutPropsType = LayoutProps | null
+
 if (environment.sentryDsn) {
   Sentry.init({
     dsn: environment.sentryDsn,
