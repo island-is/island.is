@@ -23,12 +23,6 @@ const filterNavigationTree = (
           route.path.includes(item.path)),
     ) !== undefined || item.systemRoute === true
 
-  // Only display the document-provider module for those who have access
-  if (item.path === '/skjalaveitur') {
-    if (!env.documentProviderAdmins?.includes(userInfo.profile.nationalId))
-      return false
-  }
-
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {
     return filterNavigationTree(child, routes, userInfo)
