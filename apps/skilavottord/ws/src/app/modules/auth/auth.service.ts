@@ -50,4 +50,9 @@ export class AuthService {
     }
     return false
   }
+
+  // test
+  static test(): string {
+    return 'test'
+  }
 }
