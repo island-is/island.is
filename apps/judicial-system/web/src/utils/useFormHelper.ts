@@ -38,7 +38,7 @@ export const useCaseFormHelper = (
     }
 
     setIsValid(valid)
-  }, [theCase, setIsValid])
+  }, [theCase, validations, setIsValid])
 
   const setField = (element: HTMLInputElement | HTMLTextAreaElement) => {
     if (element.value.includes('\t')) {
