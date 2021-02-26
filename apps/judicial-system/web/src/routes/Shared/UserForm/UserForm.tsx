@@ -12,7 +12,7 @@ import { ValueType } from 'react-select/src/types'
 import { FormFooter } from '@island.is/judicial-system-web/src/shared-components'
 import { Institution, User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '../../../types'
-import { validate, Validation } from '../../../utils/validate'
+import { validate, FormValidation } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
 
 interface Props {
@@ -22,14 +22,9 @@ interface Props {
   loading: boolean
 }
 
-interface FieldValidation {
-  validations: Validation[]
-  errorMessage?: string | undefined
-  setErrorMessage?: React.Dispatch<React.SetStateAction<string | undefined>>
-}
-
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
+
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
@@ -49,7 +44,7 @@ export const UserForm: React.FC<Props> = (props) => {
     (institution) => institution.label === user.institution?.name,
   )
 
-  const validations: { [key: string]: FieldValidation } = {
+  const validations: FormValidation = {
     name: {
       validations: ['empty'],
       errorMessage: nameErrorMessage,
