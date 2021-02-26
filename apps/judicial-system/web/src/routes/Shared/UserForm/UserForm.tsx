@@ -11,10 +11,10 @@ import InputMask from 'react-input-mask'
 import { ValueType } from 'react-select/src/types'
 import { FormFooter } from '@island.is/judicial-system-web/src/shared-components'
 import { Institution, User, UserRole } from '@island.is/judicial-system/types'
+import { FormValidation } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
-import { FormValidation } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 
 interface Props {
   user: User
