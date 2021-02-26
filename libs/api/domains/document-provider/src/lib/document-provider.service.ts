@@ -23,7 +23,11 @@ import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 // eslint-disable-next-line
 const handleError = (error: any) => {
   logger.error(JSON.stringify(error))
-  throw new ApolloError('Failed to resolve request', error.status)
+  if (error.response?.data) {
+    throw new ApolloError(error.response.data, error.status)
+  } else {
+    throw new ApolloError('Failed to resolve request', error.status)
+  }
 }
 
 @Injectable()
@@ -45,6 +49,16 @@ export class DocumentProviderService {
     return await this.organisationsApi
       .organisationControllerFindByNationalId({ nationalId })
       .catch(handleError)
+  }
+
+  async organisationExists(nationalId: string): Promise<boolean> {
+    const organisation = await this.organisationsApi
+      .organisationControllerFindByNationalId({ nationalId })
+      .catch(() => {
+        //Find returns 404 error if organisation is not found. Do nothing.
+      })
+
+    return !organisation ? false : true
   }
 
   async createOrganisation(

@@ -8,11 +8,9 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { NO, YES } from '../constants'
-import {
-  isEUCountry,
-  requireConfirmationOfResidency,
-} from '../healthInsuranceUtils'
+import { API_MODULE } from '../shared'
 import { StatusTypes } from '../types'
+import { answerValidators } from './answerValidators'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -41,28 +39,10 @@ const HealthInsuranceSchema = z.object({
     phoneNumber: z.string().optional(),
     citizenship: z.string().optional(),
   }),
-  status: z.enum([
-    StatusTypes.EMPLOYED,
-    StatusTypes.STUDENT,
-    StatusTypes.PENSIONER,
-    StatusTypes.OTHER,
-  ]),
-  confirmationOfStudies: z.array(FileSchema).nonempty(),
   children: z.string().nonempty(),
-  formerInsurance: z.object({
-    registration: z.enum([YES, NO]),
-    country: z.string(),
-    personalId: z.string().nonempty(),
-    institution: z.string(),
-    entitlement: z.enum([YES, NO]),
-    entitlementReason: z.string().optional(),
-  }),
-  confirmationOfResidencyDocument: z.array(FileSchema).nonempty(),
-  additionalInfo: z.object({
-    hasAdditionalInfo: z.enum([YES, NO]),
-    files: z.array(FileSchema),
-    remarks: z.string().optional(),
-  }),
+  hasAdditionalInfo: z.enum([YES, NO]),
+  additionalFiles: z.array(FileSchema),
+  additionalRemarks: z.string().optional(),
   confirmCorrectInfo: z.boolean().refine((v) => v),
 })
 
@@ -102,10 +82,13 @@ const HealthInsuranceTemplate: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
-          progress: 0.5,
+          onEntry: {
+            apiModuleAction: API_MODULE.sendApplyHealthInsuranceApplication,
+          },
+          progress: 1,
           roles: [
             {
-              id: 'reviewer',
+              id: 'applicant',
               formLoader: () =>
                 import('../forms/ConfirmationScreen').then((val) =>
                   Promise.resolve(val.HealthInsuranceConfirmation),
@@ -118,11 +101,9 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      return 'reviewer'
-    }
     return 'applicant'
   },
+  answerValidators,
 }
 
 export default HealthInsuranceTemplate

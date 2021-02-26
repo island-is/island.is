@@ -5,13 +5,21 @@ import {
   ParentResidenceChange,
   PersonResidenceChange,
 } from '@island.is/application/templates/children-residence-change'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from '../application.configuration'
 
 describe('FileService', () => {
   let service: FileService
 
   beforeEach(async () => {
+    const config: ApplicationConfig = {}
     const module = await Test.createTestingModule({
-      providers: [FileService],
+      providers: [
+        FileService,
+        { provide: APPLICATION_CONFIG, useValue: config },
+      ],
     }).compile()
 
     service = module.get(FileService)

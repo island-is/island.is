@@ -49,36 +49,17 @@ export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
   }, [loading, data, error])
 
   return (
-    <Box>
-      {/* Top Line */}
-      <Box
-        display="flex"
-        flexDirection={['column', 'column', 'column', 'row', 'row']}
-        justifyContent={[
-          'flexStart',
-          'flexStart',
-          'spaceBetween',
-          'spaceBetween',
-        ]}
-      >
-        <Box display="flex" alignItems="center">
-          <Text color="blue600" variant="h4" as="h4" truncate>
-            {n('title')}
+    <Box paddingTop={[3, 3, 4]} paddingBottom={[0, 0, 6]}>
+      {loading && (
+        <Stack space={3} align="center">
+          <LoadingIcon animate size={40} color="blue400" />
+          <Text variant="h4" color="blue600">
+            {n('gettingDocumentation')}
           </Text>
-        </Box>
-      </Box>
-      <Box>
-        {loading && (
-          <Stack space={3} align="center">
-            <LoadingIcon animate size={40} color="blue400" />
-            <Text variant="h4" color="blue600">
-              {n('gettingDocumentation')}
-            </Text>
-          </Stack>
-        )}
-      </Box>
+        </Stack>
+      )}
       {error && (
-        <Box paddingY={2}>
+        <Box>
           <AlertBanner
             title={n('loadErrorTitle')}
             description={n('loadErrorText')}
@@ -94,13 +75,11 @@ export const OpenApiView = ({ strings, openApiInput }: OpenApiViewProps) => {
             <OpenApiDocumentation spec={documentation} />
           ) : (
             // documentation missing
-            <Box paddingY={2}>
-              <AlertBanner
-                title={n('queryErrorTitle')}
-                description={n('queryErrorText')}
-                variant="error"
-              />
-            </Box>
+            <AlertBanner
+              title={n('queryErrorTitle')}
+              description={n('queryErrorText')}
+              variant="error"
+            />
           ))}
       </Box>
     </Box>

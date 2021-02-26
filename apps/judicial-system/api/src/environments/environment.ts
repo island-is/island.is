@@ -11,5 +11,15 @@ export default {
   auditTrail: {
     useGenericLogger: true,
   },
+  xRoad: {
+    basePathWithEnv: '',
+    clientId: '',
+  },
+  courtService: {
+    apiPath: '',
+    memberCode: '',
+    username: '',
+    password: '',
+  },
   backendUrl: 'http://localhost:3344',
 }
