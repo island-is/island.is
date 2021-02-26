@@ -6,29 +6,17 @@ describe('AuthService', () => {
   let authService: AuthService
 
   const user1 = {
-    nationalId: '2310765229',
-    name: 'Batman',
+    nationalId: '1111111111',
+    name: 'Gervimaður',
     mobile: '',
     role: 'developer',
   }
+
   const user2 = {
-    nationalId: '0706765599',
-    name: 'Batman',
+    nationalId: '2222222222',
+    name: 'Gervimaður',
     mobile: '',
-    role: 'recyclingCompany',
-  }
-  const user3 = {
-    nationalId: '3005594339',
-    name: 'Batman',
-    mobile: '',
-    role: 'recyclingFund',
-  }
-  const user4 = {
-    // nationalId: '3005594339',
-    nationalId: '8888888888',
-    name: 'Batman',
-    mobile: '',
-    role: 'citizen',
+    role: '',
   }
 
   beforeEach(async () => {
@@ -39,21 +27,21 @@ describe('AuthService', () => {
     authService = moduleRef.get(AuthService)
   })
 
-  describe('getRole', () => {
-    it('should return a correct role', () => {
-      const user = user2
+  describe('getRole test', () => {
+    it('should return a correct user with role', () => {
+      const user = user1
       const ur = authService.getUserRole(user)
-      expect(ur.role).toBe(user.role)
+      expect(ur.role).toBe('recyclingCompany')
     })
   })
 
-  describe('checkRole should return true for valid permission', () => {
+  describe('checkRole test ', () => {
     it('allways return false for citizen', () => {
       // Arrange & Act
-      const hasPermission = authService.checkRole(user4, 'citizen')
+      const hasPermission = authService.checkRole(user2, 'citizen')
       expect(hasPermission).toBeFalsy()
     })
-    it('return true for developer if found', () => {
+    it('allways return true for other than citizen', () => {
       // Arrange & Act
       const hasPermission = authService.checkRole(user1, 'developer')
       expect(hasPermission).toBeTruthy()

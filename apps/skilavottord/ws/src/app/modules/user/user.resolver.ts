@@ -1,7 +1,6 @@
 import { Query, Resolver } from '@nestjs/graphql'
 import { User } from './models'
 import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
-import { Role } from '../auth/auth.types'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 
@@ -22,18 +21,15 @@ export class UserResolver {
     }
     this.logger.info('  - User exists')
     const currUser = new User()
-
     currUser.nationalId = user.nationalId
     currUser.name = user.name
     currUser.mobile = user.mobile
-    const authService = new AuthService()
-    const RoleUser: AuthUser = {
+    const roleUser: AuthUser = {
       nationalId: user.nationalId,
       mobile: user.mobile,
       name: user.name,
     }
-
-    const userRole = authService.getUserRole(RoleUser)
+    const userRole = this.authService.getUserRole(roleUser)
     if (!userRole) {
       currUser.role = 'citizen'
     } else {

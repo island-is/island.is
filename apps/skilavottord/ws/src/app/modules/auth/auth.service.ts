@@ -29,11 +29,16 @@ const users = `[{ "nationalId":"2310765229", "name": "Vésteinn Viðarsson", "ro
 { "nationalId":"1207952879","name": "Anton Örn  Kærnested", "role":"recyclingCompany", "partnerId":"221"},
 { "nationalId":"3005594339","name": "Ólafur Kjartansson", "role":"recyclingFund", "partnerId":""},
 { "nationalId":"0202614989","name": "Guðlaugur Gylfi Sverrisson", "role":"recyclingFund", "partnerId":""},
-{ "nationalId":"0305695639","name": "Ása Hauksdóttir", "role":"recyclingFund", "partnerId":""}
+{ "nationalId":"0305695639","name": "Ása Hauksdóttir", "role":"recyclingFund", "partnerId":""},
+{ "nationalId":"1111111111","name": "Gervimaður", "role":"recyclingCompany", "partnerId":"999"}
 ]`
 
 @Injectable()
 export class AuthService {
+  roleArr: [User]
+  constructor() {
+    this.roleArr = JSON.parse(users)
+  }
   // TODO old
   // getRole(user: AuthUser): Role {
   //   var picked = roleArr.find((o) => o.nationalId === user.nationalId)
@@ -43,14 +48,12 @@ export class AuthService {
 
   //TODO
   getUserRole(user: AuthUser): User {
-    const roleArr: [User] = JSON.parse(users)
-    var picked = roleArr.find((o) => o.nationalId === user.nationalId)
+    var picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
     return picked
   }
 
   checkRole(user: AuthUser, role: Role): boolean {
-    const roleArr: [User] = JSON.parse(users)
-    const picked = roleArr.find((o) => o.nationalId === user.nationalId)
+    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
     if (!picked) {
       return false
     } else {
@@ -59,21 +62,6 @@ export class AuthService {
         r === 'developer' || r === 'recyclingCompany' || r === 'recyclingFund'
       )
     }
-
-    // switch (role) {
-    //   case 'recyclingCompany':
-    //     return RECYCLINGCOMPANY.includes(user.nationalId)
-    //   case 'recyclingFund':
-    //     return RECYCLINGFUND.includes(user.nationalId)
-    //   case 'developer':
-    //     return DEVELOPERS.includes(user.nationalId)
-    //   default: {
-    //     if (role) {
-    //       return false
-    //     }
-    //   return true
-    // }
-    // }
-    return true
+    return false
   }
 }
