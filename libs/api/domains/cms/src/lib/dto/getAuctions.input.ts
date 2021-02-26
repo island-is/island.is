@@ -1,25 +1,28 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsNumber, IsString, Max, Min } from 'class-validator'
+import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator'
 
 @InputType()
 export class GetAuctionsInput {
   @Field()
   @IsString()
-  organization: string
+  lang: string
 
-  @Field()
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  organization?: string
+
+  @Field({ nullable: true })
   @IsNumber()
+  @IsOptional()
   @Min(2000)
   @Max(2100)
-  year: number
+  year?: number
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
+  @IsOptional()
   @Min(0)
   @Max(11)
-  month: number
-
-  @Field()
-  @IsString()
-  lang: string
+  month?: number
 }
