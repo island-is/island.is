@@ -17,10 +17,7 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
       <Text>
         <Markdown>
           {formatText(
-            () => ({
-              ...m.successfulSubmissionMessage,
-              values: { applicationNumber: application.id },
-            }),
+            m.successfulSubmissionMessage,
             application,
             formatMessage,
           )}
