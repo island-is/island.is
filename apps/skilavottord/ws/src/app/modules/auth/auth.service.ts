@@ -10,12 +10,12 @@ export class AuthService {
     const { userList } = environment.skilavottord
     this.roleArr = JSON.parse(userList)
   }
-  // TODO old
-  // getRole(user: AuthUser): Role {
-  //   var picked = roleArr.find((o) => o.nationalId === user.nationalId)
-  //   //TODO if not found
-  //   return picked.role as Role
-  // }
+  // TODO 
+  getRole(user: AuthUser): Role {
+    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+    //TODO if not found
+    return picked.role as Role
+  }
 
   // //TODO
   // getUserRoleNew(user: AuthUser): User {
