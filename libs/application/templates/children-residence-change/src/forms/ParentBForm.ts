@@ -20,7 +20,7 @@ export const ParentBForm: Form = buildForm({
       children: [
         buildCustomField({
           id: 'approveTermsParentB',
-          title: 'Hvaða áhrif hefur breytingin?',
+          title: m.terms.general.pageTitle,
           component: 'Terms',
         }),
       ],
