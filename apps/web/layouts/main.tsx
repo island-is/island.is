@@ -55,16 +55,17 @@ import {
   linkResolver as LinkResolver,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
+import { MenuProps } from '../components/Menu/Menu'
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
-const absoluteUrl = (req, setLocalhost) => {
+const absoluteUrl = (req: NextPageContext['req'], setLocalhost: string) => {
   let protocol = 'https:'
   let host = req
     ? req.headers['x-forwarded-host'] || req.headers['host']
     : window.location.host
-  if (host.indexOf('localhost') > -1) {
+  if (host && host.indexOf('localhost') > -1) {
     if (setLocalhost) host = setLocalhost
     protocol = 'http:'
   }
@@ -91,8 +92,8 @@ export interface LayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
-  respOrigin
-  megaMenuData
+  respOrigin: string
+  megaMenuData: MenuProps
 }
 
 if (environment.sentryDsn) {
@@ -102,7 +103,7 @@ if (environment.sentryDsn) {
     integrations: [
       new RewriteFrames({
         iteratee: (frame) => {
-          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
+          frame.filename = frame?.filename?.replace(`~/.next`, 'app:///_next')
           return frame
         },
       }),
@@ -503,7 +504,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     },
     ...footerMenu,
     namespace,
-    respOrigin,
+    respOrigin: respOrigin as string,
     megaMenuData: {
       asideTopLinks: formatMegaMenuLinks(
         lang as Locale,

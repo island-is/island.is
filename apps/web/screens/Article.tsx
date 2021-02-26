@@ -21,6 +21,8 @@ import {
   Button,
   Tag,
   LinkContext,
+  NavigationTreeProps,
+  BreadCrumbItem,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -38,8 +40,9 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   AllSlicesFragment as Slice,
-  GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
+  GetSingleArticleQuery,
+  Namespace,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -54,7 +57,7 @@ import { Locale } from '../i18n/I18n'
 import { useScrollPosition } from '../hooks/useScrollPosition'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
-type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
+type SubArticle = Article
 
 const createSubArticleNavigation = (body: Slice[]) => {
   // on sub-article page the main article title is h1, sub-article title is h2
@@ -76,7 +79,7 @@ const createArticleNavigation = (
     locale?: Locale,
   ) => LinkResolverResponse,
 ): Array<{ url: string; title: string }> => {
-  if (article.subArticles.length === 0) {
+  if (article?.subArticles.length === 0) {
     return createNavigation(article.body, {
       title: article.shortTitle || article.title,
     }).map(({ id, text }) => ({
@@ -88,14 +91,14 @@ const createArticleNavigation = (
   let nav = []
 
   nav.push({
-    title: article.title,
-    url: linkResolver('article', [article.slug]).href,
+    title: article?.title ?? '',
+    url: linkResolver('article', [article?.slug ?? '']).href,
   })
 
-  for (const subArticle of article.subArticles) {
+  for (const subArticle of article?.subArticles ?? []) {
     nav.push({
       title: subArticle.title,
-      url: linkResolver('article', [article.slug, subArticle.slug]).href,
+      url: linkResolver('article', [article?.slug ?? '', subArticle.slug]).href,
     })
 
     // expand sub-article navigation for selected sub-article
@@ -104,7 +107,7 @@ const createArticleNavigation = (
       nav = nav.concat(
         createSubArticleNavigation(subArticle.body).map(({ id, text }) => ({
           title: text,
-          url: article.slug + '#' + id,
+          url: article?.slug + '#' + id,
         })),
       )
     }
@@ -153,7 +156,7 @@ const RelatedContent: FC<{
 }
 
 const TOC: FC<{
-  body: SubArticle['body']
+  body: Slice[]
   title: string
 }> = ({ body, title }) => {
   const navigation = useMemo(() => {
@@ -170,11 +173,12 @@ const TOC: FC<{
           headingTitle: text,
           headingId: id,
         }))}
-        onClick={(id) =>
-          document.getElementById(id).scrollIntoView({
+        onClick={(id) => {
+          const el = document.getElementById(id)
+          return el?.scrollIntoView({
             behavior: 'smooth',
           })
-        }
+        }}
       />
     </Box>
   )
@@ -184,40 +188,52 @@ const ArticleNavigation: FC<
   ArticleSidebarProps & { isMenuDialog?: boolean }
 > = ({ article, activeSlug, n, isMenuDialog }) => {
   const { linkResolver } = useLinkResolver()
+
+  if (!!article?.subArticles?.length) {
+    return null
+  }
+
+  const activeArticle = article?.subArticles.find(
+    (sub) => activeSlug === sub?.slug,
+  ) as Article
+
   return (
-    article.subArticles.length > 0 && (
-      <Navigation
-        baseId="articleNav"
-        title={n('sidebarHeader')}
-        activeItemTitle={
-          !activeSlug
-            ? article.shortTitle || article.title
-            : article.subArticles.find((sub) => activeSlug === sub.slug).title
-        }
-        isMenuDialog={isMenuDialog}
-        renderLink={(link, { typename, slug }) => {
+    <Navigation
+      baseId="articleNav"
+      title={n('sidebarHeader')}
+      activeItemTitle={
+        !activeSlug
+          ? activeArticle?.shortTitle || activeArticle?.title
+          : activeArticle?.title
+      }
+      isMenuDialog={isMenuDialog}
+      renderLink={(link, item) => {
+        if (item) {
           return (
-            <NextLink {...linkResolver(typename as LinkType, slug)} passHref>
+            <NextLink
+              {...linkResolver(item.typename as LinkType, item.slug)}
+              passHref
+            >
               {link}
             </NextLink>
           )
-        }}
-        items={[
-          {
-            title: article.shortTitle || article.title,
-            typename: article.__typename,
-            slug: [article.slug],
-            active: !activeSlug,
-          },
-          ...article.subArticles.map((item) => ({
-            title: item.title,
-            typename: item.__typename,
-            slug: [article.slug, item.slug],
-            active: activeSlug === item.slug,
-          })),
-        ]}
-      />
-    )
+        }
+      }}
+      items={[
+        {
+          title: (article?.shortTitle || article?.title) ?? '',
+          typename: article?.__typename,
+          slug: [article?.slug ?? ''],
+          active: !activeSlug,
+        },
+        ...(article?.subArticles || []).map((item) => ({
+          title: item.title,
+          typename: item.__typename,
+          slug: [article?.slug ?? '', item.slug],
+          active: activeSlug === item.slug,
+        })),
+      ]}
+    />
   )
 }
 interface ArticleSidebarProps {
@@ -236,7 +252,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 
   return (
     <Stack space={3}>
-      {!!article.category && (
+      {!!article?.category && (
         <Box display={['none', 'none', 'block']} printHidden>
           <Link {...linkResolver('articlecategory', [article.category.slug])}>
             <Button
@@ -251,24 +267,24 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
           </Link>
         </Box>
       )}
-      {article.organization.length > 0 && (
+      {!!article?.organization && article.organization.length > 0 && (
         <InstitutionPanel
           img={article.organization[0].logo?.url}
           institutionTitle={n('organization')}
           institution={article.organization[0].title}
           locale={activeLocale}
-          linkProps={{ href: article.organization[0].link }}
+          linkProps={{ href: article.organization[0].link as string }}
           imgContainerDisplay={['block', 'block', 'none', 'block']}
         />
       )}
-      {article.subArticles.length > 0 && (
+      {!!article?.subArticles && article.subArticles.length > 0 && (
         <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
       )}
-      {article.relatedArticles.length > 0 && (
+      {!!article?.relatedArticles && article.relatedArticles.length > 0 && (
         <RelatedContent
           title={n('relatedMaterial')}
-          articles={article.relatedArticles}
-          otherContent={article.relatedContent}
+          articles={article?.relatedArticles ?? []}
+          otherContent={article?.relatedContent ?? []}
         />
       )}
     </Stack>
@@ -282,8 +298,8 @@ export interface ArticleProps {
 
 const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const { activeLocale } = useI18n()
-  const portalRef = useRef()
-  const processEntryRef = useRef(null)
+  const portalRef = useRef<HTMLElement | null>(null)
+  const processEntryRef = useRef<HTMLElement | null>(null)
   const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   useEffect(() => {
@@ -291,8 +307,8 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
   }, [])
-  useContentfulId(article.id)
-  const n = useNamespace(namespace)
+  useContentfulId(article?.id ?? '')
+  const n = useNamespace(namespace as Namespace)
   const { query } = useRouter()
   const { linkResolver } = useLinkResolver()
 
@@ -307,27 +323,27 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
       const elementPosition =
         processEntryRef && processEntryRef.current
           ? processEntryRef?.current.getBoundingClientRect().bottom +
-            (px - currPos.y)
+            (px - (currPos?.y ?? 0))
           : 0
 
-      const canShow = elementPosition + currPos.y >= 0
+      const canShow = elementPosition + (currPos?.y ?? 0) >= 0
       setIsVisible(canShow)
     },
     [setIsVisible],
-    null,
+    undefined,
     false,
     150,
   )
 
-  const subArticle = article.subArticles.find((sub) => {
+  const subArticle = article?.subArticles.find((sub) => {
     return sub.slug === query.subSlug
   })
 
   const contentOverviewOptions = useMemo(() => {
-    return createArticleNavigation(article, subArticle, linkResolver)
+    return createArticleNavigation(article, subArticle as Article, linkResolver)
   }, [article, subArticle, linkResolver])
 
-  const relatedLinks = (article.relatedArticles ?? []).map((article) => ({
+  const relatedLinks = (article?.relatedArticles ?? []).map((article) => ({
     title: article.title,
     url: linkResolver('article', [article.slug]).href,
   }))
@@ -346,21 +362,54 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     })
   }
 
-  const metaTitle = `${article.title} | Ísland.is`
-  const processEntry = article.processEntry
-  const categoryHref = linkResolver('articlecategory', [article.category.slug])
-    .href
-  const organizationTitle = article.organization[0]?.title
-  const organizationShortTitle = article.organization[0]?.shortTitle
+  const metaTitle = `${article?.title} | Ísland.is`
+  const processEntry = article?.processEntry
+  const categoryHref = linkResolver('articlecategory', [
+    article?.category?.slug ?? '',
+  ]).href
+  const organizationTitle = article?.organization?.length
+    ? article?.organization[0].title
+    : ''
+  const organizationShortTitle = article?.organization?.length
+    ? article?.organization[0].shortTitle
+    : ''
+
+  const breadCrumbItems = [
+    {
+      title: 'Ísland.is',
+      typename: 'homepage',
+      href: '/',
+    },
+  ] as BreadCrumbItem[]
+
+  article?.category &&
+    breadCrumbItems.push({
+      title: article?.category?.title,
+      typename: 'articlecategory',
+      slug: [article?.category?.slug ?? ''],
+    })
+
+  article?.group &&
+    breadCrumbItems.push({
+      isTag: true,
+      title: article.group.title,
+      typename: 'articlecategory',
+      slug: [
+        article?.category?.slug ??
+          '' + (article?.group?.slug ? `#${article.group.slug}` : ''),
+      ],
+    })
+
+  const subArticleOrArticle = subArticle ?? article
 
   return (
     <>
       <HeadWithSocialSharing
         title={metaTitle}
-        description={article.intro}
-        imageUrl={article.featuredImage?.url}
-        imageWidth={article.featuredImage?.width.toString()}
-        imageHeight={article.featuredImage?.height.toString()}
+        description={article?.intro ?? ''}
+        imageUrl={article?.featuredImage?.url}
+        imageWidth={article?.featuredImage?.width.toString()}
+        imageHeight={article?.featuredImage?.height.toString()}
       />
       <SidebarLayout
         isSticky={false}
@@ -380,27 +429,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           printHidden
         >
           <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                typename: 'homepage',
-                href: '/',
-              },
-              !!article.category && {
-                title: article.category.title,
-                typename: 'articlecategory',
-                slug: [article.category.slug],
-              },
-              !!article.group && {
-                isTag: true,
-                title: article.group.title,
-                typename: 'articlecategory',
-                slug: [
-                  article.category.slug +
-                    (article.group?.slug ? `#${article.group.slug}` : ''),
-                ],
-              },
-            ]}
+            items={breadCrumbItems}
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
@@ -420,7 +449,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           alignItems="center"
           printHidden
         >
-          {!!article.category && (
+          {!!article?.category && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
               <LinkContext.Provider
                 value={{
@@ -447,7 +476,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               </LinkContext.Provider>
             </Box>
           )}
-          {article.organization.length > 0 && (
+          {!!article?.organization && article.organization.length > 0 && (
             <Box minWidth={0}>
               {article.organization[0].link ? (
                 <Link href={article.organization[0].link} skipTab>
@@ -465,7 +494,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </Box>
         <Box>
           <Text variant="h1" as="h1">
-            <span id={slugify(article.title)}>{article.title}</span>
+            <span id={slugify(article?.title ?? '')}>{article?.title}</span>
           </Text>
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
@@ -482,12 +511,14 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           )}
           {(subArticle
             ? subArticle.showTableOfContents
-            : article.showTableOfContents) && (
+            : article?.showTableOfContents) && (
             <GridRow>
-              <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
+              <GridColumn span={['0', '4/7', '5/7', '4/7', '3/7']}>
                 <TOC
                   title={n('tableOfContentTitle')}
-                  body={subArticle ? subArticle.body : article.body}
+                  body={
+                    (subArticle ? subArticle?.body : article?.body) as Slice[]
+                  }
                 />
               </GridColumn>
             </GridRow>
@@ -500,7 +531,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
           {richText(
-            (subArticle ?? article).body as SliceType[],
+            subArticleOrArticle?.body as SliceType[],
             undefined,
             activeLocale,
           )}
@@ -512,7 +543,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           >
             {!!processEntry && <ProcessEntry {...processEntry} />}
           </Box>
-          {article.organization.length > 0 && (
+          {!!article?.organization && article.organization.length > 0 && (
             <Box
               marginTop={[3, 3, 3, 10, 20]}
               marginBottom={[3, 3, 3, 10, 20]}
@@ -522,35 +553,42 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
                 institution={{
                   title: article.organization[0].title,
                   label: article.organization[0].title,
-                  href: article.organization[0].link,
+                  href: article.organization[0].link as string,
                 }}
-                responsibleParty={article.responsibleParty.map(
-                  (responsibleParty) => ({
-                    title: responsibleParty.title,
-                    label: n('responsibleParty'),
-                    href: responsibleParty.link,
-                  }),
-                )}
-                relatedInstitution={article.relatedOrganization.map(
-                  (relatedOrganization) => ({
-                    title: relatedOrganization.title,
-                    label: n('relatedOrganization'),
-                    href: relatedOrganization.link,
-                  }),
-                )}
+                responsibleParty={
+                  !!article?.responsibleParty?.length
+                    ? article.responsibleParty.map((responsibleParty) => ({
+                        title: responsibleParty.title,
+                        label: n('responsibleParty'),
+                        href: responsibleParty.link as string,
+                      }))
+                    : []
+                }
+                relatedInstitution={
+                  !!article?.relatedOrganization?.length
+                    ? article.relatedOrganization.map(
+                        (relatedOrganization) => ({
+                          title: relatedOrganization.title,
+                          label: n('relatedOrganization'),
+                          href: relatedOrganization.link as string,
+                        }),
+                      )
+                    : []
+                }
                 locale={activeLocale}
                 contactText="Hafa samband"
               />
             </Box>
           )}
           <Box display={['block', 'block', 'none']} printHidden>
-            {article.relatedArticles.length > 0 && (
-              <RelatedContent
-                title={n('relatedMaterial')}
-                articles={article.relatedArticles}
-                otherContent={article.relatedContent}
-              />
-            )}
+            {!!article?.relatedArticles &&
+              article.relatedArticles.length > 0 && (
+                <RelatedContent
+                  title={n('relatedMaterial')}
+                  articles={article?.relatedArticles ?? []}
+                  otherContent={article?.relatedContent ?? []}
+                />
+              )}
           </Box>
         </Box>
         {!!processEntry &&
@@ -581,7 +619,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((response) => response.data.getSingleArticle),
+      .then((response) => response?.data?.getSingleArticle),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -594,7 +632,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
       })
       .then((content) => {
         // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
+        return JSON.parse(content?.data?.getNamespace?.fields ?? '')
       }),
   ])
 

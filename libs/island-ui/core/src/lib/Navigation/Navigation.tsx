@@ -58,7 +58,7 @@ interface MobileNavigationDialogProps {
   menuState: MenuStateReturn
 }
 
-interface NavigationTreeProps {
+export interface NavigationTreeProps {
   items: NavigationItem[]
   level?: Level
   colorScheme?: keyof typeof styles.colorScheme
