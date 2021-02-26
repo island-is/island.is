@@ -46,12 +46,27 @@ export class AuthService {
   //   return picked.role as Role
   // }
 
-  //TODO
+  // //TODO
+  // getUserRoleNew(user: AuthUser): User {
+  //   const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+  //   let curruser = new User()
+  //   // curruser.nationalId = user.nationalId
+  //   if (!picked) {
+  //     // curruser.role = 'citizen'
+  //   } else {
+  //     // curruser.role = picked.role
+  //     // curruser.partnerId = picked.partnerId
+  //   }
+  //   return null
+  // }
+
+  // get user role
   getUserRole(user: AuthUser): User {
-    var picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
     return picked
   }
 
+  // check role
   checkRole(user: AuthUser, role: Role): boolean {
     const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
     if (!picked) {
