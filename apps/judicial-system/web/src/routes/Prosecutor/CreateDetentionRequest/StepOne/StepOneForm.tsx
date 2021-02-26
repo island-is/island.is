@@ -8,11 +8,10 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 
 import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
-import { FormValidation } from 'apps/judicial-system/web/src/utils/validate'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './StepOne.treat'
-import { useCaseFormHelper } from 'apps/judicial-system/web/src/utils/useFormHelper'
+import { FormValidation, useCaseFormHelper } from 'apps/judicial-system/web/src/utils/useFormHelper'
 
 interface Props {
   case: Case
