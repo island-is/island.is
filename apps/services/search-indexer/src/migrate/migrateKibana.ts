@@ -4,7 +4,7 @@ import * as kibana from './lib/kibana'
 import * as indexManager from '@island.is/content-search-index-manager'
 
 class App {
-  async run () {
+  async run() {
     logger.info('Starting kibana migration')
 
     try {
@@ -16,14 +16,14 @@ class App {
     logger.info('Done')
   }
 
-  async syncKibana () {
+  async syncKibana() {
     logger.info('Starting kibana syncing')
     await kibana.syncObjects()
     logger.info('Done')
   }
 }
 
-async function migrateBootstrap () {
+async function migrateBootstrap() {
   const argv = yargs(process.argv).argv
   const app = new App()
   if (argv.syncKibana) {

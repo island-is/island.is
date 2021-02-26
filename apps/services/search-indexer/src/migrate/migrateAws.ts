@@ -4,7 +4,7 @@ import * as dictionary from './lib/dictionary'
 import * as indexManager from '@island.is/content-search-index-manager'
 
 class App {
-  async run (): Promise<boolean> {
+  async run(): Promise<boolean> {
     logger.info('Starting migration of dictionaries to AWS')
 
     const dictionaryVersion = indexManager.getDictionaryVersion() // returns versions of the dictionary in order with the newest version first
@@ -27,7 +27,7 @@ class App {
   }
 }
 
-async function migrateBootstrap () {
+async function migrateBootstrap() {
   const app = new App()
   await app.run()
 }

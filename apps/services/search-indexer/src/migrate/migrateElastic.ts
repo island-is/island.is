@@ -8,7 +8,7 @@ import * as indexManager from '@island.is/content-search-index-manager'
 const { locales } = environment
 
 class App {
-  async run () {
+  async run() {
     logger.info('Starting elasticsearch migration')
     const hasAwsAccess = await aws.checkAWSAccess()
 
@@ -108,7 +108,7 @@ class App {
   }
 }
 
-async function migrateBootstrap () {
+async function migrateBootstrap() {
   const app = new App()
   await app.run()
 }
