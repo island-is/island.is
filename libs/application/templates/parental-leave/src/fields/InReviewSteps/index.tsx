@@ -17,7 +17,7 @@ import {
 import ReviewSection, { reviewSectionState } from './ReviewSection'
 import Review from '../Review'
 
-import { mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES } from '../../constants'
 
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
@@ -83,18 +83,28 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
   const steps = [
     {
       state: statesMap['otherParent'][application.state],
-      title: formatMessage(mm.reviewScreen.otherParentTitle),
-      description: formatMessage(mm.reviewScreen.otherParentDesc),
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.otherParentTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.otherParentDesc,
+      ),
     },
     {
       state: statesMap['employer'][application.state],
-      title: formatMessage(mm.reviewScreen.employerTitle),
-      description: formatMessage(mm.reviewScreen.employerDesc),
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerTitle,
+      ),
+      description: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerDesc,
+      ),
     },
     {
       state: statesMap['vinnumalastofnun'][application.state],
-      title: formatMessage(mm.reviewScreen.deptTitle),
-      description: formatMessage(mm.reviewScreen.deptDesc),
+      title: formatMessage(parentalLeaveFormMessages.reviewScreen.deptTitle),
+      description: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.deptDesc,
+      ),
     },
   ]
 
@@ -104,8 +114,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
     <Box marginBottom={10}>
       <Box display="flex" justifyContent="spaceBetween">
         <Text>
-          {(screenState === 'steps' && formatMessage(mm.reviewScreen.desc)) ||
-            formatMessage(mm.reviewScreen.descReview)}
+          {(screenState === 'steps' &&
+            formatMessage(parentalLeaveFormMessages.reviewScreen.desc)) ||
+            formatMessage(parentalLeaveFormMessages.reviewScreen.descReview)}
         </Text>
         <Box>
           <Box display="inlineBlock" marginLeft={1} marginRight={2}>
@@ -122,19 +133,26 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
               variant="text"
             >
               {(screenState === 'steps' &&
-                formatMessage(mm.reviewScreen.buttonsView)) ||
-                formatMessage(mm.reviewScreen.buttonsViewProgress)}
+                formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.buttonsView,
+                )) ||
+                formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.buttonsViewProgress,
+                )}
             </Button>
           </Box>
           <Box display="inlineBlock">
             <DialogPrompt
               baseId="editApplicationDialog"
-              title={formatMessage(mm.reviewScreen.editApplicationModalTitle)}
+              title={formatMessage(
+                parentalLeaveFormMessages.reviewScreen
+                  .editApplicationModalTitle,
+              )}
               description={formatMessage(
-                mm.reviewScreen.editApplicationModalDesc,
+                parentalLeaveFormMessages.reviewScreen.editApplicationModalDesc,
               )}
               ariaLabel={formatMessage(
-                mm.reviewScreen.editApplicationModalAria,
+                parentalLeaveFormMessages.reviewScreen.editApplicationModalAria,
               )}
               disclosureElement={
                 <Button
@@ -147,7 +165,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
                   loading={loadingSubmit}
                   disabled={loadingSubmit}
                 >
-                  {formatMessage(mm.reviewScreen.buttonsEdit)}
+                  {formatMessage(
+                    parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                  )}
                 </Button>
               }
               onConfirm={async () => {
@@ -167,10 +187,12 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
                 }
               }}
               buttonTextConfirm={formatMessage(
-                mm.reviewScreen.editApplicationModalConfirmButton,
+                parentalLeaveFormMessages.reviewScreen
+                  .editApplicationModalConfirmButton,
               )}
               buttonTextCancel={formatMessage(
-                mm.reviewScreen.editApplicationModalCancelButton,
+                parentalLeaveFormMessages.reviewScreen
+                  .editApplicationModalCancelButton,
               )}
             />
           </Box>

@@ -9,10 +9,7 @@ const Header: React.FC = () => {
   const router = useRouter()
 
   useEffect(() => {
-    console.info('Header - useEffect - ', session?.refreshToken)
     if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
-      console.info('Header - useEffect - !isLoggedIn -', session?.refreshToken)
-
       if (router) {
         router.push('/')
       }

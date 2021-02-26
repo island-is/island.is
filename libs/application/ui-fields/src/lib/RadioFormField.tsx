@@ -6,6 +6,7 @@ import {
   formatText,
   getValueViaPath,
   RadioField,
+  buildFieldOptions,
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -13,7 +14,6 @@ import {
   RadioController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import { buildOptions } from '../utils'
 import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
@@ -37,7 +37,7 @@ const RadioFormField: FC<Props> = ({
   } = field
   const { formatMessage } = useLocale()
 
-  const finalOptions = useMemo(() => buildOptions(options, application), [
+  const finalOptions = useMemo(() => buildFieldOptions(options, application), [
     options,
     application,
   ])
@@ -68,7 +68,7 @@ const RadioFormField: FC<Props> = ({
           disabled={disabled}
           error={error}
           split={width === 'half' ? '1/2' : '1/1'}
-          name={`${id}`}
+          name={id}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
             useDefaultValue(field, application)

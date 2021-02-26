@@ -1,6 +1,5 @@
 import {
   Box,
-  Checkbox,
   GridColumn,
   GridRow,
   Input,
@@ -17,17 +16,13 @@ import {
 import {
   Case,
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   CaseGender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  parseArray,
-  parseString,
-} from '@island.is/judicial-system-web/src/utils/formatters'
-import { constructConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -41,24 +36,23 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
+  setCheckboxAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import {
+  alternativeTravelBanRestrictions,
+  judgeRestrictions,
+} from '@island.is/judicial-system-web/src/utils/Restrictions'
 import {
   capitalize,
   formatAccusedByGender,
   NounCases,
 } from '@island.is/judicial-system/formatters'
+import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const RulingStepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [, setVisitationCheckbox] = useState<boolean>()
-  const [, setCommunicationCheckbox] = useState<boolean>()
-  const [, setMediaCheckbox] = useState<boolean>()
-  const [, setAlternativeTravelBanRequireNotificationCheckbox] = useState<
-    boolean
-  >()
-  const [, setAlternativeTravelBanConfiscatePassportCheckbox] = useState<
-    boolean
-  >()
+
   const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const { data, loading } = useQuery(CaseQuery, {
@@ -92,48 +86,6 @@ export const RulingStepTwo: React.FC = () => {
     }
   }, [id, workingCase, setWorkingCase, resCase])
 
-  const custodyRestrictions = [
-    {
-      restriction: 'C - Heimsóknarbann',
-      value: CaseCustodyRestrictions.VISITAION,
-      setCheckbox: setVisitationCheckbox,
-      explanation:
-        'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
-    },
-    {
-      restriction: 'D - Bréfskoðun, símabann',
-      value: CaseCustodyRestrictions.COMMUNICATION,
-      setCheckbox: setCommunicationCheckbox,
-      explanation:
-        'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
-    },
-    {
-      restriction: 'E - Fjölmiðlabann',
-      value: CaseCustodyRestrictions.MEDIA,
-      setCheckbox: setMediaCheckbox,
-      explanation:
-        'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
-    },
-  ]
-
-  const alternativeTravelBanRestrictions = [
-    {
-      restriction: 'Tilkynningarskylda',
-      value:
-        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-      setCheckbox: setAlternativeTravelBanRequireNotificationCheckbox,
-      explanation:
-        'Sé sakborningi gert að tilkynna sig reglulega á meðan á farbanni stendur er hægt að haka hér í þennan reit og skrifa nánari upplýsingar um tilkynningarskyldu í textareitinn fyrir neðan.',
-    },
-    {
-      restriction: 'Afhending vegabréfs',
-      value: CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-      setCheckbox: setAlternativeTravelBanConfiscatePassportCheckbox,
-      explanation:
-        'Sé krafist þess að sakborningur afhendi vegabréf sitt, er hægt að haka í þennan reit og skrifa nánari upplýsingar um hvenær og hvert sakborningur skal afhenda vegabréfið í textareitinn fyrir neðan.',
-    },
-  ]
-
   return (
     <PageLayout
       activeSection={
@@ -142,6 +94,7 @@ export const RulingStepTwo: React.FC = () => {
       activeSubSection={JudgeSubsections.RULING_STEP_TWO}
       isLoading={loading}
       notFound={data?.case === undefined}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -161,9 +114,7 @@ export const RulingStepTwo: React.FC = () => {
                   Úrskurðarorð
                 </Text>
               </Box>
-              <Box marginBottom={3}>
-                <Text>{constructConclusion(workingCase)}</Text>
-              </Box>
+              <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
               <Text variant="h4" fontWeight="light">
                 Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
               </Text>
@@ -473,103 +424,35 @@ export const RulingStepTwo: React.FC = () => {
                 </Box>
               </BlueBox>
             </Box>
-            {(!workingCase.decision ||
-              workingCase.decision === CaseDecision.ACCEPTING) && (
-              <Box component="section" marginBottom={3}>
-                <Box marginBottom={3}>
-                  <Text as="h3" variant="h3">
-                    Tilhögun gæsluvarðhalds
-                  </Text>
-                </Box>
-                <BlueBox>
-                  <Box marginBottom={1}>
-                    <GridRow>
-                      {custodyRestrictions.map((restriction, index) => {
-                        return (
-                          <GridColumn span="6/12" key={index}>
-                            <Box
-                              marginBottom={
-                                index + 2 <= custodyRestrictions.length ? 3 : 0
-                              }
-                            >
-                              <Checkbox
-                                name={restriction.restriction}
-                                label={restriction.restriction}
-                                value={restriction.value}
-                                checked={workingCase.custodyRestrictions?.includes(
-                                  restriction.value,
-                                )}
-                                tooltip={restriction.explanation}
-                                onChange={({ target }) => {
-                                  // Create a copy of the state
-                                  const copyOfState = Object.assign(
-                                    workingCase,
-                                    {},
-                                  )
-
-                                  const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                                    target.value as CaseCustodyRestrictions,
-                                  )
-
-                                  // Toggle the checkbox on or off
-                                  restriction.setCheckbox(
-                                    !restrictionIsSelected,
-                                  )
-
-                                  // If the user is checking the box, add the restriction to the state
-                                  if (!restrictionIsSelected) {
-                                    if (
-                                      copyOfState.custodyRestrictions === null
-                                    ) {
-                                      copyOfState.custodyRestrictions = []
-                                    }
-
-                                    copyOfState.custodyRestrictions &&
-                                      copyOfState.custodyRestrictions.push(
-                                        target.value as CaseCustodyRestrictions,
-                                      )
-                                  }
-                                  // If the user is unchecking the box, remove the restriction from the state
-                                  else {
-                                    copyOfState.custodyRestrictions &&
-                                      copyOfState.custodyRestrictions.splice(
-                                        copyOfState.custodyRestrictions.indexOf(
-                                          target.value as CaseCustodyRestrictions,
-                                        ),
-                                        1,
-                                      )
-                                  }
-
-                                  setWorkingCase({
-                                    ...workingCase,
-                                    custodyRestrictions:
-                                      copyOfState.custodyRestrictions,
-                                  })
-
-                                  // Save case
-                                  updateCase(
-                                    workingCase.id,
-                                    parseArray(
-                                      'custodyRestrictions',
-                                      copyOfState.custodyRestrictions || [],
-                                    ),
-                                  )
-                                }}
-                                large
-                                filled
-                              />
-                            </Box>
-                          </GridColumn>
-                        )
-                      })}
-                    </GridRow>
+            {workingCase.decision === CaseDecision.ACCEPTING &&
+              workingCase.type === CaseType.CUSTODY && (
+                <Box component="section" marginBottom={3}>
+                  <Box marginBottom={3}>
+                    <Text as="h3" variant="h3">
+                      Tilhögun gæsluvarðhalds
+                    </Text>
                   </Box>
-                </BlueBox>
-              </Box>
-            )}
-            {(!workingCase.decision ||
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
+                  <BlueBox>
+                    <CheckboxList
+                      checkboxes={judgeRestrictions}
+                      selected={workingCase.custodyRestrictions}
+                      onChange={(id) =>
+                        setCheckboxAndSendToServer(
+                          'custodyRestrictions',
+                          id,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                    />
+                  </BlueBox>
+                </Box>
+              )}
+            {(workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+              (workingCase.decision === CaseDecision.ACCEPTING &&
+                workingCase.type === CaseType.TRAVEL_BAN)) && (
               <Box component="section" marginBottom={4}>
                 <Box marginBottom={3}>
                   <Text as="h3" variant="h3">
@@ -577,85 +460,20 @@ export const RulingStepTwo: React.FC = () => {
                   </Text>
                 </Box>
                 <BlueBox>
-                  <Box marginBottom={2}>
-                    <GridRow>
-                      {alternativeTravelBanRestrictions.map(
-                        (restriction, index) => {
-                          return (
-                            <GridColumn span="6/12" key={index}>
-                              <Box marginBottom={3}>
-                                <Checkbox
-                                  name={restriction.restriction}
-                                  label={restriction.restriction}
-                                  value={restriction.value}
-                                  checked={workingCase.custodyRestrictions?.includes(
-                                    restriction.value,
-                                  )}
-                                  tooltip={restriction.explanation}
-                                  onChange={({ target }) => {
-                                    // Create a copy of the state
-                                    const copyOfState = Object.assign(
-                                      workingCase,
-                                      {},
-                                    )
-
-                                    const restrictionIsSelected = copyOfState.custodyRestrictions?.includes(
-                                      target.value as CaseCustodyRestrictions,
-                                    )
-
-                                    // Toggle the checkbox on or off
-                                    restriction.setCheckbox(
-                                      !restrictionIsSelected,
-                                    )
-
-                                    // If the user is checking the box, add the restriction to the state
-                                    if (!restrictionIsSelected) {
-                                      if (
-                                        copyOfState.custodyRestrictions === null
-                                      ) {
-                                        copyOfState.custodyRestrictions = []
-                                      }
-
-                                      copyOfState.custodyRestrictions &&
-                                        copyOfState.custodyRestrictions.push(
-                                          target.value as CaseCustodyRestrictions,
-                                        )
-                                    }
-                                    // If the user is unchecking the box, remove the restriction from the state
-                                    else {
-                                      copyOfState.custodyRestrictions &&
-                                        copyOfState.custodyRestrictions.splice(
-                                          copyOfState.custodyRestrictions.indexOf(
-                                            target.value as CaseCustodyRestrictions,
-                                          ),
-                                          1,
-                                        )
-                                    }
-
-                                    setWorkingCase({
-                                      ...workingCase,
-                                      custodyRestrictions:
-                                        copyOfState.custodyRestrictions,
-                                    })
-
-                                    // Save case
-                                    updateCase(
-                                      workingCase.id,
-                                      parseArray(
-                                        'custodyRestrictions',
-                                        copyOfState.custodyRestrictions || [],
-                                      ),
-                                    )
-                                  }}
-                                  large
-                                  filled
-                                />
-                              </Box>
-                            </GridColumn>
-                          )
-                        },
-                      )}
-                    </GridRow>
+                  <Box marginBottom={3}>
+                    <CheckboxList
+                      checkboxes={alternativeTravelBanRestrictions}
+                      selected={workingCase.custodyRestrictions}
+                      onChange={(id) =>
+                        setCheckboxAndSendToServer(
+                          'custodyRestrictions',
+                          id,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                    />
                   </Box>
                   <Input
                     name="otherRestrictions"
@@ -694,6 +512,7 @@ export const RulingStepTwo: React.FC = () => {
               <Text variant="h4" fontWeight="light">
                 {`Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera
                 atriði er lúta að framkvæmd ${
+                  workingCase.type === CaseType.CUSTODY &&
                   workingCase.decision === CaseDecision.ACCEPTING
                     ? 'gæsluvarðhaldsins'
                     : 'farbannsins'
@@ -702,6 +521,7 @@ export const RulingStepTwo: React.FC = () => {
             )}
           </Box>
           <FormFooter
+            previousUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
             nextIsDisabled={
               !workingCase.accusedAppealDecision ||

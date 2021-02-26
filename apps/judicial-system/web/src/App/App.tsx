@@ -25,6 +25,10 @@ import {
   Header,
 } from '@island.is/judicial-system-web/src/shared-components'
 import SignedVerdictOverview from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
+import { CaseType } from '@island.is/judicial-system/types'
+import { Users } from '@island.is/judicial-system-web/src/routes/Shared/Users/Users'
+import ChangeUser from '../routes/Shared/ChangeUser/ChangeUser'
+import NewUser from '../routes/Shared/NewUser/NewUser'
 
 const App: React.FC = () => {
   return (
@@ -78,11 +82,26 @@ const App: React.FC = () => {
               <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
                 <JudgeOverview />
               </Route>
-              <Route path={`${Constants.SINGLE_REQUEST_BASE_ROUTE}/:id?`}>
+              <Route path={`${Constants.STEP_ONE_NEW_DETENTION_ROUTE}/:id?`}>
+                <StepOne type={CaseType.CUSTODY} />
+              </Route>
+              <Route path={`${Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE}/:id?`}>
+                <StepOne type={CaseType.TRAVEL_BAN} />
+              </Route>
+              <Route path={`${Constants.STEP_ONE_ROUTE}/:id?`}>
                 <StepOne />
               </Route>
-              <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
+              <Route path={Constants.REQUEST_LIST_ROUTE}>
                 <DetentionRequests />
+              </Route>
+              <Route path={`${Constants.USER_NEW_ROUTE}/`}>
+                <NewUser />
+              </Route>
+              <Route path={`${Constants.USER_CHANGE_ROUTE}/:id?`}>
+                <ChangeUser />
+              </Route>
+              <Route path={Constants.USER_LIST_ROUTE}>
+                <Users />
               </Route>
               <Route path="/">
                 <Login />

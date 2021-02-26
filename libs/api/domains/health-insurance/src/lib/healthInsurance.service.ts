@@ -1,52 +1,35 @@
-import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 
-import { HealthTest } from './graphql/models'
+import { VistaSkjalModel } from './graphql/models'
 import { HealthInsuranceAPI } from './soap'
+import { VistaSkjalInput } from './types'
 
 @Injectable()
 export class HealthInsuranceService {
-  constructor(private healthInsuranceAPI: HealthInsuranceAPI) {}
-
-  async getTest(nationalId: string): Promise<HealthTest> {
-    const healthTest = new HealthTest()
-    healthTest.nationalId = nationalId
-    healthTest.fullName = 'working'
-    return healthTest
-  }
+  constructor(
+    @Inject(HealthInsuranceAPI)
+    private healthInsuranceAPI: HealthInsuranceAPI,
+  ) {}
 
   getProfun(): Promise<string> {
     return this.healthInsuranceAPI.getProfun()
   }
 
-  // return true or false when asked if person is health insured?
-  async isHealthInsured(nationalId: string): Promise<boolean> {
-    const res = await this.healthInsuranceAPI.isHealthInsured(nationalId)
-    logger.info(`--- Finished isHealthInsured api call for ${nationalId} ---`)
-    return res.SjukratryggdurType.sjukratryggdur == 1
-  }
-
   // return caseIds array with Pending status
   async getPendingApplication(nationalId: string): Promise<number[]> {
-    const res = await this.healthInsuranceAPI.getApplication(nationalId)
-    if (!res.FaUmsoknSjukratryggingType?.umsoknir) {
-      logger.info(`return empty array to graphQL`)
-      return []
-    }
+    return this.healthInsuranceAPI.getPendingApplication(nationalId)
+  }
 
-    logger.info(`Start filtering Pending status`)
-    // Return all caseIds with Pending status
-    const pendingCases: number[] = []
-    // res.FaUmsoknSjukratryggingType.umsoknir[0].stada = 2
-    res.FaUmsoknSjukratryggingType.umsoknir
-      .filter((umsokn) => {
-        return umsokn.stada == 2
-      })
-      .forEach((value) => {
-        pendingCases.push(value.skjalanumer)
-      })
+  // return true or false when asked if person is health insured?
+  async isHealthInsured(nationalId: string): Promise<boolean> {
+    return this.healthInsuranceAPI.isHealthInsured(nationalId)
+  }
 
-    logger.info(`--- Finished getApplication api call for ${nationalId} ---`)
-    return pendingCases
+  // Apply for Health insurance ( number 570 is identify number for health insurance application)
+  async applyInsurance(
+    inputs: VistaSkjalInput,
+    nationalId: string,
+  ): Promise<VistaSkjalModel> {
+    return this.healthInsuranceAPI.applyInsurance(570, inputs, nationalId)
   }
 }

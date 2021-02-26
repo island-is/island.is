@@ -1,9 +1,9 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   UserProvider,
   Header,
@@ -12,11 +12,11 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 const mockJudgeQuery = {
   request: {
-    query: UserQuery,
+    query: CurrentUserQuery,
   },
   result: {
     data: {
-      user: mockJudge,
+      currentUser: mockJudge,
     },
   },
 }
@@ -25,10 +25,10 @@ describe('UserProvider', () => {
   test('should load the user', async () => {
     render(
       <MockedProvider mocks={[mockJudgeQuery]} addTypename={false}>
-        <MemoryRouter initialEntries={[Constants.DETENTION_REQUESTS_ROUTE]}>
-          <Route path={Constants.DETENTION_REQUESTS_ROUTE}>
+        <MemoryRouter initialEntries={[Constants.REQUEST_LIST_ROUTE]}>
+          <Route path={Constants.REQUEST_LIST_ROUTE}>
             <UserProvider>
-              <Header pathname={Constants.DETENTION_REQUESTS_ROUTE} />
+              <Header pathname={Constants.REQUEST_LIST_ROUTE} />
             </UserProvider>
           </Route>
         </MemoryRouter>
@@ -41,7 +41,7 @@ describe('UserProvider', () => {
      * user is being set.
      */
     expect(
-      await waitFor(() => screen.getByRole('button', { name: 'Wonder Woman' })),
+      await screen.findByRole('button', { name: 'Wonder Woman' }),
     ).toBeInTheDocument()
   })
 })

@@ -13,7 +13,15 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { BackendAPI } from '../services'
-import { AuthModule, UserModule, CaseModule, FileModule } from './modules/'
+import {
+  AuthModule,
+  UserModule,
+  CaseModule,
+  FileModule,
+  AuditModule,
+  InstitutionModule,
+  CourtModule,
+} from './modules/'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -34,9 +42,12 @@ const autoSchemaFile = environment.production
     SharedAuthModule,
     AuditTrailModule,
     AuthModule,
+    AuditModule,
     UserModule,
     CaseModule,
     FileModule,
+    InstitutionModule,
+    CourtModule,
   ],
   providers: [BackendAPI],
 })

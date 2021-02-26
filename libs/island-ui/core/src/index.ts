@@ -46,6 +46,7 @@ export * from './lib/IconRC/Icon'
 export * from './lib/Typography/Typography'
 export * from './lib/Text/Text'
 export * from './lib/Hyphen/Hyphen'
+export { default as Table } from './lib/Table'
 
 // Form
 export * from './lib/Checkbox/Checkbox'
@@ -69,7 +70,6 @@ export * from './lib/Grid/GridRow/GridRow'
 export * from './lib/Columns/Columns'
 export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
-export * from './lib/Sleeve/Sleeve'
 export * from './lib/Divider/Divider'
 
 // Navigation

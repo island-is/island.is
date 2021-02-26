@@ -12,6 +12,7 @@
  */
 
 export * from './Card/Card'
+export * from './CardsSlider/CardsSlider'
 export * from './Categories/Categories'
 export * from './Header/Header'
 export * from './Sidebar/Sidebar'
@@ -61,3 +62,6 @@ export * from './ServiceList'
 export * from './OpenApiView'
 export * from './OpenApiDocumentation'
 export * from './InstitutionPanel/InstitutionPanel'
+export * from './InstitutionsPanel/InstitutionsPanel'
+export * from './Organization/'
+export * from './ApiCatalogueFilter/ApiCatalogueFilter'

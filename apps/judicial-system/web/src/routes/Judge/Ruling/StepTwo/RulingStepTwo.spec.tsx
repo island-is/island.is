@@ -1,21 +1,22 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
-import { RulingStepTwo } from './RulingStepTwo'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter, Route } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
+import userEvent from '@testing-library/user-event'
+
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { MemoryRouter, Route } from 'react-router-dom'
-import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { RulingStepTwo } from './RulingStepTwo'
 
 describe('/domari-krafa/urskurdarord', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -51,30 +52,27 @@ describe('/domari-krafa/urskurdarord', () => {
     )
 
     userEvent.click(
-      await waitFor(
-        () =>
-          screen.getByRole('radio', {
-            name: 'Kærði kærir úrskurðinn',
-          }) as HTMLInputElement,
-      ),
+      (await screen.findByRole('radio', {
+        name: 'Kærði kærir úrskurðinn',
+      })) as HTMLInputElement,
     )
 
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      }),
     ).toBeDisabled()
 
     userEvent.click(
-      screen.getByRole('radio', {
+      await screen.findByRole('radio', {
         name: 'Sækjandi tekur sér lögboðinn frest',
-      }) as HTMLInputElement,
+      }),
     )
 
     expect(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /Halda áfram/i,
-      }) as HTMLButtonElement,
+      }),
     ).not.toBeDisabled()
   })
 
@@ -101,9 +99,9 @@ describe('/domari-krafa/urskurdarord', () => {
 
     // Assert
     expect(
-      (
-        await waitFor(() => screen.getAllByRole('radio') as HTMLInputElement[])
-      ).filter((input) => input.checked),
+      ((await screen.findAllByRole('radio')) as HTMLInputElement[]).filter(
+        (input) => input.checked,
+      ),
     ).toHaveLength(0)
   })
 
@@ -139,24 +137,27 @@ describe('/domari-krafa/urskurdarord', () => {
       </MockedProvider>,
     )
 
-    await waitFor(() =>
-      userEvent.click(
-        screen.getByRole('radio', { name: 'Kærði tekur sér lögboðinn frest' }),
-      ),
+    userEvent.click(
+      await screen.findByRole('radio', {
+        name: 'Kærði tekur sér lögboðinn frest',
+      }),
     )
 
     userEvent.click(
-      screen.getByRole('radio', {
+      await screen.findByRole('radio', {
         name: 'Sækjandi tekur sér lögboðinn frest',
       }),
     )
 
     // Assert
     expect(
-      await waitFor(() => screen.getByLabelText('Yfirlýsing um kæru kærða')),
+      await screen.findByLabelText('Yfirlýsing um kæru kærða'),
     ).toBeDisabled()
-    expect(screen.getByLabelText('Yfirlýsing um kæru sækjanda')).toBeDisabled()
-  }, 10000)
+
+    expect(
+      await screen.findByLabelText('Yfirlýsing um kæru sækjanda'),
+    ).toBeDisabled()
+  })
 
   test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
@@ -192,10 +193,11 @@ describe('/domari-krafa/urskurdarord', () => {
 
     // Assert
     expect(
-      await waitFor(() => screen.getByLabelText('Yfirlýsing um kæru kærða')),
+      await screen.findByLabelText('Yfirlýsing um kæru kærða'),
     ).not.toBeDisabled()
+
     expect(
-      screen.getByLabelText('Yfirlýsing um kæru sækjanda'),
+      await screen.findByLabelText('Yfirlýsing um kæru sækjanda'),
     ).not.toBeDisabled()
   })
 
@@ -234,12 +236,9 @@ describe('/domari-krafa/urskurdarord', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('checkbox', {
-            name: 'E - Fjölmiðlabann',
-          }) as HTMLInputElement,
-      ),
+      (await screen.findByRole('checkbox', {
+        name: 'E - Fjölmiðlabann',
+      })) as HTMLInputElement,
     ).toBeChecked()
   })
 
@@ -247,6 +246,7 @@ describe('/domari-krafa/urskurdarord', () => {
     // Arrange
 
     // Act
+
     render(
       <MockedProvider
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
@@ -266,14 +266,13 @@ describe('/domari-krafa/urskurdarord', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.queryByRole('checkbox', {
-            name: 'Tilkynningarskylda',
-          }) as HTMLInputElement,
+      await waitFor(() =>
+        screen.queryByRole('checkbox', {
+          name: 'Tilkynningarskylda',
+        }),
       ),
     ).not.toBeInTheDocument()
-  }, 10000)
+  })
 
   test('should display the alternative travel ban retstirction section if the decision is ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
     // Arrange
@@ -298,12 +297,9 @@ describe('/domari-krafa/urskurdarord', () => {
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('checkbox', {
-            name: 'Tilkynningarskylda',
-          }) as HTMLInputElement,
-      ),
+      await screen.findByRole('checkbox', {
+        name: 'Tilkynningarskylda',
+      }),
     ).toBeInTheDocument()
-  }, 10000)
+  })
 })

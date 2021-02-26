@@ -87,7 +87,7 @@ export const Menu: FC<Props> = ({
       }
       renderLink={({ className, text, href }, closeModal) => {
         return (
-          <Link {...href} onClick={closeModal}>
+          <Link href={href} onClick={closeModal}>
             <span className={className}>{text}</span>
           </Link>
         )

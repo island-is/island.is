@@ -2,8 +2,7 @@ import React, { FC } from 'react'
 import { Document } from '@contentful/rich-text-types'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import slugify from '@sindresorhus/slugify'
-import StaticHtml from '../StaticHtml/StaticHtml'
-import { renderHtml } from '../richTextRendering'
+import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import * as styles from './SectionWithImage.treat'
 
 export interface SectionWithImageProps {
@@ -11,7 +10,7 @@ export interface SectionWithImageProps {
   image?: {
     url: string
   }
-  html?: { document: Document }
+  html?: { __typename: 'Html'; id: string; document: Document }
 }
 
 export const SectionWithImage: FC<SectionWithImageProps> = ({
@@ -35,28 +34,34 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
             {title}
           </Text>
         )}
-        <StaticHtml>{renderHtml(htmlDocument)}</StaticHtml>
+        {richText([html] as SliceType[], undefined)}
       </>
     )
   }
 
   return (
-    <GridRow>
-      {!!image && (
-        <GridColumn span={['12/12', '12/12', '12/12', '3/9']}>
-          <Box marginBottom={3} className={styles.imageContainer}>
-            <img className={styles.image} src={image.url + '?w=600'} alt="" />
-          </Box>
-        </GridColumn>
-      )}
-      <GridColumn span={['12/12', '12/12', '12/12', '6/9']}>
-        {title && (
-          <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={3}>
-            {title}
-          </Text>
+    <Box
+      className={styles.sectionOffset}
+      marginBottom={[3, 3, 12]}
+      marginTop={[3, 3, 12]}
+    >
+      <GridRow>
+        {!!image && (
+          <GridColumn span={['12/12', '12/12', '12/12', '3/9']}>
+            <Box className={styles.imageContainer}>
+              <img className={styles.image} src={image.url + '?w=600'} alt="" />
+            </Box>
+          </GridColumn>
         )}
-        {!!htmlDocument && <StaticHtml>{renderHtml(htmlDocument)}</StaticHtml>}
-      </GridColumn>
-    </GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/9']}>
+          {title && (
+            <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={2}>
+              {title}
+            </Text>
+          )}
+          {!!htmlDocument && richText([html] as SliceType[], undefined)}
+        </GridColumn>
+      </GridRow>
+    </Box>
   )
 }

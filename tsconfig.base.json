@@ -65,6 +65,9 @@
       "@island.is/api/domains/driving-license": [
         "libs/api/domains/driving-license/src/index.ts"
       ],
+      "@island.is/api/domains/education": [
+        "libs/api/domains/education/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
@@ -77,6 +80,9 @@
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
+      "@island.is/api/domains/syslumenn": [
+        "libs/api/domains/syslumenn/src/index.ts"
+      ],
       "@island.is/api/domains/translations": [
         "libs/api/domains/translations/src/index.ts"
       ],
@@ -86,15 +92,15 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
-      "@island.is/application/api-template-utils": [
-        "libs/application/api-template-utils/src/index.ts"
-      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
       ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
+      ],
+      "@island.is/application/template-api-modules": [
+        "libs/application/template-api-modules/src/index.ts"
       ],
       "@island.is/application/template-loader": [
         "libs/application/template-loader/src/index.ts"
@@ -152,6 +158,7 @@
       ],
       "@island.is/dokobit-signing": ["libs/dokobit-signing/src/index.ts"],
       "@island.is/email-service": ["libs/email-service/src/index.ts"],
+      "@island.is/feature-flags": ["libs/feature-flags/src/index.ts"],
       "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/gjafakort/application/*": [
@@ -162,8 +169,10 @@
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],
+      "@island.is/infra-metrics": ["libs/infra-metrics/src/index.ts"],
       "@island.is/infra-monitoring": ["libs/infra-monitoring/src/index.ts"],
       "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
+      "@island.is/infra-next-server": ["libs/infra-next-server/src/index.ts"],
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
@@ -180,6 +189,9 @@
       ],
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
+      ],
+      "@island.is/judicial-system/court-client": [
+        "libs/judicial-system/court-client/src/index.ts"
       ],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"

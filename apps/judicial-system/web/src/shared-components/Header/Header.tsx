@@ -3,9 +3,10 @@ import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 
 import { api } from '@island.is/judicial-system-web/src/services'
-import * as styles from './Header.treat'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserRole } from '@island.is/judicial-system/types'
+import * as styles from './Header.treat'
 
 interface Props {
   pathname: string
@@ -17,7 +18,13 @@ const Header: React.FC<Props> = (props: Props) => {
   return (
     <header className={`${styles.header}`}>
       <Link
-        to={Constants.DETENTION_REQUESTS_ROUTE}
+        to={
+          !user || !isAuthenticated
+            ? '/'
+            : user.role === UserRole.ADMIN
+            ? Constants.USER_LIST_ROUTE
+            : Constants.REQUEST_LIST_ROUTE
+        }
         style={{ textDecoration: 'none' }}
         data-testid="link-to-home"
       >

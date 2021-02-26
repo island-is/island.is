@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useContext,
 } from 'react'
-import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
@@ -19,8 +18,9 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Link,
 } from '@island.is/island-ui/core'
-import { renderHtml } from '@island.is/island-ui/contentful'
+import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { Document } from '@contentful/rich-text-types'
 import { deorphanize } from '@island.is/island-ui/utils'
 import { useI18n } from '../../i18n'
@@ -31,11 +31,6 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './FrontpageSlider.treat'
 import { FrontpageSlider as FrontpageSliderType } from '@island.is/web/graphql/schema'
-
-export const LEFT = 'Left'
-export const RIGHT = 'Right'
-export const UP = 'Up'
-export const DOWN = 'Down'
 
 export interface FrontpageSliderProps {
   slides: FrontpageSliderType[]
@@ -68,6 +63,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   const itemRefs = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const [animationData, setAnimationData] = useState([])
+  const timerRef = useRef(null)
 
   const tab = useTabState({
     baseId: 'frontpage-tab',
@@ -143,9 +139,12 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
   }, [width, itemRefs])
 
   useIsomorphicLayoutEffect(() => {
-    setTimeout(onResize, 0)
+    timerRef.current = setTimeout(onResize, 5000)
     window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
+    return () => {
+      clearTimeout(timerRef.current)
+      window.removeEventListener('resize', onResize)
+    }
   }, [onResize])
 
   useIsomorphicLayoutEffect(() => {
@@ -233,7 +232,16 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
 
                           {intro ? (
                             <Box marginBottom={4}>
-                              {renderHtml(intro.document as Document)}
+                              {richText(
+                                [
+                                  {
+                                    __typename: 'Html',
+                                    id: intro.id,
+                                    document: intro.document,
+                                  },
+                                ] as SliceType[],
+                                undefined,
+                              )}
                             </Box>
                           ) : (
                             <Text>
@@ -252,7 +260,7 @@ export const FrontpageSlider: FC<FrontpageSliderProps> = ({
                                 [styles.textItemVisible]: visible,
                               })}
                             >
-                              <Link {...linkUrls}>
+                              <Link {...linkUrls} skipTab>
                                 <Button
                                   variant="text"
                                   icon="arrowForward"

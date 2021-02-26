@@ -1,27 +1,41 @@
-import { Application } from '@island.is/application/core'
-import { Parent, RegisteredChildren } from '../dataProviders/APIDataTypes'
+import { Application, FormValue } from '@island.is/application/core'
+import { NationalRegistryUser } from '@island.is/api/schema'
+import {
+  PersonResidenceChange,
+  ParentResidenceChange,
+} from '../dataProviders/APIDataTypes'
+
+export const extractApplicantFromApplication = (application: Application) => {
+  return (application.externalData.nationalRegistry?.data as {
+    parent?: object
+  }) as NationalRegistryUser
+}
 
 export const extractParentFromApplication = (application: Application) => {
   return (application.externalData.parentNationalRegistry?.data as {
     parent?: object
-  }) as Parent
+  }) as ParentResidenceChange
 }
 
 export const extractChildrenFromApplication = (application: Application) => {
   return (application.externalData.childrenNationalRegistry?.data as {
     registeredChildren?: object
-  }) as RegisteredChildren[]
+  }) as PersonResidenceChange[]
 }
 
 export const extractAnswersFromApplication = (application: Application) => {
   return {
     selectedChildren: application.answers.selectChild as string[],
-    selectedDuration: application.answers.selectDuration as string,
-    durationDate: application.answers.durationDate as string,
+    selectedDuration: application.answers.selectDuration as string[],
+    reason: application.answers.residenceChangeReason as string,
+    contactInformation: {
+      email: application.answers.email,
+      phoneNumber: application.answers.phoneNumber,
+    },
   }
 }
 
-export const constructParentAddressString = (parent: Parent) => {
+export const constructParentAddressString = (parent: ParentResidenceChange) => {
   if (!parent) {
     return null
   }

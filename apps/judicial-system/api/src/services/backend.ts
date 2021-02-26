@@ -5,6 +5,8 @@ import { Injectable } from '@nestjs/common'
 import {
   Case,
   CreateCase,
+  CreateUser,
+  Institution,
   Notification,
   RequestSignatureResponse,
   SendNotification,
@@ -12,6 +14,7 @@ import {
   SignatureConfirmationResponse,
   TransitionCase,
   UpdateCase,
+  UpdateUser,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -26,8 +29,24 @@ class BackendAPI extends RESTDataSource {
     req.headers.set('cookie', this.context.req.headers.cookie)
   }
 
+  getInstitutions(): Promise<Institution[]> {
+    return this.get('institutions')
+  }
+
   getUsers(): Promise<User[]> {
-    return this.get(`users`)
+    return this.get('users')
+  }
+
+  getUser(id: string): Promise<User> {
+    return this.get(`user/${id}`)
+  }
+
+  createUser(createUser: CreateUser): Promise<User> {
+    return this.post('user', createUser)
+  }
+
+  updateUser(id: string, updateUser: UpdateUser): Promise<User> {
+    return this.put(`user/${id}`, updateUser)
   }
 
   getCases(): Promise<Case[]> {

@@ -12,8 +12,8 @@ interface LinkResolverInput {
 }
 
 interface TypeResolverResponse {
-  type: LinkType
   locale: Locale
+  type?: LinkType
   slug?: string[]
 }
 
@@ -51,9 +51,37 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
+  organizations: {
+    is: '/stofnanir',
+    en: '/en/organizations',
+  },
+  organizationpage: {
+    is: '/stofnanir/[slug]',
+    en: '/en/organizations/[slug]',
+  },
+  organizationsubpage: {
+    is: '/stofnanir/[slug]/[subSlug]',
+    en: '/en/organizations/[slug]/[subSlug]',
+  },
+  lifeevents: {
+    is: '/lifsvidburdir',
+    en: '/en/life-events',
+  },
   lifeeventpage: {
-    is: '/lifsvidburdur/[slug]',
-    en: '/en/life-event/[slug]',
+    is: '/lifsvidburdir/[slug]',
+    en: '/en/life-events/[slug]',
+  },
+  organizationnews: {
+    is: '/stofnanir/[organization]/frett/[slug]',
+    en: '/en/organizations/[organization]/news/[slug]',
+  },
+  organizationnewsoverview: {
+    is: '/stofnanir/[organization]/frett',
+    en: '/en/organizations/[organization]/news',
+  },
+  auction: {
+    is: '/stofnanir/syslumenn/uppbod/[id]',
+    en: '',
   },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
@@ -102,11 +130,12 @@ export const replaceVariableInPath = (
 }
 
 // converts a path template to a regex query for matching
-export const convertToRegex = (routeTemplate: string) =>
-  routeTemplate
+export const convertToRegex = (routeTemplate: string) => {
+  const query = routeTemplate
     .replace(/\//g, '\\/') // escape slashes to match literal "/" in route template
-    .replace(/\[\w+\]/g, '\\w+') // make path variables be regex word matches
-    .concat('$') // to prevent partial matches
+    .replace(/\[\w+\]/g, '[-\\w]+') // make path variables be regex word matches
+  return `^${query}$` // to prevent partial matches
+}
 
 // extracts slugs from given path
 export const extractSlugsByRouteTemplate = (
@@ -205,6 +234,7 @@ export const typeResolver = (
       }
     }
   }
+
   return null
 }
 

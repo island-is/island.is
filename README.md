@@ -118,16 +118,16 @@ yarn nx dep-graph
 Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
 Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
 
-All secrets labeled with the `dev` label can be fetched using `yarn env-secrets`.
+All secrets labeled with the `dev` label can be fetched using `yarn get-secrets`.
 
 ### Fetch development secrets for your project
 
 ```bash
-yarn env-secrets <project> [options]
+yarn get-secrets <project> [options]
 ```
 
 **Example**:
 
 ```bash
-yarn env-secrets gjafakort --reset
+yarn get-secrets gjafakort --reset
 ```

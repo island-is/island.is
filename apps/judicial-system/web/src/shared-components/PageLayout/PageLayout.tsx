@@ -1,4 +1,4 @@
-import React, { ReactNode, FC, useContext } from 'react'
+import React, { ReactNode, useContext } from 'react'
 import {
   Box,
   GridContainer,
@@ -8,37 +8,44 @@ import {
   AlertBanner,
   LinkContext,
 } from '@island.is/island-ui/core'
-import * as styles from './PageLayout.treat'
-import { ProsecutorLogo } from '../Logos'
-import { JudgeLogo } from '../Logos'
-import Loading from '../Loading/Loading'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { CaseDecision, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { Link } from 'react-router-dom'
-import { UserContext } from '../UserProvider/UserProvider'
 import { Sections } from '@island.is/judicial-system-web/src/types'
+import { UserContext } from '../UserProvider/UserProvider'
+import Logo from '../Logo/Logo'
+import Loading from '../Loading/Loading'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
-  activeSection: number
+  activeSection?: number
   isLoading: boolean
   notFound: boolean
+  caseType?: CaseType
   activeSubSection?: number
   decision?: CaseDecision
   parentCaseDecision?: CaseDecision
   isCustodyEndDateInThePast?: boolean
   isExtension?: boolean
+  showSidepanel?: boolean
 }
 
-const PageLayout: FC<PageProps> = ({
+const PageLayout: React.FC<PageProps> = ({
   children,
   activeSection,
   activeSubSection,
   isLoading,
   notFound,
+  caseType,
   decision,
   parentCaseDecision,
   isCustodyEndDateInThePast,
+  showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
 
@@ -67,7 +74,10 @@ const PageLayout: FC<PageProps> = ({
 
   const sections = [
     {
-      name: 'Krafa um gæsluvarðhald',
+      name:
+        caseType === CaseType.CUSTODY
+          ? 'Krafa um gæsluvarðhald'
+          : 'Krafa um farbann',
       children: [
         { type: 'SUB_SECTION', name: 'Sakborningur' },
         { type: 'SUB_SECTION', name: 'Óskir um fyrirtöku' },
@@ -155,31 +165,27 @@ const PageLayout: FC<PageProps> = ({
               </GridColumn>
             </Box>
           </GridColumn>
-          <GridColumn span={['0', '0', '3/12', '3/12']}>
-            <Box marginLeft={2}>
-              {user?.role === UserRole.JUDGE ? (
-                <Box marginBottom={7}>
-                  <JudgeLogo />
-                </Box>
-              ) : user?.role === UserRole.PROSECUTOR ? (
-                <Box marginBottom={7}>
-                  <ProsecutorLogo />
-                </Box>
-              ) : null}
-              <FormStepper
-                // Remove the extension parts of the formstepper if the user is not applying for an extension
-                sections={
-                  activeSection === Sections.EXTENSION ||
-                  activeSection === Sections.JUDGE_EXTENSION
-                    ? sections
-                    : sections.filter((_, index) => index <= 2)
-                }
-                formName="Gæsluvarðhald"
-                activeSection={activeSection}
-                activeSubSection={activeSubSection}
-              />
-            </Box>
-          </GridColumn>
+          {showSidepanel && (
+            <GridColumn span={['0', '0', '3/12', '3/12']}>
+              <Box marginLeft={2}>
+                <Logo />
+                <FormStepper
+                  // Remove the extension parts of the formstepper if the user is not applying for an extension
+                  sections={
+                    activeSection === Sections.EXTENSION ||
+                    activeSection === Sections.JUDGE_EXTENSION
+                      ? sections
+                      : sections.filter((_, index) => index <= 2)
+                  }
+                  formName={
+                    caseType === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
+                  }
+                  activeSection={activeSection}
+                  activeSubSection={activeSubSection}
+                />
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
       </GridContainer>
     </Box>
@@ -199,11 +205,22 @@ const PageLayout: FC<PageProps> = ({
     >
       {notFound && (
         <AlertBanner
-          title="Mál fannst ekki"
-          description="Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni"
+          title={
+            user?.role === UserRole.ADMIN
+              ? 'Notandi fannst ekki'
+              : 'Mál fannst ekki'
+          }
+          description={
+            user?.role === UserRole.ADMIN
+              ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
+              : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+          }
           variant="error"
           link={{
-            href: Constants.DETENTION_REQUESTS_ROUTE,
+            href:
+              user?.role === UserRole.ADMIN
+                ? Constants.USER_LIST_ROUTE
+                : Constants.REQUEST_LIST_ROUTE,
             title: 'Fara á yfirlitssíðu',
           }}
         />

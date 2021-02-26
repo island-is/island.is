@@ -1,15 +1,21 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { ApplicationForm, NotFound } from '@island.is/application/ui-shell'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { coreMessages } from '@island.is/application/core'
+
 import useAuth from '../hooks/useAuth'
 
 export const Application = () => {
   const { id } = useParams()
   const { userInfo } = useAuth()
+  const { formatMessage } = useLocale()
+
   useNamespaces([
+    'crc.application',
     'dl.application',
     'pl.application',
+    'hi.application',
     'application.system',
     'example.application',
     'dpo.application',
@@ -20,11 +26,12 @@ export const Application = () => {
   if (!id) {
     return <NotFound />
   }
+
   if (!nationalRegistryId) {
     return (
       <NotFound
-        title="Þú þarft að vera skrá þig inn."
-        subTitle="Til að halda áfram umsóknarferli þarftu að skrá þig inn."
+        title={formatMessage(coreMessages.notLoggedIn)}
+        subTitle={formatMessage(coreMessages.notLoggedInDescription)}
       />
     )
   }

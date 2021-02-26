@@ -103,6 +103,7 @@ export const StepFour: React.FC = () => {
       notFound={data?.case === undefined}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -114,7 +115,8 @@ export const StepFour: React.FC = () => {
           <Box component="section" marginBottom={7}>
             <Box marginBottom={4}>
               <Text as="h3" variant="h3">
-                Dómkröfutexti
+                Dómkröfutexti{' '}
+                <Tooltip text="Hér er hægt að bæta texta við dómkröfur, t.d. ef óskað er eftir öðrum úrræðum til vara." />
               </Text>
             </Box>
             <BlueBox>
@@ -284,6 +286,7 @@ export const StepFour: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
+            previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
             nextIsDisabled={isStepIllegal}
           />

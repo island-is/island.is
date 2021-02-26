@@ -20,6 +20,7 @@ import {
   UpdateCase,
   CaseState,
   CaseGender,
+  CaseType,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -30,7 +31,6 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import * as styles from './StepOne.treat'
 import InputMask from 'react-input-mask'
 import {
   setAndSendToServer,
@@ -38,12 +38,17 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { CreateCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import * as styles from './StepOne.treat'
 
 interface CaseData {
   case?: Case
 }
 
-export const StepOne: React.FC = () => {
+interface Props {
+  type?: CaseType
+}
+
+export const StepOne: React.FC<Props> = ({ type }: Props) => {
   const history = useHistory()
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
@@ -85,6 +90,7 @@ export const StepOne: React.FC = () => {
       const { data } = await createCaseMutation({
         variables: {
           input: {
+            type: workingCase?.type,
             policeCaseNumber: workingCase?.policeCaseNumber,
             accusedNationalId: workingCase?.accusedNationalId.replace('-', ''),
             accusedName: workingCase?.accusedName,
@@ -144,11 +150,12 @@ export const StepOne: React.FC = () => {
   useEffect(() => {
     if (id && !workingCase && data?.case) {
       setWorkingCase(data?.case)
-    } else if (!id && !workingCase) {
+    } else if (!id && !workingCase && type !== undefined) {
       setWorkingCase({
         id: '',
         created: '',
         modified: '',
+        type: type,
         state: CaseState.DRAFT,
         policeCaseNumber: '',
         accusedNationalId: '',
@@ -159,7 +166,7 @@ export const StepOne: React.FC = () => {
         accusedGender: undefined,
       })
     }
-  }, [id, workingCase, setWorkingCase, data])
+  }, [id, workingCase, setWorkingCase, data, type])
 
   // Validate step
   useEffect(() => {
@@ -199,9 +206,10 @@ export const StepOne: React.FC = () => {
       activeSubSection={ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_ONE}
       isLoading={loading}
       notFound={id !== undefined && data?.case === undefined}
-      isExtension={!!workingCase?.parentCase}
+      isExtension={workingCase?.parentCase && true}
       decision={workingCase?.decision}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -445,6 +453,7 @@ export const StepOne: React.FC = () => {
             </Box>
             <Box marginBottom={2}>
               <Input
+                data-testid="defenderName"
                 name="defenderName"
                 label="Nafn verjanda"
                 placeholder="Fullt nafn"
@@ -466,6 +475,7 @@ export const StepOne: React.FC = () => {
               />
             </Box>
             <Input
+              data-testid="defenderEmail"
               name="defenderEmail"
               label="Netfang verjanda"
               placeholder="Netfang"
@@ -496,6 +506,7 @@ export const StepOne: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             onNextButtonClick={async () => await handleNextButtonClick()}
             nextIsLoading={createLoading}
             nextIsDisabled={isStepIllegal || createLoading}

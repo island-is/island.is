@@ -18,6 +18,7 @@ import {
   formatText,
   MessageFormatter,
   mergeAnswers,
+  coreMessages,
 } from '@island.is/application/core'
 import {
   Box,
@@ -68,16 +69,7 @@ type ScreenProps = {
 }
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(
-      {
-        id: 'application.system:submit.error',
-        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
-        description: 'Error message on submit',
-      },
-      { error },
-    ),
-  )
+  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -284,6 +276,7 @@ const Screen: FC<ScreenProps> = ({
                 externalData={externalData}
                 externalDataProvider={screen}
                 formValue={formValue}
+                errors={dataSchemaOrApiErrors}
               />
             ) : (
               <FormField

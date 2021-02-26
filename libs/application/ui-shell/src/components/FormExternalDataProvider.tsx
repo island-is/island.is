@@ -13,12 +13,16 @@ import {
   ExternalData,
   FormValue,
   getValueViaPath,
+  coreMessages,
+  RecordObject,
 } from '@island.is/application/core'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
+
 import { verifyExternalData } from '../utils'
+import Markdown from 'markdown-to-jsx'
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
@@ -60,6 +64,7 @@ const FormExternalDataProvider: FC<{
   externalData: ExternalData
   externalDataProvider: ExternalDataProviderScreen
   formValue: FormValue
+  errors: RecordObject
 }> = ({
   addExternalData,
   setBeforeSubmitCallback,
@@ -67,7 +72,9 @@ const FormExternalDataProvider: FC<{
   externalData,
   externalDataProvider,
   formValue,
+  errors,
 }) => {
+  const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
     onCompleted(responseData: UpdateApplicationExternalDataResponse) {
@@ -75,8 +82,13 @@ const FormExternalDataProvider: FC<{
     },
   })
 
-  const { id, dataProviders } = externalDataProvider
+  const { id, dataProviders, subTitle, checkboxLabel } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
+
+  // If id is undefined then the error won't be attached to the field with id
+  const error = getValueViaPath(errors, id ?? '', undefined) as
+    | string
+    | undefined
 
   const activateBeforeSubmitCallback = (checked: boolean) => {
     if (checked) {
@@ -111,7 +123,6 @@ const FormExternalDataProvider: FC<{
     }
   }
 
-  const label = 'Ég samþykki'
   return (
     <Box>
       <Box
@@ -125,7 +136,9 @@ const FormExternalDataProvider: FC<{
           <Icon icon="download" size="medium" color="blue400" type="outline" />
         </Box>
         <Text variant="h4">
-          Eftirfarandi gögn verða sótt rafrænt með þínu samþykki
+          {subTitle
+            ? formatMessage(subTitle)
+            : formatMessage(coreMessages.externalDataTitle)}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -160,11 +173,19 @@ const FormExternalDataProvider: FC<{
                     activateBeforeSubmitCallback(isChecked)
                   }}
                   checked={value}
+                  hasError={error !== undefined}
                   name={`${id}`}
-                  label={label}
+                  label={
+                    <Markdown>
+                      {checkboxLabel
+                        ? formatMessage(checkboxLabel)
+                        : formatMessage(coreMessages.externalDataAgreement)}
+                    </Markdown>
+                  }
                   value={id}
                 />
               </Box>
+              {error !== undefined && <InputError errorMessage={error} />}
             </>
           )
         }}

@@ -23,6 +23,7 @@ import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
+import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { AlertBanner } from './models/alertBanner.model'
@@ -66,7 +67,15 @@ import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
+import { ErrorPage } from './models/errorPage.model'
+import { OrganizationSubpage } from './models/organizationSubpage.model'
+import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { OrganizationPage } from './models/organizationPage.model'
+import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
+import { GetAuctionsInput } from './dto/getAuctions.input'
+import { Auction } from './models/auction.model'
+import { GetAuctionInput } from './dto/getAuction.input'
 
 const { cacheTime } = environment
 
@@ -152,6 +161,14 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => ErrorPage, { nullable: true })
+  getErrorPage(
+    @Args('input') input: GetErrorPageInput,
+  ): Promise<ErrorPage | null> {
+    return this.cmsContentfulService.getErrorPage(input)
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => Organization, { nullable: true })
   getOrganization(
     @Args('input') input: GetOrganizationInput,
@@ -160,6 +177,48 @@ export class CmsResolver {
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OrganizationPage, { nullable: true })
+  getOrganizationPage(
+    @Args('input') input: GetOrganizationPageInput,
+  ): Promise<OrganizationPage | null> {
+    return this.cmsContentfulService.getOrganizationPage(
+      input.slug,
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OrganizationSubpage, { nullable: true })
+  getOrganizationSubpage(
+    @Args('input') input: GetOrganizationSubpageInput,
+  ): Promise<OrganizationSubpage | null> {
+    return this.cmsContentfulService.getOrganizationSubpage(
+      input.organizationSlug,
+      input.slug,
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Auction])
+  getAuctions(
+    @Args('input') input: GetAuctionsInput,
+  ): Promise<Auction[] | null> {
+    return this.cmsContentfulService.getAuctions(
+      input.lang,
+      input.organization,
+      input.year,
+      input.month,
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Auction)
+  getAuction(@Args('input') input: GetAuctionInput): Promise<Auction | null> {
+    return this.cmsContentfulService.getAuction(input.id, input.lang)
   }
 
   @Directive(cacheControlDirective())

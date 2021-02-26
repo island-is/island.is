@@ -95,21 +95,25 @@ export const updateEsTemplate = async (
   templateBody: string,
 ) => {
   const templateName = getTemplateName(locale)
-  logger.info('Updating template', { templateName })
+  logger.info('Updating template', { templateName, templateBody })
   const client = await esService.getClient()
   return client.indices.putTemplate({
     name: templateName,
     body: templateBody,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    error_trace: true,
   })
 }
 
-export const updateIndexTemplate = (
+export const updateIndexTemplate = async (
   locale: ElasticsearchIndexLocale,
   esPackages: AwsEsPackage[],
 ) => {
   const packageMap = parseEsPackages(esPackages)
   const templateBody = createTemplateBody(locale, packageMap)
-  return updateEsTemplate(locale, templateBody)
+  const response = await updateEsTemplate(locale, templateBody)
+  logger.info('Successfully updated index template', { locale })
+  return response
 }
 
 export const importContentToIndex = async (
@@ -117,6 +121,10 @@ export const importContentToIndex = async (
   index: string,
   syncType: SyncOptions['syncType'],
 ) => {
+  logger.info(
+    'Migration is starting content importer to move data into index',
+    { index, syncType },
+  )
   // we do a full sync here to import data
   const app = await NestFactory.create(IndexingModule)
   const indexingService = app.get(IndexingService)

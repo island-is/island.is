@@ -9,6 +9,7 @@ import {
   Case,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
@@ -61,9 +62,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (workingCase?.childCase) {
-      history.push(
-        `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${workingCase.childCase.id}`,
-      )
+      history.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
     } else {
       const { data } = await extendCaseMutation({
         variables: {
@@ -74,10 +73,94 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       if (data) {
-        history.push(
-          `${Constants.SINGLE_REQUEST_BASE_ROUTE}/${data.extendCase.id}`,
-        )
+        history.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
       }
+    }
+  }
+
+  /**
+   * If the case is not rejected it must be accepted because
+   * this screen is only rendered if the case is either accepted
+   * or rejected. Here we are first handling the case where a case
+   * is rejected, then the case where a case is accepted and the
+   * custody end date is in the past and then we assume that
+   * the case is accepted and the custody end date has not come yet.
+   * For accepted cases, we first handle the case where the judge
+   * decided only accept an alternative travel ban and finally we
+   * assume that the actual custody was accepted.
+   */
+
+  const titleForCase = (theCase: Case) => {
+    if (theCase.decision === CaseDecision.REJECTING) {
+      return 'Kröfu hafnað'
+    }
+
+    const isTravelBan =
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      theCase.type === CaseType.TRAVEL_BAN
+
+    if (theCase.isCustodyEndDateInThePast) {
+      return isTravelBan ? 'Farbanni lokið' : 'Gæsluvarðhaldi lokið'
+    }
+
+    return isTravelBan ? 'Farbann virkt' : 'Gæsluvarðhald virkt'
+  }
+
+  const subtitleForCase = (theCase: Case) => {
+    if (theCase.decision === CaseDecision.REJECTING) {
+      return `Úrskurðað ${formatDate(
+        theCase.courtEndTime,
+        'PPP',
+      )} kl. ${formatDate(theCase.courtEndTime, TIME_FORMAT)}`
+    }
+
+    const isTravelBan =
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+      theCase.type === CaseType.TRAVEL_BAN
+
+    if (theCase.isCustodyEndDateInThePast) {
+      return `${
+        isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
+      } rann út ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
+        theCase.custodyEndDate,
+        TIME_FORMAT,
+      )}`
+    }
+
+    return `${
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+        ? 'Farbann'
+        : 'Gæsla' // ACCEPTING
+    } til ${formatDate(theCase.custodyEndDate, 'PPP')} kl. ${formatDate(
+      theCase.custodyEndDate,
+      TIME_FORMAT,
+    )}`
+  }
+
+  const getInfoText = (workingCase: Case): string | undefined => {
+    if (user?.role !== UserRole.PROSECUTOR) {
+      // Only prosecutors should see the explanation.
+      return undefined
+    } else if (workingCase.decision === CaseDecision.REJECTING) {
+      return `Ekki hægt að framlengja ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      } sem var hafnað.`
+    } else if (
+      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+    ) {
+      return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
+    } else if (workingCase.childCase) {
+      return 'Framlengingarkrafa hefur þegar verið útbúin.'
+    } else if (workingCase.isCustodyEndDateInThePast) {
+      // This must be after the rejected and alternatice decision cases as the custody
+      // end date only applies to cases that were accepted by the judge. This must also
+      // be after the already extended case as the custody end date may expire after
+      // the case has been extended.
+      return `Ekki hægt að framlengja ${
+        workingCase.type === CaseType.CUSTODY ? 'gæsluvarðhald' : 'farbann'
+      } sem er lokið.`
+    } else {
+      return undefined
     }
   }
 
@@ -106,6 +189,7 @@ export const SignedVerdictOverview: React.FC = () => {
       notFound={data?.case === undefined}
       isCustodyEndDateInThePast={workingCase?.isCustodyEndDateInThePast}
       decision={data?.case?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -114,7 +198,7 @@ export const SignedVerdictOverview: React.FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() => history.push(Constants.DETENTION_REQUESTS_ROUTE)}
+                onClick={() => history.push(Constants.REQUEST_LIST_ROUTE)}
               >
                 Til baka
               </Button>
@@ -123,72 +207,18 @@ export const SignedVerdictOverview: React.FC = () => {
               <Box>
                 <Box marginBottom={1}>
                   <Text as="h1" variant="h1">
-                    {/**
-                     * If the case is not rejected it must be accepted because
-                     * this screen is only rendered if the case is either accepted
-                     * or rejected. Here we are first handling the case where a case
-                     * is rejected, then the case where a case is accepted and the
-                     * custody end date is in the past and then we assume that
-                     * the case is accepted and the custody end date has not come yet.
-                     * For accepted cases, we first handle the case where the judge
-                     * decided only accept an alternative travel ban and finally we
-                     * assume that the actual custody was accepted.
-                     */}
-                    {
-                      workingCase.decision === CaseDecision.REJECTING
-                        ? 'Kröfu hafnað'
-                        : workingCase.isCustodyEndDateInThePast
-                        ? workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? 'Farbanni lokið'
-                          : 'Gæsluvarðhaldi lokið' // ACCEPTING
-                        : workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                        ? 'Farbann virkt'
-                        : 'Gæsluvarðhald virkt' // ACCEPTING
-                    }
+                    {titleForCase(workingCase)}
                   </Text>
                 </Box>
                 <Text as="h5" variant="h5">
-                  {workingCase.decision === CaseDecision.REJECTING
-                    ? `Úrskurðað ${formatDate(
-                        workingCase.courtEndTime,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.courtEndTime,
-                        TIME_FORMAT,
-                      )}`
-                    : workingCase.isCustodyEndDateInThePast
-                    ? `${
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? 'Farbann'
-                          : 'Gæsla' // ACCEPTING
-                      } rann út ${formatDate(
-                        workingCase.custodyEndDate,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`
-                    : `${
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? 'Farbann'
-                          : 'Gæsla' // ACCEPTING
-                      } til ${formatDate(
-                        workingCase.custodyEndDate,
-                        'PPP',
-                      )} kl. ${formatDate(
-                        workingCase.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`}
+                  {subtitleForCase(workingCase)}
                 </Text>
               </Box>
               <Box display="flex" flexDirection="column">
                 {
                   // Custody restrictions
                   workingCase.decision === CaseDecision.ACCEPTING &&
+                    workingCase.type === CaseType.CUSTODY &&
                     workingCase.custodyRestrictions
                       ?.filter((restriction) =>
                         [
@@ -214,8 +244,10 @@ export const SignedVerdictOverview: React.FC = () => {
                 }
                 {
                   // Alternative travel ban restrictions
-                  workingCase.decision ===
-                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+                  (workingCase.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                    (CaseType.TRAVEL_BAN &&
+                      workingCase.decision === CaseDecision.ACCEPTING)) &&
                     workingCase.custodyRestrictions
                       ?.filter((restriction) =>
                         [
@@ -251,7 +283,12 @@ export const SignedVerdictOverview: React.FC = () => {
                   title: 'Málsnúmer héraðsdóms',
                   value: workingCase.courtCaseNumber,
                 },
-                { title: 'Embætti', value: 'Lögreglan á Höfuðborgarsvæðinu' },
+                {
+                  title: 'Embætti',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
+                },
                 { title: 'Dómstóll', value: workingCase.court },
                 { title: 'Ákærandi', value: workingCase.prosecutor?.name },
                 { title: 'Dómari', value: workingCase.judge?.name },
@@ -273,16 +310,35 @@ export const SignedVerdictOverview: React.FC = () => {
             </Accordion>
           </Box>
           <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Opna PDF kröfu"
+                pdfType="request"
+              />
+            </Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF þingbók og úrskurð"
+              pdfType="ruling"
+            />
           </Box>
           <FormFooter
+            previousUrl={Constants.REQUEST_LIST_ROUTE}
             hideNextButton={
+              user?.role !== UserRole.PROSECUTOR ||
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
               workingCase.decision === CaseDecision.REJECTING ||
-              user?.role !== UserRole.PROSECUTOR
+              workingCase.isCustodyEndDateInThePast ||
+              (workingCase.childCase && true)
             }
-            nextButtonText="Framlengja gæslu"
+            nextButtonText={`Framlengja ${
+              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+            }`}
             onNextButtonClick={() => handleNextButtonClick()}
             nextIsLoading={isCreatingExtension}
+            infoBoxText={getInfoText(workingCase)}
           />
         </>
       ) : null}

@@ -1,19 +1,20 @@
 import {
   AlertMessage,
   Box,
-  DatePicker,
-  GridColumn,
-  GridRow,
   Input,
+  Select,
   Text,
+  Option,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
   Modal,
-  TimeInputField,
   CaseNumbers,
+  BlueBox,
+  DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
@@ -27,6 +28,8 @@ import {
   CaseState,
   NotificationType,
   UpdateCase,
+  User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
 import {
@@ -37,6 +40,7 @@ import {
 import parseISO from 'date-fns/parseISO'
 import {
   JudgeSubsections,
+  ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -45,10 +49,18 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   validateAndSetTime,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { ValueType } from 'react-select/src/types'
+import useDateTime from '../../../utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case
+}
+
+interface UserData {
+  users: User[]
 }
 
 export const HearingArrangements: React.FC = () => {
@@ -65,10 +77,25 @@ export const HearingArrangements: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const history = useHistory()
 
+  const { isValidDate: isValidCourtDate } = useDateTime({
+    date: workingCase?.courtDate,
+  })
+  const { isValidTime: isValidCourtTime } = useDateTime({
+    time: courtTimeRef.current?.value,
+  })
+
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
+
+  const { data: userData, loading: userLoading } = useQuery<UserData>(
+    UsersQuery,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
 
@@ -105,6 +132,26 @@ export const HearingArrangements: React.FC = () => {
     return data?.sendNotification?.notificationSent
   }
 
+  const judges = (userData?.users || [])
+    .filter((user: User) => user.role === UserRole.JUDGE)
+    .map((judge: User) => {
+      return { label: judge.name, value: judge.id }
+    })
+
+  const registrars = (userData?.users || [])
+    .filter((user: User) => user.role === UserRole.REGISTRAR)
+    .map((registrar: User) => {
+      return { label: registrar.name, value: registrar.id }
+    })
+
+  const defaultJudge = judges?.find(
+    (judge: Option) => judge.value === workingCase?.judge?.id,
+  )
+
+  const defaultRegistrar = registrars?.find(
+    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
+  )
+
   useEffect(() => {
     document.title = 'Fyrirtaka - Réttarvörslugátt'
   }, [])
@@ -129,14 +176,6 @@ export const HearingArrangements: React.FC = () => {
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
       {
-        value: workingCase?.courtDate || '',
-        validations: ['empty'],
-      },
-      {
-        value: courtTimeRef.current?.value || '',
-        validations: ['empty', 'time-format'],
-      },
-      {
         value: workingCase?.courtRoom || '',
         validations: ['empty'],
       },
@@ -147,9 +186,39 @@ export const HearingArrangements: React.FC = () => {
     ]
 
     if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
+      setIsStepIllegal(
+        isNextDisabled(requiredFields) ||
+          !workingCase.judge ||
+          !workingCase.registrar,
+      )
     }
   }, [workingCase, isStepIllegal])
+
+  const setJudge = (id: string) => {
+    if (workingCase) {
+      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
+
+      const judge = userData?.users.find((j) => j.id === id)
+
+      setWorkingCase({ ...workingCase, judge: judge })
+    }
+  }
+
+  const setRegistrar = (id: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'registrarId',
+        id,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      const registrar = userData?.users.find((r) => r.id === id)
+
+      setWorkingCase({ ...workingCase, registrar: registrar })
+    }
+  }
 
   return (
     <PageLayout
@@ -157,9 +226,10 @@ export const HearingArrangements: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
-      isLoading={loading}
+      isLoading={loading || userLoading}
       notFound={data?.case === undefined}
       parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -181,6 +251,46 @@ export const HearingArrangements: React.FC = () => {
             <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
             <CaseNumbers workingCase={workingCase} />
           </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómari{' '}
+                <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
+              </Text>
+            </Box>
+            <Select
+              name="judge"
+              label="Veldu dómara"
+              placeholder="Velja héraðsdómara"
+              defaultValue={defaultJudge}
+              options={judges}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setJudge((selectedOption as ReactSelectOption).value.toString())
+              }
+              required
+            />
+          </Box>
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                Dómritari{' '}
+                <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+              </Text>
+            </Box>
+            <Select
+              name="registrar"
+              label="Veldu dómritara"
+              placeholder="Velja dómritara"
+              defaultValue={defaultRegistrar}
+              options={registrars}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              }
+              required
+            />
+          </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
@@ -188,22 +298,18 @@ export const HearingArrangements: React.FC = () => {
               </Text>
             </Box>
             <Box marginBottom={3}>
-              <GridRow>
-                <GridColumn span="7/12">
-                  <DatePicker
-                    id="courtDate"
-                    label="Veldu dagsetningu"
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    errorMessage={courtDateErrorMessage}
-                    hasError={courtDateErrorMessage !== ''}
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <DateTime
+                    datepickerId="courtDate"
+                    datepickerErrorMessage={courtDateErrorMessage}
                     minDate={new Date()}
-                    selected={
+                    selectedDate={
                       workingCase.courtDate
                         ? parseISO(workingCase.courtDate.toString())
                         : null
                     }
-                    handleCloseCalendar={(date: Date | null) => {
+                    handleCloseCalander={(date: Date | null) => {
                       setAndSendDateToServer(
                         'courtDate',
                         workingCase.courtDate,
@@ -215,13 +321,9 @@ export const HearingArrangements: React.FC = () => {
                         setCourtDateErrorMessage,
                       )
                     }}
-                    required
-                  />
-                </GridColumn>
-                <GridColumn span="5/12">
-                  <TimeInputField
-                    disabled={!workingCase.courtDate}
-                    onChange={(evt) =>
+                    dateIsRequired
+                    disabledTime={!workingCase.courtDate}
+                    timeOnChange={(evt) =>
                       validateAndSetTime(
                         'courtDate',
                         workingCase.courtDate,
@@ -233,7 +335,7 @@ export const HearingArrangements: React.FC = () => {
                         setCourtTimeErrorMessage,
                       )
                     }
-                    onBlur={(evt) =>
+                    timeOnBlur={(evt) =>
                       validateAndSendTimeToServer(
                         'courtDate',
                         workingCase.courtDate,
@@ -244,55 +346,51 @@ export const HearingArrangements: React.FC = () => {
                         setCourtTimeErrorMessage,
                       )
                     }
-                  >
-                    <Input
-                      name="courtTime"
-                      label="Tímasetning"
-                      placeholder="Settu inn tíma"
-                      errorMessage={courtTimeErrorMessage}
-                      hasError={courtTimeErrorMessage !== ''}
-                      defaultValue={
-                        workingCase.courtDate?.includes('T')
-                          ? formatDate(workingCase.courtDate, TIME_FORMAT)
-                          : undefined
-                      }
-                      ref={courtTimeRef}
-                      required
-                    />
-                  </TimeInputField>
-                </GridColumn>
-              </GridRow>
+                    timeName="courtTime"
+                    timeErrorMessage={courtTimeErrorMessage}
+                    timeDefaultValue={
+                      workingCase.courtDate?.includes('T')
+                        ? formatDate(workingCase.courtDate, TIME_FORMAT)
+                        : undefined
+                    }
+                    timeRef={courtTimeRef}
+                    timeIsRequired
+                    blueBox={false}
+                  />
+                </Box>
+                <Input
+                  data-testid="courtroom"
+                  name="courtroom"
+                  label="Dómsalur"
+                  defaultValue={workingCase.courtRoom}
+                  placeholder="Skráðu inn dómsal"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtRoom',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtroomErrorMessage,
+                      setCourtroomErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtRoom',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtroomErrorMessage,
+                    )
+                  }
+                  errorMessage={courtroomErrorMessage}
+                  hasError={courtroomErrorMessage !== ''}
+                  required
+                />
+              </BlueBox>
             </Box>
-            <Input
-              name="courtroom"
-              label="Dómsalur"
-              defaultValue={workingCase.courtRoom}
-              placeholder="Skráðu inn dómsal"
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtRoom',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  courtroomErrorMessage,
-                  setCourtroomErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtRoom',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtroomErrorMessage,
-                )
-              }
-              errorMessage={courtroomErrorMessage}
-              hasError={courtroomErrorMessage !== ''}
-              required
-            />
           </Box>
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
@@ -357,14 +455,20 @@ export const HearingArrangements: React.FC = () => {
             />
           </Box>
           <FormFooter
+            previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
             nextIsDisabled={
-              workingCase.state === CaseState.DRAFT || isStepIllegal
+              workingCase.state === CaseState.DRAFT ||
+              isStepIllegal ||
+              !isValidCourtDate?.isValid ||
+              !isValidCourtTime?.isValid
             }
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
               const notificationSent = await sendNotification(workingCase.id)
 
-              if (notificationSent) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // @ts-ignore
+              if (notificationSent && !window.Cypress) {
                 setModalVisible(true)
               } else {
                 history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)

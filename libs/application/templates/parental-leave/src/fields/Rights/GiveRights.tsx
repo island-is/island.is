@@ -10,7 +10,7 @@ import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { m, mm } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths } from '../../config'
 import { YES, NO } from '../../constants'
 
@@ -30,7 +30,7 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   const boxChartKeys = [
     {
       label: () => ({
-        ...m.yourRightsInMonths,
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
@@ -47,11 +47,19 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           }
           options={[
             {
-              label: formatText(m.giveRightsYes, application, formatMessage),
+              label: formatText(
+                parentalLeaveFormMessages.shared.giveRightsYes,
+                application,
+                formatMessage,
+              ),
               value: YES,
             },
             {
-              label: formatText(m.giveRightsNo, application, formatMessage),
+              label: formatText(
+                parentalLeaveFormMessages.shared.giveRightsNo,
+                application,
+                formatMessage,
+              ),
               value: NO,
             },
           ]}
@@ -62,7 +70,9 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
 
       {error && (
         <Box color="red400" padding={2}>
-          <Text color="red400">{formatMessage(mm.errors.requiredAnswer)}</Text>
+          <Text color="red400">
+            {formatMessage(parentalLeaveFormMessages.errors.requiredAnswer)}
+          </Text>
         </Box>
       )}
 

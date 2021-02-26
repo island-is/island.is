@@ -8,6 +8,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseGender,
+  AccusedPleaDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
@@ -59,10 +60,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly alternativeTravelBan?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
   readonly requestedCustodyEndDate?: string
 
   @Allow()
@@ -80,6 +77,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field(() => [String], { nullable: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestedOtherRestrictions?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -130,8 +131,12 @@ export class UpdateCaseInput implements UpdateCase {
   readonly courtDocuments?: string[]
 
   @Allow()
+  @Field(() => String, { nullable: true })
+  readonly accusedPleaDecision?: AccusedPleaDecision
+
+  @Allow()
   @Field({ nullable: true })
-  readonly accusedPlea?: string
+  readonly accusedPleaAnnouncement?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -172,4 +177,12 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly prosecutorAppealAnnouncement?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly judgeId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly registrarId?: string
 }

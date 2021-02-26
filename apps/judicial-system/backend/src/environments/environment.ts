@@ -6,6 +6,7 @@ export default {
   notifications: {
     judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,
     prisonEmail: process.env.PRISON_EMAIL,
+    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
   },
   email: {
     fromEmail: 'gudjon@kolibri.is',
@@ -24,5 +25,9 @@ export default {
   },
   emailOptions: {
     useTestAccount: true,
+  },
+  admin: {
+    users:
+      '[{"id":"8f8f6522-95c8-46dd-98ef-cbc198544871","nationalId":"3333333333","name":"Addi Admin"},{"id":"66430be4-a662-442b-bf97-1858a64ab685","nationalId":"4444444444","name":"Solla Sýsla"}]',
   },
 }

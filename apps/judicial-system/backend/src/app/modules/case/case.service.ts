@@ -1,5 +1,3 @@
-import { Op } from 'sequelize'
-
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -10,12 +8,18 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { CaseState, User as TUser } from '@island.is/judicial-system/types'
+import { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
-import { generateRulingPdf, writeFile } from '../../formatters'
+import {
+  generateRequestPdf,
+  generateRulingPdf,
+  writeFile,
+} from '../../formatters'
+import { Institution } from '../institution'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
+import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
 @Injectable()
@@ -71,7 +75,6 @@ export class CaseService {
 
   private async sendRulingAsSignedPdf(
     existingCase: Case,
-    user: TUser,
     signedRulingPdf: string,
   ): Promise<void> {
     if (!environment.production) {
@@ -86,8 +89,14 @@ export class CaseService {
         signedRulingPdf,
       ),
       this.sendEmail(
-        existingCase.judge?.name || user?.name,
-        existingCase.judge?.email || user?.email,
+        existingCase.registrar?.name,
+        existingCase.registrar?.email,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
+      this.sendEmail(
+        existingCase.judge?.name,
+        existingCase.judge?.email,
         existingCase.courtCaseNumber,
         signedRulingPdf,
       ),
@@ -97,35 +106,37 @@ export class CaseService {
         existingCase.courtCaseNumber,
         signedRulingPdf,
       ),
+      this.sendEmail(
+        'Fangelsismálastofnun',
+        environment.notifications.prisonAdminEmail,
+        existingCase.courtCaseNumber,
+        signedRulingPdf,
+      ),
     ])
   }
 
-  private sevenDaysFromNow(): string {
-    const now = new Date()
-    const sevenDaysFromNow = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    )
-
-    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() - 7)
-
-    return sevenDaysFromNow.toISOString()
-  }
-
-  getAll(): Promise<Case[]> {
+  getAll(user: TUser): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
     return this.caseModel.findAll({
       order: [['created', 'DESC']],
-      where: {
-        state: {
-          [Op.not]: CaseState.DELETED,
-        },
-      },
+      where: getCasesQueryFilter(user),
       include: [
-        { model: User, as: 'prosecutor' },
-        { model: User, as: 'judge' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'judge',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'registrar',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],
@@ -138,8 +149,21 @@ export class CaseService {
     return this.caseModel.findOne({
       where: { id },
       include: [
-        { model: User, as: 'prosecutor' },
-        { model: User, as: 'judge' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'judge',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        {
+          model: User,
+          as: 'registrar',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         { model: Case, as: 'parentCase' },
         { model: Case, as: 'childCase' },
       ],
@@ -172,30 +196,35 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  getRulingPdf(existingCase: Case, user: TUser): Promise<string> {
+  getRulingPdf(existingCase: Case): Promise<string> {
     this.logger.debug(
       `Getting the ruling for case ${existingCase.id} as a pdf document`,
     )
 
-    return generateRulingPdf(existingCase, user)
+    return generateRulingPdf(existingCase)
   }
 
-  async requestSignature(
-    existingCase: Case,
-    user: TUser,
-  ): Promise<SigningServiceResponse> {
+  getRequestPdf(existingCase: Case): Promise<string> {
+    this.logger.debug(
+      `Getting the request for case ${existingCase.id} as a pdf document`,
+    )
+
+    return generateRequestPdf(existingCase)
+  }
+
+  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
     this.logger.debug(
       `Requesting signature of ruling for case ${existingCase.id}`,
     )
 
-    const pdf = await generateRulingPdf(existingCase, user)
+    const pdf = await generateRulingPdf(existingCase)
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
       return this.signingService.requestSignature(
-        user.mobileNumber,
+        existingCase.judge?.mobileNumber,
         'Undirrita dóm - Öryggistala',
-        user.name,
+        existingCase.judge?.name,
         'Ísland',
         'ruling.pdf',
         pdf,
@@ -211,7 +240,6 @@ export class CaseService {
 
   async getSignatureConfirmation(
     existingCase: Case,
-    user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(
@@ -228,7 +256,7 @@ export class CaseService {
           documentToken,
         )
 
-        await this.sendRulingAsSignedPdf(existingCase, user, signedPdf)
+        await this.sendRulingAsSignedPdf(existingCase, signedPdf)
       } catch (error) {
         if (error instanceof DokobitError) {
           return {
@@ -251,6 +279,7 @@ export class CaseService {
     this.logger.debug(`Extending case ${existingCase.id}`)
 
     return this.caseModel.create({
+      type: existingCase.type,
       policeCaseNumber: existingCase.policeCaseNumber,
       accusedNationalId: existingCase.accusedNationalId,
       accusedName: existingCase.accusedName,

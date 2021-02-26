@@ -7,8 +7,8 @@ import { EmailService } from '@island.is/email-service'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseType,
   NotificationType,
-  User,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
@@ -183,6 +183,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
+      existingCase.type,
       existingCase.prosecutor?.name,
       existingCase.arrestDate,
       existingCase.requestedCourtDate,
@@ -207,6 +208,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtReadyForCourtSmsNotification(
+      existingCase.type,
       existingCase.prosecutor?.name,
       existingCase.court,
     )
@@ -260,6 +262,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
     const html = formatProsecutorCourtDateEmailNotification(
+      existingCase.type,
       existingCase.court,
       existingCase.courtDate,
       existingCase.courtRoom,
@@ -277,9 +280,9 @@ export class NotificationService {
   private sendCourtDateEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
-    const subject = 'Krafa um gæsluvarðhald í vinnslu'
+    const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     const html = formatPrisonCourtDateEmailNotification(
-      existingCase.prosecutor?.institution,
+      existingCase.prosecutor?.institution?.name,
       existingCase.court,
       existingCase.courtDate,
       existingCase.accusedName,
@@ -301,18 +304,20 @@ export class NotificationService {
     )
   }
 
-  private sendCourtDateEmailNotificationToDefender(
+  private async sendCourtDateEmailNotificationToDefender(
     existingCase: Case,
   ): Promise<Recipient> {
     if (!existingCase.defenderEmail) {
       return
     }
 
-    const subject = 'Krafa um gæsluvarðhald í vinnslu'
+    const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
+      existingCase.type,
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.court,
+      existingCase.courtCaseNumber,
       existingCase.courtDate,
       existingCase.courtRoom,
     )
@@ -348,11 +353,16 @@ export class NotificationService {
       }
     }
 
-    const recipients = await Promise.all([
+    const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(existingCase),
-      this.sendCourtDateEmailNotificationToPrison(existingCase),
       this.sendCourtDateEmailNotificationToDefender(existingCase),
-    ])
+    ]
+
+    if (existingCase.type === CaseType.CUSTODY) {
+      promises.push(this.sendCourtDateEmailNotificationToPrison(existingCase))
+    }
+
+    const recipients = await Promise.all(promises)
 
     return this.recordNotification(
       existingCase.id,
@@ -367,15 +377,16 @@ export class NotificationService {
   private sendRulingEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
-    const subject = 'Úrskurður um gæsluvarðhald'
+    const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.accusedGender,
       existingCase.court,
       existingCase.prosecutor?.name,
-      existingCase.courtDate,
+      existingCase.courtEndTime,
       existingCase.defenderName,
+      existingCase.defenderEmail,
       existingCase.decision,
       existingCase.custodyEndDate,
       existingCase.custodyRestrictions,
@@ -398,6 +409,12 @@ export class NotificationService {
   private async sendRulingNotifications(
     existingCase: Case,
   ): Promise<SendNotificationResponse> {
+    if (existingCase.type !== CaseType.CUSTODY) {
+      return {
+        notificationSent: false,
+      }
+    }
+
     const recipient = await this.sendRulingEmailNotificationToPrison(
       existingCase,
     )
@@ -413,6 +430,7 @@ export class NotificationService {
     existingCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtRevokedSmsNotification(
+      existingCase.type,
       existingCase.prosecutor?.name,
       existingCase.requestedCourtDate,
       existingCase.courtDate,
@@ -424,9 +442,9 @@ export class NotificationService {
   private sendRevokedEmailNotificationToPrison(
     existingCase: Case,
   ): Promise<Recipient> {
-    const subject = 'Gæsluvarðhaldskrafa afturkölluð'
+    const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     const html = formatPrisonRevokedEmailNotification(
-      existingCase.prosecutor?.institution,
+      existingCase.prosecutor?.institution?.name,
       existingCase.court,
       existingCase.courtDate,
       existingCase.accusedName,
@@ -450,8 +468,13 @@ export class NotificationService {
       return
     }
 
-    const subject = 'Gæsluvarðhaldskrafa afturkölluð'
+    const subject = `${
+      existingCase.type === CaseType.CUSTODY
+        ? 'Gæsluvarðhaldskrafa'
+        : 'Farbannskrafa'
+    } afturkölluð`
     const html = formatDefenderRevokedEmailNotification(
+      existingCase.type,
       existingCase.accusedNationalId,
       existingCase.accusedName,
       existingCase.court,
@@ -480,10 +503,12 @@ export class NotificationService {
       promises.push(this.sendRevokedSmsNotificationToCourt(existingCase))
     }
 
-    const prisonWasNotified = await this.existsRevokableNotification(
-      existingCase.id,
-      environment.notifications.prisonEmail,
-    )
+    const prisonWasNotified =
+      existingCase.type === CaseType.CUSTODY &&
+      (await this.existsRevokableNotification(
+        existingCase.id,
+        environment.notifications.prisonEmail,
+      ))
 
     if (prisonWasNotified) {
       promises.push(this.sendRevokedEmailNotificationToPrison(existingCase))
@@ -506,6 +531,10 @@ export class NotificationService {
         NotificationType.REVOKED,
         recipients,
       )
+    }
+
+    return {
+      notificationSent: false,
     }
   }
 

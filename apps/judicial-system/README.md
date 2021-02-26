@@ -64,7 +64,7 @@ NOVA_PASSWORD=<SMS password> JUDGE_MOBILE_NUMBER=<judge mobile number> yarn star
 
 Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
 
-To enable email sending you can modify `emailOptions` in `environment.ts` as follows:
+To enable email sending via AWS SES you can modify `emailOptions` in `environment.ts` as follows:
 
 ```typescript
 emailOptions: {
@@ -75,7 +75,9 @@ emailOptions: {
 },
 ```
 
-Finally, to enable prison email notifications provide a prison email address: `PRISON_EMAIL=<prison email>`
+You need to be authenticated against AWS for this to work. Alternatively, you can view ethereal nodemailer messages by following the urls shown in the logs.
+
+Finally, to enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL<prison administration email>`
 
 ### Graphql
 

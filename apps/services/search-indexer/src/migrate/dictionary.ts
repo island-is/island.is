@@ -15,57 +15,76 @@ const analyzers = [
   'hyphenwhitelist',
 ]
 
-const getDictUrl = (type: string, lang: string): string => {
-  const url = environment.dictRepo
-    .replace('api.github', 'github')
-    .replace('/repos/', '/')
-  return `${url}/blob/master/${lang}/${type}.txt?raw=true`
-}
-
-const getFile = (url: string) => {
-  logger.info('Getting file from', { url })
-  return fetch(url)
-}
-
-type dictionaryVersion = { tag_name: string }
-export const getDictionaryVersion = async (): Promise<string> => {
-  const url = environment.dictRepo + '/releases/latest'
-  const data: dictionaryVersion = await getFile(url).then((raw) => {
-    return raw.json()
-  })
-  return data.tag_name
-}
-
 export interface Dictionary {
+  version: string
   analyzerType: string
   locale: ElasticsearchIndexLocale
   file: NodeJS.ReadableStream
 }
-export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
-  const locales = environment.locales
 
-  const dictionaries = locales.map((locale) => {
-    return analyzers.map(async (analyzerType) => {
-      const fileUrl = getDictUrl(analyzerType, locale)
-      const response = await getFile(fileUrl)
-      // only add found dictionaries to list, this tackles no dictionary provided for lang problem
-      if (response.status === 200) {
-        return {
-          analyzerType,
-          locale,
-          file: response.body,
-        }
-      } else {
-        // we will filter this from the dictionaries later
-        return false
-      }
-    })
+interface Commit {
+  sha: string
+}
+
+const getDictionaryFile = (
+  sha: string,
+  locale: ElasticsearchIndexLocale,
+  analyzer: string,
+) => {
+  return fetch(
+    `https://github.com/${environment.dictRepo}/blob/${sha}/${locale}/${analyzer}.txt?raw=true`,
+  ).then((response) => {
+    if (response.ok) {
+      return response.body
+    } else {
+      return null
+    }
+  })
+}
+
+// get a list of all latest commits for this repo
+const getCommits = async (): Promise<string[]> => {
+  const commitsEndpoint = `https://api.github.com/repos/${environment.dictRepo}/commits`
+  const commits: Commit[] = await fetch(commitsEndpoint).then((response) =>
+    response.json(),
+  ) // this is rate limited to 60 requests an hour
+  return commits.map((commit) => commit.sha)
+}
+
+export const getDictionaryFilesForVersion = async (
+  currentVersion: string,
+): Promise<Dictionary[]> => {
+  const commits = await getCommits()
+
+  // find the whole commit sha for this version
+  const commit = commits.find((commit) => commit.startsWith(currentVersion))
+
+  logger.info('Getting dictionary files from dictionary repo', {
+    commit,
   })
 
-  const allDictionaryResponses = await Promise.all(flatten(dictionaries))
-  return allDictionaryResponses.filter(
-    (response): response is Dictionary => response !== false,
-  )
+  // fetch all missing dictionary files for each version
+  const dictionaryFiles: Dictionary[] = []
+  for (const locale of environment.locales) {
+    for (const analyzer of analyzers) {
+      const file = await getDictionaryFile(commit, locale, analyzer)
+      // all versions don't have all files
+      if (file) {
+        dictionaryFiles.push({
+          analyzerType: analyzer,
+          version: currentVersion,
+          file,
+          locale,
+        })
+      }
+    }
+  }
+
+  logger.info('Done getting dictionary files from dictionary repo', {
+    fileCount: dictionaryFiles.length,
+  })
+
+  return dictionaryFiles
 }
 
 export const getFakeEsPackages = (): AwsEsPackage[] => {

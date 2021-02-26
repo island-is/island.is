@@ -8,9 +8,15 @@ export class GetArticlesInput {
   @IsString()
   lang: ElasticsearchIndexLocale
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  category: string
+  @IsOptional()
+  category?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  organization?: string
 
   @Field(() => Int, { nullable: true })
   @IsInt()

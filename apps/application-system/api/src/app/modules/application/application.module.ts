@@ -1,15 +1,20 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { BullModule as NestBullModule } from '@nestjs/bull'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { FileStorageModule } from '@island.is/file-storage'
+import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
+import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
+import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
 import { environment } from '../../../environments'
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from './application.configuration'
 
 // import { AuthModule } from '@island.is/auth-nest-tools'
 
@@ -19,40 +24,38 @@ if (process.env.INIT_SCHEMA === 'true') {
   BullModule = NestBullModule.registerQueueAsync()
 } else {
   const bullModuleName = 'application_system_api_bull_module'
-  const redisClient = createRedisCluster({
-    name: bullModuleName,
-    ssl: environment.production,
-    nodes: environment.redis.urls,
-  })
   BullModule = NestBullModule.registerQueueAsync({
     name: 'upload',
     useFactory: () => ({
       prefix: `{${bullModuleName}}`,
-      createClient: () => redisClient,
+      createClient: () =>
+        createRedisCluster({
+          name: bullModuleName,
+          ssl: environment.production,
+          nodes: environment.redis.urls,
+          noPrefix: true,
+        }),
     }),
   })
 }
 
 @Module({
   imports: [
-    // AuthModule.register({
-    //   audience: environment.identityServer.audience,
-    //   issuer: environment.identityServer.issuer,
-    //   jwksUri: `${environment.identityServer.jwksUri}`,
-    // }),
+    // AuthModule.register(environment.auth),
+    TemplateAPIModule.register(environment.templateApi),
     SequelizeModule.forFeature([Application]),
-    FileStorageModule,
+    FileStorageModule.register(environment.fileStorage),
     BullModule,
   ],
   controllers: [ApplicationController],
   providers: [
     ApplicationService,
     UploadProcessor,
+    FileService,
     {
-      provide: EMAIL_OPTIONS,
-      useValue: environment.emailOptions,
+      provide: APPLICATION_CONFIG,
+      useValue: environment.application as ApplicationConfig,
     },
-    EmailService,
   ],
 })
 export class ApplicationModule {}

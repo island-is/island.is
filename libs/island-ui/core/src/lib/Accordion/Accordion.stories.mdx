@@ -19,23 +19,16 @@ import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Stack } from '../Stack/Stack'
 
-export const links = {
-  desktop:
-    'https://www.figma.com/file/pDczqgdlWxgn3YugWZfe1v/UI-Library-%E2%80%93-%F0%9F%96%A5%EF%B8%8F-Desktop?node-id=208%3A446',
-  mobile:
-    'https://www.figma.com/file/rU3mPM1cLfHa3u7TWuutPQ/UI-Library-%E2%80%93-%F0%9F%93%B1Mobile?node-id=30%3A5',
-}
-
 <Meta
   title="Components/Accordion"
   component={Accordion}
   decorators={[withDesign]}
-  parameters={withFigma(links)}
+  parameters={withFigma('Accordion')}
 />
 
 # Accordion
 
-<DescriptionFigma links={links} />
+<DescriptionFigma name="Accordion" />
 
 The **Accordion** component has three different type of items that can be rendered.
 

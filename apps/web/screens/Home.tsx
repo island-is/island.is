@@ -1,10 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
-import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
+import { Box, Stack, Inline, Tag, Link } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
-import Link from 'next/link'
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
@@ -41,6 +40,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -77,7 +77,7 @@ const Home: Screen<HomeProps> = ({
     return {
       title,
       description,
-      href: linkResolver(__typename as LinkType, [slug]).href,
+      link: linkResolver(__typename as LinkType, [slug]),
     }
   })
 
@@ -98,7 +98,7 @@ const Home: Screen<HomeProps> = ({
           {page.featuredThings.map(({ title, attention, thing }) => {
             const cardUrl = linkResolver(thing?.type as LinkType, [thing?.slug])
             return cardUrl?.href && cardUrl?.href.length > 0 ? (
-              <Link key={title} {...cardUrl}>
+              <Link key={title} {...cardUrl} skipTab>
                 <Tag variant="darkerBlue" attention={attention}>
                   {title}
                 </Tag>
@@ -114,7 +114,7 @@ const Home: Screen<HomeProps> = ({
     </Box>
   )
   return (
-    <div id="main-content">
+    <div id="main-content" style={{ overflow: 'hidden' }}>
       <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={frontpageSlides as FrontpageSliderType[]}
@@ -125,8 +125,8 @@ const Home: Screen<HomeProps> = ({
         aria-labelledby="lifeEventsTitle"
         paddingTop={4}
         backgroundBleed={{
-          bleedAmount: 100,
-          mobileBleedAmount: 50,
+          bleedAmount: 150,
+          mobileBleedAmount: 250,
           bleedDirection: 'bottom',
           fromColor: 'white',
           toColor: 'purple100',
@@ -135,7 +135,7 @@ const Home: Screen<HomeProps> = ({
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
-          titleId="lifeEventsTitle"
+          linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
           lifeEvents={lifeEvents}
         />
       </Section>
@@ -166,7 +166,7 @@ const Home: Screen<HomeProps> = ({
           introText={n('ourGoalsIntro')}
           text={n('ourGoalsText')}
           linkText={n('ourGoalsButtonText')}
-          linkUrl={n('ourGoalsLink')}
+          linkUrl={{ href: n('ourGoalsLink') }}
         />
       </Section>
     </div>
@@ -224,6 +224,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         input: {
           size: 3,
           lang: locale as ContentLanguage,
+          tag: FRONTPAGE_NEWS_TAG_ID,
         },
       },
     }),
