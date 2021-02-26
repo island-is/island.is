@@ -1,16 +1,20 @@
+import get from 'lodash/get'
 import {
   Application,
   DataProviderResult,
   getValueViaPath,
+  Option,
 } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
-import { NationalRegistryFamilyMember } from '@island.is/api/schema'
+import { FamilyMember } from '@island.is/api/domains/national-registry'
+
+import { parentalLeaveFormMessages } from './lib/messages'
 
 import { TimelinePeriod } from './fields/components/Timeline'
 import { Period } from './types'
 import { ParentalLeave, PregnancyStatus } from './dataProviders/APIDataTypes'
 import { daysInMonth, defaultMonths } from './config'
-import { YES } from './constants'
+import { YES, NO } from './constants'
 import { SchemaFormValues } from './lib/dataSchema'
 
 export function getExpectedDateOfBirth(
@@ -42,7 +46,7 @@ export function getExpectedDateOfBirth(
 }
 
 export function getNameAndIdOfSpouse(
-  familyMembers?: NationalRegistryFamilyMember[],
+  familyMembers?: FamilyMember[],
 ): [string?, string?] {
   const spouse = familyMembers?.find(
     (member) => member.familyRelation === 'spouse',
@@ -113,21 +117,63 @@ export const getAvailableRights = (application: Application) => {
 
   let requestedDays = 0
   let givenDays = 0
+  let days = defaultMonths * daysInMonth
   let months = defaultMonths
 
   if (requestRights?.isRequestingRights === YES && requestRights.requestDays) {
     requestedDays = requestRights.requestDays
+    days = days + requestedDays
     months = months + daysToMonths(requestedDays)
   }
 
   if (giveRights?.isGivingRights === YES && giveRights.giveDays) {
     givenDays = giveRights.giveDays
+    days = days + givenDays
     months = months + daysToMonths(givenDays)
   }
 
   return {
     requestedDays,
     givenDays,
+    days,
     months: Number(months.toFixed(1)), // TODO: do we want to truncate decimals?
   }
+}
+
+export const getOtherParentOptions = (application: Application) => {
+  const family = get(
+    application.externalData,
+    'family.data.nationalRegistryFamily',
+    [],
+  ) as FamilyMember[]
+
+  const options: Option[] = [
+    {
+      value: NO,
+      label: parentalLeaveFormMessages.shared.noOtherParent,
+    },
+    {
+      value: 'manual',
+      label: parentalLeaveFormMessages.shared.otherParentOption,
+    },
+  ]
+
+  if (family && family.length > 0) {
+    const spouse = family.find((member) => member.familyRelation === 'spouse')
+
+    if (spouse) {
+      options.unshift({
+        value: 'spouse',
+        label: {
+          ...parentalLeaveFormMessages.shared.otherParentSpouse,
+          values: {
+            spouseName: spouse.fullName,
+            spouseId: spouse.nationalId,
+          },
+        },
+      })
+    }
+  }
+
+  return options
 }

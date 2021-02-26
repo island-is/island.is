@@ -58,6 +58,7 @@ export const checkbox = style({
   alignItems: 'center',
   backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.standard,
   display: 'flex',
   flexShrink: 0,
   height: checkboxSize,

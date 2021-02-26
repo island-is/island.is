@@ -1759,6 +1759,9 @@ export interface IOrganizationOfficeFields {
 
   /** Opening Hours */
   openingHours?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
 }
 
 export interface IOrganizationOffice extends Entry<IOrganizationOfficeFields> {
@@ -1838,7 +1841,9 @@ export interface IOrganizationSubpageFields {
   links?: ILink[] | undefined
 
   /** Slices */
-  slices?: (IOffices | IOneColumnText | ITwoColumnText)[] | undefined
+  slices?:
+    | (IDistricts | IOffices | IOneColumnText | ITwoColumnText)[]
+    | undefined
 
   /** Slice Custom Renderer */
   sliceCustomRenderer?: 'SliceDropdown' | undefined

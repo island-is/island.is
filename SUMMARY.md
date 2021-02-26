@@ -76,6 +76,7 @@
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
+- [Workspace Settings](handbook/repository/workspace-settings.md)
 
 ## Apps
 

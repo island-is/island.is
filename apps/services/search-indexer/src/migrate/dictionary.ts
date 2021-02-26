@@ -13,6 +13,7 @@ const analyzers = [
   'stopwords',
   'hyphenpatterns',
   'hyphenwhitelist',
+  'autocompletestop',
 ]
 
 export interface Dictionary {

@@ -537,8 +537,13 @@ export const m = defineMessages({
     description: '',
   },
   testEndPointErrorMessage: {
-    id: 'dpo.application:testEnviroment.subMessage',
+    id: 'dpo.application:testEnviroment.errorMessage',
     defaultMessage: 'Eitthvað fór úrskeiðis. Ekki tókst að vista endapunkt.',
+    description: '',
+  },
+  testEndPointErrorMessageUniqueKeyViolation: {
+    id: 'dpo.application:testEnviroment.errorMessageUniqueKeyViolation',
+    defaultMessage: 'Þessi endapunktur er nú þegar í notkun',
     description: '',
   },
   testEndpointLabel: {
@@ -553,7 +558,7 @@ export const m = defineMessages({
   },
   testEndpointInputErrorMessage: {
     id: 'dpo.application:testEnviroment.subMessage',
-    defaultMessage: '"Þú verður að skrá inn endapunkt"',
+    defaultMessage: 'Þú verður að skrá inn endapunkt',
     description: '',
   },
 
@@ -730,7 +735,7 @@ export const m = defineMessages({
   },
   prodEndpointInputErrorMessage: {
     id: 'dpo.application:testEnviroment.subMessage',
-    defaultMessage: '"Þú verður að skrá inn endapunkt"',
+    defaultMessage: 'Þú verður að skrá inn endapunkt',
     description: '',
   },
 

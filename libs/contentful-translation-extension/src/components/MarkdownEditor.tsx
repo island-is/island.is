@@ -76,8 +76,9 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({
         <MarkButton format="italic" icon="format_italic" />
         <MarkButton format="underline" icon="format_underlined" />
         <LinkButton dialogs={dialogs} />
-        <BlockButton format="heading_one" icon="looks_one" />
         <BlockButton format="heading_two" icon="looks_two" />
+        <BlockButton format="heading_three" icon="looks_three" />
+        <BlockButton format="heading_four" icon="looks_four" />
         <BlockButton format="ol_list" icon="format_list_numbered" />
         <BlockButton format="ul_list" icon="format_list_bulleted" />
       </Toolbar>

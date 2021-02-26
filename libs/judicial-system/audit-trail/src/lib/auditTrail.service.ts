@@ -18,6 +18,7 @@ export enum AuditedAction {
   EXTEND = 'EXTEND',
   CREATE_USER = 'CREATE_USER',
   UPDATE_USER = 'UPDATE_USER',
+  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
 }
 
 export interface AuditTrailOptions {

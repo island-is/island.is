@@ -21,7 +21,6 @@ import {
 import {
   getConclusion,
   getAppealDecisionText,
-  isNextDisabled,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -61,12 +60,12 @@ import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   getTimeFromDate,
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
 
 interface SigningModalProps {
@@ -270,7 +269,6 @@ interface CaseData {
 export const Confirmation: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
@@ -284,6 +282,9 @@ export const Confirmation: React.FC = () => {
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+  const { isValidTime: isValidCourtEndTime } = useDateTime({
+    time: getTimeFromDate(workingCase?.courtEndTime),
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -311,19 +312,6 @@ export const Confirmation: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: getTimeFromDate(workingCase?.courtEndTime) || '',
-        validations: ['empty', 'time-format'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, isStepIllegal])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -588,7 +576,7 @@ export const Confirmation: React.FC = () => {
                     <Input
                       data-testid="courtEndTime"
                       name="courtEndTime"
-                      label="Þinghaldi lauk"
+                      label="Þinghaldi lauk (kk:mm)"
                       placeholder="Veldu tíma"
                       defaultValue={formatDate(
                         workingCase.courtEndTime,
@@ -614,7 +602,7 @@ export const Confirmation: React.FC = () => {
             previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={isStepIllegal}
+            nextIsDisabled={!isValidCourtEndTime?.isValid}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
             hideNextButton={workingCase.judge?.id !== user?.id}

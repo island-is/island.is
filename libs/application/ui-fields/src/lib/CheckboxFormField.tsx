@@ -6,6 +6,7 @@ import {
   FieldBaseProps,
   formatText,
   getValueViaPath,
+  buildFieldOptions,
 } from '@island.is/application/core'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
@@ -13,7 +14,6 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { buildOptions } from '../utils'
 import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
@@ -28,7 +28,7 @@ const CheckboxFormField: FC<Props> = ({
   const { id, title, description, options, disabled, large } = field
   const { formatMessage } = useLocale()
 
-  const finalOptions = useMemo(() => buildOptions(options, application), [
+  const finalOptions = useMemo(() => buildFieldOptions(options, application), [
     options,
     application,
   ])
