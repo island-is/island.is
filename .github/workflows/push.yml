@@ -210,7 +210,8 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: docker-yarn-cache
-          path: yarn-cache.tar # or path/to/artifact
+          path: yarn-cache.tar
+          retention-days: 1
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
