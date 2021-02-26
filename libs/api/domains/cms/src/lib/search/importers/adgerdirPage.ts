@@ -5,11 +5,7 @@ import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { IVidspyrnaPage } from '../../generated/contentfulTypes'
 import { mapAdgerdirPage } from '../../models/adgerdirPage.model'
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 
 import {
   createTerms,
@@ -31,7 +27,7 @@ export class AdgerdirPageSyncService
     )
   }
 
-  doMapping(entries: doMappingInput<IVidspyrnaPage>) {
+  doMapping(entries: IVidspyrnaPage[]) {
     logger.info('Mapping adgerdir page', { count: entries.length })
 
     return entries
