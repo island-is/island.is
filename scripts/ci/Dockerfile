@@ -10,7 +10,7 @@ ADD package.json yarn.lock ./
 
 RUN mkdir -p /build/scripts
 ADD ./scripts/postinstall.js /build/scripts/
-ENV NODE_ENV=production
+#ENV NODE_ENV=production
 CMD CI=true yarn install --frozen-lockfile
 # CMD yarn cache dir
 
@@ -21,10 +21,10 @@ ADD . .
 FROM src as builder
 ARG APP
 ENV APP=${APP}
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-CMD CI=true yarn install --frozen-lockfile && \
+CMD CI=true yarn install --frozen-lockfile --offline && \
     yarn run build ${APP} --prod
 
 FROM node:12.19.0-alpine3.11 as output-base
