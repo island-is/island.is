@@ -10,8 +10,8 @@ import {
 import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { FormValidation, useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import * as styles from './StepOne.treat'
-import { FormValidation, useCaseFormHelper } from 'apps/judicial-system/web/src/utils/useFormHelper'
 
 interface Props {
   case: Case
