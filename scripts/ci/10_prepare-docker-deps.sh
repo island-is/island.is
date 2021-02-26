@@ -13,6 +13,6 @@ docker build \
   --tag=deps \
   $PROJECT_ROOT
 
-docker run --rm -it -v $PROJECT_ROOT/cache:/usr/local/share/.cache deps 
+docker run --rm -v $PROJECT_ROOT/cache:/usr/local/share/.cache deps 
 
 # store $PROJECT_ROOT/cache 
