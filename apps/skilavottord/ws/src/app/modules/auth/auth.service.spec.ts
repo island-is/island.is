@@ -18,7 +18,7 @@ describe('AuthService', () => {
     role: '',
   }
 
-  const users = `[{ "nationalId":"2310765229", "name": "Vésteinn Viðarsson", "role":"developer", "partnerId":""},
+  const userList = `[{ "nationalId":"2310765229", "name": "Vésteinn Viðarsson", "role":"developer", "partnerId":""},
 { "nationalId":"0602773039", "name": "Bjarki Már Flosason", "role":"developer", "partnerId":""},
 { "nationalId":"1505664449","name": "Rúnar Sigurður Guðlaugsson", "role":"developer", "partnerId":""},
 { "nationalId":"0202614989","name": "Guðlaugur Gylfi Sverrisson", "role":"recyclingFund", "partnerId":""},
