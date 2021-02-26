@@ -205,12 +205,11 @@ export const Overview: React.FC = () => {
                         workingCase.parentCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `${capitalize(
+                    : workingCase.arrestDate
+                    ? `${capitalize(
                         formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                      )} kl. ${formatDate(
-                        workingCase.arrestDate,
-                        TIME_FORMAT,
-                      )}`,
+                      )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                    : 'Var ekki skráður',
                 },
               ]}
               accusedName={workingCase.accusedName}
