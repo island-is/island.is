@@ -12,7 +12,7 @@ export const ParentBForm: Form = buildForm({
   id: 'ParentBForm',
   title: m.application.name,
   logo: Logo,
-  mode: FormModes.APPLYING,
+  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'approveTermsParentB',
