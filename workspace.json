@@ -283,7 +283,8 @@
             "outputPath": "dist/apps/air-discount-scheme/web",
             "main": "apps/air-discount-scheme/web/server.ts",
             "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "assets": ["apps/air-discount-scheme/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -1969,7 +1970,8 @@
             "outputPath": "dist/apps/auth-admin-web",
             "main": "apps/auth-admin-web/server.ts",
             "tsConfig": "apps/auth-admin-web/tsconfig.json",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "assets": ["apps/auth-admin-web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -2753,7 +2755,8 @@
             "outputPath": "dist/apps/gjafakort/web",
             "main": "apps/gjafakort/web/server.ts",
             "tsConfig": "apps/gjafakort/web/tsconfig.json",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "assets": ["apps/gjafakort/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -5402,7 +5405,8 @@
             "outputPath": "dist/apps/skilavottord/web",
             "main": "apps/skilavottord/web/server.ts",
             "tsConfig": "apps/skilavottord/web/tsconfig.json",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "assets": ["apps/skilavottord/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -5717,7 +5721,8 @@
             "outputPath": "dist/apps/web",
             "main": "apps/web/server.ts",
             "tsConfig": "apps/web/tsconfig.json",
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "assets": ["apps/web/next-modules"]
           },
           "configurations": {
             "production": {
