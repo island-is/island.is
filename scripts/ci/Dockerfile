@@ -24,7 +24,8 @@ ENV APP=${APP}
 # ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-CMD CI=true yarn install --frozen-lockfile --cache-folder /usr/local/share/.cache && \
+CMD CI=true yarn install --frozen-lockfile && \
+    yarn run postinstall && \
     yarn run build ${APP} --prod
 
 FROM node:12.19.0-alpine3.11 as output-base
