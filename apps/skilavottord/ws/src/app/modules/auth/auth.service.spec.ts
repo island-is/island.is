@@ -23,14 +23,13 @@ describe('skilavottordApiTest', () => {
   //     role: '',
   //   }
 
-  //   const userList = `[{ "nationalId":"2310765229", "name": "Vésteinn Viðarsson", "role":"developer", "partnerId":""},
-  // { "nationalId":"0602773039", "name": "Bjarki Már Flosason", "role":"developer", "partnerId":""},
-  // { "nationalId":"1505664449","name": "Rúnar Sigurður Guðlaugsson", "role":"developer", "partnerId":""},
-  // { "nationalId":"0202614989","name": "Guðlaugur Gylfi Sverrisson", "role":"recyclingFund", "partnerId":""},
-  // { "nationalId":"0305695639","name": "Ása Hauksdóttir", "role":"recyclingFund", "partnerId":""},
-  // { "nationalId":"1111111111","name": "Gervimaður", "role":"recyclingCompany", "partnerId":"999"}
+  //   const userList = `[{ "nationalId":"2310765229", "name": "xxxxxxxxxxxxxxxxxx", "role":"developer", "partnerId":""},
+  // { "nationalId":"1111111111", "name": "xxxxxxxxxxxxxxxxxxx", "role":"developer", "partnerId":""},
+  // { "nationalId":"1111111111","name": "xxxxxxxxxxxxxxxxxxxxxxxxxx", "role":"developer", "partnerId":""},
+  // { "nationalId":"1111111111","name": "xxxxxxxxxxxxxxxxxxxxxxxxxx", "role":"recyclingFund", "partnerId":""},
+  // { "nationalId":"1111111111","name": "xxxxxxxxxxxxxxx", "role":"recyclingFund", "partnerId":""},
+  // { "nationalId":"1111111111","name": "xxxxxxxxxx", "role":"recyclingCompany", "partnerId":"999"}
   // ]`
-
   //   beforeEach(async () => {
   //     const moduleRef = await Test.createTestingModule({
   //       providers: [AuthService],
