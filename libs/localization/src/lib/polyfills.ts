@@ -33,7 +33,7 @@ export async function polyfill(locale: string) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((Intl.DateTimeFormat as any).polyfilled) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     dataPolyfills.push(import('@formatjs/intl-datetimeformat/add-all-tz'))
     dataPolyfills.push(

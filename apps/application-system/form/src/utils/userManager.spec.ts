@@ -75,7 +75,7 @@ describe('UserManager', () => {
         .spyOn(global.Date, 'now')
         .mockImplementationOnce(() => valueGreaterThanExpiry)
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       userManager.signinSilent = () => {
         throw new Error('')

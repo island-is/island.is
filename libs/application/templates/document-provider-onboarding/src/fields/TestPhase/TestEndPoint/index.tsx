@@ -39,7 +39,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   )
 
   const [endpointExists, setendpointExists] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     formValue.endPointObject?.endPointExists || '',
   )
