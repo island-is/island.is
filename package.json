@@ -31,7 +31,7 @@
     "format": "nx format:write",
     "format:check": "nx format:check",
     "update": "nx migrate latest",
-    "workspace-schematic": "nx workspace-schematic",
+    "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",

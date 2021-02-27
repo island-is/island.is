@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'application-template-parental-leave',
-  preset: '../../../../jest.config.js',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -10,4 +9,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '../../../../coverage/libs/application/templates/parental-leave',
+  displayName: 'application-templates-parental-leave',
 }

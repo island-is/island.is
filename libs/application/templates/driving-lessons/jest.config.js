@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'application-template-driving-lessons',
-  preset: '../../../../jest.config.js',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -10,4 +9,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '../../../../coverage/libs/application/templates/driving-lessons',
+  displayName: 'application-templates-driving-lessons',
 }
