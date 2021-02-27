@@ -7,7 +7,7 @@ import { coreMessages } from '@island.is/application/core'
 import useAuth from '../hooks/useAuth'
 
 export const Application = () => {
-  const { id } = useParams()
+  const { id } = useParams<{ id: string }>()
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
 

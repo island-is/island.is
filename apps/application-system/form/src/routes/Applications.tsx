@@ -22,7 +22,7 @@ import { useLocale } from '@island.is/localization'
 import useAuth from '../hooks/useAuth'
 
 export const Applications: FC = () => {
-  const { type } = useParams()
+  const { type } = useParams<{ type: string }>()
   const history = useHistory()
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
