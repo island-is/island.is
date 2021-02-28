@@ -2345,6 +2345,9 @@
           "options": {
             "outputPath": "dist/contentful-translation-extension",
             "command": "contentful-extension-scripts build --input libs/contentful-translation-extension --output dist/contentful-translation-extension"
+          },
+          "configurations": {
+            "production": {}
           }
         },
         "docker-static": {}
