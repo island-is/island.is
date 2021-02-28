@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { ExtendedUserManager, settings } from './userManager'
 
 // seconds
