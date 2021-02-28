@@ -25,7 +25,7 @@ export default {
     restPassword: process.env.FJARSYSLA_REST_PASS,
   },
   skilavottord: {
-    userList: process.env.USER,
+    userList: process.env.SKILAVOTTORD_USER_LIST ?? '[]',
   },
   backendUrl: 'http://localhost:3333',
 }
