@@ -1,5 +1,5 @@
 {
-  "extends": ["../../../.eslintrc.react.json"],
+  "extends": ["plugin:@nrwl/nx/react", "../../../.eslintrc"],
   "rules": {
     "@typescript-eslint/no-var-requires": "off"
   },
