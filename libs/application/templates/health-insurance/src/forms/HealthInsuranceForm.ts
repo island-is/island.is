@@ -314,7 +314,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
               placeholder: m.formerInsuranceCountryPlaceholder,
-              loadingError: 'Could not load country list',
+              loadingError: m.formerInsuranceCountryError,
               loadOptions: async () => {
                 const countries = await fetch(
                   'https://restcountries.eu/rest/v2/all',
