@@ -15,3 +15,8 @@ export const createGoProCaseContainer = style({
   gridTemplateColumns: '144px 1fr',
   columnGap: theme.spacing[2],
 })
+
+export const createGoProCaseButton = style({
+  display: 'flex',
+  maxHeight: theme.spacing[8],
+})

@@ -13,7 +13,6 @@ import {
 import {
   FormFooter,
   PageLayout,
-  CaseNumbers,
   InfoCard,
   PdfButton,
   BlueBox,
@@ -41,6 +40,7 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
@@ -62,11 +62,11 @@ export const JudgeOverview: React.FC = () => {
 
   const [
     createCustodyCourtCaseMutation,
-    { loading: createLoading },
+    { loading: creatingCustodyCourtCase },
   ] = useMutation(CreateCustodyCourtCaseMutation)
 
-  const createCase = async (): Promise<string | undefined> => {
-    if (createLoading === false) {
+  const createCase = async (): Promise<void> => {
+    if (creatingCustodyCourtCase === false) {
       const { data } = await createCustodyCourtCaseMutation({
         variables: {
           input: {
@@ -76,11 +76,17 @@ export const JudgeOverview: React.FC = () => {
         },
       })
 
-      const resCase: Case = data?.createCase
-      return resCase.id
+      if (workingCase && data) {
+        setAndSendToServer(
+          'courtCaseNumber',
+          data.createCustodyCourtCase.courtCaseNumber,
+          workingCase,
+          setWorkingCase,
+          updateCase,
+        )
+        setCourtCaseNumberErrorMessage('')
+      }
     }
-
-    return undefined
   }
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -179,18 +185,30 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <BlueBox>
               <div className={styles.createGoProCaseContainer}>
-                <Button size="small" onClick={createCase} fluid>
-                  Stofna mál
-                </Button>
+                <div className={styles.createGoProCaseButton}>
+                  <Button
+                    size="small"
+                    onClick={createCase}
+                    loading={creatingCustodyCourtCase}
+                    disabled={!!workingCase.courtCaseNumber}
+                    fluid
+                  >
+                    Stofna mál
+                  </Button>
+                </div>
                 <Input
                   data-testid="courtCaseNumber"
                   name="courtCaseNumber"
                   label="Mál nr."
                   placeholder="Málsnúmer birtist hér með því að smella á stofna mál"
-                  defaultValue={workingCase.courtCaseNumber}
-                  errorMessage={courtCaseNumberErrorMessage}
-                  hasError={courtCaseNumberErrorMessage !== ''}
                   size="sm"
+                  disabled={creatingCustodyCourtCase}
+                  value={workingCase.courtCaseNumber}
+                  errorMessage={courtCaseNumberErrorMessage}
+                  hasError={
+                    !creatingCustodyCourtCase &&
+                    courtCaseNumberErrorMessage !== ''
+                  }
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'courtCaseNumber',

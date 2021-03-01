@@ -96,7 +96,7 @@ export const CreateCustodyCourtCaseMutation = gql`
     $input: CreateCustodyCourtCaseInput!
   ) {
     createCustodyCourtCase(input: $input) {
-      id
+      courtCaseNumber
     }
   }
 `
