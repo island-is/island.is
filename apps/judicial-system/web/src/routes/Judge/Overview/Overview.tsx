@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Box, Text, Input } from '@island.is/island-ui/core'
+import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -16,6 +16,7 @@ import {
   CaseNumbers,
   InfoCard,
   PdfButton,
+  BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -44,6 +45,7 @@ import {
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
+import { CreateCustodyCourtCaseMutation } from '../../../utils/mutations'
 
 interface CaseData {
   case?: Case
@@ -57,6 +59,29 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
+
+  const [
+    createCustodyCourtCaseMutation,
+    { loading: createLoading },
+  ] = useMutation(CreateCustodyCourtCaseMutation)
+
+  const createCase = async (): Promise<string | undefined> => {
+    if (createLoading === false) {
+      const { data } = await createCustodyCourtCaseMutation({
+        variables: {
+          input: {
+            caseId: workingCase?.id,
+            policeCaseNumber: workingCase?.policeCaseNumber,
+          },
+        },
+      })
+
+      const resCase: Case = data?.createCase
+      return resCase.id
+    }
+
+    return undefined
+  }
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -146,46 +171,51 @@ export const JudgeOverview: React.FC = () => {
               }`}
             </Text>
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={6}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Málsnúmer héraðsdóms
               </Text>
             </Box>
-            <Box marginBottom={1}>
-              <Input
-                data-testid="courtCaseNumber"
-                name="courtCaseNumber"
-                label="Slá inn málsnúmer"
-                placeholder="R-X/ÁÁÁÁ"
-                defaultValue={workingCase.courtCaseNumber}
-                errorMessage={courtCaseNumberErrorMessage}
-                hasError={courtCaseNumberErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'courtCaseNumber',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    courtCaseNumberErrorMessage,
-                    setCourtCaseNumberErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'courtCaseNumber',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setCourtCaseNumberErrorMessage,
-                  )
-                }
-                required
-              />
-            </Box>
-            <CaseNumbers workingCase={workingCase} />
+            <BlueBox>
+              <div className={styles.createGoProCaseContainer}>
+                <Button size="small" onClick={createCase} fluid>
+                  Stofna mál
+                </Button>
+                <Input
+                  data-testid="courtCaseNumber"
+                  name="courtCaseNumber"
+                  label="Mál nr."
+                  placeholder="Málsnúmer birtist hér með því að smella á stofna mál"
+                  defaultValue={workingCase.courtCaseNumber}
+                  errorMessage={courtCaseNumberErrorMessage}
+                  hasError={courtCaseNumberErrorMessage !== ''}
+                  size="sm"
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'courtCaseNumber',
+                      event,
+                      ['empty'],
+                      workingCase,
+                      setWorkingCase,
+                      courtCaseNumberErrorMessage,
+                      setCourtCaseNumberErrorMessage,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'courtCaseNumber',
+                      event.target.value,
+                      ['empty'],
+                      workingCase,
+                      updateCase,
+                      setCourtCaseNumberErrorMessage,
+                    )
+                  }
+                  required
+                />
+              </div>
+            </BlueBox>
           </Box>
           <Box component="section" marginBottom={5}>
             <InfoCard
