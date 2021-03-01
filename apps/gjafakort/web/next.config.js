@@ -40,7 +40,7 @@ module.exports = withSourceMaps(
       SENTRY_DSN,
     },
     env: {
-      API_MOCKS: process.env.API_MOCKS ?? '',
+      API_MOCKS: process.env.API_MOCKS || '',
     },
   }),
 )
