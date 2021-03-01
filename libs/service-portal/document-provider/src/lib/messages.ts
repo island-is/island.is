@@ -89,7 +89,7 @@ export const m = defineMessages({
   //DocumentProviders
   documentProvidersTitle: {
     id: 'sp.document-provider:document-providers-title',
-    defaultMessage: 'Skjalaveitur',
+    defaultMessage: 'Skjalaveitendur',
   },
   documentProvidersDescription: {
     id: 'sp.document-provider:document-providers-description',
