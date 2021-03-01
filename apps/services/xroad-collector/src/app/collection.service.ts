@@ -916,20 +916,17 @@ export class CollectionService {
     // with a name that starts with something like this: apicatalogue-dev
 
     let workerIndicesToDelete
-    try {
-      workerIndicesToDelete = await this.elasticService
-        .fetchAllIndices({
-          format: 'json',
-          index: `${this.getWorkerPrefix()}*`, // e.g. apicatalogue2-dev*
-        })
-        .then((res) => res.map((e) => e.index))
-      if (!workerIndicesToDelete?.length) {
-        throw new Error(
-          `An error occurred.  No index name is associated with alias ${this.getWorkerPrefix()}`,
-        )
-      }
-    } catch (err) {
-      throw err
+    workerIndicesToDelete = await this.elasticService
+      .fetchAllIndices({
+        format: 'json',
+        index: `${this.getWorkerPrefix()}*`, // e.g. apicatalogue2-dev*
+      })
+      .then((res) => res.map((e) => e.index))
+
+    if (!workerIndicesToDelete?.length) {
+      throw new Error(
+        `An error occurred.  No index name is associated with alias ${this.getWorkerPrefix()}`,
+      )
     }
 
     logger.debug(

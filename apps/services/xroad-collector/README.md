@@ -35,5 +35,4 @@ The description of the collection process can be found [here](docs/collection-pr
 
 - [Advania](https://github.com/orgs/island-is/teams/advania/members)
 
-
 [here](.\docs\collection-process.md)
