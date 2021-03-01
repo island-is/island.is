@@ -1,5 +1,5 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/judicial-system/types'
@@ -9,9 +9,10 @@ import {
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
+import { BackendAPI } from '../../../services'
 import { AuditService } from '../audit'
+import { Case } from '../case'
 import { CreateCustodyCourtCaseInput } from './dto'
-import { CreateCustodyCourtCaseResponse } from './models'
 import { CourtService } from './court.service'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -24,12 +25,13 @@ export class CourtResolver {
     private readonly logger: Logger,
   ) {}
 
-  @Mutation(() => CreateCustodyCourtCaseResponse, { nullable: true })
-  createCustodyCourtCase(
+  @Mutation(() => Case, { nullable: true })
+  async createCustodyCourtCase(
     @Args('input', { type: () => CreateCustodyCourtCaseInput })
     input: CreateCustodyCourtCaseInput,
     @CurrentGraphQlUser() user: User,
-  ): Promise<CreateCustodyCourtCaseResponse> {
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Case> {
     const { caseId, policeCaseNumber } = input
 
     this.logger.info(`Creating custody court case for case ${caseId}`)
@@ -37,7 +39,11 @@ export class CourtResolver {
     return this.auditService.audit(
       user.id,
       AuditedAction.CREATE_CUSTODY_COURT_CASE,
-      this.courtService.createCustodyCourtCase(policeCaseNumber),
+      backendApi.updateCase(caseId, {
+        courtCaseNumber: await this.courtService.createCustodyCourtCase(
+          policeCaseNumber,
+        ),
+      }),
       caseId,
     )
   }
