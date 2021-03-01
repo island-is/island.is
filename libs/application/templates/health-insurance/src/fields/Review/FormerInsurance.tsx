@@ -17,11 +17,12 @@ import {
 } from '@island.is/shared/form-fields'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
-
 import { m } from '../../forms/messages'
 import { ReviewFieldProps } from '../../types'
-import CountrySelectField from '../CountrySelectField/CountrySelectField'
-import { requireConfirmationOfResidency } from '../../healthInsuranceUtils'
+import {
+  requireConfirmationOfResidency,
+  extractKeyFromStringObject,
+} from '../../healthInsuranceUtils'
 
 const FormerInsurance: FC<ReviewFieldProps> = ({
   application,
@@ -85,11 +86,18 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
         />
         <GridRow>
           <GridColumn span="12/12">
-            <CountrySelectField
-              field={{ ...field, id: 'formerInsurance.country' }}
-              application={application}
-              isEditable={false}
-              isReviewField={true}
+            <Input
+              id=""
+              name=""
+              label={formatText(
+                m.formerInsuranceCountry,
+                application,
+                formatMessage,
+              )}
+              ref={register}
+              disabled={!isEditable}
+              backgroundColor="white"
+              value={extractKeyFromStringObject(country, 'name')}
             />
           </GridColumn>
         </GridRow>

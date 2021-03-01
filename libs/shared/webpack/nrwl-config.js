@@ -27,7 +27,7 @@ const setApiMocks = (config) => {
 
       // Set API_MOCKS so it's always set before webpack does its things
       plugin.definitions['process.env.API_MOCKS'] = JSON.stringify(
-        process.env.API_MOCKS ?? '',
+        process.env.API_MOCKS || '',
       )
     }
   })
