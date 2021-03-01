@@ -861,6 +861,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Umsókn þín er samþykkt',
       description: 'Your application is in approved',
     },
+    estimatedBirthDate: {
+      id: 'pl.application:review.estimatedBirthDate',
+      defaultMessage: 'Áætlaður fæðingardagur',
+      description: 'Estimated date of birth',
+    },
     desc: {
       id: 'pl.application:review.desc',
       defaultMessage: 'Hér að neðan eru skrefin sem gerast næst.',

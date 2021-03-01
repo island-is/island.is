@@ -114,19 +114,23 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
 
   return (
     <Box marginBottom={10}>
-      <Box display={['block', 'flex']} justifyContent="spaceBetween">
+      <Box
+        display={['block', 'block', 'block', 'flex']}
+        justifyContent="spaceBetween"
+      >
         <Text variant="h4" color="blue400">
-          {/* {(screenState === 'steps' &&
-            formatMessage(parentalLeaveFormMessages.reviewScreen.desc)) ||
-            formatMessage(parentalLeaveFormMessages.reviewScreen.descReview)} */}
-          Birth estimated {format(dobDate, 'dd.MM.yyyy')}
+          {formatMessage(
+            parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
+          )}
+          <br />
+          {format(dobDate, 'dd.MM.yyyy')}
         </Text>
         <Box>
           <Box
             display={['block', 'inlineBlock']}
-            marginLeft={[0, 1]}
+            marginLeft={[0, 0, 0, 0]}
             marginRight={2}
-            marginTop={[1, 0]}
+            marginTop={[2, 2, 2, 0]}
             marginBottom={[1, 0]}
           >
             <Button
