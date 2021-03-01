@@ -1,6 +1,6 @@
 import { VehicleInformation } from './samgongustofa.model'
 import { Injectable, HttpService, Inject } from '@nestjs/common'
-import xml2js from 'xml2js'
+import * as xml2js from 'xml2js'
 import { environment } from '../../../../environments'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { RecyclingRequestService } from '../../recycling.request/recycling.request.service'
@@ -226,46 +226,52 @@ export class SamgongustofaService {
                   ][0]['basicVehicleInformationReturn'][0]['_'],
                 )
                 .then(function (basicInfo) {
-                  // If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
-                  /*if (
-                    !(
-                      basicInfo['vehicle']['updatelocks'][0] == '' &&
-                      basicInfo['vehicle']['stolens'][0] == '' &&
-                      basicInfo['vehicle']['ownerregistrationerrors'][0] == ''
-                    )
-                  ) {
-                    newVehicleArr[i]['isRecyclable'] = false
-                  }*/
-                  // If there is any information in updatelocks and there is nothing in enddate (lock is acive)then we may not deregister it
+                  //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
-                    !(basicInfo['vehicle']['updatelocks'][0] == '') &&
-                    basicInfo['vehicle']['updatelocks']['updatelock'][
-                      'enddate'
-                    ][0] == ''
+                    typeof basicInfo.vehicle.ownerregistrationerrors[0]
+                      .ownerregistrationerror != 'undefined'
                   ) {
-                    this.logger.info(
-                      `--- Car ${carObj['permno']} has updatelocks and no enddate - not recyclable  `,
+                    //Handle registrationerror
+                    loggerReplacement.info(
+                      'vehicle has ownerregistrationerrors',
                     )
-                    newVehicleArr[i]['isRecyclable'] = false
-                    // If there is any information in stolens and there is nothing in enddate (lock is acive)then we may not deregister it
-                  } else if (
-                    !(basicInfo['vehicle']['stolens'][0] == '') &&
-                    basicInfo['vehicle']['stolens']['stolen']['enddate'][0] ==
-                      ''
-                  ) {
-                    this.logger.info(
-                      `--- Car ${carObj['permno']} has been stolen and no enddate - not recyclable  `,
-                    )
-                    newVehicleArr[i]['isRecyclable'] = false
-                    // If there is any information in ownerregistrationerrors and there is nothing in enddate (lock is acive)then we may not deregister it
-                  } else if (
-                    !(basicInfo['vehicle']['ownerregistrationerrors'][0] == '')
-                  ) {
-                    this.logger.info(
-                      `--- Car ${carObj['permno']} has ownerregistrationerror and no enddate - not recyclable  `,
-                    )
-                    newVehicleArr[i]['isRecyclable'] = false
+                    newVehicleArr[i].isRecyclable = false
                   }
+                  if (
+                    //Handle stolen
+                    typeof basicInfo.vehicle.stolens[0].stolen != 'undefined'
+                  ) {
+                    for (const stolenEndDate of basicInfo.vehicle.stolens[0]
+                      .stolen) {
+                      if (!stolenEndDate.enddate[0].trim()) {
+                        loggerReplacement.info('vehicle is stolen')
+                        newVehicleArr[i].isRecyclable = false
+                        break
+                      }
+                    }
+                  }
+                  if (
+                    typeof basicInfo.vehicle.updatelocks[0].updatelock !=
+                    'undefined'
+                  ) {
+                    //Handle lock
+                    for (const lockEndDate of basicInfo.vehicle.updatelocks[0]
+                      .updatelock) {
+                      if (!lockEndDate.enddate[0].trim()) {
+                        loggerReplacement.info('vehicle is locked')
+                        newVehicleArr[i].isRecyclable = false
+                        break
+                      }
+                    }
+                  }
+                  if (newVehicleArr[i].isRecyclable) {
+                    loggerReplacement.info(
+                      'vehicle is clean. not stolen, not locked, no registrationerror',
+                    )
+                  }
+                  loggerReplacement.info(
+                    'isRecycleble=' + newVehicleArr[i].isRecyclable,
+                  )
                   return newVehicleArr[i]
                 })
                 .catch(function (err) {
@@ -319,5 +325,10 @@ export class SamgongustofaService {
       )
       throw new Error('Failed on getting vehicles information...')
     }
+  }
+
+  /* test */
+  static test(): any {
+    return 'test'
   }
 }

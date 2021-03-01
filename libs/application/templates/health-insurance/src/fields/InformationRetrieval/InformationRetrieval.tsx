@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
 import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
 import * as styles from './InformationRetrieval.treat'
+import Markdown from 'markdown-to-jsx'
 
 interface DataRetrievalContent {
   title: string
@@ -83,7 +84,11 @@ const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
         <Checkbox
           checked={true}
           onChange={() => true}
-          label={formatText(m.externalDataCheckbox, application, formatMessage)}
+          label={
+            <Markdown>
+              {formatText(m.externalDataCheckbox, application, formatMessage)}
+            </Markdown>
+          }
         />
       </Box>
     </Box>

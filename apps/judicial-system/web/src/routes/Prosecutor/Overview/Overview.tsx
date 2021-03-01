@@ -157,7 +157,7 @@ export const Overview: React.FC = () => {
                 workingCase.parentCase ? 'framlengingu á' : ''
               } ${
                 workingCase.type === CaseType.CUSTODY
-                  ? 'gæslu'
+                  ? `gæsluvarðhald${workingCase.parentCase ? 'i' : ''}`
                   : `farbann${workingCase.parentCase ? 'i' : ''}`
               }`}
             </Text>
@@ -205,12 +205,11 @@ export const Overview: React.FC = () => {
                         workingCase.parentCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `${capitalize(
+                    : workingCase.arrestDate
+                    ? `${capitalize(
                         formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                      )} kl. ${formatDate(
-                        workingCase.arrestDate,
-                        TIME_FORMAT,
-                      )}`,
+                      )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                    : 'Var ekki skráður',
                 },
               ]}
               accusedName={workingCase.accusedName}
@@ -328,9 +327,6 @@ export const Overview: React.FC = () => {
             </Accordion>
           </Box>
           <Box className={styles.prosecutorContainer}>
-            <Box marginBottom={1}>
-              <Text>F.h.l</Text>
-            </Box>
             <Text variant="h3">
               {workingCase.prosecutor
                 ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`

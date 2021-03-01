@@ -11,9 +11,9 @@ describe('/domur/urskurdur/:id', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should not display the custody/travel ban end date if a decision has not been made', () => {
-    // TODO: Find a way to test that this section appears when a decision is made.
+  it('should not display the custody/travel ban end date if a decision is rejected', () => {
     cy.wait('@gqlUpdateCaseMutatation')
+    cy.get('#case-decision-rejecting').check()
     cy.getByTestid('caseDecisionSection').should('not.exist')
   })
 

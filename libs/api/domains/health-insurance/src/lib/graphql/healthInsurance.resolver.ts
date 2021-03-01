@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, Args } from '@nestjs/graphql'
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql'
 
 import {
   IdsAuthGuard,
@@ -46,11 +46,11 @@ export class HealthInsuranceResolver {
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
 
-  @Query(() => VistaSkjalModel, {
+  @Mutation(() => VistaSkjalModel, {
     name: 'healthInsuranceApplyInsurance',
   })
   async healthInsuranceApplyInsurance(
-    @Args({ name: 'input', type: () => VistaSkjalInput })
+    @Args({ name: 'inputs', type: () => VistaSkjalInput })
     inputs: VistaSkjalInput,
     @CurrentUser() user: AuthUser,
   ): Promise<VistaSkjalModel> {

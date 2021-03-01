@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Inject,
   NotFoundException,
@@ -11,8 +12,13 @@ import {
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { NotificationType, UserRole } from '@island.is/judicial-system/types'
 import {
+  NotificationType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRule,
@@ -21,7 +27,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { UserService } from '../user'
-import { CaseService } from '../case'
+import { CaseService, isCaseBlockedFromUser } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
@@ -70,11 +76,17 @@ export class NotificationController {
     private readonly logger: Logger,
   ) {}
 
-  private async findCaseById(id: string) {
+  private async findCaseById(id: string, user: User) {
     const existingCase = await this.caseService.findById(id)
 
     if (!existingCase) {
       throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (isCaseBlockedFromUser(existingCase, user)) {
+      throw new ForbiddenException(
+        `User ${user.id} does not have access to case ${id}`,
+      )
     }
 
     return existingCase
@@ -92,9 +104,10 @@ export class NotificationController {
   })
   async sendNotificationByCaseId(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.findCaseById(id, user)
 
     return this.notificationService.sendCaseNotification(
       notification,
@@ -110,8 +123,9 @@ export class NotificationController {
   })
   async getAllNotificationsById(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
   ): Promise<Notification[]> {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.findCaseById(id, user)
 
     return this.notificationService.getAllCaseNotifications(existingCase)
   }

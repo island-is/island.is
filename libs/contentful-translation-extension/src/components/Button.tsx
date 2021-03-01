@@ -12,8 +12,9 @@ export const ICONS = [
   { id: 'format_italic', src: require('../assets/italic.png') },
   { id: 'format_underlined', src: require('../assets/underlined.png') },
   { id: 'insert_link', src: require('../assets/insert_link.png') },
-  { id: 'looks_one', src: require('../assets/looks_one.png') },
   { id: 'looks_two', src: require('../assets/looks_two.png') },
+  { id: 'looks_three', src: require('../assets/looks_three.png') },
+  { id: 'looks_four', src: require('../assets/looks_four.png') },
   { id: 'format_list_numbered', src: require('../assets/list_numbered.png') },
   { id: 'format_list_bulleted', src: require('../assets/list_bulleted.png') },
 ]

@@ -20,21 +20,16 @@ import {
 type UploadFileAnswer = {
   name: string
   key?: string
-  url?: string
 }
 
 // Transform an uploaded file to an form answer.
-const transformToAnswer = ({
-  name,
-  key,
-  url,
-}: UploadFile): UploadFileAnswer => {
-  return { name, key, url }
+const transformToAnswer = ({ name, key }: UploadFile): UploadFileAnswer => {
+  return { name, key }
 }
 
 // Transform an form answer to an uploaded file object to display.
-const answerToUploadFile = ({ name, key, url }: UploadFile): UploadFile => {
-  return { name, key, url, status: 'done' }
+const answerToUploadFile = ({ name, key }: UploadFile): UploadFile => {
+  return { name, key, status: 'done' }
 }
 
 function reducer(state: UploadFile[], action: Action) {
@@ -53,7 +48,6 @@ function reducer(state: UploadFile[], action: Action) {
           file.status = action.payload.status
           file.percent = action.payload.percent
           file.key = action.payload.key
-          file.url = action.payload.url
         }
         return file
       })
@@ -103,7 +97,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
 
   useEffect(() => {
     const onlyUploadedFiles = state.filter(
-      (f: UploadFile) => f.key && f.url && f.status === 'done',
+      (f: UploadFile) => f.key && f.status === 'done',
     )
 
     const uploadAnswer: UploadFileAnswer[] = onlyUploadedFiles.map(
@@ -141,7 +135,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
       })
 
       // Done!
-      return Promise.resolve({ url: response.url, key: fields.key })
+      return Promise.resolve({ key: fields.key })
     } catch {
       // TODO: Translate
       setUploadError('An error occurred uploading one or more files')
@@ -188,7 +182,6 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
             status: 'done',
             percent: 100,
             key: res.key,
-            url: res.url,
           },
         })
       } catch {
@@ -243,7 +236,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
             buttonLabel={buttonLabel}
             onChange={onFileChange}
             onRemove={onRemoveFile}
-            errorMessage={uploadError}
+            errorMessage={uploadError || error}
             multiple={multiple}
             accept={accept}
             maxSize={maxSize}
