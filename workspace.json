@@ -1729,6 +1729,34 @@
         }
       }
     },
+    "application-templates-party-letter": {
+      "root": "libs/application/templates/party-letter",
+      "sourceRoot": "libs/application/templates/party-letter/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/party-letter/tsconfig.lib.json",
+              "libs/application/templates/party-letter/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/party-letter/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-letter/src/lib/messages.ts'"
+          }
+        }
+      }
+    },
     "application-templates-passport": {
       "root": "libs/application/templates/passport",
       "sourceRoot": "libs/application/templates/passport/src",
@@ -2736,6 +2764,32 @@
         }
       }
     },
+    "health-insurance": {
+      "root": "libs/health-insurance",
+      "sourceRoot": "libs/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/health-insurance/tsconfig.lib.json",
+              "libs/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/health-insurance/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/health-insurance/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "infra-express-server": {
       "root": "libs/infra-express-server",
       "sourceRoot": "libs/infra-express-server/src",
@@ -3321,6 +3375,41 @@
         }
       }
     },
+    "judicial-system-court-client": {
+      "root": "libs/judicial-system/court-client",
+      "sourceRoot": "libs/judicial-system/court-client/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/court-client/tsconfig.lib.json",
+              "libs/judicial-system/court-client/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/judicial-system/court-client/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/court-client/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/judicial-system/court-client/gen/fetch -i libs/judicial-system/court-client/src/clientConfig.json"
+          }
+        }
+      }
+    },
     "judicial-system-formatters": {
       "root": "libs/judicial-system/formatters",
       "sourceRoot": "libs/judicial-system/formatters/src",
@@ -3479,7 +3568,7 @@
             }
           }
         },
-        "e2e-ci": {
+        "e2e-no-ci": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn e2e-ci -n judicial-system-web-e2e -t react -d dist/apps/judicial-system/web"
@@ -5367,6 +5456,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/utils/api/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "utils-environment": {
+      "root": "libs/utils/environment",
+      "sourceRoot": "libs/utils/environment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/utils/environment/tsconfig.lib.json",
+              "libs/utils/environment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/utils/environment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/utils/environment/jest.config.js",
             "passWithNoTests": true
           }
         }

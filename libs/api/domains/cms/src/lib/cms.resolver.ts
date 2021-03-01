@@ -210,10 +210,10 @@ export class CmsResolver {
     @Args('input') input: GetAuctionsInput,
   ): Promise<Auction[] | null> {
     return this.cmsContentfulService.getAuctions(
+      input.lang,
       input.organization,
       input.year,
       input.month,
-      input.lang,
     )
   }
 

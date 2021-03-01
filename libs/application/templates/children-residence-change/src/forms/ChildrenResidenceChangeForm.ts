@@ -12,6 +12,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
+import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -74,6 +75,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             buildCustomField({
               id: 'contactInfo',
               title: m.otherParent.general.pageTitle,
+              childInputIds: contactInfoIds,
               component: 'ContactInfo',
             }),
           ],
@@ -125,7 +127,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       children: [
         buildCustomField({
           id: 'approveTerms',
-          title: 'Hvaða áhrif hefur breytingin?',
+          title: m.terms.general.pageTitle,
           component: 'Terms',
         }),
       ],

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import { VistaSkjalModel } from './graphql/models'
 import { HealthInsuranceAPI } from './soap'
@@ -6,7 +6,10 @@ import { VistaSkjalInput } from './types'
 
 @Injectable()
 export class HealthInsuranceService {
-  constructor(private healthInsuranceAPI: HealthInsuranceAPI) {}
+  constructor(
+    @Inject(HealthInsuranceAPI)
+    private healthInsuranceAPI: HealthInsuranceAPI,
+  ) {}
 
   getProfun(): Promise<string> {
     return this.healthInsuranceAPI.getProfun()

@@ -8,7 +8,7 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
-import { ReviewFieldProps, StatusTypes } from '../../types'
+import { ReviewFieldProps, Status, StatusTypes } from '../../types'
 import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
@@ -22,7 +22,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
   const { formatMessage } = useLocale()
 
   const [status, setStatus] = useState(
-    getValueViaPath(application.answers, 'status') as StatusTypes,
+    getValueViaPath(application.answers, 'status') as Status,
   )
 
   const [children, setChildren] = useState(
@@ -42,7 +42,9 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
             disabled={!isEditable}
             largeButtons={true}
             split={'1/2'}
-            onSelect={(value) => setStatus(value as StatusTypes)}
+            onSelect={(value) =>
+              setStatus({ ...status, type: value as StatusTypes })
+            }
             options={[
               {
                 label: m.statusEmployed.defaultMessage,
@@ -87,7 +89,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
             ]}
           />
         </Stack>
-        {status === StatusTypes.STUDENT && (
+        {status.type === StatusTypes.STUDENT && (
           <Box marginBottom={2}>
             <Stack space={4}>
               <TextWithTooltip

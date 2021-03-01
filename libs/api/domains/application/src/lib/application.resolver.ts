@@ -11,6 +11,8 @@ import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { CreatePdfInput } from './dto/createPdf.input'
+import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
+import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -141,5 +143,24 @@ export class ApplicationResolver {
       input,
       user.authorization,
     )
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  requestFileSignature(
+    @Args('input') input: RequestFileSignatureInput,
+    @CurrentUser() user: User,
+  ): Promise<Application> {
+    return this.applicationService.requestFileSignature(
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  uploadSignedFile(
+    @Args('input') input: UploadSignedFileInput,
+    @CurrentUser() user: User,
+  ): Promise<Application> {
+    return this.applicationService.uploadSignedFile(input, user.authorization)
   }
 }
