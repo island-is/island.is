@@ -44,7 +44,9 @@
     },
     "air-discount-scheme/web-e2e": {
       "tags": [],
-      "implicitDependencies": ["air-discount-scheme-web"]
+      "implicitDependencies": [
+        "air-discount-scheme-web"
+      ]
     },
     "api": {
       "tags": []
@@ -132,7 +134,9 @@
     },
     "application-system-form-e2e": {
       "tags": [],
-      "implicitDependencies": ["application-system-form"]
+      "implicitDependencies": [
+        "application-system-form"
+      ]
     },
     "application-template-api-modules": {
       "tags": []
@@ -167,6 +171,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-translations": {
+      "tags": []
+    },
     "application-ui-fields": {
       "tags": []
     },
@@ -178,7 +185,9 @@
     },
     "auth-admin-web-e2e": {
       "tags": [],
-      "implicitDependencies": ["auth-admin-web"]
+      "implicitDependencies": [
+        "auth-admin-web"
+      ]
     },
     "auth-api-lib": {
       "tags": []
@@ -239,11 +248,15 @@
     },
     "gjafakort-web": {
       "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
+      "implicitDependencies": [
+        "gjafakort-api"
+      ]
     },
     "gjafakort-web-e2e": {
       "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
+      "implicitDependencies": [
+        "gjafakort-web"
+      ]
     },
     "infra-express-server": {
       "tags": []
@@ -268,14 +281,18 @@
     },
     "island-ui-core": {
       "tags": [],
-      "implicitDependencies": ["island-ui-theme"]
+      "implicitDependencies": [
+        "island-ui-theme"
+      ]
     },
     "island-ui-fonts": {
       "tags": []
     },
     "island-ui-storybook": {
       "tags": [],
-      "implicitDependencies": ["island-ui-core"]
+      "implicitDependencies": [
+        "island-ui-core"
+      ]
     },
     "island-ui-theme": {
       "tags": []
@@ -309,7 +326,9 @@
     },
     "judicial-system/web-e2e": {
       "tags": [],
-      "implicitDependencies": ["judicial-system-web"]
+      "implicitDependencies": [
+        "judicial-system-web"
+      ]
     },
     "localization": {
       "tags": []
@@ -358,7 +377,9 @@
     },
     "service-portal-e2e": {
       "tags": [],
-      "implicitDependencies": ["service-portal"]
+      "implicitDependencies": [
+        "service-portal"
+      ]
     },
     "service-portal-education": {
       "tags": []
@@ -397,7 +418,9 @@
       "tags": []
     },
     "services-xroad-collector": {
-      "tags": ["api-catalogue-services"]
+      "tags": [
+        "api-catalogue-services"
+      ]
     },
     "shared-babel": {
       "tags": []
@@ -431,7 +454,9 @@
     },
     "skilavottord/web-e2e": {
       "tags": [],
-      "implicitDependencies": ["skilavottord-web"]
+      "implicitDependencies": [
+        "skilavottord-web"
+      ]
     },
     "utils-api": {
       "tags": []
@@ -444,7 +469,9 @@
     },
     "web-e2e": {
       "tags": [],
-      "implicitDependencies": ["web"]
+      "implicitDependencies": [
+        "web"
+      ]
     }
   },
   "affected": {

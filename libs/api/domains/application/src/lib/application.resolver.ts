@@ -1,4 +1,12 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
+import { UseGuards } from '@nestjs/common'
+
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
 import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
@@ -11,18 +19,12 @@ import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { CreatePdfInput } from './dto/createPdf.input'
-import {
-  IdsAuthGuard,
-  ScopesGuard,
-  CurrentUser,
-  User,
-} from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { GetApplicationsInput } from './dto/getApplications.input'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class ApplicationResolver {
-  constructor(private applicationService: ApplicationService) {}
+  constructor(private applicationService: ApplicationService) { }
 
   @Query(() => Application, { nullable: true })
   async getApplication(
@@ -34,9 +36,10 @@ export class ApplicationResolver {
 
   @Query(() => [Application], { nullable: true })
   async getApplications(
+    @Args('input') input: GetApplicationsInput,
     @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findApplications(user.authorization)
+    return this.applicationService.findApplications(user.authorization, input.locale)
   }
 
   @Query(() => [Application], { nullable: true })

@@ -47,7 +47,7 @@ yarn generate @nrwl/react:lib my-lib --linter eslint
 To create a NestJS module:
 
 ```bash
-yarn generate @nrwl/node:lib my-lib
+yarn generate @nrwl/nest:lib my-lib
 ```
 
 To create a JS library that can be used both on the frontend and the backend:

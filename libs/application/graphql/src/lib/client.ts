@@ -31,6 +31,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 })
 
 const authLink = setContext(async (_, { headers }) => {
+  console.log('-token', token);
+
   return {
     headers: {
       ...headers,

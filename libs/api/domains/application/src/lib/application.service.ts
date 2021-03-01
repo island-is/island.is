@@ -11,6 +11,7 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { CreatePdfInput } from './dto/createPdf.input'
+import { GetApplicationsInput } from './dto/getApplications.input'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -28,7 +29,7 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class ApplicationService {
-  constructor(private applicationApi: ApplicationsApi) {}
+  constructor(private applicationApi: ApplicationsApi) { }
 
   async findApplication(id: string, authorization: string) {
     return await this.applicationApi
@@ -39,7 +40,9 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async findApplications(authorization: string) {
+  async findApplications(authorization: string, locale: GetApplicationsInput['locale']) {
+    console.log('-locale', locale);
+
     return await this.applicationApi
       .applicationControllerFindApplications({ authorization })
       .catch(handleError)

@@ -42,6 +42,7 @@ import {
   getApplicationTemplateByTypeId,
 } from '@island.is/application/template-loader'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
+import { TranslationsService } from '@island.is/application/translations'
 
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -89,13 +90,17 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
+    private readonly translationsService: TranslationsService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
-  ) {}
+  ) { }
 
   @Get('applications')
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   async findApplications(): Promise<ApplicationResponseDto[]> {
+    const result = this.translationsService.t('firstTest')
+    console.log('-result', result);
+
     return await this.applicationService.findAll()
   }
 

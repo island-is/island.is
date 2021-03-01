@@ -4,8 +4,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
+import { TranslationsModule } from '@island.is/application/translations'
 // import { AuthModule } from '@island.is/auth-nest-tools'
-
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
@@ -52,8 +52,9 @@ if (process.env.INIT_SCHEMA === 'true') {
     SequelizeModule.forFeature([Application]),
     FileStorageModule,
     BullModule,
+    TranslationsModule,
   ],
   controllers: [ApplicationController],
   providers: [ApplicationService, UploadProcessor, FileService],
 })
-export class ApplicationModule {}
+export class ApplicationModule { }
