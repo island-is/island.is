@@ -32,6 +32,7 @@ import {
   QueryGetNamespaceArgs,
   GetSubpageHeaderQuery,
   QueryGetSubpageHeaderArgs,
+  Namespace,
 } from '@island.is/web/graphql/schema'
 import {
   Query,
@@ -81,9 +82,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   }
   /* --- */
   const { activeLocale } = useI18n()
-  const sn = useNamespace(staticContent)
-  const fn = useNamespace(filterContent)
-  const nn = useNamespace(navigationLinks)
+  const sn = useNamespace(staticContent as Namespace)
+  const fn = useNamespace(filterContent as Namespace)
+  const nn = useNamespace(navigationLinks as Namespace)
 
   const { linkResolver } = useLinkResolver()
 
@@ -101,6 +102,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
           ...prevResult.getApiCatalogue.services,
           ...fetchMoreResult.getApiCatalogue.services,
         ]
+
         return fetchMoreResult
       },
     })
@@ -296,12 +298,12 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   />
                 </Box>
                 <Stack space={1}>
-                  <Text variant="h1">{subpageHeader.title}</Text>
-                  <Text variant="intro">{subpageHeader.summary}</Text>
+                  <Text variant="h1">{subpageHeader?.title}</Text>
+                  <Text variant="intro">{subpageHeader?.summary}</Text>
                   <Stack space={2}>
-                    {subpageHeader.body ? (
+                    {subpageHeader?.body ? (
                       <RichText
-                        body={subpageHeader.body as SliceType[]}
+                        body={subpageHeader?.body as SliceType[]}
                         config={{ defaultPadding: [2, 2, 4] }}
                         locale={activeLocale}
                       />
@@ -318,10 +320,10 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 alignItems="center"
               >
                 <img
-                  src={subpageHeader.featuredImage.url}
-                  alt={subpageHeader.featuredImage.title}
-                  width={subpageHeader.featuredImage.width}
-                  height={subpageHeader.featuredImage.height}
+                  src={subpageHeader?.featuredImage?.url}
+                  alt={subpageHeader?.featuredImage?.title}
+                  width={subpageHeader?.featuredImage?.width}
+                  height={subpageHeader?.featuredImage?.height}
                 />
               </Box>
             }
@@ -421,7 +423,8 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                 />
               </Box>
 
-              {(error || data?.getApiCatalogue?.services.length < 1) && (
+              {(error ||
+                (data && data?.getApiCatalogue?.services.length < 1)) && (
                 <GridContainer>
                   {error ? (
                     <Text>{sn('errorHeading')}</Text>
@@ -432,7 +435,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   )}
                 </GridContainer>
               )}
-              {data?.getApiCatalogue?.services.length > 0 && (
+              {data && data?.getApiCatalogue?.services.length > 0 && (
                 <GridContainer>
                   <ServiceList
                     baseUrl={linkResolver('webservicespage').href + '/'}
@@ -462,22 +465,22 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
 ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
-    {
-      data: { getSubpageHeader: subpageHeader },
-    },
+    subpageHeader,
     staticContent,
     filterContent,
     navigationLinks,
   ] = await Promise.all([
-    apolloClient.query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
-      query: GET_SUBPAGE_HEADER_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-          id: 'VefthjonusturHome',
+    apolloClient
+      .query<GetSubpageHeaderQuery, QueryGetSubpageHeaderArgs>({
+        query: GET_SUBPAGE_HEADER_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            id: 'VefthjonusturHome',
+          },
         },
-      },
-    }),
+      })
+      .then((res) => res?.data?.getSubpageHeader),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -488,7 +491,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) => JSON.parse(res?.data?.getNamespace?.fields ?? '')),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -499,7 +502,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) => JSON.parse(res?.data?.getNamespace?.fields ?? '')),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -510,7 +513,7 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) => JSON.parse(res?.data?.getNamespace?.fields ?? '')),
   ])
 
   return {

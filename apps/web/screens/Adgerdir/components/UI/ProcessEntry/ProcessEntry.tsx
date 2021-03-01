@@ -25,7 +25,7 @@ export const Titles: {
 export interface ProcessEntryProps {
   processTitle: string
   processLink: string
-  openLinkInModal?: boolean
+  openLinkInModal?: boolean | null | undefined
   buttonText: string
   /**
    * render process entry fixed to bottom of screen in a react portal

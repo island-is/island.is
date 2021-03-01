@@ -22,7 +22,7 @@ interface Props {
   onChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
-  onSubmit: (event: React.FormEvent<unknown>) => void
+  onSubmit: (event?: React.FormEvent<HTMLFormElement>) => void
   value: string
 }
 
@@ -70,7 +70,7 @@ export const NewsletterSignup: React.FC<Props> = ({
           marginLeft={[0, 0, 8]}
         >
           <Box>
-            <Button onClick={onSubmit} variant="text">
+            <Button onClick={() => onSubmit()} variant="text">
               {buttonText}
             </Button>
           </Box>

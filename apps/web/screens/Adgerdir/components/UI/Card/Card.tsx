@@ -32,7 +32,6 @@ interface CardProps {
   linkProps?: LinkProps
   href?: string
   as?: string
-  status?: string
 }
 
 export const Card: FC<CardProps> = ({
@@ -42,7 +41,6 @@ export const Card: FC<CardProps> = ({
   tags = [],
   href,
   as,
-  status,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
@@ -126,7 +124,7 @@ export const Card: FC<CardProps> = ({
         })}
       >
         <BackgroundImage
-          positionX={!stackImage ? 'right' : null}
+          positionX={!stackImage ? 'right' : undefined}
           background="transparent"
           backgroundSize="contain"
           image={image}
@@ -173,37 +171,15 @@ export const Card: FC<CardProps> = ({
         borderWidth="standard"
         className={covidStyles.focusableBorderColor[colorScheme]}
       >
-        {status ? (
-          <span
-            className={cn(
-              styles.status,
-              styles.statusPosition,
-              styles.statusType[status],
-            )}
-          ></span>
-        ) : null}
         <Frame>{Content}</Frame>
       </FocusableBox>
     )
   }
 
-  return (
-    <Frame>
-      {status ? (
-        <span
-          className={cn(
-            styles.status,
-            styles.statusPosition,
-            styles.statusType[status],
-          )}
-        ></span>
-      ) : null}
-      {Content}
-    </Frame>
-  )
+  return <Frame>{Content}</Frame>
 }
 
-export const Frame = ({ children }) => {
+export const Frame: FC = ({ children }) => {
   return (
     <Box
       className={cn(styles.card)}

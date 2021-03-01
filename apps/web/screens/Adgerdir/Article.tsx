@@ -17,6 +17,7 @@ import {
   QueryGetAdgerdirPageArgs,
   QueryGetAdgerdirPagesArgs,
   QueryGetAdgerdirTagsArgs,
+  Namespace,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { HeadWithSocialSharing, ChatPanel } from '@island.is/web/components'
@@ -39,10 +40,11 @@ import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
 
 import * as covidStyles from './components/UI/styles/styles.treat'
+import { AdgerdirPage } from 'apps/web/graphql/schema'
 
 interface AdgerdirArticleProps {
-  article: Query['getAdgerdirPage']
-  pages: Query['getAdgerdirPages']
+  article: Query['getAdgerdirPage'] | undefined
+  pages: Query['getAdgerdirPages'] | undefined
   tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
 }
@@ -53,10 +55,10 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   tags,
   namespace,
 }) => {
-  const portalRef = useRef()
+  const portalRef = useRef<HTMLElement | null>(null)
   const [mounted, setMounted] = useState(false)
 
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace as Namespace)
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
@@ -65,16 +67,16 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
     setMounted(true)
   }, [])
 
-  const { items: pagesItems } = pages
-  const { items: tagsItems } = tags
+  const pagesItems = pages?.items
+  const tagsItems = tags?.items
 
-  const processEntry = article.processEntry
+  const processEntry = article?.processEntry
 
   return (
     <>
       <HeadWithSocialSharing
-        title={`${article.title} | Viðspyrna fyrir Ísland`}
-        description={article.description}
+        title={`${article?.title} | Viðspyrna fyrir Ísland`}
+        description={article?.description}
       />
       <SidebarLayout
         sidebarContent={
@@ -87,7 +89,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
                   </span>
                 </Text>
                 <Inline space={2} alignY="center">
-                  {article.tags.map(({ title }, index) => {
+                  {article?.tags.map(({ title }, index) => {
                     return (
                       <Tag key={index} variant="green" label>
                         {title}
@@ -131,7 +133,7 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 
         <Stack space={2}>
           <Text variant="h1" as="h1">
-            {article.title}
+            {article?.title}
           </Text>
           {!!processEntry && (
             <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
@@ -139,14 +141,11 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
             </Box>
           )}
         </Stack>
-        {richText(
-          (article ?? article).content as SliceType[],
-          undefined,
-          activeLocale,
-        )}
+        {richText(article?.content as SliceType[], undefined, activeLocale)}
         <Box>
           {!!processEntry &&
             mounted &&
+            portalRef.current &&
             createPortal(
               <Box
                 marginTop={5}
@@ -163,10 +162,10 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         <Box className={covidStyles.bg}>
           <ContentBlock width="large">
             <AdgerdirArticles
-              tags={tagsItems}
-              items={pagesItems}
-              namespace={namespace}
-              currentArticle={article}
+              tags={tagsItems ?? []}
+              items={pagesItems ?? []}
+              namespace={namespace as Namespace}
+              currentArticle={article as AdgerdirPage}
               showAll
             />
           </ContentBlock>
@@ -180,42 +179,42 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
 AdgerdirArticle.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
   const [
-    {
-      data: { getAdgerdirPage },
-    },
-    {
-      data: { getAdgerdirPages },
-    },
-    {
-      data: { getAdgerdirTags },
-    },
+    getAdgerdirPage,
+    getAdgerdirPages,
+    getAdgerdirTags,
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetAdgerdirPageArgs>({
-      query: GET_ADGERDIR_PAGE_QUERY,
-      variables: {
-        input: {
-          slug,
-          lang: locale as ContentLanguage,
+    apolloClient
+      .query<Query, QueryGetAdgerdirPageArgs>({
+        query: GET_ADGERDIR_PAGE_QUERY,
+        variables: {
+          input: {
+            slug,
+            lang: locale as ContentLanguage,
+          },
         },
-      },
-    }),
-    apolloClient.query<Query, QueryGetAdgerdirPagesArgs>({
-      query: GET_ADGERDIR_PAGES_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
+      })
+      .then((res) => res?.data?.getAdgerdirPage),
+    apolloClient
+      .query<Query, QueryGetAdgerdirPagesArgs>({
+        query: GET_ADGERDIR_PAGES_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+          },
         },
-      },
-    }),
-    apolloClient.query<Query, QueryGetAdgerdirTagsArgs>({
-      query: GET_ADGERDIR_TAGS_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
+      })
+      .then((res) => res?.data?.getAdgerdirPages),
+    apolloClient
+      .query<Query, QueryGetAdgerdirTagsArgs>({
+        query: GET_ADGERDIR_TAGS_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+          },
         },
-      },
-    }),
+      })
+      .then((res) => res?.data?.getAdgerdirTags),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -226,7 +225,7 @@ AdgerdirArticle.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((content) => JSON.parse(content.data.getNamespace.fields)),
+      .then((content) => JSON.parse(content?.data?.getNamespace?.fields ?? '')),
   ])
 
   // we assume 404 if no article is found

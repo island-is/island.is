@@ -40,6 +40,8 @@ import {
   QueryGetLifeEventsInCategoryArgs,
   Image,
   ArticleGroup,
+  Namespace,
+  Article,
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -81,7 +83,7 @@ export const getHashString = (hashArray: string[]): string => {
 }
 
 // creates hash array from string
-export const getHashArr = (hashString: string): string[] => {
+export const getHashArr = (hashString: string): string[] | null => {
   if (!!hashString && hashString.length > 0) {
     hashString = hashString.replace('#', '')
     return hashString.length > 0 ? hashString.split(',') : null
@@ -108,7 +110,7 @@ const Category: Screen<CategoryProps> = ({
   const [hashArray, setHashArray] = useState<string[]>([])
 
   const Router = useRouter()
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace as Namespace)
   const { linkResolver } = useLinkResolver()
 
   const getCurrentCategory = () => categories.find((x) => x.slug === slug)
@@ -116,34 +118,40 @@ const Category: Screen<CategoryProps> = ({
   // group articles
   const { groups, cards, otherArticles } = articles.reduce(
     (content, article) => {
+      const currentCategory = getCurrentCategory()
       // check if this is not the main category for this article
-      if (article?.category?.title !== getCurrentCategory().title) {
-        content.otherArticles.push(article)
+      if (article?.category?.title !== currentCategory?.title) {
+        content.otherArticles.push(article as Article)
         return content
       }
 
-      if (article?.group?.slug && !content.groups[article?.group?.slug]) {
+      if (article?.group?.slug && !content.groups[article.group.slug]) {
         // group does not exist create the collection
-        content.groups[article?.group?.slug] = {
-          title: article?.group?.title,
-          description: article?.group?.description,
-          articles: [article],
-          groupSlug: article?.group?.slug,
-          importance: article?.group?.importance,
+        content.groups[article.group.slug] = {
+          title: article.group?.title,
+          description: article.group?.description,
+          articles: [article as Article],
+          groupSlug: article.group?.slug,
+          importance: article.group?.importance,
         }
       } else if (article?.group?.slug) {
         // group should exists push into collection
-        content.groups[article?.group?.slug].articles.push(article)
+        content.groups[article.group.slug].articles.push(article as Article)
       } else {
         // this article belongs to no group
-        content.cards.push(article)
+        content.cards.push(article as Article)
       }
       return content
     },
     {
-      groups: {},
-      cards: [],
-      otherArticles: [],
+      groups: {} as {
+        [key: string]: ArticleGroup & {
+          articles: Article[]
+          groupSlug: string
+        }
+      },
+      cards: [] as Article[],
+      otherArticles: [] as Article[],
     },
   )
 
@@ -389,10 +397,10 @@ const Category: Screen<CategoryProps> = ({
         </Box>
         <Box paddingBottom={[5, 5, 10]}>
           <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
-            {category.title}
+            {category?.title}
           </Text>
           <Text variant="intro" as="p">
-            {category.description}
+            {category?.description}
           </Text>
         </Box>
         <Stack space={2}>

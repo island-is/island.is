@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  ChangeEvent,
 } from 'react'
 import uniq from 'lodash/uniq'
 import intersection from 'lodash/intersection'
@@ -68,38 +69,38 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   )
   const [tagIds, setTagIds] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [showCount, setShowCount] = useState<number | null>(ITEMS_PER_SHOW)
+  const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
   const [indexesFilteredByString, setIndexesFilteredByString] = useState<
     Array<number>
   >([])
   const [indexesFilteredByTag, setIndexesFilteredByTag] = useState<
     Array<number>
   >([])
-  const timerRef = useRef(null)
+  const timerRef = useRef<number | undefined>(undefined)
 
   const visibleItems = startingItems.length ? startingItems : items
 
   useEffect(() => {
-    setUsableFilters(
-      items.reduce((all, cur) => {
-        const ids = cur.tags.map((x) => x.id)
+    const ids = items.reduce((all, cur) => {
+      const ids = cur.tags.map((x) => x.id)
 
-        if (ids.length) {
-          return uniq(ids.concat(all))
-        }
+      if (ids.length) {
+        return uniq(ids.concat(all))
+      }
 
-        return all
-      }, []),
-    )
+      return all
+    }, [] as AdgerdirTag['id'][])
+
+    setUsableFilters(ids)
   }, [])
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     setFilterString(e.target.value)
   }
 
   const onFilterStringChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ title, description }, index) => {
       const str = `${title} ${description}`.trim()
@@ -116,7 +117,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [visibleItems, filterString])
 
   const onFilterTagChange = useCallback(() => {
-    const arr = []
+    const arr: number[] = []
 
     visibleItems.forEach(({ tags }, index) => {
       const ids = tags.map((x) => x.id)
@@ -136,18 +137,18 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
   }, [onFilterStringChange, onFilterTagChange])
 
   const onUpdateFilters = useCallback(() => {
-    clearTimeout(timerRef.current)
+    timerRef.current && clearTimeout(timerRef.current)
     setIsLoading(true)
 
     if (!filterString) {
       doUpdate()
     } else {
-      timerRef.current = setTimeout(doUpdate, FILTER_TIMER)
+      timerRef.current = window.setTimeout(doUpdate, FILTER_TIMER)
     }
   }, [filterString, doUpdate])
 
   const onTagClick = (id: string) => {
-    clearTimeout(timerRef.current)
+    timerRef.current && clearTimeout(timerRef.current)
 
     const arr = [...tagIds]
     const index = tagIds.findIndex((x) => x === id)
@@ -187,7 +188,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
 
   const dividerRenames = {
     Einstaklingar: 'Einstaklinga',
-  }
+  } as { [key: string]: string }
 
   return (
     <Box padding={[3, 3, 6]}>

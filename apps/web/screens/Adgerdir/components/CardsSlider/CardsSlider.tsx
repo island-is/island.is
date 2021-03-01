@@ -37,6 +37,13 @@ const initialSlideState = {
   isNextSlideDisabled: false,
 } as EventObject
 
+interface AliceRef extends HTMLElement {
+  stageComponent: HTMLElement
+  state: {
+    items: number
+  }
+}
+
 export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
   const { linkResolver } = useLinkResolver()
   const { colorScheme } = useContext(ColorSchemeContext)
@@ -47,9 +54,9 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
     paddingLeft: 0,
     paddingRight: 0,
   })
-  const ref = useRef(null)
+  const ref = useRef<AliceCarousel & AliceRef>(null)
 
-  const handleOnDragStart = (e) => e.preventDefault()
+  const handleOnDragStart = (e: React.DragEvent) => e.preventDefault()
 
   const handleResize = useCallback(() => {
     let paddingRight = 0
@@ -65,14 +72,15 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
       paddingRight,
     })
 
-    const el = ref && ref.current?.stageComponent?.offsetParent
+    const el =
+      ref && (ref?.current?.stageComponent?.offsetParent as HTMLElement)
 
     if (el) {
       setHeight('auto')
       setHeight(`${el.offsetHeight}px`)
       setSlideState({
         ...initialSlideState,
-        itemsInSlide: ref.current.state.items,
+        itemsInSlide: ref?.current?.state.items || 0,
       })
     }
   }, [ref])
@@ -87,11 +95,11 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
   }, [handleResize])
 
   const slideNext = () => {
-    ref.current.slideNext()
+    ref?.current?.slideNext()
   }
 
   const slidePrev = () => {
-    ref.current.slidePrev()
+    ref?.current?.slidePrev()
   }
 
   const onSlideChanged = (e: EventObject) => {
@@ -177,7 +185,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               <button
                 key={item}
                 onClick={() =>
-                  ref.current.slideTo(index * slideState.itemsInSlide)
+                  ref?.current?.slideTo(index * slideState.itemsInSlide)
                 }
                 className={styles.dot}
               />
