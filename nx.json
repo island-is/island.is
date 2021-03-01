@@ -161,6 +161,9 @@
     "application-templates-parental-leave": {
       "tags": []
     },
+    "application-templates-party-letter": {
+      "tags": []
+    },
     "application-templates-passport": {
       "tags": []
     },
@@ -244,6 +247,9 @@
     "gjafakort-web-e2e": {
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
+    },
+    "health-insurance": {
+      "tags": []
     },
     "infra-express-server": {
       "tags": []
@@ -437,6 +443,9 @@
       "tags": []
     },
     "utils-api": {
+      "tags": []
+    },
+    "utils-environment": {
       "tags": []
     },
     "vmst-client": {
