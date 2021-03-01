@@ -16,9 +16,18 @@ const setApiMocks = (config) => {
   config.plugins.forEach((plugin) => {
     // Find the DefinePlugin and check if it has 'process.env' key
     if (plugin instanceof DefinePlugin && plugin.definitions['process.env']) {
+      // Switch from 'process.env' definition to 'process.env.*' definitions.
+      // Otherwise webpack is unable to properly remove unused code from bundles.
+      plugin.definitions = Object.entries(
+        plugin.definitions['process.env'],
+      ).reduce(
+        (defs, [key, value]) => ({ ...defs, [`process.env.${key}`]: value }),
+        {},
+      )
+
       // Set API_MOCKS so it's always set before webpack does its things
-      plugin.definitions['process.env'].API_MOCKS = JSON.stringify(
-        process.env.API_MOCKS,
+      plugin.definitions['process.env.API_MOCKS'] = JSON.stringify(
+        process.env.API_MOCKS ?? '',
       )
     }
   })

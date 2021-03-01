@@ -14,6 +14,7 @@
 
 /apps/web*/                                                         @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/cms/                                              @island-is/kosmos-kaos @island-is/aranja
+/libs/application/templates/party-letter/                           @island-is/kosmos-kaos
 
 /*/air-discount-scheme/                                             @island-is/vice-versa
 /*/gjafakort/                                                       @island-is/vice-versa @island-is/kosmos-kaos
@@ -98,6 +99,7 @@
 /libs/application/templates/health-insurance                        @island-is/deloitte
 /libs/skilavottord/                                                 @island-is/deloitte
 /libs/api/domains/health-insurance/                                 @island-is/deloitte
+/libs/health-insurance/                                             @island-is/deloitte
 
 /apps/auth-admin-web/                                               @island-is/fuglar
 /apps/auth-admin-web-e2e/                                           @island-is/fuglar

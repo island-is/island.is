@@ -6,7 +6,6 @@ import {
   IsOptional,
   IsDate,
   IsIn,
-  MaxDate,
   IsEmail,
 } from 'class-validator'
 
@@ -19,18 +18,17 @@ export class VistaSkjalInput {
   @Field(() => Date)
   @IsNotEmpty()
   @IsDate()
-  @MaxDate(new Date(Date.now()))
   applicationDate!: Date
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @MaxLength(10)
-  @MinLength(10)
-  nationalId?: string
 
   @Field(() => String)
   @IsNotEmpty()
+  @MaxLength(10)
   @MinLength(10)
+  nationalId!: string
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @MinLength(6)
   @MaxLength(15)
   foreignNationalId!: string
 
@@ -70,25 +68,25 @@ export class VistaSkjalInput {
   @MaxLength(20)
   phoneNumber!: string
 
-  @Field(() => Date)
-  @IsNotEmpty()
+  @Field(() => Date || undefined, { nullable: true })
+  @IsOptional()
   @IsDate()
-  residenceDateFromNationalRegistry!: Date
+  residenceDateFromNationalRegistry?: Date
 
-  @Field(() => Date)
-  @IsNotEmpty()
+  @Field(() => Date || undefined, { nullable: true })
+  @IsOptional()
   @IsDate()
-  residenceDateUserThink!: Date
+  residenceDateUserThink?: Date
 
   @Field(() => String)
   @IsNotEmpty()
   @IsIn(['S', 'P', 'O'])
-  userStatus!: 'S' | 'P' | 'O'
+  userStatus!: string
 
   @Field(() => Number)
   @IsNotEmpty()
   @IsIn([0, 1])
-  isChildrenFollowed!: 0 | 1
+  isChildrenFollowed!: number
 
   @Field(() => String)
   @IsNotEmpty()
@@ -109,7 +107,7 @@ export class VistaSkjalInput {
   @Field(() => Number)
   @IsNotEmpty()
   @IsIn([0, 1])
-  isHealthInsuredInPreviousCountry!: 0 | 1
+  isHealthInsuredInPreviousCountry!: number
 
   @Field(() => [String], { nullable: true })
   @IsOptional()

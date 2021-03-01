@@ -345,7 +345,7 @@ const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
     PackageID: packageId,
   }
 
-  logger.info('Associating package with AWS ES domain', params)
+  logger.info('Disassociating package from AWS ES domain', params)
   const result = await awsEs.dissociatePackage(params).promise()
   await waitForPackageStatus(packageId, 'DISSOCIATED')
   return result
