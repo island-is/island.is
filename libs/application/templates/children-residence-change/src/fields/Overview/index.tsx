@@ -128,13 +128,11 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
         modalOpen={fileSignatureState.modalOpen}
         signatureStatus={fileSignatureState.status}
       />
-      <Box marginTop={3}>
-        <AlertMessage
-          type="info"
-          title={formatMessage(m.contract.alert.title)}
-          message={formatMessage(m.contract.alert.message)}
-        />
-      </Box>
+      <AlertMessage
+        type="info"
+        title={formatMessage(m.contract.alert.title)}
+        message={formatMessage(m.contract.alert.message)}
+      />
       <Box marginTop={5}>
         <DescriptionText
           text={m.contract.general.description}
