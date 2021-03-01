@@ -99,10 +99,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       ) {
         const field = `${FORMER_INSURANCE}.confirmationOfResidencyDocument`
         const buildError = buildValidationError(field)
-        return buildError(
-          'Please attach a confirmation of residency',
-          field,
-        )
+        return buildError('Please attach a confirmation of residency', field)
       }
       // Check that entitlement is Yes / No
       if (
