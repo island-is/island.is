@@ -75,7 +75,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
         },
       },
     })
-  }, [application.id, createPdfPresignedUrl])
+  }, [application.id, createPdfPresignedUrl, pdfType])
 
   const pdfUrl = pdfResponse?.createPdfPresignedUrl?.attachments?.[pdfType]
 

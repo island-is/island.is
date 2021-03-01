@@ -221,14 +221,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<
-                      PensionFundsQuery
-                    >({
-                      query: GetPensionFunds,
+                    const { data } = await apolloClient.query<UnionQuery>({
+                      query: GetUnions,
                     })
 
                     return (
-                      data?.getPensionFunds.map(({ id, name }) => ({
+                      data?.getUnions.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []

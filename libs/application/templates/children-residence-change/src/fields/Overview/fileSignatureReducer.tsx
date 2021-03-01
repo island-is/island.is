@@ -24,8 +24,8 @@ type Action =
   | { type: FileSignatureActionTypes.ERROR; error: string; status: ErrorStatus }
 
 export type ReducerState =
-  | { status: Exclude<FileSignatureStatus, ErrorStatus>; modalOpen?: boolean }
-  | { status: ErrorStatus; errorCode: string; modalOpen?: boolean }
+  | { status: Exclude<FileSignatureStatus, ErrorStatus>; modalOpen: boolean }
+  | { status: ErrorStatus; errorCode: string; modalOpen: boolean }
 
 export const initialFileSignatureState: ReducerState = {
   status: FileSignatureStatus.INITIAL,
