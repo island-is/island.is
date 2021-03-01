@@ -42,6 +42,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
     createPdfPresignedUrl,
     { loading: loadingUrl, data: pdfResponse },
   ] = useMutation(CREATE_PDF_PRESIGNED_URL)
+
   const [
     requestFileSignature,
     { data: requestFileSignatureData },
@@ -55,6 +56,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
     onCompleted: () =>
       dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD }),
   })
+
   const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE, {
     onError: () =>
       dispatchFileSignature({
@@ -97,7 +99,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
         const documentToken =
           requestResponse.data.requestFileSignature?.externalData?.fileSignature
             ?.data?.documentToken
-        const signedFileReponse = await uploadSignedFile({
+        const signedFileResponse = await uploadSignedFile({
           variables: {
             input: {
               id: application.id,
@@ -106,7 +108,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
             },
           },
         })
-        if (signedFileReponse?.data) {
+        if (signedFileResponse?.data) {
           return [true, null]
         }
       }
