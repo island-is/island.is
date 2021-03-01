@@ -38,18 +38,20 @@ const FORMER_INSURANCE = 'formerInsurance'
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
   [STATUS]: (newAnswer: unknown, application: Application) => {
-    const field = `${STATUS}.type`
-    const buildError = buildValidationError(field)
     const status = newAnswer as Status
 
     if (!Object.values(StatusTypes).includes(status.type)) {
+      const field = `${STATUS}.type`
+      const buildError = buildValidationError(field)
       return buildError('You must select one of the above', field)
     }
     if (
       status.type === StatusTypes.STUDENT &&
       !status.confirmationOfStudies.length
     ) {
-      return buildError('Please attach a confirmation of studies below', field)
+      const field = `${STATUS}.confirmationOfStudies`
+      const buildError = buildValidationError(field)
+      return buildError('Please attach a confirmation of studies', field)
     }
 
     return undefined
@@ -95,10 +97,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
         requireConfirmationOfResidency(formerInsurance.country) &&
         !formerInsurance.confirmationOfResidencyDocument.length
       ) {
-        const field = `${FORMER_INSURANCE}.personalId`
+        const field = `${FORMER_INSURANCE}.confirmationOfResidencyDocument`
         const buildError = buildValidationError(field)
         return buildError(
-          'Please attach a confirmation of residency below',
+          'Please attach a confirmation of residency',
           field,
         )
       }
