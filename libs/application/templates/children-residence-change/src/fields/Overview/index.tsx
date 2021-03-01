@@ -51,7 +51,12 @@ const Overview = ({ application }: FieldBaseProps) => {
     application.state === ApplicationStates.DRAFT
       ? createPdfPresignedUrl(input)
       : getPresignedUrl(input)
-  }, [application.id, createPdfPresignedUrl, getPresignedUrl])
+  }, [
+    application.id,
+    createPdfPresignedUrl,
+    getPresignedUrl,
+    application.state,
+  ])
 
   const pdfUrl =
     createResponse?.createPdfPresignedUrl?.attachments?.[
