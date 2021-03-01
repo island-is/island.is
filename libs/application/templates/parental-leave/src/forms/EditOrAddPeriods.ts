@@ -9,7 +9,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
-import { mm } from '../lib/messages'
+import { parentalLeaveFormMessages } from '../lib/messages'
 
 export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
@@ -24,24 +24,24 @@ export const EditOrAddPeriods: Form = buildForm({
         // Copied from ParentalLeaveForm.ts line 606
         buildRepeater({
           id: 'periods',
-          title: mm.leavePlan.title,
+          title: parentalLeaveFormMessages.leavePlan.title,
           component: 'PeriodsRepeater',
           children: [
             buildDateField({
               id: 'startDate',
-              title: mm.startDate.title,
-              description: mm.startDate.description,
-              placeholder: mm.startDate.placeholder,
+              title: parentalLeaveFormMessages.startDate.title,
+              description: parentalLeaveFormMessages.startDate.description,
+              placeholder: parentalLeaveFormMessages.startDate.placeholder,
             }),
             buildMultiField({
               id: 'endDate',
-              title: mm.endDate.title,
-              description: mm.endDate.description,
+              title: parentalLeaveFormMessages.endDate.title,
+              description: parentalLeaveFormMessages.endDate.description,
               children: [
                 buildDateField({
                   id: 'endDate',
-                  title: mm.endDate.label,
-                  placeholder: mm.endDate.placeholder,
+                  title: parentalLeaveFormMessages.endDate.label,
+                  placeholder: parentalLeaveFormMessages.endDate.placeholder,
                 }),
               ],
             }),
@@ -49,7 +49,7 @@ export const EditOrAddPeriods: Form = buildForm({
             //   {
             //     id: 'endDate',
             //     name: m.duration,
-            //     description: mm.duration.description,
+            //     description: parentalLeaveFormMessages.duration.description,
             //     component: 'ParentalLeaveDuration',
             //   },
             //   {
@@ -58,15 +58,15 @@ export const EditOrAddPeriods: Form = buildForm({
             // ),
             buildMultiField({
               id: 'ratio',
-              title: mm.ratio.title,
-              description: mm.ratio.description,
+              title: parentalLeaveFormMessages.ratio.title,
+              description: parentalLeaveFormMessages.ratio.description,
               children: [
                 buildSelectField({
                   id: 'ratio',
                   width: 'half',
-                  title: mm.ratio.label,
+                  title: parentalLeaveFormMessages.ratio.label,
                   defaultValue: '100',
-                  placeholder: mm.ratio.placeholder,
+                  placeholder: parentalLeaveFormMessages.ratio.placeholder,
                   options: [
                     { label: '100%', value: '100' },
                     { label: '75%', value: '75' },

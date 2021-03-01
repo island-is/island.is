@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
+import format from 'date-fns/format'
 
 import {
   FieldBaseProps,
@@ -15,6 +16,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES } from '../../constants'
 
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
   toast.error(
@@ -56,6 +58,12 @@ const statesMap: statesMap = {
 }
 
 const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
+  const dob = getExpectedDateOfBirth(application)
+  if (!dob) {
+    return null
+  }
+  const dobDate = new Date(dob)
+
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -106,14 +114,21 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
 
   return (
     <Box marginBottom={10}>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Text>
-          {(screenState === 'steps' &&
+      <Box display={['block', 'flex']} justifyContent="spaceBetween">
+        <Text variant="h4" color="blue400">
+          {/* {(screenState === 'steps' &&
             formatMessage(parentalLeaveFormMessages.reviewScreen.desc)) ||
-            formatMessage(parentalLeaveFormMessages.reviewScreen.descReview)}
+            formatMessage(parentalLeaveFormMessages.reviewScreen.descReview)} */}
+          Birth estimated {format(dobDate, 'dd.MM.yyyy')}
         </Text>
         <Box>
-          <Box display="inlineBlock" marginLeft={1} marginRight={2}>
+          <Box
+            display={['block', 'inlineBlock']}
+            marginLeft={[0, 1]}
+            marginRight={2}
+            marginTop={[1, 0]}
+            marginBottom={[1, 0]}
+          >
             <Button
               colorScheme="default"
               iconType="filled"
