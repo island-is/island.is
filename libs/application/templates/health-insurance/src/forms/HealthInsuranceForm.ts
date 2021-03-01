@@ -17,10 +17,11 @@ import {
   Application,
   FormValue,
   ExternalData,
+  buildAsyncSelectField,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
-import { StatusTypes } from '../types'
+import { CountryDataResult, StatusTypes } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
@@ -263,9 +264,9 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               introduction: '',
               maxSize: FILE_SIZE_LIMIT,
-              uploadHeader: m.fileUploadHeader.defaultMessage,
-              uploadDescription: m.fileUploadDescription.defaultMessage,
-              uploadButtonLabel: m.fileUploadButton.defaultMessage,
+              uploadHeader: m.fileUploadHeader,
+              uploadDescription: m.fileUploadDescription,
+              uploadButtonLabel: m.fileUploadButton,
               condition: (answers) =>
                 (answers.status as { type: string })?.type ===
                 StatusTypes.STUDENT,
@@ -309,10 +310,27 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
-            buildCustomField({
+            buildAsyncSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
-              component: 'CountrySelectField',
+              placeholder: m.formerInsuranceCountryPlaceholder,
+              loadingError: m.formerInsuranceCountryError,
+              loadOptions: async () => {
+                const countries = await fetch(
+                  'https://restcountries.eu/rest/v2/all',
+                )
+                const data = (await countries.json()) as CountryDataResult[]
+                return data.map(
+                  ({ name, alpha2Code: countryCode, regionalBlocs }) => {
+                    const regions = regionalBlocs.map((blocs) => blocs.acronym)
+                    const option = { name, countryCode, regions }
+                    return {
+                      label: name,
+                      value: JSON.stringify(option),
+                    }
+                  },
+                )
+              },
             }),
             buildTextField({
               id: 'formerInsurance.personalId',
@@ -348,9 +366,9 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               maxSize: FILE_SIZE_LIMIT,
               introduction: m.confirmationOfResidencyFileUpload,
-              uploadHeader: m.fileUploadHeader.defaultMessage,
-              uploadDescription: m.fileUploadDescription.defaultMessage,
-              uploadButtonLabel: m.fileUploadButton.defaultMessage,
+              uploadHeader: m.fileUploadHeader,
+              uploadDescription: m.fileUploadDescription,
+              uploadButtonLabel: m.fileUploadButton,
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
@@ -459,8 +477,9 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               introduction: '',
               maxSize: FILE_SIZE_LIMIT,
-              uploadHeader: m.fileUploadHeader.defaultMessage,
-              uploadDescription: m.fileUploadDescription.defaultMessage,
+              uploadHeader: m.fileUploadHeader,
+              uploadDescription: m.fileUploadDescription,
+              uploadButtonLabel: m.fileUploadButton,
               condition: {
                 questionId: 'hasAdditionalInfo',
                 comparator: Comparators.EQUALS,

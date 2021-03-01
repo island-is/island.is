@@ -252,8 +252,8 @@ export const m = defineMessages({
   },
   formerInsuranceSection: {
     id: 'hi.application:formerInsurance.section',
-    defaultMessage: 'Fyrri trygging',
-    description: 'Former insurance',
+    defaultMessage: 'Fyrra tryggingarland',
+    description: 'Former country of insurance',
   },
   formerInsuranceTitle: {
     id: 'hi.application:formerInsurance.title',
@@ -271,6 +271,11 @@ export const m = defineMessages({
     id: 'hi.application:formerInsurance.countryPlaceholder',
     defaultMessage: 'Veldu land',
     description: 'Select a country',
+  },
+  formerInsuranceCountryError: {
+    id: 'hi.application:formerInsurance.countryError',
+    defaultMessage: 'Error when loading countries',
+    description: 'Error when loading countries',
   },
   formerInsuranceDetails: {
     id: 'hi.application:formerInsurance.details',
@@ -324,12 +329,12 @@ export const m = defineMessages({
   },
   confirmationSection: {
     id: 'hi.application:confirmationSection',
-    defaultMessage: 'Staðfesting',
-    description: 'Confirmation',
+    defaultMessage: 'Staðfesta og senda',
+    description: 'Confirm and submit',
   },
   confirmationTitle: {
     id: 'hi.application:confirmationTitle',
-    defaultMessage: 'Staðfestið og sendið inn umsókn',
+    defaultMessage: 'Staðfesta og senda inn umsókn',
     description: 'Confirm and submit your application',
   },
   additionalInfo: {
@@ -360,7 +365,7 @@ export const m = defineMessages({
   successfulSubmissionTitle: {
     id: 'hi.application:successfulSubmission.title',
     defaultMessage: 'Við höfum móttekið umsókn þína!',
-    description: 'We have received your application',
+    description: 'Your application is sent!',
   },
   successfulSubmissionMissingInfoTitle: {
     id: 'hi.application:successfulSubmission.missingInfoTitle',
@@ -369,15 +374,16 @@ export const m = defineMessages({
   },
   successfulSubmissionMessage: {
     id: 'hi.application:successfulSubmission.message',
-    defaultMessage: 'Númer umsókninnar er **{applicationNumber}**.',
-    description: 'Your application number is **{applicationNumber}**.',
+    defaultMessage:
+      'Þú færð staðfestingapóst með skjalanúmerinu þínu sendann á netfangið þitt',
+    description: 'A confirmation e-mail with your case number will be sent',
   },
   nextStepReviewTime: {
     id: 'hi.application:nextStep.duration',
     defaultMessage:
       'Tekið getur allt að 2-6 vikur að fara yfir umsókn. Lengd svartíma fer eftir því hversu fljótt fyrra tryggingarland þitt svarar fyrirspurn okkar og getur það tekið lengri tíma.',
     description:
-      'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance is to responds on our request, it may take longer time.',
+      'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance responds to our request, it may take longer.',
   },
   missingInfoSection: {
     id: 'hi.application:missingInfo.section',
@@ -422,7 +428,7 @@ export const m = defineMessages({
   waitingPeriodDescription: {
     id: 'hi.application:waitingPeriod.description',
     defaultMessage:
-      'Þegar flutt er til Íslands frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.\n Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar **[læknisfræðilegar undanþágur](https://islandd.is/umsokn-um-sjukratryggingu)** eru frá sex mánaða biðtímanum.', //TODO, should link to the Læknisfræðilegar undanþágur section
+      'Þegar flutt er til Íslands frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.\n Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar **[læknisfræðilegar undanþágur](https://island.is/umsokn-um-sjukratryggingu)** eru frá sex mánaða biðtímanum.', //TODO, should link to the Læknisfræðilegar undanþágur section
     description:
       'When moving to Iceland or being a citizen from a country outside the **[EU/EEA](https://www.sjukra.is/english/health-insurance-abroad/european-health-insurance-card/european-countries/)**, Greenland or the Faroe Islands there is a six-month waiting period before qualifying for national health insurance. You will need to wait. You will be automatically covered by the national health insurance six months from the day you registered your legal residence with Registers Iceland. We advise you to buy private health insurance until you are covered. There are some **[medical exceptions](https://island.is/en/apply-for-health-insurance)** to the waiting period.',
   },

@@ -3,6 +3,7 @@ import {
   FieldBaseProps,
   formatText,
   SelectField,
+  buildFieldOptions,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -10,7 +11,6 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { buildOptions } from '../utils'
 import { useDefaultValue } from '../useDefaultValue'
 
 interface Props extends FieldBaseProps {
@@ -28,7 +28,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
     backgroundColor,
   } = field
   const { formatMessage } = useLocale()
-  const finalOptions = useMemo(() => buildOptions(options, application), [
+  const finalOptions = useMemo(() => buildFieldOptions(options, application), [
     options,
     application,
   ])

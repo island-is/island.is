@@ -266,3 +266,7 @@ export interface SignatureConfirmationResponse {
   code?: number
   message?: string
 }
+
+export interface CreateCustodyCourtCase {
+  policeCaseNumber: string
+}
