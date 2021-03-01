@@ -280,7 +280,14 @@ const Screen: FC<ScreenProps> = ({
                 errors={dataSchemaOrApiErrors}
               />
             ) : screen.type === FormItemTypes.FIELD_REPEATER ? (
-              <FieldRepeater />
+              <FieldRepeater
+                answerQuestions={answerQuestions}
+                errors={dataSchemaOrApiErrors}
+                fieldRepeater={screen}
+                application={application}
+                goToScreen={goToScreen}
+                refetch={refetch}
+              />
             ) : (
               <FormField
                 autoFocus
