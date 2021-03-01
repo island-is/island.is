@@ -4,37 +4,36 @@ import {
   MenuLink,
 } from '../graphql/schema'
 import { Locale } from '../i18n/I18n'
-import { linkResolver, LinkType } from '../hooks/useLinkResolver'
+import {
+  linkResolver,
+  LinkResolverResponse,
+  LinkType,
+} from '../hooks/useLinkResolver'
+import { MegaMenuLink } from '../components/Menu/Menu'
 
 export const formatMegaMenuLinks = (
   locale: Locale,
   menuLinks: (MenuLinkWithChildren | MenuLink)[],
-) => {
+): MegaMenuLink[] => {
   return menuLinks
+    .filter((linkData) => !!linkData.link)
     .map((linkData) => {
       let sub
       // if this link has children format them
       if ('childLinks' in linkData) {
-        sub = formatMegaMenuLinks(locale, linkData.childLinks)
-      } else {
-        sub = null
-      }
-
-      if (!linkData.link) {
-        return null
+        sub = formatMegaMenuLinks(locale, linkData.childLinks) as MegaMenuLink[]
       }
 
       return {
         text: linkData.title,
         href: linkResolver(
-          linkData.link.type as LinkType,
-          [linkData.link.slug],
+          linkData?.link?.type as LinkType,
+          [linkData?.link?.slug ?? ''],
           locale,
-        ).href,
-        sub,
+        ).href as string,
+        ...(sub && sub),
       }
     })
-    .filter((linkData) => Boolean(linkData))
 }
 
 export const formatMegaMenuCategoryLinks = (

@@ -10,10 +10,9 @@ import { useI18n } from '@island.is/web/i18n'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
-import { BoxOptions, DisclosureProps } from 'reakit/ts'
 
-interface MegaMenuLink {
-  href: LinkResolverResponse
+export interface MegaMenuLink {
+  href: LinkResolverResponse['href']
   text: string
   sub?: [MegaMenuLink]
 }

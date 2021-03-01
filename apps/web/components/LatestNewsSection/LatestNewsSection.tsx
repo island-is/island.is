@@ -11,7 +11,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import { GetNewsQuery, Image } from '@island.is/web/graphql/schema'
+import { Image, News } from '@island.is/web/graphql/schema'
 import { GlobalContext } from '@island.is/web/context/GlobalContext/GlobalContext'
 import { useNamespace } from '@island.is/web/hooks'
 
@@ -24,7 +24,7 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 interface LatestNewsProps {
   label: string
   labelId?: string
-  items: GetNewsQuery['getNews']['items']
+  items: News[]
   linkType?: LinkType
   overview?: LinkType
   parameters?: Array<string>

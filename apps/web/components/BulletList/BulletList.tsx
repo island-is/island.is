@@ -10,8 +10,8 @@ type IconBullet = {
   title: string
   body: string
   icon: string
-  url?: string
-  linkText?: string
+  url?: null | string
+  linkText?: null | string
 }
 
 type NumberBullet = {

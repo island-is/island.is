@@ -15,6 +15,7 @@ import {
   AboutLatestNews,
   LogoList,
   BulletList,
+  TimelineEventProps,
 } from '@island.is/web/components'
 import {
   Text,
@@ -49,6 +50,10 @@ import {
   QueryGetGroupedMenuArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
+  TimelineEvent,
+  News,
+  ArticleCategory,
+  MenuLink,
 } from '@island.is/web/graphql/schema'
 import {
   renderSlices,
@@ -64,6 +69,8 @@ import {
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { Colors } from 'libs/island-ui/theme/src/lib/theme'
+import { MegaMenuLink, MenuProps } from '../../components/Menu/Menu'
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -132,7 +139,7 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
     }
 
     return (
-      <Box ref={ref} id={id} background={background}>
+      <Box ref={ref} id={id} background={background as Colors}>
         {children}
       </Box>
     )
@@ -161,7 +168,7 @@ interface PageHeaderProps {
   page: GetAboutPageQuery['getAboutPage']
   navigation: SliceItem[]
   namespace?: GetNamespaceQuery['getNamespace']
-  megaMenuData
+  megaMenuData: MenuProps
 }
 
 const PageHeader: FC<PageHeaderProps> = ({
@@ -173,7 +180,7 @@ const PageHeader: FC<PageHeaderProps> = ({
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const { linkResolver } = useLinkResolver()
-  const [currentSliceId] = useScrollSpy(ids, { marginTop: 220 })
+  const [currentSliceId] = useScrollSpy(ids as string[], { marginTop: 220 })
 
   return (
     <Background id={slice.id} theme={page.theme}>
@@ -190,7 +197,7 @@ const PageHeader: FC<PageHeaderProps> = ({
           <Sidebar>
             <Navigation
               colorScheme={
-                decideSidebarType(page, currentSliceId) === 'gradient'
+                decideSidebarType(page, currentSliceId as string) === 'gradient'
                   ? 'darkBlue'
                   : 'blue'
               }
@@ -205,7 +212,7 @@ const PageHeader: FC<PageHeaderProps> = ({
         <GridColumn span={'12/12'}>
           <GridRow>
             <GridColumn
-              offset={[null, null, null, '1/9']}
+              offset={['0', '0', '0', '1/9']}
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
@@ -219,7 +226,10 @@ const PageHeader: FC<PageHeaderProps> = ({
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('homepage')} passHref>
+                      <NextLink
+                        href={linkResolver('homepage').href ?? ''}
+                        passHref
+                      >
                         {link}
                       </NextLink>
                     )
@@ -266,10 +276,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
         <div id={slice.id}>
           <TimelineSection
             {...slice}
-            events={slice.events.map((event) => ({
-              ...event,
-              body: event.body && renderSlices(event.body as SliceType),
-            }))}
+            events={
+              slice.events.map((event) => ({
+                ...event,
+                body: event.body && renderSlices(event.body as SliceType),
+              })) as TimelineEventProps[]
+            }
           />
         </div>
       )
@@ -301,7 +313,7 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
               <RenderForm
                 namespace={namespace}
                 heading={slice.title}
-                text={slice.description}
+                text={slice?.description ?? ''}
                 submitButtonText={slice.buttonText}
                 inputLabel={slice.inputLabel}
               />
@@ -330,7 +342,11 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
         <div key={slice.id} id={slice.id}>
           <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
             <Box paddingTop={[8, 8, 15]} paddingBottom={[4, 6, 12]}>
-              <AboutLatestNews {...slice} namespace={namespace} />
+              <AboutLatestNews
+                {...slice}
+                news={slice.news as News[]}
+                namespace={namespace}
+              />
             </Box>
           </SidebarLayout>
         </div>
@@ -364,8 +380,6 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                       }
                     case 'NumberBulletGroup':
                       return { ...bullet, type: 'NumberBulletGroup' }
-                    default:
-                      return null
                   }
                 })}
               />
@@ -387,11 +401,11 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
                     <GridRow>
                       <GridColumn
                         span={['9/9', '9/9', '9/9', '7/9']}
-                        offset={[null, null, null, '1/9']}
+                        offset={['0', '0', '0', '1/9']}
                       >
                         <Box paddingTop={[0, 4, 9]} paddingBottom={[8, 0, 9]}>
                           <img
-                            src={tab.image.url}
+                            src={tab?.image?.url}
                             className={styles.tabSectionImg}
                             alt=""
                           />
@@ -411,13 +425,15 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
           </SidebarLayout>
         </Box>
       )
+    default:
+      return null
   }
 }
 
 export interface AboutPageProps {
   page?: GetAboutPageQuery['getAboutPage']
   namespace: GetNamespaceQuery['getNamespace']
-  megaMenuData
+  megaMenuData: MenuProps
 }
 
 const AboutPageScreen: Screen<AboutPageProps> = ({
@@ -427,24 +443,26 @@ const AboutPageScreen: Screen<AboutPageProps> = ({
 }) => {
   const navigation = useMemo(
     () =>
-      [{ id: page.pageHeader.id, text: page.pageHeader.navigationText }].concat(
-        createNavigation(page.slices),
-      ),
-    [page.slices, page.pageHeader],
+      [
+        { id: page?.pageHeader?.id, text: page?.pageHeader?.navigationText },
+      ].concat(createNavigation(page?.slices as AllSlicesFragment[])),
+    [page?.slices, page?.pageHeader],
   )
   return (
     <>
       <Head>
-        <title>{page.title}</title>
-        <meta name="description" content={page.seoDescription} />
+        <title>{page?.title}</title>
+        <meta name="description" content={page?.seoDescription} />
       </Head>
       <Box position="relative">
-        <PageHeader
-          page={page}
-          navigation={navigation as SliceItem[]}
-          megaMenuData={megaMenuData}
-        />
-        {(page.slices as AvailableSlices[]).map((slice) => (
+        {!!page && (
+          <PageHeader
+            page={page}
+            navigation={navigation as SliceItem[]}
+            megaMenuData={megaMenuData}
+          />
+        )}
+        {(page?.slices as AvailableSlices[]).map((slice) => (
           <Section key={slice.id} slice={slice} namespace={namespace} />
         ))}
         <GridContainer>
@@ -454,9 +472,9 @@ const AboutPageScreen: Screen<AboutPageProps> = ({
               isMenuDialog={false}
               items={sidebarContent(
                 navigation as SliceItem[],
-                page.pageHeader.links,
+                page?.pageHeader?.links ?? [],
               )}
-              title={page.title}
+              title={page?.title ?? ''}
             />
           </Box>
         </GridContainer>
@@ -466,22 +484,17 @@ const AboutPageScreen: Screen<AboutPageProps> = ({
 }
 
 AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
-  const [
-    {
-      data: { getAboutPage: page },
-    },
-    namespace,
-    megaMenuData,
-    categories,
-  ] = await Promise.all([
-    apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
-      query: GET_ABOUT_PAGE_QUERY,
-      variables: {
-        input: {
-          lang: locale,
+  const [page, namespace, megaMenuData, categories] = await Promise.all([
+    apolloClient
+      .query<GetAboutPageQuery, QueryGetAboutPageArgs>({
+        query: GET_ABOUT_PAGE_QUERY,
+        variables: {
+          input: {
+            lang: locale,
+          },
         },
-      },
-    }),
+      })
+      .then((res) => res?.data?.getAboutPage),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -492,7 +505,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) => JSON.parse(res?.data?.getNamespace?.fields ?? '')),
     apolloClient
       .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
         query: GET_GROUPED_MENU_QUERY,
@@ -500,7 +513,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
           input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang: locale },
         },
       })
-      .then((res) => res.data.getGroupedMenu),
+      .then((res) => res?.data?.getGroupedMenu),
     apolloClient
       .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
         query: GET_CATEGORIES_QUERY,
@@ -510,10 +523,10 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => res.data.getArticleCategories),
+      .then((res) => res?.data?.getArticleCategories),
   ])
 
-  const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+  const [asideTopLinksData, asideBottomLinksData] = megaMenuData?.menus || []
 
   return {
     page,
@@ -528,7 +541,10 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
         locale as Locale,
         asideBottomLinksData.menuLinks,
       ),
-      mainLinks: formatMegaMenuCategoryLinks(locale as Locale, categories),
+      mainLinks: formatMegaMenuCategoryLinks(
+        locale as Locale,
+        categories as ArticleCategory[],
+      ),
     },
   }
 }
