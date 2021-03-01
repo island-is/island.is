@@ -51,6 +51,7 @@ import {
 } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
+import FormLineRepeater from './FormLineRepeater'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -60,6 +61,7 @@ type ScreenProps = {
   answerQuestions(answers: FormValue): void
   dataSchema: Schema
   expandRepeater(): void
+  expandLineRepeater(): void
   mode?: FormModes
   numberOfScreens: number
   prevScreen(): void
@@ -79,6 +81,7 @@ const Screen: FC<ScreenProps> = ({
   application,
   dataSchema,
   expandRepeater,
+  expandLineRepeater,
   goToScreen,
   answerAndGoToNextScreen,
   mode,
@@ -277,6 +280,16 @@ const Screen: FC<ScreenProps> = ({
                 externalDataProvider={screen}
                 formValue={formValue}
                 errors={dataSchemaOrApiErrors}
+              />
+            ) : screen.type === FormItemTypes.LINE_REPEATER ? (
+              <FormLineRepeater
+                answerQuestions={answerQuestions}
+                errors={dataSchemaOrApiErrors}
+                multiField={screen}
+                application={application}
+                expandLineRepeater={expandLineRepeater}
+                goToScreen={goToScreen}
+                refetch={refetch}
               />
             ) : (
               <FormField

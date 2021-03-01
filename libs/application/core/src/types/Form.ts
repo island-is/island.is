@@ -21,6 +21,7 @@ export enum FormItemTypes {
   REPEATER = 'REPEATER',
   MULTI_FIELD = 'MULTI_FIELD',
   EXTERNAL_DATA_PROVIDER = 'EXTERNAL_DATA_PROVIDER',
+  LINE_REPEATER = 'LINE_REPEATER',
 }
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +46,12 @@ export interface Form {
   children: FormChildren[]
 }
 
-export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
+export type FormLeaf =
+  | MultiField
+  | Field
+  | Repeater
+  | ExternalDataProvider
+  | LineRepeater
 export type FormNode = Form | Section | SubSection | FormLeaf
 export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
@@ -74,6 +80,13 @@ export interface Repeater extends FormItem {
   component: string
   children: FormLeaf[]
   isPartOfRepeater?: boolean
+}
+
+export interface LineRepeater extends FormItem {
+  readonly id: string
+  type: FormItemTypes.LINE_REPEATER
+  isPartOfRepeater?: boolean
+  children: Field[]
 }
 
 export interface MultiField extends FormItem {

@@ -13,6 +13,7 @@ import {
   FormModes,
   FormValue,
   buildFileUploadField,
+  buildLineRepeater,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -35,39 +36,49 @@ export const ExampleForm: Form = buildForm({
             values: { name: application.answers.name },
           }),
         }),
-        buildMultiField({
-          id: 'about',
-          title: m.about,
+        // buildMultiField({
+        //   id: 'about',
+        //   title: m.about,
+        //   children: [
+        //     buildTextField({
+        //       id: 'person.name',
+        //       title: m.name,
+        //     }),
+        //     buildTextField({
+        //       id: 'person.nationalId',
+        //       title: m.nationalId,
+        //       width: 'half',
+        //     }),
+        //     buildTextField({
+        //       id: 'person.age',
+        //       title: m.age,
+        //       width: 'half',
+        //     }),
+        //     buildTextField({
+        //       id: 'person.email',
+        //       title: m.email,
+        //       width: 'half',
+        //     }),
+        //     buildTextField({
+        //       id: 'person.phoneNumber',
+        //       title: m.phoneNumber,
+        //       width: 'half',
+        //       condition: {
+        //         questionId: 'person.age',
+        //         isMultiCheck: false,
+        //         comparator: Comparators.GTE,
+        //         value: '18',
+        //       },
+        //     }),
+        //   ],
+        // }),
+        buildLineRepeater({
+          id: 'person.repeater',
+          title: 'Repeater',
           children: [
             buildTextField({
               id: 'person.name',
               title: m.name,
-            }),
-            buildTextField({
-              id: 'person.nationalId',
-              title: m.nationalId,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'person.age',
-              title: m.age,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'person.email',
-              title: m.email,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'person.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              condition: {
-                questionId: 'person.age',
-                isMultiCheck: false,
-                comparator: Comparators.GTE,
-                value: '18',
-              },
             }),
           ],
         }),

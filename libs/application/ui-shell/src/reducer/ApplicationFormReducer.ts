@@ -145,6 +145,35 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
   }
 }
 
+function expandLineRepeater(state: ApplicationUIState): ApplicationUIState {
+  const { activeScreen, form, screens, application } = state
+  const repeater = screens[activeScreen]
+  if (!repeater || repeater.type !== FormItemTypes.LINE_REPEATER) {
+    return state
+  }
+  const { answers, externalData } = application
+
+  const newRepeaterFields = repeater.children.map((item) => ({
+    ...item,
+    id: `${item.id}-2`,
+  }))
+
+  newRepeaterFields.map((x) => {
+    repeater.children.push(x)
+  })
+
+  console.log('children', repeater.children)
+  console.log('new fields', newRepeaterFields)
+
+  console.log('expand line repeater')
+  console.log(screens)
+  console.log(repeater)
+
+  return {
+    ...state,
+  }
+}
+
 function findNearestRepeater(
   activeScreen: number,
   screens: FormScreen[],
@@ -193,6 +222,8 @@ export const ApplicationReducer = (
       return addNewAnswersToState(state, action.payload)
     case ActionTypes.EXPAND_REPEATER:
       return expandRepeater(state)
+    case ActionTypes.EXPAND_LINE_REPEATER:
+      return expandLineRepeater(state)
     case ActionTypes.GO_TO_SCREEN:
       return goToSpecificScreen(state, action.payload)
     case ActionTypes.ADD_EXTERNAL_DATA:

@@ -11,6 +11,7 @@ import {
   FormValue,
   getValueViaPath,
   isValidScreen,
+  LineRepeater,
   MultiField,
   Repeater,
   Section,
@@ -21,6 +22,7 @@ import {
   ExternalDataProviderScreen,
   FieldDef,
   FormScreen,
+  LineRepeaterScreen,
   MultiFieldScreen,
   RepeaterScreen,
 } from '../types'
@@ -145,6 +147,37 @@ export function convertMultiFieldToScreen(
   } as MultiFieldScreen
 }
 
+export function convertLineRepeaterToScreens(
+  multiField: LineRepeater,
+  answers: FormValue,
+  externalData: ExternalData,
+  isParentNavigable = true,
+  sectionIndex: number,
+  subSectionIndex: number): LineRepeaterScreen {
+    let isMultiFieldVisible = false
+    const children: FieldDef[] = []
+    multiField.children.forEach((field) => {
+      const isFieldVisible = shouldShowFormItem(field, answers, externalData)
+      if (isFieldVisible) {
+        isMultiFieldVisible = true
+      }
+      children.push({
+        ...field,
+        isNavigable: isFieldVisible && isParentNavigable,
+        sectionIndex,
+        subSectionIndex,
+      })
+    })
+    return {
+      ...multiField,
+      isNavigable: isMultiFieldVisible && isParentNavigable,
+      children,
+      sectionIndex,
+      subSectionIndex,
+    } as LineRepeaterScreen
+
+  }
+
 function convertRepeaterToScreens(
   repeater: Repeater,
   answers: FormValue,
@@ -233,6 +266,14 @@ function convertLeafToScreens(
       sectionIndex,
       subSectionIndex,
     )
+  } else if(leaf.type === FormItemTypes.LINE_REPEATER) {
+    return [convertLineRepeaterToScreens(
+      leaf,
+      answers,
+      externalData,
+      isParentNavigable,
+      sectionIndex,
+      subSectionIndex)]
   } else if (leaf.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
     return [
       convertDataProviderToScreen(

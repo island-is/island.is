@@ -16,6 +16,7 @@ import {
   DataProviderItem,
   FormModes,
   FormText,
+  LineRepeater,
 } from '../types/Form'
 import type { BoxProps } from '@island.is/island-ui/core'
 
@@ -50,6 +51,15 @@ export function buildRepeater(data: {
   children: FormLeaf[]
 }): Repeater {
   return { ...data, type: FormItemTypes.REPEATER }
+}
+
+export function buildLineRepeater(data: {
+  id: string
+  condition?: Condition
+  title: MessageDescriptor | string
+  children: FormLeaf[]
+}): LineRepeater {
+  return { ...data, type: FormItemTypes.LINE_REPEATER }
 }
 
 export function buildSection(data: {
