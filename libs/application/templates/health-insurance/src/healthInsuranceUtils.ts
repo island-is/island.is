@@ -95,7 +95,7 @@ const getCountryRegions = (countryField: string) => {
   try {
     const countryData = JSON.parse(countryField)
     const { regions } = countryData
-    return regions
+    return regions || []
   } catch (error) {
     return []
   }
