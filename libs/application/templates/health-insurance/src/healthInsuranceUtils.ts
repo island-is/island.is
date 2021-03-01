@@ -81,7 +81,7 @@ export const requireWaitingPeriod = (
   return false
 }
 
-const extractKeyFromStringObject = (objectString: string, key: string) => {
+export const extractKeyFromStringObject = (objectString: string, key: string) => {
   try {
     const object = JSON.parse(objectString)
     const value = object[key]
