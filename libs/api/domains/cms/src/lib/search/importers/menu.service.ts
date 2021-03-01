@@ -4,11 +4,7 @@ import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import { IMenu } from '../../generated/contentfulTypes'
 import { mapMenu } from '../../models/menu.model'
-import {
-  CmsSyncProvider,
-  doMappingInput,
-  processSyncDataInput,
-} from '../cmsSync.service'
+import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 
 @Injectable()
 export class MenuSyncService implements CmsSyncProvider<IMenu> {
@@ -19,7 +15,7 @@ export class MenuSyncService implements CmsSyncProvider<IMenu> {
     )
   }
 
-  doMapping(entries: doMappingInput<IMenu>) {
+  doMapping(entries: IMenu[]) {
     logger.info('Mapping menu', { count: entries.length })
 
     return entries

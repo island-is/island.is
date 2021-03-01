@@ -10,7 +10,6 @@ export default {
     dsn:
       'https://3c45a55273774b91a897b85e0a1243d1@o406638.ingest.sentry.io/5501494',
   },
-  documentProviderAdmins: process.env.NX_DOCUMENT_PROVIDER_ADMINS || '',
   featureFlags: {
     applications: false,
     documents: true,

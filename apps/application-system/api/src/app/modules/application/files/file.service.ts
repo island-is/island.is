@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
@@ -101,8 +106,8 @@ export class FileService {
         return await this.handleChildrenResidenceChangeSignature(
           type,
           application.id,
-          'Vilhjalmur Ari Gunnarsson',
-          '6947125',
+          name,
+          phoneNumber,
         )
       }
     }
@@ -135,5 +140,47 @@ export class FileService {
       DokobitFileName[type],
       fileContent,
     )
+  }
+
+  validateApplicationType(applicationType: string) {
+    if (
+      Object.values(PdfTypes).includes(applicationType as PdfTypes) === false
+    ) {
+      throw new BadRequestException(
+        'Application type is not supported in file service.',
+      )
+    }
+  }
+
+  validateFileSignature(
+    applicationType: string,
+    type: PdfTypes,
+    attachments?: object,
+  ) {
+    this.validateApplicationType(applicationType)
+
+    const data = attachments as { [type]: string }
+    if (data?.[type] === undefined) {
+      throw new BadRequestException(
+        'Document has not been uploaded to be signed',
+      )
+    }
+  }
+
+  validateFileUpload(
+    applicationType: string,
+    documentToken: string,
+    externalData: object,
+  ) {
+    this.validateApplicationType(applicationType)
+
+    const data = externalData as {
+      fileSignature: { data: { documentToken: string } }
+    }
+    if (data?.fileSignature?.data?.documentToken !== documentToken) {
+      throw new BadRequestException(
+        'Document token does not match token on application',
+      )
+    }
   }
 }

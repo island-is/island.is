@@ -10,7 +10,9 @@ export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
 ) => void
 
-export type StaticText = (MessageDescriptor & { values?: object }) | string
+// TODO: refactor { values?: object } into { values?: RecordObject }
+export type StaticTextObject = MessageDescriptor & { values?: object }
+export type StaticText = StaticTextObject | string
 
 export type FormText =
   | StaticText

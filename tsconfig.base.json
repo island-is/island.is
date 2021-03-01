@@ -126,6 +126,9 @@
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
+      "@island.is/application/templates/party-letter": [
+        "libs/application/templates/party-letter/src/index.ts"
+      ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
@@ -166,6 +169,7 @@
       ],
       "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
       "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
+      "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],
@@ -260,6 +264,7 @@
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
       "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
+      "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
       "@island.is/vmst-client": ["libs/vmst-client/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]

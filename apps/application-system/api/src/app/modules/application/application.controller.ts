@@ -560,6 +560,8 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const { type } = input
 
+    this.fileService.validateApplicationType(application.typeId)
+
     const url = await this.fileService.createPdf(application, type)
 
     const { updatedApplication } = await this.applicationService.update(
@@ -591,6 +593,12 @@ export class ApplicationController {
     @Body() input: RequestFileSignatureDto,
   ): Promise<ApplicationResponseDto> {
     const { type } = input
+
+    this.fileService.validateFileSignature(
+      application.typeId,
+      type,
+      application.attachments,
+    )
 
     const {
       controlCode,
@@ -632,6 +640,13 @@ export class ApplicationController {
     @Body() input: UploadSignedFileDto,
   ): Promise<ApplicationResponseDto> {
     const { documentToken, type } = input
+
+    this.fileService.validateFileUpload(
+      application.typeId,
+      documentToken,
+      application.externalData,
+    )
+
     await this.fileService.uploadSignedFile(application, documentToken, type)
 
     return application
