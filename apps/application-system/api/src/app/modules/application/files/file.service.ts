@@ -177,9 +177,7 @@ export class FileService {
   getPresignedUrl(applicationId: string, type: PdfTypes) {
     const bucket = this.getBucketName()
 
-    const fileName = `${
-      BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
-    }/${applicationId}.pdf`
+    const fileName = `${BucketTypePrefix[type]}/${applicationId}.pdf`
 
     return this.awsService.getPresignedUrl(bucket, fileName)
   }

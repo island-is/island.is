@@ -672,7 +672,7 @@ export class ApplicationController {
 
     const { type } = input
 
-    let url = this.fileService.getPresignedUrl(application.id, type)
+    const url = this.fileService.getPresignedUrl(application.id, type)
 
     const { updatedApplication } = await this.applicationService.update(
       application.id,
