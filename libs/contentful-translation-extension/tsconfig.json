@@ -8,9 +8,6 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "lib": ["dom", "es2017"],
-    "resolveJsonModule": true,
-    "paths": {
-      "@island.is/shared/types": ["../shared/types/src/index.ts"]
-    }
+    "resolveJsonModule": true
   }
 }

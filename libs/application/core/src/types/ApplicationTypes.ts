@@ -8,4 +8,5 @@ export enum ApplicationTypes {
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
+  PARTY_LETTER = 'PartyLetter',
 }

@@ -285,7 +285,7 @@ export const UserForm: React.FC<Props> = (props) => {
       <Box marginBottom={2}>
         <Checkbox
           name="active"
-          label="Virkja notandann"
+          label="Virkur notandi"
           checked={user.active}
           onChange={({ target }) =>
             setUser({ ...user, active: target.checked })

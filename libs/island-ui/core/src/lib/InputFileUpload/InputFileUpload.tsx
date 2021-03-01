@@ -14,7 +14,6 @@ export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
 export interface UploadFile {
   name: string
-  url?: string
   key?: string
   status?: UploadFileStatus
   percent?: number
@@ -30,7 +29,6 @@ export const fileToObject = (
     name: file.name,
     percent: 0,
     originalFileObj: file,
-    url: '',
     status: status || 'done',
   }
 }
@@ -100,21 +98,33 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
       marginBottom={2}
       width="full"
       position="relative"
+      title={file.name}
       className={styles.uploadedFile}
       onClick={(e) => e.stopPropagation()}
     >
-      <Text variant="small">{file.name}</Text>
-      <Box
-        cursor={!isUploading ? 'pointer' : undefined}
-        onClick={(e) => {
-          e.stopPropagation()
-          if (!isUploading) onRemoveClick(file)
-        }}
-      >
-        <Box className={isUploading ? styles.progressIconAnimation : undefined}>
+      <Text truncate variant="small">
+        {file.name}
+      </Text>
+      {isUploading ? (
+        <div
+          className={styles.progressIconAnimation}
+          aria-label="Hleð upp skrá"
+        >
           <Icon color="blue400" icon={statusIcon(file.status)} />
-        </Box>
-      </Box>
+        </div>
+      ) : (
+        <button
+          type={'button'}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (!isUploading) onRemoveClick(file)
+          }}
+          aria-label="Fjarlægja skrá"
+        >
+          <Icon color="blue400" icon={statusIcon(file.status)} />
+        </button>
+      )}
+
       <UploadingIndicator percent={file.percent} />
     </Box>
   )
