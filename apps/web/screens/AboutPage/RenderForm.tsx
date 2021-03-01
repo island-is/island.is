@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
+// @ts-ignore
 import toQueryString from 'to-querystring'
+// @ts-ignore
 import jsonp from 'jsonp'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { GetNamespaceQuery, Namespace } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { NewsletterSignup } from '@island.is/island-ui/core'
@@ -29,7 +31,7 @@ export const RenderForm: React.FC<{
   submitButtonText = 'Submit',
   inputLabel = 'Email',
 }) => {
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace as Namespace)
   const [status, setStatus] = useState<FormState>({
     type: '',
     message: '',
@@ -37,7 +39,7 @@ export const RenderForm: React.FC<{
     touched: false,
   })
 
-  const formatMessage = (message) => {
+  const formatMessage = (message: string) => {
     // These messages come from Mailchimp's API and contain links and other stuff we don't want.
     if (!message) {
       return
@@ -59,7 +61,7 @@ export const RenderForm: React.FC<{
     return ''
   }
 
-  const handleSubmit = ({ email }) => {
+  const handleSubmit = ({ email }: { email: string }) => {
     const validEmail = isValidEmail.test(email)
 
     if (!validEmail) {
@@ -80,7 +82,7 @@ export const RenderForm: React.FC<{
         {
           param: 'c',
         },
-        (err, data) => {
+        (err: string, data: { msg: string; result: string }) => {
           if (err) {
             setStatus({
               type: 'error',

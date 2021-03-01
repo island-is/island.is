@@ -49,7 +49,7 @@ const useHeadingLinks = ({
         return false
       }
 
-      const yPos = Math.abs(currPos.y)
+      const yPos = Math.abs(currPos.y ?? 0)
       const idx = offsets.reduce((acc, offset, index) => {
         return yPos >= offset ? index : acc
       }, 0)

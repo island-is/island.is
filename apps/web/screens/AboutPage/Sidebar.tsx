@@ -1,4 +1,6 @@
 import React, {
+  CSSProperties,
+  HTMLAttributes,
   ReactNode,
   useCallback,
   useEffect,
@@ -14,16 +16,18 @@ export interface SidebarProps {
 }
 
 const Sidebar = ({ children }: SidebarProps) => {
-  const containerRef = useRef(null)
-  const [divStyles, setDivStyles] = useState(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [divStyles, setDivStyles] = useState<
+    HTMLAttributes<HTMLDivElement>['style']
+  >({})
 
   const onResize = useCallback(() => {
     if (containerRef?.current) {
       setDivStyles({
         position: 'absolute',
-        top: containerRef.current.offsetTop + 'px',
-        left: containerRef.current.offsetLeft + 'px',
-        width: containerRef.current.offsetWidth + 'px',
+        top: containerRef?.current?.offsetTop + 'px',
+        left: containerRef?.current?.offsetLeft + 'px',
+        width: containerRef?.current?.offsetWidth + 'px',
         bottom: theme.spacing[12] + 'px',
         zIndex: 10,
       })
