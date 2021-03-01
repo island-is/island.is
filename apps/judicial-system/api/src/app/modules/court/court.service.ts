@@ -7,7 +7,6 @@ import {
 } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'
-import { CreateCustodyCourtCaseResponse } from './models'
 
 let authenticationToken: string
 
@@ -53,20 +52,13 @@ export class CourtService {
     }
   }
 
-  async createCustodyCourtCase(
-    policeCaseNumber: string,
-  ): Promise<CreateCustodyCourtCaseResponse> {
-    const courtCaseNumber = await this.wrappedRequest(
-      async (authenticationToken: string) =>
-        this.createCustodyCaseApi.createCustodyCase({
-          basedOn: 'Rannsóknarhagsmunir',
-          sourceNumber: policeCaseNumber,
-          authenticationToken,
-        }),
+  createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
+    return this.wrappedRequest(async (authenticationToken: string) =>
+      this.createCustodyCaseApi.createCustodyCase({
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+        authenticationToken,
+      }),
     )
-
-    this.logger.info(`Created court case ${courtCaseNumber}`)
-
-    return { courtCaseNumber }
   }
 }
