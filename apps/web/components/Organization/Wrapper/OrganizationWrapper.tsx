@@ -95,7 +95,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 }
               >
                 <Box display="flex" flexDirection="row" alignItems="center">
-                  {!!organizationPage.organization.logo.url && (
+                  {!!organizationPage.organization.logo?.url && (
                     <img
                       src={organizationPage.organization.logo.url}
                       className={styles.headerLogo}
@@ -125,7 +125,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 <Box
                   className={cn(
                     styles.navigation,
-                    organizationPage.organization.logo.url
+                    organizationPage.organization.logo?.url
                       ? styles.navigationWithLogo
                       : styles.navigationWithoutLogo,
                   )}

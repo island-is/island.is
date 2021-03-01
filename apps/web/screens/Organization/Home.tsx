@@ -123,14 +123,14 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
           items={news}
           linkType="organizationnews"
           overview="organizationnewsoverview"
-          parameters={['syslumenn']}
+          parameters={[organizationPage.slug]}
         />
       </Section>
     </OrganizationWrapper>
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: {
@@ -156,7 +156,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },

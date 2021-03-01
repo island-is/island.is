@@ -267,7 +267,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -276,7 +276,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_SERVICES_QUERY,
       variables: {
         input: {
-          organization: 'syslumenn',
+          organization: query.slug as string,
           lang: locale as ContentLanguage,
           sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
         },
