@@ -9,13 +9,20 @@ import {
   AfterCreate,
   AfterUpdate,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Organisation } from './organisation.model'
 import { EntityTypes } from '../enums/EntityTypes'
-import { Changelog } from './changelog.model'
 
-@Table({ tableName: 'helpdesk' })
-export class Helpdesk extends Model<Helpdesk> {
+@Table({
+  tableName: 'changelog',
+  timestamps: true,
+  indexes: [
+    {
+      fields: ['organisation_id', 'entity_id'],
+    },
+  ],
+})
+export class Changelog extends Model<Changelog> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -36,19 +43,22 @@ export class Helpdesk extends Model<Helpdesk> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  email?: string
+  entityId?: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(EntityTypes),
   })
-  @ApiProperty()
-  phoneNumber?: string
+  @ApiProperty({ enum: EntityTypes })
+  entityType?: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.JSONB,
+    defaultValue: {},
   })
-  @ApiProperty()
-  modifiedBy?: string
+  @ApiPropertyOptional()
+  data?: object
 
   @CreatedAt
   @ApiProperty()
@@ -57,17 +67,4 @@ export class Helpdesk extends Model<Helpdesk> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
-
-  @AfterCreate
-  @AfterUpdate
-  static addChangelog(instance: Helpdesk) {
-    const obj = {
-      organisationId: instance.organisationId,
-      entityId: instance.id,
-      entityType: EntityTypes.HELPDESK,
-      data: instance,
-    }
-
-    Changelog.create(obj)
-  }
 }

@@ -35,9 +35,9 @@ export class DocumentProviderService {
     private providersApi: ProvidersApi,
   ) {}
 
-  async getOrganisations(): Promise<Organisation[]> {
+  async getOrganisations(authorization: string): Promise<Organisation[]> {
     return await this.organisationsApi
-      .organisationControllerGetOrganisations()
+      .organisationControllerGetOrganisations({ authorization })
       .catch(handleError)
   }
 
@@ -59,6 +59,7 @@ export class DocumentProviderService {
 
   async createOrganisation(
     input: CreateOrganisationInput,
+    authorization: string,
   ): Promise<Organisation> {
     const createOrganisationDto = { ...input }
 
@@ -70,10 +71,12 @@ export class DocumentProviderService {
   async updateOrganisation(
     id: string,
     organisation: UpdateOrganisationInput,
+    authorization: string,
   ): Promise<Organisation> {
     const dto = {
       id,
       updateOrganisationDto: { ...organisation },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -85,6 +88,7 @@ export class DocumentProviderService {
     organisationId: string,
     contactId: string,
     contact: UpdateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
@@ -101,6 +105,7 @@ export class DocumentProviderService {
     organisationId: string,
     contactId: string,
     contact: UpdateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
@@ -117,6 +122,7 @@ export class DocumentProviderService {
     organisationId: string,
     helpdeskId: string,
     helpdesk: UpdateHelpdeskInput,
+    authorization: string,
   ): Promise<Helpdesk> {
     const dto = {
       id: organisationId,
@@ -190,6 +196,7 @@ export class DocumentProviderService {
   async createProvider(
     nationalId: string,
     clientName: string,
+    authorization: string,
   ): Promise<ClientCredentials> {
     // return new ClientCredentials(
     //   '5016d8d5cb6ce0758107b9969ea3c301',
@@ -235,6 +242,7 @@ export class DocumentProviderService {
     endpoint: string,
     providerId: string,
     xroad: boolean,
+    authorization: string,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',

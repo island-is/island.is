@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { setup } from '../../../../../test/setup'
+import * as tokenUtils from '../utils/tokenUtils'
 
 let app: INestApplication
 
@@ -42,11 +43,27 @@ const provider = {
   externalProviderId: 'b9fe843a1dea446a9c8497a3f1e8ad72',
 }
 
+const nationalId = '123456-4321'
+
 beforeAll(async () => {
   app = await setup()
 })
 
 describe('Organisation API', () => {
+  let spy: jest.SpyInstance<
+    string | undefined,
+    [import('@nestjs/common').ExecutionContext]
+  >
+  beforeEach(() => {
+    spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
+    spy.mockImplementation(() => {
+      return nationalId
+    })
+  })
+  afterAll(() => {
+    spy.mockRestore()
+  })
+
   it('POST /organisations should register organisation with no related objects', async () => {
     const response = await request(app.getHttpServer())
       .post('/organisations')

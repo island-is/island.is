@@ -16,6 +16,7 @@ import { TechnicalContact } from './models/technicalContact.model'
 import { Helpdesk } from './models/helpdesk.model'
 import { CreateHelpdeskDto } from './dto/createHelpdesk.dto'
 import { UpdateHelpdeskDto } from './dto/updateHelpdesk.dto'
+import { Changelog } from './models/changelog.model'
 
 @Injectable()
 export class DocumentProviderService {
@@ -30,6 +31,8 @@ export class DocumentProviderService {
     private technicalContactModel: typeof TechnicalContact,
     @InjectModel(Helpdesk)
     private helpdeskModel: typeof Helpdesk,
+    @InjectModel(Changelog)
+    private changelogModel: typeof Changelog,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -37,6 +40,12 @@ export class DocumentProviderService {
   // ORGANISATION
   async getOrganisations(): Promise<Organisation[] | null> {
     return await this.organisationModel.findAll()
+  }
+
+  async getOrganisationById(id: string): Promise<Organisation | null> {
+    return await this.organisationModel.findOne({
+      where: { id },
+    })
   }
 
   async findOrganisationByNationalId(
@@ -51,19 +60,24 @@ export class DocumentProviderService {
 
   async createOrganisation(
     organisation: CreateOrganisationDto,
+    modifiedBy: string,
   ): Promise<Organisation> {
     this.logger.debug(
       `Creating organisation with nationalId - ${organisation.nationalId}`,
     )
     //console.log(JSON.stringify(organisation))
-    return this.organisationModel.create(organisation, {
-      include: [AdministrativeContact, TechnicalContact, Helpdesk],
-    })
+    return this.organisationModel.create(
+      { ...organisation, modifiedBy },
+      {
+        include: [AdministrativeContact, TechnicalContact, Helpdesk],
+      },
+    )
   }
 
   async updateOrganisation(
     id: string,
     update: UpdateOrganisationDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedOrganisation: Organisation
@@ -73,10 +87,14 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedOrganisation],
-    ] = await this.organisationModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.organisationModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedOrganisation }
   }
@@ -135,6 +153,7 @@ export class DocumentProviderService {
     ] = await this.providerModel.update(update, {
       where: { id },
       returning: true,
+      individualHooks: true,
     })
 
     return { numberOfAffectedRows, updatedProvider }
@@ -144,18 +163,21 @@ export class DocumentProviderService {
   async createAdministrativeContact(
     organisationId: string,
     contact: CreateContactDto,
+    modifiedBy: string,
   ): Promise<AdministrativeContact> {
     this.logger.debug(`Creating administrative contact`)
 
     return await this.administrativeContactModel.create({
       organisationId,
       ...contact,
+      modifiedBy,
     })
   }
 
   async updateAdministrativeContact(
     id: string,
     update: UpdateContactDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedContact: AdministrativeContact
@@ -165,10 +187,14 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedContact],
-    ] = await this.administrativeContactModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.administrativeContactModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedContact }
   }
@@ -177,18 +203,21 @@ export class DocumentProviderService {
   async createTechnicalContact(
     organisationId: string,
     contact: CreateContactDto,
+    modifiedBy: string,
   ): Promise<TechnicalContact> {
     this.logger.debug(`Creating technical contact`)
 
     return await this.technicalContactModel.create({
       organisationId,
       ...contact,
+      modifiedBy,
     })
   }
 
   async updateTechnicalContact(
     id: string,
     update: UpdateContactDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedContact: TechnicalContact
@@ -198,10 +227,14 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedContact],
-    ] = await this.technicalContactModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.technicalContactModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedContact }
   }
@@ -210,18 +243,21 @@ export class DocumentProviderService {
   async createHelpdesk(
     organisationId: string,
     helpdesk: CreateHelpdeskDto,
+    modifiedBy: string,
   ): Promise<Helpdesk> {
     this.logger.debug(`Creating helpdesk`)
 
     return await this.helpdeskModel.create({
       organisationId,
       ...helpdesk,
+      modifiedBy,
     })
   }
 
   async updateHelpdesk(
     id: string,
     update: UpdateHelpdeskDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedHelpdesk: Helpdesk
@@ -231,11 +267,19 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedHelpdesk],
-    ] = await this.helpdeskModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    ] = await this.helpdeskModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedHelpdesk }
+  }
+
+  async getChangelogs(): Promise<Changelog[] | null> {
+    return await this.changelogModel.findAll()
   }
 }
