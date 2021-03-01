@@ -6,6 +6,7 @@ import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Organisation } from '@island.is/api/schema'
 import { DocumentProvidersSearch } from './DocumentProvidersSearch'
+import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
 
 export type OrganisationPreview = Pick<
   Organisation,
@@ -40,7 +41,7 @@ const DocumentProviders: ServicePortalModuleComponent = () => {
       <Box marginBottom={[2, 3]}>
         <Text as="p">{formatMessage(m.documentProvidersDescription)}</Text>
       </Box>
-
+      <DocumentProvidersDashboard />
       {!error && (
         <DocumentProvidersSearch organisationsPreview={organisationsPreview} />
       )}
