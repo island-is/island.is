@@ -24,8 +24,8 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
-} from '../queries'
-import { Screen } from '../../types'
+} from '../../queries'
+import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'

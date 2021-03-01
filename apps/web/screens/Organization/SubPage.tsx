@@ -175,6 +175,7 @@ const renderSlices = (
 }
 
 SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+  console.log(query)
   const [
     {
       data: { getOrganizationPage },
@@ -188,7 +189,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -197,8 +198,8 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'syslumenn',
-          slug: query.slug as string,
+          organizationSlug: query.slug as string,
+          slug: query.subSlug as string,
           lang: locale as ContentLanguage,
         },
       },
