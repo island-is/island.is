@@ -140,7 +140,7 @@ export const JudgeOverview: React.FC = () => {
             <Text as="h1" variant="h1">
               {`Yfirlit ${
                 workingCase.type === CaseType.CUSTODY
-                  ? 'kröfu'
+                  ? 'gæsluvarðhaldskröfu'
                   : 'farbannskröfu'
               }`}
             </Text>
@@ -191,7 +191,9 @@ export const JudgeOverview: React.FC = () => {
               data={[
                 {
                   title: 'Embætti',
-                  value: 'Lögreglan á Höfuðborgarsvæðinu',
+                  value: `${
+                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                  }`,
                 },
                 {
                   title: 'Ósk um fyrirtökudag og tíma',
@@ -246,43 +248,39 @@ export const JudgeOverview: React.FC = () => {
               {constructProsecutorDemands(workingCase)}
             </Box>
             <div className={styles.infoSection}>
-              <Box marginBottom={2}>
-                <Text variant="h3" as="h3">
-                  Lagaákvæði
-                </Text>
-              </Box>
-              <Box>
-                <Box marginBottom={2}>
-                  <Box marginBottom={1}>
-                    <Text variant="eyebrow" color="blue400">
-                      Lagaákvæði sem brot varða við
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.lawsBroken}
-                    </span>
+              <Box marginBottom={6} data-testid="lawsBroken">
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Lagaákvæði sem brot varða við
                   </Text>
                 </Box>
-                <Box marginBottom={2}>
-                  <Box marginBottom={1}>
-                    <Text variant="eyebrow" color="blue400">
-                      Lagaákvæði sem krafan er byggð á
-                    </Text>
-                  </Box>
-                  {workingCase.custodyProvisions?.map(
-                    (custodyProvision: CaseCustodyProvisions, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{laws[custodyProvision]}</Text>
-                        </div>
-                      )
-                    },
-                  )}
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase.lawsBroken}
+                  </span>
+                </Text>
+              </Box>
+              <Box data-testid="custodyProvisions">
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Lagaákvæði sem krafan er byggð á
+                  </Text>
                 </Box>
+                {workingCase.custodyProvisions?.map(
+                  (custodyProvision: CaseCustodyProvisions, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{laws[custodyProvision]}</Text>
+                      </div>
+                    )
+                  },
+                )}
               </Box>
             </div>
-            <div className={styles.infoSection}>
+            <div
+              className={styles.infoSection}
+              data-testid="custodyRestrictions"
+            >
               <Box marginBottom={1}>
                 <Text variant="h3" as="h3">
                   {`Takmarkanir og tilhögun ${
@@ -297,11 +295,13 @@ export const JudgeOverview: React.FC = () => {
                   workingCase.requestedOtherRestrictions,
                 )
                   .split('\n')
-                  .map((requestedCustodyRestriction, index) => (
-                    <Text key={index} as="span">
-                      {requestedCustodyRestriction}
-                    </Text>
-                  ))}
+                  .map((requestedCustodyRestriction, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{requestedCustodyRestriction}</Text>
+                      </div>
+                    )
+                  })}
               </Text>
             </div>
             {(workingCase.caseFacts || workingCase.legalArguments) && (

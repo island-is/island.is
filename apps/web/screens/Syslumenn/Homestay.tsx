@@ -3,7 +3,10 @@ import React, { useState } from 'react'
 import {
   Box,
   Button,
+  GridColumn,
+  GridRow,
   Input,
+  Link,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -25,7 +28,7 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { MarkdownText, OrganizationWrapper } from '@island.is/web/components'
+import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -106,10 +109,6 @@ const Homestay: Screen<HomestayProps> = ({
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
     >
       <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
@@ -136,9 +135,10 @@ const Homestay: Screen<HomestayProps> = ({
           onChange={(event) => setQuery(event.target.value)}
         />
       </Box>
-      {filteredItems.slice(0, showCount).map((homestay) => {
+      {filteredItems.slice(0, showCount).map((homestay, index) => {
         return (
           <Box
+            key={index}
             border="standard"
             borderRadius="large"
             marginY={2}
@@ -148,10 +148,33 @@ const Homestay: Screen<HomestayProps> = ({
             <Text variant="h4" color="blue400" marginBottom={1}>
               {homestay.address}
             </Text>
-            <Text>{homestay.registrationNumber}</Text>
-            <Text>{homestay.name}</Text>
-            <Text>{homestay.city}</Text>
-            <Text>{homestay.manager}</Text>
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <Text>{homestay.registrationNumber}</Text>
+                <Text>{homestay.name}</Text>
+                <Text>{homestay.city}</Text>
+                <Text>{homestay.manager}</Text>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '6/12']}>
+                <Text>
+                  Fasteignanúmer:{' '}
+                  <Link
+                    href={`https://leyfi.island.is/Home/OpenSkraFastNR?fastnr=${homestay.propertyId}`}
+                  >
+                    {homestay.propertyId}
+                  </Link>
+                </Text>
+                <Text>
+                  {n('homestayApartmentNo', 'Íbúð')}: {homestay.apartmentId}
+                </Text>
+                <Text>
+                  {n('homestayGuests', 'Gestir')}: {homestay.guests}
+                </Text>
+                <Text>
+                  {n('homestayRooms', 'Herbergi')}: {homestay.rooms}
+                </Text>
+              </GridColumn>
+            </GridRow>
           </Box>
         )
       })}

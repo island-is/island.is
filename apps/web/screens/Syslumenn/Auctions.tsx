@@ -6,6 +6,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  LoadingIcon,
   NavigationItem,
   Option,
   Select,
@@ -108,18 +109,23 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       value: 'syslumadurinn-a-hoefudborgarsvaedinu',
     },
   ]
-  const months = []
 
   const date = new Date()
+
+  const months = [
+    {
+      label: 'Næstu uppboð',
+      value: '',
+    },
+  ]
 
   const [organization, setOrganization] = useState<string>(
     organizations[0].value,
   )
 
-  const [month, setMonth] = useState<string>(
-    `${date.getFullYear()}-${date.getMonth()}`,
-  )
+  const [month, setMonth] = useState<string>(months[0].value)
 
+  // Create options for the last three months in YYYY-MM format
   for (let i = 0; i <= 2; i++) {
     months.push({
       label: format(date, 'MMMM yyyy'),
@@ -136,20 +142,22 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       input: {
         lang: 'is',
         organization,
-        year: parseInt(month.split('-')[0]),
-        month: parseInt(month.split('-')[1]),
+        ...(month && {
+          year: parseInt(month.split('-')[0]),
+          month: parseInt(month.split('-')[1]),
+        }),
       },
     },
   })
 
   useEffect(() => {
     refetch()
-  }, [organization, month])
+  }, [organization, month, refetch])
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
     setOrganization(hashString ?? organizations[0].value)
-  }, [Router])
+  }, [Router, organizations])
 
   return (
     <OrganizationWrapper
@@ -172,10 +180,6 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
-        titleLink: {
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
-          active: false,
-        },
       }}
     >
       <Box marginBottom={6}>
@@ -230,14 +234,25 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
         paddingTop={[4, 4, 6]}
         paddingBottom={[4, 5, 10]}
       >
-        {!data?.getAuctions.length && (
-          <Text>{n('noAuctionsFound', 'Engin uppboð fundust')}</Text>
+        {loading && (
+          <Box display="flex" marginTop={4} justifyContent="center">
+            <LoadingIcon size={48} />
+          </Box>
+        )}
+        {(error || !data?.getAuctions.length) && !loading && (
+          <Box display="flex" marginTop={4} justifyContent="center">
+            <Text variant="h3">
+              {n('noAuctionsFound', 'Engin uppboð fundust')}
+            </Text>
+          </Box>
         )}
         {data?.getAuctions.map((auction) => {
-          const date = new Date(auction.date)
+          const currentDate = new Date()
+          const auctionDate = new Date(auction.date)
           const updatedAt = new Date(auction.updatedAt)
 
-          return (
+          return auctionDate <= currentDate &&
+            month === months[0].value ? null : (
             <FocusableBox
               href={linkResolver('auction', [auction.id]).href}
               borderWidth="standard"
@@ -252,7 +267,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                   {n('auctionType-' + auction.type)}
                 </Text>
                 <Text variant="h3">
-                  {format(date, 'd. MMMM yyyy')} | {auction.title}
+                  {format(auctionDate, 'd. MMMM yyyy')} | {auction.title}
                 </Text>
                 <Text paddingTop={1}>
                   {n('updatedAt', 'Uppfært')} {format(updatedAt, 'd. MMMM H:m')}
@@ -265,8 +280,8 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                 justifyContent="spaceBetween"
                 marginLeft="auto"
               >
-                <Tag>{auction.organization.title}</Tag>
-                <Text variant="small">{format(date, 'dd.MM.yyyy')}</Text>
+                <Tag disabled>{auction.organization.title}</Tag>
+                <Text variant="small">{format(auctionDate, 'dd.MM.yyyy')}</Text>
               </Box>
             </FocusableBox>
           )

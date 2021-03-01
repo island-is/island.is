@@ -70,9 +70,12 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
       align: 'center',
     })
     .fontSize(16)
-    .text(`Embætti: ${existingCase.prosecutor?.institution || 'Ekki skráð'}`, {
-      align: 'center',
-    })
+    .text(
+      `Embætti: ${existingCase.prosecutor?.institution?.name || 'Ekki skráð'}`,
+      {
+        align: 'center',
+      },
+    )
     .lineGap(40)
     .text(`Dómstóll: ${existingCase.court}`, { align: 'center' })
     .font('Helvetica-Bold')
@@ -202,7 +205,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `F.h.l. ${existingCase.prosecutor?.name || ''} ${
+      `${existingCase.prosecutor?.name || ''} ${
         existingCase.prosecutor?.title || ''
       }`,
     )

@@ -329,7 +329,7 @@
         "docker-next": {}
       }
     },
-    "air-discount-scheme/web-e2e": {
+    "air-discount-scheme-web-e2e": {
       "root": "apps/air-discount-scheme/web-e2e",
       "sourceRoot": "apps/air-discount-scheme/web-e2e/src",
       "projectType": "application",
@@ -344,8 +344,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "air-discount-scheme-web:serve:production"
+              "devServerTarget": ""
             }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n air-discount-scheme-web-e2e -d dist/apps/air-discount-scheme/web"
           }
         },
         "lint": {
@@ -1405,12 +1411,19 @@
           "options": {
             "cypressConfig": "apps/application-system/form-e2e/cypress.json",
             "tsConfig": "apps/application-system/form-e2e/tsconfig.e2e.json",
-            "devServerTarget": "application-system-form:serve"
+            "devServerTarget": "application-system-form:serve",
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "application-system-form:serve:production"
+              "devServerTarget": ""
             }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n application-system-form-e2e -t react -d dist/apps/application-system/form"
           }
         },
         "lint": {
@@ -1502,6 +1515,12 @@
               "**/node_modules/**",
               "!libs/application/templates/children-residence-change/**/*"
             ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/children-residence-change/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -1641,7 +1660,7 @@
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/health-insurance/src/forms/messages.ts"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/health-insurance/src/forms/messages.ts"
           }
         }
       }
@@ -1706,6 +1725,34 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/parental-leave/src/lib/messages.ts"
+          }
+        }
+      }
+    },
+    "application-templates-party-letter": {
+      "root": "libs/application/templates/party-letter",
+      "sourceRoot": "libs/application/templates/party-letter/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/party-letter/tsconfig.lib.json",
+              "libs/application/templates/party-letter/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/party-letter/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-letter/src/lib/messages.ts'"
           }
         }
       }
@@ -1931,8 +1978,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "auth-admin-web:serve:production"
+              "devServerTarget": ""
             }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n auth-admin-web-e2e -d dist/apps/auth-admin-web"
           }
         },
         "lint": {
@@ -2198,7 +2251,7 @@
     "contentful-translation-extension": {
       "root": "libs/contentful-translation-extension",
       "sourceRoot": "libs/contentful-translation-extension/src",
-      "projectType": "",
+      "projectType": "library",
       "schematics": {},
       "architect": {
         "test": {
@@ -2691,8 +2744,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "gjafakort-web:serve:production"
+              "devServerTarget": ""
             }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web"
           }
         },
         "lint": {
@@ -2701,6 +2760,32 @@
             "linter": "eslint",
             "tsConfig": ["apps/gjafakort/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/gjafakort/web-e2e/**/*"]
+          }
+        }
+      }
+    },
+    "health-insurance": {
+      "root": "libs/health-insurance",
+      "sourceRoot": "libs/health-insurance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/health-insurance/tsconfig.lib.json",
+              "libs/health-insurance/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/health-insurance/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/health-insurance/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -3290,6 +3375,41 @@
         }
       }
     },
+    "judicial-system-court-client": {
+      "root": "libs/judicial-system/court-client",
+      "sourceRoot": "libs/judicial-system/court-client/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/court-client/tsconfig.lib.json",
+              "libs/judicial-system/court-client/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/judicial-system/court-client/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/court-client/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/judicial-system/court-client/gen/fetch -i libs/judicial-system/court-client/src/clientConfig.json"
+          }
+        }
+      }
+    },
     "judicial-system-formatters": {
       "root": "libs/judicial-system/formatters",
       "sourceRoot": "libs/judicial-system/formatters/src",
@@ -3429,7 +3549,7 @@
         "docker-static": {}
       }
     },
-    "judicial-system/web-e2e": {
+    "judicial-system-web-e2e": {
       "root": "apps/judicial-system/web-e2e",
       "sourceRoot": "apps/judicial-system/web-e2e/src",
       "projectType": "application",
@@ -3439,12 +3559,19 @@
           "options": {
             "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
             "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "judicial-system-web:serve"
+            "devServerTarget": "judicial-system-web:serve",
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "judicial-system-web:serve:production"
+              "devServerTarget": ""
             }
+          }
+        },
+        "e2e-no-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n judicial-system-web-e2e -t react -d dist/apps/judicial-system/web"
           }
         },
         "lint": {
@@ -4007,6 +4134,12 @@
             "jestConfig": "libs/service-portal/document-provider/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/document-provider/src/lib/messages.ts"
+          }
         }
       }
     },
@@ -4084,12 +4217,19 @@
           "options": {
             "cypressConfig": "apps/service-portal-e2e/cypress.json",
             "tsConfig": "apps/service-portal-e2e/tsconfig.e2e.json",
-            "devServerTarget": "service-portal:serve"
+            "devServerTarget": "service-portal:serve",
+            "baseUrl": "http://localhost:4200"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "service-portal:serve:production"
+              "devServerTarget": ""
             }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n service-portal-e2e -t react -d dist/apps/service-portal -b /minarsidur"
           }
         },
         "lint": {
@@ -5150,6 +5290,41 @@
         "docker-next": {}
       }
     },
+    "skilavottord-web-e2e": {
+      "root": "apps/skilavottord/web-e2e",
+      "sourceRoot": "apps/skilavottord/web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
+            "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "skilavottord-web:serve",
+            "baseUrl": "http://localhost:4200"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": ""
+            }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n skilavottord-web-e2e -d dist/apps/skilavottord/web"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/skilavottord/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
+          }
+        }
+      }
+    },
     "skilavottord-ws": {
       "root": "apps/skilavottord/ws",
       "sourceRoot": "apps/skilavottord/ws/src",
@@ -5256,35 +5431,6 @@
         "docker-express": {}
       }
     },
-    "skilavottord/web-e2e": {
-      "root": "apps/skilavottord/web-e2e",
-      "sourceRoot": "apps/skilavottord/web-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/skilavottord/web-e2e/cypress.json",
-            "tsConfig": "apps/skilavottord/web-e2e/tsconfig.e2e.json",
-            "baseUrl": "http://localhost:4200",
-            "devServerTarget": "skilavottord-web:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "skilavottord-web:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["apps/skilavottord/web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
-          }
-        }
-      }
-    },
     "utils-api": {
       "root": "libs/utils/api",
       "sourceRoot": "libs/utils/api/src",
@@ -5306,6 +5452,32 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/utils/api/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "utils-environment": {
+      "root": "libs/utils/environment",
+      "sourceRoot": "libs/utils/environment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/utils/environment/tsconfig.lib.json",
+              "libs/utils/environment/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/utils/environment/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/utils/environment/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -5446,8 +5618,14 @@
           },
           "configurations": {
             "production": {
-              "devServerTarget": "web:serve:production"
+              "devServerTarget": ""
             }
+          }
+        },
+        "e2e-ci": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn e2e-ci -n web-e2e -d dist/apps/web"
           }
         },
         "lint": {

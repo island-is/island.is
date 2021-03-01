@@ -4,6 +4,7 @@ import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { environment } from '../environments/environment'
 import { Dictionary } from './dictionary'
 import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 AWS.config.update({ region: environment.awsRegion })
 const awsEs = new AWS.ES()
@@ -68,21 +69,41 @@ const getPackageStatuses = async (
   }
 }
 
-export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
+export const getAssociatedEsPackages = async (
+  requestedVersion: string,
+): Promise<AwsEsPackage[]> => {
   const domainPackageList = await awsEs
     .listPackagesForDomain({
       DomainName: environment.esDomain,
     })
     .promise()
-  return domainPackageList.DomainPackageDetailsList.map((esPackage) => {
-    const { locale, analyzerType } = parsePackageName(esPackage.PackageName)
-    return {
-      packageName: esPackage.PackageName,
-      packageId: esPackage.PackageID,
-      locale,
-      analyzerType,
-    }
-  })
+
+  return (
+    domainPackageList.DomainPackageDetailsList
+      // we only want to return packages for current version
+      .filter((esPackage) => {
+        const { version, locale, analyzerType } = parsePackageName(
+          esPackage.PackageName,
+        )
+        logger.info('Found associated package for domain', {
+          version,
+          locale,
+          analyzerType,
+          requestedVersion,
+          willBeUsed: requestedVersion === version,
+        })
+        return requestedVersion === version
+      })
+      .map((esPackage) => {
+        const { locale, analyzerType } = parsePackageName(esPackage.PackageName)
+        return {
+          packageName: esPackage.PackageName,
+          packageId: esPackage.PackageID,
+          locale: locale as ElasticsearchIndexLocale,
+          analyzerType,
+        }
+      })
+  )
 }
 
 // AWS ES wont let us make multiple requests at once so we wait
@@ -144,27 +165,20 @@ export const checkAWSAccess = async (): Promise<boolean> => {
   return !!domains.find((domain) => domain.DomainName === environment.esDomain)
 }
 
-const createS3Key = (type: string, prefix = ''): string => {
-  const prefixString = prefix ? `${prefix}/` : ''
-  return `${environment.s3Folder}${prefixString}${type}.txt`
+interface CreateS3KeyInput {
+  filename: string
+  locale: ElasticsearchIndexLocale
+  version: string
 }
-
-export const getDictionaryVersion = (): Promise<string> => {
-  const params = {
-    Bucket: environment.s3Bucket,
-    Key: createS3Key('dictionaryVersion'),
-  }
-
-  // we don't want to stop here even if file is not found
-  return s3
-    .getObject(params)
-    .promise()
-    .then((data) => data.Body.toString())
-    .catch((error) => {
-      logger.error('Version file not found', { error })
-      // return empty string to indicate no version set
-      return ''
-    })
+const createS3Key = ({
+  filename,
+  locale,
+  version,
+}: CreateS3KeyInput): string => {
+  const prefix = [locale, version, '']
+    .filter((parameter) => parameter !== undefined)
+    .join('/') // creates folder prefix e.g. is/4cc9840/
+  return `${environment.s3Folder}${prefix}${filename}.txt`
 }
 
 const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
@@ -185,120 +199,117 @@ const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
     })
 }
 
-interface S3DictionaryFile {
-  locale: string
-  analyzerType: string
+const checkIfS3Exists = (key: string) => {
+  return s3
+    .headObject({
+      Bucket: environment.s3Bucket,
+      Key: key,
+    })
+    .promise()
+    .then(() => true)
+    .catch(() => false) // we don't want this to throw on error so we can handle if not exists manually
 }
-export const updateS3DictionaryFiles = async (
+
+interface S3DictionaryFile {
+  locale: ElasticsearchIndexLocale
+  analyzerType: string
+  version: string
+}
+export const uploadS3DictionaryFiles = async (
   dictionaries: Dictionary[],
 ): Promise<S3DictionaryFile[]> => {
   const uploads = dictionaries.map(async (dictionary) => {
-    const { analyzerType, locale, file } = dictionary
-    const s3Key = createS3Key(analyzerType, locale)
-    await uploadFileToS3({ Key: s3Key, Body: file })
+    const { analyzerType, locale, file, version } = dictionary
+    // we will upload the files into subfolders by locale
+    const s3Key = createS3Key({ filename: analyzerType, locale, version })
+
+    const exists = await checkIfS3Exists(s3Key)
+    if (!exists) {
+      logger.info('S3 file not found, uploading file', { key: s3Key })
+      await uploadFileToS3({ Key: s3Key, Body: file })
+    } else {
+      logger.info('S3 file found, skipping upload of file', { key: s3Key })
+    }
+
+    // the following processes just need a way to point correctly to the files
     return {
       locale,
       analyzerType,
+      version,
     }
   })
 
-  return Promise.all(uploads)
+  return await Promise.all(uploads)
 }
 
 const getAwsEsPackagesDetails = async () => {
   logger.info('Getting all AWS ES packages')
-  const packages = await awsEs.describePackages().promise()
+  const packages = await awsEs.describePackages({ MaxResults: 100 }).promise()
 
   return packages.PackageDetailsList
 }
 
-const removePackagesIfExist = async (
-  uploadedDictionaryFiles: S3DictionaryFile[],
-  version: string,
-) => {
+const checkIfAwsEsPackageExists = async (
+  packageName: string,
+): Promise<string | null> => {
   const esPackages = await getAwsEsPackagesDetails()
-
-  logger.info('Checking if we have conflicting packages')
-  // search esPackages to check of any package exist
-  const responses = uploadedDictionaryFiles.map(async (uploadedFile) => {
-    const { analyzerType, locale } = uploadedFile
-    const packageName = createPackageName(locale, analyzerType, version)
-    const existingPackage = esPackages.find(
-      (esPackage) => esPackage.PackageName === packageName,
-    )
-
-    if (existingPackage) {
-      logger.info(
-        'Found conflicting AWS ES package, removing existing package to prevent conflict',
-        { existingPackage, packageName },
-      )
-      const params = {
-        PackageID: existingPackage.PackageID,
-      }
-
-      // this package should never be in use so we can delete it
-      return awsEs
-        .deletePackage(params)
-        .promise()
-        .catch((error) => {
-          logger.info('Unable to remove conflicting package', {
-            error: error,
-            existingPackage: existingPackage,
-          })
-          return false
-        })
-    } else {
-      // no file found, return promise
-      return false
-    }
-  })
-
-  // wait for all request to resolve
-  await Promise.all(responses)
-  return true
+  logger.info('Checking if package exists', { packageName })
+  const foundPackage = esPackages.find(
+    (esPackage) => esPackage.PackageName === packageName,
+  )
+  return foundPackage?.PackageID ?? null
 }
 
 /*
 createAwsEsPackages should only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
-We run a remove packages for this version function to handle failed partial updates
+We run a remove packages for this version function to handle failed partial updates that might not have associated the package to the domain 
 */
 export interface AwsEsPackage {
   packageName?: string
   packageId: string
-  locale: string
+  locale: ElasticsearchIndexLocale
   analyzerType: string
 }
 export const createAwsEsPackages = async (
   uploadedDictionaryFiles: S3DictionaryFile[],
-  version: string,
 ): Promise<AwsEsPackage[]> => {
-  // this handles failed updates, if everything works this should never remove packages
-  await removePackagesIfExist(uploadedDictionaryFiles, version)
-
   // create a new package for each uploaded s3 file
   const createdPackages = uploadedDictionaryFiles.map(async (uploadedFile) => {
-    const { analyzerType, locale } = uploadedFile
+    const { analyzerType, locale, version } = uploadedFile
+    const packageName = createPackageName(locale, analyzerType, version)
+    const foundPackageId = await checkIfAwsEsPackageExists(packageName)
+    let uploadedPackageId
 
-    const params = {
-      PackageName: createPackageName(locale, analyzerType, version), // version is here so we dont conflict with older packages
-      PackageType: 'TXT-DICTIONARY',
-      PackageSource: {
-        S3BucketName: environment.s3Bucket,
-        S3Key: createS3Key(analyzerType, locale),
-      },
+    if (!foundPackageId) {
+      const params = {
+        PackageName: createPackageName(locale, analyzerType, version), // version is here so we don't conflict with older packages
+        PackageType: 'TXT-DICTIONARY',
+        PackageSource: {
+          S3BucketName: environment.s3Bucket,
+          S3Key: createS3Key({ filename: analyzerType, locale, version }),
+        },
+      }
+
+      logger.info('Creating AWS ES package', params)
+
+      const esPackage = await awsEs.createPackage(params).promise()
+
+      // we have to wait for package to be ready cause AWS ES can only process one request at a time
+      await waitForPackageStatus(
+        esPackage.PackageDetails.PackageID,
+        'AVAILABLE',
+      )
+
+      logger.info('Created AWS ES package', { esPackage })
+      uploadedPackageId = esPackage.PackageDetails.PackageID
+    } else {
+      logger.info('AWS ES package found, skipping upload of package', {
+        packageId: foundPackageId,
+      })
     }
 
-    logger.info('Creating AWS ES package', params)
-
-    const esPackage = await awsEs.createPackage(params).promise()
-
-    // we have to wait for package to be ready cause AWS ES can only process one request at a time
-    await waitForPackageStatus(esPackage.PackageDetails.PackageID, 'AVAILABLE')
-
-    logger.info('Created AWS ES package', { esPackage })
-
     return {
-      packageId: esPackage.PackageDetails.PackageID,
+      packageId: uploadedPackageId ?? foundPackageId,
       locale,
       analyzerType,
     }
@@ -307,35 +318,77 @@ export const createAwsEsPackages = async (
   return Promise.all(createdPackages)
 }
 
-export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
-  // do one at a time
-  for (const awsEsPackage of packages) {
-    const params = {
+const getDomainPackages = () => {
+  return awsEs
+    .listPackagesForDomain({
       DomainName: environment.esDomain,
-      PackageID: awsEsPackage.packageId,
+    })
+    .promise()
+}
+
+const getPackageAssociationStatus = async (
+  packageId,
+): Promise<'missing' | 'active' | 'broken'> => {
+  const domainPackageList = await getDomainPackages()
+  const domainPackage = domainPackageList.DomainPackageDetailsList.find(
+    (domainPackageEntry) => domainPackageEntry.PackageID === packageId,
+  )
+  if (!domainPackage) {
+    return 'missing'
+  }
+  return domainPackage.DomainPackageStatus === 'ACTIVE' ? 'active' : 'broken'
+}
+
+const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
+  const params = {
+    DomainName: environment.esDomain,
+    PackageID: packageId,
+  }
+
+  logger.info('Disassociating package from AWS ES domain', params)
+  const result = await awsEs.dissociatePackage(params).promise()
+  await waitForPackageStatus(packageId, 'DISSOCIATED')
+  return result
+}
+
+export const associatePackagesWithAwsEsSearchDomain = async (
+  packages: AwsEsPackage[],
+) => {
+  // we have to do one at a time due to limitations in AWS API
+  for (const awsEsPackage of packages) {
+    const packageId = awsEsPackage.packageId
+    const packageStatus = await getPackageAssociationStatus(packageId)
+
+    if (packageStatus === 'broken') {
+      logger.error('Package failed to associate correctly attempting to remove')
+      await dissociatePackageWithAwsEsSearchDomain(packageId)
+      logger.error('Dissociation successful, continuing')
     }
 
-    logger.info('Associating package with AWS ES instance', params)
-    const esPackage = await awsEs.associatePackage(params).promise()
+    if (packageStatus === 'missing' || packageStatus === 'broken') {
+      const params = {
+        DomainName: environment.esDomain,
+        PackageID: packageId,
+      }
 
-    // we have to wait for package to be ready cause AWS ES can only process one request at a time
-    await waitForPackageStatus(
-      esPackage.DomainPackageDetails.PackageID,
-      'ACTIVE',
-    )
+      logger.info('Associating package with AWS ES domain', params)
+      const esPackage = await awsEs.associatePackage(params).promise()
+
+      // we have to wait for package to be ready cause AWS ES can only process one request at a time
+      await waitForPackageStatus(
+        esPackage.DomainPackageDetails.PackageID,
+        'ACTIVE',
+      )
+    } else {
+      logger.info(
+        'AWS ES package already associated, skipping association of package',
+        {
+          packageId,
+        },
+      )
+    }
   }
 
   logger.info('Successfully associated all packages with AWS ES instance')
   return true
-}
-
-export const updateDictionaryVersion = async (newDictionaryVersion: string) => {
-  const params = {
-    Key: createS3Key('dictionaryVersion'),
-    Body: newDictionaryVersion,
-  }
-  await uploadFileToS3(params)
-  logger.info('Updated dictionary version to', {
-    version: newDictionaryVersion,
-  })
 }

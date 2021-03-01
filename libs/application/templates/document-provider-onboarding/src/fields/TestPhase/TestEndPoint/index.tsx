@@ -43,7 +43,26 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     // @ts-ignore
     formValue.endPointObject?.endPointExists || '',
   )
-  const [updateEndpoint] = useMutation(updateTestEndpointMutation)
+  const [updateEndpoint, { loading }] = useMutation(
+    updateTestEndpointMutation,
+    {
+      onError: (error) => {
+        if (error.message.includes('Unique key violation')) {
+          setTestEndPointError(
+            formatText(
+              m.testEndPointErrorMessageUniqueKeyViolation,
+              application,
+              formatMessage,
+            ),
+          )
+        } else {
+          setTestEndPointError(
+            formatText(m.testEndPointErrorMessage, application, formatMessage),
+          )
+        }
+      },
+    },
+  )
 
   const nationalId = getValueViaPath(
     application.answers,
@@ -69,22 +88,19 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-
-      if (!result.data) {
-        setTestEndPointError(m.testEndPointErrorMessage.defaultMessage)
-      }
-
       setendPointVariables([
         {
           id: '1',
           name: 'Audience',
           value: result.data.updateTestEndpoint.audience,
         },
-        { id: '2', name: 'Scope', value: result.data.updateTestEndpoint.scope },
+        {
+          id: '2',
+          name: 'Scope',
+          value: result.data.updateTestEndpoint.scope,
+        },
       ])
-
       setendpointExists('true')
-
       clearErrors()
     }
   }
@@ -112,6 +128,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   application,
                   formatMessage,
                 )}
+                disabled={loading}
                 name={'endPointObject.endPoint'}
                 id={'endPointObject.endPoint'}
                 ref={register}
@@ -122,11 +139,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   formatMessage,
                 )}
                 hasError={errors.endPointObject?.endPoint !== undefined}
-                errorMessage={formatText(
-                  m.testEndpointInputErrorMessage,
-                  application,
-                  formatMessage,
-                )}
+                errorMessage={testEndPointError ? testEndPointError : ''}
               />
             )}
           />
@@ -141,6 +154,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
         <Button
           variant="ghost"
           size="small"
+          loading={loading}
           onClick={() => {
             trigger(['endPointObject.endPoint']).then((answer) =>
               onUpdateEndpoint(answer),

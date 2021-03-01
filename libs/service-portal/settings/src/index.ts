@@ -14,11 +14,17 @@ export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
   widgets: () => [],
   routes: async ({ client }) => {
-    const res = await client.query<Query>({
-      query: USER_PROFILE,
-    })
+    let emailVerified = true
+    try {
+      const res = await client.query<Query>({
+        query: USER_PROFILE,
+      })
 
-    const userProfile = res.data?.getUserProfile
+      const userProfile = res.data?.getUserProfile
+      emailVerified = !!userProfile?.emailVerified
+    } catch (err) {
+      // TODO: Handle error?
+    }
 
     const routes: ServicePortalRoute[] = [
       {
@@ -26,7 +32,7 @@ export const settingsModule: ServicePortalModule = {
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        notifications: userProfile?.emailVerified === false ? 1 : 0,
+        notifications: emailVerified === false ? 1 : 0,
         path: ServicePortalPath.UserProfileRoot,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },

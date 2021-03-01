@@ -76,6 +76,7 @@
 - [Generating a New Project](handbook/repository/generate.md)
 - [GitBook Contributions](handbook/repository/gitbook-contribute.md)
 - [Auto Generated Schemas](handbook/repository/schemas.md)
+- [Workspace Settings](handbook/repository/workspace-settings.md)
 
 ## Apps
 
@@ -119,6 +120,7 @@
   - [Template Loader](libs/application/template-loader/README.md)
     - [Children Residence Change Template](libs/application/templates/children-residence-change/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
+    - [Party Letter](libs/application/templates/party-letter/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
@@ -132,6 +134,7 @@
 - [Dokobit Signing](libs/dokobit-signing/README.md)
 - [Email Service](libs/email-service/README.md)
 - [Feature Flags](libs/feature-flags/README.md)
+- [Health Insurance](libs/health-insurance/README.md)
 - [Island UI](libs/island-ui/README.md)
 - [Localization](libs/localization/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
@@ -147,6 +150,7 @@
   - [Shared Types](libs/shared/types/README.md)
 - [Utils](libs/utils/README.md)
   - [API Utils](libs/utils/api/README.md)
+  - [Utils Environment](libs/utils/environment/README.md)
 - [VMST Client](libs/vmst-client/README.md)
 
 ## Misc

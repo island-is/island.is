@@ -17,7 +17,6 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { Card, Sticky } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {
@@ -48,6 +47,48 @@ import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
+// adds or removes selected category in hash array
+export const updateHashArray = (
+  hashArray: string[],
+  categoryId: string,
+): string[] => {
+  let tempArr = hashArray ?? []
+  if (!!categoryId && categoryId.length > 0) {
+    if (tempArr.includes(categoryId)) {
+      tempArr = hashArray.filter((x) => x !== categoryId)
+    } else {
+      tempArr = tempArr.concat([categoryId])
+    }
+  }
+  return tempArr
+}
+
+// gets "active" category that we use to scroll to on inital render
+export const getActiveCategory = (hashArr: string[]): string | null => {
+  if (!!hashArr && hashArr.length > 0) {
+    const activeCategory = hashArr[hashArr.length - 1].replace('#', '')
+    return activeCategory.length > 0 ? activeCategory : null
+  }
+  return null
+}
+
+// creates hash string from array
+export const getHashString = (hashArray: string[]): string => {
+  if (!!hashArray && hashArray.length > 0) {
+    return hashArray.length > 1 ? hashArray.join(',') : hashArray[0]
+  }
+  return ''
+}
+
+// creates hash array from string
+export const getHashArr = (hashString: string): string[] => {
+  if (!!hashString && hashString.length > 0) {
+    hashString = hashString.replace('#', '')
+    return hashString.length > 0 ? hashString.split(',') : null
+  }
+  return null
+}
+
 interface CategoryProps {
   articles: Articles
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -64,8 +105,8 @@ const Category: Screen<CategoryProps> = ({
   slug,
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
-  const [hash, setHash] = useState<string>('')
-  const { activeLocale, t } = useI18n()
+  const [hashArray, setHashArray] = useState<string[]>([])
+
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -122,10 +163,17 @@ const Category: Screen<CategoryProps> = ({
   const category = getCurrentCategory()
 
   useEffect(() => {
-    const hashMatch = window.location.hash ?? ''
-    const hashString = hashMatch.replace('#', '')
-    setHash(hashString)
-  }, [Router])
+    const urlHash = window.location.hash ?? ''
+    if (urlHash && urlHash.length > 0) {
+      const ulrHashArr = getHashArr(urlHash)
+      const activeCategory = getActiveCategory(ulrHashArr)
+      setHashArray(ulrHashArr)
+      if (activeCategory) {
+        const elementFound = document.getElementById(activeCategory)
+        if (elementFound) elementFound.scrollIntoView()
+      }
+    }
+  }, [])
 
   const sidebarCategoryLinks = categories.map(({ __typename, title, slug }) => {
     return {
@@ -175,26 +223,12 @@ const Category: Screen<CategoryProps> = ({
   }
 
   const handleAccordionClick = (groupSlug: string) => {
-    let newHash = hash.replace('#', '')
-    const hashArray = newHash.split(',')
-
-    if (hash === '') {
-      newHash = `${groupSlug}`
-    } else {
-      if (hashArray.indexOf(groupSlug) > -1) {
-        hashArray.splice(hashArray.indexOf(groupSlug), 1)
-        newHash = hashArray.join(',')
-      } else {
-        newHash = newHash.concat(`,${groupSlug}`)
-      }
-    }
-
-    setHash(newHash)
-
-    Router.replace(
-      linkResolver(category.__typename as LinkType, [slug]).href +
-        `#${newHash}`,
-    )
+    const updatedArr = updateHashArray(hashArray, groupSlug)
+    setHashArray(updatedArr)
+    Router.replace({
+      pathname: linkResolver(category.__typename as LinkType, [slug]).href,
+      hash: getHashString(updatedArr),
+    })
   }
 
   const sortArticles = (articles: Articles) => {
@@ -265,12 +299,13 @@ const Category: Screen<CategoryProps> = ({
               title={n('sidebarHeader')}
               renderLink={(link, { typename, slug }) => {
                 return (
-                  <NextLink
-                    {...linkResolver(typename as LinkType, slug)}
+                  <Link
+                    href={linkResolver(typename as LinkType, slug).href}
+                    onClick={() => setHashArray([])}
                     passHref
                   >
                     {link}
-                  </NextLink>
+                  </Link>
                 )
               }}
             />
@@ -338,12 +373,13 @@ const Category: Screen<CategoryProps> = ({
             isMenuDialog
             renderLink={(link, { typename, slug }) => {
               return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
+                <Link
+                  href={linkResolver(typename as LinkType, slug).href}
+                  onClick={() => setHashArray([])}
                   passHref
                 >
                   {link}
-                </NextLink>
+                </Link>
               )
             }}
             items={sidebarCategoryLinks}
@@ -369,7 +405,7 @@ const Category: Screen<CategoryProps> = ({
             )
 
             const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
-            const expanded = hash.includes(groupSlug)
+            const expanded = hashArray.includes(groupSlug)
 
             return (
               <div

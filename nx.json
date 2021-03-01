@@ -42,7 +42,7 @@
     "air-discount-scheme-web": {
       "tags": []
     },
-    "air-discount-scheme/web-e2e": {
+    "air-discount-scheme-web-e2e": {
       "tags": [],
       "implicitDependencies": ["air-discount-scheme-web"]
     },
@@ -161,6 +161,9 @@
     "application-templates-parental-leave": {
       "tags": []
     },
+    "application-templates-party-letter": {
+      "tags": []
+    },
     "application-templates-passport": {
       "tags": []
     },
@@ -245,6 +248,9 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },
@@ -298,6 +304,9 @@
     "judicial-system-consts": {
       "tags": []
     },
+    "judicial-system-court-client": {
+      "tags": []
+    },
     "judicial-system-formatters": {
       "tags": []
     },
@@ -307,7 +316,7 @@
     "judicial-system-web": {
       "tags": []
     },
-    "judicial-system/web-e2e": {
+    "judicial-system-web-e2e": {
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
     },
@@ -426,14 +435,17 @@
     "skilavottord-web": {
       "tags": []
     },
-    "skilavottord-ws": {
-      "tags": []
-    },
-    "skilavottord/web-e2e": {
+    "skilavottord-web-e2e": {
       "tags": [],
       "implicitDependencies": ["skilavottord-web"]
     },
+    "skilavottord-ws": {
+      "tags": []
+    },
     "utils-api": {
+      "tags": []
+    },
+    "utils-environment": {
       "tags": []
     },
     "vmst-client": {

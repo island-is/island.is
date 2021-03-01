@@ -11,6 +11,8 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { CreatePdfInput } from './dto/createPdf.input'
+import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
+import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -136,10 +138,37 @@ export class ApplicationService {
 
   async createPdfPresignedUrl(input: CreatePdfInput, authorization: string) {
     const { id, ...createPdfDto } = input
-    return await this.applicationApi.applicationControllerCreatePdf({
-      id,
-      createPdfDto,
-      authorization,
-    })
+    return await this.applicationApi
+      .applicationControllerCreatePdf({
+        id,
+        createPdfDto,
+        authorization,
+      })
+      .catch(handleError)
+  }
+
+  async requestFileSignature(
+    input: RequestFileSignatureInput,
+    authorization: string,
+  ) {
+    const { id, ...requestFileSignatureDto } = input
+    return await this.applicationApi
+      .applicationControllerRequestFileSignature({
+        id,
+        requestFileSignatureDto,
+        authorization,
+      })
+      .catch(handleError)
+  }
+
+  async uploadSignedFile(input: UploadSignedFileInput, authorization: string) {
+    const { id, ...uploadSignedFileDto } = input
+    return await this.applicationApi
+      .applicationControllerUploadSignedFile({
+        id,
+        uploadSignedFileDto,
+        authorization,
+      })
+      .catch(handleError)
   }
 }

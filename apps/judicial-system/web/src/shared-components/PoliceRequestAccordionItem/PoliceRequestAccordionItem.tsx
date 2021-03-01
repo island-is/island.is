@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import AccordionListItem from '../AccordionListItem/AccordionListItem'
-
+import * as styles from './PoliceRequestAccordionItem.treat'
 interface Props {
   workingCase: Case
 }
@@ -97,11 +97,13 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
             workingCase.requestedOtherRestrictions,
           )
             .split('\n')
-            .map((requestedCustodyRestriction, index) => (
-              <Text as="span" key={index}>
-                {requestedCustodyRestriction}
-              </Text>
-            ))}
+            .map((requestedCustodyRestriction, index) => {
+              return (
+                <span key={index} className={styles.block}>
+                  <Text as="span">{requestedCustodyRestriction}</Text>
+                </span>
+              )
+            })}
         </Text>
       </Box>
       <Box marginBottom={2}>
