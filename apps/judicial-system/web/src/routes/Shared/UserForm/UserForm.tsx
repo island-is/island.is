@@ -29,9 +29,10 @@ export const UserForm: React.FC<Props> = (props) => {
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
-  const [mobileNumberErrorMessage, setMobileNumberErrorMessage] = useState<
-    string
-  >()
+  const [
+    mobileNumberErrorMessage,
+    setMobileNumberErrorMessage,
+  ] = useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
   const selectInstitutions = props.institutions.map((institution) => {

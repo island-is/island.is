@@ -29,9 +29,7 @@ export function variablesForResidenceChange(
   externalData: FormValue,
 ) {
   const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
-  const childrenAppliedFor = (answers.selectChild as unknown) as Array<
-    PersonResidenceChange
-  >
+  const childrenAppliedFor = (answers.selectChild as unknown) as Array<PersonResidenceChange>
   const parentB = (parentBNationalRegistry.data as unknown) as ParentResidenceChange
 
   parentB.email = answers.parentBEmail as string

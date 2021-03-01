@@ -38,9 +38,10 @@ export const ChangeUser: React.FC = () => {
     },
   )
 
-  const { data: institutionData, loading: institutionLoading } = useQuery<
-    InstitutionData
-  >(InstitutionsQuery, {
+  const {
+    data: institutionData,
+    loading: institutionLoading,
+  } = useQuery<InstitutionData>(InstitutionsQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })

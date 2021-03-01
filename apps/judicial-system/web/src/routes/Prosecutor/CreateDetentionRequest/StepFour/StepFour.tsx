@@ -36,9 +36,10 @@ export const StepFour: React.FC = () => {
 
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
 
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] = useState<
-    string
-  >('')
+  const [
+    legalArgumentsErrorMessage,
+    setLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },

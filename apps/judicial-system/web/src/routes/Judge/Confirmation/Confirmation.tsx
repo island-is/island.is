@@ -273,9 +273,10 @@ export const Confirmation: React.FC = () => {
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
   ] = useState<string>('')
-  const [requestSignatureResponse, setRequestSignatureResponse] = useState<
-    RequestSignatureResponse
-  >()
+  const [
+    requestSignatureResponse,
+    setRequestSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
 
   const { id } = useParams<{ id: string }>()
   const { user } = useContext(UserContext)

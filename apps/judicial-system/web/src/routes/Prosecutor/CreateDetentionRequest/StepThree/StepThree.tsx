@@ -53,9 +53,10 @@ export const StepThree: React.FC = () => {
     '',
   )
 
-  const [requestedCustodyEndTime, setRequestedCustodyEndTime] = useState<
-    string
-  >()
+  const [
+    requestedCustodyEndTime,
+    setRequestedCustodyEndTime,
+  ] = useState<string>()
 
   const [
     requestedCustodyEndDateErrorMessage,
