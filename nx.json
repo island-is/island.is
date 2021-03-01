@@ -100,6 +100,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-rsk": {
+      "tags": []
+    },
     "api-domains-syslumenn": {
       "tags": []
     },
@@ -339,6 +342,9 @@
       "tags": []
     },
     "reference-next-app": {
+      "tags": []
+    },
+    "rsk": {
       "tags": []
     },
     "service-portal": {

@@ -32,7 +32,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.PARTY_LETTER,
-  name: 'Reference application',
+  name: 'Party letter',
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',

@@ -71,4 +71,9 @@ export default {
     username: process.env.SYSLUMENN_USERNAME ?? '',
     password: process.env.SYSLUMENN_PASSWORD ?? '',
   },
+  rskDomain: {
+    username: 'rf_api_island.is',
+    url: 'https://thjonusta-s.rsk.is/api',
+    password: process.env.RSK_API_PASSWORD,
+  },
 }

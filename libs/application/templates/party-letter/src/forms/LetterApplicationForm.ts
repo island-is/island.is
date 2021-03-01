@@ -8,6 +8,7 @@ import {
   buildTextField,
   Form,
   FormModes,
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 
@@ -21,6 +22,11 @@ export const LetterApplicationForm: Form = buildForm({
       id: 'company',
       title: m.companySection,
       children: [
+        buildCustomField({
+          id: 'intro',
+          title: 'Title',
+          component: 'UserCompaniesField',
+        }),
         buildRadioField({
           id: 'companyNationalId',
           title: m.companySelection,
