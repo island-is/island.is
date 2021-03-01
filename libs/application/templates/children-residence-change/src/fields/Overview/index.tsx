@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
@@ -24,10 +24,20 @@ import {
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { DescriptionText } from '../components'
+import {
+  fileSignatureReducer,
+  initialFileSignatureState,
+  FileSignatureActionTypes,
+  FileSignatureStatus,
+  ErrorStatus,
+} from './fileSignatureReducer'
 import * as style from './Overview.treat'
 
 const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [fileSignatureState, dispatchFileSignature] = useReducer(
+    fileSignatureReducer,
+    initialFileSignatureState,
+  )
   const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
@@ -43,8 +53,26 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   const [
     requestFileSignature,
     { data: requestFileSignatureData },
-  ] = useMutation(REQUEST_FILE_SIGNATURE)
-  const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
+  ] = useMutation(REQUEST_FILE_SIGNATURE, {
+    onError: () =>
+      dispatchFileSignature({
+        type: FileSignatureActionTypes.ERROR,
+        status: FileSignatureStatus.REQUEST_ERROR,
+        error: '500',
+      }),
+    onCompleted: () =>
+      dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD }),
+  })
+  const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE, {
+    onError: () =>
+      dispatchFileSignature({
+        type: FileSignatureActionTypes.ERROR,
+        status: FileSignatureStatus.UPLOAD_ERROR,
+        error: '500',
+      }),
+    onCompleted: () =>
+      dispatchFileSignature({ type: FileSignatureActionTypes.SUCCESS }),
+  })
 
   useEffect(() => {
     createPdfPresignedUrl({
@@ -64,7 +92,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
       if (!pdfUrl) {
         return [false, 'no pdf url']
       }
-      setModalOpen(true)
+      dispatchFileSignature({ type: FileSignatureActionTypes.REQUEST })
       const requestResponse = await requestFileSignature({
         variables: {
           input: {
@@ -81,12 +109,12 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
           variables: {
             input: {
               id: application.id,
-              documentToken,
+              documentToken: documentToken,
               type: pdfType,
             },
           },
         })
-        if (signedFileReponse.data) {
+        if (signedFileReponse?.data) {
           return [true, null]
         }
       }
@@ -96,13 +124,28 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.externalData?.fileSignature
       ?.data?.controlCode
+  const hasError = [
+    FileSignatureStatus.REQUEST_ERROR,
+    FileSignatureStatus.UPLOAD_ERROR,
+  ].includes(fileSignatureState.status)
   return (
     <>
       <ModalBase
-        baseId="myDialog"
-        isVisible={modalOpen}
-        hideOnClickOutside={false}
+        baseId="signatureDialog"
         className={style.modal}
+        modalLabel="Rafræn undirritun"
+        isVisible={fileSignatureState.modalOpen}
+        onVisibilityChange={(visibility) => {
+          if (!visibility) {
+            dispatchFileSignature({
+              type: FileSignatureActionTypes.RESET,
+            })
+          }
+        }}
+        // When there is an error it should not be possible to close the modal
+        hideOnEsc={hasError}
+        // Passing in tabIndex={0} when there is no tabbable element inside the modal
+        tabIndex={!hasError ? 0 : undefined}
       >
         <Box
           className={style.modalContent}
@@ -115,25 +158,59 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
           <Text variant="h1" marginBottom={2}>
             Rafræn undirritun
           </Text>
-          {controlCode ? (
-            <>
-              <Text variant="h2" marginBottom={2}>
-                Öryggistala:{' '}
-                <span className={style.controlCode}>{controlCode}</span>
-              </Text>
-              <Text>
-                Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu ef sama
-                öryggistala birtist í símanum þínum.
-              </Text>
-            </>
-          ) : (
-            <>
-              <Box marginBottom={2}>
-                <SkeletonLoader width="50%" height={30} />
-              </Box>
-              <SkeletonLoader repeat={2} space={1} />
-            </>
-          )}
+          <>
+            {(() => {
+              switch (fileSignatureState.status) {
+                case FileSignatureStatus.REQUEST:
+                  return (
+                    <>
+                      <Box marginBottom={2}>
+                        <SkeletonLoader width="50%" height={30} />
+                      </Box>
+                      <SkeletonLoader repeat={2} space={1} />
+                    </>
+                  )
+                case FileSignatureStatus.UPLOAD:
+                  return (
+                    <>
+                      <Text variant="h2" marginBottom={2}>
+                        Öryggistala:{' '}
+                        <span className={style.controlCode}>{controlCode}</span>
+                      </Text>
+                      <Text>
+                        Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu
+                        ef sama öryggistala birtist í símanum þínum.
+                      </Text>
+                    </>
+                  )
+                case FileSignatureStatus.REQUEST_ERROR:
+                case FileSignatureStatus.UPLOAD_ERROR:
+                  return (
+                    <>
+                      <AlertMessage
+                        type="error"
+                        title="Villa kom upp við undirritun"
+                        message="Það hefur eitthvað farið úrskeiðis við undirritun, vinsamlegast reynið aftur."
+                      />
+                      <Box marginTop={3} justifyContent="center">
+                        <Button
+                          onClick={() =>
+                            dispatchFileSignature({
+                              type: FileSignatureActionTypes.RESET,
+                            })
+                          }
+                          variant="primary"
+                        >
+                          Loka
+                        </Button>
+                      </Box>
+                    </>
+                  )
+                default:
+                  return null
+              }
+            })()}
+          </>
         </Box>
       </ModalBase>
       <Box marginTop={3}>
