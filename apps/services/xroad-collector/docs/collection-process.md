@@ -4,19 +4,20 @@ The collection process of the X-Road collector is a scheduled task executed peri
 
 The _collection task_ here after, referred to as _the collector_, is responsible for providing information about existing services in X-Road. The three environments each have their own services, and the collector needs to collect information about services on all environments.
 
-But the collector only has access to services in his own environment, so it will need to collect and store those he has access to, and get information on other environments from the other two collectors which are, or have been executed in their own environment.
+But the collector only has access to services in his own environment, so it will need to collect and store those he has access to, and get information on other environments from the other two collectors which are currently executing, or have been executed in their own environment.
 
 ## Collection process
 
 The collector starts by fetching information about all providers from X-Road. Then he fetches information on all services from each provider and stores the information in a elastic worker index created by the task.
 
-When the local collection process is done, the collector checks if collectors on other environments are running, waits for them to finish and finally copies their service information to it's own worker index.
+When the local collection process is done, the collector checks if collectors on other environments are running, if so, waits for them to finish, and copies their service information to it's own worker index.
 
 After copying from other environments, the collector replaces the old worker index with the new one, that is makes the alias `apicatalogue` point to the new worker index.
 
-Processes that need to query service information will query the alias `apicatalogue` which should always point to the newest worker index.
-
 Finally a cleanup process is preformed to delete all unused indices which could exist because of failed executions.
+
+Note, _processes that need to query service information will query the alias `apicatalogue` which should always point to the newest worker index_.
+
 
 ### Sequence diagram
 
