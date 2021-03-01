@@ -13,6 +13,7 @@ import { AssignApplicationInput } from './dto/assignApplication.input'
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
+import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -162,5 +163,13 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.uploadSignedFile(input, user.authorization)
+  }
+
+  @Query(() => Application, { nullable: true })
+  getPresignedUrl(
+    @Args('input') input: GetPresignedUrlInput,
+    @CurrentUser() user: User,
+  ): Promise<Application> {
+    return this.applicationService.presignedUrl(input, user.authorization)
   }
 }

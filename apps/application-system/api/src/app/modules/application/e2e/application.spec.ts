@@ -490,4 +490,37 @@ describe('Application system API', () => {
       documentToken: expectedDocumentToken,
     })
   })
+
+  it('GET application/:id/presignedUrl should return a presigned url', async () => {
+    const expectedPresignedUrl = 'presignedurl'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'getPresignedUrl')
+      .mockImplementation(() => expectedPresignedUrl)
+
+    const postResponse = await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'review',
+      attachments: {},
+      typeId: 'ChildrenResidenceChange',
+      assignees: [],
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const newState = await server
+      .put(`/application/${postResponse.body.id}/presignedUrl`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(newState.body.attachments).toEqual({
+      ChildrenResidenceChange: expectedPresignedUrl,
+    })
+  })
 })

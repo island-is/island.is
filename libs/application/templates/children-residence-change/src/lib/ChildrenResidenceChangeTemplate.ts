@@ -13,7 +13,7 @@ import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
-enum States {
+export enum States {
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
 }

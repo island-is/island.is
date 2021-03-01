@@ -13,6 +13,7 @@ import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/Applica
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
+import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -189,6 +190,17 @@ export class ApplicationService {
       .applicationControllerUploadSignedFile({
         id,
         uploadSignedFileDto,
+        authorization,
+      })
+      .catch(handleError)
+  }
+
+  async presignedUrl(input: GetPresignedUrlInput, authorization: string) {
+    const { id, ...presignedUrlDto } = input
+    return await this.applicationApi
+      .applicationControllerGetPresignedUrl({
+        id,
+        presignedUrlDto,
         authorization,
       })
       .catch(handleError)

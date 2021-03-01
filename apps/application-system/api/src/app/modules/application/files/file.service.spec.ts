@@ -274,4 +274,16 @@ describe('FileService', () => {
 
     expect(act).not.toThrow()
   })
+
+  it('should return presigned url', async () => {
+    const id = 'id'
+    const fileName = `children-residence-change/${id}.pdf`
+    const result = service.getPresignedUrl(
+      id,
+      PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+    )
+
+    expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
+    expect(result).toEqual('url')
+  })
 })

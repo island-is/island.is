@@ -55,6 +55,7 @@ import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
+import { PresignedUrlDto } from './dto/presignedUrl.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -650,5 +651,39 @@ export class ApplicationController {
     await this.fileService.uploadSignedFile(application, documentToken, type)
 
     return application
+  }
+
+  @Put('application/:id/presignedUrl')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async getPresignedUrl(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: PresignedUrlDto,
+  ): Promise<ApplicationResponseDto> {
+    this.fileService.validateApplicationType(application.typeId)
+
+    const { type } = input
+
+    let url = this.fileService.getPresignedUrl(application.id, type)
+
+    const { updatedApplication } = await this.applicationService.update(
+      application.id,
+      {
+        attachments: {
+          ...application.attachments,
+          [type]: url,
+        },
+      },
+    )
+
+    return updatedApplication
   }
 }

@@ -47,11 +47,7 @@ export class FileService {
           childrenAppliedFor,
           expiry,
         } = variablesForResidenceChange(answers, externalData)
-        const bucket = this.config.presignBucket
-
-        if (!bucket) {
-          throw new Error(' Bucket not configured.')
-        }
+        const bucket = this.getBucketName()
 
         const pdfBuffer = await generateResidenceChangePdf(
           childrenAppliedFor,
@@ -76,10 +72,7 @@ export class FileService {
     documentToken: string,
     type: PdfTypes,
   ) {
-    const bucket = this.config.presignBucket
-    if (!bucket) {
-      throw new Error(' Bucket not configured.')
-    }
+    const bucket = this.getBucketName()
 
     await this.signingService
       .getSignedDocument(DokobitFileName[type], documentToken)
@@ -119,10 +112,7 @@ export class FileService {
     applicantName: string,
     phoneNumber?: string,
   ): Promise<SigningServiceResponse> {
-    const bucket = this.config.presignBucket
-    if (!bucket) {
-      throw new Error(' Bucket not configured.')
-    }
+    const bucket = this.getBucketName()
 
     const s3FileName = `${BucketTypePrefix[type]}/${applicationId}.pdf`
     const s3File = await this.awsService.getFile(bucket, s3FileName)
@@ -182,5 +172,25 @@ export class FileService {
         'Document token does not match token on application',
       )
     }
+  }
+
+  getPresignedUrl(applicationId: string, type: PdfTypes) {
+    const bucket = this.getBucketName()
+
+    const fileName = `${
+      BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
+    }/${applicationId}.pdf`
+
+    return this.awsService.getPresignedUrl(bucket, fileName)
+  }
+
+  private getBucketName() {
+    const bucket = this.config.presignBucket
+
+    if (!bucket) {
+      throw new Error('Bucket name not found.')
+    }
+
+    return bucket
   }
 }
