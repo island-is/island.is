@@ -16,7 +16,7 @@ import {
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { DescriptionText } from '../components'
-import { States as ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
+import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
 
 const Overview = ({ application }: FieldBaseProps) => {
   const applicant = extractApplicantFromApplication(application)
@@ -39,7 +39,7 @@ const Overview = ({ application }: FieldBaseProps) => {
   ] = useLazyQuery(GET_PRESIGNED_URL)
 
   useEffect(() => {
-    let input = {
+    const input = {
       variables: {
         input: {
           id: application.id,

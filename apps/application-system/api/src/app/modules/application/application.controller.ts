@@ -670,9 +670,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     this.fileService.validateApplicationType(application.typeId)
 
-    const { type } = input
-
-    const url = this.fileService.getPresignedUrl(application.id, type)
+    const url = this.fileService.getPresignedUrl(application.id, input.type)
 
     const { updatedApplication } = await this.applicationService.update(
       application.id,
