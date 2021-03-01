@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import {
   Box,
   Text,
@@ -7,6 +8,7 @@ import {
   ModalBase,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
+import { signatureModal } from '../../../lib/messages'
 import { FileSignatureStatus } from '../fileSignatureReducer'
 import * as style from './Modal.treat'
 
@@ -23,7 +25,7 @@ const SignatureModal = ({
   modalOpen,
   onClose,
 }: SignatureModalProps) => {
-
+  const { formatMessage } = useIntl()
   const hasError = [
     FileSignatureStatus.REQUEST_ERROR,
     FileSignatureStatus.UPLOAD_ERROR,
@@ -32,7 +34,7 @@ const SignatureModal = ({
     <ModalBase
       baseId="signatureDialog"
       className={style.modal}
-      modalLabel="Rafræn undirritun"
+      modalLabel={formatMessage(signatureModal.general.title)}
       isVisible={modalOpen}
       onVisibilityChange={(visibility: boolean) => {
         if (!visibility) {
@@ -53,7 +55,7 @@ const SignatureModal = ({
         paddingY={[3, 3, 4, 10]}
       >
         <Text variant="h1" marginBottom={2}>
-          Rafræn undirritun
+          {formatMessage(signatureModal.general.title)}
         </Text>
         <>
           {(() => {
@@ -71,12 +73,11 @@ const SignatureModal = ({
                 return (
                   <>
                     <Text variant="h2" marginBottom={2}>
-                      Öryggistala:{' '}
+                      {formatMessage(signatureModal.security.numberLabel)}
                       <span className={style.controlCode}>{controlCode}</span>
                     </Text>
                     <Text>
-                      Þetta er ekki pin-númerið. Staðfestu aðeins innskráningu
-                      ef sama öryggistala birtist í símanum þínum.
+                      {formatMessage(signatureModal.security.message)}
                     </Text>
                   </>
                 )
@@ -87,12 +88,14 @@ const SignatureModal = ({
                   <>
                     <AlertMessage
                       type="error"
-                      title="Villa kom upp við undirritun"
-                      message="Það hefur eitthvað farið úrskeiðis við undirritun, vinsamlegast reynið aftur."
+                      title={formatMessage(signatureModal.defaultError.title)}
+                      message={formatMessage(
+                        signatureModal.defaultError.message,
+                      )}
                     />
                     <Box marginTop={3} justifyContent="center">
                       <Button onClick={onClose} variant="primary">
-                        Loka
+                        {formatMessage(signatureModal.general.closeButtonLabel)}
                       </Button>
                     </Box>
                   </>

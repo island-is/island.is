@@ -2,12 +2,7 @@ import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
-import {
-  Box,
-  Text,
-  AlertMessage,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import {
   CREATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,

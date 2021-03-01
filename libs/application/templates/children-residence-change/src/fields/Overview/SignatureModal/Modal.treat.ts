@@ -18,4 +18,5 @@ export const modalContent = style({
 
 export const controlCode = style({
   color: theme.color.blue400,
+  marginLeft: '8px',
 })
