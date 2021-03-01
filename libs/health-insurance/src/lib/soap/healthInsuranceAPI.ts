@@ -2,14 +2,11 @@ import {
   InternalServerErrorException,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 import {
-  GetSjukratryggdurTypeDto,
-  GetFaUmsoknSjukratryggingTypeDto,
   GetVistaSkjalDtoType,
   GetVistaSkjalBody,
   Fylgiskjal,
@@ -18,7 +15,7 @@ import {
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
-import { BucketService } from '../bucket.service'
+// import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -34,8 +31,8 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
-    @Inject(BucketService)
-    private bucketService: BucketService,
+    // @Inject(BucketService)
+    // private bucketService: BucketService,
   ) {}
 
   public async getProfun(): Promise<string> {
@@ -48,90 +45,16 @@ export class HealthInsuranceAPI {
     return res.ProfunType.radnumer_si ?? null
   }
 
-  // check whether the person is health insured
-  public async isHealthInsured(nationalId: string): Promise<boolean> {
-    logger.info(`--- Starting isHealthInsured api call ---`)
-
-    const args = {
-      sendandi: '',
-      kennitala: nationalId,
-      dagsetning: Date.now(),
-    }
-    const res: GetSjukratryggdurTypeDto = await this.xroadCall(
-      'sjukratryggdur',
-      args,
-    )
-
-    if (!res.SjukratryggdurType) {
-      logger.error(
-        `Something went totally wrong in 'Sjukratryggdur' call with result: ${JSON.stringify(
-          res,
-          null,
-          2,
-        )}`,
-      )
-      throw new NotFoundException(`Unexpected results: ${JSON.stringify(res)}`)
-    } else {
-      logger.info(`--- Finished isHealthInsured api call ---`)
-      return res.SjukratryggdurType.sjukratryggdur == 1
-    }
-  }
-
-  // get user's pending applications
-  public async getPendingApplication(nationalId: string): Promise<number[]> {
-    logger.info(`--- Starting getPendingApplication api call ---`)
-
-    const args = {
-      sendandi: '',
-      kennitala: nationalId,
-    }
-    /*
-      API returns null when there is no application in the system,
-      but it returns also null when the nationalId is not correct,
-      we return all reponses to developer to handle them
-
-      Application statuses:
-      0: Samþykkt/Accepted
-      1: Synjað/Refused
-      2: Í bið/Pending
-      3: Ógilt/Invalid
-    */
-    const res: GetFaUmsoknSjukratryggingTypeDto = await this.xroadCall(
-      'faumsoknirsjukratrygginga',
-      args,
-    )
-
-    if (!res.FaUmsoknSjukratryggingType?.umsoknir) {
-      logger.info(`return empty array to graphQL`)
-      return []
-    }
-
-    logger.info(`Start filtering Pending status`)
-    // Return all caseIds with Pending status
-    const pendingCases: number[] = []
-    res.FaUmsoknSjukratryggingType.umsoknir
-      .filter((umsokn) => {
-        return umsokn.stada == 2
-      })
-      .forEach((value) => {
-        pendingCases.push(value.skjalanumer)
-      })
-
-    logger.info(`--- Finished getPendingApplication api call ---`)
-    return pendingCases
-  }
-
   // Apply Insurance without attachment
   public async applyInsurance(
     appNumber: number,
     inputObj: VistaSkjalInput,
-    nationalId: string,
   ): Promise<VistaSkjalModel> {
     logger.info(`--- Starting applyInsurance api call ---`)
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
-          kennitala: '0101671089',//nationalId,
+          kennitala: inputObj.nationalId,
           erlendkennitala: inputObj.foreignNationalId,
           nafn: inputObj.name,
           heimili: inputObj.address ?? '',
@@ -179,7 +102,7 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
-          innihald: await this.bucketService.getFileContentAsBase64(filename),
+          innihald: '' // TODO: await this.bucketService.getFileContentAsBase64(filename),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)
       }
@@ -217,6 +140,7 @@ export class HealthInsuranceAPI {
     */
     logger.info(`Calling vistaskjal through xroad`)
     const res: GetVistaSkjalDtoType = await this.xroadCall('vistaskjal', args)
+
     const vistaSkjal = new VistaSkjalModel()
     if (!res.VistaSkjalType?.tokst) {
       vistaSkjal.isSucceeded = false
@@ -230,7 +154,7 @@ export class HealthInsuranceAPI {
           vistaSkjal.comment = res.VistaSkjalType.villulisti[0].villulysinginnri
         }
       }
-      logger.info(
+      logger.error(
         `Failed to upload document to sjukra because: ${
           vistaSkjal.comment ?? 'unknown error'
         }`,

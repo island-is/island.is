@@ -69,17 +69,18 @@ export const transformApplicationToHealthInsuranceDTO = (
   // There is 2 fields to add information in frontend
   // But there is only one tag in API
   // Merge 2 fields together
-  const addInfo = `additional comments: ${
-    extractAnswer(application.answers, 'additionalRemarks') ?? ''
-  }. isHealthInsuredInPreviousCountry reason: ${
-    extractAnswer(application.answers, 'formerInsurance.entitlementReason') ??
-    ''
-  }`
+  let addInfo = ''
+  if (extractAnswer(application.answers, 'additionalRemarks')){
+    addInfo += `Additional comments: ${extractAnswer(application.answers, 'additionalRemarks')}.`
+  }
+  if (extractAnswer(application.answers, 'formerInsurance.entitlementReason')){
+    addInfo += `IsHealthInsuredInPreviousCountry reason: ${extractAnswer(application.answers, 'formerInsurance.entitlementReason')}`
+  }
 
   return {
     applicationNumber: application.id,
     applicationDate: application.modified,
-    nationalId: '0123456789', // NOT send naltionalId through graphQL
+    nationalId: application.applicant,
     foreignNationalId:
       extractAnswer(application.answers, 'formerInsurance.personalId') ?? '',
     name: extractAnswer(application.answers, 'applicant.name') ?? '',
