@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   Image,
+  ImageProps,
   richText,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
@@ -30,6 +31,8 @@ import {
   QueryGetSingleNewsArgs,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
+  Namespace,
+  News,
 } from '@island.is/web/graphql/schema'
 import {
   SidebarBox,
@@ -48,13 +51,13 @@ interface NewsItemProps {
 }
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
-  useContentfulId(newsItem?.id)
+  useContentfulId(newsItem?.id ?? '')
   const { t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace as Namespace)
 
-  const metaTitle = `${newsItem.title} | Ísland.is`
+  const metaTitle = `${newsItem?.title} | Ísland.is`
 
   const breadCrumbs: BreadCrumbItem[] = [
     {
@@ -68,9 +71,11 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
       href: '/',
     },
   ]
-  const breadCrumbTags: BreadCrumbItem[] =
-    !!newsItem.genericTags.length &&
-    newsItem.genericTags.map(({ id, title }) => {
+
+  let breadCrumbTags: BreadCrumbItem[] | null = null
+
+  if (newsItem?.genericTags?.length) {
+    breadCrumbTags = newsItem.genericTags.map(({ id, title }) => {
       return {
         isTag: true,
         title: title,
@@ -78,15 +83,16 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
         href: id,
       }
     })
+  }
 
   return (
     <>
       <HeadWithSocialSharing
         title={metaTitle}
-        description={newsItem.intro}
-        imageUrl={newsItem.image?.url}
-        imageWidth={newsItem.image?.width.toString()}
-        imageHeight={newsItem.image?.height.toString()}
+        description={newsItem?.intro ?? ''}
+        imageUrl={newsItem?.image?.url}
+        imageWidth={newsItem?.image?.width.toString()}
+        imageHeight={newsItem?.image?.height.toString()}
       />
       <GridContainer id="main-content">
         <Box paddingTop={[2, 2, 10]} paddingBottom={[0, 0, 10]}>
@@ -122,22 +128,24 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                     />
 
                     <Text variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
-                      {newsItem.title}
+                      {newsItem?.title}
                     </Text>
                     <Text variant="intro" as="p" paddingBottom={2}>
-                      {newsItem.intro}
+                      {newsItem?.intro}
                     </Text>
-                    {Boolean(newsItem.image) && (
+                    {Boolean(newsItem?.image?.url) && (
                       <Box paddingY={2}>
                         <Image
-                          {...newsItem.image}
-                          url={newsItem.image.url + '?w=774&fm=webp&q=80'}
-                          thumbnail={newsItem.image.url + '?w=50&fm=webp&q=80'}
+                          {...(newsItem?.image as ImageProps)}
+                          url={newsItem?.image?.url + '?w=774&fm=webp&q=80'}
+                          thumbnail={
+                            newsItem?.image?.url + '?w=50&fm=webp&q=80'
+                          }
                         />
                       </Box>
                     )}
                     <Box paddingBottom={4} width="full">
-                      {richText(newsItem.content as SliceType[])}
+                      {richText(newsItem?.content as SliceType[])}
                     </Box>
                   </GridColumn>
                 </GridRow>
@@ -147,23 +155,24 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
               <Sticky>
                 <SidebarBox>
                   <Stack space={3}>
-                    {Boolean(newsItem.author) && (
+                    {Boolean(newsItem?.author) && (
                       <Stack space={1}>
                         <Text variant="eyebrow" as="p" color="blue400">
                           {n('author', 'Höfundur')}
                         </Text>
                         <Text variant="h5" as="p">
-                          {newsItem.author.name}
+                          {newsItem?.author?.name}
                         </Text>
                       </Stack>
                     )}
-                    {Boolean(newsItem.date) && (
+                    {Boolean(newsItem?.date) && (
                       <Stack space={1}>
                         <Text variant="eyebrow" as="p" color="blue400">
                           {n('published', 'Birt')}
                         </Text>
                         <Text variant="h5" as="p">
-                          {format(new Date(newsItem.date), 'do MMMM yyyy')}
+                          {!!newsItem?.date &&
+                            format(new Date(newsItem.date), 'do MMMM yyyy')}
                         </Text>
                       </Stack>
                     )}
@@ -179,22 +188,18 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
 }
 
 NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const [
-    {
-      data: { getSingleNews: newsItem },
-    },
-    namespace,
-  ] = await Promise.all([
-    apolloClient.query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
-      query: GET_SINGLE_NEWS_ITEM_QUERY,
-      variables: {
-        input: {
-          slug: query.slug as string,
-          lang: locale as ContentLanguage,
+  const [newsItem, namespace] = await Promise.all([
+    apolloClient
+      .query<GetSingleNewsItemQuery, QueryGetSingleNewsArgs>({
+        query: GET_SINGLE_NEWS_ITEM_QUERY,
+        variables: {
+          input: {
+            slug: query.slug as string,
+            lang: locale as ContentLanguage,
+          },
         },
-      },
-    }),
-
+      })
+      .then((res) => res?.data?.getSingleNews),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -207,7 +212,7 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((variables) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(variables?.data?.getNamespace?.fields ?? '')
       }),
   ])
 

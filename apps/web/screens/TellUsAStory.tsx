@@ -76,7 +76,7 @@ TellUsAStoryPage.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((response) => response.data.getTellUsAStory),
+      .then((response) => response?.data?.getTellUsAStory),
   ])
 
   if (!data) {

@@ -37,17 +37,20 @@ import {
   ContentLanguage,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
+  Image,
+  Namespace,
 } from '../graphql/schema'
 import { NewsCard } from '../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { ValueType } from 'react-select'
 
 const PERPAGE = 10
 
 interface NewsListProps {
   newsList: GetNewsQuery['getNews']['items']
-  total: number
+  total: GetNewsQuery['getNews']['total']
   datesMap: { [year: string]: number[] }
   selectedYear: number
   selectedMonth: number
@@ -69,7 +72,7 @@ const NewsList: Screen<NewsListProps> = ({
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const { getMonthByIndex } = useDateUtils()
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace as Namespace)
 
   const years = Object.keys(datesMap)
   const months = datesMap[selectedYear] ?? []
@@ -108,7 +111,7 @@ const NewsList: Screen<NewsListProps> = ({
         queryObject[key] = value
       }
       return queryObject
-    }, {})
+    }, {} as { [key: string]: number | string | null })
 
     return {
       pathname: linkResolver('newsoverview').href,
@@ -150,10 +153,15 @@ const NewsList: Screen<NewsListProps> = ({
       href: '/',
     },
   ]
-  const breadCrumbTags: BreadCrumbItem = !!selectedTag && {
-    isTag: true,
-    title: selectedTag.title,
-    typename: 'newsoverview',
+
+  let breadCrumbTags: BreadCrumbItem | null = null
+
+  if (!!selectedTag) {
+    breadCrumbTags = {
+      isTag: true,
+      title: selectedTag.title,
+      typename: 'newsoverview',
+    }
   }
 
   const sidebar = (
@@ -171,7 +179,7 @@ const NewsList: Screen<NewsListProps> = ({
             onChange={(e) => {
               const selectedValue =
                 e.target.value !== allYearsString ? e.target.value : null
-              Router.push(makeHref(selectedValue))
+              Router.push(makeHref(selectedValue ?? ''))
             }}
             color="purple400"
           />
@@ -238,8 +246,13 @@ const NewsList: Screen<NewsListProps> = ({
                   (selectedYear ? selectedYear.toString() : allYearsString),
               )}
               options={yearOptions}
-              onChange={({ value }: Option) => {
-                Router.push(makeHref(value === allYearsString ? null : value))
+              onChange={(option: ValueType<Option>) => {
+                const o = option as Option
+                Router.push(
+                  makeHref(
+                    (o.value === allYearsString ? null : o.value) as number,
+                  ),
+                )
               }}
               name="year"
             />
@@ -249,10 +262,12 @@ const NewsList: Screen<NewsListProps> = ({
               <Select
                 label={monthString}
                 placeholder={monthString}
-                value={monthOptions.find((o) => o.value === selectedMonth)}
-                options={monthOptions}
-                onChange={({ value }: Option) =>
-                  Router.push(makeHref(selectedYear, value))
+                value={
+                  monthOptions.find((o) => o.value === selectedMonth) as Option
+                }
+                options={monthOptions as Option[]}
+                onChange={(option: ValueType<Option>) =>
+                  Router.push(makeHref(selectedYear, (option as Option).value))
                 }
                 name="month"
               />
@@ -270,9 +285,9 @@ const NewsList: Screen<NewsListProps> = ({
             <NewsCard
               key={index}
               title={newsItem.title}
-              introduction={newsItem.intro}
+              introduction={newsItem.intro as string}
               slug={newsItem.slug}
-              image={newsItem.image}
+              image={newsItem.image as Image}
               titleAs="h2"
               href={linkResolver('news', [newsItem.slug]).href}
               date={newsItem.date}
@@ -304,16 +319,19 @@ const NewsList: Screen<NewsListProps> = ({
   )
 }
 
-const createDatesMap = (datesList) => {
-  return datesList.reduce((datesMap, date) => {
-    const [year, month] = date.split('-')
-    if (datesMap[year]) {
-      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
-    } else {
-      datesMap[year] = [parseInt(month)]
-    }
-    return datesMap
-  }, {})
+const createDatesMap = (datesList: string[] | undefined) => {
+  return (datesList || []).reduce(
+    (datesMap: { [year: string]: number[] }, date: string) => {
+      const [year, month] = date.split('-')
+      if (datesMap[year]) {
+        datesMap[year].push(parseInt(month, 10)) // we can assume each month only appears once
+      } else {
+        datesMap[year] = [parseInt(month, 10)]
+      }
+      return datesMap
+    },
+    {},
+  )
 }
 
 const getIntParam = (s: string | string[]) => {
@@ -327,39 +345,36 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const selectedPage = getIntParam(query.page) ?? 1
   const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
 
-  const [
-    {
-      data: { getNewsDates: newsDatesList },
-    },
-    {
-      data: {
-        getNews: { items: newsList, total },
-      },
-    },
-    namespace,
-  ] = await Promise.all([
-    apolloClient.query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
-      query: GET_NEWS_DATES_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-          tag,
+  const [newsDatesList, { newsList, total }, namespace] = await Promise.all([
+    apolloClient
+      .query<GetNewsDatesQuery, QueryGetNewsDatesArgs>({
+        query: GET_NEWS_DATES_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            tag,
+          },
         },
-      },
-    }),
-    apolloClient.query<GetNewsQuery, QueryGetNewsArgs>({
-      query: GET_NEWS_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-          size: PERPAGE,
-          page: selectedPage,
-          year,
-          month,
-          tag,
+      })
+      .then((res) => res.data?.getNewsDates),
+    apolloClient
+      .query<GetNewsQuery, QueryGetNewsArgs>({
+        query: GET_NEWS_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            size: PERPAGE,
+            page: selectedPage,
+            year,
+            month,
+            tag,
+          },
         },
-      },
-    }),
+      })
+      .then((res) => ({
+        newsList: res?.data?.getNews?.items ?? [],
+        total: res?.data?.getNews?.total ?? 0,
+      })),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -372,15 +387,15 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((variables) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(variables?.data?.getNamespace?.fields ?? '')
       }),
   ])
 
   return {
     newsList,
     total,
-    selectedYear: year,
-    selectedMonth: month,
+    selectedYear: year as number,
+    selectedMonth: month as number,
     selectedTagId: tag,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,

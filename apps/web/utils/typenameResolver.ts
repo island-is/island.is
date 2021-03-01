@@ -3,4 +3,4 @@ const typenameMap = {
   aboutpage: 'page',
 }
 export const typenameResolver = (typename: string) =>
-  typenameMap[typename.toLowerCase()] ?? typename
+  typenameMap[typename.toLowerCase() as keyof typeof typenameMap] ?? typename
