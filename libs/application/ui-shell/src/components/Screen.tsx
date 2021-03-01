@@ -51,6 +51,7 @@ import {
 } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
+import FieldRepeater from './FieldRepeater'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -278,6 +279,8 @@ const Screen: FC<ScreenProps> = ({
                 formValue={formValue}
                 errors={dataSchemaOrApiErrors}
               />
+            ) : screen.type === FormItemTypes.FIELD_REPEATER ? (
+              <FieldRepeater />
             ) : (
               <FormField
                 autoFocus

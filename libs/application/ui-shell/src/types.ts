@@ -5,6 +5,7 @@ import {
   Repeater,
   FormNode,
   Schema,
+  FieldRepeater,
 } from '@island.is/application/core'
 
 type ScreenAttributes = {
@@ -25,6 +26,11 @@ export type RepeaterScreen = ScreenAttributes &
     children: (FieldDef | MultiFieldScreen | RepeaterScreen)[]
   }
 
+export type FieldRepeaterScreen = ScreenAttributes &
+  FieldRepeater & {
+    children: (FieldDef | MultiFieldScreen)[]
+  }
+
 export type ExternalDataProviderScreen = ScreenAttributes & ExternalDataProvider
 
 export type FormScreen =
@@ -32,6 +38,7 @@ export type FormScreen =
   | ExternalDataProviderScreen
   | MultiFieldScreen
   | RepeaterScreen
+  | FieldRepeaterScreen
 
 export type ResolverContext = {
   formNode: FormNode

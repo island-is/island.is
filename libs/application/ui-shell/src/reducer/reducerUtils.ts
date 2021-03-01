@@ -2,6 +2,8 @@ import {
   ExternalData,
   ExternalDataProvider,
   Field,
+  FieldRepeater,
+  FieldTypes,
   findSectionIndex,
   findSubSectionIndex,
   Form,
@@ -20,6 +22,7 @@ import {
 import {
   ExternalDataProviderScreen,
   FieldDef,
+  FieldRepeaterScreen,
   FormScreen,
   MultiFieldScreen,
   RepeaterScreen,
@@ -205,6 +208,51 @@ function convertRepeaterToScreens(
   ]
 }
 
+export function convertFieldRepeaterToScreen(
+  fieldRepeater: FieldRepeater,
+  answers: FormValue,
+  externalData: ExternalData,
+  isParentNavigable = true,
+  sectionIndex: number,
+  subSectionIndex: number,
+): FieldRepeaterScreen {
+  let isFieldRepeaterVisible = false
+  const children: (FieldDef | MultiFieldScreen)[] = []
+  fieldRepeater.children.forEach((field) => {
+    const isFieldVisible = shouldShowFormItem(field, answers, externalData)
+    if (isFieldVisible) {
+      isFieldRepeaterVisible = true
+    }
+
+    if (field.type === FormItemTypes.MULTI_FIELD) {
+      children.push(
+        convertMultiFieldToScreen(
+          field,
+          answers,
+          externalData,
+          isParentNavigable,
+          sectionIndex,
+          subSectionIndex,
+        ),
+      )
+    } else {
+      children.push({
+        ...field,
+        isNavigable: isFieldVisible && isParentNavigable,
+        sectionIndex,
+        subSectionIndex,
+      })
+    }
+  })
+  return {
+    ...fieldRepeater,
+    isNavigable: isFieldRepeaterVisible && isParentNavigable,
+    children,
+    sectionIndex,
+    subSectionIndex,
+  } as FieldRepeaterScreen
+}
+
 function convertLeafToScreens(
   leaf: FormLeaf,
   answers: FormValue,
@@ -236,6 +284,17 @@ function convertLeafToScreens(
   } else if (leaf.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
     return [
       convertDataProviderToScreen(
+        leaf,
+        answers,
+        externalData,
+        isParentNavigable,
+        sectionIndex,
+        subSectionIndex,
+      ),
+    ]
+  } else if (leaf.type === FormItemTypes.FIELD_REPEATER) {
+    return [
+      convertFieldRepeaterToScreen(
         leaf,
         answers,
         externalData,

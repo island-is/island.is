@@ -7,6 +7,7 @@ import {
   FormChildren,
   FormItemTypes,
   FormLeaf,
+  FieldRepeater,
   MultiField,
   ExternalDataProvider,
   Repeater,
@@ -50,6 +51,24 @@ export function buildRepeater(data: {
   children: FormLeaf[]
 }): Repeater {
   return { ...data, type: FormItemTypes.REPEATER }
+}
+
+export function buildFieldRepeater(data: {
+  id: string
+  condition?: Condition
+  title: MessageDescriptor | string
+  min?: number
+  max?: number
+  item: Field | MultiField
+}): FieldRepeater {
+  const { min = 1 } = data
+  // TODO: Multiple children if min has been set higher than 1
+  return {
+    ...data,
+    type: FormItemTypes.FIELD_REPEATER,
+    min,
+    children: [data.item],
+  }
 }
 
 export function buildSection(data: {

@@ -19,6 +19,7 @@ export enum FormItemTypes {
   SECTION = 'SECTION',
   SUB_SECTION = 'SUB_SECTION',
   REPEATER = 'REPEATER',
+  FIELD_REPEATER = 'FIELD_REPEATER',
   MULTI_FIELD = 'MULTI_FIELD',
   EXTERNAL_DATA_PROVIDER = 'EXTERNAL_DATA_PROVIDER',
 }
@@ -45,7 +46,12 @@ export interface Form {
   children: FormChildren[]
 }
 
-export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
+export type FormLeaf =
+  | MultiField
+  | Field
+  | Repeater
+  | ExternalDataProvider
+  | FieldRepeater
 export type FormNode = Form | Section | SubSection | FormLeaf
 export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
@@ -74,6 +80,16 @@ export interface Repeater extends FormItem {
   component: string
   children: FormLeaf[]
   isPartOfRepeater?: boolean
+}
+
+export interface FieldRepeater extends FormItem {
+  readonly id: string
+  type: FormItemTypes.FIELD_REPEATER
+  children: Array<Field | MultiField>
+  item: Field | MultiField
+  isPartOfRepeater?: boolean
+  min: number
+  max?: number
 }
 
 export interface MultiField extends FormItem {

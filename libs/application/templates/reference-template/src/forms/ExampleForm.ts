@@ -13,6 +13,7 @@ import {
   FormModes,
   FormValue,
   buildFileUploadField,
+  buildFieldRepeater,
 } from '@island.is/application/core'
 import { m } from './messages'
 
@@ -33,6 +34,14 @@ export const ExampleForm: Form = buildForm({
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
             values: { name: application.answers.name },
+          }),
+        }),
+        buildFieldRepeater({
+          id: 'person.interests',
+          title: 'Áhugamálin mín',
+          item: buildTextField({
+            id: 'person.interest',
+            title: 'Áhugamál',
           }),
         }),
         buildMultiField({
