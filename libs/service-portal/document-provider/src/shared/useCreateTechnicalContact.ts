@@ -7,10 +7,10 @@ import { m } from '../lib/messages'
 
 const CREATE_TECHNICAL_CONTACT_MUTATION = gql`
   mutation CreateTechnicalContactMutation(
+    $input: CreateContactInput!
     $organisationId: String!
-    $contact: CreateContactInput!
   ) {
-    createTechnicalContact(organisationId: $organisationId, contact: $contact) {
+    createTechnicalContact(input: $input, organisationId: $organisationId) {
       name
       email
       phoneNumber
@@ -18,10 +18,7 @@ const CREATE_TECHNICAL_CONTACT_MUTATION = gql`
   }
 `
 
-export type ContactInput = Pick<
-  Contact,
-  'id' | 'name' | 'email' | 'phoneNumber'
->
+export type CreateContactInput = Pick<Contact, 'name' | 'email' | 'phoneNumber'>
 
 export function useCreateTechnicalContact(organisationId: string) {
   const [
@@ -42,13 +39,11 @@ export function useCreateTechnicalContact(organisationId: string) {
     }
   }, [called, loading, error, errorMsg, successMsg])
 
-  const createTechnicalContact = (contactInput: ContactInput) => {
-    const { id, ...contact } = contactInput
-    console.log('org', organisationId)
+  const createTechnicalContact = (input: CreateContactInput) => {
     createTechnicalContactMutation({
       variables: {
         organisationId,
-        contact,
+        input,
       },
     })
   }

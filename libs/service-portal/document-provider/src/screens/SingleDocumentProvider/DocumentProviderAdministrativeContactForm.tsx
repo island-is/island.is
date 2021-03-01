@@ -6,9 +6,10 @@ import { m } from '../../lib/messages'
 import { DocumentProviderInput } from './DocumentProviderInput'
 import { Contact } from '@island.is/api/schema'
 import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministrativeContact'
+import { useCreateAdministrativeContact } from '../../shared/useCreateAdministrativeContact'
 import { ContactInput } from '../../shared/useUpdateTechnicalContact'
 interface Props {
-  administrativeContact: Contact
+  administrativeContact?: Contact | null
   organisationId: string
 }
 
@@ -20,17 +21,22 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
   const { handleSubmit, control, errors } = useForm()
   const {
     updateAdministrativeContact,
-    loading,
+    loading: loadingUpdate,
   } = useUpdateAdministrativeContact(organisationId)
 
+  const {
+    createAdministrativeContact,
+    loading: loadingCreate,
+  } = useCreateAdministrativeContact(organisationId)
+
   const onSubmit = (data: { administrativeContact: Contact }) => {
-    if (data?.administrativeContact) {
+    if (data?.administrativeContact && administrativeContact) {
       const input: ContactInput = {
         ...data.administrativeContact,
         id: administrativeContact.id,
       }
       updateAdministrativeContact(input)
-    }
+    } else createAdministrativeContact(data.administrativeContact)
   }
   return (
     <Box marginY={3}>
@@ -44,7 +50,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="administrativeContact.name"
-            defaultValue={administrativeContact?.name}
+            defaultValue={administrativeContact?.name ?? ''}
             rules={{
               required: {
                 value: true,
@@ -63,7 +69,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="administrativeContact.email"
-            defaultValue={administrativeContact?.email}
+            defaultValue={administrativeContact?.email ?? ''}
             rules={{
               required: {
                 value: true,
@@ -86,7 +92,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="administrativeContact.phoneNumber"
-            defaultValue={administrativeContact?.phoneNumber}
+            defaultValue={administrativeContact?.phoneNumber ?? ''}
             rules={{
               required: {
                 value: true,
@@ -133,7 +139,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
               type="submit"
               variant="primary"
               icon="arrowForward"
-              loading={loading}
+              loading={loadingUpdate || loadingCreate}
             >
               {formatMessage(m.SingleProviderSaveButton)}
             </Button>

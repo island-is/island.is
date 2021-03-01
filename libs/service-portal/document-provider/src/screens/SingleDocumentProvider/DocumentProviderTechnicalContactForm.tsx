@@ -9,7 +9,10 @@ import {
   ContactInput,
   useUpdateTechnicalContact,
 } from '../../shared/useUpdateTechnicalContact'
-import { useCreateTechnicalContact } from '../../shared/useCreateTechnicalContact'
+import {
+  useCreateTechnicalContact,
+  CreateContactInput,
+} from '../../shared/useCreateTechnicalContact'
 
 interface Props {
   technicalContact?: Contact | null
@@ -33,14 +36,15 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
   } = useCreateTechnicalContact(organisationId)
 
   const onSubmit = (data: { technicalContact: Contact }) => {
-    if (data?.technicalContact && technicalContact?.id) {
+    if (data?.technicalContact && technicalContact) {
       const input: ContactInput = {
         ...data.technicalContact,
         id: technicalContact.id,
       }
       updateTechnicalContact(input)
     } else {
-      createTechnicalContact(data.technicalContact)
+      const input: CreateContactInput = data.technicalContact
+      createTechnicalContact(input)
     }
   }
   return (
