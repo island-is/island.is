@@ -105,6 +105,9 @@ export const FormShell: FC<{
                     expandRepeater={() =>
                       dispatch({ type: ActionTypes.EXPAND_REPEATER })
                     }
+                    expandFieldRepeater={() =>
+                      dispatch({ type: ActionTypes.EXPAND_FIELD_REPEATER })
+                    }
                     answerAndGoToNextScreen={(payload) =>
                       dispatch({
                         type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,

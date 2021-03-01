@@ -80,7 +80,9 @@ const answerAndGoNextScreen = (
   state: ApplicationUIState,
   answers: FormValue,
 ): ApplicationUIState => {
+  console.log('answers', answers)
   const newState = addNewAnswersToState(state, answers)
+  console.log('new state with answers', newState)
   const currentScreen = newState.screens[newState.activeScreen]
   const nextScreen =
     newState.screens[
@@ -145,6 +147,36 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
   }
 }
 
+function expandFieldRepeater(state: ApplicationUIState): ApplicationUIState {
+  const { activeScreen, form, screens, application } = state
+  const fieldRepeater = screens[activeScreen]
+  if (!fieldRepeater || fieldRepeater.type !== FormItemTypes.FIELD_REPEATER) {
+    return state
+  }
+  const { answers, externalData } = application
+  const repeaterValues = getValueViaPath(
+    answers ?? {},
+    fieldRepeater.id,
+    [],
+  ) as unknown[]
+
+  console.log('expand field repeater')
+  console.log('answers', answers)
+
+  const newAnswers = mergeAnswers(answers, {
+    [fieldRepeater.id]: [...repeaterValues, {}],
+  })
+
+  console.log('new answers', newAnswers)
+
+  const newScreens = convertFormToScreens(form, newAnswers, externalData)
+
+  return {
+    ...state,
+    screens: newScreens,
+  }
+}
+
 function findNearestRepeater(
   activeScreen: number,
   screens: FormScreen[],
@@ -193,6 +225,8 @@ export const ApplicationReducer = (
       return addNewAnswersToState(state, action.payload)
     case ActionTypes.EXPAND_REPEATER:
       return expandRepeater(state)
+    case ActionTypes.EXPAND_FIELD_REPEATER:
+      return expandFieldRepeater(state)
     case ActionTypes.GO_TO_SCREEN:
       return goToSpecificScreen(state, action.payload)
     case ActionTypes.ADD_EXTERNAL_DATA:

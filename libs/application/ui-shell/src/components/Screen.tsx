@@ -61,6 +61,7 @@ type ScreenProps = {
   answerQuestions(answers: FormValue): void
   dataSchema: Schema
   expandRepeater(): void
+  expandFieldRepeater(): void
   mode?: FormModes
   numberOfScreens: number
   prevScreen(): void
@@ -80,6 +81,7 @@ const Screen: FC<ScreenProps> = ({
   application,
   dataSchema,
   expandRepeater,
+  expandFieldRepeater,
   goToScreen,
   answerAndGoToNextScreen,
   mode,
@@ -285,6 +287,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={dataSchemaOrApiErrors}
                 fieldRepeater={screen}
                 application={application}
+                expandFieldRepeater={expandFieldRepeater}
                 goToScreen={goToScreen}
                 refetch={refetch}
               />

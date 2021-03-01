@@ -1,24 +1,12 @@
 import React, { FC } from 'react'
 
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import {
   Application,
-  formatText,
   FormValue,
-  FieldTypes,
   RecordObject,
   FormItemTypes,
 } from '@island.is/application/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
-
-import ConditionHandler from './ConditionHandler'
 import FormField from './FormField'
 import { FieldDef, FieldRepeaterScreen, MultiFieldScreen } from '../types'
 import FormMultiField from './FormMultiField'
@@ -30,6 +18,7 @@ interface Props {
   answerQuestions(answers: FormValue): void
   goToScreen: (id: string) => void
   refetch: () => void
+  expandFieldRepeater: () => void
 }
 
 const FieldRepeater: FC<Props> = ({
@@ -39,10 +28,11 @@ const FieldRepeater: FC<Props> = ({
   answerQuestions,
   goToScreen,
   refetch,
+  expandFieldRepeater,
 }) => {
   return (
     <div>
-      {fieldRepeater.children.map((field, index) => {
+      {fieldRepeater.children.map((field) => {
         return field.type === FormItemTypes.MULTI_FIELD ? (
           <FormMultiField
             answerQuestions={answerQuestions}
@@ -64,6 +54,11 @@ const FieldRepeater: FC<Props> = ({
           />
         )
       })}
+      <Box marginTop={2}>
+        <Button variant="utility" onClick={expandFieldRepeater}>
+          Expand
+        </Button>
+      </Box>
     </div>
   )
 }

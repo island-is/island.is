@@ -216,9 +216,20 @@ export function convertFieldRepeaterToScreen(
   sectionIndex: number,
   subSectionIndex: number,
 ): FieldRepeaterScreen {
-  let isFieldRepeaterVisible = false
+  const { id } = fieldRepeater
+  // TODO: Create children for each defined answer
+  const repeatedValues = getValueViaPath(answers, id, []) as unknown[]
+  let isFieldRepeaterVisible = true
+  const fields: (Field | MultiField)[] = []
   const children: (FieldDef | MultiFieldScreen)[] = []
-  fieldRepeater.children.forEach((field) => {
+  for (let i = 0; i < repeatedValues.length; i++) {
+    fields.push({
+      ...fieldRepeater.item,
+      id: `${fieldRepeater.id}[${i}].${fieldRepeater.item.id}`,
+    })
+  }
+
+  fields.forEach((field) => {
     const isFieldVisible = shouldShowFormItem(field, answers, externalData)
     if (isFieldVisible) {
       isFieldRepeaterVisible = true
@@ -244,6 +255,7 @@ export function convertFieldRepeaterToScreen(
       })
     }
   })
+
   return {
     ...fieldRepeater,
     isNavigable: isFieldRepeaterVisible && isParentNavigable,

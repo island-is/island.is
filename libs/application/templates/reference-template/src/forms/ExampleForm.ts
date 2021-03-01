@@ -37,10 +37,10 @@ export const ExampleForm: Form = buildForm({
           }),
         }),
         buildFieldRepeater({
-          id: 'person.interests',
+          id: 'interests',
           title: 'Áhugamálin mín',
           item: buildTextField({
-            id: 'person.interest',
+            id: 'interest',
             title: 'Áhugamál',
           }),
         }),
