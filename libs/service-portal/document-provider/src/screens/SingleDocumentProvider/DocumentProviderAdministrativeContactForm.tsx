@@ -8,6 +8,7 @@ import { Contact } from '@island.is/api/schema'
 import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministrativeContact'
 import { useCreateAdministrativeContact } from '../../shared/useCreateAdministrativeContact'
 import { ContactInput } from '../../shared/useUpdateTechnicalContact'
+import { CreateContactInput } from '../../shared/useCreateTechnicalContact'
 interface Props {
   administrativeContact?: Contact | null
   organisationId: string
@@ -36,7 +37,10 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
         id: administrativeContact.id,
       }
       updateAdministrativeContact(input)
-    } else createAdministrativeContact(data.administrativeContact)
+    } else {
+      const input: CreateContactInput = data.administrativeContact
+      createAdministrativeContact(input)
+    }
   }
   return (
     <Box marginY={3}>
