@@ -34,7 +34,7 @@ export class ApplicationsProvider extends BasicDataProvider {
 
   handleError(error: any) {
     console.log('Provider error - Applications', error)
-    return Promise.resolve(error)
+    return Promise.resolve({})
   }
 
   onProvideError(result: string): FailedDataProviderResult {

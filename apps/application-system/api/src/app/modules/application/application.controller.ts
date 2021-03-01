@@ -53,6 +53,8 @@ import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
+import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
+import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -558,6 +560,8 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const { type } = input
 
+    this.fileService.validateApplicationType(application.typeId)
+
     const url = await this.fileService.createPdf(application, type)
 
     const { updatedApplication } = await this.applicationService.update(
@@ -571,5 +575,80 @@ export class ApplicationController {
     )
 
     return updatedApplication
+  }
+
+  @Put('application/:id/requestFileSignature')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async requestFileSignature(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: RequestFileSignatureDto,
+  ): Promise<ApplicationResponseDto> {
+    const { type } = input
+
+    this.fileService.validateFileSignature(
+      application.typeId,
+      type,
+      application.attachments,
+    )
+
+    const {
+      controlCode,
+      documentToken,
+    } = await this.fileService.requestFileSignature(application, type)
+
+    const externalData: ExternalData = {
+      fileSignature: {
+        data: { controlCode: controlCode, documentToken: documentToken },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateExternalData(
+      application.id,
+      application.externalData as ExternalData,
+      externalData,
+    )
+
+    return updatedApplication
+  }
+
+  @Put('application/:id/uploadSignedFile')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @UseInterceptors(ApplicationSerializer)
+  async uploadSignedFile(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: UploadSignedFileDto,
+  ): Promise<ApplicationResponseDto> {
+    const { documentToken, type } = input
+
+    this.fileService.validateFileUpload(
+      application.typeId,
+      documentToken,
+      application.externalData,
+    )
+
+    await this.fileService.uploadSignedFile(application, documentToken, type)
+
+    return application
   }
 }

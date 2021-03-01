@@ -13,7 +13,10 @@ import {
 } from '@island.is/application/core'
 import isEmpty from 'lodash/isEmpty'
 
-import { getExpectedDateOfBirth } from '../parentalLeaveUtils'
+import {
+  getAvailableRights,
+  getExpectedDateOfBirth,
+} from '../parentalLeaveUtils'
 import { Period } from '../types'
 import { minPeriodDays, usageMaxMonths } from '../config'
 import { NO } from '../constants'
@@ -142,6 +145,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (period?.endDate !== undefined) {
       const field = 'endDate'
       const { startDate, endDate } = period
+      const { days, months } = getAvailableRights(application)
 
       // We need a valid end date
       if (typeof endDate !== 'string' || !isValid(parseISO(endDate))) {
@@ -170,6 +174,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
       ) {
         return buildError(
           `You cannot apply for a period shorter than ${minPeriodDays} days.`,
+          field,
+        )
+      }
+
+      // We check if the endDate is inside the allowed range of days/months
+      if (
+        (!startDate &&
+          differenceInDays(parseISO(endDate), parseISO(dob)) > days) ||
+        differenceInDays(parseISO(endDate), parseISO(startDate)) > days
+      ) {
+        return buildError(
+          `You cannot apply for a period longer than the allowed period of ${months} months.`,
           field,
         )
       }

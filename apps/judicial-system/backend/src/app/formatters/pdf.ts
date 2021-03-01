@@ -205,7 +205,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `F.h.l. ${existingCase.prosecutor?.name || ''} ${
+      `${existingCase.prosecutor?.name || ''} ${
         existingCase.prosecutor?.title || ''
       }`,
     )

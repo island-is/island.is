@@ -50,7 +50,7 @@ const variantStyles: VariantStyles = {
 export interface AlertMessageProps {
   type: AlertMessageType
   title: string
-  message?: string
+  message?: string | React.ReactNode
 }
 
 export const AlertMessage: React.FC<AlertMessageProps> = ({

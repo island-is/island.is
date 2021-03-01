@@ -71,35 +71,34 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError('You must select one of the above', field)
     }
 
-    // Check that country is a string and not empty
+    // Check that country is not empty
     if (!formerInsurance.country) {
       const field = `${FORMER_INSURANCE}.country`
       const buildError = buildValidationError(field)
       return buildError('Please select a country', field)
     }
 
-    // Check file upload if country is Greenland / Faroe
-    if (
-      requireConfirmationOfResidency(formerInsurance.country) &&
-      !formerInsurance.confirmationOfResidencyDocument.length
-    ) {
-      const field = `${FORMER_INSURANCE}.personalId`
-      const buildError = buildValidationError(field)
-      return buildError(
-        'Please attach a confirmation of residency below',
-        field,
-      )
-    }
-
     if (
       !requireWaitingPeriod(formerInsurance.country, applicant?.citizenship)
     ) {
-      // Check that national ID is string and not empty
+      // Check that national ID is not empty
       if (!formerInsurance.personalId) {
         const field = `${FORMER_INSURANCE}.personalId`
         const buildError = buildValidationError(field)
         return buildError(
           'Please fill in your ID number in previous country',
+          field,
+        )
+      }
+      // Check file upload if country is Greenland / Faroe
+      if (
+        requireConfirmationOfResidency(formerInsurance.country) &&
+        !formerInsurance.confirmationOfResidencyDocument.length
+      ) {
+        const field = `${FORMER_INSURANCE}.personalId`
+        const buildError = buildValidationError(field)
+        return buildError(
+          'Please attach a confirmation of residency below',
           field,
         )
       }
@@ -112,7 +111,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
         const buildError = buildValidationError(field)
         return buildError('You must select one of the above', field)
       }
-      // Check that entitelmentReason is a string and not empty (field is conditionally renderd if entitlement === YES)
+      // Check that entitelmentReason is not empty if field is rendered (rendered if entitlement === YES)
       if (
         formerInsurance.entitlement === YES &&
         !formerInsurance.entitlementReason
