@@ -40,8 +40,6 @@ export const center = style({
 })
 
 export const gridFix = style({
-  gridGap: '16px',
-
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
       flexDirection: 'column-reverse',
