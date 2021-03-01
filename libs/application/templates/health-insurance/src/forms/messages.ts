@@ -272,6 +272,11 @@ export const m = defineMessages({
     defaultMessage: 'Veldu land',
     description: 'Select a country',
   },
+  formerInsuranceCountryError: {
+    id: 'hi.application:formerInsurance.countryError',
+    defaultMessage: 'Error when loading countries',
+    description: 'Error when loading countries',
+  },
   formerInsuranceDetails: {
     id: 'hi.application:formerInsurance.details',
     defaultMessage: 'Vinsamlegast gefið upplýsingar um fyrra tryggingarland.',
