@@ -7,6 +7,7 @@ interface ErrorMessageProps {
   onClose: () => void
 }
 
+// TODO: handle errors better when we have the support from the backend
 const ErrorMessage = ({ onClose }: ErrorMessageProps) => {
   const { formatMessage } = useIntl()
   return (
