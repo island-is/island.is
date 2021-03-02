@@ -68,6 +68,7 @@ export interface AlertBannerProps {
   link?: {
     href: string
     title: string
+    isReactLink?: boolean
   }
   /**
    * Fires when banner gets dismissed, usefull for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
@@ -90,6 +91,14 @@ export const AlertBanner: FC<AlertBannerProps> = ({
   }
 
   const variant = variantStyles[variantKey]
+
+  const renderDescriptionAndLink = () => (
+    <Text>
+      {description}
+      {description && link && ` `}
+      {link && <a href={link.href}>{link.title}</a>}
+    </Text>
+  )
   return (
     <Box
       background={variant.background}
@@ -124,26 +133,30 @@ export const AlertBanner: FC<AlertBannerProps> = ({
       >
         {(description || link) && (
           <Box marginRight={[0, 0, 0, 2]} marginBottom={[1, 1, 1, 0]}>
-            <LinkContext.Provider
-              value={{
-                linkRenderer: (href, children) => (
-                  <Link
-                    href={href}
-                    color="blue400"
-                    underline="small"
-                    underlineVisibility="always"
-                  >
-                    {children}
-                  </Link>
-                ),
-              }}
-            >
-              <Text>
-                {description}
-                {description && link && ` `}
-                {link && <a href={link.href}>{link.title}</a>}
-              </Text>
-            </LinkContext.Provider>
+            {link?.isReactLink ? (
+              renderDescriptionAndLink()
+            ) : (
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <Link
+                      href={href}
+                      color="blue400"
+                      underline="small"
+                      underlineVisibility="always"
+                    >
+                      {children}
+                    </Link>
+                  ),
+                }}
+              >
+                <Text>
+                  {description}
+                  {description && link && ` `}
+                  {link && <a href={link.href}>{link.title}</a>}
+                </Text>
+              </LinkContext.Provider>
+            )}
           </Box>
         )}
       </Box>

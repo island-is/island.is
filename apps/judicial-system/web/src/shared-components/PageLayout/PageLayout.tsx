@@ -197,7 +197,7 @@ const PageLayout: React.FC<PageProps> = ({
     <LinkContext.Provider
       value={{
         linkRenderer: (href, children) => (
-          <Link to={href} color="blue400" className={styles.link}>
+          <Link to={href} className={styles.link}>
             {children}
           </Link>
         ),
@@ -222,6 +222,7 @@ const PageLayout: React.FC<PageProps> = ({
                 ? Constants.USER_LIST_ROUTE
                 : Constants.REQUEST_LIST_ROUTE,
             title: 'Fara á yfirlitssíðu',
+            isReactLink: true,
           }}
         />
       )}
