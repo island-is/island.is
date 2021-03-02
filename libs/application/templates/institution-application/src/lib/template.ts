@@ -71,7 +71,11 @@ const dataSchema = z.object({
     other: z.string().optional(),
   }),
 })
-
+enum TEMPLATE_API_ACTIONS {
+  // Has to match name of action in template API module
+  // (will be refactored when state machine is a part of API module)
+  sendApplication = 'sendApplication'
+}
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -86,7 +90,7 @@ const template: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um Umsokn',
-          progress: 0.33,
+          progress: 0.43,
           roles: [
             {
               id: 'applicant',
@@ -95,7 +99,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(val.application),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary', },
               ],
               write: 'all',
             },
@@ -103,16 +107,23 @@ const template: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: 'approved',
           },
         },
+      },
+      approved: {
+        meta: {
+          name: 'Approved',
+          progress: 1,
+          onEntry: {
+            apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+          },
+        },
+        type: 'final' as const,
       },
     },
   },
   mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      return 'reviewer'
-    }
     return 'applicant'
   },
 }
