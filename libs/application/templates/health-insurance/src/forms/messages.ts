@@ -69,7 +69,7 @@ export const m = defineMessages({
     defaultMessage:
       'Nánari útlistun á hvaða upplýsinga er aflað frá ofangreindum stofnunum og hvaða upplýsingum verður miðlað áfram er að finna undir **[Persónuverndarsíðu SÍ](https://www.sjukra.is/personuvernd)**',
     description:
-      'Further details on what information is obtained from the above institusions and what personal data will be passed on can be found on IHI’s **[Privacy page](https://www.sjukra.is/english/privacy)**',
+      'Further details on what information is obtained from the above institutions and what personal data will be passed on can be found on IHI’s **[Privacy page](https://www.sjukra.is/english/privacy)**',
   },
   confirmationOfResidencyTitle: {
     id: 'hi.application:confirmationOfResidency.title',
