@@ -677,7 +677,7 @@ export class ApplicationController {
       {
         attachments: {
           ...application.attachments,
-          [type]: url,
+          [input.type]: url,
         },
       },
     )
