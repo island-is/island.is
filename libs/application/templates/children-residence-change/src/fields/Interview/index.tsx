@@ -9,7 +9,6 @@ import { DescriptionText } from '../components'
 export type ValidAnswers = 'yes' | 'no'
 
 const Interview = ({ field, application, error }: FieldBaseProps) => {
-  console.log('error', error)
   const currentAnswer = getValueViaPath(
     application.answers,
     field.id,
