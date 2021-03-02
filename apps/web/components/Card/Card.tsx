@@ -1,7 +1,6 @@
 import React, { FC, useContext } from 'react'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-import Link, { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
@@ -13,9 +12,10 @@ import {
   TagVariant,
   GridColumn,
   GridRow,
+  Link,
+  LinkProps,
 } from '@island.is/island-ui/core'
 import { ColorSchemeContext } from '@island.is/web/context'
-import { Image } from '@island.is/web/graphql/schema'
 import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
@@ -161,6 +161,7 @@ export const Card: FC<CardProps> = ({
         background="white"
         borderColor={borderColor}
         borderWidth="standard"
+        id={`clickable-card-${title.replace(/ /g, '')}`}
       >
         {status ? (
           <span

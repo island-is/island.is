@@ -16,6 +16,7 @@ export type UnderlineVariants = 'normal' | 'small'
 export interface LinkProps extends NextLinkProps {
   color?: LinkColor
   className?: string
+  id?: string
   underline?: UnderlineVariants
   underlineVisibility?: UnderlineVisibility
   skipTab?: boolean
@@ -35,6 +36,7 @@ export const Link: React.FC<LinkProps> = ({
   color,
   skipTab,
   className,
+  id,
   underline,
   underlineVisibility = 'hover',
   pureChildren,
@@ -56,7 +58,7 @@ export const Link: React.FC<LinkProps> = ({
 
   if (!href) {
     return (
-      <span className={classNames} {...linkProps}>
+      <span className={classNames} {...linkProps} id={id}>
         {children}
       </span>
     )
@@ -79,6 +81,7 @@ export const Link: React.FC<LinkProps> = ({
             className={classNames}
             {...linkProps}
             tabIndex={skipTab ? -1 : undefined}
+            id={id}
           >
             {children}
           </a>
@@ -94,6 +97,7 @@ export const Link: React.FC<LinkProps> = ({
         className={classNames}
         {...linkProps}
         tabIndex={skipTab ? -1 : undefined}
+        id={id}
       >
         {children}
       </a>
