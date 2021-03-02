@@ -7,8 +7,8 @@ import {
   FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
-import { ReviewFieldProps, Status, StatusTypes } from '../../types'
+import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../../constants'
+import { ReviewFieldProps, Status } from '../../types'
 import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
