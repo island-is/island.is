@@ -58,13 +58,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
       />
       {searchResults && (
         <Box marginY={3}>
-          <Box marginBottom={2}>
-            <Text variant="h3" as="h3">
-              {`${searchResults.length} ${formatMessage(
-                m.documentProvidersNumberOfSearchResultsFoundMessage,
-              )}`}
-            </Text>
-          </Box>
+          <Box marginBottom={2}></Box>
           {searchResults
             .slice(PAGE_SIZE * (page - 1), PAGE_SIZE * page)
             .map(({ name, id, nationalId }) => (

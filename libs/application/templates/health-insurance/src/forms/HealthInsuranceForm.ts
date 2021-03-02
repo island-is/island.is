@@ -17,10 +17,11 @@ import {
   Application,
   FormValue,
   ExternalData,
+  buildAsyncSelectField,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
-import { StatusTypes } from '../types'
+import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../constants'
+import { CountryDataResult } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
@@ -42,7 +43,7 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: m.externalDataSubtitle,
+          subTitle: ' ',
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
@@ -68,6 +69,12 @@ export const HealthInsuranceForm: Form = buildForm({
               type: undefined,
               title: m.socialInsuranceAdministrationTitle,
               subTitle: m.socialInsuranceAdministrationSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'moreInfo',
+              type: undefined,
+              title: '',
+              subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
               id: 'userProfile',
@@ -309,10 +316,27 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
-            buildCustomField({
+            buildAsyncSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
-              component: 'CountrySelectField',
+              placeholder: m.formerInsuranceCountryPlaceholder,
+              loadingError: m.formerInsuranceCountryError,
+              loadOptions: async () => {
+                const countries = await fetch(
+                  'https://restcountries.eu/rest/v2/all',
+                )
+                const data = (await countries.json()) as CountryDataResult[]
+                return data.map(
+                  ({ name, alpha2Code: countryCode, regionalBlocs }) => {
+                    const regions = regionalBlocs.map((blocs) => blocs.acronym)
+                    const option = { name, countryCode, regions }
+                    return {
+                      label: name,
+                      value: JSON.stringify(option),
+                    }
+                  },
+                )
+              },
             }),
             buildTextField({
               id: 'formerInsurance.personalId',
