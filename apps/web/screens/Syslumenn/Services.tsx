@@ -329,7 +329,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     categories,
     groups,
-    sort: query.sort ?? 'popular',
+    sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
   }
 }

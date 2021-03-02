@@ -215,6 +215,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     // TODO: do a scrolling query or sumthin
     const query = {
       query: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
         match_all: {},
       },
       size: 10000,
@@ -225,7 +226,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       unknown
     >(index, query)
 
-    let oldScores = {}
+    const oldScores = {}
     oldData.body.hits?.hits.forEach((obj) => {
       oldScores[obj._id] = obj._source.popularityScore
     })
