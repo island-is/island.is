@@ -52,6 +52,7 @@ import {
 } from '../hooks/useLinkResolver'
 import { Locale } from '../i18n/I18n'
 import { useScrollPosition } from '../hooks/useScrollPosition'
+import { scrollTo } from '../hooks/useScrollSpy'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -170,11 +171,7 @@ const TOC: FC<{
           headingTitle: text,
           headingId: id,
         }))}
-        onClick={(id) =>
-          document.getElementById(id).scrollIntoView({
-            behavior: 'smooth',
-          })
-        }
+        onClick={(id) => scrollTo(id, { smooth: true })}
       />
     </Box>
   )
