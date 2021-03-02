@@ -41,7 +41,7 @@ const SignatureModal = ({
           onClose()
         }
       }}
-      // When there is an error it should not be possible to close the modal
+      // When there is NO error it should not be possible to close the modal
       hideOnEsc={hasError}
       // Passing in tabIndex={0} when there is no tabbable element inside the modal
       tabIndex={!hasError ? 0 : undefined}
