@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { FindOptions } from 'sequelize/types'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
@@ -28,12 +27,15 @@ export class ApplicationService {
   }
 
   async findAll(): Promise<Application[]> {
-    return this.applicationModel.findAll()
+    return this.applicationModel.findAll({
+      order: [['modified', 'DESC']],
+    })
   }
 
   async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {
     return this.applicationModel.findAll({
       where: { typeId },
+      order: [['modified', 'DESC']],
     })
   }
 

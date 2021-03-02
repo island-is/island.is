@@ -8,7 +8,7 @@ import { defineMessage } from 'react-intl'
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',
   widgets: () => [],
-  routes: async () => [
+  routes: () => [
     {
       name: 'Mín gögn',
       path: ServicePortalPath.MyInfoRoot,

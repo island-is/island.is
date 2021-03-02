@@ -1,9 +1,9 @@
 import fetch from 'node-fetch'
-import { environment } from '../environments/environment'
-import { logger } from '@island.is/logging'
 import flatten from 'lodash/flatten'
-import { AwsEsPackage } from './aws'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { logger } from '@island.is/logging'
+import { environment } from '../../environments/environment'
+import { AwsEsPackage } from './aws'
 
 // Analyzers name must not exceed 20 in length and must satisfy this pattern [a-z][a-z0-9\\-]+
 const analyzers = [

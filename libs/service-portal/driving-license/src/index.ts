@@ -10,7 +10,7 @@ import {
 export const drivingLicenseModule: ServicePortalModule = {
   name: 'Ökuréttindi',
   widgets: () => [],
-  routes: async () => [
+  routes: () => [
     {
       name: defineMessage({
         id: 'service.portal:driving-license',

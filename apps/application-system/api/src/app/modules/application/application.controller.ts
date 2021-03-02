@@ -7,13 +7,11 @@ import {
   Post,
   Put,
   Delete,
-  Query,
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
 } from '@nestjs/common'
-
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
@@ -94,7 +92,7 @@ export class ApplicationController {
   @Get('applications')
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
-  async findAll(@Param() params: string[]): Promise<ApplicationResponseDto[]> {
+  async findAll(): Promise<ApplicationResponseDto[]> {
     return await this.applicationService.findAll()
   }
 

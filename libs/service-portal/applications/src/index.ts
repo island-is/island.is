@@ -9,7 +9,7 @@ import { m } from './lib/messages'
 export const applicationsModule: ServicePortalModule = {
   name: m.heading,
   widgets: () => [],
-  routes: async () => {
+  routes: () => {
     const applicationRoutes = [
       {
         name: m.heading,
