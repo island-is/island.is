@@ -10,6 +10,11 @@ import {
   Filter,
   FilterInput,
   FilterMultiChoice,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Select,
+  Option,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -33,6 +38,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -41,6 +47,7 @@ interface ServicesPageProps {
   services: Query['getArticles']
   categories: FilterItem[]
   groups: FilterItem[]
+  sort: string
   namespace: Query['getNamespace']
 }
 
@@ -54,6 +61,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   services,
   categories,
   groups,
+  sort,
   namespace,
 }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
@@ -63,6 +71,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  const Router = useRouter()
   useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
@@ -83,6 +92,17 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   categories.sort(filterItemComparator)
   groups.sort(filterItemComparator)
+
+  const sortOptions = [
+    {
+      label: 'Vinsælast',
+      value: 'popular',
+    },
+    {
+      label: 'Stafrófsröð',
+      value: 'title',
+    },
+  ]
 
   const matches = services.filter(
     (x) =>
@@ -180,10 +200,31 @@ const ServicesPage: Screen<ServicesPageProps> = ({
         items: navList,
       }}
     >
-      <Text variant="h1" as="h1" marginBottom={4}>
-        {n('allServices', 'Öll þjónusta')}
-      </Text>
-      <Stack space={4}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
+            <Text variant="h1" as="h1" marginBottom={4}>
+              {n('allServices', 'Öll þjónusta')}
+            </Text>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '6/12', '6/12', '4/12']}>
+            <Select
+              backgroundColor="white"
+              icon="chevronDown"
+              isSearchable
+              label="Röðun"
+              name="sort"
+              value={sortOptions.filter((x) => x.value === sort)[0]}
+              options={sortOptions}
+              onChange={({ value }: Option) => {
+                Router.replace(`?sort=${value}`)
+              }}
+              size="sm"
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+      <Stack space={2}>
         {matches.map((article) => {
           const url = linkResolver('Article' as LinkType, [article.slug])
           return (
@@ -236,6 +277,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           organization: 'syslumenn',
           lang: locale as ContentLanguage,
+          sort: (query.sort as string) ?? 'popular',
         },
       },
     }),
@@ -287,6 +329,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     namespace,
     categories,
     groups,
+    sort: query.sort ?? 'popular',
     showSearchInHeader: false,
   }
 }
