@@ -163,7 +163,7 @@
     "jwt-decode": "2.2.0",
     "kennitala": "1.2.4",
     "libphonenumber-js": "1.7.53",
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "lottie-web": "5.7.5",
     "markdown-to-jsx": "7.1.1",
     "miragejs": "0.1.40",
@@ -246,7 +246,7 @@
     "zod": "1.10.2"
   },
   "devDependencies": {
-    "@babel/core": "7.8.7",
+    "@babel/core": "7.13.8",
     "@babel/plugin-transform-runtime": "7.12.10",
     "@babel/preset-env": "7.8.7",
     "@babel/preset-react": "7.8.3",
