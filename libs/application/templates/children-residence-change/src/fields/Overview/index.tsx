@@ -59,12 +59,8 @@ const Overview = ({ application }: FieldBaseProps) => {
   ])
 
   const pdfUrl =
-    createResponse?.createPdfPresignedUrl?.attachments?.[
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE
-    ] ||
-    getResponse?.getPresignedUrl?.attachments?.[
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE
-    ]
+    createResponse?.createPdfPresignedUrl?.url ||
+    getResponse?.getPresignedUrl?.url
 
   return (
     <>

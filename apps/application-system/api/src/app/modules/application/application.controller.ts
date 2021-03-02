@@ -34,6 +34,7 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
+  PdfTypes,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -69,6 +70,9 @@ import {
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
+import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
+import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
+import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
@@ -95,7 +99,7 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
-  @Get('applications/:id')
+  @Get('application/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async findOne(
@@ -257,7 +261,7 @@ export class ApplicationController {
     return existingApplication
   }
 
-  @Put('applications/:id')
+  @Put('application/:id')
   @ApiParam({
     name: 'id',
     type: String,
@@ -300,7 +304,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('applications/:id/externalData')
+  @Put('application/:id/externalData')
   @ApiParam({
     name: 'id',
     type: String,
@@ -351,7 +355,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('applications/:id/submit')
+  @Put('application/:id/submit')
   @ApiParam({
     name: 'id',
     type: String,
@@ -482,7 +486,7 @@ export class ApplicationController {
     return [true, updatedApplication]
   }
 
-  @Put('applications/:id/attachments')
+  @Put('application/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,
@@ -517,7 +521,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Delete('applications/:id/attachments')
+  @Delete('application/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,
@@ -552,30 +556,19 @@ export class ApplicationController {
     description: 'The id of the application to create a pdf for',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @UseInterceptors(ApplicationSerializer)
+  @ApiOkResponse({ type: PresignedUrlResponseDto })
   async createPdf(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
     @Body() input: CreatePdfDto,
-  ): Promise<ApplicationResponseDto> {
+  ): Promise<PresignedUrlResponseDto> {
     const { type } = input
 
     this.fileService.validateApplicationType(application.typeId)
 
-    const url = await this.fileService.createPdf(application, type)
+    let url = await this.fileService.createPdf(application, type)
 
-    const { updatedApplication } = await this.applicationService.update(
-      application.id,
-      {
-        attachments: {
-          ...application.attachments,
-          [type]: url,
-        },
-      },
-    )
-
-    return updatedApplication
+    return { url }
   }
 
   @Put('application/:id/requestFileSignature')
@@ -587,13 +580,12 @@ export class ApplicationController {
       'The id of the application which the file signature is requested for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @UseInterceptors(ApplicationSerializer)
+  @ApiOkResponse({ type: RequestFileSignatureResponseDto })
   async requestFileSignature(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
     @Body() input: RequestFileSignatureDto,
-  ): Promise<ApplicationResponseDto> {
+  ): Promise<RequestFileSignatureResponseDto> {
     const { type } = input
 
     this.fileService.validateFileSignature(
@@ -607,23 +599,7 @@ export class ApplicationController {
       documentToken,
     } = await this.fileService.requestFileSignature(application, type)
 
-    const externalData: ExternalData = {
-      fileSignature: {
-        data: { controlCode: controlCode, documentToken: documentToken },
-        date: new Date(),
-        status: 'success',
-      },
-    }
-
-    const {
-      updatedApplication,
-    } = await this.applicationService.updateExternalData(
-      application.id,
-      application.externalData as ExternalData,
-      externalData,
-    )
-
-    return updatedApplication
+    return { controlCode, documentToken }
   }
 
   @Put('application/:id/uploadSignedFile')
@@ -634,13 +610,12 @@ export class ApplicationController {
     description: 'The id of the application which the file was created for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @UseInterceptors(ApplicationSerializer)
+  @ApiOkResponse({ type: UploadSignedFileResponseDto })
   async uploadSignedFile(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
     @Body() input: UploadSignedFileDto,
-  ): Promise<ApplicationResponseDto> {
+  ): Promise<UploadSignedFileResponseDto> {
     const { documentToken, type } = input
 
     this.fileService.validateFileUpload(
@@ -651,10 +626,12 @@ export class ApplicationController {
 
     await this.fileService.uploadSignedFile(application, documentToken, type)
 
-    return application
+    return {
+      documentSigned: true,
+    }
   }
 
-  @Get('application/:id/presignedUrl')
+  @Get('application/:id/:pdfType/presignedUrl')
   @ApiParam({
     name: 'id',
     type: String,
@@ -662,27 +639,15 @@ export class ApplicationController {
     description: 'The id of the application which the file was created for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @UseInterceptors(ApplicationSerializer)
+  @ApiOkResponse({ type: PresignedUrlResponseDto })
   async getPresignedUrl(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
-    @Body() input: PresignedUrlDto,
-  ): Promise<ApplicationResponseDto> {
+    @Param('pdfType') type: PdfTypes,
+  ): Promise<PresignedUrlResponseDto> {
     this.fileService.validateApplicationType(application.typeId)
+    let url = this.fileService.getPresignedUrl(application.id, type)
 
-    const url = this.fileService.getPresignedUrl(application.id, input.type)
-
-    const { updatedApplication } = await this.applicationService.update(
-      application.id,
-      {
-        attachments: {
-          ...application.attachments,
-          [input.type]: url,
-        },
-      },
-    )
-
-    return updatedApplication
+    return { url }
   }
 }

@@ -196,11 +196,12 @@ export class ApplicationService {
   }
 
   async presignedUrl(input: GetPresignedUrlInput, authorization: string) {
-    const { id, ...presignedUrlDto } = input
+    const { id, type } = input
+
     return await this.applicationApi
       .applicationControllerGetPresignedUrl({
         id,
-        presignedUrlDto,
+        pdfType: type,
         authorization,
       })
       .catch(handleError)
