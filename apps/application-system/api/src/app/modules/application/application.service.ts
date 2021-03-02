@@ -27,8 +27,8 @@ export class ApplicationService {
     })
   }
 
-  async findAll(options?: FindOptions): Promise<Application[]> {
-    return this.applicationModel.findAll(options)
+  async findAll(): Promise<Application[]> {
+    return this.applicationModel.findAll()
   }
 
   async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {

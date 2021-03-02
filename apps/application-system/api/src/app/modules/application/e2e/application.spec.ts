@@ -372,7 +372,7 @@ describe('Application system API', () => {
     expect(putResponse.body.error).toBe('Bad Request')
   })
 
-  it('GET /applicants/:nationalRegistryId/applications should return a list of applications for applicant', async () => {
+  it('GET /applications should return a list of applications', async () => {
     await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
@@ -384,9 +384,7 @@ describe('Application system API', () => {
       },
     })
 
-    const getResponse = await server
-      .get('/applicants/123456-4321/applications')
-      .expect(200)
+    const getResponse = await server.get('/applications').expect(200)
 
     // Assert
     expect(getResponse.body).toEqual(
@@ -396,8 +394,8 @@ describe('Application system API', () => {
     )
   })
 
-  it('GET /assignees/:nationalRegistryId/applications should return a list of applications for assignee', async () => {
-    await server.post('/applications').send({
+  it('GET /applications/:typeId should return a list of applications with the typeId', async () => {
+    const response = await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
       attachments: {},
@@ -408,14 +406,15 @@ describe('Application system API', () => {
       },
     })
 
+    const { typeId } = response.body
     const getResponse = await server
-      .get('/assignees/123456-1234/applications')
+      .get(`/applications/type/${typeId}`)
       .expect(200)
 
     // Assert
     expect(getResponse.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ assignees: ['123456-1234'] }),
+        expect.objectContaining({ typeId: 'ParentalLeave' }),
       ]),
     )
   })

@@ -17,16 +17,13 @@ import {
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
-import { WhereOptions } from 'sequelize/types'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
-  ApiQuery,
   ApiHeader,
 } from '@nestjs/swagger'
-import { Op } from 'sequelize'
 import {
   Application as BaseApplication,
   callDataProviders,
@@ -97,14 +94,14 @@ export class ApplicationController {
   @Get('applications')
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
-  async findApplications(): Promise<ApplicationResponseDto[]> {
+  async findAll(@Param() params: string[]): Promise<ApplicationResponseDto[]> {
     return await this.applicationService.findAll()
   }
 
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
-  async findApplication(
+  async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<ApplicationResponseDto> {
     const application = await this.applicationService.findById(id)
@@ -118,13 +115,13 @@ export class ApplicationController {
     return application
   }
 
-  @Get('applications/:typeId')
+  @Get('applications/type/:typeId')
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
-  async findApplicationsByType(
-    @Param('typeId') typeId: string,
+  async findAllByType(
+    @Param('typeId') typeId: ApplicationTypes,
   ): Promise<ApplicationResponseDto[]> {
-    return this.applicationService.findAll({ where: { typeId } })
+    return await this.applicationService.findAllByType(typeId)
   }
 
   @Post('applications')

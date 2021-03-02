@@ -32,27 +32,27 @@ const handleError = async (error: any) => {
 export class ApplicationService {
   constructor(private applicationApi: ApplicationsApi) {}
 
-  async findApplication(id: string, authorization: string) {
+  async findOne(id: string, authorization: string) {
     return await this.applicationApi
-      .applicationControllerFindApplication({
+      .applicationControllerFindOne({
         id,
         authorization,
       })
       .catch(handleError)
   }
 
-  async findApplications(authorization: string) {
+  async findAll(authorization: string) {
     return await this.applicationApi
-      .applicationControllerFindApplications({ authorization })
+      .applicationControllerFindAll({ authorization })
       .catch(handleError)
   }
 
-  async findApplicationsByType(
+  async findAllByType(
     authorization: string,
     typeId: ApplicationResponseDtoTypeIdEnum,
   ) {
     return await this.applicationApi
-      .applicationControllerFindApplicationsByType({ authorization, typeId })
+      .applicationControllerFindAllByType({ authorization, typeId })
       .catch(handleError)
   }
 

@@ -31,14 +31,14 @@ export class ApplicationResolver {
     @Args('input') input: GetApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.findApplication(input.id, user.authorization)
+    return this.applicationService.findOne(input.id, user.authorization)
   }
 
   @Query(() => [Application], { nullable: true })
   async getApplications(
     @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findApplications(user.authorization)
+    return this.applicationService.findAll(user.authorization)
   }
 
   @Query(() => [Application], { nullable: true })
@@ -46,7 +46,7 @@ export class ApplicationResolver {
     @Args('input') input: GetApplicationsByTypeInput,
     @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findApplicationsByType(
+    return this.applicationService.findAllByType(
       user.authorization,
       input.typeId,
     )

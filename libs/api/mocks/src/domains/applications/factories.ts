@@ -12,6 +12,8 @@ export const application = factory<Application>({
   typeId: 'ExampleForm',
   answers: [],
   externalData: {},
+  isApplicant: true,
+  isAssignee: false,
 })
 
 export const externalData = factory<DataProviderResult>({
