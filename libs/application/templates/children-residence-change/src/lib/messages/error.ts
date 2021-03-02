@@ -33,5 +33,10 @@ export const error = {
       defaultMessage: 'Samþykkja þarf alla skilmála',
       description: 'Error message when terms are not approved',
     },
+    interview: {
+      id: 'crc.application:error.interview',
+      defaultMessage: 'Velja þarf valmöguleika',
+      description: 'Error message when interview option is not selected',
+    },
   }),
 }
