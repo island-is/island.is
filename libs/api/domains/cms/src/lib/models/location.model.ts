@@ -7,22 +7,22 @@ import { Link, mapLink } from './link.model'
 @ObjectType()
 export class Location {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  subTitle: string
+  subTitle?: string
 
   @Field()
-  address: string
+  address?: string
 
   @Field(() => Link, { nullable: true })
-  link: Link
+  link?: Link
 
   @Field(() => Image)
-  background: Image
+  background!: Image
 }
 
 export const mapLocation = ({

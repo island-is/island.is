@@ -5,25 +5,25 @@ import { Image, mapImage } from './image.model'
 @ObjectType()
 export class Story {
   @Field()
-  label: string
+  label!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field(() => Image)
-  logo: Image
+  logo!: Image
 
   @Field()
-  readMoreText: string
+  readMoreText!: string
 
   @Field()
-  date: string
+  date: string = ''
 
   @Field()
-  intro: string
+  intro!: string
 
   @Field()
-  link: string
+  link?: string
 
   @Field({ nullable: true })
   linkedPage?: string

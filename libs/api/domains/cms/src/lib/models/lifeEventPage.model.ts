@@ -7,13 +7,13 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class LifeEventPage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field({ nullable: true })
   intro?: string
@@ -25,10 +25,10 @@ export class LifeEventPage {
   thumbnail?: Image
 
   @Field(() => [SliceUnion])
-  content: Array<typeof SliceUnion>
+  content!: Array<typeof SliceUnion>
 
   @Field(() => ArticleCategory, { nullable: true })
-  category?: ArticleCategory
+  category?: ArticleCategory | null
 }
 
 export const mapLifeEventPage = ({

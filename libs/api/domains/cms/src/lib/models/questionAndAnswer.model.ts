@@ -5,10 +5,10 @@ import { Html, mapHtml } from './html.model'
 @ObjectType()
 export class QuestionAndAnswer {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  question: string
+  question!: string
 
   @Field(() => Html, { nullable: true })
   answer?: Html

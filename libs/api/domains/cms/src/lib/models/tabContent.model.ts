@@ -6,7 +6,7 @@ import { Html, mapHtml } from './html.model'
 @ObjectType()
 export class TabContent {
   @Field()
-  tabTitle: string
+  tabTitle!: string
 
   @Field({ nullable: true })
   contentTitle?: string
@@ -15,7 +15,7 @@ export class TabContent {
   image?: Image
 
   @Field(() => Html, { nullable: true })
-  body?: Html
+  body?: Html | null
 }
 
 export const mapTabContent = ({ sys, fields }: ITabContent): TabContent => ({

@@ -7,13 +7,13 @@ import { Image, mapImage } from './image.model'
 @ObjectType()
 export class SubpageHeader {
   @Field()
-  subpageId: string
+  subpageId!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  summary: string
+  summary!: string
 
   @Field(() => Image, { nullable: true })
   featuredImage?: Image

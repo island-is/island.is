@@ -4,10 +4,10 @@ import { IAuthor } from '../generated/contentfulTypes'
 @ObjectType()
 export class Author {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  name: string
+  name!: string
 }
 
 export const mapAuthor = ({ sys, fields }: IAuthor): Author => ({

@@ -4,10 +4,10 @@ import { IGenericTag } from '../generated/contentfulTypes'
 @ObjectType()
 export class GenericTag {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 }
 
 export const mapGenericTag = ({ sys, fields }: IGenericTag): GenericTag => ({

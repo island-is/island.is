@@ -14,13 +14,13 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class Article {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field({ nullable: true })
   shortTitle?: string
@@ -29,28 +29,28 @@ export class Article {
   intro?: string
 
   @Field({ nullable: true })
-  importance: number
+  importance?: number
 
   @Field(() => [SliceUnion])
-  body: Array<typeof SliceUnion>
+  body: Array<typeof SliceUnion> = []
 
   @Field(() => ProcessEntry, { nullable: true })
-  processEntry?: ProcessEntry
+  processEntry?: ProcessEntry | null
 
   @Field(() => ArticleCategory, { nullable: true })
-  category?: ArticleCategory
+  category?: ArticleCategory | null
 
   @Field(() => [ArticleCategory], { nullable: true })
   otherCategories?: Array<ArticleCategory>
 
   @Field(() => ArticleGroup, { nullable: true })
-  group?: ArticleGroup
+  group?: ArticleGroup | null
 
   @Field(() => [ArticleGroup], { nullable: true })
   otherGroups?: Array<ArticleGroup>
 
   @Field(() => ArticleSubgroup, { nullable: true })
-  subgroup?: ArticleSubgroup
+  subgroup?: ArticleSubgroup | null
 
   @Field(() => [ArticleSubgroup], { nullable: true })
   otherSubgroups?: Array<ArticleSubgroup>
@@ -65,7 +65,7 @@ export class Article {
   responsibleParty?: Array<Organization>
 
   @Field(() => [SubArticle])
-  subArticles: Array<SubArticle>
+  subArticles?: Array<SubArticle>
 
   @Field(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>
