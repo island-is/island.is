@@ -407,9 +407,7 @@ describe('Application system API', () => {
     })
 
     const { typeId } = response.body
-    const getResponse = await server
-      .get(`/applications/type/${typeId}`)
-      .expect(200)
+    const getResponse = await server.get(`/applications/${typeId}`).expect(200)
 
     // Assert
     expect(getResponse.body).toEqual(

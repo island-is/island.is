@@ -7,13 +7,11 @@ import {
   Post,
   Put,
   Delete,
-  Query,
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
 } from '@nestjs/common'
-
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
@@ -91,14 +89,7 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
-  @Get('applications')
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findAll(@Param() params: string[]): Promise<ApplicationResponseDto[]> {
-    return await this.applicationService.findAll()
-  }
-
-  @Get('applications/:id')
+  @Get('application/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async findOne(
@@ -115,7 +106,14 @@ export class ApplicationController {
     return application
   }
 
-  @Get('applications/type/:typeId')
+  @Get('applications')
+  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
+  @UseInterceptors(ApplicationSerializer)
+  async findAll(): Promise<ApplicationResponseDto[]> {
+    return await this.applicationService.findAll()
+  }
+
+  @Get('applications/:typeId')
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   async findAllByType(
