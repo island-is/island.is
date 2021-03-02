@@ -50,7 +50,7 @@ There are additional steps required to run this template locally
 - Run `kubectl -n socat port-forward svc/socat-xroad 8080:80`
 - Keep this process running while running the project
 
-### National Registry Provider 
+### National Registry Provider
 
 1. Fetch development secrets for the project
 
@@ -67,13 +67,11 @@ There are additional steps required to run this template locally
 
 This service is optional as there is a fallback for dev
 
-
 ### Translations from Contentful
 
 Fetch development secrets
 
 - Run `yarn get-secrets api`
-
 
 ## Code owners and maintainers
 
