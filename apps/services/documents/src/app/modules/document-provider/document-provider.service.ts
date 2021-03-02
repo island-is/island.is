@@ -65,9 +65,29 @@ export class DocumentProviderService {
     this.logger.debug(
       `Creating organisation with nationalId - ${organisation.nationalId}`,
     )
-    //console.log(JSON.stringify(organisation))
+
+    // Add modified by to sub-objects, but only if they exists in the CreateOrganisationDto
+    // since it is allowed to add organisation without sub-objects
+    const org = organisation as Organisation
+
+    if (
+      org &&
+      'administrativeContact' in organisation &&
+      org.administrativeContact
+    ) {
+      org.administrativeContact.modifiedBy = modifiedBy
+    }
+
+    if (org && 'technicalContact' in organisation && org.technicalContact) {
+      org.technicalContact.modifiedBy = modifiedBy
+    }
+
+    if (org && 'helpdesk' in organisation && org.helpdesk) {
+      org.helpdesk.modifiedBy = modifiedBy
+    }
+
     return this.organisationModel.create(
-      { ...organisation, modifiedBy },
+      { ...org, modifiedBy },
       {
         include: [AdministrativeContact, TechnicalContact, Helpdesk],
       },
@@ -121,7 +141,10 @@ export class DocumentProviderService {
     })
   }
 
-  async createProvider(provider: CreateProviderDto): Promise<Provider> {
+  async createProvider(
+    provider: CreateProviderDto,
+    modifiedBy: string,
+  ): Promise<Provider> {
     this.logger.debug(
       `Creating provider for organisation ${provider.organisationId}`,
     )
@@ -135,12 +158,13 @@ export class DocumentProviderService {
         `Organisation with id ${provider.organisationId} doesn't exist`,
       )
     }
-    return await this.providerModel.create(provider)
+    return await this.providerModel.create({ ...provider, modifiedBy })
   }
 
   async updateProvider(
     id: string,
     update: UpdateProviderDto,
+    modifiedBy: string,
   ): Promise<{
     numberOfAffectedRows: number
     updatedProvider: Provider
@@ -150,11 +174,14 @@ export class DocumentProviderService {
     const [
       numberOfAffectedRows,
       [updatedProvider],
-    ] = await this.providerModel.update(update, {
-      where: { id },
-      returning: true,
-      individualHooks: true,
-    })
+    ] = await this.providerModel.update(
+      { ...update, modifiedBy },
+      {
+        where: { id },
+        returning: true,
+        individualHooks: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedProvider }
   }
@@ -279,7 +306,19 @@ export class DocumentProviderService {
     return { numberOfAffectedRows, updatedHelpdesk }
   }
 
-  async getChangelogs(): Promise<Changelog[] | null> {
-    return await this.changelogModel.findAll()
+  // CHANGELOGS
+  async getChangelogsByOrganisationId(
+    organisationId: string,
+  ): Promise<Changelog[] | null> {
+    return await this.changelogModel.findAll({ where: { organisationId } })
+  }
+
+  async getChangelogsByOrganisationIdAndEntityId(
+    organisationId: string,
+    entityId: string,
+  ): Promise<Changelog[] | null> {
+    return await this.changelogModel.findAll({
+      where: { organisationId, entityId },
+    })
   }
 }

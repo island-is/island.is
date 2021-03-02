@@ -6,8 +6,6 @@ import {
   CreatedAt,
   UpdatedAt,
   ForeignKey,
-  AfterCreate,
-  AfterUpdate,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Organisation } from './organisation.model'

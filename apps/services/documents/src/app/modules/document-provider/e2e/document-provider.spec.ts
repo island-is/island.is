@@ -43,7 +43,7 @@ const provider = {
   externalProviderId: 'b9fe843a1dea446a9c8497a3f1e8ad72',
 }
 
-const nationalId = '123456-4321'
+const authNationalId = '123456432x'
 
 beforeAll(async () => {
   app = await setup()
@@ -57,7 +57,7 @@ describe('Organisation API', () => {
   beforeEach(() => {
     spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
     spy.mockImplementation(() => {
-      return nationalId
+      return authNationalId
     })
   })
   afterAll(() => {
@@ -70,11 +70,29 @@ describe('Organisation API', () => {
       .send(simpleOrg)
       .expect(201)
     const { body } = response
+    expect(body.id).toBeTruthy()
     expect(body.nationalId).toEqual(simpleOrg.nationalId)
     expect(body.name).toEqual(simpleOrg.name)
     expect(body.address).toEqual(simpleOrg.address)
     expect(body.email).toEqual(simpleOrg.email)
     expect(body.phoneNumber).toEqual(simpleOrg.phoneNumber)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${body.id}/entities/${body.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(1)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(body.id)
+    expect(changelog.entityId).toEqual(body.id)
+    expect(changelog.entityType).toEqual('Organisation')
+    const changelogData = changelog.data
+    expect((changelogData.id = body.id))
+    expect(changelogData.name).toEqual(simpleOrg.name)
+    expect(changelogData.email).toEqual(simpleOrg.email)
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('POST /organisations should register organisation with related objects', async () => {
@@ -106,6 +124,16 @@ describe('Organisation API', () => {
     )
     expect(body.helpdesk.email).toEqual(complexOrg.helpdesk.email)
     expect(body.helpdesk.phoneNumber).toEqual(complexOrg.helpdesk.phoneNumber)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${body.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(4)
+    changelogBody.forEach((entity: { data: { modifiedBy: string } }) => {
+      expect(entity.data.modifiedBy).toEqual(authNationalId)
+    })
   })
 
   it('POST /organisation should return 400 bad request on invalid input', async () => {
@@ -178,18 +206,37 @@ describe('Organisation API', () => {
 
     const { id } = postResponse.body
 
+    // Update organisation
+    const updatedName = 'Rex Kex ehf.'
     const response = await request(app.getHttpServer())
       .put(`/organisations/${id}`)
       .send({
-        name: 'Rex Kex ehf.',
+        name: updatedName,
       })
       .expect(200)
     const { body } = response
     expect(body.nationalId).toEqual(simpleOrg.nationalId)
-    expect(body.name).toEqual('Rex Kex ehf.')
+    expect(body.name).toEqual(updatedName)
     expect(body.address).toEqual(simpleOrg.address)
     expect(body.email).toEqual(simpleOrg.email)
     expect(body.phoneNumber).toEqual(simpleOrg.phoneNumber)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${id}/entities/${id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(2)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(body.id)
+    expect(changelog.entityId).toEqual(body.id)
+    expect(changelog.entityType).toEqual('Organisation')
+    const changelogData = changelog.data
+    expect((changelogData.id = body.id))
+    expect(changelogData.name).toEqual(updatedName)
+    expect(changelogData.email).toEqual(simpleOrg.email)
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('POST /organisations/{id}/administrativecontact should add to existing organisation', async () => {
@@ -198,7 +245,7 @@ describe('Organisation API', () => {
       .send(simpleOrg)
       .expect(201)
 
-    const { id, nationalId } = postResponse.body
+    const { id, nationalId: nationalIdBody } = postResponse.body
 
     await request(app.getHttpServer())
       .post(`/organisations/${id}/administrativecontact`)
@@ -210,13 +257,31 @@ describe('Organisation API', () => {
       .expect(201)
 
     const getResponse = await request(app.getHttpServer())
-      .get(`/organisations/${nationalId}`)
+      .get(`/organisations/${nationalIdBody}`)
       .expect(200)
 
     const { body } = getResponse
     expect(body.administrativeContact.name).toEqual('Siggi CEO')
     expect(body.administrativeContact.email).toEqual('siggi@org.is')
     expect(body.administrativeContact.phoneNumber).toEqual('5559876')
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(
+        `/changelogs/organisations/${id}/entities/${body.administrativeContact.id}`,
+      )
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(1)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(body.id)
+    expect(changelog.entityId).toEqual(body.administrativeContact.id)
+    expect(changelog.entityType).toEqual('AdministrativeContact')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.administrativeContact.id)
+    expect(changelogData.email).toEqual('siggi@org.is')
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('PUT /organisations/{id}/administrativecontact{administrativeContactId} should update administrative contact', async () => {
@@ -230,15 +295,32 @@ describe('Organisation API', () => {
       id: administrativeContactId,
     } = postResponse.body.administrativeContact
 
+    const updatedName = 'Stefán stórlax'
     const putResponse = await request(app.getHttpServer())
       .put(
         `/organisations/${id}/administrativecontact/${administrativeContactId}`,
       )
-      .send({ name: 'Stefán stórlax' })
+      .send({ name: updatedName })
       .expect(200)
 
     const { body } = putResponse
-    expect(body.name).toEqual('Stefán stórlax')
+    expect(body.name).toEqual(updatedName)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${id}/entities/${body.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(2)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(id)
+    expect(changelog.entityId).toEqual(body.id)
+    expect(changelog.entityType).toEqual('AdministrativeContact')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.id)
+    expect(changelogData.name).toEqual(updatedName)
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('POST /organisations/{id}/technicalcontact should add to existing organisation', async () => {
@@ -266,6 +348,24 @@ describe('Organisation API', () => {
     expect(body.technicalContact.name).toEqual('Siggi Tech')
     expect(body.technicalContact.email).toEqual('siggi@org.is')
     expect(body.technicalContact.phoneNumber).toEqual('5559876')
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(
+        `/changelogs/organisations/${id}/entities/${body.technicalContact.id}`,
+      )
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(1)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(body.id)
+    expect(changelog.entityId).toEqual(body.technicalContact.id)
+    expect(changelog.entityType).toEqual('TechnicalContact')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.technicalContact.id)
+    expect(changelogData.email).toEqual('siggi@org.is')
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('PUT /organisations/{id}/technicalcontact{technicalContactId} should update technical contact', async () => {
@@ -277,13 +377,30 @@ describe('Organisation API', () => {
     const { id } = postResponse.body
     const { id: technicalContactId } = postResponse.body.technicalContact
 
+    const updatedName = 'Tóti tölvukall'
     const putResponse = await request(app.getHttpServer())
       .put(`/organisations/${id}/technicalcontact/${technicalContactId}`)
-      .send({ name: 'Tóti tölvukall' })
+      .send({ name: updatedName })
       .expect(200)
 
     const { body } = putResponse
-    expect(body.name).toEqual('Tóti tölvukall')
+    expect(body.name).toEqual(updatedName)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${id}/entities/${body.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(2)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(id)
+    expect(changelog.entityId).toEqual(body.id)
+    expect(changelog.entityType).toEqual('TechnicalContact')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.id)
+    expect(changelogData.name).toEqual(updatedName)
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('POST /organisations/{id}/helpdesk should add to existing organisation', async () => {
@@ -309,6 +426,22 @@ describe('Organisation API', () => {
     const { body } = getResponse
     expect(body.helpdesk.email).toEqual('help@org.is')
     expect(body.helpdesk.phoneNumber).toEqual('5559898')
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${id}/entities/${body.helpdesk.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(1)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(body.id)
+    expect(changelog.entityId).toEqual(body.helpdesk.id)
+    expect(changelog.entityType).toEqual('Helpdesk')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.helpdesk.id)
+    expect(changelogData.email).toEqual('help@org.is')
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('PUT /organisations/{id}/helpdesk{helpdeskId} should update helpdesk', async () => {
@@ -320,17 +453,48 @@ describe('Organisation API', () => {
     const { id } = postResponse.body
     const { id: helpdeskId } = postResponse.body.helpdesk
 
+    const updatedEmail = 'sos@sameinadir.is'
     const putResponse = await request(app.getHttpServer())
       .put(`/organisations/${id}/helpdesk/${helpdeskId}`)
-      .send({ email: 'sos@sameinadir.is' })
+      .send({ email: updatedEmail })
       .expect(200)
 
     const { body } = putResponse
-    expect(body.email).toEqual('sos@sameinadir.is')
+    expect(body.email).toEqual(updatedEmail)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${id}/entities/${body.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(2)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(id)
+    expect(changelog.entityId).toEqual(body.id)
+    expect(changelog.entityType).toEqual('Helpdesk')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.id)
+    expect(changelogData.email).toEqual(updatedEmail)
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 })
 
 describe('Provider API', () => {
+  let spy: jest.SpyInstance<
+    string | undefined,
+    [import('@nestjs/common').ExecutionContext]
+  >
+  beforeEach(() => {
+    spy = jest.spyOn(tokenUtils, 'getNationalIdFromToken')
+    spy.mockImplementation(() => {
+      return authNationalId
+    })
+  })
+  afterAll(() => {
+    spy.mockRestore()
+  })
+
   it('GET /providers should return empty array if no proviers exists', async () => {
     const response = await request(app.getHttpServer())
       .get('/providers')
@@ -399,6 +563,22 @@ describe('Provider API', () => {
     expect(body.apiScope).toEqual(provider.apiScope)
     expect(body.xroad).toEqual(provider.xroad)
     expect(body.externalProviderId).toEqual(provider.externalProviderId)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${organisationId}/entities/${body.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(1)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(body.organisationId)
+    expect(changelog.entityId).toEqual(body.id)
+    expect(changelog.entityType).toEqual('Provider')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.id)
+    expect(changelogData.endpoint).toEqual(provider.endpoint)
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('GET /providers/{id} should return 404 not found', async () => {
@@ -455,21 +635,40 @@ describe('Provider API', () => {
       .expect(201)
     const { id } = postProvider.body
 
+    const updatedEndpoint = 'https://newdomain.is/api/customer'
+    const updatedApiScope = 'https://newdomain.is/api/customer/.default'
     const putProvider = await request(app.getHttpServer())
       .put(`/providers/${id}`)
       .send({
-        endpoint: 'https://newdomain.is/api/customer',
-        apiScope: 'https://newdomain.is/api/customer/.default',
+        endpoint: updatedEndpoint,
+        apiScope: updatedApiScope,
       })
       .expect(200)
     const { body } = putProvider
     expect(body.id).toBeTruthy()
     expect(body.organisationId).toEqual(organisationId)
-    expect(body.endpoint).toEqual('https://newdomain.is/api/customer')
+    expect(body.endpoint).toEqual(updatedEndpoint)
     expect(body.endpointType).toEqual(provider.endpointType)
-    expect(body.apiScope).toEqual('https://newdomain.is/api/customer/.default')
+    expect(body.apiScope).toEqual(updatedApiScope)
     expect(body.xroad).toEqual(provider.xroad)
     expect(body.externalProviderId).toEqual(provider.externalProviderId)
+
+    // Check for changelogs
+    const changelogResponse = await request(app.getHttpServer())
+      .get(`/changelogs/organisations/${organisationId}/entities/${body.id}`)
+      .expect(200)
+    const { body: changelogBody } = changelogResponse
+    expect(changelogBody.length).toBe(2)
+    const changelog = changelogBody[0]
+    expect(changelog.id).toBeTruthy()
+    expect(changelog.organisationId).toEqual(body.organisationId)
+    expect(changelog.entityId).toEqual(body.id)
+    expect(changelog.entityType).toEqual('Provider')
+    const changelogData = changelog.data
+    expect(changelogData.id).toEqual(body.id)
+    expect(changelogData.endpoint).toEqual(updatedEndpoint)
+    expect(changelogData.apiScope).toEqual(updatedApiScope)
+    expect(changelogData.modifiedBy).toEqual(authNationalId)
   })
 
   it('POST /providers should allow xroad paths', async () => {

@@ -67,7 +67,6 @@ export class OrganisationController {
     @Body() organisation: CreateOrganisationDto,
     @NationalId() nationalId: string,
   ): Promise<Organisation> {
-    console.log(nationalId)
     const org = await this.documentProviderService.createOrganisation(
       organisation,
       nationalId,
@@ -82,8 +81,6 @@ export class OrganisationController {
     @Body() organisation: UpdateOrganisationDto,
     @NationalId() nationalId: string,
   ): Promise<Organisation> {
-    //console.log('authorization: ', authorization)
-    console.log('nationalId: ', nationalId)
     const {
       numberOfAffectedRows,
       updatedOrganisation,
