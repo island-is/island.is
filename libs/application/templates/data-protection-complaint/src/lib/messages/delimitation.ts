@@ -28,5 +28,24 @@ export const delimitation = {
       defaultMessage: 'Ertu að kvarta yfir umfjöllun um þig í fjölmiðlum?',
       description: 'Label for concernsMediaCoverage field',
     },
+    concernsBanMarking: {
+      id: 'dcap.application:section.delimitation.labels.concernsBanMarking',
+      defaultMessage:
+        'Ertu að kvarta yfir x-merkingu (bannmerkingu) í símaskrá?',
+      description: 'Label for concernsBanMarking field',
+    },
+    concernsLibel: {
+      id: 'dcap.application:section.delimitation.labels.concernsLibel',
+      defaultMessage:
+        'Ertu að kvarta yfir meiðyrði um þig í fjölmiðlum eða í daglegu tali?',
+      description: 'Label for concernsLibel field',
+    },
+    concernsPersonalLettersOrSocialMedia: {
+      id:
+        'dcap.application:section.delimitation.labels.concernsPersonalLettersOrSocialMedia',
+      defaultMessage:
+        'Ertu að kvarta yfir opnun persónulegra bréfa eða þegar farið er inn á aðgang einstaklings á samfélagsmiðli eða einkatölvupóst í leyfisleysi?',
+      description: 'Label for concernsPersonalLettersOrSocialMedia field',
+    },
   }),
 }

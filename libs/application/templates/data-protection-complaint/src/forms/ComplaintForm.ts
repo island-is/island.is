@@ -65,6 +65,54 @@ export const ComplaintForm: Form = buildForm({
                 (formValue.delimitation as FormValue)?.concernsMediaCoverage ===
                 YES,
             }),
+            buildRadioField({
+              id: 'delimitation.concernsBanMarking',
+              title: delimitation.labels.concernsBanMarking,
+              options: [noOption, yesOption],
+              largeButtons: true,
+              width: 'half',
+            }),
+            buildCustomField({
+              component: 'FieldAlertMessage',
+              id: 'delimitation.concernsBanMarkingAlert',
+              title: errorCards.concernsBanMarkingTitle,
+              description: errorCards.concernsBanMarkingDescription,
+              condition: (formValue) =>
+                (formValue.delimitation as FormValue)?.concernsBanMarking ===
+                YES,
+            }),
+            buildRadioField({
+              id: 'delimitation.concernsLibel',
+              title: delimitation.labels.concernsLibel,
+              options: [noOption, yesOption],
+              largeButtons: true,
+              width: 'half',
+            }),
+            buildCustomField({
+              component: 'FieldAlertMessage',
+              id: 'delimitation.concernsLibelAlert',
+              title: errorCards.concernsLibelTitle,
+              description: errorCards.concernsLibelDescription,
+              condition: (formValue) =>
+                (formValue.delimitation as FormValue)?.concernsLibel === YES,
+            }),
+            buildRadioField({
+              id: 'delimitation.concernsPersonalLettersOrSocialMedia',
+              title: delimitation.labels.concernsPersonalLettersOrSocialMedia,
+              options: [noOption, yesOption],
+              largeButtons: true,
+              width: 'half',
+            }),
+            buildCustomField({
+              component: 'FieldAlertMessage',
+              id: 'delimitation.concernsPersonalLettersOrSocialMediaAlert',
+              title: errorCards.concernsPersonalLettersOrSocialMediaTitle,
+              description:
+                errorCards.concernsPersonalLettersOrSocialMediaDescription,
+              condition: (formValue) =>
+                (formValue.delimitation as FormValue)
+                  ?.concernsPersonalLettersOrSocialMedia === YES,
+            }),
           ],
         }),
       ],

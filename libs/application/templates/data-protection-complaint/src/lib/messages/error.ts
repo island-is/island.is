@@ -62,4 +62,45 @@ export const errorCards = defineMessages({
     description:
       'Shown in a card when concernsMediaCoverage has been answered as yes',
   },
+  concernsBanMarkingTitle: {
+    id: 'dpac.application:error.concernsBanMarking.card.title',
+    defaultMessage:
+      'TODO: Við tökum því miður ekki á málum sem varða bannmerkingu',
+    description:
+      'Shown in a card when concernsBanMarking has been answered as yes',
+  },
+  concernsBanMarkingDescription: {
+    id: 'dpac.application:error.concernsBanMarking.card.description',
+    defaultMessage:
+      'Ef sama mál er til meðferðar hjá öðru stjórnvaldi eða dómstólum tekur Persónuvernd slík mál allajafna ekki til meðferðar fyrr en viðkomandi stjórnvald/dómstóll hefur lokið sinni málsmeðferð. Er þessi framkvæmd viðhöfð á grundvelli almennra reglna stjórnsýsluréttarins um meðalhóf.',
+    description:
+      'Shown in a card when concernsBanMarking has been answered as yes',
+  },
+  concernsLibelTitle: {
+    id: 'dpac.application:error.concernsLibel.card.title',
+    defaultMessage: 'TODO: Við tökum því miður ekki á málum sem varða meiðyrði',
+    description: 'Shown in a card when concernsLibel has been answered as yes',
+  },
+  concernsLibelDescription: {
+    id: 'dpac.application:error.concernsLibel.card.description',
+    defaultMessage:
+      'Ef sama mál er til meðferðar hjá öðru stjórnvaldi eða dómstólum tekur Persónuvernd slík mál allajafna ekki til meðferðar fyrr en viðkomandi stjórnvald/dómstóll hefur lokið sinni málsmeðferð. Er þessi framkvæmd viðhöfð á grundvelli almennra reglna stjórnsýsluréttarins um meðalhóf.',
+    description: 'Shown in a card when concernsLibel has been answered as yes',
+  },
+  concernsPersonalLettersOrSocialMediaTitle: {
+    id:
+      'dpac.application:error.concernsPersonalLettersOrSocialMedia.card.title',
+    defaultMessage:
+      'TODO: Við tökum því miður ekki á málum sem varða opnun persónulegra bréfa',
+    description:
+      'Shown in a card when concernsPersonalLettersOrSocialMedia has been answered as yes',
+  },
+  concernsPersonalLettersOrSocialMediaDescription: {
+    id:
+      'dpac.application:error.concernsPersonalLettersOrSocialMedia.card.description',
+    defaultMessage:
+      'Ef sama mál er til meðferðar hjá öðru stjórnvaldi eða dómstólum tekur Persónuvernd slík mál allajafna ekki til meðferðar fyrr en viðkomandi stjórnvald/dómstóll hefur lokið sinni málsmeðferð. Er þessi framkvæmd viðhöfð á grundvelli almennra reglna stjórnsýsluréttarins um meðalhóf.',
+    description:
+      'Shown in a card when concernsPersonalLettersOrSocialMedia has been answered as yes',
+  },
 })
