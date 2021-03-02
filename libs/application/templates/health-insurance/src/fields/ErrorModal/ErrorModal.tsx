@@ -26,12 +26,14 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage, lang } = useLocale()
   const history = useHistory()
   const content = useModalContent(externalData)
+  const canClose = process.env.NODE_ENV !== 'development' ? false : true
 
   return (
     <ModalBase
       baseId="healthInsuranceErrorModal"
       initialVisibility={true}
       className={`${styles.dialog} ${styles.background} ${styles.center}`}
+      hideOnClickOutside={canClose}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <Box
