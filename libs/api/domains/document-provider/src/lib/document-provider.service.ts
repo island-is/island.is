@@ -17,13 +17,19 @@ import {
   UpdateOrganisationInput,
   UpdateContactInput,
   UpdateHelpdeskInput,
+  CreateContactInput,
+  CreateHelpdeskInput,
 } from './dto'
 import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
   logger.error(JSON.stringify(error))
-  throw new ApolloError('Failed to resolve request', error.status)
+  if (error.response?.data) {
+    throw new ApolloError(error.response.data, error.status)
+  } else {
+    throw new ApolloError('Failed to resolve request', error.status)
+  }
 }
 
 @Injectable()
@@ -84,6 +90,20 @@ export class DocumentProviderService {
       .catch(handleError)
   }
 
+  async createAdministrativeContact(
+    organisationId: string,
+    input: CreateContactInput,
+  ): Promise<Contact> {
+    const dto = {
+      id: organisationId,
+      createContactDto: { ...input },
+    }
+
+    return await this.organisationsApi
+      .organisationControllerCreateAdministrativeContact(dto)
+      .catch(handleError)
+  }
+
   async updateAdministrativeContact(
     organisationId: string,
     contactId: string,
@@ -101,6 +121,20 @@ export class DocumentProviderService {
       .catch(handleError)
   }
 
+  async createTechnicalContact(
+    organisationId: string,
+    input: CreateContactInput,
+  ): Promise<Contact> {
+    const dto = {
+      id: organisationId,
+      createContactDto: { ...input },
+    }
+
+    return await this.organisationsApi
+      .organisationControllerCreateTechnicalContact(dto)
+      .catch(handleError)
+  }
+
   async updateTechnicalContact(
     organisationId: string,
     contactId: string,
@@ -115,6 +149,20 @@ export class DocumentProviderService {
 
     return await this.organisationsApi
       .organisationControllerUpdateTechnicalContact(dto)
+      .catch(handleError)
+  }
+
+  async createHelpdesk(
+    organisationId: string,
+    input: CreateHelpdeskInput,
+  ): Promise<Helpdesk> {
+    const dto = {
+      id: organisationId,
+      createHelpdeskDto: { ...input },
+    }
+
+    return await this.organisationsApi
+      .organisationControllerCreateHelpdesk(dto)
       .catch(handleError)
   }
 

@@ -5,6 +5,6 @@ describe('web', () => {
 
   it('should display front page slider', () => {
     // Function helper example, see `../support/app.po.ts` file
-    cy.get('h1').contains(cms.store.frontPageSliders[0].title)
+    cy.get('h1').contains(cms.store.frontpage.slides[0].title)
   })
 })

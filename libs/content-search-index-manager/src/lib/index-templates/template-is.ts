@@ -13,6 +13,10 @@ export const template = {
           type: 'stop',
           stopwords_path: 'analyzers/{STOPWORDS}',
         },
+        icelandicAutocompleteStop: {
+          type: 'stop',
+          stopwords_path: 'analyzers/{AUTOCOMPLETESTOP}',
+        },
         icelandicKeyword: {
           type: 'keyword_marker',
           ignore_case: true,
@@ -58,7 +62,12 @@ export const template = {
         termIcelandic: {
           type: 'custom',
           tokenizer: 'standard',
-          filter: ['lowercase', 'icelandicSynonym', 'icelandicStop'],
+          filter: [
+            'lowercase',
+            'icelandicSynonym',
+            'icelandicStop',
+            'icelandicAutocompleteStop',
+          ],
         },
       },
     },

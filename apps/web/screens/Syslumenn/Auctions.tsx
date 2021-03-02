@@ -115,7 +115,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
   const months = [
     {
       label: 'Næstu uppboð',
-      value: `${date.getFullYear()}-${date.getMonth()}-01`,
+      value: '',
     },
   ]
 
@@ -125,6 +125,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
 
   const [month, setMonth] = useState<string>(months[0].value)
 
+  // Create options for the last three months in YYYY-MM format
   for (let i = 0; i <= 2; i++) {
     months.push({
       label: format(date, 'MMMM yyyy'),
@@ -141,8 +142,10 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       input: {
         lang: 'is',
         organization,
-        year: parseInt(month.split('-')[0]),
-        month: parseInt(month.split('-')[1]),
+        ...(month && {
+          year: parseInt(month.split('-')[0]),
+          month: parseInt(month.split('-')[1]),
+        }),
       },
     },
   })
