@@ -9,10 +9,15 @@ import {
   buildMultiField,
   buildRepeater,
   buildCustomField,
+  FormValue,
 } from '@island.is/application/core'
-import { WalledRadio } from '../fields'
 import { NO, YES } from '../shared'
-import { m } from './messages'
+import { section } from '../lib/messages/application'
+import { delimitation } from '../lib/messages/delimitation'
+import { errorCards } from '../lib/messages/error'
+
+const yesOption = { value: 'yes', label: 'Já' }
+const noOption = { value: 'no', label: 'Nei' }
 
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
@@ -20,70 +25,45 @@ export const ComplaintForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'first',
-      title: 'Fyrsta skref',
+      id: 'delimitation',
+      title: section.delimitation.defaultMessage,
       children: [
-        buildRadioField({
-          id: 'theQuestion',
-          title: 'Fara í milliskref?',
-          options: [
-            {
-              label: 'Já',
-              value: YES,
-            },
-            {
-              label: 'Nei',
-              value: NO,
-            },
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'mediateStep',
-      title: 'Milliskref',
-      condition: (formValue) => formValue.theQuestion === YES,
-      children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Velkominn í milliskrefið',
-          description: (application) => ({
-            id: 'asdf',
-            defaultMessage: 'Til hamingju með þennan áfanga',
-          }),
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'second',
-      title: 'Annað skref',
-      children: [
-        buildCustomField({
-          component: 'WalledRadio',
-          id: 'second.walledRadioQuestion',
-          title: 'Walled radio title',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'repeaterStep',
-      title: 'Repeater skref',
-      children: [
-        buildRepeater({
-          id: 'data',
-          title: 'Hvaða gögn þurfa að fylgja umsókninni?',
-          component: 'CustomRepeater',
+        buildMultiField({
+          id: 'delimitationFields',
+          title: delimitation.general.pageTitle,
+          description: delimitation.general.description,
           children: [
-            buildMultiField({
-              id: 'data.fields',
-              title: 'Gögn',
-              children: [
-                buildTextField({
-                  id: 'name',
-                  title: 'Nafn',
-                  width: 'half',
-                }),
-              ],
+            buildRadioField({
+              id: 'delimitation.inCourtProceedings',
+              title: delimitation.labels.inCourtProceedings,
+              options: [noOption, yesOption],
+              largeButtons: true,
+              width: 'half',
+            }),
+            buildCustomField({
+              component: 'FieldAlertMessage',
+              id: 'delimitation.inCourtProceedingsAlert',
+              title: errorCards.inCourtProceedingsTitle,
+              description: errorCards.inCourtProceedingsDescription,
+              condition: (formValue) =>
+                (formValue.delimitation as FormValue)?.inCourtProceedings ===
+                YES,
+            }),
+            buildRadioField({
+              id: 'delimitation.concernsMediaCoverage',
+              title: delimitation.labels.concernsMediaCoverage,
+              options: [noOption, yesOption],
+              largeButtons: true,
+              width: 'half',
+            }),
+            buildCustomField({
+              component: 'FieldAlertMessage',
+              id: 'delimitation.concernsMediaCoverageAlert',
+              title: errorCards.concernsMediaCoverageTitle,
+              description: errorCards.concernsMediaCoverageDescription,
+              condition: (formValue) =>
+                (formValue.delimitation as FormValue)?.concernsMediaCoverage ===
+                YES,
             }),
           ],
         }),
@@ -97,7 +77,7 @@ export const ComplaintForm: Form = buildForm({
           id: 'field',
           title: "I guess the journey's never really over",
           description: (application) => ({
-            ...m.introIntroduction,
+            defaultMessage: 'Done',
             // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
             // @ts-ignore
             values: { name: application.answers.name },

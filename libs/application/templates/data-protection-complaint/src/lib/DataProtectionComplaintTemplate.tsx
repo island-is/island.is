@@ -7,10 +7,8 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import { NO } from '../shared'
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
+import { DataProtectionComplaintSchema } from './dataSchema'
+import { application } from './messages/application'
 
 type DataProtectionComplaintEvent =
   | { type: DefaultEvents.APPROVE }
@@ -22,13 +20,6 @@ enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-const DataProtectionComplaintSchema = z.object({
-  second: z.object({
-    walledRadioQuestion: z
-      .string()
-      .refine((p) => p === NO, { message: 'Þú verður að segja nei félagi' }),
-  }),
-})
 
 const DataProtectionComplaintTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -43,7 +34,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
     states: {
       draft: {
         meta: {
-          name: 'Umsókn um ökunám',
+          name: application.name.defaultMessage,
           progress: 0.25,
           roles: [
             {
