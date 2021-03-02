@@ -1,5 +1,5 @@
 {
   "extends": ["plugin:@nrwl/nx/react", "../../../.eslintrc"],
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": ["!**/*", "translation.d.ts"],
   "rules": {}
 }

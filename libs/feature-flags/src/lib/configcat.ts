@@ -15,11 +15,13 @@ export class Client implements FeatureFlagClient {
       dataGovernance: DataGovernance.EuOnly,
     }
     if (typeof window === 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       this.configcat = require('configcat-node').createClient(
         resolvedSdkKey,
         ccConfig,
       )
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       this.configcat = require('configcat-js').createClient(
         resolvedSdkKey,
         ccConfig,

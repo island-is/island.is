@@ -70,13 +70,27 @@
             "format": ["camelCase", "PascalCase", "UPPER_CASE"]
           },
           {
+            "selector": "variable",
+            "modifiers": ["destructured"],
+            "leadingUnderscore": "allow",
+            "format": ["camelCase", "PascalCase"]
+          },
+          {
             "selector": "parameter",
             "leadingUnderscore": "allow",
-            "format": ["camelCase"]
+            "format": ["camelCase", "PascalCase"]
           },
           {
             "selector": "function",
             "format": ["camelCase", "PascalCase"]
+          },
+          {
+            "selector": "objectLiteralMethod",
+            "format": ["camelCase", "PascalCase"],
+            "filter": {
+              "regex": "^(__resolveType)$",
+              "match": false
+            }
           },
           {
             "selector": "property",
@@ -85,6 +99,10 @@
           {
             "selector": "typeLike",
             "format": ["PascalCase"]
+          },
+          {
+            "selector": "typeAlias",
+            "format": ["camelCase", "PascalCase"]
           },
           {
             "selector": "enumMember",
