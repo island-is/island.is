@@ -10,5 +10,5 @@ export class GetNamespaceInput {
 
   @Field()
   @IsString()
-  lang: string
+  lang: string = 'is-IS'
 }

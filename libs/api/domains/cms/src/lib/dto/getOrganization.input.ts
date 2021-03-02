@@ -10,5 +10,5 @@ export class GetOrganizationInput {
 
   @Field()
   @IsString()
-  lang: string
+  lang: string = 'is-IS'
 }

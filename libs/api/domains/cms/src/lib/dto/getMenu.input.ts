@@ -10,5 +10,5 @@ export class GetMenuInput {
 
   @Field(() => String)
   @IsString()
-  lang: ElasticsearchIndexLocale
+  lang: ElasticsearchIndexLocale = 'is'
 }

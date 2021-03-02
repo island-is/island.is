@@ -6,7 +6,7 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 export class GetSingleNewsInput {
   @Field()
   @IsString()
-  slug: string
+  slug!: string
 
   @Field(() => String, { nullable: true })
   @IsString()

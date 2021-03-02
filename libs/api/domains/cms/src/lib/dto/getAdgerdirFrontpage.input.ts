@@ -5,5 +5,5 @@ import { IsString } from 'class-validator'
 export class GetAdgerdirFrontpageInput {
   @Field()
   @IsString()
-  lang: string
+  lang: string = 'is-IS'
 }

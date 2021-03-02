@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetErrorPageInput {
   @Field()
   @IsString()
-  errorCode: string
+  errorCode!: string
 
   @Field()
   @IsString()
-  lang: string
+  lang: string = 'is-IS'
 }

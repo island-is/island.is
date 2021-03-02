@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetOrganizationPageInput {
   @Field()
   @IsString()
-  slug: string
+  slug!: string
 
   @Field()
   @IsString()
-  lang: string
+  lang: string = 'is-IS'
 }

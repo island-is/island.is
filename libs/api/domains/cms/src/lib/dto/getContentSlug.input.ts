@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetContentSlugInput {
   @Field()
   @IsString()
-  id: string
+  id!: string // checked against in LanguageToggler.tsx
 
   @Field()
   @IsString()
-  lang: string
+  lang: string = 'is-IS'
 }
