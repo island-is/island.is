@@ -7,43 +7,23 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import * as z from 'zod'
+import { extractParentFromApplication } from './utils'
+import { assign } from 'xstate'
+import { dataSchema } from './dataSchema'
 
-type Events =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ABORT }
+type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
-enum Roles {
-  APPLICANT = 'applicant',
+enum States {
+  DRAFT = 'draft',
+  IN_REVIEW = 'inReview',
 }
 
-const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v, {
-    message: 'Samþykkja þarf gagnaöflun til að halda áfram',
-  }),
-  selectChild: z
-    .array(z.string())
-    .min(1, { message: 'Velja þarf að lágmarki eitt barn' }),
-  email: z
-    .string()
-    .email('Netfang þarf að vera löglegt, t.d. netfang@netfang.is'),
-  phoneNumber: z
-    .string()
-    .min(7, { message: 'Símanúmer þarf að vera 7 tölustafir' }),
-  confirmResidenceChangeInfo: z
-    .array(z.string())
-    .length(1, 'Samþykkja þarf breytingu'),
-  // selectDuration: z
-  //   .enum(['temporary', 'permanent'])
-  //   .optional()
-  //   .refine((v) => v, {
-  //     message: 'Velja þarf valmöguleika',
-  //   }),
-  approveTerms: z.array(z.string()).length(3, 'Samþykkja þarf alla skilmála'),
-})
+enum Roles {
+  ParentA = 'parentA',
+  ParentB = 'parentB',
+}
+
+const applicationName = 'Umsókn um breytt lögheimili barns'
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -52,34 +32,77 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
   name: 'Children residence change application',
-  dataSchema: dataSchema,
+  dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um breytt lögheimili barns',
+          name: applicationName,
           progress: 0.33,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ParentA,
               formLoader: () =>
                 import('../forms/ChildrenResidenceChangeForm').then((module) =>
                   Promise.resolve(module.ChildrenResidenceChangeForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.ASSIGN,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'inReview',
+          ASSIGN: {
+            target: States.IN_REVIEW,
           },
         },
       },
+      [States.IN_REVIEW]: {
+        entry: 'assignToOtherParent',
+        meta: {
+          name: applicationName,
+          progress: 0.66,
+          roles: [
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/ParentBForm').then((module) =>
+                  Promise.resolve(module.ParentBForm),
+                ),
+              write: 'all',
+            },
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationConfirmation').then((module) =>
+                  Promise.resolve(module.ApplicationConfirmation),
+                ),
+            },
+          ],
+        },
+      },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToOtherParent: assign((context) => {
+        const otherParent = extractParentFromApplication(context.application)
+
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            assignees: [otherParent.ssn],
+          },
+        }
+      }),
     },
   },
 
@@ -87,7 +110,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    return Roles.APPLICANT
+    if (id === application.applicant) {
+      return Roles.ParentA
+    }
+    if (application.assignees.includes(id)) {
+      return Roles.ParentB
+    }
+    return undefined
   },
 }
 

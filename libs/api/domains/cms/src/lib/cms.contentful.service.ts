@@ -58,6 +58,8 @@ import {
   mapOrganizationPage,
 } from './models/organizationPage.model'
 import { Auction, mapAuction } from './models/auction.model'
+import { mapFrontpage, Frontpage } from './models/frontpage.model'
+import { GetFrontpageInput } from './dto/getFrontpage.input'
 
 const makePage = (
   page: number,
@@ -254,20 +256,26 @@ export class CmsContentfulService {
   }
 
   async getAuctions(
-    organization: string,
-    year: number,
-    month: number,
     lang: string,
+    organization?: string,
+    year?: number,
+    month?: number,
   ): Promise<Auction[]> {
-    const fromDate = new Date(year, month, 1).toISOString()
-    const toDate = new Date(year, month + 1, 1).toISOString()
+    // If year and date is not specified, we query for the next month
+    const fromDate =
+      year !== undefined && month !== undefined
+        ? new Date(year, month, 1)
+        : new Date()
+    const toDate = new Date(fromDate.getTime())
+
+    toDate.setMonth(toDate.getMonth() + 1)
 
     const params = {
       ['content_type']: 'auction',
       'fields.organization.sys.contentType.sys.id': 'organization',
-      'fields.organization.fields.slug': organization,
-      'fields.date[gte]': fromDate,
-      'fields.date[lte]': toDate,
+      'fields.organization.fields.slug': organization ?? '',
+      'fields.date[gte]': fromDate.toISOString(),
+      'fields.date[lte]': toDate.toISOString(),
       order: 'fields.date',
     }
 
@@ -566,6 +574,24 @@ export class CmsContentfulService {
       .catch(errorHandler('getHomepage'))
 
     return result.items.map(mapHomepage)[0]
+  }
+
+  async getFrontpage({
+    lang,
+    pageIdentifier,
+  }: GetFrontpageInput): Promise<Frontpage> {
+    const params = {
+      ['content_type']: 'frontpage',
+      'fields.pageIdentifier': pageIdentifier,
+      include: 10,
+      order: '-sys.createdAt',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IFrontpageFields>(lang, params)
+      .catch(errorHandler('getFrontpage'))
+
+    return result.items.map(mapFrontpage)[0]
   }
 
   async getTellUsAStory({ lang }: { lang: string }): Promise<TellUsAStory> {

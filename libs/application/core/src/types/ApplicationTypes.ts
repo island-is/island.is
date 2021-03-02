@@ -8,6 +8,7 @@ export enum ApplicationTypes {
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
+  PARTY_LETTER = 'PartyLetter',
 }
 
 export const ApplicationTranslations = {
@@ -18,6 +19,7 @@ export const ApplicationTranslations = {
   ParentalLeave: 'pl.application',
   MetaApplication: null,
   DocumentProviderOnboarding: 'dpo.application',
-  HealthInsurance: null,
-  ChildrenResidenceChange: null,
+  HealthInsurance: 'hi.application',
+  ChildrenResidenceChange: 'crc.application',
+  PartyLetter: 'ple.application',
 }
