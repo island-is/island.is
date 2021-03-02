@@ -195,6 +195,39 @@ export class ElasticService {
     return data.body
   }
 
+  async getSingleDocumentByMetaData(
+    index: string,
+    query: DocumentByMetaDataInput,
+  ) {
+    const results = await this.getDocumentsByMetaData(index, query)
+    await this.updateDocumentPopularityScore(
+      index,
+      results.hits?.hits[0]._id,
+      results.hits?.hits[0]._source.popularityScore,
+    )
+    return results
+  }
+
+  async updateDocumentPopularityScore(index, id, oldPopularityScore) {
+    const a = environment.popularityFactor
+    // we use this equation to update the popularity score
+    // https://stackoverflow.com/questions/11128086/simple-popularity-algorithm
+    const popularityScore =
+      (a * Number(new Date())) / 1000 + (1 - a) * oldPopularityScore
+
+    console.log(popularityScore)
+    const client = await this.getClient()
+    return client.update({
+      index,
+      id,
+      body: {
+        doc: {
+          popularityScore,
+        },
+      },
+    })
+  }
+
   async getTagAggregation(index: string, query: TagAggregationInput) {
     const requestBody = tagAggregationQuery(query)
     const data = await this.findByQuery<

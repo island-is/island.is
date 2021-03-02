@@ -158,7 +158,7 @@ export class CmsElasticsearchService {
   ): Promise<RequestedType | null> {
     // return a single news item by slug
     const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
-    const newsResponse = await this.elasticService.getDocumentsByMetaData(
+    const newsResponse = await this.elasticService.getSingleDocumentByMetaData(
       index,
       query,
     )

@@ -83,6 +83,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             contentWordCount: parentContent.split(/\s+/).length,
             processEntryCount: numberOfProcessEntries(mapped.body),
             ...numberOfLinks(mapped.body),
+            popularityScore: 0,
             type: 'webArticle',
             termPool: createTerms([
               mapped.title,
