@@ -62,7 +62,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
               </Text>
             </Stack>
             <GridRow align="spaceBetween" className={styles.gridFix}>
-              <GridColumn span={['12/12', '12/12', '1/3']}>
+              <GridColumn span={['12/12', '12/12', '1/3']} paddingTop={[2, 0]}>
                 <Button
                   size="default"
                   variant="ghost"

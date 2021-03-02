@@ -6,6 +6,7 @@ import {
   ArticleSubgroup,
   Author,
   Featured,
+  Frontpage,
   FrontpageSlider,
   GenericPage,
   GroupedMenu,
@@ -198,4 +199,12 @@ export const homepage = factory<Homepage>({
 export const genericPage = factory<GenericPage>({
   slug: slugify('title'),
   title: () => title(),
+})
+
+export const frontpage = factory<Frontpage>({
+  id: () => faker.random.uuid(),
+  title: () => title(),
+  featured: () => featured.list(3),
+  slides: () => frontPageSlider.list(2),
+  lifeEvents: () => lifeEvent.list(6),
 })

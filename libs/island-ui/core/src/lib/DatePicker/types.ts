@@ -46,6 +46,14 @@ export interface DatePickerProps {
   backgroundColor?: DatePickerBackgroundColor
   icon?: IconType
   iconType?: Type
+  /**
+   * Minimum selectable year inside datepicker
+   */
+  minYear?: number
+  /**
+   * Maximum selectable year inside datepicker
+   */
+  maxYear?: number
 }
 
 export interface DatePickerCustomHeaderProps {
@@ -61,4 +69,6 @@ export interface DatePickerCustomHeaderProps {
   prevYearButtonDisabled: boolean
   nextYearButtonDisabled: boolean
   locale: Locale
+  minYear?: number
+  maxYear?: number
 }
