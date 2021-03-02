@@ -9,8 +9,9 @@ import { OrganisationPreview } from '../DocumentProviders/DocumentProviders'
 import { DocumentProviderTechnicalContactForm } from './DocumentProviderTechnicalContactForm'
 import { DocumentProviderAdministrativeContactForm } from './DocumentProviderAdministrativeContactForm'
 import { DocumentProviderHelpDeskForm } from './DocumentProviderHelpDeskForm'
+import { DocumentProviderDashboard } from './DocumentProviderDashboard'
 import { useGetOrganisation } from '../../shared/useGetOrganisation'
-
+//TODO fix breadcrumbs so you can go back to DocmentProviders site
 export const IsFetchingProviderOrganisationContext = React.createContext(false)
 
 const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
@@ -43,28 +44,23 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Box>
         <IsFetchingProviderOrganisationContext.Provider value={loading}>
+          <DocumentProviderDashboard />
           <DocumentProviderOrganisationForm
             organisation={organisation}
             setOrganisationName={setOrganisationName}
           />
-          {technicalContact && (
-            <DocumentProviderTechnicalContactForm
-              organisationId={organisation?.id}
-              technicalContact={technicalContact}
-            />
-          )}
-          {administrativeContact && (
-            <DocumentProviderAdministrativeContactForm
-              organisationId={organisation?.id}
-              administrativeContact={administrativeContact}
-            />
-          )}
-          {helpdesk && (
-            <DocumentProviderHelpDeskForm
-              organisationId={organisation?.id}
-              helpDesk={helpdesk}
-            />
-          )}
+          <DocumentProviderTechnicalContactForm
+            organisationId={organisation?.id}
+            technicalContact={technicalContact}
+          />
+          <DocumentProviderAdministrativeContactForm
+            organisationId={organisation?.id}
+            administrativeContact={administrativeContact}
+          />
+          <DocumentProviderHelpDeskForm
+            organisationId={organisation?.id}
+            helpDesk={helpdesk}
+          />
         </IsFetchingProviderOrganisationContext.Provider>
       </Box>
     </Box>

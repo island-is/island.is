@@ -9,9 +9,13 @@ import {
   ContactInput,
   useUpdateTechnicalContact,
 } from '../../shared/useUpdateTechnicalContact'
+import {
+  useCreateTechnicalContact,
+  CreateContactInput,
+} from '../../shared/useCreateTechnicalContact'
 
 interface Props {
-  technicalContact: Contact
+  technicalContact?: Contact | null
   organisationId: string
 }
 
@@ -22,17 +26,25 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
 
-  const { updateTechnicalContact, loading } = useUpdateTechnicalContact(
-    organisationId,
-  )
+  const {
+    updateTechnicalContact,
+    loading: loadingUpdate,
+  } = useUpdateTechnicalContact(organisationId)
+  const {
+    createTechnicalContact,
+    loading: loadingCreate,
+  } = useCreateTechnicalContact(organisationId)
 
   const onSubmit = (data: { technicalContact: Contact }) => {
-    if (data?.technicalContact) {
+    if (data?.technicalContact && technicalContact) {
       const input: ContactInput = {
         ...data.technicalContact,
         id: technicalContact.id,
       }
       updateTechnicalContact(input)
+    } else {
+      const input: CreateContactInput = data.technicalContact
+      createTechnicalContact(input)
     }
   }
   return (
@@ -47,7 +59,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="technicalContact.name"
-            defaultValue={technicalContact?.name}
+            defaultValue={technicalContact?.name ?? ''}
             rules={{
               required: {
                 value: true,
@@ -66,7 +78,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="technicalContact.email"
-            defaultValue={technicalContact?.email}
+            defaultValue={technicalContact?.email ?? ''}
             rules={{
               required: {
                 value: true,
@@ -91,7 +103,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="technicalContact.phoneNumber"
-            defaultValue={technicalContact?.phoneNumber}
+            defaultValue={technicalContact?.phoneNumber ?? ''}
             rules={{
               required: {
                 value: true,
@@ -138,7 +150,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
               type="submit"
               variant="primary"
               icon="arrowForward"
-              loading={loading}
+              loading={loadingCreate || loadingUpdate}
             >
               {formatMessage(m.SingleProviderSaveButton)}
             </Button>

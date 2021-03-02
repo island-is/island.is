@@ -364,6 +364,8 @@
     "object-path": "0.11.5",
     "serialize-javascript": "4.0.0",
     "webpack": "4.44.1",
-    "xml-crypto": "2.0.0"
+    "xml-crypto": "2.0.0",
+    "prismjs": "1.23.0",
+    "urijs": "1.19.6"
   }
 }
