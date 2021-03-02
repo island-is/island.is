@@ -13,7 +13,7 @@ const rootName = defineMessage({
 export const documentsModule: ServicePortalModule = {
   name: rootName,
   widgets: () => [],
-  routes: async () => [
+  routes: () => [
     {
       name: rootName,
       path: ServicePortalPath.ElectronicDocumentsRoot,
