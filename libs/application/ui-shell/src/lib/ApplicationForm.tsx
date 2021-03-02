@@ -131,10 +131,20 @@ const ShellWrapper: FC<{
     formatMessage,
   ])
 
-  // TODO we need better loading states
   if (!form || !dataSchema) {
-    return null
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        width="full"
+        className={styles.root}
+      >
+        <LoadingIcon animate color="blue400" size={50} />
+      </Box>
+    )
   }
+
   return (
     <FormShell
       application={application}
