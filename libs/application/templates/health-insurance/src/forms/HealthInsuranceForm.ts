@@ -20,8 +20,8 @@ import {
   buildAsyncSelectField,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
-import { CountryDataResult, StatusTypes } from '../types'
+import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../constants'
+import { CountryDataResult } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
