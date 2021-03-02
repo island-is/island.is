@@ -6,7 +6,7 @@ import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { interview } from '../../lib/messages'
 import { DescriptionText } from '../components'
 
-export type ValidAnswers = 'yes' | 'no'
+type ValidAnswers = 'yes' | 'no'
 
 const Interview = ({ field, application, error }: FieldBaseProps) => {
   const currentAnswer = getValueViaPath(
