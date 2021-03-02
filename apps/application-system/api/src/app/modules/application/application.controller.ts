@@ -549,7 +549,7 @@ export class ApplicationController {
     name: 'id',
     type: String,
     required: true,
-    description: 'The id of the application to update the state for.',
+    description: 'The id of the application to create a pdf for',
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: ApplicationResponseDto })
@@ -583,7 +583,8 @@ export class ApplicationController {
     name: 'id',
     type: String,
     required: true,
-    description: 'The id of the application to update the state for.',
+    description:
+      'The id of the application which the file signature is requested for.',
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: ApplicationResponseDto })
@@ -630,7 +631,7 @@ export class ApplicationController {
     name: 'id',
     type: String,
     required: true,
-    description: 'The id of the application to update the state for.',
+    description: 'The id of the application which the file was created for.',
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: ApplicationResponseDto })
@@ -653,12 +654,12 @@ export class ApplicationController {
     return application
   }
 
-  @Put('application/:id/presignedUrl')
+  @Get('application/:id/presignedUrl')
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
-    description: 'The id of the application to update the state for.',
+    description: 'The id of the application which the file was created for.',
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: ApplicationResponseDto })

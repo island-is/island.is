@@ -512,7 +512,7 @@ describe('Application system API', () => {
     })
 
     const newState = await server
-      .put(`/application/${postResponse.body.id}/presignedUrl`)
+      .get(`/application/${postResponse.body.id}/presignedUrl`)
       .send({
         type: type,
       })
