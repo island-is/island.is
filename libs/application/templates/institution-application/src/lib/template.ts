@@ -38,14 +38,7 @@ const dataSchema = z.object({
   }),
   contact: contactSchema,
   hasSecondaryContact: z.enum([YES, NO]),
-  secondaryContact: z.object({
-    name: z.string().optional(),
-    email: z
-      .string()
-      // .email()
-      .optional(),
-    phoneNumber: z.string().optional(),
-  }),
+  secondaryContact: contactSchema.deepPartial(),
   project: z.object({
     name: z.string().optional(),
     background: z.string().optional(),
@@ -74,7 +67,7 @@ const dataSchema = z.object({
 enum TEMPLATE_API_ACTIONS {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
-  sendApplication = 'sendApplication'
+  sendApplication = 'sendApplication',
 }
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -99,7 +92,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(val.application),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary', },
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
             },

@@ -12,6 +12,7 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { m } from './messages'
+import { YES } from '../constants'
 
 export const application: Form = buildForm({
   id: 'InstitutionApplicationDraftForm',
@@ -56,6 +57,27 @@ export const application: Form = buildForm({
               id: 'secondaryContact',
               title: '',
               component: 'SecondaryContact',
+            }),
+            buildTextField({
+              id: 'secondaryContact.name',
+              title: m.applicantContactName,
+              backgroundColor: 'blue',
+              condition: (formvalue) => formvalue.hasSecondaryContact === YES,
+            }),
+            buildTextField({
+              id: 'secondaryContact.phoneNumber',
+              title: m.applicantContactPhone,
+              variant: 'tel',
+              format: '###-####',
+              backgroundColor: 'blue',
+              condition: (formvalue) => formvalue.hasSecondaryContact === YES,
+            }),
+            buildTextField({
+              id: 'secondaryContact.email',
+              title: m.applicantContactEmail,
+              variant: 'email',
+              backgroundColor: 'blue',
+              condition: (formvalue) => formvalue.hasSecondaryContact === YES,
             }),
           ],
         }),
