@@ -17,6 +17,16 @@ export class RestServiceCollector implements ServiceCollector {
   async indexServices(): Promise<void> {
     logger.info('Start indexing of REST services')
 
+    if (
+      (await this.collectionService.fetchAllIndexNames()).includes(
+        this.collectionService.getAliasName(),
+      )
+    )
+      throw new Error(
+        `Elastic index named "${this.collectionService.getAliasName()}" exists, it must be deleted ` +
+          `before running the collector.  We need this name name for an alias!\n\n` +
+          `Earlier the collector used the name "${this.collectionService.getAliasName()}" for an index.  This new collection process uses it for an alias.`,
+      )
     const providers = await this.providerService.getProviders()
 
     await this.indexProviders(providers.protected.concat(providers.public))
@@ -40,7 +50,7 @@ export class RestServiceCollector implements ServiceCollector {
 
         // Insert into Elastic worker index
         addedItems = await this.collectionService.bulkWorker(services, true)
-        if (addedItems && createCollectionAlias) {
+        if (createCollectionAlias && addedItems) {
           await this.collectionService.createCollectorWorkingAlias()
           createCollectionAlias = false
         }

@@ -119,6 +119,10 @@ export class CollectionService {
     return this.getPrefix(this.getEnvironment())
   }
 
+  async fetchAllIndexNames() {
+    return await this.elasticService.fetchAllIndexNames()
+  }
+
   /**
    * Creates a prefixed string from a number.
    *

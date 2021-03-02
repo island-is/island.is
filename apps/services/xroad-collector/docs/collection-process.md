@@ -18,7 +18,6 @@ Finally a cleanup process is preformed to delete all unused indices which could 
 
 Note, _processes that need to query service information will query the alias `apicatalogue` which should always point to the newest worker index_.
 
-
 ### Sequence diagram
 
 This diagram shows the order of tasks in the collection process when the collector is executed on the `dev` environment. In this scenario, we are assuming that all collectors were started at the same time, which will trigger a waiting period for the `dev` collector. We are not showing the collection process of the other environments on this sequence diagram. We are assuming that the `dev` collector finishes his local collection first, then the `prod` collector and finally the `staging` collector.
