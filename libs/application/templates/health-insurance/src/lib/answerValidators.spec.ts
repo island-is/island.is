@@ -1,6 +1,5 @@
 import { Application, ApplicationTypes } from '@island.is/application/core'
-import { NO, YES } from '../constants'
-import { StatusTypes } from '../types'
+import { NO, YES, StatusTypes } from '../constants'
 
 import { answerValidators } from './answerValidators'
 
