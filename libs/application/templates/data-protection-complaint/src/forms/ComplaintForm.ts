@@ -10,11 +10,11 @@ import {
   buildRepeater,
   buildCustomField,
   FormValue,
+  buildSubSection,
 } from '@island.is/application/core'
 import { NO, YES } from '../shared'
-import { section } from '../lib/messages/application'
-import { delimitation } from '../lib/messages/delimitation'
-import { errorCards } from '../lib/messages/error'
+import { section, delimitation, errorCards, info } from '../lib/messages'
+import { OnBehalf } from '../lib/dataSchema'
 
 const yesOption = { value: 'yes', label: 'Já' }
 const noOption = { value: 'no', label: 'Nei' }
@@ -112,6 +112,56 @@ export const ComplaintForm: Form = buildForm({
               condition: (formValue) =>
                 (formValue.delimitation as FormValue)
                   ?.concernsPersonalLettersOrSocialMedia === YES,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'info',
+      title: section.info.defaultMessage,
+      children: [
+        buildSubSection({
+          id: 'type',
+          title: section.onBehalf.defaultMessage,
+          children: [
+            buildMultiField({
+              id: 'onBehalfFields',
+              title: info.general.pageTitle,
+              description: info.general.description,
+              children: [
+                buildRadioField({
+                  id: 'info.onBehalf',
+                  title: '',
+                  options: [
+                    { value: OnBehalf.MYSELF, label: info.labels.myself },
+                    {
+                      value: OnBehalf.MYSELF_AND_OR_OTHERS,
+                      label: info.labels.myselfAndOrOthers,
+                    },
+                    { value: OnBehalf.COMPANY, label: info.labels.company },
+                    {
+                      value: OnBehalf.ORGANIZATION_OR_INSTITUTION,
+                      label: info.labels.organizationInstitution,
+                    },
+                  ],
+                  largeButtons: true,
+                  width: 'half',
+                }),
+                buildCustomField({
+                  component: 'FieldAlertMessage',
+                  id: 'info.onBehalfOfACompanyAlertMessage',
+                  title: errorCards.onBehalfOfACompanyTitle,
+                  description: errorCards.onBehalfOfACompanyDescription,
+                  condition: (formValue) => {
+                    console.log(formValue)
+                    return (
+                      (formValue.info as FormValue)?.onBehalf ===
+                      OnBehalf.COMPANY
+                    )
+                  },
+                }),
+              ],
             }),
           ],
         }),

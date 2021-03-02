@@ -31,6 +31,11 @@ export const error = defineMessages({
     description:
       'Error message when concernsPersonalLettersOrSocialMedia has been answered as yes',
   },
+  onBehalfOfACompany: {
+    id: 'dpac.application:error.onBehalfOfACompany',
+    defaultMessage: 'Hér er ekki hægt að senda inn kvörtun á vegum fyrirtækis',
+    description: 'Error message when onBehalf has been answered as company',
+  },
 })
 
 export const errorCards = defineMessages({
@@ -102,5 +107,16 @@ export const errorCards = defineMessages({
       'Ef sama mál er til meðferðar hjá öðru stjórnvaldi eða dómstólum tekur Persónuvernd slík mál allajafna ekki til meðferðar fyrr en viðkomandi stjórnvald/dómstóll hefur lokið sinni málsmeðferð. Er þessi framkvæmd viðhöfð á grundvelli almennra reglna stjórnsýsluréttarins um meðalhóf.',
     description:
       'Shown in a card when concernsPersonalLettersOrSocialMedia has been answered as yes',
+  },
+  onBehalfOfACompanyTitle: {
+    id: 'dpac.application:error.onBehalfOfACompany.card.title',
+    defaultMessage: 'Hér er ekki hægt að senda inn kvörtun á vegum fyrirtækis',
+    description: 'Shown in a card when onBehalf has been answered as company',
+  },
+  onBehalfOfACompanyDescription: {
+    id: 'dpac.application:error.onBehalfOfACompany.card.description',
+    defaultMessage:
+      'Ef þú vilt senda inn tilkynningu um öryggisbrest þá getur þú gert það með því að senda inn í gáttina: Tilkynning um öryggisbrest sem er samvinnuverkefni samgöngu- og sveitarstjórnarráðuneytis, Persónuverndar, Póst- og fjarskiptastofnunar/CERT-IS og Lögreglunnar.',
+    description: 'Shown in a card when onBehalfOf has been answered as company',
   },
 })

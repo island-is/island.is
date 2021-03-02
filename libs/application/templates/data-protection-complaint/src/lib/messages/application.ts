@@ -19,7 +19,12 @@ export const section = defineMessages({
   info: {
     id: 'dpac.application:section.info',
     defaultMessage: 'Upplýsingar',
-    description: 'User Info',
+    description: 'Info',
+  },
+  onBehalf: {
+    id: 'dpac.application:section.onBehalf',
+    defaultMessage: 'Fyrir hvern',
+    description: 'Details about on behalf of whom the complaint is registered',
   },
   complaint: {
     id: 'dpac.application:section.complaint',
