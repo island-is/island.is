@@ -6,8 +6,6 @@ import { lazy } from 'react'
 
 import { m } from './lib/messages'
 
-export const applicationsMessages = m
-
 export const applicationsModule: ServicePortalModule = {
   name: m.name,
   widgets: () => [],

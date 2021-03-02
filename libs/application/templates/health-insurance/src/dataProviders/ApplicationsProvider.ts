@@ -1,6 +1,5 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   ApplicationTypes,
@@ -9,9 +8,9 @@ import {
 export class ApplicationsProvider extends BasicDataProvider {
   type = 'ApplicationsProvider'
 
-  provide(application: Application): Promise<string> {
+  provide(): Promise<string> {
     const query = `query GetApplicationsByType {
-      getApplicationsByType(typeId: ${ApplicationTypes.HEALTH_INSURANCE}) {
+      getApplicationsByType(input: { typeId: ${ApplicationTypes.HEALTH_INSURANCE} }) {
         id
         state
         created
