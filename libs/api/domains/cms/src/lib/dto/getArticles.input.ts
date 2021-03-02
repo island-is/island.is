@@ -24,4 +24,9 @@ export class GetArticlesInput {
   @Max(1000)
   @IsOptional()
   size?: number = 100
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  sort?: 'title' | 'popular' = 'title'
 }

@@ -46,8 +46,16 @@ export class CmsElasticsearchService {
     const query = {
       types: ['webArticle'],
       tags: [],
-      sort: { 'title.sort': 'asc' as sortDirection },
+      sort: {},
       size: input.size,
+    }
+
+    switch (input.sort) {
+      case 'popular':
+        query.sort = { popularityScore: 'desc' as sortDirection }
+        break
+      default:
+        query.sort = { 'title.sort': 'asc' as sortDirection }
     }
 
     if (input.category) {
