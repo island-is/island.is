@@ -7,3 +7,6 @@ export {
 export { default as Constraints } from './Constraints/Constraints'
 
 export { default as ReviewScreen } from './ReviewScreen/ReviewScreen'
+export {
+  default as FieldDescription,
+} from './FieldDescription/FieldDescription'
