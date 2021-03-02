@@ -168,8 +168,11 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       },
     )
 
+    // If the current index does not exist, then we migrate from last index
+    const previousIndex = await this.getLatestIndex(options.locale)
+
     const migratedData = await this.migratePopularityScores(
-      elasticIndex,
+      previousIndex,
       flatten(importableData),
     )
 
@@ -206,6 +209,9 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     index: string,
     data: Array<MappedData>,
   ): Promise<Array<MappedData>> {
+    if (!index) {
+      return data
+    }
     // TODO: do a scrolling query or sumthin
     const query = {
       query: {
@@ -231,5 +237,30 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     })
 
     return data
+  }
+
+  /**
+   * Returns the name of the most recent island-* index with the given locale,
+   * determined by creation date.
+   *
+   * @param {string} locale
+   * @return {string}
+   */
+  async getLatestIndex(locale: string): Promise<string> {
+    const client = await this.elasticService.getClient()
+
+    const indices = await client.cat.indices({
+      h: ['i', 'creation.date.string'],
+      s: 'creation.date:desc',
+    })
+
+    const results = indices.body.match(
+      new RegExp(`island-${locale}-[a-z0-9]+`, 'gi'),
+    )
+
+    if (results.length < 1) {
+      return null
+    }
+    return results[0]
   }
 }
