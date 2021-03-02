@@ -3,14 +3,12 @@ import { useEffect } from 'react'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { Action, ActionType } from '../../store/actions'
 import { useModuleProps } from '../useModuleProps/useModuleProps'
-import { useModules } from '../useModules/useModules'
 import { User } from 'oidc-client'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import flatten from 'lodash/flatten'
 
 export const useRoutes = () => {
-  const [_, dispatch] = useStore()
-  const { modules } = useModules()
+  const [{ modules }, dispatch] = useStore()
   const { userInfo, client } = useModuleProps()
 
   const arrangeRoutes = async (

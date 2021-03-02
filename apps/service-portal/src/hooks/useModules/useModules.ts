@@ -48,6 +48,4 @@ export const useModules = () => {
   useEffect(() => {
     filterModulesBasedOnFeatureFlags()
   }, [])
-
-  return { modules }
 }

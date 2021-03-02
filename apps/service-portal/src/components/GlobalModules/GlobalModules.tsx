@@ -6,7 +6,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { User } from 'oidc-client'
 import React, { FC, Suspense, useEffect, useState } from 'react'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import { useModules } from '../../hooks/useModules/useModules'
+import { useStore } from '../../store/stateProvider'
 
 const GlobalComponent: FC<{
   component: ServicePortalGlobalComponent
@@ -71,7 +71,7 @@ const ModuleLoader: FC<{
 }
 
 export const GlobalModules: FC = () => {
-  const { modules } = useModules()
+  const [{ modules }] = useStore()
   const { userInfo, client } = useModuleProps()
 
   return userInfo ? (
