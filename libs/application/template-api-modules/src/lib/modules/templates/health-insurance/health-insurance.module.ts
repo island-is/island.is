@@ -12,9 +12,12 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { HealthInsuranceService } from './health-insurance.service'
 
 const XROAD_HEALTH_INSURANCE_WSDL_URL = process.env.healthInsurancewsdlUrl ?? ''
-const XROAD_HEALTH_INSURANCE_BASE_URL = process.env.baseUrl ?? 'http://localhost:8080'
-const XROAD_HEALTH_INSURANCE_USERNAME = process.env.healthInsuranceUsername ?? ''
-const XROAD_HEALTH_INSURANCE_PASSWORD = process.env.healthInsurancePassword ?? ''
+const XROAD_HEALTH_INSURANCE_BASE_URL =
+  process.env.baseUrl ?? 'http://localhost:8080'
+const XROAD_HEALTH_INSURANCE_USERNAME =
+  process.env.healthInsuranceUsername ?? ''
+const XROAD_HEALTH_INSURANCE_PASSWORD =
+  process.env.healthInsurancePassword ?? ''
 
 export class HealthInsuranceModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -27,7 +30,7 @@ export class HealthInsuranceModule {
           username: XROAD_HEALTH_INSURANCE_USERNAME,
           password: XROAD_HEALTH_INSURANCE_PASSWORD,
         }),
-        SharedTemplateAPIModule.register(config)
+        SharedTemplateAPIModule.register(config),
       ],
       providers: [HealthInsuranceService],
       exports: [HealthInsuranceService],

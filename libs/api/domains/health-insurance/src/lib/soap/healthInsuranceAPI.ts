@@ -131,7 +131,7 @@ export class HealthInsuranceAPI {
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
-          kennitala: '0101671089',//nationalId,
+          kennitala: '0101671089', //nationalId,
           erlendkennitala: inputObj.foreignNationalId,
           nafn: inputObj.name,
           heimili: inputObj.address ?? '',

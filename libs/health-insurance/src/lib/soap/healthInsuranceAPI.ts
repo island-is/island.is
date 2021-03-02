@@ -31,9 +31,9 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
-    // @Inject(BucketService)
-    // private bucketService: BucketService,
-  ) {}
+  ) // @Inject(BucketService)
+  // private bucketService: BucketService,
+  {}
 
   public async getProfun(): Promise<string> {
     logger.info(`--- Starting getProfun api call ---`)
@@ -102,7 +102,7 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
-          innihald: '' // TODO: await this.bucketService.getFileContentAsBase64(filename),
+          innihald: '', // TODO: await this.bucketService.getFileContentAsBase64(filename),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)
       }

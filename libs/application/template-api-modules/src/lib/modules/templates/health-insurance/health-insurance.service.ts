@@ -25,8 +25,8 @@ export class HealthInsuranceService {
       logger.info(`Finished transform Application to Health Insurance DTO`)
 
       const res = await this.healthInsuranceAPI.applyInsurance(570, vistaSkjal)
-      console.log("-------------- resssssssss -----------------")
-      console.log(JSON.stringify(res, null, 2))
+      // console.log("-------------- resssssssss -----------------")
+      // console.log(JSON.stringify(res, null, 2))
 
       logger.info(`Finished send Health Insurance application`)
     } catch (error) {

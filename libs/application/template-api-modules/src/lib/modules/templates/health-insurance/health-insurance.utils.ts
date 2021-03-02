@@ -70,11 +70,17 @@ export const transformApplicationToHealthInsuranceDTO = (
   // But there is only one tag in API
   // Merge 2 fields together
   let addInfo = ''
-  if (extractAnswer(application.answers, 'additionalRemarks')){
-    addInfo += `Additional comments: ${extractAnswer(application.answers, 'additionalRemarks')}.`
+  if (extractAnswer(application.answers, 'additionalRemarks')) {
+    addInfo += `Additional comments: ${extractAnswer(
+      application.answers,
+      'additionalRemarks',
+    )}.`
   }
-  if (extractAnswer(application.answers, 'formerInsurance.entitlementReason')){
-    addInfo += `IsHealthInsuredInPreviousCountry reason: ${extractAnswer(application.answers, 'formerInsurance.entitlementReason')}`
+  if (extractAnswer(application.answers, 'formerInsurance.entitlementReason')) {
+    addInfo += `IsHealthInsuredInPreviousCountry reason: ${extractAnswer(
+      application.answers,
+      'formerInsurance.entitlementReason',
+    )}`
   }
 
   return {
