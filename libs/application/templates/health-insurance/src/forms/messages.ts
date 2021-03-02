@@ -64,6 +64,13 @@ export const m = defineMessages({
     description:
       "Handles the public pension system, as well as child's pension, spouse's pension, disability grant, age-related disability supplement, guaranteed income and household supplement.",
   },
+  dataProvidersMoreInfo: {
+    id: 'hi.application:externalData.moreInfo',
+    defaultMessage:
+      'Nánari útlistun á hvaða upplýsinga er aflað frá ofangreindum stofnunum og hvaða upplýsingum verður miðlað áfram er að finna undir **[Persónuverndarsíðu SÍ](https://www.sjukra.is/personuvernd)**',
+    description:
+      'Further details on what information is obtained from the above institusions and what personal data will be passed on can be found on IHI’s **[Privacy page](https://www.sjukra.is/english/privacy)**',
+  },
   confirmationOfResidencyTitle: {
     id: 'hi.application:confirmationOfResidency.title',
     defaultMessage: 'Staðfesting á búsetu',
@@ -507,9 +514,9 @@ export const m = defineMessages({
   externalDataCheckbox: {
     id: 'hi.application:externalDataCheckbox',
     defaultMessage:
-      'Ég samþykki að gagna sé aflað og **[persónuverndarstefnuna](https://island.is/umsokn-um-sjukratryggingu/personuverndarstefna)**',
+      'Ég staðfesti að hafa lesið þessar upplýsingar um vinnslu persónuupplýsinga í tengslum við þessa umsókn',
     description:
-      'I confirm that I have read the Terms of use and the **[Privacy policy](https://island.is/en/apply-for-health-insurance/privacy-policy)**',
+      'I confirm that I have read these terms for processing of my personal data regarding this application',
   },
   externalDataSubtitle: {
     id: 'hi.application:externalDataSubtitle',
