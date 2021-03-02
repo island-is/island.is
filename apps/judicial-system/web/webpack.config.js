@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const DefinePlugin = require('webpack/lib/DefinePlugin')
 const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
 
 /**

@@ -16,8 +16,8 @@ import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
-import * as styles from './PageLayout.treat'
 import { AlertBanner } from '../AlertBanner/AlertBanner'
+import * as styles from './PageLayout.treat'
 
 interface PageProps {
   children: ReactNode
