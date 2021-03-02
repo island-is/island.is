@@ -30,9 +30,8 @@ export interface HealthInsuranceConfig {
 export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
-    private clientConfig: HealthInsuranceConfig,
-  ) // @Inject(BucketService)
-  // private bucketService: BucketService,
+    private clientConfig: HealthInsuranceConfig, // @Inject(BucketService)
+  ) // private bucketService: BucketService,
   {}
 
   public async getProfun(): Promise<string> {
