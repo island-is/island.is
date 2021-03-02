@@ -8,11 +8,11 @@ registerEnumType(CreatePdfDtoTypeEnum, {
 
 @InputType()
 export class CreatePdfInput {
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   id!: string
 
-  @Field((type) => CreatePdfDtoTypeEnum)
+  @Field(() => CreatePdfDtoTypeEnum)
   @IsEnum(CreatePdfDtoTypeEnum)
   type!: CreatePdfDtoTypeEnum
 }

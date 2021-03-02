@@ -19,7 +19,11 @@ import {
 } from '@island.is/application/core'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
-import { formatIsk, getEstimatedMonthlyPay } from '../parentalLeaveUtils'
+import {
+  formatIsk,
+  getEstimatedMonthlyPay,
+  getOtherParentOptions,
+} from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
   GetUnions,
@@ -73,6 +77,14 @@ export const ParentalLeaveForm: Form = buildForm({
                   subTitle:
                     parentalLeaveFormMessages.shared
                       .userProfileInformationSubTitle,
+                }),
+                buildDataProviderItem({
+                  id: 'family',
+                  type: 'FamilyInformationProvider',
+                  title:
+                    parentalLeaveFormMessages.shared.familyInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.familyInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   id: 'pregnancyStatus',
@@ -146,10 +158,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 return true
               },
               children: [
-                buildCustomField({
+                buildRadioField({
                   id: 'otherParent',
-                  title: '',
-                  component: 'OtherParent',
+                  title: 'Other parent',
+                  options: (application) => getOtherParentOptions(application),
+                  largeButtons: true,
                 }),
                 buildTextField({
                   id: 'otherParentName',
