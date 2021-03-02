@@ -23,7 +23,7 @@ export default {
       'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   templateApi: {
-    clientLocationOrigin: 'http://localhost:4200',
+    clientLocationOrigin: 'http://localhost:4242',
     emailOptions: {
       useTestAccount: true,
     },

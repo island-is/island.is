@@ -141,6 +141,7 @@
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
 - [Service Portal](libs/service-portal/README.md)
+  - [Service Portal Applications](libs/service-portal/applications/README.md)
   - [Service Portal Core](libs/service-portal/core/README.md)
   - [Document Provider](libs/service-portal/document-provider/README.md)
   - [Service Portal Driving License](libs/service-portal/driving-license/README.md)

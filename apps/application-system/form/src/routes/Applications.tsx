@@ -36,7 +36,7 @@ export const Applications: FC = () => {
     GET_APPLICATIONS_BY_TYPE,
     {
       variables: {
-        typeId: type,
+        input: { typeId: type },
       },
     },
   )

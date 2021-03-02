@@ -21,7 +21,18 @@ import * as Sentry from '@sentry/react'
 
 import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
 import { m } from '../../lib/messages'
-import { environment } from '../../environments'
+
+const isDev = window.location.origin === 'https://beta.dev01.devland.is'
+const isStaging = window.location.origin === 'https://beta.staging01.devland.is'
+const isProduction = window.location.origin === 'https://island.is'
+
+const baseUrlForm = isDev
+  ? 'https://umsoknir.dev01.devland.is'
+  : isStaging
+  ? 'https://umsoknir.staging01.devland.is'
+  : isProduction
+  ? 'https://umsoknir.island.is'
+  : 'http://localhost:4242'
 
 const ApplicationList: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
@@ -105,7 +116,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
             isApplicant={application.isApplicant}
             isAssignee={application.isAssignee}
             isComplete={application.progress === 1}
-            url={`${environment.applicationSystem.baseFormUrl}/umsoknir/${application.id}`}
+            url={`${baseUrlForm}/umsokn/${application.id}`}
             progress={application.progress ? application.progress * 100 : 0}
           />
         ))}

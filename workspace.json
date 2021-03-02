@@ -1363,6 +1363,7 @@
         "serve": {
           "builder": "@nrwl/web:dev-server",
           "options": {
+            "port": 4242,
             "buildTarget": "application-system-form:build"
           },
           "configurations": {
