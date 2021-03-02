@@ -43,7 +43,7 @@
     "no-restricted-imports": [
       "error",
       {
-        "paths": ["lodash", "date-fns", "date-fns/locale", "styled-components", "."]
+        "paths": ["lodash", "date-fns", "date-fns/locale", "."]
       }
     ],
     "local-rules/disallow-kennitalas": 1

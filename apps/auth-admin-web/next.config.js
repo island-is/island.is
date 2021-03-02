@@ -28,7 +28,7 @@ module.exports = withTreat(
         backendUrl: '',
       },
       env: {
-        API_MOCKS: process.env.API_MOCKS ?? '',
+        API_MOCKS: process.env.API_MOCKS || '',
       },
     }),
   ),

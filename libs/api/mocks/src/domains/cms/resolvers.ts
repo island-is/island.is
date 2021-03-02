@@ -74,6 +74,8 @@ export const resolvers: Resolvers = {
 
     getHomepage: () => store.homepage,
 
+    getFrontpage: () => store.frontpage,
+
     getNamespace: (parent, args) => {
       return {
         namespace: args.input.namespace || 'namespace',
