@@ -15,7 +15,6 @@ import {
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
-// import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -30,9 +29,8 @@ export interface HealthInsuranceConfig {
 export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
-    private clientConfig: HealthInsuranceConfig, // @Inject(BucketService)
-  ) // private bucketService: BucketService,
-  {}
+    private clientConfig: HealthInsuranceConfig,
+  ) {}
 
   public async getProfun(): Promise<string> {
     logger.info(`--- Starting getProfun api call ---`)
