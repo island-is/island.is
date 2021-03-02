@@ -5,8 +5,8 @@ import {
   AnswerValidationError,
   getValueViaPath,
 } from '@island.is/application/core'
-import { StatusTypes, Status, FormerInsurance, Applicant } from '../types'
-import { NO, YES } from '../constants'
+import { Status, FormerInsurance, Applicant } from '../types'
+import { NO, YES, StatusTypes } from '../constants'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
