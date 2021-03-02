@@ -21,6 +21,12 @@ export const dataSchema = z.object({
   //   .refine((v) => v, {
   //     message: 'Velja þarf valmöguleika',
   //   }),
+  interview: z
+    .enum(['yes', 'no'])
+    .optional()
+    .refine((v) => v, {
+      message: 'Velja þarf valmöguleika',
+    }),
   approveTerms: z
     .array(z.string())
     .length(3, error.validation.approveTerms.defaultMessage),

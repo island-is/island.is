@@ -6,9 +6,10 @@ import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { interview } from '../../lib/messages'
 import { DescriptionText } from '../components'
 
-export type ValidAnswers = 'yes' | 'no' | undefined
+export type ValidAnswers = 'yes' | 'no'
 
-const Interview = ({ field, application }: FieldBaseProps) => {
+const Interview = ({ field, application, error }: FieldBaseProps) => {
+  console.log('error', error)
   const currentAnswer = getValueViaPath(
     application.answers,
     field.id,
@@ -21,12 +22,13 @@ const Interview = ({ field, application }: FieldBaseProps) => {
   )
   return (
     <>
-      <Box marginTop={3} marginBottom={5}>
+      <Box marginTop={3}>
         <DescriptionText text={interview.general.description} />
       </Box>
-      <Box marginTop={3} marginBottom={2}>
+      <Box marginTop={5}>
         <RadioController
           id={`${field.id}`}
+          error={error}
           defaultValue={
             statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
