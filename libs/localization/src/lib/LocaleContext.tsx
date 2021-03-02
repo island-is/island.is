@@ -21,11 +21,11 @@ export interface MessagesDict {
 
 interface LocaleContextType {
   lang: Locale
-  loadMessages: (namespaces: string | (string | null)[]) => void
-  changeLanguage: (lang: Locale) => void
   loadingMessages: boolean
   loadedNamespaces: string[]
   messages: MessagesDict
+  loadMessages(namespaces: string | string[]): void
+  changeLanguage(lang: Locale): void
 }
 
 interface LocaleProviderProps {
@@ -40,11 +40,11 @@ type Query = {
 
 export const LocaleContext = createContext<LocaleContextType>({
   lang: 'is',
-  loadMessages: () => undefined,
-  changeLanguage: () => undefined,
   loadingMessages: true,
   loadedNamespaces: [],
   messages: {},
+  loadMessages: () => undefined,
+  changeLanguage: () => undefined,
 })
 
 const GET_TRANSLATIONS = gql`
@@ -102,6 +102,7 @@ export const LocaleProvider = ({
     setLoadingMessages(true)
     await polyfill(lang)
     setActiveLocale(lang)
+
     const { data } = await apolloClient.query<Query>({
       query: GET_TRANSLATIONS,
       variables: {
@@ -116,11 +117,9 @@ export const LocaleProvider = ({
     setMessagesDict((old) => Object.assign({}, old, data?.getTranslations))
   }
 
-  const loadMessages = async (namespaces: string | (string | null)[]) => {
+  const loadMessages = async (namespaces: string | string[]) => {
     const namespaceArr =
-      typeof namespaces === 'string'
-        ? [namespaces]
-        : (namespaces.filter((value) => value !== null) as string[])
+      typeof namespaces === 'string' ? [namespaces] : namespaces
     const diff = difference(namespaceArr, loadedNamespaces)
 
     // Only fetch namespaces that we have not fetched yet

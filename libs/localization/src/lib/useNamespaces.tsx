@@ -1,8 +1,9 @@
 import { useContext, useEffect } from 'react'
-import { LocaleContext } from './LocaleContext'
 import isEmpty from 'lodash/isEmpty'
 
-export function useNamespaces(namespaces?: string | (string | null)[]) {
+import { LocaleContext } from './LocaleContext'
+
+export function useNamespaces(namespaces?: string | string[]) {
   const {
     loadMessages,
     loadingMessages,
