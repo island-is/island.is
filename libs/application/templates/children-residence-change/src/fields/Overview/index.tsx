@@ -46,27 +46,9 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   const [
     requestFileSignature,
     { data: requestFileSignatureData },
-  ] = useMutation(REQUEST_FILE_SIGNATURE, {
-    onError: () =>
-      dispatchFileSignature({
-        type: FileSignatureActionTypes.ERROR,
-        status: FileSignatureStatus.REQUEST_ERROR,
-        error: '500',
-      }),
-    onCompleted: () =>
-      dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD }),
-  })
+  ] = useMutation(REQUEST_FILE_SIGNATURE)
 
-  const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE, {
-    onError: () =>
-      dispatchFileSignature({
-        type: FileSignatureActionTypes.ERROR,
-        status: FileSignatureStatus.UPLOAD_ERROR,
-        error: '500',
-      }),
-    onCompleted: () =>
-      dispatchFileSignature({ type: FileSignatureActionTypes.SUCCESS }),
-  })
+  const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
 
   useEffect(() => {
     createPdfPresignedUrl({
@@ -87,7 +69,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
         return [false, 'no pdf url']
       }
       dispatchFileSignature({ type: FileSignatureActionTypes.REQUEST })
-      const requestResponse = await requestFileSignature({
+      const documentToken = await requestFileSignature({
         variables: {
           input: {
             id: application.id,
@@ -95,11 +77,21 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
           },
         },
       })
-      if (requestResponse?.data) {
-        const documentToken =
-          requestResponse.data.requestFileSignature?.externalData?.fileSignature
-            ?.data?.documentToken
-        const signedFileResponse = await uploadSignedFile({
+        .then((response) => {
+          return response.data?.requestFileSignature?.externalData
+            ?.fileSignature?.data?.documentToken
+        })
+        .catch((error) => {
+          dispatchFileSignature({
+            type: FileSignatureActionTypes.ERROR,
+            status: FileSignatureStatus.REQUEST_ERROR,
+            error: '500',
+          })
+          throw new Error(`Request signature error ${JSON.stringify(error)}`)
+        })
+      if (documentToken) {
+        dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD })
+        const success = await uploadSignedFile({
           variables: {
             input: {
               id: application.id,
@@ -108,7 +100,20 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
             },
           },
         })
-        if (signedFileResponse?.data) {
+          .then(() => {
+            return true
+          })
+          .catch((error) => {
+            dispatchFileSignature({
+              type: FileSignatureActionTypes.ERROR,
+              status: FileSignatureStatus.UPLOAD_ERROR,
+              error: '500',
+            })
+            throw new Error(`Upload signed pdf error ${JSON.stringify(error)}`)
+          })
+
+        if (success) {
+          dispatchFileSignature({ type: FileSignatureActionTypes.SUCCESS })
           return [true, null]
         }
       }
