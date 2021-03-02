@@ -43,7 +43,7 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: m.externalDataSubtitle,
+          subTitle: ' ',
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
@@ -69,6 +69,12 @@ export const HealthInsuranceForm: Form = buildForm({
               type: undefined,
               title: m.socialInsuranceAdministrationTitle,
               subTitle: m.socialInsuranceAdministrationSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'moreInfo',
+              type: undefined,
+              title: '',
+              subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
               id: 'userProfile',
