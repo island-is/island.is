@@ -10,6 +10,9 @@ import {
   Stack,
   GridRow,
   GridColumn,
+  Button,
+  Link,
+  Divider,
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
@@ -32,15 +35,51 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     <>
       <Box marginBottom={5}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+          <GridColumn>
             <Stack space={2}>
               <Text variant="h1" as="h1">
-                {formatMessage(m.name)}
+                {formatMessage(m.heading)}
               </Text>
 
               <Text as="p" variant="intro">
-                {formatMessage(m.introText)}
+                {formatMessage(m.introCopy)}
               </Text>
+
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="spaceBetween"
+                background="blue100"
+                padding={4}
+                marginTop={1}
+                borderRadius="large"
+                width="full"
+              >
+                <Box marginRight={2}>
+                  <Text variant="h3" color="blue600">
+                    {formatMessage(m.introBlock)}
+                  </Text>
+                </Box>
+
+                <Link href="https://island.is/flokkur/fjolskylda-og-velferd">
+                  <Button icon="open" iconType="outline" nowrap>
+                    {formatMessage(m.introButton)}
+                  </Button>
+                </Link>
+              </Box>
+
+              <Box marginTop={4}>
+                <Divider />
+              </Box>
+
+              <GridRow>
+                <GridColumn span="8/12">
+                  <Text as="p" marginTop={3}>
+                    {formatMessage(m.listCopy)}
+                  </Text>
+                </GridColumn>
+              </GridRow>
             </Stack>
           </GridColumn>
         </GridRow>

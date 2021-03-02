@@ -1,15 +1,31 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  name: {
-    id: 'sp.applications:name',
+  heading: {
+    id: 'sp.applications:heading',
     defaultMessage: 'Umsóknir',
-    description: 'Main title for the applications portal',
+    description: `Main title for the applications portal`,
   },
-  introText: {
-    id: 'sp.applications:intro-text',
+  introCopy: {
+    id: 'sp.applications:intro.copy',
     defaultMessage:
-      'Hér eru birt þau leyfi og umsóknir sem þú hefur sótt um á Ísland.is, bæði sem einstaklingur og í umboði annarra.',
+      'Smelltu á hnappinn hér að neðan til að sjá allar umsóknir sem eru í boði fyrir Ísland.is gáttina.',
+    description: 'Intro copy to introduce to all applications available',
+  },
+  introBlock: {
+    id: 'sp.applications:intro.block',
+    defaultMessage: 'Allt um umsóknir',
+    description: 'Short copy for the applications block',
+  },
+  introButton: {
+    id: 'sp.applications:intro.button',
+    defaultMessage: 'Sjá allar umsóknir',
+    description: 'Button copy for the application redirect',
+  },
+  listCopy: {
+    id: 'sp.applications:list.copy',
+    defaultMessage:
+      'Hér eru allar umsóknir sem þú hefur sótt um á Ísland.is eru birtar hér, bæði sem einstaklingur og fyrir hönd annarra.',
     description: 'Used on the overview page for the applications',
   },
   error: {

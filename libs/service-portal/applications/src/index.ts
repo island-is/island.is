@@ -7,12 +7,12 @@ import { lazy } from 'react'
 import { m } from './lib/messages'
 
 export const applicationsModule: ServicePortalModule = {
-  name: m.name,
+  name: m.heading,
   widgets: () => [],
   routes: async () => {
     const applicationRoutes = [
       {
-        name: m.name,
+        name: m.heading,
         path: ServicePortalPath.ApplicationRoot,
         render: () =>
           lazy(() => import('./screens/ApplicationList/ApplicationList')),
