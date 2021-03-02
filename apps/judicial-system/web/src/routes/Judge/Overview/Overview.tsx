@@ -44,11 +44,17 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
-import * as styles from './Overview.treat'
 import { CreateCustodyCourtCaseMutation } from '../../../utils/mutations'
+import * as styles from './Overview.treat'
 
 interface CaseData {
   case?: Case
+}
+
+interface CreateCustodyCourtCaseMutationResponse {
+  createCustodyCourtCase: {
+    courtCaseNumber: string
+  }
 }
 
 export const JudgeOverview: React.FC = () => {
@@ -59,11 +65,16 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [isClickingCreateCase, setIsClickingCreateCase] = useState<boolean>(
+    false,
+  )
 
   const [
     createCustodyCourtCaseMutation,
     { loading: creatingCustodyCourtCase },
-  ] = useMutation(CreateCustodyCourtCaseMutation)
+  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
+    CreateCustodyCourtCaseMutation,
+  )
 
   const createCase = async (): Promise<void> => {
     if (creatingCustodyCourtCase === false) {
@@ -76,7 +87,7 @@ export const JudgeOverview: React.FC = () => {
         },
       })
 
-      if (workingCase && data) {
+      if (workingCase && data?.createCustodyCourtCase.courtCaseNumber) {
         setAndSendToServer(
           'courtCaseNumber',
           data.createCustodyCourtCase.courtCaseNumber,
@@ -84,7 +95,12 @@ export const JudgeOverview: React.FC = () => {
           setWorkingCase,
           updateCase,
         )
+
         setCourtCaseNumberErrorMessage('')
+      } else {
+        setCourtCaseNumberErrorMessage(
+          'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+        )
       }
     }
   }
@@ -188,6 +204,8 @@ export const JudgeOverview: React.FC = () => {
                 <div className={styles.createGoProCaseButton}>
                   <Button
                     size="small"
+                    onMouseDown={() => setIsClickingCreateCase(true)}
+                    onMouseUp={() => setIsClickingCreateCase(false)}
                     onClick={createCase}
                     loading={creatingCustodyCourtCase}
                     disabled={!!workingCase.courtCaseNumber}
@@ -207,6 +225,7 @@ export const JudgeOverview: React.FC = () => {
                   errorMessage={courtCaseNumberErrorMessage}
                   hasError={
                     !creatingCustodyCourtCase &&
+                    !isClickingCreateCase &&
                     courtCaseNumberErrorMessage !== ''
                   }
                   onChange={(event) =>
@@ -220,7 +239,7 @@ export const JudgeOverview: React.FC = () => {
                       setCourtCaseNumberErrorMessage,
                     )
                   }
-                  onBlur={(event) =>
+                  onBlur={(event) => {
                     validateAndSendToServer(
                       'courtCaseNumber',
                       event.target.value,
@@ -229,7 +248,7 @@ export const JudgeOverview: React.FC = () => {
                       updateCase,
                       setCourtCaseNumberErrorMessage,
                     )
-                  }
+                  }}
                   required
                 />
               </div>

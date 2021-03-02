@@ -39,10 +39,7 @@ describe('/domari-krafa with an ID', () => {
         </UserProvider>
       </MockedProvider>,
     )
-    userEvent.type(
-      await screen.findByLabelText('Slá inn málsnúmer *'),
-      '000-0000-000',
-    )
+    userEvent.type(await screen.findByLabelText('Mál nr. *'), '000-0000-000')
 
     expect(
       (await screen.findByRole('button', {
