@@ -143,13 +143,15 @@ export const application: Form = buildForm({
                       'Ef búið er að útbúa þarfagreiningu fyrir verkefnið eða önnur skjöl sem þú vilt koma á framfæri. ',
                   },
                 ),
-                // buildFileUploadField({
-                //   id: 'attatchments',
-                //   uploadHeader: 'Dragðu skjöl hingað til að hlaða upp',
-                //   uploadDescription:
-                //     'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
-                //   uploadButtonLabel: 'Velja skjöl til að hlaða upp',
-                // }),
+                buildFileUploadField({
+                  id: 'attatchments',
+                  title: '',
+                  introduction: '',
+                  uploadHeader: 'Dragðu skjöl hingað til að hlaða upp',
+                  uploadDescription:
+                    'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+                  uploadButtonLabel: 'Velja skjöl til að hlaða upp',
+                }),
               ],
             }),
           ],
@@ -182,14 +184,14 @@ export const application: Form = buildForm({
               description: '',
               children: [
                 buildTextField({
-                  id: 'project.stakeholders',
+                  id: 'stakeholders',
                   title: 'Hagsmunaaðilar',
                   placeholder: 'asnjdnajsdn',
                   variant: 'textarea',
                   backgroundColor: 'blue',
                 }),
                 buildTextField({
-                  id: 'project.role',
+                  id: 'role',
                   title: 'Skilgreind hlutverk',
                   placeholder: 'asnjdnajsdn',
                   variant: 'textarea',
@@ -198,17 +200,6 @@ export const application: Form = buildForm({
               ],
             }),
           ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'tempSuccessScreen',
-      title: 'Umsokn stadfest',
-      children: [
-        buildCustomField({
-          id: 'successfulSubmission2',
-          title: 'Takk fyrir umsóknina!',
-          component: 'ConfirmationScreen',
         }),
       ],
     }),
@@ -245,7 +236,7 @@ export const application: Form = buildForm({
       children: [
         buildCustomField({
           id: 'successfulSubmission',
-          title: '',
+          title: 'Takk fyrir umsóknina!',
           component: 'ConfirmationScreen',
         }),
       ],
