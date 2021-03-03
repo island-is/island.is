@@ -17,13 +17,11 @@ const HEALTH_INSURANCE_XROAD_WSDLURL =
 const HEALTH_INSURANCE_XROAD_BASEURL =
   process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8080'
 const HEALTH_INSURANCE_XROAD_USERNAME =
-  process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? 'deloittetest'
+  process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? ''
 const HEALTH_INSURANCE_XROAD_PASSWORD =
-  process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? 'xroadtest123'
-const HEALTH_INSURANCE_XROAD_CLIENT_ID =
-  process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client'
-const HEALTH_INSURANCE_XROAD_ID =
-  process.env.XROAD_HEALTH_INSURANCE_ID ?? 'IS-DEV/GOV/10007/SJUKRA-Protected'
+  process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? ''
+const HEALTH_INSURANCE_XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
+const HEALTH_INSURANCE_XROAD_ID = process.env.XROAD_HEALTH_INSURANCE_ID ?? ''
 
 export class HealthInsuranceModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
