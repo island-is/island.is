@@ -1,59 +1,65 @@
 import { Test } from '@nestjs/testing'
 import { AuthService } from './auth.service'
 
+const userList = [
+  {
+    nationalId: '1111111111',
+    name: 'Gerfimaður-1',
+    role: 'developer',
+    partnerId: '',
+  },
+  {
+    nationalId: '2222222222',
+    name: 'Gerfimaður-2',
+    role: 'developer',
+    partnerId: '',
+  },
+  {
+    nationalId: '3333333333',
+    name: 'Gerfimaður-3',
+    role: 'developer',
+    partnerId: '',
+  },
+  {
+    nationalId: '4444444444',
+    name: 'Gerfimaður-4',
+    role: 'recyclingFund',
+    partnerId: '',
+  },
+  {
+    nationalId: '5555555555',
+    name: 'xxxxxxxxxxxxxxx',
+    role: 'recyclingFund',
+    partnerId: '',
+  },
+  {
+    nationalId: '6666666666',
+    name: 'xxxxxxxxxx',
+    role: 'recyclingCompany',
+    partnerId: '999',
+  },
+]
 describe('skilavottordApiTest', () => {
   it('should work', () => {
     expect(AuthService.test()).toEqual('test')
   })
 
-  const user1 = {
-    nationalId: '1111111111',
-    name: 'Gervimaður',
-    mobile: '',
-    role: 'developer',
-  }
-
-  const user2 = {
-    nationalId: '2222222222',
-    name: 'Gervimaður',
-    mobile: '',
-    role: '',
-  }
-
-  const ulistString = `[{nationalId:"1111111111",name:"Gervimaður",role:"recyclingCompany",partnerId:"999"},
-   {nationalId":"2310765229","name":"VésteinnViðarsson","role":"developer","partnerId":""},
-   {nationalId":"0602773039","name":"BjarkiMárFlosason","role":"developer","partnerId":""},
-   {nationalId":"1505664449","name":"RúnarSigurðurGuðlaugsson","role":"developer","partnerId":""},
-   {nationalId":"0301665909","name":"SigurgeirGuðmundsson","role":"developer","partnerId":""},
-   {nationalId":"2311862559","name":"QuanDong","role":"developer","partnerId":""},
-   {nationalId":"0101302129","name":"GervimaðurNoregur","role":"developer","partnerId":""},
-   {nationalId":"2811638099","name":"Tómas Árni Jónsson","role":"developer","partnerId":""},
-   {nationalId":"0905665129","name":"Friðbjörn Hólm Ólafsson","role":"recyclingCompany","partnerId":""},
-   {nationalId":"0706765599","name":"Sigríður Björk Þórisdóttir","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"1310734109","name":"Reynir Þór Guðmundsson","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"1110892489","name":"Ari Halldór Hjaltason","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"0409842919","name":"Gísli Rúnar Svanbergsson","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"3108002360","name":"ViktoríaSólReynisdóttir","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"2309695079","name":"Valdemar Örn Haraldsson","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"0910872009","name":"Tómas Kári Kristinsson","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"0601756089","name":"Greta Björg Egilsdóttir","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"0709804529","name":"Halldór Örn Kristjánsson","role":"recyclingCompany","partnerId":"110"},
-   {nationalId":"1811673949","name":"Tryggvi Daníel Sigurðsson","role":"recyclingCompany","partnerId":"104"},
-   {nationalId":"2405843609","name":"Þórdís Jónsdóttir","role":"recyclingCompany","partnerId":"104"},
-   {nationalId":"2211692989","name":"Úlfar Haraldsson","role":"recyclingCompany","partnerId":"221"},
-   {nationalId":"2808714009","name":"Dagný Michelle Jónsdóttir","role":"recyclingCompany","partnerId":"221"},
-   {nationalId":"3108654949","name":"Ólafía Sigurjónsdóttir","role":"recyclingCompany","partnerId":"221"},
-   {nationalId":"2512942099","name":"Marjón Pétur Benediktsson","role":"recyclingCompany","partnerId":"221"},
-   {nationalId":"0306942609","name":"Karítas Þorvaldsdóttir","role":"recyclingCompany","partnerId":"221"},
-   {nationalId":"1207952879","name":"Anton Örn Kærnested","role":"recyclingCompany","partnerId":"221"},
-   {nationalId":"3005594339","name":"Ólafur Kjartansson","role":"recyclingFund","partnerId":""},
-   {nationalId":"0202614989","name":"Guðlaugur Gylfi Sverrisson","role":"recyclingFund","partnerId":""},
-   {nationalId":"0305695639","name":"Ása Hauksdóttir","role":"recyclingFund","partnerId":""}]`
-
-  const ulist = JSON.parse(ulistString)
-
   describe('AuthService', () => {
     let authService: AuthService
+
+    const user1 = {
+      nationalId: '1111111111',
+      name: 'Gervimaður1',
+      mobile: '',
+      role: 'developer',
+    }
+
+    const user2 = {
+      nationalId: '2222222222',
+      name: 'Gervimaður2',
+      mobile: '',
+      role: '',
+    }
 
     beforeEach(async () => {
       const moduleRef = await Test.createTestingModule({
@@ -72,17 +78,33 @@ describe('skilavottordApiTest', () => {
     })
 
     describe('checkRole test ', () => {
+      const httpServiceSpy = jest
+        .spyOn(JSON, 'parse')
+        .mockImplementation(() => userList)
       it('allways return false for citizen', () => {
-        // Arrange & Act
-        const hasPermission = authService.checkRole(user2, 'citizen')
+        let userx = {
+          nationalId: '8888888888',
+          name: 'Gervimaður-1',
+          mobile: '',
+          role: 'citizen',
+        }
+        const hasPermission = authService.checkRole(userx, 'citizen')
+        expect(hasPermission).toBeFalsy()
+      })
+      it('nationalId not in userList', () => {
+        let userx = {
+          nationalId: '8888888888',
+          name: 'Gervimaður-1',
+          mobile: '',
+          role: 'developer',
+        }
+        let hasPermission = authService.checkRole(userx, 'citizen')
         expect(hasPermission).toBeFalsy()
       })
       it('allways return true for other than citizen', () => {
-        // jest.spyOn(JSON, 'parse').mockImplementationOnce(() => ulist)
-        // Arrange & Act
         const userx = {
-          nationalId: '0301665909',
-          name: 'Gervimaður',
+          nationalId: '1111111111',
+          name: 'Gervimaður-1',
           mobile: '',
           role: 'developer',
         }
