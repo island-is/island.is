@@ -212,7 +212,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               backgroundColor="white"
               icon="chevronDown"
               isSearchable
-              label="Röðun"
+              label={n('order', 'Röðun')}
               name="sort"
               value={sortOptions.find((x) => x.value === sort)}
               options={sortOptions}
