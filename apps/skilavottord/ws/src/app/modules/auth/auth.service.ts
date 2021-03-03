@@ -3,16 +3,15 @@ import { environment } from '../../../environments'
 import { User } from '../user'
 import { Role, AuthUser } from './auth.types'
 
+const { userList } = environment.skilavottord
+
 @Injectable()
 export class AuthService {
-  roleArr: [User]
-  constructor() {
-    const { userList } = environment.skilavottord
-    this.roleArr = JSON.parse(userList)
-  }
+  constructor() {}
   // TODO
   getRole(user: AuthUser): Role {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+    const ulist = JSON.parse(userList)
+    const picked = ulist.find((o) => o.nationalId === user.nationalId)
     //TODO if not found
     return picked.role as Role
   }
@@ -33,13 +32,15 @@ export class AuthService {
 
   // get user role
   getUserRole(user: AuthUser): User {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+    const ulist = JSON.parse(userList)
+    const picked = ulist.find((o) => o.nationalId === user.nationalId)
     return picked
   }
 
   // check role
   checkRole(user: AuthUser, role: Role): boolean {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+    const ulist = JSON.parse(userList)
+    const picked = ulist.find((o) => o.nationalId === user.nationalId)
     if (!picked) {
       return false
     } else {
