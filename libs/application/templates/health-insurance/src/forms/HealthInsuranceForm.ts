@@ -321,6 +321,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceCountry,
               placeholder: m.formerInsuranceCountryPlaceholder,
               loadingError: m.formerInsuranceCountryError,
+              backgroundColor: 'blue',
               loadOptions: async () => {
                 const countries = await fetch(
                   'https://restcountries.eu/rest/v2/all',
