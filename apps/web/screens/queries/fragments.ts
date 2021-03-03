@@ -382,6 +382,9 @@ export const slices = gql`
       address
       email
       openingHours
+      content {
+        ...HtmlFields
+      }
     }
   }
 

@@ -1,17 +1,25 @@
 # Search Indexer Migration
 
-The code inside the migration folder is built into a single file which is run
-on `initContainer` inside the cluster. The migration file has several tasks:
+The files inside the migration folder are build into multiple entry files an run in series inside separate `initContainers` in the cluster.  
+The migration files have several tasks:
 
-- Keep the dictionaries inside AWS up to date with `elasticsearch-dictionaries`
-  - Manage files inside S3 buckets
-  - Create packages inside AWS ES
-  - Associate and disassociate packages with AWS ES domains
+**migrateAws.ts**:
+
+- Keep the dictionaries inside AWS up to date with the `island.is/elasticsearch-dictionaries` repo
+- Manage files inside S3 buckets
+- Create packages inside AWS ES
+- Associate and disassociate packages with AWS ES domains
+
+**migrateElastic.ts**:
+
 - Keep ES indexes up to date
-  - Create new index versions
-  - Migrate data from datasources
-  - Manage aliases
-  - Rollback to last deployed version on failure
+- Create new indices when dictionary or index templates are updated
+- Migrate data from datasources into current index
+- Ensure builds with a faulty index don't spin up
+
+**migrateKibana.ts**:
+
+- Ensure content status dashboard is up to date
 
 You can run the migration script locally to manage your `dev-service` instance
 of elasticsearch. **The migrate script assumes you have dictionary files inside

@@ -280,4 +280,32 @@ export abstract class ClientBaseDTO {
     example: null,
   })
   contactEmail!: string
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly supportsDelegation!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly supportsLegalGuardians!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly supportsProcuringHolders!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly promptDelegations!: boolean
 }

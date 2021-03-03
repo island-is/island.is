@@ -24,6 +24,8 @@ import {
   CreateProviderInput,
   UpdateContactInput,
   UpdateHelpdeskInput,
+  CreateContactInput,
+  CreateHelpdeskInput,
 } from './dto'
 import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
@@ -75,6 +77,20 @@ export class DocumentProviderResolver {
     return this.documentProviderService.updateOrganisation(id, input)
   }
 
+  @Mutation(() => Contact, { nullable: true })
+  async createAdministrativeContact(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact | null> {
+    logger.info(`createAdministrativeContact: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createAdministrativeContact(
+      organisationId,
+      input,
+    )
+  }
+
   @Mutation(() => Contact)
   async updateAdministrativeContact(
     @Args('organisationId') organisationId: string,
@@ -90,6 +106,20 @@ export class DocumentProviderResolver {
       organisationId,
       administrativeContactId,
       contact,
+    )
+  }
+
+  @Mutation(() => Contact, { nullable: true })
+  async createTechnicalContact(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact | null> {
+    logger.info(`createTechnicalContact: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createTechnicalContact(
+      organisationId,
+      input,
     )
   }
 
@@ -109,6 +139,17 @@ export class DocumentProviderResolver {
       technicalContactId,
       contact,
     )
+  }
+
+  @Mutation(() => Helpdesk, { nullable: true })
+  async createHelpdesk(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateHelpdeskInput,
+    @CurrentUser() user: User,
+  ): Promise<Helpdesk | null> {
+    logger.info(`createHelpdesk: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createHelpdesk(organisationId, input)
   }
 
   @Mutation(() => Helpdesk)

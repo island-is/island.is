@@ -33,4 +33,8 @@ export default {
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
   },
+  signingOptions: {
+    url: process.env.DOKOBIT_URL,
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
 } as Environment

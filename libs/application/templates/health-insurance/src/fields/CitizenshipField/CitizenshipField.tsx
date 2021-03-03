@@ -5,7 +5,7 @@ import { Box, Input } from '@island.is/island-ui/core'
 import { Citizenship } from '@island.is/api/schema'
 import { CountryDataResult, ExternalDataNationalRegistry } from '../../types'
 
-const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
+const CitizenshipField: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const citizenship = (getValueViaPath(
     application.externalData,
@@ -46,4 +46,4 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default CountrySelectField
+export default CitizenshipField
