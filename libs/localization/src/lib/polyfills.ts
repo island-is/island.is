@@ -2,11 +2,11 @@ import { shouldPolyfill as shouldPolyfillNumberFormat } from '@formatjs/intl-num
 import areIntlLocalesSupported from 'intl-locales-supported'
 import { Locale } from './LocaleContext'
 
-declare namespace Intl {
-  var NumberFormat: {
+interface PolyfilledIntl {
+  NumberFormat: {
     polyfilled?: boolean
   }
-  var DateTimeFormat: {
+  DateTimeFormat: {
     polyfilled?: boolean
   }
 }
@@ -64,11 +64,11 @@ export async function polyfill(locale: Locale) {
   ])
 
   const dataPolyfills = []
-  if (Intl.NumberFormat.polyfilled) {
+  if ((Intl as PolyfilledIntl).NumberFormat.polyfilled) {
     dataPolyfills.push(localeDataModules.numberFormat[locale]())
   }
 
-  if (Intl.DateTimeFormat.polyfilled) {
+  if ((Intl as PolyfilledIntl).DateTimeFormat.polyfilled) {
     dataPolyfills.push(
       import(
         /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/add-all-tz'

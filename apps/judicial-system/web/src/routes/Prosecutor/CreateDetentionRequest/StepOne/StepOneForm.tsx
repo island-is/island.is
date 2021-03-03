@@ -33,17 +33,20 @@ export const StepOneForm: React.FC<Props> = (props) => {
 
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
 
-  const [accusedNameErrorMessage, setAccusedNameErrorMessage] = useState<
-    string
-  >()
+  const [
+    accusedNameErrorMessage,
+    setAccusedNameErrorMessage,
+  ] = useState<string>()
 
-  const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] = useState<
-    string
-  >()
+  const [
+    accusedAddressErrorMessage,
+    setAccusedAddressErrorMessage,
+  ] = useState<string>()
 
-  const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState<
-    string
-  >()
+  const [
+    defenderEmailErrorMessage,
+    setDefenderEmailErrorMessage,
+  ] = useState<string>()
 
   const validations: FormValidation = {
     policeCaseNumber: {
