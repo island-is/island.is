@@ -562,11 +562,7 @@ export class ApplicationController {
     application: Application,
     @Body() input: CreatePdfDto,
   ): Promise<PresignedUrlResponseDto> {
-    const { type } = input
-
-    this.fileService.validateApplicationType(application.typeId)
-
-    let url = await this.fileService.createPdf(application, type)
+    const url = await this.fileService.createPdf(application, input.type)
 
     return { url }
   }
@@ -586,18 +582,10 @@ export class ApplicationController {
     application: Application,
     @Body() input: RequestFileSignatureDto,
   ): Promise<RequestFileSignatureResponseDto> {
-    const { type } = input
-
-    this.fileService.validateFileSignature(
-      application.typeId,
-      type,
-      application.attachments,
-    )
-
     const {
       controlCode,
       documentToken,
-    } = await this.fileService.requestFileSignature(application, type)
+    } = await this.fileService.requestFileSignature(application, input.type)
 
     return { controlCode, documentToken }
   }
@@ -616,15 +604,11 @@ export class ApplicationController {
     application: Application,
     @Body() input: UploadSignedFileDto,
   ): Promise<UploadSignedFileResponseDto> {
-    const { documentToken, type } = input
-
-    this.fileService.validateFileUpload(
-      application.typeId,
-      documentToken,
-      application.externalData,
+    await this.fileService.uploadSignedFile(
+      application,
+      input.documentToken,
+      input.type,
     )
-
-    await this.fileService.uploadSignedFile(application, documentToken, type)
 
     return {
       documentSigned: true,
@@ -645,8 +629,7 @@ export class ApplicationController {
     application: Application,
     @Param('pdfType') type: PdfTypes,
   ): Promise<PresignedUrlResponseDto> {
-    this.fileService.validateApplicationType(application.typeId)
-    let url = this.fileService.getPresignedUrl(application.id, type)
+    const url = this.fileService.getPresignedUrl(application, type)
 
     return { url }
   }

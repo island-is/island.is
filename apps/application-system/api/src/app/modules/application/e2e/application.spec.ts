@@ -446,7 +446,7 @@ describe('Application system API', () => {
         type: type,
       })
       .expect(200)
-    console.log(res)
+
     // Assert
     expect(res.body).toEqual({ url: 'presignedurl' })
   })
@@ -525,10 +525,6 @@ describe('Application system API', () => {
     const fileService: FileService = app.get<FileService>(FileService)
     jest
       .spyOn(fileService, 'uploadSignedFile')
-      .mockImplementation(() => Promise.resolve())
-
-    jest
-      .spyOn(fileService, 'validateFileUpload')
       .mockImplementation(() => Promise.resolve())
 
     const postResponse = await server.post('/applications').send({

@@ -34,12 +34,14 @@ export class FileService {
 
   async createPdf(
     application: Application,
-    type: PdfTypes,
+    pdfType: PdfTypes,
   ): Promise<string | undefined> {
+    this.validateApplicationType(application.typeId)
+
     const answers = application.answers as FormValue
     const externalData = application.externalData as FormValue
 
-    switch (type) {
+    switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         const {
           parentA,
@@ -70,14 +72,16 @@ export class FileService {
   async uploadSignedFile(
     application: Application,
     documentToken: string,
-    type: PdfTypes,
+    pdfType: PdfTypes,
   ) {
+    this.validateApplicationType(application.typeId)
+
     const bucket = this.getBucketName()
 
     await this.signingService
-      .getSignedDocument(DokobitFileName[type], documentToken)
+      .getSignedDocument(DokobitFileName[pdfType], documentToken)
       .then((file) => {
-        const s3FileName = `${BucketTypePrefix[type]}/${application.id}.pdf`
+        const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
         this.awsService.uploadFile(
           Buffer.from(file, 'binary'),
           bucket,
@@ -88,16 +92,18 @@ export class FileService {
 
   async requestFileSignature(
     application: Application,
-    type: PdfTypes,
+    pdfType: PdfTypes,
   ): Promise<SigningServiceResponse> {
+    this.validateApplicationType(application.typeId)
+
     const answers = application.answers as FormValue
     const externalData = application.externalData as FormValue
 
-    switch (type) {
+    switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         const { phoneNumber, name } = applicantData(answers, externalData)
         return await this.handleChildrenResidenceChangeSignature(
-          type,
+          pdfType,
           application.id,
           name,
           phoneNumber,
@@ -106,15 +112,25 @@ export class FileService {
     }
   }
 
+  getPresignedUrl(application: Application, pdfType: PdfTypes) {
+    this.validateApplicationType(application.typeId)
+
+    const bucket = this.getBucketName()
+
+    const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
+
+    return this.awsService.getPresignedUrl(bucket, fileName)
+  }
+
   private async handleChildrenResidenceChangeSignature(
-    type: PdfTypes,
+    pdfType: PdfTypes,
     applicationId: string,
     applicantName: string,
     phoneNumber?: string,
   ): Promise<SigningServiceResponse> {
     const bucket = this.getBucketName()
 
-    const s3FileName = `${BucketTypePrefix[type]}/${applicationId}.pdf`
+    const s3FileName = `${BucketTypePrefix[pdfType]}/${applicationId}.pdf`
     const s3File = await this.awsService.getFile(bucket, s3FileName)
     const fileContent = s3File.Body?.toString('binary')
 
@@ -127,12 +143,12 @@ export class FileService {
       'Lögheimilisbreyting barns',
       applicantName,
       'Ísland',
-      DokobitFileName[type],
+      DokobitFileName[pdfType],
       fileContent,
     )
   }
 
-  validateApplicationType(applicationType: string) {
+  private validateApplicationType(applicationType: string) {
     if (
       Object.values(PdfTypes).includes(applicationType as PdfTypes) === false
     ) {
@@ -140,46 +156,6 @@ export class FileService {
         'Application type is not supported in file service.',
       )
     }
-  }
-
-  validateFileSignature(
-    applicationType: string,
-    type: PdfTypes,
-    attachments?: object,
-  ) {
-    this.validateApplicationType(applicationType)
-
-    const data = attachments as { [type]: string }
-    if (data?.[type] === undefined) {
-      throw new BadRequestException(
-        'Document has not been uploaded to be signed',
-      )
-    }
-  }
-
-  validateFileUpload(
-    applicationType: string,
-    documentToken: string,
-    externalData: object,
-  ) {
-    this.validateApplicationType(applicationType)
-
-    const data = externalData as {
-      fileSignature: { data: { documentToken: string } }
-    }
-    if (data?.fileSignature?.data?.documentToken !== documentToken) {
-      throw new BadRequestException(
-        'Document token does not match token on application',
-      )
-    }
-  }
-
-  getPresignedUrl(applicationId: string, type: PdfTypes) {
-    const bucket = this.getBucketName()
-
-    const fileName = `${BucketTypePrefix[type]}/${applicationId}.pdf`
-
-    return this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   private getBucketName() {
