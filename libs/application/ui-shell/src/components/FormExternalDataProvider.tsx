@@ -35,7 +35,11 @@ const ProviderItem: FC<{
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
-      {subTitle && <Text>{formatMessage(subTitle)}</Text>}
+      {subTitle && (
+        <Text>
+          <Markdown>{formatMessage(subTitle)}</Markdown>
+        </Text>
+      )}
       {provider.type && dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}
