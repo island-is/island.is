@@ -420,7 +420,7 @@ describe('Application system API', () => {
     )
   })
 
-  it('PUT application/:id/createPdf should return a presigned url', async () => {
+  it('PUT applications/:id/createPdf should return a presigned url', async () => {
     const expectPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
@@ -440,20 +440,18 @@ describe('Application system API', () => {
       },
     })
 
-    const newState = await server
-      .put(`/application/${postResponse.body.id}/createPdf`)
+    const res = await server
+      .put(`/applications/${postResponse.body.id}/createPdf`)
       .send({
         type: type,
       })
       .expect(200)
 
     // Assert
-    expect(newState.body.attachments).toEqual({
-      ChildrenResidenceChange: 'presignedurl',
-    })
+    expect(res.body).toEqual({ url: 'presignedurl' })
   })
 
-  it('PUT application/:id/requestFileSignature should return a documentToken and controlCode', async () => {
+  it('PUT applications/:id/requestFileSignature should return a documentToken and controlCode', async () => {
     const expectedControlCode = '0000'
     const expectedDocumentToken = 'token'
     const type = 'ChildrenResidenceChange'
@@ -477,17 +475,78 @@ describe('Application system API', () => {
       },
     })
 
-    const newState = await server
-      .put(`/application/${postResponse.body.id}/requestFileSignature`)
+    const res = await server
+      .put(`/applications/${postResponse.body.id}/requestFileSignature`)
       .send({
         type: type,
       })
       .expect(200)
 
     // Assert
-    expect(newState.body.externalData.fileSignature.data).toEqual({
+    expect(res.body).toEqual({
       controlCode: expectedControlCode,
       documentToken: expectedDocumentToken,
     })
+  })
+
+  it('GET applications/:id/presignedUrl should return a presigned url', async () => {
+    const expectedPresignedUrl = 'presignedurl'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'getPresignedUrl')
+      .mockImplementation(() => expectedPresignedUrl)
+
+    const postResponse = await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'review',
+      attachments: {},
+      typeId: type,
+      assignees: [],
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const res = await server
+      .get(`/applications/${postResponse.body.id}/${type}/presignedUrl`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({ url: expectedPresignedUrl })
+  })
+
+  it('PUT applications/:id/uploadSignedFile should return that document has been signed', async () => {
+    const type = 'ChildrenResidenceChange'
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'uploadSignedFile')
+      .mockImplementation(() => Promise.resolve())
+
+    const postResponse = await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'review',
+      attachments: {},
+      typeId: type,
+      assignees: [],
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const res = await server
+      .put(`/applications/${postResponse.body.id}/uploadSignedFile`)
+      .send({
+        type: type,
+        documentToken: '0000',
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({ documentSigned: true })
   })
 })

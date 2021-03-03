@@ -401,6 +401,18 @@ export const slices = gql`
     }
   }
 
+  fragment AccordionSliceFields on AccordionSlice {
+    __typename
+    id
+    title
+    accordionItems {
+      title
+      content {
+        ...HtmlFields
+      }
+    }
+  }
+
   fragment AllSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -429,5 +441,6 @@ export const slices = gql`
     ...TwoColumnTextFields
     ...OfficesSlice
     ...OneColumnTextFields
+    ...AccordionSliceFields
   }
 `

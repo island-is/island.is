@@ -143,7 +143,7 @@ export const getAvailableRights = (application: Application) => {
 export const getOtherParentOptions = (application: Application) => {
   const family = get(
     application.externalData,
-    'family.data.nationalRegistryFamily',
+    'family.data',
     [],
   ) as FamilyMember[]
 

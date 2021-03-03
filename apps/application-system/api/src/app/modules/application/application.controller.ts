@@ -34,6 +34,7 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
+  PdfTypes,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -55,6 +56,7 @@ import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
+import { PresignedUrlDto } from './dto/presignedUrl.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -68,6 +70,9 @@ import {
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
+import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
+import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
+import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
@@ -543,112 +548,89 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('application/:id/createPdf')
+  @Put('applications/:id/createPdf')
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
-    description: 'The id of the application to update the state for.',
+    description: 'The id of the application to create a pdf for',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @UseInterceptors(ApplicationSerializer)
+  @ApiOkResponse({ type: PresignedUrlResponseDto })
   async createPdf(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
     @Body() input: CreatePdfDto,
-  ): Promise<ApplicationResponseDto> {
-    const { type } = input
+  ): Promise<PresignedUrlResponseDto> {
+    const url = await this.fileService.createPdf(application, input.type)
 
-    this.fileService.validateApplicationType(application.typeId)
-
-    const url = await this.fileService.createPdf(application, type)
-
-    const { updatedApplication } = await this.applicationService.update(
-      application.id,
-      {
-        attachments: {
-          ...application.attachments,
-          [type]: url,
-        },
-      },
-    )
-
-    return updatedApplication
+    return { url }
   }
 
-  @Put('application/:id/requestFileSignature')
+  @Put('applications/:id/requestFileSignature')
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
-    description: 'The id of the application to update the state for.',
+    description:
+      'The id of the application which the file signature is requested for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @UseInterceptors(ApplicationSerializer)
+  @ApiOkResponse({ type: RequestFileSignatureResponseDto })
   async requestFileSignature(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
     @Body() input: RequestFileSignatureDto,
-  ): Promise<ApplicationResponseDto> {
-    const { type } = input
-
-    this.fileService.validateFileSignature(
-      application.typeId,
-      type,
-      application.attachments,
-    )
-
+  ): Promise<RequestFileSignatureResponseDto> {
     const {
       controlCode,
       documentToken,
-    } = await this.fileService.requestFileSignature(application, type)
+    } = await this.fileService.requestFileSignature(application, input.type)
 
-    const externalData: ExternalData = {
-      fileSignature: {
-        data: { controlCode: controlCode, documentToken: documentToken },
-        date: new Date(),
-        status: 'success',
-      },
-    }
-
-    const {
-      updatedApplication,
-    } = await this.applicationService.updateExternalData(
-      application.id,
-      application.externalData as ExternalData,
-      externalData,
-    )
-
-    return updatedApplication
+    return { controlCode, documentToken }
   }
 
-  @Put('application/:id/uploadSignedFile')
+  @Put('applications/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
     type: String,
     required: true,
-    description: 'The id of the application to update the state for.',
+    description: 'The id of the application which the file was created for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @UseInterceptors(ApplicationSerializer)
+  @ApiOkResponse({ type: UploadSignedFileResponseDto })
   async uploadSignedFile(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     application: Application,
     @Body() input: UploadSignedFileDto,
-  ): Promise<ApplicationResponseDto> {
-    const { documentToken, type } = input
-
-    this.fileService.validateFileUpload(
-      application.typeId,
-      documentToken,
-      application.externalData,
+  ): Promise<UploadSignedFileResponseDto> {
+    await this.fileService.uploadSignedFile(
+      application,
+      input.documentToken,
+      input.type,
     )
 
-    await this.fileService.uploadSignedFile(application, documentToken, type)
+    return {
+      documentSigned: true,
+    }
+  }
 
-    return application
+  @Get('applications/:id/:pdfType/presignedUrl')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application which the file was created for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: PresignedUrlResponseDto })
+  async getPresignedUrl(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Param('pdfType') type: PdfTypes,
+  ): Promise<PresignedUrlResponseDto> {
+    const url = this.fileService.getPresignedUrl(application, type)
+
+    return { url }
   }
 }

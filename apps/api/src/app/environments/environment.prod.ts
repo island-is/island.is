@@ -31,9 +31,11 @@ export default {
   },
   healthInsurance: {
     wsdlUrl: process.env.HEALTH_INSURANCE_XROAD_WSDLURL,
-    baseUrl: process.env.XROAD_BASE_PATH,
+    baseUrl: process.env.XROAD_BASE_PATH_WITH_ENV,
     username: process.env.HEALTH_INSURANCE_XROAD_USERNAME,
     password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD,
+    clientID: process.env.XROAD_CLIENT_ID,
+    xroadID: process.env.XROAD_HEALTH_INSURANCE_ID,
   },
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
