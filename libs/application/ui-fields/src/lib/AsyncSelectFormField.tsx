@@ -27,6 +27,7 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
     placeholder,
     disabled,
     onSelect,
+    backgroundColor,
   } = field
   const { formatMessage } = useLocale()
   const apolloClient = useApolloClient()
@@ -81,6 +82,7 @@ const AsyncSelectFormField: FC<Props> = ({ application, error, field }) => {
               : undefined
           }
           onSelect={onSelect}
+          backgroundColor={backgroundColor}
         />
       </Box>
     </div>

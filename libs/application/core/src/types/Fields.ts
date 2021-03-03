@@ -131,6 +131,7 @@ export interface AsyncSelectField extends BaseField {
   loadOptions: (c: Context) => Promise<Option[]>
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   loadingError?: FormText
+  backgroundColor?: InputBackgroundColor
 }
 
 export interface TextField extends BaseField {

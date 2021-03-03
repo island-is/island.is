@@ -11,8 +11,6 @@ const analyzers = [
   'keywords',
   'synonyms',
   'stopwords',
-  'hyphenpatterns',
-  'hyphenwhitelist',
   'autocompletestop',
 ]
 

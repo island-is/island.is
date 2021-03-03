@@ -483,6 +483,90 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       show === true ? 'show' : 'hidden'
                     }`}
                   >
+                    <section className="client_section">
+                      <h3>Delegation section</h3>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="supportsDelegation"
+                        >
+                          Supports Delegation
+                        </label>
+                        <input
+                          id="supportsDelegation"
+                          type="checkbox"
+                          name="client.supportsDelegation"
+                          defaultChecked={client.supportsDelegation ?? false}
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the client supports delegation"
+                        />
+                        <HelpBox helpText="Specifies if the client supports delegation" />
+                      </div>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="supportsLegalGuardians"
+                        >
+                          Supports Legal Guardians Delegation
+                        </label>
+                        <input
+                          id="supportsLegalGuardians"
+                          type="checkbox"
+                          name="client.supportsLegalGuardians"
+                          defaultChecked={
+                            client.supportsLegalGuardians ?? false
+                          }
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the client supports legal guardian delegation"
+                        />
+                        <HelpBox helpText="Specifies if the client supports legal guardian delegation" />
+                      </div>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="supportsProcuringHolders"
+                        >
+                          Supports Procuring Holders Delegation
+                        </label>
+                        <input
+                          id="supportsProcuringHolders"
+                          type="checkbox"
+                          name="client.supportsProcuringHolders"
+                          defaultChecked={
+                            client.supportsProcuringHolders ?? false
+                          }
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the client supports Procuring Holders delegation"
+                        />
+                        <HelpBox helpText="Specifies if the client supports Procuring Holders delegation" />
+                      </div>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="promptDelegations"
+                        >
+                          Prompt delegations
+                        </label>
+                        <input
+                          id="promptDelegations"
+                          type="checkbox"
+                          name="client.promptDelegations"
+                          defaultChecked={client.promptDelegations ?? false}
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the user is prompt with delegation window"
+                        />
+                        <HelpBox helpText="Specifies if the user is prompt with delegation window" />
+                      </div>
+                    </section>
+
                     <div className="client__container__field">
                       <label className="client__label">
                         Front channel logout uri
