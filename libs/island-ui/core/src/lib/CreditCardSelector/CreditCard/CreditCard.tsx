@@ -1,21 +1,22 @@
 import * as React from 'react'
 import cn from 'classnames'
 import * as styles from './CreditCard.treat'
-import { Box } from '../../Box/Box'
 import * as icons from '../icons'
+import { Box } from '../../Box/Box'
 import { Text } from '../../Text/Text'
+import { RemoveButton } from '../RemoveButton/RemoveButton'
 
 type ValidCard = 'Mastercard' | 'Visa'
 
 interface CreditCardProps {
-  name: ValidCard
+  cardType: ValidCard
   lastFourDigits: string
   active?: boolean
   disabled?: boolean
 }
 
 type RadioProps = {
-  name?: string
+  cardType?: string
   id?: string
   value?: string | number
   checked?: boolean
@@ -59,55 +60,59 @@ const Radio: React.FC<RadioProps> = ({
   </>
 )
 
-const getIcon = (name: ValidCard) => icons[name]
+const getIcon = (cardType: ValidCard) => icons[cardType]
 
 const MaskedNumbers = ({ total = 4 }) => {
   return (
-    <Box component="span" paddingRight={1}>
+    <Box component="span" className={styles.maskedNumbers}>
       {Array.from({ length: total }, () => '*')}
     </Box>
   )
 }
 
 export const CreditCard: React.FC<CreditCardProps> = ({
-  name = 'Mastercard',
+  cardType = 'Mastercard',
   lastFourDigits,
   active,
   disabled = false,
 }) => {
   const onChange = () => {}
-  const Icon = getIcon(name)
+  const onRemove = () => {}
+  const Icon = getIcon(cardType)
 
   return (
-    <div className={cn(styles.root)}>
+    <div className={styles.root}>
       <Radio
         onChange={onChange}
         disabled={disabled}
         checked={active}
-        value={name}
-        id={name}
+        value={cardType}
+        id={cardType}
       />
       <Box
         background="white"
         borderColor={active ? 'blue400' : 'blue200'}
         borderWidth="standard"
         borderRadius="large"
-        marginY={2}
-        padding={2}
+        marginY={1}
+        paddingY={1}
+        paddingX={2}
         display="flex"
         alignItems="center"
         flexGrow={1}
+        marginX={2}
       >
         <Box marginRight={5}>
           <Icon />
         </Box>
         <Box display="flex" flexDirection="column">
-          <Text fontWeight={active ? 'semiBold' : 'regular'}>{name}</Text>
+          <Text fontWeight={active ? 'semiBold' : 'regular'}>{cardType}</Text>
           <Text fontWeight={active ? 'semiBold' : 'regular'}>
             <MaskedNumbers /> <MaskedNumbers /> {lastFourDigits}
           </Text>
         </Box>
       </Box>
+      <RemoveButton onClick={onRemove} />
     </div>
   )
 }

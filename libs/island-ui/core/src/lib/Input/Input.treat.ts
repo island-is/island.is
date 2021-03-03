@@ -6,7 +6,17 @@ import mapValues from 'lodash/mapValues'
 
 export const containerDisabled = style({})
 export const noLabel = style({})
+// /* Chrome, Safari, Edge, Opera */
+// input::-webkit-outer-spin-button,
+// input::-webkit-inner-spin-button {
+//   -webkit-appearance: none;
+//   margin: 0;
+// }
 
+// /* Firefox */
+// input[type=number] {
+//   -moz-appearance: textfield;
+// }
 export const container = style({
   ...omit(mixins.container, 'backgroundColor'),
   boxSizing: 'border-box',
@@ -25,6 +35,9 @@ export const input = style({
     [`${noLabel} &::placeholder`]: {
       color: theme.color.dark400,
     },
+    // ['&[type="number"]']: {
+    //   appearance: 'textfield'
+    // }
   },
 })
 

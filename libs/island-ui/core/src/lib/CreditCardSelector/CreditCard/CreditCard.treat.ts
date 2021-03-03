@@ -8,6 +8,8 @@ export const root = style({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
+  width: 'calc(100% + 80px)',
+  marginLeft: -40,
 })
 
 export const input = style({
@@ -18,19 +20,23 @@ export const input = style({
   top: 0,
   width: radioButtonSize,
 })
+
 export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
   fontWeight: theme.typography.light,
   lineHeight: theme.typography.baseLineHeight,
 })
+
 export const labelChecked = style({
   fontWeight: theme.typography.medium,
 })
+
 export const radioButtonDisabled = style({
   background: 'transparent',
   borderColor: theme.color.blue200,
 })
+
 export const radioButton = style({
   alignItems: 'center',
   backgroundColor: theme.color.white,
@@ -40,7 +46,6 @@ export const radioButton = style({
   flexShrink: 0,
   height: radioButtonSize,
   justifyContent: 'center',
-  marginRight: theme.spacing[2],
   transition: 'border-color .1s, shadow .1s, background-color .1s',
   width: radioButtonSize,
   selectors: {
@@ -72,4 +77,8 @@ export const checkMark = style({
 
 export const radioButtonLabelDisabled = style({
   color: theme.color.dark300,
+})
+
+export const maskedNumbers = style({
+  marginRight: 4,
 })
