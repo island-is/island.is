@@ -99,7 +99,7 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
-  @Get('application/:id')
+  @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async findOne(
@@ -261,7 +261,7 @@ export class ApplicationController {
     return existingApplication
   }
 
-  @Put('application/:id')
+  @Put('applications/:id')
   @ApiParam({
     name: 'id',
     type: String,
@@ -304,7 +304,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('application/:id/externalData')
+  @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
     type: String,
@@ -355,7 +355,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('application/:id/submit')
+  @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
     type: String,
@@ -486,7 +486,7 @@ export class ApplicationController {
     return [true, updatedApplication]
   }
 
-  @Put('application/:id/attachments')
+  @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,
@@ -521,7 +521,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Delete('application/:id/attachments')
+  @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,
@@ -548,7 +548,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put('application/:id/createPdf')
+  @Put('applications/:id/createPdf')
   @ApiParam({
     name: 'id',
     type: String,
@@ -567,7 +567,7 @@ export class ApplicationController {
     return { url }
   }
 
-  @Put('application/:id/requestFileSignature')
+  @Put('applications/:id/requestFileSignature')
   @ApiParam({
     name: 'id',
     type: String,
@@ -590,7 +590,7 @@ export class ApplicationController {
     return { controlCode, documentToken }
   }
 
-  @Put('application/:id/uploadSignedFile')
+  @Put('applications/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
     type: String,
@@ -615,7 +615,7 @@ export class ApplicationController {
     }
   }
 
-  @Get('application/:id/:pdfType/presignedUrl')
+  @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
     name: 'id',
     type: String,
