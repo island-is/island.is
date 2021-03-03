@@ -9,25 +9,20 @@ export enum OnBehalf {
   ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
 }
 
+const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
+
 export const DataProtectionComplaintSchema = z.object({
-  delimitation: z.object({
-    inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
-      message: error.inCourtProceedings.defaultMessage,
-    }),
-    concernsMediaCoverage: z.enum([YES, NO]).refine((p) => p === NO, {
-      message: error.concernsMediaCoverage.defaultMessage,
-    }),
-    concernsBanMarking: z.enum([YES, NO]).refine((p) => p === NO, {
-      message: error.concernsBanMarking.defaultMessage,
-    }),
-    concernsLibel: z.enum([YES, NO]).refine((p) => p === NO, {
-      message: error.concernsLibel.defaultMessage,
-    }),
-    concernsPersonalLettersOrSocialMedia: z
-      .enum([YES, NO])
-      .refine((p) => p === NO, {
-        message: error.concernsPersonalLettersOrSocialMedia.defaultMessage,
-      }),
+  inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
+    message: error.inCourtProceedings.defaultMessage,
+  }),
+  concernsMediaCoverage: z.enum([YES, NO]).refine((p) => p === NO, {
+    message: error.concernsMediaCoverage.defaultMessage,
+  }),
+  concernsBanMarking: z.enum([YES, NO]).refine((p) => p === NO, {
+    message: error.concernsBanMarking.defaultMessage,
+  }),
+  concernsLibel: z.enum([YES, NO]).refine((p) => p === NO, {
+    message: error.concernsLibel.defaultMessage,
   }),
   info: z.object({
     onBehalf: z
@@ -46,5 +41,14 @@ export const DataProtectionComplaintSchema = z.object({
           message: error.onBehalfOfACompany.defaultMessage,
         },
       ),
+  }),
+  applicant: z.object({
+    name: z.string().nonempty(),
+    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+    address: z.string().nonempty(),
+    zipCode: z.string().nonempty(),
+    city: z.string().nonempty(),
+    email: z.string().email().optional(),
+    phoneNumber: z.string().optional(),
   }),
 })

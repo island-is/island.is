@@ -16,6 +16,26 @@ export const section = defineMessages({
     defaultMessage: 'Afmörkun kvörtunar',
     description: 'Delimitation of the complaint',
   },
+  authorities: {
+    id: 'dpac.application:section.authorities',
+    defaultMessage: 'Stjórnvöld',
+    description: 'Is the complaint being handles by the authorities',
+  },
+  media: {
+    id: 'dpac.application:section.media',
+    defaultMessage: 'Fjölmiðlar',
+    description: 'Complaint regards media coverage',
+  },
+  banMarking: {
+    id: 'dpac.application:section.banMarking',
+    defaultMessage: 'Bannmerking',
+    description: 'Complaint regards ban marking in the phone book',
+  },
+  libel: {
+    id: 'dpac.application:section.libel',
+    defaultMessage: 'Meiðyrði',
+    description: 'Complaint regards libel',
+  },
   info: {
     id: 'dpac.application:section.info',
     defaultMessage: 'Upplýsingar',
@@ -25,6 +45,11 @@ export const section = defineMessages({
     id: 'dpac.application:section.onBehalf',
     defaultMessage: 'Fyrir hvern',
     description: 'Details about on behalf of whom the complaint is registered',
+  },
+  applicant: {
+    id: 'dpac.application:section.applicant',
+    defaultMessage: 'Upplýsingar um þig',
+    description: 'Details about the applicant',
   },
   complaint: {
     id: 'dpac.application:section.complaint',

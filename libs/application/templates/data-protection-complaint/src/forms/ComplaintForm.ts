@@ -28,90 +28,116 @@ export const ComplaintForm: Form = buildForm({
       id: 'delimitation',
       title: section.delimitation.defaultMessage,
       children: [
-        buildMultiField({
-          id: 'delimitationFields',
-          title: delimitation.general.pageTitle,
-          description: delimitation.general.description,
+        buildSubSection({
+          id: 'authoritiesSection',
+          title: section.authorities.defaultMessage,
           children: [
-            buildRadioField({
-              id: 'delimitation.inCourtProceedings',
+            buildMultiField({
+              id: 'inCourtProceedingsFields',
               title: delimitation.labels.inCourtProceedings,
-              options: [noOption, yesOption],
-              largeButtons: true,
-              width: 'half',
+              description: delimitation.general.pageTitle,
+              children: [
+                buildRadioField({
+                  id: 'inCourtProceedings',
+                  title: '',
+                  options: [noOption, yesOption],
+                  largeButtons: true,
+                  width: 'half',
+                }),
+                buildCustomField({
+                  component: 'FieldAlertMessage',
+                  id: 'inCourtProceedingsAlert',
+                  title: errorCards.inCourtProceedingsTitle,
+                  description: errorCards.inCourtProceedingsDescription,
+                  condition: (formValue) =>
+                    formValue.inCourtProceedings === YES,
+                }),
+              ],
             }),
-            buildCustomField({
-              component: 'FieldAlertMessage',
-              id: 'delimitation.inCourtProceedingsAlert',
-              title: errorCards.inCourtProceedingsTitle,
-              description: errorCards.inCourtProceedingsDescription,
-              condition: (formValue) =>
-                (formValue.delimitation as FormValue)?.inCourtProceedings ===
-                YES,
-            }),
-            buildRadioField({
-              id: 'delimitation.concernsMediaCoverage',
+          ],
+        }),
+        buildSubSection({
+          id: 'mediaSection',
+          title: section.media.defaultMessage,
+          children: [
+            buildMultiField({
+              id: 'concernsMediaCoverageFields',
               title: delimitation.labels.concernsMediaCoverage,
-              options: [noOption, yesOption],
-              largeButtons: true,
-              width: 'half',
+              description: delimitation.general.pageTitle,
+              children: [
+                buildRadioField({
+                  id: 'concernsMediaCoverage',
+                  title: '',
+                  options: [noOption, yesOption],
+                  largeButtons: true,
+                  width: 'half',
+                }),
+                buildCustomField({
+                  component: 'FieldAlertMessage',
+                  id: 'concernsMediaCoverageAlert',
+                  title: errorCards.concernsMediaCoverageTitle,
+                  description: errorCards.concernsMediaCoverageDescription,
+                  condition: (formValue) =>
+                    formValue.concernsMediaCoverage === YES,
+                }),
+              ],
             }),
-            buildCustomField({
-              component: 'FieldAlertMessage',
-              id: 'delimitation.concernsMediaCoverageAlert',
-              title: errorCards.concernsMediaCoverageTitle,
-              description: errorCards.concernsMediaCoverageDescription,
-              condition: (formValue) =>
-                (formValue.delimitation as FormValue)?.concernsMediaCoverage ===
-                YES,
-            }),
-            buildRadioField({
-              id: 'delimitation.concernsBanMarking',
+          ],
+        }),
+        buildSubSection({
+          id: 'banMarkingSection',
+          title: section.banMarking.defaultMessage,
+          children: [
+            buildMultiField({
+              id: 'concernsBanMarkingFields',
               title: delimitation.labels.concernsBanMarking,
-              options: [noOption, yesOption],
-              largeButtons: true,
-              width: 'half',
+              description: delimitation.general.pageTitle,
+              children: [
+                buildRadioField({
+                  id: 'concernsBanMarking',
+                  title: '',
+                  options: [noOption, yesOption],
+                  largeButtons: true,
+                  width: 'half',
+                }),
+                buildCustomField({
+                  component: 'FieldAlertMessage',
+                  id: 'concernsBanMarkingAlert',
+                  title: errorCards.concernsBanMarkingTitle,
+                  description: errorCards.concernsBanMarkingDescription,
+                  condition: (formValue) =>
+                    formValue.concernsBanMarking === YES,
+                }),
+              ],
             }),
-            buildCustomField({
-              component: 'FieldAlertMessage',
-              id: 'delimitation.concernsBanMarkingAlert',
-              title: errorCards.concernsBanMarkingTitle,
-              description: errorCards.concernsBanMarkingDescription,
-              condition: (formValue) =>
-                (formValue.delimitation as FormValue)?.concernsBanMarking ===
-                YES,
-            }),
-            buildRadioField({
-              id: 'delimitation.concernsLibel',
+          ],
+        }),
+        buildSubSection({
+          id: 'libelSection',
+          title: section.libel.defaultMessage,
+          children: [
+            buildMultiField({
+              id: 'concernsLibelFields',
               title: delimitation.labels.concernsLibel,
-              options: [noOption, yesOption],
-              largeButtons: true,
-              width: 'half',
-            }),
-            buildCustomField({
-              component: 'FieldAlertMessage',
-              id: 'delimitation.concernsLibelAlert',
-              title: errorCards.concernsLibelTitle,
-              description: errorCards.concernsLibelDescription,
-              condition: (formValue) =>
-                (formValue.delimitation as FormValue)?.concernsLibel === YES,
-            }),
-            buildRadioField({
-              id: 'delimitation.concernsPersonalLettersOrSocialMedia',
-              title: delimitation.labels.concernsPersonalLettersOrSocialMedia,
-              options: [noOption, yesOption],
-              largeButtons: true,
-              width: 'half',
-            }),
-            buildCustomField({
-              component: 'FieldAlertMessage',
-              id: 'delimitation.concernsPersonalLettersOrSocialMediaAlert',
-              title: errorCards.concernsPersonalLettersOrSocialMediaTitle,
-              description:
-                errorCards.concernsPersonalLettersOrSocialMediaDescription,
-              condition: (formValue) =>
-                (formValue.delimitation as FormValue)
-                  ?.concernsPersonalLettersOrSocialMedia === YES,
+              description: delimitation.general.pageTitle,
+              children: [
+                buildRadioField({
+                  id: 'concernsLibel',
+                  title: '',
+                  options: [noOption, yesOption],
+                  largeButtons: true,
+                  width: 'half',
+                }),
+                buildCustomField({
+                  component: 'FieldAlertMessage',
+                  id: 'concernsLibelAlert',
+                  title: errorCards.concernsLibelTitle,
+                  description: errorCards.concernsLibelDescription,
+                  condition: (formValue) =>
+                    (formValue.delimitation as FormValue)?.concernsLibel ===
+                    YES,
+                }),
+              ],
             }),
           ],
         }),
@@ -122,7 +148,7 @@ export const ComplaintForm: Form = buildForm({
       title: section.info.defaultMessage,
       children: [
         buildSubSection({
-          id: 'type',
+          id: 'onBehalf',
           title: section.onBehalf.defaultMessage,
           children: [
             buildMultiField({
@@ -153,13 +179,65 @@ export const ComplaintForm: Form = buildForm({
                   id: 'info.onBehalfOfACompanyAlertMessage',
                   title: errorCards.onBehalfOfACompanyTitle,
                   description: errorCards.onBehalfOfACompanyDescription,
-                  condition: (formValue) => {
-                    console.log(formValue)
-                    return (
-                      (formValue.info as FormValue)?.onBehalf ===
-                      OnBehalf.COMPANY
-                    )
-                  },
+                  condition: (formValue) =>
+                    (formValue.info as FormValue)?.onBehalf ===
+                    OnBehalf.COMPANY,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'applicant',
+          title: section.applicant.defaultMessage,
+          children: [
+            buildMultiField({
+              id: 'applicantSection',
+              title: info.general.applicantPageTitle,
+              description: info.general.applicantPageDescription,
+              children: [
+                buildTextField({
+                  id: 'applicant.name',
+                  title: info.labels.name,
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'applicant.nationalId',
+                  title: info.labels.nationalId,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'applicant.address',
+                  title: info.labels.address,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'applicant.postalCode',
+                  title: info.labels.postalCode,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'applicant.city',
+                  title: info.labels.city,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'applicant.email',
+                  title: info.labels.email,
+                  width: 'half',
+                  variant: 'email',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'applicant.phoneNumber',
+                  title: info.labels.tel,
+                  width: 'half',
+                  variant: 'tel',
+                  backgroundColor: 'blue',
                 }),
               ],
             }),
