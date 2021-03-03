@@ -8,25 +8,17 @@ interface Props {
 
 export const StatisticBox: FC<Props> = ({ name, value }) => {
   return (
-    <Box
-      marginRight={1}
-      paddingY={2}
-      paddingX={2}
-      border="standard"
-      borderRadius="large"
-    >
-      <Box marginBottom={2}>
+    <Box padding={2} border="standard" borderRadius="large">
+      <Box>
+        <Box>
+          <Text variant={'eyebrow'}>{name}</Text>
+        </Box>
         <Inline alignY="bottom" space={1}>
-          <Text variant="h2" as="h2" color="blue400">
+          <Text variant="h2" as="h2">
             {value}
           </Text>
-          <Text fontWeight="semiBold" color="dark300" lineHeight="lg">
-            Þús
-          </Text>
+          <Text variant={'eyebrow'}>Þús</Text>
         </Inline>
-      </Box>
-      <Box>
-        <Text fontWeight="semiBold">{name}</Text>
       </Box>
     </Box>
   )
