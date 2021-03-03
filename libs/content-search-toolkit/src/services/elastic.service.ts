@@ -200,32 +200,35 @@ export class ElasticService {
     query: DocumentByMetaDataInput,
   ) {
     const results = await this.getDocumentsByMetaData(index, query)
-    await this.updateDocumentPopularityScore(
-      index,
-      results.hits?.hits[0]._id,
-      results.hits?.hits[0]._source.popularityScore,
-    )
+    this.updateDocumentPopularityScore(index, results.hits?.hits[0]._id)
+
     return results
   }
 
-  async updateDocumentPopularityScore(index, id, oldPopularityScore) {
-    const a = environment.popularityFactor
-    // we use this equation to update the popularity score
-    // https://stackoverflow.com/questions/11128086/simple-popularity-algorithm
-    const popularityScore =
-      (a * Number(new Date())) / 1000 + (1 - a) * oldPopularityScore
-
-    console.log(popularityScore)
+  // we use this equation to update the popularity score
+  // https://stackoverflow.com/questions/11128086/simple-popularity-algorithm
+  async updateDocumentPopularityScore(index, id) {
     const client = await this.getClient()
-    return client.update({
-      index,
-      id,
-      body: {
-        doc: {
-          popularityScore,
+    client
+      .update({
+        index,
+        id,
+        body: {
+          script: {
+            lang: 'painless',
+            source: `ctx._source.popularityScore = params.a * params.t +
+              (1 - params.a) * ctx._source.popularityScore
+            `,
+            params: {
+              a: environment.popularityFactor,
+              t: Number(new Date()) / 1000,
+            },
+          },
         },
-      },
-    })
+      })
+      .catch((error) => {
+        logger.error('Could not update popularityScore', error)
+      })
   }
 
   async getTagAggregation(index: string, query: TagAggregationInput) {
