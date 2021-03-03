@@ -38,6 +38,12 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   // TODO: Can we get the states from the enum in ParentalLeaveTemplate.ts?
   const editable =
     application.state === 'draft' || application.state === 'editOrAddPeriods'
+
+  const periodsToShow =
+    application.state === 'editOrAddPeriods'
+      ? (application.answers.tempPeriods as Period[])
+      : (application.answers.periods as Period[])
+
   return (
     <Box>
       <FieldDescription
@@ -55,7 +61,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
           periods={formatPeriods(
-            application.answers.periods as Period[],
+            periodsToShow,
             editable ? otherParentPeriods : [],
           )}
           onDeletePeriod={removeRepeaterItem}

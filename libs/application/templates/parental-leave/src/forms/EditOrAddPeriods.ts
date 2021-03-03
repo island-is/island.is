@@ -1,10 +1,14 @@
 import {
+  buildCustomField,
   buildDateField,
+  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildRepeater,
   buildSection,
   buildSelectField,
+  buildSubmitField,
+  coreMessages,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -23,7 +27,7 @@ export const EditOrAddPeriods: Form = buildForm({
       children: [
         // Copied from ParentalLeaveForm.ts line 606
         buildRepeater({
-          id: 'periods',
+          id: 'tempPeriods',
           title: parentalLeaveFormMessages.leavePlan.title,
           component: 'PeriodsRepeater',
           children: [
@@ -78,7 +82,57 @@ export const EditOrAddPeriods: Form = buildForm({
             }),
           ],
         }),
+        buildSubmitField({
+          id: 'submit',
+          title: coreMessages.buttonSubmit,
+          placement: 'footer',
+          actions: [
+            { name: 'Cancel', type: 'reject', event: 'CANCEL' },
+            { name: 'Approve', type: 'primary', event: 'SUBMIT' },
+          ],
+        }),
+        buildDescriptionField({
+          id: 'final',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
+        }),
+        // buildSubmitField({
+        //   id: 'submit',
+        //   title: coreMessages.buttonSubmit,
+        //   placement: 'footer',
+        //   actions: [{ name: 'Approve', type: 'primary', event: 'SUBMIT' }],
+        // }),
+        // buildCustomField({
+        //   id: 'thankYou',
+        //   title: parentalLeaveFormMessages.finalScreen.title,
+        //   component: 'Conclusion',
+        // }),
       ],
     }),
+    // buildSection({
+    //   id: 'confirmation',
+    //   title: parentalLeaveFormMessages.confirmation.section,
+    //   children: [
+    //     buildMultiField({
+    //       id: 'confirmation',
+    //       title: parentalLeaveFormMessages.confirmation.title,
+    //       description: parentalLeaveFormMessages.confirmation.description,
+    //       children: [
+    //         buildSubmitField({
+    //           id: 'submit',
+    //           placement: 'footer',
+    //           title: parentalLeaveFormMessages.confirmation.title,
+    //           actions: [
+    //             {
+    //               event: 'SUBMIT',
+    //               name: parentalLeaveFormMessages.confirmation.title,
+    //               type: 'primary',
+    //             },
+    //           ],
+    //         }),
+    //       ],
+    //     }),
+    //   ],
+    // }),
   ],
 })

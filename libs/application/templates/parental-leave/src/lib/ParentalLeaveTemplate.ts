@@ -101,8 +101,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
 
       [States.EDIT_OR_ADD_PERIODS]: {
-        // TODO:
-        // exit: merge the edit state answers here? ...
+        entry: 'copyPeriodsToTemp',
+        exit: 'mergePeriodAnswers',
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           progress: 1,
@@ -121,6 +121,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
+              read: 'all',
             },
           ],
         },
@@ -360,9 +361,62 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      copyPeriodsToTemp: assign((context, event) => {
+        // Only continue if going to edit (skip init event)
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const currentApplicationAnswers = context.application
+          .answers as SchemaFormValues
+
+        if (currentApplicationAnswers['periods'] !== undefined) {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              answers: {
+                currentApplicationAnswers,
+                tempPeriods: context.application.answers['periods'],
+              },
+            },
+          }
+        }
+        return context
+      }),
+      mergePeriodAnswers: assign((context, event) => {
+        // Only continue if going submiting (skip init event)
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        // const currentApplicationAnswers = context.application.answers
+
+        const currentApplicationAnswers = context.application
+          .answers as SchemaFormValues
+
+        if (context.application.answers['periods']) {
+          const newPeriods = currentApplicationAnswers['tempPeriods']
+          delete currentApplicationAnswers['tempPeriods']
+
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              answers: {
+                ...context.application.answers,
+                periods: newPeriods,
+              },
+            },
+          }
+        }
+        return context
+      }),
+
       assignToOtherParent: assign((context) => {
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
+
         if (
           currentApplicationAnswers.requestRights.isRequestingRights === YES &&
           currentApplicationAnswers.otherParentId !== undefined &&
