@@ -21,7 +21,7 @@ export class HealthInsuranceModule {
           useValue: config,
         },
       ],
-      exports: [HealthInsuranceAPI],
+      exports: [HealthInsuranceAPI, SoapClient],
     }
   }
 }
