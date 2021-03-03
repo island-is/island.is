@@ -5,8 +5,6 @@ import {
   GridRow,
   GridColumn,
   FormStepper,
-  AlertBanner,
-  LinkContext,
 } from '@island.is/island-ui/core'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -14,11 +12,11 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { Link } from 'react-router-dom'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
+import { AlertBanner } from '../AlertBanner/AlertBanner'
 import * as styles from './PageLayout.treat'
 
 interface PageProps {
@@ -193,40 +191,28 @@ const PageLayout: React.FC<PageProps> = ({
     <Box className={styles.loadingWrapper}>
       <Loading />
     </Box>
-  ) : (
-    <LinkContext.Provider
-      value={{
-        linkRenderer: (href, children) => (
-          <Link to={href} color="blue400" className={styles.link}>
-            {children}
-          </Link>
-        ),
+  ) : notFound ? (
+    <AlertBanner
+      title={
+        user?.role === UserRole.ADMIN
+          ? 'Notandi fannst ekki'
+          : 'Mál fannst ekki'
+      }
+      description={
+        user?.role === UserRole.ADMIN
+          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
+          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+      }
+      variant="error"
+      link={{
+        href:
+          user?.role === UserRole.ADMIN
+            ? Constants.USER_LIST_ROUTE
+            : Constants.REQUEST_LIST_ROUTE,
+        title: 'Fara á yfirlitssíðu',
       }}
-    >
-      {notFound && (
-        <AlertBanner
-          title={
-            user?.role === UserRole.ADMIN
-              ? 'Notandi fannst ekki'
-              : 'Mál fannst ekki'
-          }
-          description={
-            user?.role === UserRole.ADMIN
-              ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
-              : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
-          }
-          variant="error"
-          link={{
-            href:
-              user?.role === UserRole.ADMIN
-                ? Constants.USER_LIST_ROUTE
-                : Constants.REQUEST_LIST_ROUTE,
-            title: 'Fara á yfirlitssíðu',
-          }}
-        />
-      )}
-    </LinkContext.Provider>
-  )
+    />
+  ) : null
 }
 
 export default PageLayout

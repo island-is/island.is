@@ -39,6 +39,9 @@ export const FormStepper: FC<{
 }) => {
   const hasHead = formIcon || formName
 
+  const sectionsWithNames = sections.filter((section) => section?.name !== '')
+  const hasSectionsToShow = sectionsWithNames.length > 0
+
   return (
     <Box paddingTop={[0, 0, 1]} paddingBottom={[1, 1, 0]} width="full">
       {tag && <Box className={styles.tag}>{tag}</Box>}
@@ -55,14 +58,13 @@ export const FormStepper: FC<{
         </Box>
       )}
 
-      <Box
-        className={cn(styles.list, {
-          [styles.listWithHead]: hasHead,
-        })}
-      >
-        {sections
-          .filter((section) => section?.name !== '')
-          .map((section, index) => {
+      {hasSectionsToShow && (
+        <Box
+          className={cn(styles.list, {
+            [styles.listWithHead]: hasHead,
+          })}
+        >
+          {sectionsWithNames.map((section, index) => {
             return (
               <FormStepperSection
                 theme={theme}
@@ -78,7 +80,8 @@ export const FormStepper: FC<{
               />
             )
           })}
-      </Box>
+        </Box>
+      )}
     </Box>
   )
 }
