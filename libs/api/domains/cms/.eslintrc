@@ -1,5 +1,7 @@
 {
   "extends": "../../../../.eslintrc",
-  "rules": {},
+  "rules": {
+    "@typescript-eslint/no-inferrable-types": 0
+  },
   "ignorePatterns": ["!**/*", "contentfulTypes.d.ts"]
 }
