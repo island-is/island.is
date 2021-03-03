@@ -39,17 +39,21 @@ export class AuthService {
 
   // check role
   checkRole(user: AuthUser, role: Role): boolean {
-    const ulist = JSON.parse(userList)
-    const picked = ulist.find((o) => o.nationalId === user.nationalId)
-    if (!picked) {
+    try {
+      const ulist = JSON.parse(userList)
+      const picked = ulist.find((o) => o.nationalId === user.nationalId)
+      if (!picked) {
+        return false
+      } else {
+        const r = picked.role as Role
+        return (
+          r === 'developer' || r === 'recyclingCompany' || r === 'recyclingFund'
+        )
+      }
       return false
-    } else {
-      const r = picked.role as Role
-      return (
-        r === 'developer' || r === 'recyclingCompany' || r === 'recyclingFund'
-      )
+    } catch (err) {
+      console.log('exeption in auth.service checkRole:' + err.message)
     }
-    return false
   }
 
   // test
