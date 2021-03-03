@@ -6,12 +6,12 @@ to the web project.
 ## Layouts and Layout Components
 
 A `SubpageLayout` (`@island.is/web/screens/Layouts/Layouts`) has been created in
-the web app. This layout has a required `main` prop and an optional `details` 
-prop. It is mainly used to split the content up if needed. The props are 
-ReactNodes so the main and details portions of the layout are entirely 
+the web app. This layout has a required `main` prop and an optional `details`
+prop. It is mainly used to split the content up if needed. The props are
+ReactNodes so the main and details portions of the layout are entirely
 customizable.
 
-Generally the main content portion is supposed to contain some introduction to 
+Generally the main content portion is supposed to contain some introduction to
 the content displayed in the details portion.
 
 For landing pages, this layout should be used with an empty details prop.
@@ -19,11 +19,11 @@ For landing pages, this layout should be used with an empty details prop.
 Example layouts can be found [here](subpages.md#examples).
 
 Main content should generally contain a navigation sidebar. This should be
-implemented using the `SidebarLayout` (`@island.is/web/screens/Layouts/SidebarLayout`) 
+implemented using the `SidebarLayout` (`@island.is/web/screens/Layouts/SidebarLayout`)
 in the web app.
 
-Both the `SubpageLayout` and the `SidebarLayout` also have top/bottom padding 
-props so developers can customize that during development. `SidebarLayout` 
+Both the `SubpageLayout` and the `SidebarLayout` also have top/bottom padding
+props so developers can customize that during development. `SidebarLayout`
 padding does have default values, and so can be left as is.
 
 ### Layout Components
@@ -61,11 +61,11 @@ to the SidebarLayout.
 
 ### Filter
 
-A list filter can be implemented by combining the general filter components in 
-he `island-ui/core` library. The components are `Filter`, `FilterInput` and 
+A list filter can be implemented by combining the general filter components in
+he `island-ui/core` library. The components are `Filter`, `FilterInput` and
 `FilterMultiChoice`.
 
-To see an example of a combined list filter refer to 
+To see an example of a combined list filter refer to
 `@island.is/web/components/ApiCatalogueFilter`.
 
 ## Contentful
@@ -117,17 +117,17 @@ follow these steps:
 
 ![Subpage With Main and Details Content][main_details_layout]
 
-This layout is composed of the `SubpageLayout`. The main prop (white portion) 
-contains a `SidebarLayout` which in turn contains a `SubpageMainContent`. The 
-details prop (light blue portion) contains a `SubpageDetailsContent` that 
+This layout is composed of the `SubpageLayout`. The main prop (white portion)
+contains a `SidebarLayout` which in turn contains a `SubpageMainContent`. The
+details prop (light blue portion) contains a `SubpageDetailsContent` that
 contains a `SidebarLayout`.
 
 ### Landing Subpage
 
 ![Landing Subpage][landing_layout]
 
-This layout is also composed of the `SubpageLayout`. In this layout only the main 
-prop (white portion) contains a `SidebarLayout` containing a `SubpageMainContent` 
+This layout is also composed of the `SubpageLayout`. In this layout only the main
+prop (white portion) contains a `SidebarLayout` containing a `SubpageMainContent`
 component. The light blue portion is the page footer.
 
 [main_details_layout]: ./assets/subpages_main_details_layout.png

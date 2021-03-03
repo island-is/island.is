@@ -39,9 +39,7 @@ You must have env variables for the `cms` and `content-search` domains for the w
 ## Further Documentation
 
 [Subpages](./docs/subpages.md) - Information on Layouts and Components used when
-creating subpages for the web. 
-
-
+creating subpages for the web.
 
 ## Code owners and maintainers
 
