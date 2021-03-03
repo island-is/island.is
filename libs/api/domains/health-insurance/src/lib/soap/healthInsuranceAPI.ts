@@ -15,7 +15,7 @@ import {
   Fylgiskjal,
   Fylgiskjol,
 } from './dto'
-import { SoapClient } from './soapClient'
+import { SoapClient } from '@island.is/health-insurance'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
 import { BucketService } from '../bucket.service'
@@ -27,6 +27,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -131,7 +133,7 @@ export class HealthInsuranceAPI {
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
-          kennitala: '0101671089', //nationalId,
+          kennitala: nationalId,
           erlendkennitala: inputObj.foreignNationalId,
           nafn: inputObj.name,
           heimili: inputObj.address ?? '',
@@ -255,6 +257,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {

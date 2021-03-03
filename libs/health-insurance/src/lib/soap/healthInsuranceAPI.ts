@@ -23,6 +23,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -176,6 +178,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {

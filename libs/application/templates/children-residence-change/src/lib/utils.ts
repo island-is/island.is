@@ -1,4 +1,4 @@
-import { Application, FormValue } from '@island.is/application/core'
+import { Application } from '@island.is/application/core'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import {
   PersonResidenceChange,
