@@ -27,6 +27,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -161,7 +163,7 @@ export class HealthInsuranceAPI {
         bornmedumsaekjanda: inputObj.isChildrenFollowed,
         fyrrautgafuland: inputObj.previousCountry,
         fyrrautgafulandkodi: inputObj.previousCountryCode,
-        fyrriutgafustofnunlands: inputObj.previousIssuingInstitution,
+        fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
@@ -217,14 +219,8 @@ export class HealthInsuranceAPI {
     */
     logger.info(`Calling vistaskjal through xroad`)
     const res: GetVistaSkjalDtoType = await this.xroadCall('vistaskjal', args)
-
     const vistaSkjal = new VistaSkjalModel()
     if (!res.VistaSkjalType?.tokst) {
-      logger.info(
-        `Failed to upload document to sjukra because: ${
-          res.VistaSkjalType.villulysing ?? 'unknown error'
-        }`,
-      )
       vistaSkjal.isSucceeded = false
       vistaSkjal.comment = res.VistaSkjalType?.villulysing ?? 'Unknown error'
 
@@ -236,6 +232,11 @@ export class HealthInsuranceAPI {
           vistaSkjal.comment = res.VistaSkjalType.villulisti[0].villulysinginnri
         }
       }
+      logger.info(
+        `Failed to upload document to sjukra because: ${
+          vistaSkjal.comment ?? 'unknown error'
+        }`,
+      )
 
       return vistaSkjal
     }
@@ -256,6 +257,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {

@@ -51,6 +51,17 @@
     border-radius: $border-radius;
   }
 
+  section {
+    background: #eae8e8;
+    border: dotted 1px black;
+    padding: 10px 0 30px 0;
+    margin-bottom: 20px;
+    h3 {
+      margin-left: 18px;
+      font-size: 1rem;
+    }
+  }
+
   &__container__field,
   &__container__checkbox__field,
   &__container__radio__field {

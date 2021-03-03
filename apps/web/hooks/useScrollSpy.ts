@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import throttle from 'lodash/throttle'
 import debounce from 'lodash/debounce'
 import { useEvent } from 'react-use'
+import { polyfill } from 'smoothscroll-polyfill'
 
 const guessVisibleSection = (
   ids: string[],
@@ -24,9 +25,27 @@ const guessVisibleSection = (
   }, ids[0])
 }
 
+export const scrollTo = (
+  id: string,
+  {
+    marginTop = 0,
+    smooth = false,
+  }: { marginTop?: number; smooth?: boolean } = {},
+) => {
+  polyfill()
+  const rect = document.getElementById(id).getBoundingClientRect()
+  window.scrollTo({
+    top: Math.floor(rect.top) + window.scrollY - marginTop,
+    behavior: smooth ? 'smooth' : 'auto',
+  })
+}
+
 const useScrollSpy = (
   ids: string[],
-  { marginTop = 100 }: { marginTop?: number } = {},
+  {
+    marginTop = 80,
+    smooth = false,
+  }: { marginTop?: number; smooth?: boolean } = {},
 ): [string | undefined, (id: string) => void] => {
   const [current, setCurrent] = useState(ids[0])
 
@@ -45,8 +64,7 @@ const useScrollSpy = (
     (id: string) => {
       setCurrent(id)
       setIgnore(true)
-      const rect = document.getElementById(id).getBoundingClientRect()
-      window.scrollTo(0, Math.floor(rect.top) + window.scrollY - marginTop)
+      scrollTo(id, { marginTop: marginTop, smooth: smooth })
     },
     [setCurrent, setIgnore],
   )
