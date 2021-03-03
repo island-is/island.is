@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
+import { useMutation, useLazyQuery } from '@apollo/client'
 import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
-import { CREATE_PDF_PRESIGNED_URL } from '@island.is/application/graphql'
+import {
+  CREATE_PDF_PRESIGNED_URL,
+  GET_PRESIGNED_URL,
+} from '@island.is/application/graphql'
 import {
   extractParentFromApplication,
   extractChildrenFromApplication,
@@ -13,6 +16,7 @@ import {
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { DescriptionText } from '../components'
+import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
 
 const Overview = ({ application }: FieldBaseProps) => {
   const applicant = extractApplicantFromApplication(application)
@@ -24,26 +28,39 @@ const Overview = ({ application }: FieldBaseProps) => {
 
   const [
     createPdfPresignedUrl,
-    { loading: loadingUrl, data: response },
+    { loading: createLoadingUrl, data: createResponse },
   ] = useMutation(CREATE_PDF_PRESIGNED_URL, {
     onError: (e) => console.log('error', e),
   })
 
+  const [
+    getPresignedUrl,
+    { data: getResponse, loading: getLoadingUrl },
+  ] = useLazyQuery(GET_PRESIGNED_URL)
+
   useEffect(() => {
-    createPdfPresignedUrl({
+    const input = {
       variables: {
         input: {
           id: application.id,
           type: PdfTypes.CHILDREN_RESIDENCE_CHANGE,
         },
       },
-    })
-  }, [application.id, createPdfPresignedUrl])
+    }
+
+    application.state === ApplicationStates.DRAFT
+      ? createPdfPresignedUrl(input)
+      : getPresignedUrl(input)
+  }, [
+    application.id,
+    createPdfPresignedUrl,
+    getPresignedUrl,
+    application.state,
+  ])
 
   const pdfUrl =
-    response?.createPdfPresignedUrl?.attachments?.[
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE
-    ]
+    createResponse?.createPdfPresignedUrl?.url ||
+    getResponse?.getPresignedUrl?.url
 
   return (
     <>
@@ -137,8 +154,8 @@ const Overview = ({ application }: FieldBaseProps) => {
           size="default"
           type="button"
           variant="ghost"
-          loading={loadingUrl}
-          disabled={loadingUrl || !pdfUrl}
+          loading={createLoadingUrl || getLoadingUrl}
+          disabled={!pdfUrl}
         >
           {formatMessage(m.contract.pdfButton.label)}
         </Button>
