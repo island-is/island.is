@@ -25,10 +25,7 @@ const FileSchema = z
 
 const contactSchema = z.object({
   name: z.string().nonempty(),
-  email: z
-    .string()
-    .email()
-    .nonempty(),
+  email: z.string().email().nonempty(),
   phoneNumber: z.string().optional(),
 })
 
