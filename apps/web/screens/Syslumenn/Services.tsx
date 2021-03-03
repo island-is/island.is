@@ -95,11 +95,11 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const sortOptions = [
     {
-      label: 'Vinsælast',
+      label: n('sortByPopular', 'Vinsælast'),
       value: 'popular',
     },
     {
-      label: 'Stafrófsröð',
+      label: n('sortByTitle', 'Stafrófsröð'),
       value: 'title',
     },
   ]
@@ -214,7 +214,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               isSearchable
               label="Röðun"
               name="sort"
-              value={sortOptions.filter((x) => x.value === sort)[0]}
+              value={sortOptions.find((x) => x.value === sort)}
               options={sortOptions}
               onChange={({ value }: Option) => {
                 Router.replace(`?sort=${value}`)
