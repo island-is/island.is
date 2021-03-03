@@ -16,31 +16,35 @@ the content displayed in the details portion.
 
 For landing pages, this layout should be used with an empty details prop.
 
-_-Pictures of sample layouts here?-_
+Example layouts can be found [here](subpages.md#examples).
 
 Main content should generally contain a navigation sidebar. This should be
 implemented using the `SidebarLayout` (`@island.is/web/screens/Layouts/SidebarLayout`) 
 in the web app.
 
+Both the `SubpageLayout` and the `SidebarLayout` also have top/bottom padding 
+props so developers can customize that during development. `SidebarLayout` 
+padding does have default values, and so can be left as is.
+
 ### Layout Components
 
 Two layout components have been created in the web app. `SubpageMainContent` and
-`SubpageDetailContent`. These components were based on figma designs so they
+`SubpageDetailsContent`. These components were based on figma designs so they
 should be universally used to maintain UX consistency between subpages.
 
 #### Main Subpage Content
 
-It is recommended to use the `SubpageMainContent` (`@island.is/web/components`)
+It is recommended to use the `SubpageMainContent` (`@island.is/web/components/SubpageMainContent`)
 layout component to wrap the main content. This component provides structure and
 responsiveness to the main content. It has a `main` prop and an optional
 `image` prop. The `image` prop gets hidden on smaller screens.
 
 #### Details Subpage Content
 
-It is recommended to use the `SubpageDetailContent` (`@island.is/web/components`)
+It is recommended to use the `SubpageDetailsContent` (`@island.is/web/components/SubpageDetailsContent`)
 layout component to wrap the detail content. This component has a `header` prop
 and a `content` prop. Both props are required and this component sets them up
-nicely so that the details header appears on top.
+nicely and assures responsiveness.
 
 ## Components
 
@@ -106,3 +110,25 @@ follow these steps:
     3. `yarn nx run web:schemas/codegen --skip-nx-cache` Generates types in the web project based on queries
 
 5. Sometimes the schemas don't update properly and your types will be missing. To fix this you should try running `yarn postinstall`.
+
+## Examples
+
+### Subpage With Main and Details Content
+
+![Subpage With Main and Details Content][main_details_layout]
+
+This layout is composed of the `SubpageLayout`. The main prop (white portion) 
+contains a `SidebarLayout` which in turn contains a `SubpageMainContent`. The 
+details prop (light blue portion) contains a `SubpageDetailsContent` that 
+contains a `SidebarLayout`.
+
+### Landing Subpage
+
+![Landing Subpage][landing_layout]
+
+This layout is also composed of the `SubpageLayout`. In this layout only the main 
+prop (white portion) contains a `SidebarLayout` containing a `SubpageMainContent` 
+component. The light blue portion is the page footer.
+
+[main_details_layout]: ./assets/subpages_main_details_layout.png
+[landing_layout]: ./assets/subpages_landing_layout.png
