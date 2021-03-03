@@ -522,7 +522,6 @@ export const m = defineMessages({
     id: 'hi.application:externalDataSubtitle',
     defaultMessage:
       'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum',
-    description:
-      'Personal data from the following sources will be processed',
+    description: 'Personal data from the following sources will be processed',
   },
 })
