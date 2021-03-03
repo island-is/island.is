@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   dateResolution,
   ElasticService,
+  sortableFields,
   sortDirection,
 } from '@island.is/content-search-toolkit'
 import { ArticleCategory } from './models/articleCategory.model'
@@ -46,16 +47,12 @@ export class CmsElasticsearchService {
     const query = {
       types: ['webArticle'],
       tags: [],
-      sort: {},
+      sort: { 'title.sort': 'asc' as sortDirection } as sortableFields,
       size: input.size,
     }
 
-    switch (input.sort) {
-      case 'popular':
-        query.sort = { popularityScore: 'desc' as sortDirection }
-        break
-      default:
-        query.sort = { 'title.sort': 'asc' as sortDirection }
+    if (input.sort === 'popular') {
+      query.sort = { popularityScore: 'desc' as sortDirection, ...query.sort }
     }
 
     if (input.category) {

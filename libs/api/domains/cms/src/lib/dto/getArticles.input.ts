@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @InputType()
@@ -26,7 +26,7 @@ export class GetArticlesInput {
   size?: number = 100
 
   @Field({ nullable: true })
-  @IsString()
+  @IsEnum(['title', 'popular'])
   @IsOptional()
   sort?: 'title' | 'popular' = 'title'
 }
