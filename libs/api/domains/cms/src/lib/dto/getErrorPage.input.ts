@@ -9,5 +9,5 @@ export class GetErrorPageInput {
 
   @Field()
   @IsString()
-  lang = 'is-IS'
+  lang: string = 'is-IS'
 }

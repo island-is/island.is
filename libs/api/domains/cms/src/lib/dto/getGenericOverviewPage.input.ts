@@ -9,5 +9,5 @@ export class GetGenericOverviewPageInput {
 
   @Field()
   @IsString()
-  lang = 'is-IS'
+  lang: string = 'is-IS'
 }

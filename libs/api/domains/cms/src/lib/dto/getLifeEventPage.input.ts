@@ -9,5 +9,5 @@ export class GetLifeEventPageInput {
 
   @Field()
   @IsString()
-  lang = 'is-IS'
+  lang: string = 'is-IS'
 }

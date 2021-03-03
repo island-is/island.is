@@ -9,5 +9,5 @@ export class GetAlertBannerInput {
 
   @Field()
   @IsString()
-  lang = 'is-IS'
+  lang: string = 'is-IS'
 }

@@ -13,5 +13,5 @@ export class GetOrganizationSubpageInput {
 
   @Field()
   @IsString()
-  lang = 'is-IS'
+  lang: string = 'is-IS'
 }

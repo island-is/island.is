@@ -43,7 +43,7 @@ const sanitizeData = (html: Document | TopLevelBlock) => ({
 @ObjectType()
 export class Html {
   @Field()
-  typename = 'Html'
+  typename: string = 'Html'
 
   @Field(() => ID)
   id!: string

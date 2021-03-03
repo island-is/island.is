@@ -10,5 +10,5 @@ export class GetAdgerdirPageInput {
 
   @Field()
   @IsString()
-  lang = 'is-IS'
+  lang: string = 'is-IS'
 }
