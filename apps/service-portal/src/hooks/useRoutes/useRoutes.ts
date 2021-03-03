@@ -8,7 +8,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import flatten from 'lodash/flatten'
 
 export const useRoutes = () => {
-  const [{ modules }, dispatch] = useStore()
+  const [{ modules, modulesPending }, dispatch] = useStore()
   const { userInfo, client } = useModuleProps()
 
   const arrangeRoutes = async (
@@ -33,7 +33,7 @@ export const useRoutes = () => {
   }
 
   useEffect(() => {
-    if (userInfo === null) return
+    if (userInfo === null || modulesPending) return
     arrangeRoutes(userInfo, dispatch, Object.values(modules), client)
   }, [userInfo, dispatch, modules, client])
 }

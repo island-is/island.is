@@ -80,13 +80,13 @@ const WidgetLoader: FC<{
 }
 
 export const Dashboard: FC<{}> = () => {
-  const [{ modules }] = useStore()
+  const [{ modules, modulesPending }] = useStore()
   const { userInfo, client } = useModuleProps()
 
   return (
     <Box>
       <Greeting />
-      {userInfo !== null && (
+      {userInfo !== null && !modulesPending && (
         <WidgetLoader
           modules={Object.values(modules)}
           userInfo={userInfo}

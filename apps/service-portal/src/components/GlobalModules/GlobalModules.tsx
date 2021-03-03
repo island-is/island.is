@@ -71,10 +71,10 @@ const ModuleLoader: FC<{
 }
 
 export const GlobalModules: FC = () => {
-  const [{ modules }] = useStore()
+  const [{ modules, modulesPending }] = useStore()
   const { userInfo, client } = useModuleProps()
 
-  return userInfo ? (
+  return userInfo && !modulesPending ? (
     <ModuleLoader
       modules={Object.values(modules)}
       userInfo={userInfo}

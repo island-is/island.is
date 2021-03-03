@@ -10,6 +10,7 @@ export interface StoreState {
   userInfo: User | null
   userInfoState: AsyncActionState | 'logging-out'
   modules: Record<ModuleKeys, ServicePortalModule>
+  modulesPending: boolean
   navigationState: AsyncActionState
   notificationMenuState: MenuState
   mobileMenuState: MenuState
@@ -26,6 +27,7 @@ export const initialState: StoreState = {
   userInfo: MOCK_SIGN_IN ? userObject : null,
   userInfoState: 'passive',
   modules,
+  modulesPending: true,
   navigationState: 'passive',
   notificationMenuState: 'closed',
   mobileMenuState: 'closed',
@@ -75,6 +77,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         modules: action.payload,
+        modulesPending: false,
       }
     case ActionType.SetUserLoggingOut:
       return {
