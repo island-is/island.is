@@ -8,12 +8,9 @@ export * from './lib/mutations/addAttachment'
 export * from './lib/mutations/deleteAttachment'
 export * from './lib/mutations/createUploadUrl'
 export * from './lib/mutations/createPdfPresignedUrl'
-<<<<<<< HEAD
 export * from './lib/mutations/requestFileSignature'
 export * from './lib/mutations/uploadSignedFile'
-=======
 export * from './lib/queries/getPresignedUrl'
->>>>>>> main
 export * from './lib/queries/getApplication'
 export * from './lib/queries/getApplicationsByType'
 export * from './lib/queries/getApplicantApplications'
