@@ -51,6 +51,11 @@ export const section = defineMessages({
     defaultMessage: 'Upplýsingar um þig',
     description: 'Details about the applicant',
   },
+  commissions: {
+    id: 'dpac.application:section.commissions',
+    defaultMessage: 'Upplýsingar umboðsaðila',
+    description: 'Details about the commissionees',
+  },
   complaint: {
     id: 'dpac.application:section.complaint',
     defaultMessage: 'Kvörtun',

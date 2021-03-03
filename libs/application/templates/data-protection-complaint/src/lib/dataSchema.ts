@@ -46,7 +46,7 @@ export const DataProtectionComplaintSchema = z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     address: z.string().nonempty(),
-    zipCode: z.string().nonempty(),
+    postalCode: z.string().nonempty(),
     city: z.string().nonempty(),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),

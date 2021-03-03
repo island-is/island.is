@@ -35,7 +35,7 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'inCourtProceedingsFields',
               title: delimitation.labels.inCourtProceedings,
-              description: delimitation.general.pageTitle,
+              description: delimitation.general.description,
               children: [
                 buildRadioField({
                   id: 'inCourtProceedings',
@@ -63,7 +63,7 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'concernsMediaCoverageFields',
               title: delimitation.labels.concernsMediaCoverage,
-              description: delimitation.general.pageTitle,
+              description: delimitation.general.description,
               children: [
                 buildRadioField({
                   id: 'concernsMediaCoverage',
@@ -91,7 +91,7 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'concernsBanMarkingFields',
               title: delimitation.labels.concernsBanMarking,
-              description: delimitation.general.pageTitle,
+              description: delimitation.general.description,
               children: [
                 buildRadioField({
                   id: 'concernsBanMarking',
@@ -119,7 +119,6 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'concernsLibelFields',
               title: delimitation.labels.concernsLibel,
-              description: delimitation.general.pageTitle,
               children: [
                 buildRadioField({
                   id: 'concernsLibel',
@@ -133,9 +132,7 @@ export const ComplaintForm: Form = buildForm({
                   id: 'concernsLibelAlert',
                   title: errorCards.concernsLibelTitle,
                   description: errorCards.concernsLibelDescription,
-                  condition: (formValue) =>
-                    (formValue.delimitation as FormValue)?.concernsLibel ===
-                    YES,
+                  condition: (formValue) => formValue.concernsLibel === YES,
                 }),
               ],
             }),
@@ -190,6 +187,13 @@ export const ComplaintForm: Form = buildForm({
         buildSubSection({
           id: 'applicant',
           title: section.applicant.defaultMessage,
+          condition: (formValue) => {
+            const onBehalf = (formValue.info as FormValue).onBehalf
+            return (
+              onBehalf === OnBehalf.MYSELF ||
+              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+            )
+          },
           children: [
             buildMultiField({
               id: 'applicantSection',
@@ -238,6 +242,28 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'commissions',
+          title: section.commissions.defaultMessage,
+          condition: (formValue) => {
+            const onBehalf = (formValue.info as FormValue).onBehalf
+            return onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+          },
+          children: [
+            buildMultiField({
+              title: 'Umboð',
+              description: 'Lýsing',
+              children: [
+                buildTextField({
+                  id: 'commissions.name',
+                  title: info.labels.name,
+                  backgroundColor: 'blue',
+                  width: 'half',
                 }),
               ],
             }),

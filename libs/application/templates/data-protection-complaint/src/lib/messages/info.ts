@@ -32,7 +32,7 @@ export const info = {
     },
     myselfAndOrOthers: {
       id: 'dcap.application:section.info.myselfAndOrOthers',
-      defaultMessage: 'Mig ásamt öðrum í umboði',
+      defaultMessage: 'Mig ásamt öðrum / í umboði',
       description: 'Myself and others',
     },
     company: {
