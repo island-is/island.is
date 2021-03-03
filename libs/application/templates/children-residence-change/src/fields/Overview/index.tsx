@@ -1,12 +1,13 @@
 import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation } from '@apollo/client'
+import { useMutation, useLazyQuery } from '@apollo/client'
 import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import {
   CREATE_PDF_PRESIGNED_URL,
   REQUEST_FILE_SIGNATURE,
   UPLOAD_SIGNED_FILE,
+  GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
 import {
   extractParentFromApplication,
@@ -16,6 +17,7 @@ import {
   extractApplicantFromApplication,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
+import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
 import { DescriptionText } from '../components'
 import {
   fileSignatureReducer,
@@ -40,8 +42,13 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
 
   const [
     createPdfPresignedUrl,
-    { loading: loadingUrl, data: pdfResponse },
+    { loading: createLoadingUrl, data: createResponse },
   ] = useMutation(CREATE_PDF_PRESIGNED_URL)
+
+  const [
+    getPresignedUrl,
+    { data: getResponse, loading: getLoadingUrl },
+  ] = useLazyQuery(GET_PRESIGNED_URL)
 
   const [
     requestFileSignature,
@@ -51,17 +58,29 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
 
   useEffect(() => {
-    createPdfPresignedUrl({
+    const input = {
       variables: {
         input: {
           id: application.id,
           type: pdfType,
         },
       },
-    })
-  }, [application.id, createPdfPresignedUrl, pdfType])
+    }
 
-  const pdfUrl = pdfResponse?.createPdfPresignedUrl?.attachments?.[pdfType]
+    application.state === ApplicationStates.DRAFT
+      ? createPdfPresignedUrl(input)
+      : getPresignedUrl(input)
+  }, [
+    application.id,
+    createPdfPresignedUrl,
+    getPresignedUrl,
+    application.state,
+    pdfType,
+  ])
+
+  const pdfUrl =
+    createResponse?.createPdfPresignedUrl?.url ||
+    getResponse?.getPresignedUrl?.url
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -205,6 +224,14 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>
+      <Box marginTop={4}>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.interview.general.sectionTitle)}
+        </Text>
+        <Text>
+          {formatMessage(m.interview[answers.interview].overviewText)}
+        </Text>
+      </Box>
       <Box marginTop={5} marginBottom={3}>
         <Button
           colorScheme="default"
@@ -215,8 +242,8 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
           size="default"
           type="button"
           variant="ghost"
-          loading={loadingUrl}
-          disabled={loadingUrl || !pdfUrl}
+          loading={createLoadingUrl || getLoadingUrl}
+          disabled={!pdfUrl}
         >
           {formatMessage(m.contract.pdfButton.label)}
         </Button>

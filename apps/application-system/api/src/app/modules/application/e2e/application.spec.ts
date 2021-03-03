@@ -139,7 +139,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const putResponse = await server
-      .put(`/applications/${response.body.id}`)
+      .put(`/application/${response.body.id}`)
       .send({
         answers: {
           careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
@@ -168,14 +168,14 @@ describe('Application system API', () => {
       .expect(201)
 
     const newStateResponse = await server
-      .put(`/applications/${response.body.id}/submit`)
+      .put(`/application/${response.body.id}/submit`)
       .send({ event: 'SUBMIT' })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('inReview')
 
     const failedResponse = await server
-      .put(`/applications/${response.body.id}`)
+      .put(`/application/${response.body.id}`)
       .send({
         answers: {
           dreamJob: 'firefighter',
@@ -205,7 +205,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const newStateResponse = await server
-      .put(`/applications/${response.body.id}/submit`)
+      .put(`/application/${response.body.id}/submit`)
       .send({
         event: 'SUBMIT',
         answers: {
@@ -238,14 +238,14 @@ describe('Application system API', () => {
       .expect(201)
 
     await server
-      .put(`/applications/${response.body.id}/submit`)
+      .put(`/application/${response.body.id}/submit`)
       .send({
         event: 'SUBMIT',
       })
       .expect(200)
 
     const finalStateResponse = await server
-      .put(`/applications/${response.body.id}/submit`)
+      .put(`/application/${response.body.id}/submit`)
       .send({
         event: 'APPROVE',
         answers: {
@@ -278,14 +278,14 @@ describe('Application system API', () => {
       .expect(201)
 
     const newStateResponse = await server
-      .put(`/applications/${response.body.id}/submit`)
+      .put(`/application/${response.body.id}/submit`)
       .send({ event: 'SUBMIT' })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('inReview')
 
     const failedResponse = await server
-      .put(`/applications/${response.body.id}/externalData`)
+      .put(`/application/${response.body.id}/externalData`)
       .send({
         dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
       })
@@ -298,7 +298,7 @@ describe('Application system API', () => {
 
   it('should fail when PUT-ing an application that does not exist', async () => {
     const response = await server
-      .put('/applications/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
+      .put('/application/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
       .send({
         applicant: nationalId,
         attachments: {},
@@ -332,7 +332,7 @@ describe('Application system API', () => {
 
     const { id } = response.body
     const putResponse = await server
-      .put(`/applications/${id}`)
+      .put(`/application/${id}`)
       .send({
         answers: {
           usage: 1,
@@ -346,7 +346,7 @@ describe('Application system API', () => {
     expect(putResponse.body.answers.spread).toBe(22)
   })
 
-  it('PUT /applications/:id should not be able to overwrite external data', async () => {
+  it('PUT /application/:id should not be able to overwrite external data', async () => {
     const response = await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
@@ -360,7 +360,7 @@ describe('Application system API', () => {
 
     const { id } = response.body
     const putResponse = await server
-      .put(`/applications/${id}`)
+      .put(`/application/${id}`)
       .send({
         externalData: {
           test: { asdf: 'asdf' },
@@ -440,7 +440,7 @@ describe('Application system API', () => {
       },
     })
 
-    const newState = await server
+    const res = await server
       .put(`/application/${postResponse.body.id}/createPdf`)
       .send({
         type: type,
@@ -448,9 +448,7 @@ describe('Application system API', () => {
       .expect(200)
 
     // Assert
-    expect(newState.body.attachments).toEqual({
-      ChildrenResidenceChange: 'presignedurl',
-    })
+    expect(res.body).toEqual({ url: 'presignedurl' })
   })
 
   it('PUT application/:id/requestFileSignature should return a documentToken and controlCode', async () => {
@@ -477,7 +475,7 @@ describe('Application system API', () => {
       },
     })
 
-    const newState = await server
+    const res = await server
       .put(`/application/${postResponse.body.id}/requestFileSignature`)
       .send({
         type: type,
@@ -485,9 +483,70 @@ describe('Application system API', () => {
       .expect(200)
 
     // Assert
-    expect(newState.body.externalData.fileSignature.data).toEqual({
+    expect(res.body).toEqual({
       controlCode: expectedControlCode,
       documentToken: expectedDocumentToken,
     })
+  })
+
+  it('GET application/:id/presignedUrl should return a presigned url', async () => {
+    const expectedPresignedUrl = 'presignedurl'
+    const type = 'ChildrenResidenceChange'
+
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'getPresignedUrl')
+      .mockImplementation(() => expectedPresignedUrl)
+
+    const postResponse = await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'review',
+      attachments: {},
+      typeId: type,
+      assignees: [],
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const res = await server
+      .get(`/application/${postResponse.body.id}/${type}/presignedUrl`)
+      .send({
+        type: type,
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({ url: expectedPresignedUrl })
+  })
+
+  it('PUT application/:id/uploadSignedFile should return that document has been signed', async () => {
+    const type = 'ChildrenResidenceChange'
+    const fileService: FileService = app.get<FileService>(FileService)
+    jest
+      .spyOn(fileService, 'uploadSignedFile')
+      .mockImplementation(() => Promise.resolve())
+
+    const postResponse = await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'review',
+      attachments: {},
+      typeId: type,
+      assignees: [],
+      answers: {
+        usage: 4,
+      },
+    })
+
+    const res = await server
+      .put(`/application/${postResponse.body.id}/uploadSignedFile`)
+      .send({
+        type: type,
+        documentToken: '0000',
+      })
+      .expect(200)
+
+    // Assert
+    expect(res.body).toEqual({ documentSigned: true })
   })
 })
