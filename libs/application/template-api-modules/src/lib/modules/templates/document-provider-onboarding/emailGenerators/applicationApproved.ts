@@ -21,9 +21,10 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
       ? dedent(`Góðan dag.
 
         Umsókn þín um að gerast skjalaveita hefur verið samþykkt.
-        <a href=${applicationLink} target="_blank">smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
+        <a href=${applicationLink} target="_blank">Smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
+        
         Með kveðju,
-        starfsfólk Island.is
+        Starfsfólk island.is
       `)
       : dedent(`Hello.
 
