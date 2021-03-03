@@ -27,7 +27,7 @@ export interface CompanyRegistryMember {
 }
 
 export class RSKService extends RESTDataSource {
-  constructor (
+  constructor(
     @Inject(RSK_OPTIONS)
     private readonly options: RSKServiceOptions,
     @Inject(LOGGER_PROVIDER)
@@ -39,7 +39,7 @@ export class RSKService extends RESTDataSource {
     this.initialize({} as DataSourceConfig<any>)
   }
 
-  willSendRequest (request: RequestOptions) {
+  willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set(
       'Authorization',
@@ -49,7 +49,7 @@ export class RSKService extends RESTDataSource {
     )
   }
 
-  async getCompaniesByNationalId (
+  async getCompaniesByNationalId(
     nationalId: string,
   ): Promise<CompanyRegistryMember[]> {
     try {
