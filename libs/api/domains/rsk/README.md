@@ -1,4 +1,4 @@
-# api-domains-rsk
+# API Domains Rsk
 
 This library was generated with [Nx](https://nx.dev).
 
