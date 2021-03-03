@@ -93,15 +93,14 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
     index: number,
     behavior: 'smooth' | 'auto' = 'smooth',
   ) => {
+    const child = entriesParentRef.current.children[index] as HTMLElement
     frameRef.current.scrollTo({
-      top: entriesParentRef.current.children[index].offsetTop,
+      top: child.offsetTop,
       behavior,
     })
-    const scrollReachedTop =
-      entriesParentRef.current.children[index].offsetTop <= 0
+    const scrollReachedTop = child.offsetTop <= 0
     const scrollReachedBottom =
-      frameRef.current.scrollHeight -
-        entriesParentRef.current.children[index].offsetTop <=
+      frameRef.current.scrollHeight - child.offsetTop <=
       frameRef.current.clientHeight
 
     setPrevButtonDisabled(scrollReachedTop)
@@ -118,9 +117,9 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
       const year = today.getFullYear()
       const month = today.getMonth()
       // find current month
-      const { currentMonthIndex, currentMonth } = [
-        ...entriesParentRef.current.children,
-      ].reduce<{
+      const { currentMonthIndex, currentMonth } = Array.from(
+        entriesParentRef.current.children,
+      ).reduce<{
         currentMonthIndex: number
         currentMonth: Element | null
       }>(
@@ -133,7 +132,7 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
         },
         {
           currentMonthIndex: 0,
-          currentMonth,
+          currentMonth: null,
         },
       )
       // padding based on mobile gutter
@@ -445,7 +444,7 @@ const EventModal = forwardRef(
             {event.data?.labels && (
               <Inline space={2}>
                 {event.data.labels.map((label, index) => (
-                  <Tag key={index} label variant="purple" outlined>
+                  <Tag key={index} variant="purple" outlined>
                     {label}
                   </Tag>
                 ))}
