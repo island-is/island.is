@@ -424,19 +424,13 @@ export const HealthInsuranceForm: Form = buildForm({
               variant: 'textarea',
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
-                const entitlement = (answers as {
-                  formerInsurance: { entitlement: string }
-                })?.formerInsurance?.entitlement
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
                   applicant: { citizenship: string }
                 })?.applicant?.citizenship
-                return (
-                  entitlement === YES &&
-                  !requireWaitingPeriod(formerCountry, citizenship)
-                )
+                return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
           ],
@@ -475,7 +469,7 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               condition: {
                 questionId: 'hasAdditionalInfo',
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),
