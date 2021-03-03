@@ -11,13 +11,19 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 // Here you import your module service
 import { HealthInsuranceService } from './health-insurance.service'
 
-const XROAD_HEALTH_INSURANCE_WSDL_URL = process.env.healthInsurancewsdlUrl ?? ''
-const XROAD_HEALTH_INSURANCE_BASE_URL =
-  process.env.baseUrl ?? 'http://localhost:8080'
-const XROAD_HEALTH_INSURANCE_USERNAME =
-  process.env.healthInsuranceUsername ?? ''
-const XROAD_HEALTH_INSURANCE_PASSWORD =
-  process.env.healthInsurancePassword ?? ''
+const HEALTH_INSURANCE_XROAD_WSDLURL =
+  process.env.HEALTH_INSURANCE_XROAD_WSDLURL ??
+  'https://test-huld.sjukra.is/islandrg?wsdl'
+const HEALTH_INSURANCE_XROAD_BASEURL =
+  process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8080'
+const HEALTH_INSURANCE_XROAD_USERNAME =
+  process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? 'deloittetest'
+const HEALTH_INSURANCE_XROAD_PASSWORD =
+  process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? 'xroadtest123'
+const HEALTH_INSURANCE_XROAD_CLIENT_ID =
+  process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client'
+const HEALTH_INSURANCE_XROAD_ID =
+  process.env.XROAD_HEALTH_INSURANCE_ID ?? 'IS-DEV/GOV/10007/SJUKRA-Protected'
 
 export class HealthInsuranceModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -25,10 +31,12 @@ export class HealthInsuranceModule {
       module: HealthInsuranceModule,
       imports: [
         HealthInsuranceMod.register({
-          wsdlUrl: XROAD_HEALTH_INSURANCE_WSDL_URL,
-          baseUrl: XROAD_HEALTH_INSURANCE_BASE_URL,
-          username: XROAD_HEALTH_INSURANCE_USERNAME,
-          password: XROAD_HEALTH_INSURANCE_PASSWORD,
+          wsdlUrl: HEALTH_INSURANCE_XROAD_WSDLURL,
+          baseUrl: HEALTH_INSURANCE_XROAD_BASEURL,
+          username: HEALTH_INSURANCE_XROAD_USERNAME,
+          password: HEALTH_INSURANCE_XROAD_PASSWORD,
+          clientID: HEALTH_INSURANCE_XROAD_CLIENT_ID,
+          xroadID: HEALTH_INSURANCE_XROAD_ID,
         }),
         SharedTemplateAPIModule.register(config),
       ],

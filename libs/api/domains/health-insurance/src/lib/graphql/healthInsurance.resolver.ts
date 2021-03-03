@@ -12,7 +12,7 @@ import { VistaSkjalModel } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
 import { VistaSkjalInput } from '../types'
 
-@UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver(() => String)
 export class HealthInsuranceResolver {
   constructor(
@@ -46,6 +46,7 @@ export class HealthInsuranceResolver {
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
 
+  // TODO remove so this function will not be public exposed
   @Mutation(() => VistaSkjalModel, {
     name: 'healthInsuranceApplyInsurance',
   })
