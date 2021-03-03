@@ -5,7 +5,7 @@ import { IsNumber, IsOptional, IsString, Max, Min } from 'class-validator'
 export class GetAuctionsInput {
   @Field()
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 
   @Field({ nullable: true })
   @IsString()

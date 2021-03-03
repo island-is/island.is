@@ -9,5 +9,5 @@ export class GetLifeEventsInCategoryInput {
 
   @Field()
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }

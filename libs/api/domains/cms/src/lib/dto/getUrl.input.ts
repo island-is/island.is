@@ -9,5 +9,5 @@ export class GetUrlInput {
 
   @Field()
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }
