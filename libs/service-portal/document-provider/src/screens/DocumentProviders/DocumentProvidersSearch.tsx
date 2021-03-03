@@ -31,8 +31,6 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
         return org.name.toLowerCase().includes(searchTerm.toLowerCase())
       })
       .sort((a, b) => a.name.localeCompare(b.name))
-
-    console.log(filtered)
     setSearchResults(filtered)
 
     const lastPage = Math.ceil(filtered.length / PAGE_SIZE)
