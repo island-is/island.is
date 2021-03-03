@@ -43,7 +43,7 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: ' ',
+          subTitle: m.externalDataSubtitle,
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
@@ -319,6 +319,7 @@ export const HealthInsuranceForm: Form = buildForm({
             buildAsyncSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
+              description: m.formerInsuranceDetails,
               placeholder: m.formerInsuranceCountryPlaceholder,
               loadingError: m.formerInsuranceCountryError,
               backgroundColor: 'blue',
