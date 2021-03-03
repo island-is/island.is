@@ -9,7 +9,6 @@ import {
 import * as z from 'zod'
 import { NO, YES } from '../constants'
 import { API_MODULE } from '../shared'
-import { StatusTypes } from '../types'
 import { answerValidators } from './answerValidators'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/

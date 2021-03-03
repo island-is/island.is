@@ -43,6 +43,7 @@ import {
 } from '../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -169,8 +170,7 @@ const Category: Screen<CategoryProps> = ({
       const activeCategory = getActiveCategory(ulrHashArr)
       setHashArray(ulrHashArr)
       if (activeCategory) {
-        const elementFound = document.getElementById(activeCategory)
-        if (elementFound) elementFound.scrollIntoView()
+        scrollTo(activeCategory, { marginTop: 24 })
       }
     }
   }, [])
