@@ -234,6 +234,7 @@ export function buildAsyncSelectField(data: {
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
+  backgroundColor?: InputBackgroundColor
 }): AsyncSelectField {
   const {
     condition,
@@ -247,6 +248,7 @@ export function buildAsyncSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -263,6 +265,7 @@ export function buildAsyncSelectField(data: {
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 

@@ -22,6 +22,8 @@ describe('healthInsuranceTest', () => {
     password: '',
     username: '',
     wsdlUrl: '',
+    clientID: '',
+    xroadID: '',
   }
 
   beforeEach(async () => {

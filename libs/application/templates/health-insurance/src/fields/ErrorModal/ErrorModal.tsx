@@ -21,19 +21,22 @@ import { m } from '../../forms/messages'
 import useModalContent from '../../hooks/useModalContent'
 
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
-  const { typeId, externalData } = application
+  const { externalData } = application
 
   const { formatMessage, lang } = useLocale()
-  const history = useHistory()
   const content = useModalContent(externalData)
-  const canClose = process.env.NODE_ENV !== 'development' ? false : true
+  const backUrl =
+    lang === 'is'
+      ? 'https://www.island.is/umsokn-um-sjukratryggingu'
+      : 'https://www.island.is/en/apply-for-health-insurance'
 
   return (
     <ModalBase
       baseId="healthInsuranceErrorModal"
       initialVisibility={true}
       className={`${styles.dialog} ${styles.background} ${styles.center}`}
-      hideOnClickOutside={canClose}
+      modalLabel="Error prompt"
+      // hideOnClickOutside={false}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <Box
@@ -71,11 +74,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
                   colorScheme="destructive"
                   onClick={() => {
                     closeModal()
-                    history.push(
-                      lang === 'is'
-                        ? '../umsokn-um-sjukratryggingu'
-                        : '../en/apply-for-health-insurance',
-                    )
+                    window.location.href = backUrl
                   }}
                   fluid
                 >

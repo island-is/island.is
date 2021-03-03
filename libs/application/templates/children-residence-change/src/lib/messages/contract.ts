@@ -23,9 +23,9 @@ export const contract = {
     },
     message: {
       id: 'crc.application:section.contract.overview.alert.message',
-      defaultMessage: 'Upphafsdagur samnings',
-      description:
-        'Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur afgreitt hana.',
+      defaultMessage:
+        'Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
+      description: 'Text for alert message',
     },
   }),
   labels: defineMessages({
