@@ -67,10 +67,13 @@ export class DocumentProviderService {
     input: CreateOrganisationInput,
     authorization: string,
   ): Promise<Organisation> {
-    const createOrganisationDto = { ...input }
+    const dto = {
+      createOrganisationDto: { ...input },
+      authorization,
+    }
 
     return await this.organisationsApi
-      .organisationControllerCreateOrganisation({ createOrganisationDto })
+      .organisationControllerCreateOrganisation(dto)
       .catch(handleError)
   }
 
@@ -93,10 +96,12 @@ export class DocumentProviderService {
   async createAdministrativeContact(
     organisationId: string,
     input: CreateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       createContactDto: { ...input },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -114,6 +119,7 @@ export class DocumentProviderService {
       id: organisationId,
       administrativeContactId: contactId,
       updateContactDto: { ...contact },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -124,10 +130,12 @@ export class DocumentProviderService {
   async createTechnicalContact(
     organisationId: string,
     input: CreateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       createContactDto: { ...input },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -145,6 +153,7 @@ export class DocumentProviderService {
       id: organisationId,
       technicalContactId: contactId,
       updateContactDto: { ...contact },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -155,10 +164,12 @@ export class DocumentProviderService {
   async createHelpdesk(
     organisationId: string,
     input: CreateHelpdeskInput,
+    authorization: string,
   ): Promise<Helpdesk> {
     const dto = {
       id: organisationId,
       createHelpdeskDto: { ...input },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -176,6 +187,7 @@ export class DocumentProviderService {
       id: organisationId,
       helpdeskId: helpdeskId,
       updateHelpdeskDto: { ...helpdesk },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -270,14 +282,17 @@ export class DocumentProviderService {
     }
 
     // Create provider for organisation
-    const createProviderDto = {
-      externalProviderId: credentials.providerId,
-      organisationId: organisation.id,
+    const dto = {
+      createProviderDto: {
+        externalProviderId: credentials.providerId,
+        organisationId: organisation.id,
+      },
+      authorization,
     }
 
-    const provider = await this.providersApi.providerControllerCreateProvider({
-      createProviderDto,
-    })
+    const provider = await this.providersApi.providerControllerCreateProvider(
+      dto,
+    )
 
     if (!provider) {
       throw new ApolloError('Could not create provider.')
@@ -317,6 +332,7 @@ export class DocumentProviderService {
         apiScope: audienceAndScope.scope,
         xroad,
       },
+      authorization,
     }
 
     const updatedProvider = await this.providersApi.providerControllerUpdateProvider(

@@ -97,6 +97,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createAdministrativeContact(
       organisationId,
       input,
+      user.authorization,
     )
   }
 
@@ -130,6 +131,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createTechnicalContact(
       organisationId,
       input,
+      user.authorization,
     )
   }
 
@@ -160,7 +162,11 @@ export class DocumentProviderResolver {
   ): Promise<Helpdesk | null> {
     logger.info(`createHelpdesk: user: ${user.nationalId}`)
 
-    return this.documentProviderService.createHelpdesk(organisationId, input)
+    return this.documentProviderService.createHelpdesk(
+      organisationId,
+      input,
+      user.authorization,
+    )
   }
 
   @Mutation(() => Helpdesk)
