@@ -116,12 +116,14 @@ export const Timeline = ({ events, getMonthByIndex }: TimelineProps) => {
       const today = new Date()
       const year = today.getFullYear()
       const month = today.getMonth()
+
       // find current month
-      const { currentMonthIndex, currentMonth } = Array.from(
+      const months = Array.from(
         entriesParentRef.current.children,
-      ).reduce<{
+      ) as Array<HTMLElement>
+      const { currentMonthIndex, currentMonth } = months.reduce<{
         currentMonthIndex: number
-        currentMonth: Element | null
+        currentMonth: HTMLElement | null
       }>(
         (acc, current, index) => {
           if (current.dataset.date === `${year}/${month}`) {
