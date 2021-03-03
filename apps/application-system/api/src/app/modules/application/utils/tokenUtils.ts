@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import decode from 'jwt-decode'
 import { ExecutionContext } from '@nestjs/common'
+
 import { environment } from '../../../../environments'
 
 export function getAuthorizationHeader(ctx: ExecutionContext): string {

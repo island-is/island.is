@@ -1,15 +1,17 @@
+import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
+import { Locale } from '@island.is/auth-nest-tools'
+
+import { ApplicationsApi } from '../../gen/fetch'
+import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
-import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
@@ -41,9 +43,9 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async findAll(authorization: string) {
+  async findAll(authorization: string, locale: Locale) {
     return await this.applicationApi
-      .applicationControllerFindAll({ authorization })
+      .applicationControllerFindAll({ authorization, locale })
       .catch(handleError)
   }
 

@@ -170,6 +170,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-translations": {
+      "tags": []
+    },
     "application-ui-fields": {
       "tags": []
     },

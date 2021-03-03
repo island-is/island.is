@@ -16,7 +16,7 @@ import { FC } from 'react'
 
 type UIFields = Record<string, FC<FieldBaseProps | RepeaterProps>>
 type TemplateLibraryModule = {
-  default: unknown
+  default: unknown | ((value: string) => unknown)
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
   getFields?: () => Promise<UIFields>
 }
@@ -29,11 +29,14 @@ async function loadTemplateLib(
   if (loadedTemplateLib !== undefined) {
     return loadedTemplateLib
   }
+
   try {
     const templateLib = (await templateLoaders[
       templateId
     ]()) as TemplateLibraryModule
+
     loadedTemplateLibs[templateId] = templateLib
+
     return templateLib
   } catch (e) {
     return Promise.reject(`Could not load template with id ${templateId}`)
@@ -46,13 +49,20 @@ export async function getApplicationTemplateByTypeId<
   TEvents extends EventObject
 >(
   templateId: ApplicationTypes,
+  formatMessage?: any,
+  locale?: Locale,
 ): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
   const templateLib = await loadTemplateLib(templateId)
-  return templateLib.default as ApplicationTemplate<
-    TContext,
-    TStateSchema,
-    TEvents
-  >
+  // console.log('-getApplicationTemplateByTypeIdtypeof', typeof templateLib.default);
+  const template =
+    typeof templateLib.default === 'function' && formatMessage
+      ? templateLib.default(formatMessage)
+      : templateLib.default === 'function'
+      ? (templateLib as any).default()
+      : templateLib.default
+  // console.log('-template', template);
+
+  return template as ApplicationTemplate<TContext, TStateSchema, TEvents>
 }
 
 export async function getApplicationUIFields(

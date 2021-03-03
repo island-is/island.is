@@ -80,6 +80,10 @@ interface DecodedAssignmentToken {
   name: 'authorization',
   description: 'Bearer token authorization',
 })
+@ApiHeader({
+  name: 'locale',
+  description: 'Current client-side locale used',
+})
 @Controller()
 export class ApplicationController {
   constructor(

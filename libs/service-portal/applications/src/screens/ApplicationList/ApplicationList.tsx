@@ -39,7 +39,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
   const { formatMessage, lang } = useLocale()
-  const { data: applications, loading, error } = useApplications()
+  const { data: applications, loading, error } = useApplications(lang)
   const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
 
   return (

@@ -1,5 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
+
 import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationsApi, Configuration } from '../../gen/fetch'

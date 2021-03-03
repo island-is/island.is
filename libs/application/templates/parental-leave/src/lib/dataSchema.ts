@@ -22,7 +22,11 @@ const PersonalAllowance = z
  * been moved to the answerValidators because it needs to be more advanced than
  * what zod can handle.
  */
+// export const dataSchema = (yoyo: string) => {
+//   console.log('-yoyo', yoyo)
+
 export const dataSchema = z.object({
+  // return z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
     email: z.string().email(),
@@ -67,4 +71,10 @@ export const dataSchema = z.object({
   usePersonalAllowance: z.enum([YES, NO]),
   usePersonalAllowanceFromSpouse: z.enum([YES, NO]),
 })
+// }
+
+// export type SchemaFormValues = z.infer<
+//   typeof dataSchema | ((yoyo: string) => typeof dataSchema)
+// >
+
 export type SchemaFormValues = z.infer<typeof dataSchema>

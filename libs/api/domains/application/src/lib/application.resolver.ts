@@ -1,4 +1,14 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  CurrentUser,
+  User,
+  CurrentLocale,
+  Locale,
+} from '@island.is/auth-nest-tools'
+import { ExecutionContext, UseGuards } from '@nestjs/common'
+
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
 import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
@@ -13,13 +23,6 @@ import { AssignApplicationInput } from './dto/assignApplication.input'
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
-import {
-  IdsAuthGuard,
-  ScopesGuard,
-  CurrentUser,
-  User,
-} from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -36,9 +39,17 @@ export class ApplicationResolver {
 
   @Query(() => [Application], { nullable: true })
   async getApplications(
+    @CurrentLocale() locale: Locale,
     @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAll(user.authorization)
+    // console.log('-Current Locale YOOOO', locale)
+    const res = await this.applicationService.findAll(
+      user.authorization,
+      locale,
+    )
+    // console.log('-res', res)
+
+    return res
   }
 
   @Query(() => [Application], { nullable: true })

@@ -16,17 +16,20 @@ import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { HealthController } from './health.controller'
-import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+
+import { HealthController } from './health.controller'
+import { environment } from './environments'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
   : 'apps/api/src/api.graphql'
+
+let locale = 'is'
 
 @Module({
   controllers: [HealthController],
@@ -48,6 +51,18 @@ const autoSchemaFile = environment.production
           },
         }),
       ],
+      context: ({ req, connection }) => {
+        // console.log('-req', req);
+        // console.log('-connection', connection);
+        // console.log('-req.headers.locale', req.headers.locale)
+        locale = req.headers.locale
+
+        if (connection) {
+          return { req: connection.context }
+        }
+
+        return { req }
+      },
     }),
     ContentSearchModule,
     CmsModule,
