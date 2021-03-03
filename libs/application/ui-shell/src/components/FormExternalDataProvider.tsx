@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { ExternalDataProviderScreen, SetBeforeSubmitCallback } from '../types'
+import { ExternalDataProviderScreen } from '../types'
 import {
   Box,
   Checkbox,
@@ -15,6 +15,7 @@ import {
   getValueViaPath,
   coreMessages,
   RecordObject,
+  SetBeforeSubmitCallback,
 } from '@island.is/application/core'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
@@ -35,7 +36,11 @@ const ProviderItem: FC<{
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
-      {subTitle && <Text>{formatMessage(subTitle)}</Text>}
+      {subTitle && (
+        <Text>
+          <Markdown>{formatMessage(subTitle)}</Markdown>
+        </Text>
+      )}
       {provider.type && dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}
