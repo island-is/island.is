@@ -97,8 +97,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
         },
       })
         .then((response) => {
-          return response.data?.requestFileSignature?.externalData
-            ?.fileSignature?.data?.documentToken
+          return response.data?.requestFileSignature?.documentToken
         })
         .catch((error) => {
           dispatchFileSignature({
@@ -140,8 +139,7 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
     })
 
   const controlCode =
-    requestFileSignatureData?.requestFileSignature?.externalData?.fileSignature
-      ?.data?.controlCode
+    requestFileSignatureData?.requestFileSignature?.controlCode
   return (
     <>
       <SignatureModal
