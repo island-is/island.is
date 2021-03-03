@@ -136,6 +136,14 @@ const Overview = ({ application }: FieldBaseProps) => {
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>
+      <Box marginTop={4}>
+        <Text variant="h4" marginBottom={1}>
+          {formatMessage(m.interview.general.sectionTitle)}
+        </Text>
+        <Text>
+          {formatMessage(m.interview[answers.interview].overviewText)}
+        </Text>
+      </Box>
       <Box marginTop={5} marginBottom={3}>
         <Button
           colorScheme="default"

@@ -320,6 +320,9 @@
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
     },
+    "judicial-system-xrd-api": {
+      "tags": []
+    },
     "localization": {
       "tags": []
     },

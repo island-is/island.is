@@ -78,6 +78,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 ),
               write: 'all',
             },
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationConfirmation').then((module) =>
+                  Promise.resolve(module.ApplicationConfirmation),
+                ),
+            },
           ],
         },
       },
