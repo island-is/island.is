@@ -12,7 +12,7 @@ export class TabContent {
   contentTitle?: string
 
   @Field({ nullable: true })
-  image?: Image
+  image?: Image | null
 
   @Field(() => Html, { nullable: true })
   body?: Html | null
@@ -21,6 +21,6 @@ export class TabContent {
 export const mapTabContent = ({ sys, fields }: ITabContent): TabContent => ({
   tabTitle: fields.tabTitle ?? '',
   contentTitle: fields.contentTitle ?? '',
-  image: mapImage(fields.image),
+  image: fields.image ? mapImage(fields.image) : null,
   body: fields.body ? mapHtml(fields.body, sys.id + ':body') : null,
 })

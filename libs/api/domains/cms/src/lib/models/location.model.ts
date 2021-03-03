@@ -19,7 +19,7 @@ export class Location {
   address?: string
 
   @Field(() => Link, { nullable: true })
-  link?: Link
+  link?: Link | null
 
   @Field(() => Image)
   background!: Image
@@ -34,6 +34,6 @@ export const mapLocation = ({
   title: fields.title ?? '',
   subTitle: fields.subTitle ?? '',
   address: fields.address ?? '',
-  link: fields.link && mapLink(fields.link),
+  link: fields.link ? mapLink(fields.link) : null,
   background: mapImage(fields.background),
 })

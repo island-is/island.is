@@ -27,5 +27,5 @@ export const mapSectionWithImage = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-  html: fields.body && mapHtml(fields.body, sys.id + ':html'),
+  html: mapHtml(fields.body, sys.id + ':html'),
 })

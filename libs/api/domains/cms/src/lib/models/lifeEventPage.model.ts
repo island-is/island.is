@@ -19,10 +19,10 @@ export class LifeEventPage {
   intro?: string
 
   @Field({ nullable: true })
-  image?: Image
+  image?: Image | null
 
   @Field({ nullable: true })
-  thumbnail?: Image
+  thumbnail?: Image | null
 
   @Field(() => [SliceUnion])
   content!: Array<typeof SliceUnion>
@@ -39,8 +39,8 @@ export const mapLifeEventPage = ({
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   intro: fields.intro ?? '',
-  image: mapImage(fields.image),
-  thumbnail: mapImage(fields.thumbnail),
+  image: fields.image ? mapImage(fields.image) : null,
+  thumbnail: fields.thumbnail ? mapImage(fields.thumbnail) : null,
   content: fields?.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],

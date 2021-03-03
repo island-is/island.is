@@ -20,7 +20,7 @@ export class News {
   subtitle!: string
 
   @Field(() => Author, { nullable: true })
-  author?: Author
+  author?: Author | null
 
   @Field({ nullable: true })
   intro!: string
@@ -43,7 +43,7 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   slug: fields.slug ?? '',
   title: fields.title ?? '',
   subtitle: fields.subtitle ?? '',
-  author: fields.author && mapAuthor(fields.author),
+  author: fields.author ? mapAuthor(fields.author) : null,
   intro: fields.intro ?? '',
   image: mapImage(fields.image),
   date: fields.date ?? '',

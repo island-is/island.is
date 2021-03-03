@@ -16,7 +16,7 @@ export class TellUsAStory {
   introDescription!: Html
 
   @Field({ nullable: true })
-  introImage?: Image
+  introImage?: Image | null
 
   @Field()
   firstSectionTitle!: string
@@ -120,7 +120,7 @@ export const mapTellUsAStory = ({
     (fields.introDescription &&
       mapHtml(fields.introDescription, sys.id + ':introDescription')) ??
     null,
-  introImage: mapImage(fields.introImage),
+  introImage: fields.introImage ? mapImage(fields.introImage) : null,
   instructionsTitle: fields.instructionsTitle ?? '',
   firstSectionTitle: fields.firstSectionTitle ?? '',
   organizationLabel: fields.organizationLabel ?? '',

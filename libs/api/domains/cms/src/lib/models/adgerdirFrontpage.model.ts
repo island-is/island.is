@@ -30,7 +30,7 @@ export class AdgerdirFrontpage {
   slices!: Array<typeof AdgerdirSliceUnion>
 
   @Field(() => Image, { nullable: true })
-  featuredImage?: Image
+  featuredImage?: Image | null
 }
 
 export const mapAdgerdirFrontpage = ({
@@ -42,7 +42,7 @@ export const mapAdgerdirFrontpage = ({
   slug: fields?.slug ?? '',
   title: fields?.title ?? '',
   description: fields?.description ?? '',
-  featuredImage: mapImage(fields.featuredImage),
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   content:
     sys?.id && fields?.content
       ? mapDocument(fields.content, sys?.id + ':content')
