@@ -21,6 +21,7 @@ export interface LinkProps extends NextLinkProps {
   skipTab?: boolean
   onClick?: () => void
   pureChildren?: boolean
+  ariaLabel?: string
 }
 
 // Next link that can handle external urls
@@ -38,6 +39,7 @@ export const Link: React.FC<LinkProps> = ({
   underline,
   underlineVisibility = 'hover',
   pureChildren,
+  ariaLabel,
   ...linkProps
 }) => {
   const isInternal = isLinkInternal(href as string)
@@ -77,6 +79,7 @@ export const Link: React.FC<LinkProps> = ({
         ) : (
           <a
             className={classNames}
+            aria-label={ariaLabel}
             {...linkProps}
             tabIndex={skipTab ? -1 : undefined}
           >
