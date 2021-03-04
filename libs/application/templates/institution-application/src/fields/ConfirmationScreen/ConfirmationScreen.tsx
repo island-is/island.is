@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { Box, Bullet, BulletList, Stack, Link } from '@island.is/island-ui/core'
+import { Box, Bullet, BulletList, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import InstitutionIllustration from '../../assets/InstitutionIllustration'
+import { institutionApplicationMessages as m } from '../../lib/messages'
 
-const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
+const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -12,18 +13,13 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
       <Stack space={6}>
         <BulletList>
           <Bullet>
-            Við munum nú fara yfir verkefnið og við sendum á þig svör innan
-            tíðar.{' '}
+            {formatText(m.confirmation.sectionInfoBulletFirst, application, formatMessage)}
           </Bullet>
           <Bullet>
-            Við verðum í sambandi ef okkur vantar frekari upplýsingar.{' '}
+            {formatText(m.confirmation.sectionInfoBulletSecond, application, formatMessage)}
           </Bullet>
           <Bullet>
-            Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma 847
-            3759 eða á netfangið{' '}
-            <Link href="mailto:island@island.is" color="blue400">
-              island@island.is
-            </Link>
+            {formatText(m.confirmation.sectionInfoBulletThird, application, formatMessage)}
           </Bullet>
         </BulletList>
         <Box display="flex" justifyContent="center" size={1}>
