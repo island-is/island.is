@@ -168,16 +168,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       },
     )
 
-    // If the current index does not exist, then we migrate from last index
-    const previousIndex = await this.getLatestIndex(options.locale)
-
-    const migratedData = await this.migratePopularityScores(
-      previousIndex,
-      flatten(importableData),
-    )
-
     return {
-      add: migratedData,
+      add: flatten(importableData),
       remove: deletedItems,
       postSyncOptions: {
         folderHash,

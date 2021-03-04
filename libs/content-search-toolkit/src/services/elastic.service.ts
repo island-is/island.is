@@ -71,9 +71,13 @@ export class ElasticService {
     if (documents.add.length) {
       documents.add.forEach(({ _id, ...document }) => {
         requests.push({
-          index: { _index: index, _id },
+          update: { _index: index, _id },
         })
-        requests.push(document)
+        requests.push({
+          doc: document,
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          doc_as_upsert: true,
+        })
         return requests
       })
     }
@@ -216,7 +220,7 @@ export class ElasticService {
         body: {
           script: {
             lang: 'painless',
-            source: `if (ctx._source.containsKey('popularityScore') {
+            source: `if (ctx._source.containsKey('popularityScore')) {
               ctx._source.popularityScore = params.a * params.t +
                 (1 - params.a) * ctx._source.popularityScore
             } else {
