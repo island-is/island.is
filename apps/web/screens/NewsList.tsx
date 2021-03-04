@@ -285,7 +285,10 @@ const NewsList: Screen<NewsListProps> = ({
               <Pagination
                 totalPages={Math.ceil(total / PERPAGE)}
                 page={selectedPage}
-                renderLink={(page, className, children) => (
+                previousPageText={n('previousPage', 'Fyrri síða')}
+                nextPageText={n('nextPage', 'Næsta síða')}
+                pageText={n('page', 'Síða')}
+                renderLink={(page, className, ariaLabel, children) => (
                   <Link
                     href={{
                       pathname: linkResolver('newsoverview').href,
