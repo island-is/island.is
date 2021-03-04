@@ -10,7 +10,7 @@ import {
 
 import { VistaSkjalModel } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
-import { VistaSkjalInput } from '../types'
+import { VistaSkjalInput } from '@island.is/health-insurance'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver(() => String)

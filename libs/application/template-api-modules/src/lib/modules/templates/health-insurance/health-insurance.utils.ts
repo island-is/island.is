@@ -2,7 +2,7 @@ import get from 'lodash/get'
 import { logger } from '@island.is/logging'
 
 import { Application } from '@island.is/application/core'
-import { VistaSkjalInput } from '@island.is/api/domains/health-insurance'
+import { VistaSkjalInput } from '@island.is/health-insurance'
 
 const extractAnswer = <T>(object: unknown, key: string): T | null => {
   const value = get(object, key, null) as T | null | undefined
@@ -119,6 +119,11 @@ export const transformApplicationToHealthInsuranceDTO = (
     previousIssuingInstitution:
       extractAnswer(application.answers, 'formerInsurance.institution') ?? '',
     isHealthInsuredInPreviousCountry:
+      extractAnswer(application.answers, 'formerInsurance.registration') ==
+      'yes'
+        ? 1
+        : 0,
+    hasHealthInsuranceRightInPreviousCountry:
       extractAnswer(application.answers, 'formerInsurance.entitlement') == 'yes'
         ? 1
         : 0,
