@@ -7,7 +7,7 @@ import {
   HEALTH_INSURANCE_CONFIG,
 } from './soap'
 import { BucketService } from './bucket.service'
-import { VistaSkjalInput } from './types'
+import { VistaSkjalInput } from '@island.is/health-insurance'
 import { VistaSkjalModel } from './graphql/models'
 
 describe('apiDomainsHealthInsurance', () => {
