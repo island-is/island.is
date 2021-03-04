@@ -157,47 +157,51 @@ const NewsList: Screen<NewsListProps> = ({
   }
 
   const sidebar = (
-    <Stack space={3}>
-      <Box background="purple100" borderRadius="large" padding={4}>
-        <Stack space={3}>
-          <Text variant="h4" as="h1" color="purple600">
-            {n('newsTitle', 'Fréttir og tilkynningar')}
-          </Text>
-          <Divider weight="purple200" />
-          <NativeSelect
-            name="year"
-            value={selectedYear ? selectedYear.toString() : allYearsString}
-            options={yearOptions}
-            onChange={(e) => {
-              const selectedValue =
-                e.target.value !== allYearsString ? e.target.value : null
-              Router.push(makeHref(selectedValue))
-            }}
-            color="purple400"
-          />
-          {selectedYear && (
-            <div>
-              <Link href={makeHref(selectedYear)}>
-                <Text as="span">{allMonthsString}</Text>
-              </Link>
-              <Text as="span">
-                {selectedMonth === undefined && <Bullet align="right" />}
-              </Text>
-            </div>
-          )}
-          {months.map((month) => (
-            <div key={month}>
-              <Link href={makeHref(selectedYear, month)}>
-                <Text as="span">{capitalize(getMonthByIndex(month - 1))}</Text>
-              </Link>
-              <Text as="span">
-                {selectedMonth === month && <Bullet align="right" />}
-              </Text>
-            </div>
-          ))}
-        </Stack>
-      </Box>
-    </Stack>
+    <aside>
+      <Stack space={3}>
+        <Box background="purple100" borderRadius="large" padding={4}>
+          <Stack space={3}>
+            <Text variant="h4" as="h1" color="purple600">
+              {n('newsTitle', 'Fréttir og tilkynningar')}
+            </Text>
+            <Divider weight="purple200" />
+            <NativeSelect
+              name="year"
+              value={selectedYear ? selectedYear.toString() : allYearsString}
+              options={yearOptions}
+              onChange={(e) => {
+                const selectedValue =
+                  e.target.value !== allYearsString ? e.target.value : null
+                Router.push(makeHref(selectedValue))
+              }}
+              color="purple400"
+            />
+            {selectedYear && (
+              <div>
+                <Link href={makeHref(selectedYear)}>
+                  <Text as="span">{allMonthsString}</Text>
+                </Link>
+                <Text as="span">
+                  {selectedMonth === undefined && <Bullet align="right" />}
+                </Text>
+              </div>
+            )}
+            {months.map((month) => (
+              <div key={month}>
+                <Link href={makeHref(selectedYear, month)}>
+                  <Text as="span">
+                    {capitalize(getMonthByIndex(month - 1))}
+                  </Text>
+                </Link>
+                <Text as="span">
+                  {selectedMonth === month && <Bullet align="right" />}
+                </Text>
+              </div>
+            ))}
+          </Stack>
+        </Box>
+      </Stack>
+    </aside>
   )
 
   return (
@@ -285,12 +289,16 @@ const NewsList: Screen<NewsListProps> = ({
               <Pagination
                 totalPages={Math.ceil(total / PERPAGE)}
                 page={selectedPage}
-                renderLink={(page, className, children) => (
+                previousPageText={n('previousPage', 'Fyrri síða')}
+                nextPageText={n('nextPage', 'Næsta síða')}
+                pageText={n('page', 'Síða')}
+                renderLink={(page, className, ariaLabel, children) => (
                   <Link
                     href={{
                       pathname: linkResolver('newsoverview').href,
                       query: { ...Router.query, page },
                     }}
+                    ariaLabel={ariaLabel}
                   >
                     <span className={className}>{children}</span>
                   </Link>

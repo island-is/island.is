@@ -11,9 +11,13 @@ const range = (min: number, max: number): number[] =>
 export interface PaginationProps {
   page: number
   totalPages: number
+  previousPageText: string
+  nextPageText: string
+  pageText: string
   renderLink: (
     page: number,
     className: string,
+    ariaLabel: string,
     children: ReactNode,
   ) => ReactNode
 }
@@ -21,6 +25,9 @@ export interface PaginationProps {
 export const Pagination: FC<PaginationProps> = ({
   page,
   totalPages,
+  previousPageText,
+  nextPageText,
+  pageText,
   renderLink,
 }) => {
   const ranges = useMemo(() => {
@@ -39,16 +46,19 @@ export const Pagination: FC<PaginationProps> = ({
   const renderEdgeLink = ({
     page,
     isActive,
+    ariaLabel,
     iconType,
   }: {
     page: number
     isActive: boolean
+    ariaLabel: string
     iconType: IconTypes
   }) => {
     if (isActive) {
       return renderLink(
         page,
         cn(styles.link, styles.edge),
+        ariaLabel,
         <Icon type={iconType} width={16} height={16} color="purple400" />,
       )
     }
@@ -66,6 +76,7 @@ export const Pagination: FC<PaginationProps> = ({
         {renderEdgeLink({
           page: page - 1,
           isActive: page > 1,
+          ariaLabel: previousPageText,
           iconType: 'arrowLeft',
         })}
       </div>
@@ -78,6 +89,7 @@ export const Pagination: FC<PaginationProps> = ({
             {renderLink(
               thisPage,
               cn(styles.link, { [styles.linkCurrent]: thisPage === page }),
+              `${pageText} ${i + 1}`,
               <>{thisPage}</>,
             )}
           </Fragment>
@@ -87,6 +99,7 @@ export const Pagination: FC<PaginationProps> = ({
         {renderEdgeLink({
           page: page + 1,
           isActive: page < totalPages,
+          ariaLabel: nextPageText,
           iconType: 'arrowRight',
         })}
       </div>
