@@ -1,4 +1,4 @@
-# application-templates-data-protection-complaint
+# Application Templates Data Protection Complaint
 
 This library was generated with [Nx](https://nx.dev).
 
