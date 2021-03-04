@@ -1,6 +1,5 @@
 import { ReactDatePickerProps } from 'react-datepicker'
 import { dateFormat } from '@island.is/shared/constants'
-import pl from 'date-fns/locale/pl'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
