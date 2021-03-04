@@ -7,9 +7,13 @@ import {
   UpdatedAt,
   BelongsTo,
   ForeignKey,
+  AfterCreate,
+  AfterUpdate,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Organisation } from './organisation.model'
+import { EntityTypes } from '../enums/EntityTypes'
+import { Changelog } from './changelog.model'
 
 @Table({ tableName: 'provider' })
 export class Provider extends Model<Provider> {
@@ -57,7 +61,7 @@ export class Provider extends Model<Provider> {
     type: DataType.STRING,
   })
   @ApiProperty()
-  createdBy?: string
+  modifiedBy?: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -82,4 +86,17 @@ export class Provider extends Model<Provider> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @AfterCreate
+  @AfterUpdate
+  static addChangelog(instance: Provider) {
+    const obj = {
+      organisationId: instance.organisationId,
+      entityId: instance.id,
+      entityType: EntityTypes.PROVIDER,
+      data: instance,
+    }
+
+    Changelog.create(obj)
+  }
 }

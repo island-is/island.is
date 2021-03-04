@@ -5,8 +5,8 @@ import {
   AnswerValidationError,
   getValueViaPath,
 } from '@island.is/application/core'
-import { StatusTypes, Status, FormerInsurance, Applicant } from '../types'
-import { NO, YES } from '../constants'
+import { Status, FormerInsurance, Applicant } from '../types'
+import { NO, YES, StatusTypes } from '../constants'
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
@@ -38,18 +38,20 @@ const FORMER_INSURANCE = 'formerInsurance'
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
   [STATUS]: (newAnswer: unknown, application: Application) => {
-    const field = `${STATUS}.type`
-    const buildError = buildValidationError(field)
     const status = newAnswer as Status
 
     if (!Object.values(StatusTypes).includes(status.type)) {
+      const field = `${STATUS}.type`
+      const buildError = buildValidationError(field)
       return buildError('You must select one of the above', field)
     }
     if (
       status.type === StatusTypes.STUDENT &&
       !status.confirmationOfStudies.length
     ) {
-      return buildError('Please attach a confirmation of studies below', field)
+      const field = `${STATUS}.confirmationOfStudies`
+      const buildError = buildValidationError(field)
+      return buildError('Please attach a confirmation of studies', field)
     }
 
     return undefined
@@ -78,19 +80,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError('Please select a country', field)
     }
 
-    // Check file upload if country is Greenland / Faroe
-    if (
-      requireConfirmationOfResidency(formerInsurance.country) &&
-      !formerInsurance.confirmationOfResidencyDocument.length
-    ) {
-      const field = `${FORMER_INSURANCE}.personalId`
-      const buildError = buildValidationError(field)
-      return buildError(
-        'Please attach a confirmation of residency below',
-        field,
-      )
-    }
-
     if (
       !requireWaitingPeriod(formerInsurance.country, applicant?.citizenship)
     ) {
@@ -102,6 +91,15 @@ export const answerValidators: Record<string, AnswerValidator> = {
           'Please fill in your ID number in previous country',
           field,
         )
+      }
+      // Check file upload if country is Greenland / Faroe
+      if (
+        requireConfirmationOfResidency(formerInsurance.country) &&
+        !formerInsurance.confirmationOfResidencyDocument.length
+      ) {
+        const field = `${FORMER_INSURANCE}.confirmationOfResidencyDocument`
+        const buildError = buildValidationError(field)
+        return buildError('Please attach a confirmation of residency', field)
       }
       // Check that entitlement is Yes / No
       if (

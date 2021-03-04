@@ -8,7 +8,7 @@ import { m } from './lib/messages'
 export const documentProviderModule: ServicePortalModule = {
   name: m.rootName,
   widgets: () => [],
-  routes: async () => [
+  routes: () => [
     {
       name: m.rootName,
       path: ServicePortalPath.DocumentProviderRoot,

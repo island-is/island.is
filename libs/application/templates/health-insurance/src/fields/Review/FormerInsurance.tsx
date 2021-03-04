@@ -17,11 +17,12 @@ import {
 } from '@island.is/shared/form-fields'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
-
 import { m } from '../../forms/messages'
 import { ReviewFieldProps } from '../../types'
-import CountrySelectField from '../CountrySelectField/CountrySelectField'
-import { requireConfirmationOfResidency } from '../../healthInsuranceUtils'
+import {
+  requireConfirmationOfResidency,
+  extractKeyFromStringObject,
+} from '../../healthInsuranceUtils'
 
 const FormerInsurance: FC<ReviewFieldProps> = ({
   application,
@@ -55,8 +56,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
           )}
         </Text>
         <RadioController
-          id={'formerInsurance.registration'}
-          name={'formerInsurance.registration'}
+          id="formerInsurance.registration"
+          name="formerInsurance.registration"
           disabled={!isEditable}
           largeButtons={true}
           options={[
@@ -85,30 +86,37 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
         />
         <GridRow>
           <GridColumn span="12/12">
-            <CountrySelectField
-              field={{ ...field, id: 'formerInsurance.country' }}
-              application={application}
-              isEditable={false}
-              isReviewField={true}
+            <Input
+              id=""
+              name=""
+              label={formatText(
+                m.formerInsuranceCountry,
+                application,
+                formatMessage,
+              )}
+              ref={register}
+              disabled={!isEditable}
+              backgroundColor="white"
+              value={extractKeyFromStringObject(country, 'name')}
             />
           </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <Input
-              id={'formerInsurance.personalId'}
-              name={'formerInsurance.personalId'}
+              id="formerInsurance.personalId"
+              name="formerInsurance.personalId"
               label={formatText(m.formerPersonalId, application, formatMessage)}
               ref={register}
               disabled={!isEditable}
-              backgroundColor={'blue'}
+              backgroundColor="blue"
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <Box marginTop={[2, 0]}>
               <Input
-                id={'formerInsurance.institution'}
-                name={'formerInsurance.institution'}
+                id="formerInsurance.institution"
+                name="formerInsurance.institution"
                 label={formatText(
                   m.formerInsuranceInstitution,
                   application,
@@ -116,7 +124,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                 )}
                 ref={register}
                 disabled={!isEditable}
-                backgroundColor={'blue'}
+                backgroundColor="blue"
               />
             </Box>
           </GridColumn>
@@ -131,7 +139,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               )}
             />
             <FileUploadController
-              id={'confirmationOfResidency'}
+              id="formerInsurance.confirmationOfResidencyDocument"
               application={application}
               error={error}
               maxSize={FILE_SIZE_LIMIT}
@@ -171,12 +179,12 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
         />
       </Box>
       <RadioController
-        id={'formerInsurance.entitlement'}
-        name={'formerInsurance.entitlement'}
+        id="formerInsurance.entitlement"
+        name="formerInsurance.entitlement"
         onSelect={(value) => setEntitlement(value as string)}
         disabled={!isEditable}
         largeButtons={true}
-        split={'1/2'}
+        split="1/2"
         options={[
           {
             label: formatText(m.noOptionLabel, application, formatMessage),
@@ -191,8 +199,8 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
       {entitlement === YES && (
         <Box marginBottom={[2, 2, 4]}>
           <Input
-            id={'formerInsurance.entitlementReason'}
-            name={'formerInsurance.entitlementReason'}
+            id="formerInsurance.entitlementReason"
+            name="formerInsurance.entitlementReason"
             label={formatText(
               m.formerInsuranceAdditionalInformation,
               application,
@@ -205,7 +213,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             )}
             ref={register}
             disabled={!isEditable}
-            backgroundColor={'blue'}
+            backgroundColor="blue"
             textarea={true}
           />
         </Box>

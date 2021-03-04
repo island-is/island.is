@@ -382,6 +382,9 @@ export const slices = gql`
       address
       email
       openingHours
+      content {
+        ...HtmlFields
+      }
     }
   }
 
@@ -395,6 +398,18 @@ export const slices = gql`
     }
     content {
       ...HtmlFields
+    }
+  }
+
+  fragment AccordionSliceFields on AccordionSlice {
+    __typename
+    id
+    title
+    accordionItems {
+      title
+      content {
+        ...HtmlFields
+      }
     }
   }
 
@@ -426,5 +441,6 @@ export const slices = gql`
     ...TwoColumnTextFields
     ...OfficesSlice
     ...OneColumnTextFields
+    ...AccordionSliceFields
   }
 `
