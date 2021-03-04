@@ -4,9 +4,9 @@ API documentation should be targeted towards the developer that will consume the
 
 To help with keeping documentation up to date consider using automatic generation tools that during build time can, for example, gather comments in predefined syntax and generate the [Open API Specification](https://swagger.io/specification/) (OAS), this means that the OAS lives bundled with the code and should be easier for developers to maintain.
 
-**Note** - To be able to register a **REST** service to _Viskuausan_ the service **MUST** provide an **OPENAPI 3** service description.
+**Note** - To be able to register a **REST** service to the _API Catalogue_ the service **MUST** provide an **OPENAPI 3** service description.
 
-The following fields are required for services to be automatically imported to _Viskuausan_:
+The following fields, not marked as (_Optional_), are required for services to be automatically imported to the _API Catalogue_:
 
 - info
   - description — short but proper description of the API.
