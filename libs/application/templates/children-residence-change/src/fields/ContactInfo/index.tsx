@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { otherParent } from '../../lib/messages'
-import { extractParentFromApplication } from '../../lib/utils'
+import { contactInfo } from '../../lib/messages'
+import { extractUserInfoFromApplication } from '../../lib/utils'
 
 const emailId = 'email'
 const phoneNumberId = 'phoneNumber'
@@ -17,26 +17,20 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
   }
   const { formatMessage } = useIntl()
   const { setValue, register } = useFormContext()
-  const parent = extractParentFromApplication(application)
+  const userInfo = extractUserInfoFromApplication(application)
   const emailError = errors?.email
   const phoneNumberError = errors?.phoneNumber
   return (
     <>
       <Box marginTop={3}>
-        <Text variant="intro">
-          {formatMessage(otherParent.general.intro, {
-            parentName: parent.name,
-            parentSSN: parent.ssn,
-          })}
-        </Text>
         <Text marginTop={3}>
-          {formatMessage(otherParent.general.description)}
+          {formatMessage(contactInfo.general.description)}
         </Text>
       </Box>
       <Box marginTop={5}>
         <Controller
           name={emailId}
-          defaultValue={getValue(emailId)}
+          defaultValue={getValue(emailId) || userInfo.email}
           render={({ value, onChange }) => {
             return (
               <Input
@@ -45,7 +39,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
                 name={emailId}
                 backgroundColor="blue"
                 type="email"
-                label={formatMessage(otherParent.inputs.emailLabel)}
+                label={formatMessage(contactInfo.inputs.emailLabel)}
                 value={value}
                 hasError={emailError !== undefined}
                 errorMessage={emailError as string}
@@ -62,7 +56,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
       <Box marginTop={2}>
         <Controller
           name={phoneNumberId}
-          defaultValue={getValue(phoneNumberId)}
+          defaultValue={getValue(phoneNumberId) || userInfo.mobilePhoneNumber}
           render={({ value, onChange }) => {
             return (
               <Input
@@ -71,7 +65,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
                 name={phoneNumberId}
                 backgroundColor="blue"
                 type="tel"
-                label={formatMessage(otherParent.inputs.phoneNumberLabel)}
+                label={formatMessage(contactInfo.inputs.phoneNumberLabel)}
                 value={value}
                 required={true}
                 hasError={phoneNumberError !== undefined}
