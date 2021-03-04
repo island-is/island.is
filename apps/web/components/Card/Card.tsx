@@ -161,7 +161,7 @@ export const Card: FC<CardProps> = ({
         background="white"
         borderColor={borderColor}
         borderWidth="standard"
-        id={`clickable-card-${title.replace(/ /g, '')}`}
+        data-cy={`clickable-card-${title.replace(/ /g, '')}`}
       >
         {status ? (
           <span

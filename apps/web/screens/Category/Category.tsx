@@ -423,6 +423,7 @@ const Category: Screen<CategoryProps> = ({
                   onClick={() => {
                     handleAccordionClick(groupSlug)
                   }}
+                  data-cy={`accordion-item`}
                 >
                   <Box paddingTop={2}>
                     {sortedSubgroupKeys.map((subgroup, index) => {

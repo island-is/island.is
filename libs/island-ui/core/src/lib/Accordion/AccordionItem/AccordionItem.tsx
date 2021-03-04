@@ -68,6 +68,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       onClick,
       onBlur,
       onFocus,
+      ...rest
     },
     forwardedRef,
   ) => {
@@ -147,6 +148,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             onFocus={onFocus}
             onBlur={onBlur}
             onClick={onClick ? onClick : handleOpen}
+            {...rest}
           >
             <Columns space={2} alignY="center">
               <Column>
@@ -201,7 +203,11 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           </Box>
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
-        <AnimateHeight duration={300} height={height}>
+        <AnimateHeight
+          duration={300}
+          height={height}
+          data-cy={`accordion-item-content`}
+        >
           <Box id={id} paddingTop={2}>
             {children}
           </Box>

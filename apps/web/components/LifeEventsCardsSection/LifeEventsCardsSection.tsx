@@ -42,7 +42,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
         })}
       />
       <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
-        <Link {...linkResolver('lifeevents')} id="overview-link" skipTab>
+        <Link {...linkResolver('lifeevents')} data-cy="overview-link" skipTab>
           <Text variant="h5" as="p" paddingBottom={2}>
             <Button
               icon="arrowForward"
