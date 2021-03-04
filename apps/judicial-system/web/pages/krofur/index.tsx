@@ -33,7 +33,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { useHistory } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import {
   SendNotificationMutation,
   TransitionCaseMutation,
@@ -56,7 +56,7 @@ export const DetentionRequests: React.FC = () => {
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   const { user } = useContext(UserContext)
-  const history = useHistory()
+  const router = useRouter()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
@@ -163,13 +163,13 @@ export const DetentionRequests: React.FC = () => {
 
   const handleClick = (c: Case): void => {
     if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
-      history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
+      router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
     } else if (isJudge || isRegistrar) {
-      history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
+      router.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
-      history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
+      router.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
-      history.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
+      router.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
     }
   }
 

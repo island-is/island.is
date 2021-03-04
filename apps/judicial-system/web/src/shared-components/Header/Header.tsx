@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
+import { useRouter } from 'next/router'
 
 import { api } from '@island.is/judicial-system-web/src/services'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -8,41 +8,38 @@ import { UserContext } from '@island.is/judicial-system-web/src/shared-component
 import { UserRole } from '@island.is/judicial-system/types'
 import * as styles from './Header.treat'
 
-interface Props {
-  pathname: string
-}
-
-const Header: React.FC<Props> = (props: Props) => {
+const Header: React.FC = () => {
+  const router = useRouter()
   const { isAuthenticated, setUser, user } = useContext(UserContext)
 
   return (
     <header className={`${styles.header}`}>
-      <Link
-        to={
-          !user || !isAuthenticated
-            ? '/'
-            : user.role === UserRole.ADMIN
-            ? Constants.USER_LIST_ROUTE
-            : Constants.REQUEST_LIST_ROUTE
+      <Box
+        display="flex"
+        alignItems="center"
+        onClick={() =>
+          router.push(
+            !user || !isAuthenticated
+              ? '/login'
+              : user.role === UserRole.ADMIN
+              ? Constants.USER_LIST_ROUTE
+              : Constants.REQUEST_LIST_ROUTE,
+          )
         }
-        style={{ textDecoration: 'none' }}
-        data-testid="link-to-home"
       >
-        <Box display="flex" alignItems="center">
-          <div className={styles.islandIsApplicationLogoWrapper}>
-            <Logo width={146} />
-          </div>
-          {props.pathname !== '/' && (
-            <>
-              {/* Text does not allow className prop so we need to do this on a separate span */}
-              <span className={styles.headerDiviter} />
-              <span className={styles.headerTextWrapper}>
-                <Text>Réttarvörslugátt</Text>
-              </span>
-            </>
-          )}
-        </Box>
-      </Link>
+        <div className={styles.islandIsApplicationLogoWrapper}>
+          <Logo width={146} />
+        </div>
+        {router.pathname !== '/' && (
+          <>
+            {/* Text does not allow className prop so we need to do this on a separate span */}
+            <span className={styles.headerDiviter} />
+            <span className={styles.headerTextWrapper}>
+              <Text>Réttarvörslugátt</Text>
+            </span>
+          </>
+        )}
+      </Box>
       {isAuthenticated && (
         <Button
           variant="ghost"
