@@ -48,6 +48,7 @@ export class FileService {
           parentB,
           childrenAppliedFor,
           expiry,
+          reason,
         } = variablesForResidenceChange(answers, externalData)
         const bucket = this.getBucketName()
 
@@ -56,6 +57,7 @@ export class FileService {
           parentA,
           parentB,
           expiry,
+          reason,
         )
 
         const fileName = `${

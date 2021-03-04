@@ -37,6 +37,7 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
       {
         id: '1',
         name: 'Ólafur Helgi Eiríksson',
+        ssn: '123456-7890',
         address: 'Vesturgata 22',
         postalCode: '101',
         city: 'Reykjavík',
@@ -44,6 +45,7 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
       {
         id: '2',
         name: 'Rósa Líf Eiríksdóttir',
+        ssn: '123456-7890',
         address: 'Vesturgata 22',
         postalCode: '101',
         city: 'Reykjavík',

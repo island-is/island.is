@@ -1,34 +1,27 @@
 import { FormValue } from '@island.is/application/core'
-import {
-  ParentResidenceChange,
-  PersonResidenceChange,
-} from '@island.is/application/templates/children-residence-change'
+import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 import { variablesForResidenceChange } from './childrenResidenceChange'
 
 describe('ChildrenResidenceChange', () => {
   it('should create parameters for legal residence change from application answers and externalData', () => {
     const expectedExpiry = 'expiry'
 
-    const expectedParentA: ParentResidenceChange = {
+    const expectedParentA: PersonResidenceChange = {
       id: 'parent a ssn',
       name: 'parent a name',
       ssn: 'parent a ssn',
       postalCode: 'parent a postal code',
       address: 'parent a address',
       city: 'parent a city',
-      phoneNumber: '0009999',
-      email: 'thisisnotanemail',
     }
 
-    const expectedParentB: ParentResidenceChange = {
+    const expectedParentB: PersonResidenceChange = {
       id: 'parent b id',
       name: 'parent b name',
       ssn: 'parent b ssn',
       postalCode: 'parent b postal code',
       address: 'parent b address',
       city: 'parent b city',
-      phoneNumber: '0008888',
-      email: 'thisisneitheranemail',
     }
 
     const expectedChildrenAppliedFor: Array<PersonResidenceChange> = [
@@ -50,10 +43,6 @@ describe('ChildrenResidenceChange', () => {
           name: expectedChildrenAppliedFor[0].name,
         },
       ],
-      parentBEmail: expectedParentB.email as string,
-      parentBPhoneNumber: expectedParentB.phoneNumber as string,
-      email: expectedParentA.email as string,
-      phoneNumber: expectedParentA.phoneNumber as string,
     }
 
     const externalData: FormValue = {
