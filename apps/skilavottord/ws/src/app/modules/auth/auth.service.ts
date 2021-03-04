@@ -1,19 +1,26 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { environment } from '../../../environments'
 import { User } from '../user'
 import { Role, AuthUser } from './auth.types'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 const { userList } = environment.skilavottord
 
 @Injectable()
 export class AuthService {
-  constructor() {}
+  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
   // TODO
   getRole(user: AuthUser): Role {
-    const ulist = JSON.parse(userList)
-    const picked = ulist.find((o) => o.nationalId === user.nationalId)
-    //TODO if not found
-    return picked.role as Role
+    try {
+      this.logger.info('getRole start...')
+      const ulist = JSON.parse(userList)
+      const picked = ulist.find((o) => o.nationalId === user.nationalId)
+      //TODO if not found
+      this.logger.info('getRole return value:' + picked.role)
+      return picked.role as Role
+    } catch (error) {
+      this.logger.error('getRole exception:' + error.message)
+    }
   }
 
   // //TODO
@@ -32,6 +39,7 @@ export class AuthService {
 
   // get user role
   getUserRole(user: AuthUser): User {
+    this.logger.info('getUserRole start...')
     const ulist = JSON.parse(userList)
     const picked = ulist.find((o) => o.nationalId === user.nationalId)
     return picked
@@ -39,20 +47,24 @@ export class AuthService {
 
   // check role
   checkRole(user: AuthUser, role: Role): boolean {
+    this.logger.info('checkRole for user start...')
     try {
       const ulist = JSON.parse(userList)
       const picked = ulist.find((o) => o.nationalId === user.nationalId)
       if (!picked) {
+        this.logger.info('checkRole user not found in userList')
         return false
       } else {
         const r = picked.role as Role
+        this.logger.info('checkRole user found in userList. user role:' + r)
         return (
           r === 'developer' || r === 'recyclingCompany' || r === 'recyclingFund'
         )
       }
+      this.logger.info('checkRole return default false')
       return false
     } catch (err) {
-      console.log('exeption in auth.service checkRole:' + err.message)
+      this.logger.error('checkRole exeption in auth.service:' + err.message)
     }
   }
 

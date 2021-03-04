@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { AuthService } from './auth.service'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 const userList = [
   {
@@ -63,7 +64,13 @@ describe('skilavottordApiTest', () => {
 
     beforeEach(async () => {
       const moduleRef = await Test.createTestingModule({
-        providers: [AuthService],
+        providers: [
+          AuthService,
+          {
+            provide: LOGGER_PROVIDER,
+            useValue: logger,
+          },
+        ],
       }).compile()
 
       authService = moduleRef.get(AuthService)
@@ -91,7 +98,7 @@ describe('skilavottordApiTest', () => {
         const hasPermission = authService.checkRole(userx, 'citizen')
         expect(hasPermission).toBeFalsy()
       })
-      it('nationalId not in userList', () => {
+      it('nationalId not in userList, return false', () => {
         let userx = {
           nationalId: '8888888888',
           name: 'Gervimaður-1',
