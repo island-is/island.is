@@ -72,22 +72,36 @@ describe('skilavottordApiTest', () => {
           },
         ],
       }).compile()
-
       authService = moduleRef.get(AuthService)
+      const httpServiceSpy = jest
+        .spyOn(JSON, 'parse')
+        .mockImplementation(() => userList)
     })
 
     describe('getRole test', () => {
       it('should return a correct user with role', () => {
-        const user = user1
-        const ur = authService.getUserRole(user)
-        expect(ur.role).toBe('recyclingCompany')
+        let userx = {
+          nationalId: '1111111111',
+          name: 'Gervimaður-developer',
+          mobile: '',
+          role: '',
+        }
+        const ur = authService.getUserRole(userx)
+        expect(ur.role).toBe('developer')
+      })
+      it('should return a correct user with role', () => {
+        let userx = {
+          nationalId: '8888888888',
+          name: 'Gervimaður-citizen',
+          mobile: '',
+          role: '',
+        }
+        const ur = authService.getUserRole(userx)
+        expect(ur.role).toBe('citizen')
       })
     })
 
     describe('checkRole test ', () => {
-      const httpServiceSpy = jest
-        .spyOn(JSON, 'parse')
-        .mockImplementation(() => userList)
       it('allways return false for citizen', () => {
         let userx = {
           nationalId: '8888888888',
