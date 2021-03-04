@@ -43,7 +43,7 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: ' ',
+          subTitle: m.externalDataSubtitle,
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
@@ -319,8 +319,10 @@ export const HealthInsuranceForm: Form = buildForm({
             buildAsyncSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
+              description: m.formerInsuranceDetails,
               placeholder: m.formerInsuranceCountryPlaceholder,
               loadingError: m.formerInsuranceCountryError,
+              backgroundColor: 'blue',
               loadOptions: async () => {
                 const countries = await fetch(
                   'https://restcountries.eu/rest/v2/all',
@@ -423,19 +425,13 @@ export const HealthInsuranceForm: Form = buildForm({
               variant: 'textarea',
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
-                const entitlement = (answers as {
-                  formerInsurance: { entitlement: string }
-                })?.formerInsurance?.entitlement
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
                   applicant: { citizenship: string }
                 })?.applicant?.citizenship
-                return (
-                  entitlement === YES &&
-                  !requireWaitingPeriod(formerCountry, citizenship)
-                )
+                return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
           ],
@@ -474,7 +470,7 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               condition: {
                 questionId: 'hasAdditionalInfo',
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),
