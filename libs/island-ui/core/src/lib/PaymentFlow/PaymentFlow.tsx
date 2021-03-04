@@ -1,4 +1,4 @@
-// Mockup of a CreditCard selection flow.
+// Mockup of a payment flow.
 // Not production code.
 
 import * as React from 'react'
