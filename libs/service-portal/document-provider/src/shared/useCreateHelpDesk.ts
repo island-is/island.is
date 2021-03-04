@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { Helpdesk } from '@island.is/api/schema'
 import { gql, useMutation } from '@apollo/client'
 import { m } from '../lib/messages'
+import { getOrganisationQuery } from '../shared/useGetOrganisation'
 
 const CREATE_HELP_DESK_MUTATION = gql`
   mutation CreateHelpDeskMutation(
@@ -19,7 +20,10 @@ const CREATE_HELP_DESK_MUTATION = gql`
 
 export type CreateHelpDeskInput = Pick<Helpdesk, 'email' | 'phoneNumber'>
 
-export function useCreateHelpDesk(organisationId: string) {
+export function useCreateHelpDesk(
+  organisationId: string,
+  organisationNationalId: string,
+) {
   const [createHelpDeskMutation, { called, loading, error }] = useMutation(
     CREATE_HELP_DESK_MUTATION,
   )
@@ -43,6 +47,14 @@ export function useCreateHelpDesk(organisationId: string) {
         input,
         organisationId,
       },
+      refetchQueries: [
+        {
+          query: getOrganisationQuery,
+          variables: {
+            input: organisationNationalId,
+          },
+        },
+      ],
     })
   }
 
