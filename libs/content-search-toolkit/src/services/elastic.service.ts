@@ -216,8 +216,12 @@ export class ElasticService {
         body: {
           script: {
             lang: 'painless',
-            source: `ctx._source.popularityScore = params.a * params.t +
-              (1 - params.a) * ctx._source.popularityScore
+            source: `if (ctx._source.containsKey('popularityScore') {
+              ctx._source.popularityScore = params.a * params.t +
+                (1 - params.a) * ctx._source.popularityScore
+            } else {
+              ctx._source.popularityScore = 0
+            }
             `,
             params: {
               a: environment.popularityFactor,
