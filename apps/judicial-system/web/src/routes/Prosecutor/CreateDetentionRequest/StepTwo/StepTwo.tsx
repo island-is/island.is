@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import parseISO from 'date-fns/parseISO'
 import { ValueType } from 'react-select/src/types'
-import { useHistory, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 
 import { Text, Box, Tooltip, Select, Option } from '@island.is/island-ui/core'
@@ -44,20 +43,21 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
 }
 
 export const StepTwo: React.FC = () => {
-  const history = useHistory()
+  const router = useRouter()
+  const id = router.query.id
 
   const [workingCase, setWorkingCase] = useState<Case>()
   const [arrestTime, setArrestTime] = useState<string | undefined>('')
   const [requestedCourtTime, setRequestedCourtTime] = useState<string>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const { id } = useParams<{ id: string }>()
   const { user } = useContext(UserContext)
 
   // Validate date and time fields
@@ -177,7 +177,7 @@ export const StepTwo: React.FC = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        history.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+        router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
       } else {
         setModalVisible(true)
       }
@@ -496,15 +496,13 @@ export const StepTwo: React.FC = () => {
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
-                history.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+                router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
               }
               handlePrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(workingCase.id)
 
                 if (notificationSent) {
-                  history.push(
-                    `${Constants.STEP_THREE_ROUTE}/${workingCase.id}`,
-                  )
+                  router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}

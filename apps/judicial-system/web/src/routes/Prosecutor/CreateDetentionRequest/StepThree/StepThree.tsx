@@ -9,7 +9,6 @@ import {
   DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -40,6 +39,7 @@ import {
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
@@ -47,7 +47,8 @@ interface CaseData {
 
 export const StepThree: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
 
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
