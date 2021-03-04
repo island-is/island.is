@@ -12,10 +12,12 @@ export const extractApplicantFromApplication = (application: Application) => {
 }
 
 const dataToUse = ({ answers, externalData }: Application, key: string) => {
-  return (
-    ((answers.mockData as FormValue)?.[key] as FormValue)?.data ||
-    externalData[key]?.data
-  )
+  const mockData = ((answers.mockData as FormValue)?.[key] as FormValue)?.data
+  const data = externalData[key]?.data
+  if (answers.useMocks === 'no') {
+    return data
+  }
+  return mockData || data
 }
 
 export const extractParentFromApplication = (application: Application) => {
