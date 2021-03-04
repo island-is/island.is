@@ -16,7 +16,7 @@ interface Props {
   organisationsPreview: OrganisationPreview[]
 }
 
-const PAGE_SIZE = 4
+const PAGE_SIZE = 10
 
 export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -26,9 +26,11 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
   const [page, setPage] = useState(1)
 
   useEffect(() => {
-    const filtered = organisationsPreview.filter((org) => {
-      return org.name.toLowerCase().includes(searchTerm.toLowerCase())
-    })
+    const filtered = organisationsPreview
+      .filter((org) => {
+        return org.name.toLowerCase().includes(searchTerm.toLowerCase())
+      })
+      .sort((a, b) => a.name.localeCompare(b.name))
     setSearchResults(filtered)
 
     const lastPage = Math.ceil(filtered.length / PAGE_SIZE)

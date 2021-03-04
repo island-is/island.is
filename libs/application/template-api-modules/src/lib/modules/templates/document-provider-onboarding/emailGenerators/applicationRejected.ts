@@ -23,7 +23,7 @@ export const generateApplicationRejectedEmail: EmailTemplateGenerator = (
         Ástæða höfnunar: ${get(application.answers, 'rejectionReason')}
 
         Með kveðju,
-        starfsfólk Island.is
+        starfsfólk island.is
       `)
       : dedent(`Hello.
 
