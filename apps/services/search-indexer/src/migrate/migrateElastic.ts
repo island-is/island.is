@@ -66,6 +66,28 @@ class App {
               // resolve the promise instead of throw to let migrations for other indices finish
               return error
             }
+
+            // try to migrate the popularity scores
+            const oldIndexName = await elastic.getPreviousIndex(locale)
+
+            if (oldIndexName) {
+              try {
+                await elastic.migratePopularityScores(
+                  oldIndexName,
+                  newIndexName,
+                )
+                logger.info('Popularity scores from previous index migrated', {
+                  oldIndexName,
+                })
+              } catch (error) {
+                logger.error('Failed to migrate popularity scores', {
+                  locale,
+                  oldIndexName,
+                  newIndexName,
+                  error: error.message,
+                })
+              }
+            }
           } else {
             logger.info(
               'Elasticsearch index version matches code index version, skipping index update',

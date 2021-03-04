@@ -20,7 +20,6 @@ import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
-import { SearchResponse } from 'elastic'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -187,73 +186,5 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       await this.updateLastFolderHash({ elasticIndex, folderHash })
     }
     return true
-  }
-
-  /**
-   * Read all documents from an index and write their popularity scores to
-   * the documents with corresponding ids in the data array
-   *
-   * @param {string} index
-   * @param {Array<MappedData>} data
-   * @return {Array<MappedData>}
-   */
-  async migratePopularityScores(
-    index: string,
-    data: Array<MappedData>,
-  ): Promise<Array<MappedData>> {
-    if (!index) {
-      return data
-    }
-    // TODO: do a scrolling query or sumthin
-    const query = {
-      query: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        match_all: {},
-      },
-      size: 10000,
-      _source: ['popularityScore'],
-    }
-    const oldData = await this.elasticService.findByQuery<
-      SearchResponse<MappedData>,
-      unknown
-    >(index, query)
-
-    const oldScores = {}
-    oldData.body.hits?.hits.forEach((obj) => {
-      oldScores[obj._id] = obj._source.popularityScore
-    })
-
-    data.forEach((obj, idx) => {
-      if (obj._id in oldScores) {
-        data[idx].popularityScore = oldScores[obj._id]
-      }
-    })
-
-    return data
-  }
-
-  /**
-   * Returns the name of the most recent island-* index with the given locale,
-   * determined by creation date.
-   *
-   * @param {string} locale
-   * @return {string}
-   */
-  async getLatestIndex(locale: string): Promise<string> {
-    const client = await this.elasticService.getClient()
-
-    const indices = await client.cat.indices({
-      h: ['i', 'creation.date.string'],
-      s: 'creation.date:desc',
-    })
-
-    const results = indices.body.match(
-      new RegExp(`island-${locale}-[a-z0-9]+`, 'gi'),
-    )
-
-    if (results.length < 1) {
-      return null
-    }
-    return results[0]
   }
 }

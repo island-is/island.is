@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/content-search-toolkit'
-import { SyncOptions } from '@island.is/content-search-indexer/types'
+import {
+  MappedData,
+  SyncOptions,
+} from '@island.is/content-search-indexer/types'
 import {
   ElasticsearchIndexLocale,
   getIndexTemplate,
@@ -15,6 +18,7 @@ import {
   MetricsService,
 } from '@island.is/content-search-metrics'
 import { AwsEsPackage } from './aws'
+import { SearchResponse } from 'elastic'
 
 const esService = new ElasticService()
 
@@ -164,4 +168,93 @@ export const removeIndexIfExists = async (indexName: string) => {
   }
 
   return false
+}
+
+/**
+ * Read all documents from the old index and write their popularity scores to
+ * the documents with corresponding ids in the new index
+ *
+ * @param {string} oldIndex
+ * @param {string} newIndex
+ */
+export const migratePopularityScores = async (
+  oldIndex: string,
+  newIndex: string,
+) => {
+  const query = {
+    query: {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      match_all: {},
+    },
+    size: 10000,
+    _source: ['popularityScore'],
+  }
+  const oldData = await esService.findByQuery<
+    SearchResponse<MappedData>,
+    unknown
+  >(oldIndex, query)
+
+  const oldScores = {}
+  oldData.body.hits?.hits.forEach((obj) => {
+    if ('popularityScore' in obj._source) {
+      oldScores[obj._id] = obj._source.popularityScore
+    }
+  })
+
+  const newData = await esService.findByQuery<
+    SearchResponse<MappedData>,
+    unknown
+  >(newIndex, query)
+
+  const requests = []
+
+  newData.body.hits?.hits.forEach((obj, idx) => {
+    if (obj._id in oldScores) {
+      requests.push({
+        update: { _index: newIndex, _id: obj._id },
+      })
+      requests.push({
+        doc: { popularityScore: oldScores[obj._id] },
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        doc_as_upsert: true,
+      })
+    }
+  })
+
+  // bulk doesn't like empty bodies
+  if (requests.length) {
+    try {
+      const client = await esService.getClient()
+      await client.bulk({ index: newIndex, body: requests })
+      logger.info(`Updated popularityScore for ${requests.length} documents`)
+    } catch (error) {
+      logger.error('Elasticsearch request failed on bulk index', error)
+      throw error
+    }
+  }
+}
+
+/**
+ * Returns the name of the second most recent island-* index with the given locale,
+ * determined by creation date.
+ *
+ * @param {string} locale
+ * @return {string}
+ */
+export const getPreviousIndex = async (locale: string): Promise<string> => {
+  const client = await esService.getClient()
+
+  const indices = await client.cat.indices({
+    h: ['i', 'creation.date.string'],
+    s: 'creation.date:desc',
+  })
+
+  const results = indices.body.match(
+    new RegExp(`island-${locale}-[a-z0-9]+`, 'gi'),
+  )
+
+  if (results.length < 2) {
+    return null
+  }
+  return results[1]
 }
