@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { YES, NO } from '../shared'
 import { error } from './messages/error'
+import * as kennitala from 'kennitala'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -8,8 +9,6 @@ export enum OnBehalf {
   COMPANY = 'company',
   ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
 }
-
-const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
 export const DataProtectionComplaintSchema = z.object({
   inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
@@ -44,7 +43,7 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   applicant: z.object({
     name: z.string().nonempty(),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
     address: z.string().nonempty(),
     postalCode: z.string().nonempty(),
     city: z.string().nonempty(),
@@ -53,7 +52,7 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   organizationOrInstitution: z.object({
     name: z.string().nonempty(),
-    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+    nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false)),
     address: z.string().nonempty(),
     postalCode: z.string().nonempty(),
     city: z.string().nonempty(),
