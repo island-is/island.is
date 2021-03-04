@@ -7,19 +7,19 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       }),
-      queryInterface.addColumn('api_scope', 'grant_to_procuring_holders ', {
+      queryInterface.addColumn('api_scope', 'grant_to_procuring_holders', {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       }),
-      queryInterface.addColumn('api_scope', 'allow_explicit_delegation_grant ', {
+      queryInterface.addColumn('api_scope', 'allow_explicit_delegation_grant', {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       }),
-      queryInterface.addColumn('api_scope', 'automatic_delegation_grant ', {
+      queryInterface.addColumn('api_scope', 'automatic_delegation_grant', {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       }),
-      queryInterface.addColumn('api_scope', 'also_for_delegated_user  ', {
+      queryInterface.addColumn('api_scope', 'also_for_delegated_user', {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       }),
