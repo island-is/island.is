@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
@@ -6,10 +6,11 @@ import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 import * as styles from './Login.treat'
 
 const Login = () => {
-  const urlParams = new URLSearchParams(window.location.search)
   const { user } = useContext(UserContext)
+  const [urlParams, setUrlParams] = useState<URLSearchParams>()
 
   useEffect(() => {
+    setUrlParams(new URLSearchParams(window.location.search))
     document.title = 'Réttarvörslugátt'
   }, [])
 
@@ -57,7 +58,7 @@ const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
-      {urlParams.has('villa') && (
+      {urlParams?.has('villa') && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
             {getErrorAlert(urlParams.get('villa') as LoginErrorCodes)}

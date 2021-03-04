@@ -10,7 +10,7 @@ import {
   StepFour,
 } from '@island.is/judicial-system-web/src/routes/Prosecutor/CreateDetentionRequest'
 import { DetentionRequests } from '@island.is/judicial-system-web/src/routes/Shared/DetentionRequests/DetentionRequests'
-import { Login } from '@island.is/judicial-system-web/src/routes/Shared/Login/Login'
+import Login from '@island.is/judicial-system-web/src/routes/Shared/Login/Login'
 import JudgeOverview from '@island.is/judicial-system-web/src/routes/Judge/Overview/Overview'
 import CourtRecord from '@island.is/judicial-system-web/src/routes/Judge/CourtRecord/CourtRecord'
 import {
