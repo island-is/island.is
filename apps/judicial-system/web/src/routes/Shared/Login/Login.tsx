@@ -4,9 +4,10 @@ import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 import * as styles from './Login.treat'
+import { useRouter } from 'next/router'
 
 const Login = () => {
-  const urlParams = new URLSearchParams(window.location.search)
+  const router = useRouter()
   const { user } = useContext(UserContext)
 
   useEffect(() => {
@@ -19,6 +20,7 @@ const Login = () => {
      * that any logged in user is logged out.
      */
     if (user) {
+      console.log(user)
       api.logOut()
     }
   }, [user])
@@ -57,10 +59,10 @@ const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
-      {urlParams.has('villa') && (
+      {router.query.villa && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
-            {getErrorAlert(urlParams.get('villa') as LoginErrorCodes)}
+            {getErrorAlert(router.query.villa as LoginErrorCodes)}
           </Box>
         </div>
       )}

@@ -12,7 +12,6 @@ import {
   BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
@@ -27,18 +26,18 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-
-  const { id } = useParams<{ id: string }>()
-
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] = useState<
     string
   >('')
+
+  const router = useRouter()
+  const id = router.query.id
 
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },

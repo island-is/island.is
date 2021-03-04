@@ -43,13 +43,15 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as styles from './Overview.treat'
+import { useRouter } from 'next/router'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { id } = useParams<{ id: string }>()
-  const history = useHistory()
+  const router = useRouter()
+  const id = router.query.id
+
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
@@ -368,12 +370,12 @@ export const Overview: React.FC = () => {
                   : 'farbann'
               }  hefur verið staðfest`}
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
-              handleClose={() => history.push(Constants.REQUEST_LIST_ROUTE)}
+              handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
-                history.push(Constants.FEEDBACK_FORM_ROUTE)
+                router.push(Constants.FEEDBACK_FORM_ROUTE)
               }}
               handleSecondaryButtonClick={() => {
-                history.push(Constants.REQUEST_LIST_ROUTE)
+                router.push(Constants.REQUEST_LIST_ROUTE)
               }}
               primaryButtonText="Gefa endurgjöf á gáttina"
               secondaryButtonText="Loka glugga"
