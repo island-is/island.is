@@ -36,7 +36,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
       <Box marginTop={5}>
         <Controller
           name={emailId}
-          defaultValue={getValue(phoneNumberId)}
+          defaultValue={getValue(emailId)}
           render={({ value, onChange }) => {
             return (
               <Input
