@@ -332,18 +332,25 @@ export const ComplaintForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'last',
-      title: 'Búinn skref',
+      id: 'confirmation',
+      title: 'Staðfesting',
       children: [
         buildDescriptionField({
           id: 'field',
-          title: "I guess the journey's never really over",
-          description: (application) => ({
-            defaultMessage: 'Done',
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-            // @ts-ignore
-            values: { name: application.answers.name },
-          }),
+          title: 'Vel gert!',
+          description:
+            'Þú ert komin/n út á enda, ef þú ýtir á næsta skref þá læsist umsóknin',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation2',
+      title: 'Búið',
+      children: [
+        buildDescriptionField({
+          id: 'field',
+          title: 'Vel gert!',
+          description: 'Þú ert komin/n út á enda',
         }),
       ],
     }),
