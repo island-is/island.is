@@ -24,7 +24,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
         <a href=${applicationLink} target="_blank">Smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
         
         Með kveðju,
-        Starfsfólk island.is
+        starfsfólk island.is
       `)
       : dedent(`Hello.
 
