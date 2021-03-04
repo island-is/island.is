@@ -39,8 +39,8 @@ More detailed response
 ```javascript
 {
   "error": {
-    "code": 400,
-    "message": "Bad Request - parameter incorrect",
+    "code": 87,
+    "message": "Parameter is incorrectly formatted",
     "errors": [
       {
         "code": 87,
