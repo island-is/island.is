@@ -51,6 +51,11 @@ export const section = defineMessages({
     defaultMessage: 'Upplýsingar um þig',
     description: 'Details about the applicant',
   },
+  organizationOrInstitution: {
+    id: 'dpac.application:section.organizationOrInstitution',
+    defaultMessage: 'Upplýsingar um félagasamtök / stofnun',
+    description: 'Details about the organizationOrInstitution',
+  },
   commissions: {
     id: 'dpac.application:section.commissions',
     defaultMessage: 'Upplýsingar umboðsaðila',

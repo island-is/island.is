@@ -248,6 +248,66 @@ export const ComplaintForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'organizationOrInstitution',
+          title: section.organizationOrInstitution.defaultMessage,
+          condition: (formValue) =>
+            (formValue.info as FormValue)?.onBehalf ===
+            OnBehalf.ORGANIZATION_OR_INSTITUTION,
+          children: [
+            buildMultiField({
+              id: 'organizationOrInstitutionSection',
+              title: info.general.organizationOrInstitutionPageTitle,
+              description:
+                info.general.organizationOrInstitutionPageDescription,
+              children: [
+                buildTextField({
+                  id: 'organizationOrInstitution.name',
+                  title: info.labels.organizationOrInstitutionName,
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.nationalId',
+                  title: info.labels.nationalId,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.address',
+                  title: info.labels.address,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.postalCode',
+                  title: info.labels.postalCode,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.city',
+                  title: info.labels.city,
+                  width: 'half',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.email',
+                  title: info.labels.email,
+                  width: 'half',
+                  variant: 'email',
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.phoneNumber',
+                  title: info.labels.tel,
+                  width: 'half',
+                  variant: 'tel',
+                  backgroundColor: 'blue',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'commissions',
           title: section.commissions.defaultMessage,
           condition: (formValue) => {

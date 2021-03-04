@@ -23,6 +23,17 @@ export const info = {
       defaultMessage: 'Vinsamlegast fylltu út þínar persónuupplýsingar',
       description: 'Applicant page description',
     },
+    organizationOrInstitutionPageTitle: {
+      id: 'dcap.application:section.info.organizationOrInstitutionPageTitle',
+      defaultMessage: 'Fylltu út upplýsingar um Félagssamtök / stofnun',
+      description: 'Organization or Institution page title',
+    },
+    organizationOrInstitutionPageDescription: {
+      id:
+        'dcap.application:section.info.organizationOrInstitutionPageDescription',
+      defaultMessage: 'Vinsamlegast fylltu út uppýsingar',
+      description: 'Organization or Institution page description',
+    },
   }),
   labels: defineMessages({
     myself: {
@@ -79,6 +90,11 @@ export const info = {
       id: 'dcap.application:section.info.tel',
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
+    },
+    organizationOrInstitutionName: {
+      id: 'dcap.application:section.info.organizationOrInstitutionName',
+      defaultMessage: 'Nafn félagssamtaka',
+      description: 'Organization or institution name',
     },
   }),
 }
