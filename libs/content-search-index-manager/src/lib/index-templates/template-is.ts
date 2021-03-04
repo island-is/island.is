@@ -28,9 +28,8 @@ export const template = {
           synonyms_path: 'analyzers/{SYNONYMS}',
         },
         icelandicDeCompounded: {
-          type: 'hyphenation_decompounder',
+          type: 'dictionary_decompounder',
           word_list_path: 'analyzers/{HYPHENWHITELIST}',
-          hyphenation_patterns_path: 'analyzers/{HYPHENPATTERNS}',
           max_subword_size: 18,
           min_subword_size: 4,
         },

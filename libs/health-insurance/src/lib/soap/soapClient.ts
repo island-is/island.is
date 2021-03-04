@@ -1,5 +1,6 @@
 import { logger } from '@island.is/logging'
 import * as Soap from 'soap'
+import { XRoadVariables } from './dto'
 
 /*
  * Because we could not read xroad .wsdl
@@ -15,25 +16,31 @@ export class SoapClient {
     baseUrl: string,
     username: string,
     password: string,
+    clientID: string,
+    servicesID: string,
     functionName: string,
   ): Promise<Soap.Client | null> {
     logger.info('Starting create soapClient...')
+
+    const clientIDs = this.parseXRoadVariables(clientID)
+    const serviceIDs = this.parseXRoadVariables(servicesID)
+
     // xroad headers
     const xh = `<xrd:protocolVersion ${SoapClient.xn}>4.0</xrd:protocolVersion>
     <xrd:id ${SoapClient.xn}>3903d152-1d2c-11eb-adc1-0242ac120002</xrd:id>
     <xrd:userId ${SoapClient.xn}>anonymous</xrd:userId>
     <xrd:service ${SoapClient.xn} ${SoapClient.xi} id:objectType="SERVICE" >
-        <id:xRoadInstance>IS-DEV</id:xRoadInstance>
-        <id:memberClass>GOV</id:memberClass>
-        <id:memberCode>10007</id:memberCode>
-        <id:subsystemCode>SJUKRA-Protected</id:subsystemCode>
+        <id:xRoadInstance>${serviceIDs.xRoadInstance}</id:xRoadInstance>
+        <id:memberClass>${serviceIDs.memberClass}</id:memberClass>
+        <id:memberCode>${serviceIDs.memberCode}</id:memberCode>
+        <id:subsystemCode>${serviceIDs.subSystemCode}</id:subsystemCode>
         <id:serviceCode>${functionName}</id:serviceCode>
     </xrd:service>
     <xrd:client ${SoapClient.xn} ${SoapClient.xi} id:objectType="SUBSYSTEM" >
-        <id:xRoadInstance>IS-DEV</id:xRoadInstance>
-        <id:memberClass>GOV</id:memberClass>
-        <id:memberCode>10000</id:memberCode>
-        <id:subsystemCode>island-is-client</id:subsystemCode>
+        <id:xRoadInstance>${clientIDs.xRoadInstance}</id:xRoadInstance>
+        <id:memberClass>${clientIDs.memberClass}</id:memberClass>
+        <id:memberCode>${clientIDs.memberCode}</id:memberCode>
+        <id:subsystemCode>${clientIDs.subSystemCode}</id:subsystemCode>
     </xrd:client>`
 
     const promise = new Promise<Soap.Client>((resolve) => {
@@ -57,5 +64,20 @@ export class SoapClient {
     })
     logger.info('Finished create soapClient...')
     return promise
+  }
+
+  static parseXRoadVariables(variables: string): XRoadVariables {
+    const varArr = variables.split('/')
+    if (varArr.length != 4) {
+      logger.error(`Could not find variables Ids from ${variables}`)
+      throw new Error(`Could not find variables Ids from ${variables}`)
+    }
+
+    return {
+      xRoadInstance: varArr[0],
+      memberClass: varArr[1],
+      memberCode: varArr[2],
+      subSystemCode: varArr[3],
+    }
   }
 }

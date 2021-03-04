@@ -20,8 +20,8 @@ import {
   buildAsyncSelectField,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
-import { CountryDataResult, StatusTypes } from '../types'
+import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../constants'
+import { CountryDataResult } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
@@ -69,6 +69,12 @@ export const HealthInsuranceForm: Form = buildForm({
               type: undefined,
               title: m.socialInsuranceAdministrationTitle,
               subTitle: m.socialInsuranceAdministrationSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'moreInfo',
+              type: undefined,
+              title: '',
+              subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
               id: 'userProfile',
@@ -313,8 +319,10 @@ export const HealthInsuranceForm: Form = buildForm({
             buildAsyncSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
+              description: m.formerInsuranceDetails,
               placeholder: m.formerInsuranceCountryPlaceholder,
               loadingError: m.formerInsuranceCountryError,
+              backgroundColor: 'blue',
               loadOptions: async () => {
                 const countries = await fetch(
                   'https://restcountries.eu/rest/v2/all',
@@ -417,19 +425,13 @@ export const HealthInsuranceForm: Form = buildForm({
               variant: 'textarea',
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
-                const entitlement = (answers as {
-                  formerInsurance: { entitlement: string }
-                })?.formerInsurance?.entitlement
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
                   applicant: { citizenship: string }
                 })?.applicant?.citizenship
-                return (
-                  entitlement === YES &&
-                  !requireWaitingPeriod(formerCountry, citizenship)
-                )
+                return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
           ],
@@ -468,7 +470,7 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               condition: {
                 questionId: 'hasAdditionalInfo',
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),
