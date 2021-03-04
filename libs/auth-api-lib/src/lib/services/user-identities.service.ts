@@ -134,7 +134,7 @@ export class UserIdentitiesService {
       `select subject_id from user_identity
         where provider_name = $provider and provider_subject_id = $subjectId
         and exists (select 0 from claim where claim.subject_id = user_identity.subject_id
-          and "type" = \'actorSubjectId\' and "value" = $actorSubjectId)`,
+          and "type" = 'actorSubjectId' and "value" = $actorSubjectId)`,
       {
         bind: {
           provider: provider,
@@ -146,7 +146,7 @@ export class UserIdentitiesService {
     )
 
     if (result) {
-      return await this.findBySubjectId(<string>result.subject_id)
+      return await this.findBySubjectId(result.subject_id as string)
     } else {
       return null
     }
