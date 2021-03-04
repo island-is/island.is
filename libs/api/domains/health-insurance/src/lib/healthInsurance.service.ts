@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { VistaSkjalModel } from './graphql/models'
 import { HealthInsuranceAPI } from './soap'
-import { VistaSkjalInput } from './types'
+import { VistaSkjalInput } from '@island.is/health-insurance'
 
 @Injectable()
 export class HealthInsuranceService {

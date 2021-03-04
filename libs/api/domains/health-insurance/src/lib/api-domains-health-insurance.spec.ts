@@ -184,6 +184,7 @@ describe('healthInsuranceTest', () => {
       previousCountryCode: 'VN',
       previousIssuingInstitution: 'The gioi',
       isHealthInsuredInPreviousCountry: 0,
+      hasHealthInsuranceRightInPreviousCountry: 0,
     }
     const appNumber = 570
     const kennitala = '0123456789'

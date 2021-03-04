@@ -109,6 +109,11 @@ export class VistaSkjalInput {
   @IsIn([0, 1])
   isHealthInsuredInPreviousCountry!: number
 
+  @Field(() => Number)
+  @IsNotEmpty()
+  @IsIn([0, 1])
+  hasHealthInsuranceRightInPreviousCountry!: number
+
   @Field(() => [String], { nullable: true })
   @IsOptional()
   attachmentsFileNames?: string[]
