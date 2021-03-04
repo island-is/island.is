@@ -22,6 +22,17 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
+      id: 'mockData',
+      title: 'Mock data',
+      children: [
+        buildCustomField({
+          id: 'mockData',
+          title: 'Mock data',
+          component: 'MockData',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'backgroundInformation',
       title: m.section.backgroundInformation,
       children: [
