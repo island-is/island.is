@@ -2,7 +2,7 @@
 
 ## Generate a component
 
-To generate a new component in island-ui-core.
+To generate a new React component in island-ui-core.
 
 ```bash
 yarn generate @nrwl/react:component MyComponent --project=island-ui-core
