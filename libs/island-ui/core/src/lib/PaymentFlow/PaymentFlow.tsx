@@ -1,3 +1,6 @@
+// Mockup of a CreditCard selection flow.
+// Not production code.
+
 import * as React from 'react'
 import { Box } from '../Box/Box'
 import { CreditCardSelector } from '../CreditCardSelector/CreditCardSelector'
