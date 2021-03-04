@@ -15,7 +15,7 @@ import {
   Fylgiskjal,
   Fylgiskjol,
 } from './dto'
-import { SoapClient } from './soapClient'
+import { SoapClient } from '@island.is/health-insurance'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
 import { BucketService } from '../bucket.service'

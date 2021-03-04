@@ -3643,16 +3643,16 @@
             "jestConfig": "apps/judicial-system/xrd-api/jest.config.js",
             "passWithNoTests": true
           }
-        }
-      },
-      "schemas/build-openapi": {
-        "builder": "@nrwl/workspace:run-commands",
-        "options": {
-          "outputPath": "apps/judicial-system/xrd-api/src/openapi.yaml",
-          "command": "yarn ts-node -P apps/judicial-system/xrd-api/tsconfig.app.json apps/judicial-system/xrd-api/src/buildOpenApi.ts"
-        }
-      },
-      "docker-express": {}
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/judicial-system/xrd-api/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/judicial-system/xrd-api/tsconfig.app.json apps/judicial-system/xrd-api/src/buildOpenApi.ts"
+          }
+        },
+        "docker-express": {}
+      }
     },
     "localization": {
       "root": "libs/localization",

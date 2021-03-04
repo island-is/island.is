@@ -5,20 +5,20 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CaseGender, CaseType } from '@island.is/judicial-system/types'
 
 export class CreateCaseDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional({ enum: CaseType })
-  readonly type: CaseType
+  readonly type!: CaseType
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly policeCaseNumber: string
+  readonly policeCaseNumber!: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly accusedNationalId: string
+  readonly accusedNationalId!: string
 
   @IsOptional()
   @IsString()
@@ -34,19 +34,4 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional({ enum: CaseGender })
   readonly accusedGender?: CaseGender
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly defenderName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly defenderEmail?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly court?: string
 }
