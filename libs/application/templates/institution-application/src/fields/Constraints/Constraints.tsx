@@ -1,10 +1,12 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath, formatText } from '@island.is/application/core'
 import { Box, Stack } from '@island.is/island-ui/core'
-import { useFormContext } from 'react-hook-form'
 import ConstraintController from './ConstraintController'
-
+import { useLocale } from '@island.is/localization'
+import { institutionApplicationMessages as m } from '../../lib/messages'
 const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
+  const { formatMessage } = useLocale()
+
   const { answers } = application
   const { id } = field
 
@@ -21,43 +23,41 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
         <ConstraintController
           id={`${id}.technical`}
           checkboxId={`${id}.hasTechnical`}
-          label={'Tæknilegar skorður'}
-          tooltip={'Herba derpa'}
+          label={formatText(m.constraints.constraintsTechicalLabel, application, formatMessage)}
+          tooltip={formatText(m.constraints.constraintsTechicalTooltip, application, formatMessage)}
           defaultValue={getConstraintVal('hasTechnical')}
         />
         <ConstraintController
           id={`${id}.financial`}
           checkboxId={`${id}.hasFinancial`}
-          label={'Fjárhagslegar skorður'}
-          tooltip={'Herba derpa'}
+          label={formatText(m.constraints.constraintsFinancialLabel, application, formatMessage)}
+          tooltip={formatText(m.constraints.constraintsFinancialTooltip, application, formatMessage)}
           defaultValue={getConstraintVal('hasFinancial')}
         />
         <ConstraintController
           id={`${id}.time`}
           checkboxId={`${id}.hasTime`}
-          label={'Tímaskorður'}
-          tooltip={'Herba derpa'}
+          label={formatText(m.constraints.constraintsTimeLabel, application, formatMessage)}
+          tooltip={formatText(m.constraints.constraintsTimeTooltip, application, formatMessage)}
           defaultValue={getConstraintVal('hasTime')}
         />
         <ConstraintController
           id={`${id}.shopping`}
           checkboxId={`${id}.hasShopping`}
-          label={'Innkaupaskorður'}
-          tooltip={'Herba derpa'}
+          label={formatText(m.constraints.constraintsShoppingLabel, application, formatMessage)}
+          tooltip={formatText(m.constraints.constraintsShoppingTooltip, application, formatMessage)}
           defaultValue={getConstraintVal('hasShopping')}
         />
         <ConstraintController
           id={`${id}.moral`}
           checkboxId={`${id}.hasMoral`}
-          label={'Siðferðilegar skorður'}
-          tooltip={'Herba derpa'}
+          label={formatText(m.constraints.constraintsMoralLabel, application, formatMessage)}
           defaultValue={getConstraintVal('hasMoral')}
         />
         <ConstraintController
           id={`${id}.other`}
           checkboxId={`${id}.hasOther`}
-          label={'Aðrar skorður'}
-          tooltip={'Herba derpa'}
+          label={formatText(m.constraints.constraintsOtherLabel, application, formatMessage)}
           defaultValue={getConstraintVal('hasOther')}
         />
       </Stack>

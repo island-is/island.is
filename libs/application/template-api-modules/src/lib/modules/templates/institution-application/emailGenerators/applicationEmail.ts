@@ -86,19 +86,19 @@ export const generateApplicationEmail: EmailTemplateGenerator = (props) => {
 
         Verkefni
 
-        ${messages.projectName.defaultMessage}:
+        ${messages.project.nameLabel.defaultMessage}:
         ${projectName}
 
-        ${messages.projectBackground.defaultMessage}:
+        ${messages.project.backgroundLabel.defaultMessage}:
         ${projectBackground}
 
-        ${messages.projectGoals.defaultMessage}:
+        ${messages.project.goalsLabel.defaultMessage}:
         ${projectGoal}
 
-        ${messages.projectFinance.defaultMessage}:
+        ${messages.project.financeLabel.defaultMessage}:
         ${projectFinance}
 
-        ${messages.projectScope.defaultMessage}:
+        ${messages.project.scopeLabel.defaultMessage}:
         ${projectScope}
 
         ${noConstraints ? 'Engar skorður skilgreindar.' : 'Skorður:'}

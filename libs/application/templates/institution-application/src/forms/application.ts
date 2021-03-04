@@ -11,7 +11,7 @@ import {
   buildSubmitField,
   buildFileUploadField,
 } from '@island.is/application/core'
-import * as m from './messages'
+import { institutionApplicationMessages as m } from '../lib/messages'
 import { YES } from '../constants'
 
 export const application: Form = buildForm({
@@ -25,7 +25,7 @@ export const application: Form = buildForm({
       children: [
         buildMultiField({
           id: 'applicantInformation',
-          title: m.applicant.sectionDescription,
+          title: m.applicant.sectionTitle,
           description: m.applicant.sectionDescription,
           children: [
             buildCustomField(
@@ -73,7 +73,7 @@ export const application: Form = buildForm({
             }),
             buildCustomField({
               id: 'secondaryContact',
-              title: '',
+              title: m.applicant.secondaryContactSubtitle,
               component: 'SecondaryContact',
             }),
             buildTextField({

@@ -1,13 +1,15 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Text, Stack, Icon, Button } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { YES, NO } from '../../constants'
 import * as styles from './SecondaryContact.treat'
-
-const SecondaryContact: FC<FieldBaseProps> = ({ field }) => {
+import { useLocale } from '@island.is/localization'
+import { institutionApplicationMessages as m } from '../../lib/messages'
+const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
   const { setValue, getValues } = useFormContext()
-  const { id } = field
+  const { formatMessage } = useLocale()
+  const { id, title } = field
   const isEnabled = getValues('hasSecondaryContact') === YES
 
   const enableSecondaryContact = () => {
@@ -27,7 +29,6 @@ const SecondaryContact: FC<FieldBaseProps> = ({ field }) => {
         <Box marginTop={4}>
           <Stack space={3}>
             <Box
-              marginBottom={2}
               display="flex"
               position="relative"
               alignItems="center"
@@ -43,22 +44,22 @@ const SecondaryContact: FC<FieldBaseProps> = ({ field }) => {
                   type="outline"
                 />
               </Box>
-              <Text variant="h4">Upplysingar tengiliðs 2</Text>
+              <Text variant="h4">{formatText(title, application, formatMessage)}</Text>
             </Box>
           </Stack>
         </Box>
       ) : (
-        <Box marginTop={4}>
-          <Button
-            icon="add"
-            variant="ghost"
-            size="small"
-            onClick={enableSecondaryContact}
-          >
-            Bæta við tengilið
-          </Button>
-        </Box>
-      )}
+          <Box marginTop={4}>
+            <Button
+              icon="add"
+              variant="ghost"
+              size="small"
+              onClick={enableSecondaryContact}
+            >
+              {formatText(m.applicant.contactAddButtonLabel, application, formatMessage)}
+            </Button>
+          </Box>
+        )}
     </>
   )
 }
