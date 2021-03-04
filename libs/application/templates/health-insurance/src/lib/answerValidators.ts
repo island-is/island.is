@@ -83,8 +83,18 @@ export const answerValidators: Record<string, AnswerValidator> = {
     if (
       !requireWaitingPeriod(formerInsurance.country, applicant?.citizenship)
     ) {
-      // Check that national ID is not empty
-      if (!formerInsurance.personalId) {
+      if (formerInsurance.personalId) {
+        // Check that personal ID in former country length is as specified in Sjukra's api
+        const field = `${FORMER_INSURANCE}.personalId`
+        if (formerInsurance.personalId.length < 6) {
+          const buildError = buildValidationError(field)
+          return buildError('Should be at least 6 characters', field)
+        } else if (formerInsurance.personalId.length > 20) {
+          const buildError = buildValidationError(field)
+          return buildError('Should be at most 20 characters long', field)
+        }
+      } else {
+        // Check that personal ID is not empty
         const field = `${FORMER_INSURANCE}.personalId`
         const buildError = buildValidationError(field)
         return buildError(
