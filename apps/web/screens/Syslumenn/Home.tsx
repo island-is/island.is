@@ -97,7 +97,10 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
     >
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12', '11/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '12/12', '10/12']}
+            offset={['0', '0', '0', '0', '1/12']}
+          >
             {organizationPage.slices.map((slice) => (
               <OrganizationSlice
                 key={slice.id}

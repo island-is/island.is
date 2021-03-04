@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import format from 'date-fns/format'
+import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 
 import {
   GetSjukratryggdurTypeDto,
@@ -15,7 +15,7 @@ import {
   Fylgiskjal,
   Fylgiskjol,
 } from './dto'
-import { SoapClient } from './soapClient'
+import { SoapClient } from '@island.is/health-insurance'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
 import { BucketService } from '../bucket.service'
@@ -27,6 +27,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -50,7 +52,7 @@ export class HealthInsuranceAPI {
 
   // check whether the person is health insured
   public async isHealthInsured(nationalId: string): Promise<boolean> {
-    logger.info(`--- Starting isHealthInsured api call for ${nationalId} ---`)
+    logger.info(`--- Starting isHealthInsured api call ---`)
 
     const args = {
       sendandi: '',
@@ -64,7 +66,7 @@ export class HealthInsuranceAPI {
 
     if (!res.SjukratryggdurType) {
       logger.error(
-        `Something went totally wrong in 'Sjukratryggdur' call for ${nationalId} with result: ${JSON.stringify(
+        `Something went totally wrong in 'Sjukratryggdur' call with result: ${JSON.stringify(
           res,
           null,
           2,
@@ -72,16 +74,14 @@ export class HealthInsuranceAPI {
       )
       throw new NotFoundException(`Unexpected results: ${JSON.stringify(res)}`)
     } else {
-      logger.info(`--- Finished isHealthInsured api call for ${nationalId} ---`)
+      logger.info(`--- Finished isHealthInsured api call ---`)
       return res.SjukratryggdurType.sjukratryggdur == 1
     }
   }
 
   // get user's pending applications
   public async getPendingApplication(nationalId: string): Promise<number[]> {
-    logger.info(
-      `--- Starting getPendingApplication api call for ${nationalId} ---`,
-    )
+    logger.info(`--- Starting getPendingApplication api call ---`)
 
     const args = {
       sendandi: '',
@@ -119,9 +119,7 @@ export class HealthInsuranceAPI {
         pendingCases.push(value.skjalanumer)
       })
 
-    logger.info(
-      `--- Finished getPendingApplication api call for ${nationalId} ---`,
-    )
+    logger.info(`--- Finished getPendingApplication api call ---`)
     return pendingCases
   }
 
@@ -131,16 +129,11 @@ export class HealthInsuranceAPI {
     inputObj: VistaSkjalInput,
     nationalId: string,
   ): Promise<VistaSkjalModel> {
-    logger.info(
-      `--- Starting applyInsurance api call for ${
-        inputObj.nationalId ?? nationalId
-      } ---`,
-    )
-
+    logger.info(`--- Starting applyInsurance api call ---`)
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
-          kennitala: inputObj.nationalId ?? nationalId,
+          kennitala: nationalId,
           erlendkennitala: inputObj.foreignNationalId,
           nafn: inputObj.name,
           heimili: inputObj.address ?? '',
@@ -152,19 +145,25 @@ export class HealthInsuranceAPI {
         },
         numerumsoknar: inputObj.applicationNumber,
         dagsumsoknar: format(new Date(inputObj.applicationDate), 'yyyy-MM-dd'),
-        dagssidustubusetuthjodskra: format(
-          new Date(inputObj.residenceDateFromNationalRegistry),
-          'yyyy-MM-dd',
-        ),
-        dagssidustubusetu: format(
-          new Date(inputObj.residenceDateUserThink),
-          'yyyy-MM-dd',
-        ),
+        // 'dagssidustubusetuthjodskra' could be empty string
+        dagssidustubusetuthjodskra: inputObj.residenceDateFromNationalRegistry
+          ? format(
+              new Date(inputObj.residenceDateFromNationalRegistry),
+              'yyyy-MM-dd',
+            )
+          : '',
+        // 'dagssidustubusetu' could be empty string
+        dagssidustubusetu: inputObj.residenceDateUserThink
+          ? format(new Date(inputObj.residenceDateUserThink), 'yyyy-MM-dd')
+          : '',
+        // There is 'Employed' status in frontend
+        // but we don't have it yet in request
+        // So we convert it to 'Other/O'
         stadaeinstaklings: inputObj.userStatus,
         bornmedumsaekjanda: inputObj.isChildrenFollowed,
         fyrrautgafuland: inputObj.previousCountry,
         fyrrautgafulandkodi: inputObj.previousCountryCode,
-        fyrriutgafustofnunlands: inputObj.previousIssuingInstitution,
+        fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
@@ -172,17 +171,14 @@ export class HealthInsuranceAPI {
 
     // Add attachments from S3 bucket
     // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
-
-    if (
-      inputObj.attachmentsFileNames &&
-      inputObj.attachmentsFileNames.length > 0
-    ) {
+    const arrAttachments = inputObj.attachmentsFileNames
+    if (arrAttachments && arrAttachments.length > 0) {
       logger.info(`Start getting attachments`)
       const fylgiskjol: Fylgiskjol = {
         fylgiskjal: [],
       }
-      for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
-        const filename = inputObj.attachmentsFileNames[i]
+      for (let i = 0; i < arrAttachments.length; i++) {
+        const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
           innihald: await this.bucketService.getFileContentAsBase64(filename),
@@ -193,74 +189,22 @@ export class HealthInsuranceAPI {
       logger.info(`Finished getting attachments`)
     }
 
+    // Student has to have status confirmation document
+    if (
+      inputObj.userStatus == 'S' &&
+      !vistaSkjalBody.sjukratryggingumsokn.fylgiskjol
+    ) {
+      logger.error(
+        `Student applys for health insurance must have confirmation document`,
+      )
+      throw new Error(
+        `Student applys for health insurance must have confirmation document`,
+      )
+    }
+
     const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>${this.OBJtoXML(
       vistaSkjalBody,
     )}]]>`
-
-    // TODO: clean up when go live
-    // let attachments = ''
-    // if (
-    //   inputObj.attachmentsFileNames &&
-    //   inputObj.attachmentsFileNames.length > 0
-    // ) {
-    //   logger.info(`Start getting attachments`)
-    //   attachments += '<fylgiskjol>'
-    //   for (let i = 0; i < inputObj.attachmentsFileNames.length; i++) {
-    //     const filename = inputObj.attachmentsFileNames[i]
-    //     logger.info(`Getting ${filename} now`)
-    //     const resultStr = await this.bucketService.getFileContentAsBase64(
-    //       filename,
-    //     )
-    //     attachments += `<fylgiskjal>
-    //                       <heiti>${filename}</heiti>
-    //                       <innihald>${resultStr}</innihald>
-    //                     </fylgiskjal>`
-    //   }
-    //   attachments += '</fylgiskjol>'
-    //   logger.info(`Finished getting attachments`)
-    // }
-
-    // const xml = `<![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
-    // <sjukratryggingumsokn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    //   <einstaklingur>
-    //     <kennitala>${inputObj.nationalId ?? nationalId}</kennitala>
-    //     <erlendkennitala>${inputObj.foreignNationalId}</erlendkennitala>
-    //     <nafn>${inputObj.name}</nafn>
-    //     <heimili>${inputObj.address ?? ''}</heimili>
-    //     <postfangstadur>${inputObj.postalAddress ?? ''}</postfangstadur>
-    //     <rikisfang>${inputObj.citizenship ?? ''}</rikisfang>
-    //     <rikisfangkodi>${inputObj.postalAddress ? 'IS' : ''}</rikisfangkodi>
-    //     <simi>${inputObj.phoneNumber}</simi>
-    //     <netfang>${inputObj.email}</netfang>
-    //   </einstaklingur>
-    //   <numerumsoknar>${inputObj.applicationNumber}</numerumsoknar>
-    //   <dagsumsoknar>${format(
-    //     new Date(inputObj.applicationDate),
-    //     'yyyy-MM-dd',
-    //   )}</dagsumsoknar>
-    //   <dagssidustubusetuthjodskra>${format(
-    //     new Date(inputObj.residenceDateFromNationalRegistry),
-    //     'yyyy-MM-dd',
-    //   )}</dagssidustubusetuthjodskra>
-    //   <dagssidustubusetu>${format(
-    //     new Date(inputObj.residenceDateUserThink),
-    //     'yyyy-MM-dd',
-    //   )}</dagssidustubusetu>
-    //   <stadaeinstaklings>${inputObj.userStatus}</stadaeinstaklings>
-    //   <bornmedumsaekjanda>${inputObj.isChildrenFollowed}</bornmedumsaekjanda>
-    //   <fyrrautgafuland>${inputObj.previousCountry}</fyrrautgafuland>
-    //   <fyrrautgafulandkodi>${inputObj.previousCountryCode}</fyrrautgafulandkodi>
-    //   <fyrriutgafustofnunlands>${
-    //     inputObj.previousIssuingInstitution
-    //   }</fyrriutgafustofnunlands>
-    //   <tryggdurfyrralandi>${
-    //     inputObj.isHealthInsuredInPreviousCountry
-    //   }</tryggdurfyrralandi>
-    //   <vidbotarupplysingar>${
-    //     inputObj.additionalInformation ?? ''
-    //   }</vidbotarupplysingar>
-    //   ${attachments}
-    // </sjukratryggingumsokn>]]>`
 
     const args = {
       sendandi: '',
@@ -275,14 +219,8 @@ export class HealthInsuranceAPI {
     */
     logger.info(`Calling vistaskjal through xroad`)
     const res: GetVistaSkjalDtoType = await this.xroadCall('vistaskjal', args)
-
     const vistaSkjal = new VistaSkjalModel()
     if (!res.VistaSkjalType?.tokst) {
-      logger.info(
-        `Failed to upload document to sjukra because: ${
-          res.VistaSkjalType.villulysing ?? 'unknown error'
-        }`,
-      )
       vistaSkjal.isSucceeded = false
       vistaSkjal.comment = res.VistaSkjalType?.villulysing ?? 'Unknown error'
 
@@ -294,6 +232,11 @@ export class HealthInsuranceAPI {
           vistaSkjal.comment = res.VistaSkjalType.villulisti[0].villulysinginnri
         }
       }
+      logger.info(
+        `Failed to upload document to sjukra because: ${
+          vistaSkjal.comment ?? 'unknown error'
+        }`,
+      )
 
       return vistaSkjal
     }
@@ -314,6 +257,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {
@@ -324,7 +269,7 @@ export class HealthInsuranceAPI {
     }
 
     return new Promise((resolve, reject) => {
-      // call 'faumsoknirsjukratrygginga' function/endpoint
+      // call 'functionName' function/endpoint
       client[functionName](args, function (err: any, result: any) {
         if (err) {
           logger.error(JSON.stringify(err, null, 2))

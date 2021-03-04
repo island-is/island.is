@@ -248,40 +248,33 @@ export const JudgeOverview: React.FC = () => {
               {constructProsecutorDemands(workingCase)}
             </Box>
             <div className={styles.infoSection}>
-              <Box marginBottom={2}>
-                <Text variant="h3" as="h3">
-                  Lagaákvæði
-                </Text>
-              </Box>
-              <Box>
-                <Box marginBottom={2} data-testid="lawsBroken">
-                  <Box marginBottom={1}>
-                    <Text variant="eyebrow" color="blue400">
-                      Lagaákvæði sem brot varða við
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.lawsBroken}
-                    </span>
+              <Box marginBottom={6} data-testid="lawsBroken">
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Lagaákvæði sem brot varða við
                   </Text>
                 </Box>
-                <Box marginBottom={2} data-testid="custodyProvisions">
-                  <Box marginBottom={1}>
-                    <Text variant="eyebrow" color="blue400">
-                      Lagaákvæði sem krafan er byggð á
-                    </Text>
-                  </Box>
-                  {workingCase.custodyProvisions?.map(
-                    (custodyProvision: CaseCustodyProvisions, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{laws[custodyProvision]}</Text>
-                        </div>
-                      )
-                    },
-                  )}
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase.lawsBroken}
+                  </span>
+                </Text>
+              </Box>
+              <Box data-testid="custodyProvisions">
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Lagaákvæði sem krafan er byggð á
+                  </Text>
                 </Box>
+                {workingCase.custodyProvisions?.map(
+                  (custodyProvision: CaseCustodyProvisions, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{laws[custodyProvision]}</Text>
+                      </div>
+                    )
+                  },
+                )}
               </Box>
             </div>
             <div

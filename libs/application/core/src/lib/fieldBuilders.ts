@@ -5,6 +5,7 @@ import type {
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
+import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -233,6 +234,7 @@ export function buildAsyncSelectField(data: {
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
+  backgroundColor?: InputBackgroundColor
 }): AsyncSelectField {
   const {
     condition,
@@ -246,6 +248,7 @@ export function buildAsyncSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -262,6 +265,7 @@ export function buildAsyncSelectField(data: {
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 
@@ -316,6 +320,7 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
+    childInputIds?: string[]
     title: FormText
     description?: FormText
     component: string
@@ -323,12 +328,21 @@ export function buildCustomField(
   },
   props?: RecordObject,
 ): CustomField {
-  const { condition, defaultValue, id, title, description, component } = data
+  const {
+    condition,
+    defaultValue,
+    id,
+    title,
+    description,
+    component,
+    childInputIds,
+  } = data
   return {
     children: undefined,
     defaultValue,
     condition,
     id,
+    childInputIds,
     title,
     description,
     type: FieldTypes.CUSTOM,
@@ -342,9 +356,9 @@ export function buildFileUploadField(data: {
   id: string
   title: FormText
   introduction: FormText
-  uploadHeader?: string
-  uploadDescription?: string
-  uploadButtonLabel?: string
+  uploadHeader?: FormText
+  uploadDescription?: FormText
+  uploadButtonLabel?: FormText
   uploadMultiple?: boolean
   uploadAccept?: string
   maxSize?: number
@@ -428,4 +442,14 @@ export function buildSubmitField(data: {
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
+}
+
+export function buildFieldOptions(
+  maybeOptions: MaybeWithApplication<Option[]>,
+  application: Application,
+): Option[] {
+  if (typeof maybeOptions === 'function') {
+    return maybeOptions(application)
+  }
+  return maybeOptions
 }

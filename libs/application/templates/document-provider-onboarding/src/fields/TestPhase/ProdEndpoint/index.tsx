@@ -43,8 +43,21 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     formValue.productionEndPointObject?.prodEndPointExists || '',
   )
   const [updateEndpoint, { loading }] = useMutation(updateEndpointMutation, {
-    onError: () =>
-      setprodEndPointError(m.prodEndPointErrorMessage.defaultMessage),
+    onError: (error) => {
+      if (error.message.includes('Unique key violation')) {
+        setprodEndPointError(
+          formatText(
+            m.testEndPointErrorMessageUniqueKeyViolation,
+            application,
+            formatMessage,
+          ),
+        )
+      } else {
+        setprodEndPointError(
+          formatText(m.prodEndPointErrorMessage, application, formatMessage),
+        )
+      }
+    },
   })
 
   const nationalId = getValueViaPath(
@@ -71,11 +84,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-
-      if (!result) {
-        setprodEndPointError(m.prodEndPointErrorMessage.defaultMessage)
-      } else {
-        //TODO: Needs new call to API
+      if (result) {
         setendPointVariables([
           {
             id: '1',

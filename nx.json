@@ -164,6 +164,9 @@
     "application-templates-parental-leave": {
       "tags": []
     },
+    "application-templates-party-letter": {
+      "tags": []
+    },
     "application-templates-passport": {
       "tags": []
     },
@@ -248,6 +251,9 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },
@@ -301,6 +307,9 @@
     "judicial-system-consts": {
       "tags": []
     },
+    "judicial-system-court-client": {
+      "tags": []
+    },
     "judicial-system-formatters": {
       "tags": []
     },
@@ -313,6 +322,9 @@
     "judicial-system-web-e2e": {
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
+    },
+    "judicial-system-xrd-api": {
+      "tags": []
     },
     "localization": {
       "tags": []
@@ -437,6 +449,9 @@
       "tags": []
     },
     "utils-api": {
+      "tags": []
+    },
+    "utils-environment": {
       "tags": []
     },
     "vmst-client": {

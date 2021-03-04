@@ -76,6 +76,8 @@ import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
 import { GetAuctionsInput } from './dto/getAuctions.input'
 import { Auction } from './models/auction.model'
 import { GetAuctionInput } from './dto/getAuction.input'
+import { Frontpage } from './models/frontpage.model'
+import { GetFrontpageInput } from './dto/getFrontpage.input'
 
 const { cacheTime } = environment
 
@@ -208,10 +210,10 @@ export class CmsResolver {
     @Args('input') input: GetAuctionsInput,
   ): Promise<Auction[] | null> {
     return this.cmsContentfulService.getAuctions(
+      input.lang,
       input.organization,
       input.year,
       input.month,
-      input.lang,
     )
   }
 
@@ -321,6 +323,12 @@ export class CmsResolver {
   @Query(() => Homepage)
   getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
     return this.cmsContentfulService.getHomepage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Frontpage)
+  getFrontpage(@Args('input') input: GetFrontpageInput): Promise<Frontpage> {
+    return this.cmsContentfulService.getFrontpage(input)
   }
 
   @Directive(cacheControlDirective())
