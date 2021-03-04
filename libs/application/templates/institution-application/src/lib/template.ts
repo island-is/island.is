@@ -29,7 +29,7 @@ const contactSchema = z.object({
     .string()
     .email()
     .nonempty(),
-  phoneNumber: z.string().optional(),
+  phoneNumber: z.string().nonempty(),
 })
 
 const dataSchema = z.object({

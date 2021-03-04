@@ -11,45 +11,63 @@ import {
   buildSubmitField,
   buildFileUploadField,
 } from '@island.is/application/core'
-import { m } from './messages'
+import * as m from './messages'
 import { YES } from '../constants'
 
 export const application: Form = buildForm({
   id: 'InstitutionApplicationDraftForm',
-  title: m.formName,
+  title: m.applicant.formName,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'applicantSection',
-      title: m.applicantSectionLabel,
+      title: m.applicant.sectionLabel,
       children: [
         buildMultiField({
           id: 'applicantInformation',
-          title: m.applicantSectionTitle,
-          description: m.applicantSectionDescription,
+          title: m.applicant.sectionDescription,
+          description: m.applicant.sectionDescription,
           children: [
+            buildCustomField(
+              {
+                id: 'applicant.institutionSubtitle',
+                component: 'FieldDescription',
+                title: '',
+              },
+              {
+                subTitle: m.applicant.institutionSubtitle,
+              },
+            ),
             buildTextField({
               id: 'applicant.institution',
-              title: m.applicantInstitutionLabel,
-              description: m.applicantInstitutionSubtitle,
+              title: m.applicant.institutionLabel,
               backgroundColor: 'blue',
             }),
+            buildCustomField(
+              {
+                id: 'applicant.contactSubtitle',
+                component: 'FieldDescription',
+                title: '',
+              },
+              {
+                subTitle: m.applicant.contactSubtitle,
+              },
+            ),
             buildTextField({
               id: 'contact.name',
-              title: m.applicantContactName,
-              description: m.applicantContactSubtitle,
+              title: m.applicant.contactNameLabel,
               backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'contact.phoneNumber',
-              title: m.applicantContactPhone,
+              title: m.applicant.contactPhoneLabel,
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
             }),
             buildTextField({
               id: 'contact.email',
-              title: m.applicantContactEmail,
+              title: m.applicant.contactEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
             }),
@@ -60,13 +78,13 @@ export const application: Form = buildForm({
             }),
             buildTextField({
               id: 'secondaryContact.name',
-              title: m.applicantContactName,
+              title: m.applicant.contactNameLabel,
               backgroundColor: 'blue',
               condition: (formvalue) => formvalue.hasSecondaryContact === YES,
             }),
             buildTextField({
               id: 'secondaryContact.phoneNumber',
-              title: m.applicantContactPhone,
+              title: m.applicant.contactPhoneLabel,
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
@@ -74,7 +92,7 @@ export const application: Form = buildForm({
             }),
             buildTextField({
               id: 'secondaryContact.email',
-              title: m.applicantContactEmail,
+              title: m.applicant.contactEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
               condition: (formvalue) => formvalue.hasSecondaryContact === YES,
@@ -85,49 +103,58 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'projectSection',
-      title: m.projectSectionLabel,
+      title: m.project.sectionLabel,
       children: [
         buildSubSection({
           id: 'projectInfoSubesction',
-          title: m.projectInformationSubsectionLabel,
+          title: m.project.subSectionLabel,
           children: [
             buildMultiField({
               id: 'project',
-              title: m.projectSectionTitle,
-              description: m.projectSectionDescription,
+              title: m.project.sectionTitle,
+              description: m.project.sectionDescription,
               children: [
+                buildCustomField(
+                  {
+                    id: 'project.informationSubtitle',
+                    component: 'FieldDescription',
+                    title: '',
+                  },
+                  {
+                    subTitle: m.project.informationSubtitle,
+                  },
+                ),
                 buildTextField({
                   id: 'project.name',
-                  title: m.projectName,
-                  description: m.projectInformationSubtitle,
+                  title: m.project.nameLabel,
                   variant: 'text',
                   backgroundColor: 'blue',
                 }),
                 buildTextField({
                   id: 'project.background',
-                  title: m.projectBackground,
-                  placeholder: m.projectBackgroundPlaceholder,
+                  title: m.project.backgroundLabel,
+                  placeholder: m.project.backgroundPlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
                 }),
                 buildTextField({
                   id: 'project.goals',
-                  title: m.projectGoals,
-                  placeholder: m.projectGoalsPlaceholder,
+                  title: m.project.goalsLabel,
+                  placeholder: m.project.goalsPlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
                 }),
                 buildTextField({
                   id: 'project.scope',
-                  title: m.projectScope,
-                  placeholder: m.projectScopePlaceholder,
+                  title: m.project.scopeLabel,
+                  placeholder: m.project.scopePlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
                 }),
                 buildTextField({
                   id: 'project.finance',
-                  title: m.projectFinance,
-                  placeholder: m.projectFinancePlaceholder,
+                  title: m.project.financeLabel,
+                  placeholder: m.project.financePlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
                 }),
@@ -138,9 +165,8 @@ export const application: Form = buildForm({
                     title: '',
                   },
                   {
-                    subTitle: 'Fylgiskjöl',
-                    description:
-                      'Ef búið er að útbúa þarfagreiningu fyrir verkefnið eða önnur skjöl sem þú vilt koma á framfæri. ',
+                    subTitle: m.project.attatchmentsSubtitle,
+                    description: m.project.attatchmentsDescription,
                   },
                 ),
                 buildFileUploadField({
@@ -158,12 +184,12 @@ export const application: Form = buildForm({
         }),
         buildSubSection({
           id: 'projectConstraintsSection',
-          title: m.projectRestrictionSubsectionLabel,
+          title: m.constraints.subSectionLabel,
           children: [
             buildMultiField({
               id: 'constraints',
-              title: 'Skorður verkefnis',
-              description: 'Vinsamlegast fylltu ut skordur',
+              title: m.constraints.sectionTitle,
+              description: m.constraints.sectionDescription,
               children: [
                 buildCustomField({
                   id: 'constraints',
@@ -176,24 +202,24 @@ export const application: Form = buildForm({
         }),
         buildSubSection({
           id: 'stakholdersSection',
-          title: 'Hagsmunaaðillar',
+          title: m.stakeholders.subSectionLabel,
           children: [
             buildMultiField({
               id: 'stakeholders',
-              title: 'Hlutverk og hagsmunaaðilar',
+              title: m.stakeholders.sectionTitle,
               description: '',
               children: [
                 buildTextField({
                   id: 'stakeholders',
-                  title: 'Hagsmunaaðilar',
-                  placeholder: 'asnjdnajsdn',
+                  title: m.stakeholders.stakeholdersLabel,
+                  placeholder: m.stakeholders.stakeholdersPlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
                 }),
                 buildTextField({
                   id: 'role',
-                  title: 'Skilgreind hlutverk',
-                  placeholder: 'asnjdnajsdn',
+                  title: m.stakeholders.roleLabel,
+                  placeholder: m.stakeholders.rolePlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
                 }),
@@ -204,14 +230,13 @@ export const application: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicationOverview',
-      title: 'Yfirlit umsóknar',
+      id: 'applicationReview',
+      title: m.review.sectionLabel,
       children: [
         buildMultiField({
-          id: 'applicationOverview',
-          title: 'Yfirlit og staðfesting umsóknar',
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rhoncus, est vel eleifend aliquet, purus nibh pretium risus, eget imperdiet turpis nisi sit amet arcu. In non auctor erat. Quisque at nunc sed nisi elementum blandit id nec nisl. Vestibulum consectetur arcu sed porta congue. Cras vulputate placerat vulputate',
+          id: 'applicationReview',
+          title: m.review.sectionTitle,
+          description: m.review.sectionDescription,
           children: [
             buildCustomField({
               id: 'reviewScreen',
@@ -220,7 +245,7 @@ export const application: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submit',
-              title: 'Staðfesta umsókn',
+              title: m.review.submitButtonLabel,
               placement: 'footer',
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta umsókn', type: 'primary' },
@@ -232,7 +257,7 @@ export const application: Form = buildForm({
     }),
     buildSection({
       id: 'successfulSubmissionSection',
-      title: 'Umsókn staðfest',
+      title: m.confirmation.sectionLabel,
       children: [
         buildCustomField({
           id: 'successfulSubmission',

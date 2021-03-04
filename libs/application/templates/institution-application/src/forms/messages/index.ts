@@ -1,0 +1,6 @@
+export { default as applicant } from './applicant.messages'
+export { default as confirmation } from './confirmation.messages'
+export { default as project } from './project.messages'
+export { default as constraints } from './constraints.messages'
+export { default as review } from './review.messages'
+export { default as stakeholders } from './stakeholders.messages'
