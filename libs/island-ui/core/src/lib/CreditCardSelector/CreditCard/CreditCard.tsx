@@ -76,8 +76,8 @@ export const CreditCard: React.FC<CreditCardProps> = ({
   active,
   disabled = false,
 }) => {
-  const onChange = () => {}
-  const onRemove = () => {}
+  const onChange = () => null
+  const onRemove = () => null
   const Icon = getIcon(cardType)
 
   return (

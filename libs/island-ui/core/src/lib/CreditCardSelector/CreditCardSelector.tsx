@@ -17,7 +17,7 @@ interface CreditCardSelectorProps {
 }
 
 export const CreditCardSelector: React.FC<CreditCardSelectorProps> = ({
-  onAddCard = () => {},
+  onAddCard = () => null,
   availableCards,
 }) => (
   <Box position="relative">
