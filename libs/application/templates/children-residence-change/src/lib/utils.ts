@@ -1,9 +1,6 @@
-import { Application } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/core'
 import { NationalRegistryUser } from '@island.is/api/schema'
-import {
-  PersonResidenceChange,
-  ParentResidenceChange,
-} from '../dataProviders/APIDataTypes'
+import { PersonResidenceChange } from '../dataProviders/APIDataTypes'
 
 export const extractApplicantFromApplication = (application: Application) => {
   return (application.externalData.nationalRegistry?.data as {
@@ -11,14 +8,25 @@ export const extractApplicantFromApplication = (application: Application) => {
   }) as NationalRegistryUser
 }
 
+const dataToUse = ({ answers, externalData }: Application, key: string) => {
+  const mockData = ((answers.mockData as FormValue)?.[key] as FormValue)?.data
+  const data = externalData[key]?.data
+  if (answers.useMocks === 'no') {
+    return data
+  }
+  return mockData || data
+}
+
 export const extractParentFromApplication = (application: Application) => {
-  return (application.externalData.parentNationalRegistry?.data as {
+  const data = dataToUse(application, 'parentNationalRegistry')
+  return (data as {
     parent?: object
-  }) as ParentResidenceChange
+  }) as PersonResidenceChange
 }
 
 export const extractChildrenFromApplication = (application: Application) => {
-  return (application.externalData.childrenNationalRegistry?.data as {
+  const data = dataToUse(application, 'childrenNationalRegistry')
+  return (data as {
     registeredChildren?: object
   }) as PersonResidenceChange[]
 }
@@ -36,7 +44,7 @@ export const extractAnswersFromApplication = (application: Application) => {
   }
 }
 
-export const constructParentAddressString = (parent: ParentResidenceChange) => {
+export const constructParentAddressString = (parent: PersonResidenceChange) => {
   if (!parent) {
     return null
   }

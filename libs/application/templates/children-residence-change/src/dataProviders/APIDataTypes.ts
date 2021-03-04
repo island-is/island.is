@@ -6,8 +6,3 @@ export interface PersonResidenceChange {
   address: string
   city: string
 }
-
-export interface ParentResidenceChange extends PersonResidenceChange {
-  phoneNumber?: string
-  email?: string
-}
