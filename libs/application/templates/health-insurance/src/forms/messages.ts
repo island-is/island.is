@@ -307,7 +307,7 @@ export const m = defineMessages({
   formerInsuranceAdditionalInformation: {
     id: 'hi.application:formerInsurance.additionalInformation',
     defaultMessage: 'Skýrið ástæðuna ef já',
-    description: 'Please explain why',
+    description: 'If yes, please explain why',
   },
   formerInsuranceAdditionalInformationPlaceholder: {
     id: 'hi.application:formerInsurance.additionalInformationPlaceholder',
@@ -521,8 +521,7 @@ export const m = defineMessages({
   externalDataSubtitle: {
     id: 'hi.application:externalDataSubtitle',
     defaultMessage:
-      'Gögn frá eftirtöldum aðilum verða sótt rafrænt með þínu samþykki',
-    description:
-      'Data from the following sources will be retrieved with your consent',
+      'Unnið verður með persónugreinanleg gögn frá eftirfarandi stofnunum',
+    description: 'Personal data from the following sources will be processed',
   },
 })
