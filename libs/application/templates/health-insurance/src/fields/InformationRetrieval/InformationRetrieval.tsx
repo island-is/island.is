@@ -50,6 +50,14 @@ const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
         formatMessage,
       ),
     },
+    {
+      title: '',
+      description: formatText(
+        m.dataProvidersMoreInfo,
+        application,
+        formatMessage,
+      ),
+    },
   ] as DataRetrievalContent[]
 
   return (
@@ -75,7 +83,9 @@ const InformationRetrieval: FC<FieldBaseProps> = ({ application }) => {
               <Text variant="h4" color="blue400">
                 {providers.title}
               </Text>
-              <Text variant="default">{providers.description}</Text>
+              <Text variant="default">
+                <Markdown>{providers.description}</Markdown>
+              </Text>
             </Box>
           )
         })}
