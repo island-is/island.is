@@ -14,44 +14,70 @@ export const generateApplicationEmail: EmailTemplateGenerator = (props) => {
     options: { locale },
   } = props
 
-  const institutionApplicant = get(application.answers, 'applicant.institution')
-  const applicantEmail = get(application.answers, 'contact.email')
-  const applicantName = get(application.answers, 'contact.name')
-  const applicantPhone = get(application.answers, 'contact.phoneNumber')
+  const institutionName = get(application.answers, 'applicant.institution')
+
+  const contactName = get(application.answers, 'contact.name')
+  const contactEmail = get(application.answers, 'contact.email')
+  const contactPhone = get(application.answers, 'contact.phoneNumber')
+
+  const secondaryContactName = get(application.answers, 'secondaryContact.name')
+  const secondaryContactEmail = get(
+    application.answers,
+    'secondaryContact.email',
+  )
+  const secondaryContactPhone = get(
+    application.answers,
+    'secondaryContact.phoneNumber',
+  )
+  const hasSecondaryContact = [
+    secondaryContactName,
+    secondaryContactEmail,
+    secondaryContactPhone,
+  ].some((x) => !!x)
 
   const projectName = get(application.answers, 'project.name')
   const projectGoal = get(application.answers, 'project.goals')
   const projectScope = get(application.answers, 'project.scope')
   const projectFinance = get(application.answers, 'project.finance')
   const projectBackground = get(application.answers, 'project.background')
+  const projectStakeholders = get(application.answers, 'stakeholders')
+  const projectRole = get(application.answers, 'role')
 
-  const hasTime = get(application.answers, 'constraints.hasTime') as boolean
-  const hasMoral = get(application.answers, 'constraints.hasMoral') as boolean
-  const hasOther = get(application.answers, 'constraints.hasOther') as boolean
-  const hasShopping = get(
+  const technicalConstraints = get(
     application.answers,
-    'constraints.hasShopping',
+    'constraints.technical',
   ) as boolean
-  const hasFinancial = get(
+  const financialConstraints = get(
     application.answers,
-    'constraints.hasFinancial',
+    'constraints.financial',
   ) as boolean
-  const hasTechnical = get(
+  const timeConstraints = get(
     application.answers,
-    'constraints.hasTechnical',
+    'constraints.time',
+  ) as boolean
+  const shoppingConstraints = get(
+    application.answers,
+    'constraints.shopping',
+  ) as boolean
+  const moralConstraints = get(
+    application.answers,
+    'constraints.moral',
+  ) as boolean
+  const otherConstraints = get(
+    application.answers,
+    'constraints.other',
   ) as boolean
 
-  const noConstraints = [
-    hasTime,
-    hasMoral,
-    hasOther,
-    hasShopping,
-    hasFinancial,
-    hasTechnical,
-  ].every((x) => !x)
+  const hasConstraints = [
+    technicalConstraints,
+    financialConstraints,
+    timeConstraints,
+    shoppingConstraints,
+    moralConstraints,
+    otherConstraints,
+  ].some((x) => !!x)
 
-  console.log(application.answers)
-  const subject = `Umsókn frá ${institutionApplicant}`
+  const subject = `Umsókn frá ${institutionName}`
   const attachments = get(application.answers, 'attatchments') as []
 
   const mailAttachments = attachments
@@ -64,82 +90,156 @@ export const generateApplicationEmail: EmailTemplateGenerator = (props) => {
       )
     : []
 
-  const hasSecondaryContact = get(
-    application.answers,
-    'hasSecondaryContact',
-  ) as boolean
-
-  const secondaryContact = hasSecondaryContact
-    ? `# Nafn  ${get(application.answers, 'secondaryContact.name')}
-    # Tölvupóstur ${get(application.answers, 'secondaryContact.email')}
-    # Sími ${get(application.answers, 'secondaryContact.phoneNumber')}`
-    : ` `
-
   const body = dedent(`
-        Umsókn hefur send verið inn frá ${institutionApplicant}.
+  <h2>Yfirlit umsóknar</h2>
+  <h3>${messages.applicant.sectionLabel.defaultMessage}</h3>
+  <p>
+    <b>${messages.applicant.institutionLabel.defaultMessage}</b> </br>
+    ${institutionName}
+  </p>
+  <h3>${messages.applicant.contactSubtitle.defaultMessage}</h3>
+  <p>
+    <b>${messages.applicant.contactNameLabel.defaultMessage}</b> </br>
+    ${contactName}
+  </p>
+  <p>
+    <b>${messages.applicant.contactEmailLabel.defaultMessage}</b> </br>
+    ${contactEmail}
+  </p>
+  <p>
+    <b>${messages.applicant.contactPhoneLabel.defaultMessage}</b> </br>
+    ${contactPhone}
+  </p>
 
-        # Nafn  ${applicantName}
-        # Tölvupóstfang ${applicantEmail}
-        # Sími  ${applicantPhone}
+  ${
+    hasSecondaryContact
+      ? `<h3>${messages.applicant.secondaryContactSubtitle.defaultMessage}</h3> `
+      : ''
+  }
 
-        ${secondaryContact}
+  ${
+    secondaryContactName
+      ? `<p>
+  <b>${messages.applicant.contactNameLabel.defaultMessage}</b> </br>
+  ${secondaryContactName}
+  </p>`
+      : ''
+  }
 
-        Verkefni
+  ${
+    secondaryContactEmail
+      ? `<p>
+  <b>${messages.applicant.contactEmailLabel.defaultMessage}</b> </br>
+  ${secondaryContactEmail}
+  </p>`
+      : ''
+  }
 
-        ${messages.project.nameLabel.defaultMessage}:
-        ${projectName}
+  ${
+    secondaryContactPhone
+      ? `<p>
+  <b>${messages.applicant.contactPhoneLabel.defaultMessage}</b> </br>
+  ${secondaryContactPhone}
+  </p>`
+      : ''
+  }
 
-        ${messages.project.backgroundLabel.defaultMessage}:
-        ${projectBackground}
 
-        ${messages.project.goalsLabel.defaultMessage}:
-        ${projectGoal}
+  <h3>${messages.project.sectionTitle.defaultMessage}</h3>
+  <p>
+    <b>${messages.project.nameLabel.defaultMessage}</b> </br>
+    ${projectName}
+  </p>
+  <p>
+    <b>${messages.project.backgroundLabel.defaultMessage}</b> </br>
+    ${projectBackground}
+  </p>
+  <p>
+    <b>${messages.project.goalsLabel.defaultMessage}</b> </br>
+    ${projectGoal}
+  </p>
+  <p>
+    <b>${messages.project.scopeLabel.defaultMessage}</b> </br>
+    ${projectScope}
+  </p>
+  <p>
+    <b>${messages.project.financeLabel.defaultMessage}</b> </br>
+    ${projectFinance}
+  </p>
 
-        ${messages.project.financeLabel.defaultMessage}:
-        ${projectFinance}
 
-        ${messages.project.scopeLabel.defaultMessage}:
-        ${projectScope}
+  ${
+    hasConstraints
+      ? `<h3>${messages.constraints.sectionTitle.defaultMessage}</h3>`
+      : ''
+  }
 
-        ${noConstraints ? 'Engar skorður skilgreindar.' : 'Skorður:'}
+  ${
+    technicalConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsTechicalLabel.defaultMessage}</b> </br>
+  ${technicalConstraints}
+  </p>`
+      : ''
+  }
 
-        ${
-          hasTechnical
-            ? `Tæknilegar skorður
-          ${get(application.answers, 'constraints.technical')}`
-            : ` `
-        }
-        ${
-          hasFinancial
-            ? `Fjárhagslegar skorður
-          ${get(application.answers, 'constraints.financial')}`
-            : ` `
-        }
-        ${
-          hasTime
-            ? `Tímaskorður
-          ${get(application.answers, 'constraints.time')}`
-            : ` `
-        }
-        ${
-          hasShopping
-            ? `Innkaupa skorður
-          ${get(application.answers, 'constraints.shopping')}`
-            : ` `
-        }
-        ${
-          hasMoral
-            ? `Siðferðilegar skorður
-          ${get(application.answers, 'constraints.moral')}`
-            : ` `
-        }
-        ${
-          hasOther
-            ? `Aðrar skorður
-          ${get(application.answers, 'constraints.other')}`
-            : ` `
-        }
-      `)
+  ${
+    financialConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsFinancialLabel.defaultMessage}</b> </br>
+  ${financialConstraints}
+  </p>`
+      : ''
+  }
+
+  ${
+    timeConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsTimeLabel.defaultMessage}</b> </br>
+  ${timeConstraints}
+  </p>`
+      : ''
+  }
+
+  ${
+    shoppingConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsShoppingLabel.defaultMessage}</b> </br>
+  ${shoppingConstraints}
+  </p>`
+      : ''
+  }
+
+  ${
+    moralConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsMoralLabel.defaultMessage}</b> </br>
+  ${moralConstraints}
+  </p>`
+      : ''
+  }
+
+  ${
+    otherConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsOtherLabel.defaultMessage}</b> </br>
+  ${otherConstraints}
+  </p>`
+      : ''
+  }
+
+  
+  <h3>${messages.stakeholders.sectionTitle.defaultMessage}</h3>
+  <p>
+    <b>${messages.stakeholders.stakeholdersLabel.defaultMessage}</b> </br>
+    ${projectStakeholders}
+  </p>
+  <p>
+    <b>${messages.stakeholders.roleLabel.defaultMessage}</b> </br>
+    ${projectRole}
+  </p>
+
+  `)
 
   return {
     from: {
@@ -149,14 +249,11 @@ export const generateApplicationEmail: EmailTemplateGenerator = (props) => {
     to: [
       {
         name: '',
-        address: applicantEmail as string,
+        address: contactEmail as string,
       },
     ],
     attachments: mailAttachments,
     subject,
-    html: `<p>${body
-      .split('')
-      .map((c) => (c === '\n' ? `<br />\n` : c))
-      .join('')}</p>`,
+    html: body,
   }
 }
