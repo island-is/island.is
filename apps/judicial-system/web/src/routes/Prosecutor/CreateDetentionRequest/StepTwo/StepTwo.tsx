@@ -39,7 +39,7 @@ import {
   SendNotificationMutation,
   TransitionCaseMutation,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'

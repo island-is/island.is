@@ -37,7 +37,7 @@ import { useRouter } from 'next/router'
 import {
   SendNotificationMutation,
   TransitionCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as styles from './DetentionRequests.treat'
 

@@ -36,7 +36,7 @@ import {
   CaseQuery,
   SendNotificationMutation,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import parseISO from 'date-fns/parseISO'
 import {
   JudgeSubsections,

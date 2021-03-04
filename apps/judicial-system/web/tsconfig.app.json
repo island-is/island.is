@@ -3,13 +3,15 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "types": ["node"],
-    "composite": true
+    "composite": true,
   },
   "exclude": ["**/*.spec.ts", "**/*.spec.tsx"],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
   "files": [
     "../../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
     "../../../node_modules/@nrwl/react/typings/image.d.ts",
-    "./graphql/possibleTypes.json"
+    "./graphql/possibleTypes.json",
+    "./proxy.config.json",
+    "../../../libs/infra-next-server/src/index.ts"
   ]
 }
