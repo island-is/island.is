@@ -105,7 +105,7 @@ export const CreditCard: React.FC<CreditCardProps> = ({
         <Box marginRight={[2, 4, 5]}>
           <Icon />
         </Box>
-        <Box display="flex" flexDirection="column" textAlign="left">
+        <Box display="flex" flexDirection="column">
           <Text fontWeight={active ? 'semiBold' : 'regular'}>{cardType}</Text>
           <Text fontWeight={active ? 'semiBold' : 'regular'}>
             <MaskedNumbers /> <MaskedNumbers /> {lastFourDigits}

@@ -10,20 +10,26 @@ export default {
 }
 
 const Template = () => (
-  <Box textAlign="center">
-    <Text variant="h3" paddingY={4}>
-      Payment flow: Choose a card
-    </Text>
+  <>
+    <Box textAlign="center">
+      <Text variant="h3" paddingY={4}>
+        Payment flow: Choose a card
+      </Text>
+    </Box>
     <frames.ChooseCard />
-    <Text variant="h3" paddingY={4}>
-      Payment flow: Add new card
-    </Text>
+    <Box textAlign="center">
+      <Text variant="h3" paddingY={4}>
+        Payment flow: Success
+      </Text>
+    </Box>
     <frames.NewCard />
-    <Text variant="h3" paddingY={4}>
-      Payment flow: Success
-    </Text>
+    <Box textAlign="center">
+      <Text variant="h3" paddingY={4}>
+        Payment flow: Success
+      </Text>
+    </Box>
     <frames.Success />
-  </Box>
+  </>
 )
 
 export const Default = Template.bind({})
