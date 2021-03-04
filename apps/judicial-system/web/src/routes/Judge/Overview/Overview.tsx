@@ -17,7 +17,6 @@ import {
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
@@ -44,13 +43,15 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as styles from './Overview.treat'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
 }
 
 export const JudgeOverview: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,

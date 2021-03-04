@@ -54,6 +54,7 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import useDateTime from '../../../utils/hooks/useDateTime'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
@@ -74,8 +75,8 @@ export const HearingArrangements: React.FC = () => {
 
   const courtTimeRef = useRef<HTMLInputElement>(null)
 
-  const { id } = useParams<{ id: string }>()
-  const history = useHistory()
+  const router = useRouter()
+  const id = router.query.id
 
   const { isValidDate: isValidCourtDate } = useDateTime({
     date: workingCase?.courtDate,
@@ -471,7 +472,7 @@ export const HearingArrangements: React.FC = () => {
               if (notificationSent && !window.Cypress) {
                 setModalVisible(true)
               } else {
-                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
               }
             }}
           />
@@ -481,7 +482,7 @@ export const HearingArrangements: React.FC = () => {
               title="Tilkynning um fyrirtökutíma hefur verið send"
               text="Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður."
               handlePrimaryButtonClick={() => {
-                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
               }}
               primaryButtonText="Loka glugga"
             />

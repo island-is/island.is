@@ -47,7 +47,6 @@ import {
   SignatureConfirmationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { useHistory, useParams } from 'react-router-dom'
 import {
   CaseQuery,
   SendNotificationMutation,
@@ -67,6 +66,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
+import { useRouter } from 'next/router'
 
 interface SigningModalProps {
   workingCase: Case
@@ -81,7 +81,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   requestSignatureResponse,
   setModalVisible,
 }) => {
-  const history = useHistory()
+  const router = useRouter()
   const [
     signatureConfirmationResponse,
     setSignatureConfirmationResponse,
@@ -249,11 +249,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
         signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
       }
       handlePrimaryButtonClick={() => {
-        history.push(Constants.FEEDBACK_FORM_ROUTE)
+        router.push(Constants.FEEDBACK_FORM_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
-          history.push(Constants.REQUEST_LIST_ROUTE)
+          router.push(Constants.REQUEST_LIST_ROUTE)
         } else {
           setModalVisible(false)
         }
@@ -267,6 +267,8 @@ interface CaseData {
 }
 
 export const Confirmation: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
@@ -277,7 +279,6 @@ export const Confirmation: React.FC = () => {
     RequestSignatureResponse
   >()
 
-  const { id } = useParams<{ id: string }>()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },

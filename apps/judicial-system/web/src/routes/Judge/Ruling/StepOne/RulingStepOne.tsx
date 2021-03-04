@@ -5,7 +5,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   FormFooter,
@@ -22,7 +21,7 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseArray,
   parseString,
@@ -51,6 +50,7 @@ import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
@@ -66,7 +66,8 @@ export const RulingStepOne: React.FC = () => {
   const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
     '',
   )
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',

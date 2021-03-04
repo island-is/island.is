@@ -53,6 +53,7 @@ import {
 import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
@@ -74,7 +75,8 @@ export const CourtRecord: React.FC = () => {
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
   ] = useState('')
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',

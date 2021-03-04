@@ -49,11 +49,13 @@ import {
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { useRouter } from 'next/router'
 
 export const RulingStepTwo: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
