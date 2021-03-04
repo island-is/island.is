@@ -68,16 +68,17 @@ export class SoapClient {
 
   static parseXRoadVariables(variables: string): XRoadVariables {
     const varArr = variables.split('/')
-    if (varArr.length != 4) {
+    if (varArr.length !== 4) {
       logger.error(`Could not find variables Ids from ${variables}`)
       throw new Error(`Could not find variables Ids from ${variables}`)
     }
+    const [xRoadInstance, memberClass, memberCode, subSystemCode] = varArr
 
     return {
-      xRoadInstance: varArr[0],
-      memberClass: varArr[1],
-      memberCode: varArr[2],
-      subSystemCode: varArr[3],
+      xRoadInstance,
+      memberClass,
+      memberCode,
+      subSystemCode,
     }
   }
 }

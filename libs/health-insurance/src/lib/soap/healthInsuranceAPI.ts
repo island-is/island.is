@@ -15,6 +15,7 @@ import {
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
+import { BucketService } from '../bucket/bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -32,6 +33,8 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
+    @Inject(BucketService)
+    private bucketService: BucketService,
   ) {}
 
   public async getProfun(): Promise<string> {
@@ -85,6 +88,8 @@ export class HealthInsuranceAPI {
         fyrrautgafulandkodi: inputObj.previousCountryCode,
         fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+        tryggingaretturfyrralandi:
+          inputObj.hasHealthInsuranceRightInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
     }
@@ -101,7 +106,10 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
-          innihald: '', // TODO: await this.bucketService.getFileContentAsBase64(filename),
+          // files are saved under 'application id' folder
+          innihald: await this.bucketService.getFileContentAsBase64(
+            `${inputObj.applicationNumber}/${filename}`,
+          ),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)
       }
