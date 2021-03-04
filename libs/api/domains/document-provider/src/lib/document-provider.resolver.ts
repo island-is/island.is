@@ -36,8 +36,10 @@ export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
 
   @Query(() => [Organisation])
-  async getProviderOrganisations(): Promise<Organisation[]> {
-    return this.documentProviderService.getOrganisations()
+  async getProviderOrganisations(
+    @CurrentUser() user: User,
+  ): Promise<Organisation[]> {
+    return this.documentProviderService.getOrganisations(user.authorization)
   }
 
   @Query(() => Organisation)
@@ -61,7 +63,10 @@ export class DocumentProviderResolver {
   ): Promise<Organisation | null> {
     logger.info(`createOrganisation: user: ${user.nationalId}`)
 
-    return this.documentProviderService.createOrganisation(input)
+    return this.documentProviderService.createOrganisation(
+      input,
+      user.authorization,
+    )
   }
 
   @Mutation(() => Organisation)
@@ -74,7 +79,11 @@ export class DocumentProviderResolver {
       `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${id}`,
     )
 
-    return this.documentProviderService.updateOrganisation(id, input)
+    return this.documentProviderService.updateOrganisation(
+      id,
+      input,
+      user.authorization,
+    )
   }
 
   @Mutation(() => Contact, { nullable: true })
@@ -88,6 +97,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createAdministrativeContact(
       organisationId,
       input,
+      user.authorization,
     )
   }
 
@@ -106,6 +116,7 @@ export class DocumentProviderResolver {
       organisationId,
       administrativeContactId,
       contact,
+      user.authorization,
     )
   }
 
@@ -120,6 +131,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createTechnicalContact(
       organisationId,
       input,
+      user.authorization,
     )
   }
 
@@ -138,6 +150,7 @@ export class DocumentProviderResolver {
       organisationId,
       technicalContactId,
       contact,
+      user.authorization,
     )
   }
 
@@ -149,7 +162,11 @@ export class DocumentProviderResolver {
   ): Promise<Helpdesk | null> {
     logger.info(`createHelpdesk: user: ${user.nationalId}`)
 
-    return this.documentProviderService.createHelpdesk(organisationId, input)
+    return this.documentProviderService.createHelpdesk(
+      organisationId,
+      input,
+      user.authorization,
+    )
   }
 
   @Mutation(() => Helpdesk)
@@ -167,6 +184,7 @@ export class DocumentProviderResolver {
       organisationId,
       helpdeskId,
       helpdesk,
+      user.authorization,
     )
   }
 
@@ -229,6 +247,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProvider(
       input.nationalId,
       input.clientName,
+      user.authorization,
     )
   }
 
@@ -245,6 +264,7 @@ export class DocumentProviderResolver {
       input.endpoint,
       input.providerId,
       input.xroad || false,
+      user.authorization,
     )
   }
 }
