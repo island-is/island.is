@@ -7,12 +7,16 @@ import {
   UpdatedAt,
   HasMany,
   HasOne,
+  AfterCreate,
+  AfterUpdate,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Provider } from './provider.model'
 import { TechnicalContact } from './technicalContact.model'
 import { AdministrativeContact } from './administrativeContact.model'
 import { Helpdesk } from './helpdesk.model'
+import { Changelog } from './changelog.model'
+import { EntityTypes } from '../enums/EntityTypes'
 
 @Table({
   tableName: 'organisation',
@@ -81,6 +85,12 @@ export class Organisation extends Model<Organisation> {
   @ApiPropertyOptional()
   helpdesk?: Helpdesk
 
+  @Column({
+    type: DataType.STRING,
+  })
+  @ApiProperty()
+  modifiedBy?: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
@@ -88,4 +98,17 @@ export class Organisation extends Model<Organisation> {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @AfterCreate
+  @AfterUpdate
+  static addChangelog(instance: Organisation) {
+    const obj = {
+      organisationId: instance.id,
+      entityId: instance.id,
+      entityType: EntityTypes.ORGANISATION,
+      data: instance,
+    }
+
+    Changelog.create(obj)
+  }
 }

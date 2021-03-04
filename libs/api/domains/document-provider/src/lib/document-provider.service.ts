@@ -41,9 +41,9 @@ export class DocumentProviderService {
     private providersApi: ProvidersApi,
   ) {}
 
-  async getOrganisations(): Promise<Organisation[]> {
+  async getOrganisations(authorization: string): Promise<Organisation[]> {
     return await this.organisationsApi
-      .organisationControllerGetOrganisations()
+      .organisationControllerGetOrganisations({ authorization })
       .catch(handleError)
   }
 
@@ -65,21 +65,27 @@ export class DocumentProviderService {
 
   async createOrganisation(
     input: CreateOrganisationInput,
+    authorization: string,
   ): Promise<Organisation> {
-    const createOrganisationDto = { ...input }
+    const dto = {
+      createOrganisationDto: { ...input },
+      authorization,
+    }
 
     return await this.organisationsApi
-      .organisationControllerCreateOrganisation({ createOrganisationDto })
+      .organisationControllerCreateOrganisation(dto)
       .catch(handleError)
   }
 
   async updateOrganisation(
     id: string,
     organisation: UpdateOrganisationInput,
+    authorization: string,
   ): Promise<Organisation> {
     const dto = {
       id,
       updateOrganisationDto: { ...organisation },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -90,10 +96,12 @@ export class DocumentProviderService {
   async createAdministrativeContact(
     organisationId: string,
     input: CreateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       createContactDto: { ...input },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -105,11 +113,13 @@ export class DocumentProviderService {
     organisationId: string,
     contactId: string,
     contact: UpdateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       administrativeContactId: contactId,
       updateContactDto: { ...contact },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -120,10 +130,12 @@ export class DocumentProviderService {
   async createTechnicalContact(
     organisationId: string,
     input: CreateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       createContactDto: { ...input },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -135,11 +147,13 @@ export class DocumentProviderService {
     organisationId: string,
     contactId: string,
     contact: UpdateContactInput,
+    authorization: string,
   ): Promise<Contact> {
     const dto = {
       id: organisationId,
       technicalContactId: contactId,
       updateContactDto: { ...contact },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -150,10 +164,12 @@ export class DocumentProviderService {
   async createHelpdesk(
     organisationId: string,
     input: CreateHelpdeskInput,
+    authorization: string,
   ): Promise<Helpdesk> {
     const dto = {
       id: organisationId,
       createHelpdeskDto: { ...input },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -165,11 +181,13 @@ export class DocumentProviderService {
     organisationId: string,
     helpdeskId: string,
     helpdesk: UpdateHelpdeskInput,
+    authorization: string,
   ): Promise<Helpdesk> {
     const dto = {
       id: organisationId,
       helpdeskId: helpdeskId,
       updateHelpdeskDto: { ...helpdesk },
+      authorization,
     }
 
     return await this.organisationsApi
@@ -238,6 +256,7 @@ export class DocumentProviderService {
   async createProvider(
     nationalId: string,
     clientName: string,
+    authorization: string,
   ): Promise<ClientCredentials> {
     // return new ClientCredentials(
     //   '5016d8d5cb6ce0758107b9969ea3c301',
@@ -263,14 +282,17 @@ export class DocumentProviderService {
     }
 
     // Create provider for organisation
-    const createProviderDto = {
-      externalProviderId: credentials.providerId,
-      organisationId: organisation.id,
+    const dto = {
+      createProviderDto: {
+        externalProviderId: credentials.providerId,
+        organisationId: organisation.id,
+      },
+      authorization,
     }
 
-    const provider = await this.providersApi.providerControllerCreateProvider({
-      createProviderDto,
-    })
+    const provider = await this.providersApi.providerControllerCreateProvider(
+      dto,
+    )
 
     if (!provider) {
       throw new ApolloError('Could not create provider.')
@@ -283,6 +305,7 @@ export class DocumentProviderService {
     endpoint: string,
     providerId: string,
     xroad: boolean,
+    authorization: string,
   ): Promise<AudienceAndScope> {
     // return new AudienceAndScope(
     //   'https://test-skjalaveita-island-is.azurewebsites.net',
@@ -309,6 +332,7 @@ export class DocumentProviderService {
         apiScope: audienceAndScope.scope,
         xroad,
       },
+      authorization,
     }
 
     const updatedProvider = await this.providersApi.providerControllerUpdateProvider(
