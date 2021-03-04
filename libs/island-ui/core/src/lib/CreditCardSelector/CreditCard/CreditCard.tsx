@@ -24,7 +24,7 @@ type RadioProps = {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const Radio: React.FC<RadioProps> = ({
+const SelectionRadio: React.FC<RadioProps> = ({
   onChange,
   disabled,
   checked,
@@ -82,7 +82,7 @@ export const CreditCard: React.FC<CreditCardProps> = ({
 
   return (
     <div className={styles.root}>
-      <Radio
+      <SelectionRadio
         onChange={onChange}
         disabled={disabled}
         checked={active}
@@ -102,7 +102,7 @@ export const CreditCard: React.FC<CreditCardProps> = ({
         flexGrow={1}
         marginX={2}
       >
-        <Box marginRight={5}>
+        <Box marginRight={[2, 4, 5]}>
           <Icon />
         </Box>
         <Box display="flex" flexDirection="column">

@@ -1,15 +1,21 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-const radioButtonSize = theme.spacing[3]
+const radioButtonSize = 24
 const radioButtonCheckSize = 12
 
 export const root = style({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
-  width: 'calc(100% + 80px)',
-  marginLeft: -40,
+  width: 'calc(100% + 32px)',
+  marginLeft: -16,
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: 'calc(100% + 80px)',
+      marginLeft: -40,
+    },
+  }),
 })
 
 export const input = style({

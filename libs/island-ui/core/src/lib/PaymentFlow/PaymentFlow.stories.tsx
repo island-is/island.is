@@ -1,4 +1,5 @@
 import React from 'react'
+import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 
 import { PaymentFlow, frames } from './PaymentFlow'
@@ -8,15 +9,21 @@ export default {
   component: PaymentFlow,
 }
 
-const Template = (args) => (
-  <>
-    <Text>Choose a card</Text>
+const Template = () => (
+  <Box textAlign="center">
+    <Text variant="h3" paddingY={4}>
+      Payment flow: Choose a card
+    </Text>
     <frames.ChooseCard />
-    <Text>Add new card</Text>
+    <Text variant="h3" paddingY={4}>
+      Payment flow: Add new card
+    </Text>
     <frames.NewCard />
-    <Text>Success</Text>
+    <Text variant="h3" paddingY={4}>
+      Payment flow: Success
+    </Text>
     <frames.Success />
-  </>
+  </Box>
 )
 
 export const Default = Template.bind({})

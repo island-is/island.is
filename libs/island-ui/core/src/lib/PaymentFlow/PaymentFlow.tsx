@@ -1,5 +1,4 @@
 import * as React from 'react'
-import cn from 'classnames'
 import { Box } from '../Box/Box'
 import { CreditCardSelector } from '../CreditCardSelector/CreditCardSelector'
 import * as styles from './PaymentFlow.treat'
@@ -10,10 +9,32 @@ import { Input } from '../Input/Input'
 import { Checkbox } from '../Checkbox/Checkbox'
 import Table from '../Table'
 
-interface PaymentFlowProps {}
+const myCards = [
+  {
+    cardType: 'Mastercard' as const,
+    lastFourDigits: '1337',
+    active: true,
+  },
+  {
+    cardType: 'Visa' as const,
+    lastFourDigits: '1234',
+    active: false,
+  },
+]
 
-export const PaymentFlow: React.FC<PaymentFlowProps> = ({ children }) => (
-  <Box className={cn(styles.root)}>
+interface PaymentFlowProps {
+  heading?: string
+  subheading?: string
+  renderButtons?: React.ReactNode
+}
+
+export const PaymentFlow: React.FC<PaymentFlowProps> = ({
+  heading,
+  subheading,
+  renderButtons,
+  children,
+}) => (
+  <Box display="flex" justifyContent="center" alignItems="center">
     <Box
       className={styles.frame}
       background="blueberry100"
@@ -21,50 +42,67 @@ export const PaymentFlow: React.FC<PaymentFlowProps> = ({ children }) => (
       borderColor="blueberry200"
       borderRadius="standard"
       paddingY={6}
-      paddingX={12}
+      paddingX={[4, 6, 8, 12]}
     >
       <Box paddingX={3}>
-        <Box display="flex" justifyContent="center" paddingBottom={8}>
+        <Box display="flex" justifyContent="center" paddingBottom={[4, 6, 8]}>
           <Logo iconOnly width={64} height={64} />
         </Box>
       </Box>
+      {heading && (
+        <Box textAlign="center" paddingBottom={1}>
+          <Text as="h1">{heading}</Text>
+        </Box>
+      )}
+      {subheading && (
+        <Box textAlign="center" paddingBottom={4}>
+          <Text as="h2" variant="h1">
+            {subheading}
+          </Text>
+        </Box>
+      )}
       {children}
+      {renderButtons}
     </Box>
   </Box>
 )
 
 export const frames = {
   ChooseCard: () => (
-    <PaymentFlow>
-      <Box textAlign="center" paddingBottom={1}>
-        <Text>
-          Til greiðslu vegna <strong>ökuskírteinis</strong>
-        </Text>
-      </Box>
-      <Box textAlign="center" paddingBottom={4}>
-        <Text variant="h1">8.990 kr.</Text>
-      </Box>
-      <CreditCardSelector />
+    <PaymentFlow
+      heading="Ökuskírteini"
+      subheading="8.990 kr."
+      renderButtons={
+        <Box textAlign="center" paddingY={2}>
+          <Button fluid variant="text">
+            Hætta við
+          </Button>
+        </Box>
+      }
+    >
+      <CreditCardSelector availableCards={myCards} />
       <Box paddingY={2}>
         <Button fluid>Greiða</Button>
-      </Box>
-      <Box textAlign="center" paddingY={2}>
-        <Button fluid variant="text">
-          Hætta við
-        </Button>
       </Box>
     </PaymentFlow>
   ),
   NewCard: () => (
-    <PaymentFlow>
-      <Box textAlign="center" paddingBottom={1}>
-        <Text>
-          Til greiðslu vegna <strong>ökuskírteinis</strong>
-        </Text>
-      </Box>
-      <Box textAlign="center" paddingBottom={4}>
-        <Text variant="h1">8.990 kr.</Text>
-      </Box>
+    <PaymentFlow
+      heading="Ökuskírteini"
+      subheading="8.990 kr."
+      renderButtons={
+        <>
+          <Box paddingY={2}>
+            <Button fluid>Greiða</Button>
+          </Box>
+          <Box textAlign="center" paddingY={2}>
+            <Button fluid variant="text">
+              Hætta við
+            </Button>
+          </Box>
+        </>
+      }
+    >
       <Text variant="small" marginBottom={1}>
         Greiðslukort
       </Text>
@@ -73,13 +111,14 @@ export const frames = {
       </Box>
       <Box marginBottom={2}>
         <Input
+          size="sm"
           label="Kortanúmer"
           placeholder="Kortanúmerið þitt"
           name="kortanumer"
           type="number"
         />
       </Box>
-      <Box marginBottom={8}>
+      <Box marginBottom={[4, 4, 8]}>
         <Box display="flex" marginBottom={2}>
           <Box marginRight={1}>
             <Input
@@ -102,26 +141,18 @@ export const frames = {
         </Box>
         <Checkbox label="Vista greiðslukort" name="vista" />
       </Box>
-      <Box paddingY={2}>
-        <Button fluid>Greiða</Button>
-      </Box>
-      <Box textAlign="center" paddingY={2}>
-        <Button fluid variant="text">
-          Hætta við
-        </Button>
-      </Box>
     </PaymentFlow>
   ),
   Success: () => (
-    <PaymentFlow>
-      <Box textAlign="center" paddingBottom={1}>
-        <Text color="mint400">
-          Greiðsla vegna <strong>ökuskírteinis</strong> tókst
-        </Text>
-      </Box>
-      <Box textAlign="center" paddingBottom={4}>
-        <Text variant="h1">8.990 kr.</Text>
-      </Box>
+    <PaymentFlow
+      heading="Greiðsla tókst"
+      subheading="8.990 kr."
+      renderButtons={
+        <Box textAlign="center" paddingY={2}>
+          <Button fluid>Til baka</Button>
+        </Box>
+      }
+    >
       <Box
         marginBottom={2}
         background="white"
@@ -133,22 +164,33 @@ export const frames = {
         <Table.Table>
           <Table.Body>
             <Table.Row>
-              <Table.Data>Heimild</Table.Data>
+              <Table.Data>
+                <strong>Skýring</strong>
+              </Table.Data>
+              <Table.Data>Ökuskírteini</Table.Data>
+            </Table.Row>
+            <Table.Row>
+              <Table.Data>
+                <strong>Heimild</strong>
+              </Table.Data>
               <Table.Data>123456</Table.Data>
             </Table.Row>
             <Table.Row>
-              <Table.Data>Greiðslutími</Table.Data>
+              <Table.Data>
+                <strong>Greiðslutími</strong>
+              </Table.Data>
               <Table.Data>17. feb. 2021 kl. 11:17:23</Table.Data>
             </Table.Row>
             <Table.Row>
-              <Table.Data>Færslunúmer</Table.Data>
-              <Table.Data>2021-17-1502113-828</Table.Data>
+              <Table.Data borderColor="transparent">
+                <strong>Færslunúmer</strong>
+              </Table.Data>
+              <Table.Data borderColor="transparent">
+                2021-17-1502113-828
+              </Table.Data>
             </Table.Row>
           </Table.Body>
         </Table.Table>
-      </Box>
-      <Box textAlign="center" paddingY={2}>
-        <Button fluid>Til baka</Button>
       </Box>
     </PaymentFlow>
   ),
