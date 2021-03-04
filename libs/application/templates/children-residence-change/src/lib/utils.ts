@@ -1,4 +1,4 @@
-import { Application } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/core'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import {
   PersonResidenceChange,
@@ -11,14 +11,23 @@ export const extractApplicantFromApplication = (application: Application) => {
   }) as NationalRegistryUser
 }
 
+const dataToUse = ({ answers, externalData }: Application, key: string) => {
+  return (
+    ((answers.mockData as FormValue)?.[key] as FormValue)?.data ||
+    externalData[key]?.data
+  )
+}
+
 export const extractParentFromApplication = (application: Application) => {
-  return (application.externalData.parentNationalRegistry?.data as {
+  const data = dataToUse(application, 'parentNationalRegistry')
+  return (data as {
     parent?: object
   }) as ParentResidenceChange
 }
 
 export const extractChildrenFromApplication = (application: Application) => {
-  return (application.externalData.childrenNationalRegistry?.data as {
+  const data = dataToUse(application, 'childrenNationalRegistry')
+  return (data as {
     registeredChildren?: object
   }) as PersonResidenceChange[]
 }
