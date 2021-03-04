@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Document, DocumentDetails } from '@island.is/api/schema'
-import * as styles from './DocumentLine.treat'
 import {
   Text,
   Box,
@@ -10,6 +9,9 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
+
+import * as styles from './DocumentLine.treat'
 
 const getEdgecaseDocument = (
   document: Document,
@@ -44,11 +46,11 @@ const DocumentLine: FC<Props> = ({ document }) => {
           >
             <Hidden above="xs">
               <Text variant="small" color="dark300">
-                {format(new Date(document.date), 'dd.MM.yyyy')}
+                {format(new Date(document.date), dateFormat.is)}
               </Text>
             </Hidden>
             <Hidden below="sm">
-              <Text>{format(new Date(document.date), 'dd.MM.yyyy')}</Text>
+              <Text>{format(new Date(document.date), dateFormat.is)}</Text>
             </Hidden>
           </Box>
         </GridColumn>

@@ -1,5 +1,7 @@
 import { toast } from '@island.is/island-ui/core'
-import { defaultLanguage, Locale, useNamespaces } from '@island.is/localization'
+import { useNamespaces } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
+import { defaultLanguage } from '@island.is/shared/constants'
 import {
   Modal,
   ServicePortalModuleComponent,

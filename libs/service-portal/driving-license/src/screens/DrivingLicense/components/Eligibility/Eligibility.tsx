@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { mapCategory } from './dataMapper'
 import { Application } from '../Application'
+import { dateFormat } from 'libs/shared/constants/src'
 
 const DrivingLicenseQuery = gql`
   query DrivingLicenseQuery {
@@ -90,7 +91,7 @@ function Eligibility(): JSX.Element | null {
                       <Text variant="h3">{category.name}</Text>
                       <Text>
                         Gefið út{' '}
-                        {format(new Date(eligibility.issued), 'dd.MM.yyyy')}
+                        {format(new Date(eligibility.issued), dateFormat.is)}
                       </Text>
                     </Box>
                     <Box
@@ -106,7 +107,7 @@ function Eligibility(): JSX.Element | null {
                       </Box>
                       <Text variant="small">
                         Gildistími:{' '}
-                        {format(new Date(eligibility.expires), 'dd.MM.yyyy')}
+                        {format(new Date(eligibility.expires), dateFormat.is)}
                       </Text>
                     </Box>
                   </Box>

@@ -2,8 +2,6 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { NextComponentType } from 'next'
 import { NextPageContext } from 'next/dist/next-server/lib/utils'
 
-export type Locale = 'is' | 'en'
-
 export interface Routes {
   admin: string
   auth: string
