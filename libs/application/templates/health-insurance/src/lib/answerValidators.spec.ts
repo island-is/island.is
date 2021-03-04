@@ -174,7 +174,7 @@ describe('answerValidators', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
       country: JSON.stringify({ name: 'Greenland' }),
-      personalId: '012345678901234567890'
+      personalId: '012345678901234567890',
     }
 
     expect(
@@ -192,7 +192,7 @@ describe('answerValidators', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
       country: JSON.stringify({ name: 'Greenland' }),
-      personalId: '000'
+      personalId: '000',
     }
 
     expect(
