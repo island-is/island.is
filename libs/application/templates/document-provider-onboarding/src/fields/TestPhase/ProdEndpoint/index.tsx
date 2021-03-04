@@ -84,7 +84,6 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-      //TODO: Needs new call to API
       if (result) {
         setendPointVariables([
           {
