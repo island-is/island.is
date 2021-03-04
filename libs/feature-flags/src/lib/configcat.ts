@@ -15,7 +15,7 @@ export class Client implements FeatureFlagClient {
       dataGovernance: DataGovernance.EuOnly,
     }
     if (typeof window === 'undefined') {
-      this.configcat = require('configcat-node').createClient(
+      this.configcat = eval('require')('configcat-node').createClient(
         resolvedSdkKey,
         ccConfig,
       )

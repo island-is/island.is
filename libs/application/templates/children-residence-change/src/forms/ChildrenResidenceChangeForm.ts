@@ -10,6 +10,7 @@ import {
   buildMultiField,
   buildSubmitField,
   DefaultEvents,
+  buildRadioField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { contactInfoIds } from '../fields/ContactInfo'
@@ -21,6 +22,38 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'mockData',
+      title: 'Mock data',
+      children: [
+        buildMultiField({
+          id: 'mockMulti',
+          title: '',
+          children: [
+            buildRadioField({
+              id: 'useMocks',
+              title: 'Nota gervigögn',
+              options: [
+                {
+                  value: 'yes',
+                  label: 'Já',
+                },
+                {
+                  value: 'no',
+                  label: 'Nei',
+                },
+              ],
+            }),
+            buildCustomField({
+              id: 'mockData',
+              title: 'Mock data',
+              component: 'MockData',
+              condition: (answers) => answers.useMocks === 'yes',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'backgroundInformation',
       title: m.section.backgroundInformation,
