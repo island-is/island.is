@@ -25,8 +25,6 @@ export const setClientAuthToken = (value: string) => {
   token = value
 }
 
-export const setLocaleContext = (value: Locale) => {}
-
 const retryLink = new RetryLink()
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {

@@ -2,7 +2,7 @@ import React from 'react'
 import format from 'date-fns/format'
 import { gql, useQuery } from '@apollo/client'
 import { defineMessage } from 'react-intl'
-
+import { dateFormat } from '@island.is/shared/constants'
 import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -13,9 +13,9 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+
 import { mapCategory } from './dataMapper'
 import { Application } from '../Application'
-import { dateFormat } from 'libs/shared/constants/src'
 
 const DrivingLicenseQuery = gql`
   query DrivingLicenseQuery {
