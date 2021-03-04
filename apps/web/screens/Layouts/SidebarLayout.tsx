@@ -54,26 +54,26 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         >
           {sidebarContent}
         </Box>
-        <Main addLandmark={addMainLandmark}>
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
-                span={[
-                  '9/9',
-                  '9/9',
-                  '9/9',
-                  '9/9',
-                  fullWidthContent ? '9/9' : '7/9',
-                ]}
-              >
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              offset={fullWidthContent ? '0' : ['0', '0', '0', '0', '1/9']}
+              span={[
+                '9/9',
+                '9/9',
+                '9/9',
+                '9/9',
+                fullWidthContent ? '9/9' : '7/9',
+              ]}
+            >
+              <Main addLandmark={addMainLandmark}>
                 <Box paddingLeft={[0, 0, hiddenOnTablet ? 0 : 6, 6, 0]}>
                   {children}
                 </Box>
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
-        </Main>
+              </Main>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       </Box>
     </GridContainer>
   </Box>
