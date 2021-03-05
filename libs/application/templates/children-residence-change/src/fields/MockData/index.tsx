@@ -219,17 +219,17 @@ const MockData = ({ application }: FieldBaseProps) => {
               </Box>
               <Box marginTop={2}>
                 <Controller
-                  name={`${childrenNationalRegistry}[${c}].id`}
+                  name={`${childrenNationalRegistry}[${c}].ssn`}
                   defaultValue={
-                    getValue(`${childrenNationalRegistry}[${c}].id`) ||
+                    getValue(`${childrenNationalRegistry}[${c}].ssn`) ||
                     Math.floor(Math.random() * 9000000000) + 1000000000
                   }
                   render={({ value, onChange }) => {
                     return (
                       <Input
                         ref={register}
-                        id={`${childrenNationalRegistry}[${c}].id`}
-                        name={`${childrenNationalRegistry}[${c}].id`}
+                        id={`${childrenNationalRegistry}[${c}].ssn`}
+                        name={`${childrenNationalRegistry}[${c}].ssn`}
                         backgroundColor="blue"
                         type="text"
                         label="Kennitala"
@@ -237,7 +237,7 @@ const MockData = ({ application }: FieldBaseProps) => {
                         onChange={(e) => {
                           onChange(e.target.value)
                           setValue(
-                            `${childrenNationalRegistry}[${c}].id`,
+                            `${childrenNationalRegistry}[${c}].ssn`,
                             e.target.value,
                           )
                         }}
