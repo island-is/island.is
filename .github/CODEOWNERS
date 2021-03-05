@@ -96,8 +96,8 @@
 /apps/services/documents                                                              @island-is/advania
 
 /apps/skilavottord/                                                                   @island-is/deloitte
-/libs/application/templates/health-insurance                                          @island-is/deloitte
-/libs/application/template-api-modules/src/lib/modules/templates/health-insurance     @island-is/deloitte
+/libs/application/templates/health-insurance/                                         @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/health-insurance/    @island-is/deloitte
 /libs/skilavottord/                                                                   @island-is/deloitte
 /libs/api/domains/health-insurance/                                                   @island-is/deloitte
 /libs/health-insurance/                                                               @island-is/deloitte
