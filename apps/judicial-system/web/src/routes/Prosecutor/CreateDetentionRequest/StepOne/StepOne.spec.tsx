@@ -170,7 +170,7 @@ describe('/krafa without ID', () => {
     ).toBeDisabled()
   })
 
-  test('should not allow users to continue unless every required field has been filled outtt', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
