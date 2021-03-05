@@ -122,5 +122,20 @@ export const info = {
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label of the commissions file upload field button',
     },
+    commissionsPerson: {
+      id: 'dpac.application:section.info.commissionsPerson',
+      defaultMessage: 'Upplýsingar um umbjóðanda',
+      description: 'Commission person repeater field',
+    },
+    commissionsAddMoreDescription: {
+      id: 'dpac.application:section.info.commissionsAddMoreDescription',
+      defaultMessage: 'Eru fleiri umbjóðendur að baki kvörtunar?',
+      description: 'Commission Add More Description',
+    },
+    commissionsAddMoreButtonLabel: {
+      id: 'dpac.application:section.info.commissionsAddMoreButtonLabel',
+      defaultMessage: 'Bæta við aðila',
+      description: 'Commissions add more button label',
+    },
   }),
 }

@@ -316,11 +316,12 @@ export const ComplaintForm: Form = buildForm({
           },
           children: [
             buildMultiField({
+              id: 'comissionsSection',
               title: info.general.commissionsPageTitle,
               description: info.general.commissionsPageDescription,
               children: [
                 buildFileUploadField({
-                  id: 'comissions.documents',
+                  id: 'commissions.documents',
                   title: '',
                   introduction: '',
                   maxSize: FILE_SIZE_LIMIT,
@@ -330,11 +331,10 @@ export const ComplaintForm: Form = buildForm({
                   uploadButtonLabel:
                     info.labels.commissionsDocumentsButtonLabel,
                 }),
-                buildTextField({
-                  id: 'commissions.name',
-                  title: info.labels.name,
-                  backgroundColor: 'blue',
-                  width: 'half',
+                buildCustomField({
+                  id: 'commissions.persons',
+                  title: info.labels.commissionsPerson,
+                  component: 'CommissionFieldRepeater',
                 }),
               ],
             }),
