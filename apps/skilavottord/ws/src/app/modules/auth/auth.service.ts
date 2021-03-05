@@ -19,10 +19,12 @@ export class AuthService {
   getRole(user: AuthUser): Role {
     try {
       // this.logger.info('getRole start...')
+      console.log('getRole start...')
       const ulist = JSON.parse(userList)
       const picked = ulist.find((o) => o.nationalId === user.nationalId)
       //TODO if not found
       // this.logger.info('getRole return value:' + picked.role)
+      console.log('getRole return value:' + picked.role)
       return picked.role as Role
     } catch (error) {
       // this.logger.error('getRole exception:' + error.message)
@@ -47,6 +49,7 @@ export class AuthService {
   getUserRole(user: AuthUser): User {
     try {
       // this.logger.info('getUserRole start...')
+      console.log('getUserRole start...')
       const ulist = JSON.parse(userList)
       const picked = ulist.find((o) => o.nationalId === user.nationalId)
       if (!picked) {
@@ -85,23 +88,28 @@ export class AuthService {
   // check role
   checkRole(user: AuthUser, role: Role): boolean {
     // this.logger.info('checkRole for user start...')
+    console.log('checkRole for user start...')
     try {
       const ulist = JSON.parse(userList)
       const picked = ulist.find((o) => o.nationalId === user.nationalId)
       if (!picked) {
         // this.logger.info('checkRole user not found in userList')
+        console.log('checkRole user not found in userList')
         return false
       } else {
         const r = picked.role as Role
         // this.logger.info('checkRole user found in userList. user role:' + r)
+        console.log('checkRole user found in userList. user role:' + r)
         return (
           r === 'developer' || r === 'recyclingCompany' || r === 'recyclingFund'
         )
       }
       // this.logger.info('checkRole return default false')
+      console.log('checkRole return default false')
       return false
     } catch (err) {
       // this.logger.error('checkRole exeption in auth.service:' + err.message)
+      console.log('checkRole exeption in auth.service:' + err.message)
       return false
     }
   }
