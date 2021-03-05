@@ -181,57 +181,63 @@ export const migratePopularityScores = async (
   oldIndex: string,
   newIndex: string,
 ) => {
-  const query = {
-    query: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      match_all: {},
-    },
-    size: 10000,
-    _source: ['popularityScore'],
-  }
-  const oldData = await esService.findByQuery<
-    SearchResponse<MappedData>,
-    unknown
-  >(oldIndex, query)
-
-  const oldScores = {}
-  oldData.body.hits?.hits.forEach((obj) => {
-    if ('popularityScore' in obj._source) {
-      oldScores[obj._id] = obj._source.popularityScore
-    }
-  })
-
-  const newData = await esService.findByQuery<
-    SearchResponse<MappedData>,
-    unknown
-  >(newIndex, query)
+  const oldScores = await getAllPopularityScores(oldIndex)
 
   const requests = []
 
-  newData.body.hits?.hits.forEach((obj, idx) => {
-    if (obj._id in oldScores) {
+  oldScores.forEach((x) => {
+    if (x.score > 0) {
       requests.push({
-        update: { _index: newIndex, _id: obj._id },
+        update: { _index: newIndex, _id: x.id },
       })
       requests.push({
-        doc: { popularityScore: oldScores[obj._id] },
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        doc_as_upsert: true,
+        doc: { popularityScore: x.score },
       })
     }
   })
 
-  // bulk doesn't like empty bodies
-  if (requests.length) {
-    try {
-      const client = await esService.getClient()
-      await client.bulk({ index: newIndex, body: requests })
-      logger.info(`Updated popularityScore for ${requests.length} documents`)
-    } catch (error) {
-      logger.error('Elasticsearch request failed on bulk index', error)
-      throw error
-    }
+  await esService.bulkRequest(newIndex, requests)
+}
+
+/**
+ * Returns all document ids and popularity scores from a given index
+ *
+ * @param {string} oldIndex
+ */
+export const getAllPopularityScores = async (index: string) => {
+  const client = await esService.getClient()
+  const scores = []
+
+  // do a scroll query to get a snapshot of the index
+  let data = await client.search<SearchResponse<MappedData>, unknown>({
+    index,
+    body: {
+      query: {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        match_all: {},
+      },
+      size: 100,
+      sort: [{ _id: { order: 'asc' } }],
+      _source: ['popularityScore'],
+    },
+    scroll: '1m',
+  })
+
+  while (data.body.hits?.hits.length) {
+    data.body.hits?.hits.forEach((x) => {
+      scores.push({
+        id: x._id,
+        score: x._source.popularityScore ?? 0,
+      })
+    })
+
+    data = await client.scroll<SearchResponse<MappedData>, unknown>({
+      scroll: '1m',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      scroll_id: data.body._scroll_id,
+    })
   }
+  return scores
 }
 
 /**
@@ -253,6 +259,7 @@ export const getPreviousIndex = async (locale: string): Promise<string> => {
     new RegExp(`island-${locale}-[a-z0-9]+`, 'gi'),
   )
 
+  // we don't want to return the current index
   if (results.length < 2) {
     return null
   }
