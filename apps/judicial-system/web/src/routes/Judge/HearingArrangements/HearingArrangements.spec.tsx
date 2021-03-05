@@ -16,6 +16,12 @@ import { HearingArrangements } from './HearingArrangements'
 
 describe('/domari-krafa/fyrirtokutimi', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
+
     render(
       <MockedProvider
         mocks={[
@@ -55,15 +61,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
-              <HearingArrangements />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <HearingArrangements />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -86,6 +86,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
   test('should not allow users to continue if the case has a DRAFT status code', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_3' },
+    }))
+
     render(
       <MockedProvider
         mocks={[
@@ -117,15 +122,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
-              <HearingArrangements />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <HearingArrangements />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -139,6 +138,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
   test("should have a info box that informs the user that they can't continue until the case is no longer a DRAFT", async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_3' },
+    }))
+
     render(
       <MockedProvider
         mocks={[
@@ -166,15 +170,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
-              <HearingArrangements />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <HearingArrangements />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -194,6 +192,11 @@ describe('/domari-krafa/fyrirtokutimi', () => {
 
   test('should have a prefilled court date with requested date', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_3' },
+    }))
+
     render(
       <MockedProvider
         mocks={[
@@ -213,15 +216,9 @@ describe('/domari-krafa/fyrirtokutimi', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.HEARING_ARRANGEMENTS_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/:id`}>
-              <HearingArrangements />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <HearingArrangements />
+        </UserProvider>
       </MockedProvider>,
     )
 

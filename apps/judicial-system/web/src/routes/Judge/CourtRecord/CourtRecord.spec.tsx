@@ -21,6 +21,11 @@ import CourtRecord from './CourtRecord'
 describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
+
     render(
       <MockedProvider
         mocks={[
@@ -56,15 +61,9 @@ describe('/domari-krafa/thingbok', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.COURT_RECORD_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.COURT_RECORD_ROUTE}/:id`}>
-              <CourtRecord />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <CourtRecord />
+        </UserProvider>
       </MockedProvider>,
     )
 

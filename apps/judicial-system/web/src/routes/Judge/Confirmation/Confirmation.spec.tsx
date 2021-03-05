@@ -19,6 +19,10 @@ import { Confirmation } from './Confirmation'
 describe('Confirmation route', () => {
   test(`should not allow users to continue unless every required field has been filled out`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_5' },
+    }))
 
     // Act
     render(
@@ -34,15 +38,9 @@ describe('Confirmation route', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_5`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
-              <Confirmation />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -67,6 +65,10 @@ describe('Confirmation route', () => {
 
   test(`should not allow users to continue if the user is not the assigned judge`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_6' },
+    }))
 
     // Act
     render(
@@ -82,15 +84,9 @@ describe('Confirmation route', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_6`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
-              <Confirmation />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -103,6 +99,10 @@ describe('Confirmation route', () => {
 
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act
     render(
@@ -110,15 +110,9 @@ describe('Confirmation route', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
-              <Confirmation />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -133,6 +127,10 @@ describe('Confirmation route', () => {
 
   test(`should display prosecutor and judge appeal announcements if appeal decition is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -140,15 +138,9 @@ describe('Confirmation route', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
-              <Confirmation />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
       </MockedProvider>,
     )
 
