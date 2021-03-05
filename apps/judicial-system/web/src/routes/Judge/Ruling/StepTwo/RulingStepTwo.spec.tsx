@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import userEvent from '@testing-library/user-event'
 
@@ -15,12 +14,15 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { RulingStepTwo } from './RulingStepTwo'
 
 describe('/domari-krafa/urskurdarord', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act and Assert
     render(
@@ -39,15 +41,9 @@ describe('/domari-krafa/urskurdarord', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepTwo />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -78,6 +74,10 @@ describe('/domari-krafa/urskurdarord', () => {
 
   test('should not have a selected radio button by default', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_3' },
+    }))
 
     // Act
     render(
@@ -85,15 +85,9 @@ describe('/domari-krafa/urskurdarord', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepTwo />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -107,6 +101,10 @@ describe('/domari-krafa/urskurdarord', () => {
 
   test(`should have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act
     render(
@@ -125,15 +123,9 @@ describe('/domari-krafa/urskurdarord', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepTwo />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -161,6 +153,10 @@ describe('/domari-krafa/urskurdarord', () => {
 
   test(`should not have a disabled accusedAppealAnnouncement and prosecutorAppealAnnouncement inputs if accusedAppealDecision and prosecutorAppealDecision respectively is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -179,15 +175,9 @@ describe('/domari-krafa/urskurdarord', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_TWO_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_TWO_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepTwo />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -203,6 +193,10 @@ describe('/domari-krafa/urskurdarord', () => {
 
   test('should save custodyRestrictions with requestedCustodyRestrictions if custodyRestrictions have not been set', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -222,15 +216,9 @@ describe('/domari-krafa/urskurdarord', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepTwo />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -244,23 +232,20 @@ describe('/domari-krafa/urskurdarord', () => {
 
   test('should not display the alternative travel ban retstirction section if the decision is not ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
-
     render(
       <MockedProvider
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepTwo />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -276,6 +261,10 @@ describe('/domari-krafa/urskurdarord', () => {
 
   test('should display the alternative travel ban retstirction section if the decision is ACCEPTING_ALTERATIVE_TRAVEL_BAN', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_7' },
+    }))
 
     // Act
     render(
@@ -283,15 +272,9 @@ describe('/domari-krafa/urskurdarord', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_7`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepTwo />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepTwo />
+        </UserProvider>
       </MockedProvider>,
     )
 

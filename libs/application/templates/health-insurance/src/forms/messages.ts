@@ -504,7 +504,7 @@ export const m = defineMessages({
     defaultMessage:
       'Þú ert nú þegar með virka sjúkratryggingu hjá Sjúkratryggingum Íslands og þarft því ekki að sækja um.\n Nánari upplýsingar er að finna á heimasíðu Sjúkratrygginga Íslands.',
     description:
-      'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at sjukra.is/english',
+      'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at **[sjukra.is/english](https://www.sjukra.is/english)**',
   },
   alreadyInsuredButtonText: {
     id: 'hi.application:alreadyInsured.buttonText',

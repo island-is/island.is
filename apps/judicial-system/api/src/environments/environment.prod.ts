@@ -14,6 +14,9 @@ export default {
   xRoad: {
     basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV,
     clientId: process.env.XROAD_CLIENT_ID,
+    clientCert: process.env.XROAD_CLIENT_CERT,
+    clientKey: process.env.XROAD_CLIENT_KEY,
+    clientCa: process.env.XROAD_CLIENT_PEM,
   },
   courtService: {
     apiPath: process.env.XROAD_COURT_API_PATH,

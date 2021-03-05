@@ -14,6 +14,7 @@ import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBread
 import * as styles from './Layout.treat'
 import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
+import { useModules } from '../../hooks/useModules/useModules'
 import { getFooterProps } from './footerProps'
 import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
@@ -25,6 +26,7 @@ import { RemoveScroll } from 'react-remove-scroll'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
+  useModules()
   const { locale, formatMessage } = useLocale()
   useNamespaces('service.portal')
   const data = useFooterContent(locale)

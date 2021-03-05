@@ -17,7 +17,6 @@ import {
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
@@ -33,7 +32,7 @@ import {
   CaseQuery,
   TransitionCaseMutation,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -43,6 +42,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 
 interface CaseData {
@@ -50,7 +50,8 @@ interface CaseData {
 }
 
 export const JudgeOverview: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
