@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 
 import {
@@ -11,26 +10,24 @@ import {
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { SignedVerdictOverview } from './SignedVerdictOverview'
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {
     test('should have the correct title if case is not accepted', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_2' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_2`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -40,20 +37,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should have the correct subtitle if case is not accepted', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_4' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_4`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -63,20 +59,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should not show restrictions tag if case is rejected event though there are restrictions', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_2' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_2`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -88,20 +83,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should not show a button for extention', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_2' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_2`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -121,20 +115,19 @@ describe('Signed Verdict Overview route', () => {
 
   describe('Accepted case with active custody', () => {
     test('should have the correct title', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_5' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_5`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -145,20 +138,19 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const date = '2020-09-25T19:50:08.033Z'
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_5' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_5`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -173,20 +165,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should show restrictions tag if there are restrictions', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -196,20 +187,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should not show a button for extention because the user is a judge', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -223,20 +213,19 @@ describe('Signed Verdict Overview route', () => {
 
   describe('Accepted case with custody end time in the past', () => {
     test('should have the correct title', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_6' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_6`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -247,21 +236,19 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_6' },
+      }))
 
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_6`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -276,20 +263,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should display restriction tags if there are restrictions', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_6' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_6`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -299,20 +285,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should not show a button for extention because the user is a judge', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -324,20 +309,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should display an indicator that the case cannot be extended', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_8' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_8`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -351,20 +335,19 @@ describe('Signed Verdict Overview route', () => {
 
   describe('Accepted case with active travel ban', () => {
     test('should have the correct title', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_7' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_7`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -374,21 +357,20 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should have the correct subtitle', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_7' },
+      }))
       const date = '2020-09-25T19:50:08.033Z'
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_7`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -403,20 +385,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should not show a button for extention because the user is a judge', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -428,20 +409,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should not show an extention for why the case cannot be extended if the user is a prosecutor', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_7' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_7`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -455,20 +435,19 @@ describe('Signed Verdict Overview route', () => {
 
   describe('Accepted case with travel ban end time in the past', () => {
     test('should have the correct title', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_8' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_8`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -479,21 +458,19 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_8' },
+      }))
 
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockJudgeQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id_8`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
@@ -508,20 +485,19 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should show a button for extention because the user is a prosecutor', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id' },
+      }))
+
       render(
         <MockedProvider
           mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
           addTypename={false}
         >
-          <MemoryRouter
-            initialEntries={[`${Constants.SIGNED_VERDICT_OVERVIEW}/test_id`]}
-          >
-            <UserProvider>
-              <Route path={`${Constants.SIGNED_VERDICT_OVERVIEW}/:id`}>
-                <SignedVerdictOverview />
-              </Route>
-            </UserProvider>
-          </MemoryRouter>
+          <UserProvider>
+            <SignedVerdictOverview />
+          </UserProvider>
         </MockedProvider>,
       )
 
