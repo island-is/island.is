@@ -4604,7 +4604,8 @@
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "docker-next": {}
     },
     "services-auth-api": {
       "root": "apps/services/auth-api",
