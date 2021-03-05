@@ -367,6 +367,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
 
+        console.log('!!!!!!!!!!copyPeriodsToTemp')
+
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
 
@@ -376,7 +378,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             application: {
               ...context.application,
               answers: {
-                currentApplicationAnswers,
+                ...context.application.answers,
                 tempPeriods: context.application.answers['periods'],
               },
             },
@@ -390,14 +392,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
 
-        // const currentApplicationAnswers = context.application.answers
-
-        const currentApplicationAnswers = context.application
-          .answers as SchemaFormValues
-
         if (context.application.answers['periods']) {
-          const newPeriods = currentApplicationAnswers['tempPeriods']
-          delete currentApplicationAnswers['tempPeriods']
+          const newPeriods = Object.assign(
+            context.application.answers['tempPeriods'] as Object,
+          )
+
+          delete context.application.answers['tempPeriods']
+          delete context.application.answers['periods']
+
+          console.log(
+            'mergePeriodAnswers',
+            context.application.answers['tempPeriods'],
+            newPeriods,
+          )
 
           return {
             ...context,
