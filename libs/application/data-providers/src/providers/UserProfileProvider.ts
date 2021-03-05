@@ -27,7 +27,7 @@ export class UserProfileProvider extends BasicDataProvider {
         console.log('responseObj', responseObj)
         if (
           !responseObj?.mobilePhoneNumber ||
-          // !responseObj?.mobilePhoneNumberVerified ||
+          !responseObj?.mobilePhoneNumberVerified ||
           !responseObj?.email ||
           !responseObj?.emailVerified
         ) {
