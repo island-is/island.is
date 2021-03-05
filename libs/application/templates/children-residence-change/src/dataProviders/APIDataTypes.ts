@@ -6,3 +6,10 @@ export interface PersonResidenceChange {
   address: string
   city: string
 }
+
+export interface UserInfo {
+  email: string
+  emailVerified: boolean
+  mobilePhoneNumber: string
+  mobilePhoneNumberVerified: boolean
+}

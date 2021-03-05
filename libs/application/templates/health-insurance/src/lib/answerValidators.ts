@@ -58,69 +58,80 @@ export const answerValidators: Record<string, AnswerValidator> = {
   },
   [FORMER_INSURANCE]: (newAnswer: unknown, application: Application) => {
     const formerInsurance = newAnswer as FormerInsurance
+    const {
+      registration,
+      country,
+      personalId,
+      confirmationOfResidencyDocument,
+      entitlement,
+      entitlementReason,
+    } = formerInsurance
+
     const applicant = getValueViaPath(
       application.answers,
       'applicant',
     ) as Applicant
 
-    // Registration must be Yes / No
-    if (
-      formerInsurance.registration !== YES &&
-      formerInsurance.registration !== NO
-    ) {
+    /* Registration must be Yes / No */
+    if (registration !== YES && registration !== NO) {
       const field = `${FORMER_INSURANCE}.registration`
       const buildError = buildValidationError(field)
       return buildError('You must select one of the above', field)
     }
 
-    // Check that country is not empty
-    if (!formerInsurance.country) {
+    /* Check that country is not empty */
+    if (!country) {
       const field = `${FORMER_INSURANCE}.country`
       const buildError = buildValidationError(field)
       return buildError('Please select a country', field)
     }
 
-    if (
-      !requireWaitingPeriod(formerInsurance.country, applicant?.citizenship)
-    ) {
-      // Check that national ID is not empty
-      if (!formerInsurance.personalId) {
-        const field = `${FORMER_INSURANCE}.personalId`
-        const buildError = buildValidationError(field)
+    if (!requireWaitingPeriod(country, applicant?.citizenship)) {
+      const personalIdField = `${FORMER_INSURANCE}.personalId`
+
+      if (personalId) {
+        /* Check that personal ID in former country length is as specified in Sjukra's api */
+        if (personalId.length < 6) {
+          const buildError = buildValidationError(personalIdField)
+          return buildError('Should be at least 6 characters', personalIdField)
+        } else if (personalId.length > 20) {
+          const buildError = buildValidationError(personalIdField)
+          return buildError(
+            'Should be at most 20 characters long',
+            personalIdField,
+          )
+        }
+      } else {
+        /* Check that personal ID is not empty */
+        const buildError = buildValidationError(personalIdField)
         return buildError(
           'Please fill in your ID number in previous country',
-          field,
+          personalIdField,
         )
       }
-      // Check file upload if country is Greenland / Faroe
+      /* Check file upload if country is Greenland / Faroe */
       if (
-        requireConfirmationOfResidency(formerInsurance.country) &&
-        !formerInsurance.confirmationOfResidencyDocument.length
+        requireConfirmationOfResidency(country) &&
+        !confirmationOfResidencyDocument.length
       ) {
         const field = `${FORMER_INSURANCE}.confirmationOfResidencyDocument`
         const buildError = buildValidationError(field)
         return buildError('Please attach a confirmation of residency', field)
       }
-      // Check that entitlement is Yes / No
-      if (
-        formerInsurance.entitlement !== YES &&
-        formerInsurance.entitlement !== NO
-      ) {
+      /* Check that entitlement is Yes / No */
+      if (entitlement !== YES && entitlement !== NO) {
         const field = `${FORMER_INSURANCE}.entitlement`
         const buildError = buildValidationError(field)
         return buildError('You must select one of the above', field)
       }
-      // Check that entitelmentReason is not empty if field is rendered (rendered if entitlement === YES)
-      if (
-        formerInsurance.entitlement === YES &&
-        !formerInsurance.entitlementReason
-      ) {
+      /* Check that entitelmentReason is not empty if field is rendered (rendered if entitlement === YES) */
+      if (entitlement === YES && !entitlementReason) {
         const field = `${FORMER_INSURANCE}.entitlementReason`
         const buildError = buildValidationError(field)
         return buildError('Please fill in a reason', field)
       }
-      // user that requires waiting period, should not be allowed to continue
     } else {
+      /* User that requires waiting period, should not be allowed to continue */
       const buildError = buildValidationError(`${FORMER_INSURANCE}`)
       return buildError('')
     }

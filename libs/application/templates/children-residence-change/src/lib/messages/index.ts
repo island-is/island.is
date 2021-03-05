@@ -1,5 +1,6 @@
 export * from './application'
 export * from './confirmation'
+export * from './contactInfo'
 export * from './contract'
 export * from './duration'
 export * from './error'

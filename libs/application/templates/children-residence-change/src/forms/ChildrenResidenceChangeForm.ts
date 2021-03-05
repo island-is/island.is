@@ -86,6 +86,12 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.title,
                 }),
+                buildDataProviderItem({
+                  id: 'userProfile',
+                  type: 'UserProfileProvider',
+                  title: '',
+                  subTitle: '',
+                }),
               ],
             }),
           ],
@@ -102,12 +108,12 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'otherParent',
-          title: m.otherParent.general.sectionTitle,
+          id: 'contact',
+          title: m.contactInfo.general.sectionTitle,
           children: [
             buildCustomField({
               id: 'contactInfo',
-              title: m.otherParent.general.pageTitle,
+              title: m.contactInfo.general.pageTitle,
               childInputIds: contactInfoIds,
               component: 'ContactInfo',
             }),

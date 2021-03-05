@@ -1,6 +1,6 @@
 import { Application, FormValue } from '@island.is/application/core'
 import { NationalRegistryUser } from '@island.is/api/schema'
-import { PersonResidenceChange } from '../dataProviders/APIDataTypes'
+import { PersonResidenceChange, UserInfo } from '../dataProviders/APIDataTypes'
 
 export const extractApplicantFromApplication = (application: Application) => {
   return (application.externalData.nationalRegistry?.data as {
@@ -22,6 +22,13 @@ export const extractParentFromApplication = (application: Application) => {
   return (data as {
     parent?: object
   }) as PersonResidenceChange
+}
+
+export const extractUserInfoFromApplication = (application: Application) => {
+  const data = dataToUse(application, 'userProfile')
+  return (data as {
+    userInfo?: object
+  }) as UserInfo
 }
 
 export const extractChildrenFromApplication = (application: Application) => {
