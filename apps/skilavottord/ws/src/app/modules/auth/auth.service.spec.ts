@@ -64,7 +64,7 @@ describe('skilavottordApiTest', () => {
         .mockImplementation(() => userList)
     })
 
-    describe('getRole test', () => {
+    describe('getUserRole test', () => {
       it('should return a correct user with role', () => {
         const userx = {
           nationalId: '1111111111',

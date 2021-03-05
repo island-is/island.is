@@ -5,6 +5,15 @@ import { Role, AuthUser } from './auth.types'
 
 const { userList } = environment.skilavottord
 
+const userListTest = [
+  {
+    nationalId: '2811638099',
+    name: 'Tómas Árni Jónsson',
+    role: 'developer',
+    partnerId: '',
+  },
+]
+
 @Injectable()
 export class AuthService {
   constructor() {}
@@ -50,7 +59,8 @@ export class AuthService {
     try {
       // this.logger.info('getUserRole start...')
       console.log('getUserRole start...')
-      const ulist = JSON.parse(userList)
+      // const ulist = JSON.parse(userList)
+      const ulist = userListTest
       const picked = ulist.find((o) => o.nationalId === user.nationalId)
       if (!picked) {
         console.log('getUserRole user not found in list => user is citizen')
@@ -122,15 +132,11 @@ export class AuthService {
           return false
         }
       }
-      // this.logger.info('checkRole return default false')
-      console.log('checkRole return default false')
-      return false
     } catch (err) {
       // this.logger.error('checkRole exeption in auth.service:' + err.message)
       console.log('checkRole exeption in auth.service:' + err.message)
       return false
     }
-    return true
   }
 
   // test
