@@ -326,4 +326,17 @@ export const institutionApplicationMessages = {
       description: 'Third information sentence, in bullet list',
     },
   }),
+  approved: defineMessages({
+    sectionTitle: {
+      id: 'ia.application:approved.section.title',
+      defaultMessage: 'Takk fyrir umsóknina!',
+      description: 'Section title',
+    },
+    sectionDescription: {
+      id: 'ia.application:approved.section.description',
+      defaultMessage:
+        'Við munum fara yfir umsóknina og sendum á þig svör innan tíðar. Við verðum í sambandi ef okkur vantar frekari upplýsingar. ',
+      description: 'Section title',
+    },
+  }),
 }

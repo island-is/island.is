@@ -5,15 +5,21 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
+  DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { YES, NO } from '../constants'
 
-type Events =
-  | { type: 'APPROVE' }
-  | { type: 'REJECT' }
-  | { type: 'SUBMIT' }
-  | { type: 'ABORT' }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
+
+enum States {
+  DRAFT = 'draft',
+  APPROVED = 'approved',
+}
+
+enum Roles {
+  APPLICANT = 'applicant',
+}
 
 const FileSchema = z
   .object({
@@ -78,36 +84,50 @@ const template: ApplicationTemplate<
   name: 'Application Application',
   dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: 'Umsókn um Umsokn',
           progress: 0.43,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/application').then((val) =>
                   Promise.resolve(val.application),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'approved',
+          [DefaultEvents.SUBMIT]: {
+            target: States.APPROVED,
           },
         },
       },
-      approved: {
+      [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.approved),
+                ),
+            },
+          ],
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
           },
