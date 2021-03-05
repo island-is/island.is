@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/content-search-toolkit'
-import { SyncOptions } from '@island.is/content-search-indexer/types'
+import {
+  MappedData,
+  SyncOptions,
+} from '@island.is/content-search-indexer/types'
 import {
   ElasticsearchIndexLocale,
   getIndexTemplate,
@@ -15,6 +18,7 @@ import {
   MetricsService,
 } from '@island.is/content-search-metrics'
 import { AwsEsPackage } from './aws'
+import { SearchResponse } from 'elastic'
 
 const esService = new ElasticService()
 
@@ -164,4 +168,101 @@ export const removeIndexIfExists = async (indexName: string) => {
   }
 
   return false
+}
+
+/**
+ * Returns all document ids and popularity scores from a given index
+ *
+ * @param {string} oldIndex
+ */
+export const getAllPopularityScores = async (index: string) => {
+  const client = await esService.getClient()
+  const scores = []
+
+  // do a scroll query to get a snapshot of the index
+  let data = await client.search<SearchResponse<MappedData>, unknown>({
+    index,
+    body: {
+      query: {
+        range: {
+          popularityScore: {
+            gt: 0,
+          },
+        },
+      },
+      size: 100,
+      sort: [{ _id: { order: 'asc' } }],
+      _source: ['popularityScore'],
+    },
+    scroll: '1m',
+  })
+
+  while (data.body.hits?.hits.length) {
+    data.body.hits?.hits.forEach((x) => {
+      scores.push({
+        id: x._id,
+        score: x._source.popularityScore,
+      })
+    })
+
+    data = await client.scroll<SearchResponse<MappedData>, unknown>({
+      scroll: '1m',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      scroll_id: data.body._scroll_id,
+    })
+  }
+  return scores
+}
+
+/**
+ * Read all documents from the old index and write their popularity scores to
+ * the documents with corresponding ids in the new index
+ *
+ * @param {string} oldIndex
+ * @param {string} newIndex
+ */
+export const migratePopularityScores = async (
+  oldIndex: string,
+  newIndex: string,
+) => {
+  const oldScores = await getAllPopularityScores(oldIndex)
+
+  const requests = []
+
+  oldScores.forEach((x) => {
+    requests.push({
+      update: { _index: newIndex, _id: x.id },
+    })
+    requests.push({
+      doc: { popularityScore: x.score },
+    })
+  })
+
+  await esService.bulkRequest(newIndex, requests)
+}
+
+/**
+ * Returns the name of the second most recent island-* index with the given locale,
+ * determined by creation date.
+ *
+ * @param {string} locale
+ * @return {string}
+ */
+export const getPreviousIndex = async (locale: string): Promise<string> => {
+  const client = await esService.getClient()
+
+  const indices = await client.cat.indices({
+    h: ['i', 'creation.date.string'],
+    s: 'creation.date:desc',
+  })
+
+  const results = indices.body.match(
+    new RegExp(`island-${locale}-[a-z0-9]+`, 'gi'),
+  )
+
+  // we don't want to return the current index
+  if (results.length < 2) {
+    return null
+  }
+  return results[1]
 }

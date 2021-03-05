@@ -10,6 +10,10 @@ import { environment } from '../../../environments'
 
 let authenticationToken: string
 
+function stripResult(str: string): string {
+  return str.slice(1, str.length - 1)
+}
+
 @Injectable()
 export class CourtService {
   constructor(
@@ -21,10 +25,12 @@ export class CourtService {
 
   private async login() {
     try {
-      authenticationToken = await this.authenticateApi.authenticate({
+      const str = await this.authenticateApi.authenticate({
         username: environment.courtService.username,
         password: environment.courtService.password,
       })
+
+      authenticationToken = stripResult(str)
     } catch (error) {
       this.logger.error('Unable to log into court service', error)
 
@@ -33,7 +39,7 @@ export class CourtService {
   }
 
   private async wrappedRequest(
-    request: (authenticationToken: string) => Promise<string>,
+    request: () => Promise<string>,
     isRetry = false,
   ): Promise<string> {
     if (!authenticationToken || isRetry) {
@@ -41,7 +47,7 @@ export class CourtService {
     }
 
     try {
-      return await request(authenticationToken)
+      return await request()
     } catch (error) {
       this.logger.error('Error while creating court case', error)
       if (isRetry) {
@@ -52,13 +58,15 @@ export class CourtService {
     }
   }
 
-  createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
-    return this.wrappedRequest(async (authenticationToken: string) =>
+  async createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
+    const courtCaseNumber = await this.wrappedRequest(() =>
       this.createCustodyCaseApi.createCustodyCase({
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
         authenticationToken,
       }),
     )
+
+    return stripResult(courtCaseNumber)
   }
 }

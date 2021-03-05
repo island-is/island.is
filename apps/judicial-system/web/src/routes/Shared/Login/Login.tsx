@@ -3,10 +3,11 @@ import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
+import { useRouter } from 'next/router'
 import * as styles from './Login.treat'
 
-export const Login = () => {
-  const urlParams = new URLSearchParams(window.location.search)
+const Login = () => {
+  const router = useRouter()
   const { user } = useContext(UserContext)
 
   useEffect(() => {
@@ -57,10 +58,10 @@ export const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
-      {urlParams.has('villa') && (
+      {router.query.villa && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
-            {getErrorAlert(urlParams.get('villa') as LoginErrorCodes)}
+            {getErrorAlert(router.query.villa as LoginErrorCodes)}
           </Box>
         </div>
       )}

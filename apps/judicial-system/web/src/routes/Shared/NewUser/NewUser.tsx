@@ -3,11 +3,11 @@ import { PageLayout } from '@island.is/judicial-system-web/src/shared-components
 import { Institution, User, UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useMutation, useQuery } from '@apollo/client'
-import { useHistory } from 'react-router-dom'
 import {
   CreateUserMutation,
   InstitutionsQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
+import { useRouter } from 'next/router'
 import UserForm from '../UserForm/UserForm'
 
 const user: User = {
@@ -29,7 +29,7 @@ interface InstitutionData {
 }
 
 export const NewUser: React.FC = () => {
-  const history = useHistory()
+  const router = useRouter()
 
   useEffect(() => {
     document.title = 'Nýr notandi - Réttarvörslugátt'
@@ -64,7 +64,7 @@ export const NewUser: React.FC = () => {
       })
     }
 
-    history.push(Constants.USER_LIST_ROUTE)
+    router.push(Constants.USER_LIST_ROUTE)
   }
 
   return (

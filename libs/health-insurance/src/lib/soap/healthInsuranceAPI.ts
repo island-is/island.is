@@ -47,9 +47,10 @@ export class HealthInsuranceAPI {
     return res.ProfunType.radnumer_si ?? null
   }
 
-  // Apply Insurance without attachment
+  // Apply Health Insurance
   public async applyInsurance(
     appNumber: number,
+    bucketName: string,
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
     logger.info(`--- Starting applyInsurance api call ---`)
@@ -109,6 +110,7 @@ export class HealthInsuranceAPI {
           // files are saved under 'application id' folder
           innihald: await this.bucketService.getFileContentAsBase64(
             `${inputObj.applicationNumber}/${filename}`,
+            bucketName,
           ),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)

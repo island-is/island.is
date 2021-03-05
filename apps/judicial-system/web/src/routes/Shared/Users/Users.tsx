@@ -8,9 +8,9 @@ import {
 import { User, UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
-import { useHistory } from 'react-router-dom'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { useRouter } from 'next/router'
 import * as styles from './Users.treat'
 
 interface UserData {
@@ -18,7 +18,7 @@ interface UserData {
 }
 
 export const Users: React.FC = () => {
-  const history = useHistory()
+  const router = useRouter()
 
   const { data, error, loading } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
@@ -30,7 +30,7 @@ export const Users: React.FC = () => {
   }, [])
 
   const handleClick = (user: User): void => {
-    history.push(`${Constants.USER_CHANGE_ROUTE}/${user.id}`)
+    router.push(`${Constants.USER_CHANGE_ROUTE}/${user.id}`)
   }
 
   const userRoleToString = (userRole: UserRole) => {

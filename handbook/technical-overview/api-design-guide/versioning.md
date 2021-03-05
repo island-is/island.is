@@ -12,7 +12,9 @@ Versioning APIs should follow the [semantic versioning](https://semver.org/) spe
 2. MINOR version when you add functionality in a backwards compatible manner, and
 3. PATCH version when you make backwards compatible bug fixes.
 
-When a `major` version is incremented, a new instance of the API service must be made available.
+When a `major` version is incremented, a new instance of the API service must be
+made available and the older version instance kept running as described in section
+[Deprecating API versions](#deprecating-api-versions).
 
 ## URLs
 

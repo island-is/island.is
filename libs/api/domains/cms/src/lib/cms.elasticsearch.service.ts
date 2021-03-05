@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common'
 import {
   dateResolution,
   ElasticService,
-  sortDirection,
+  SortDirection,
+  SortField,
+  sortRule,
 } from '@island.is/content-search-toolkit'
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
@@ -26,7 +28,7 @@ export class CmsElasticsearchService {
   ): Promise<ArticleCategory[]> {
     const query = {
       types: ['webArticleCategory'],
-      sort: { 'title.sort': 'asc' as sortDirection },
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size,
     }
     const categoryResponse = await this.elasticService.getDocumentsByMetaData(
@@ -46,8 +48,15 @@ export class CmsElasticsearchService {
     const query = {
       types: ['webArticle'],
       tags: [],
-      sort: { 'title.sort': 'asc' as sortDirection },
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size: input.size,
+    }
+
+    if (input.sort === SortField.POPULAR) {
+      query.sort = [
+        { popularityScore: { order: SortDirection.DESC } },
+        ...query.sort,
+      ]
     }
 
     if (input.category) {
@@ -97,7 +106,7 @@ export class CmsElasticsearchService {
 
     const query = {
       types: ['webNews'],
-      sort: { dateCreated: order as sortDirection },
+      sort: [{ dateCreated: { order } }] as sortRule[],
       ...dateQuery,
       ...tagQuery,
       page,
@@ -158,7 +167,7 @@ export class CmsElasticsearchService {
   ): Promise<RequestedType | null> {
     // return a single news item by slug
     const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
-    const newsResponse = await this.elasticService.getDocumentsByMetaData(
+    const newsResponse = await this.elasticService.getSingleDocumentByMetaData(
       index,
       query,
     )
