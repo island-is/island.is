@@ -371,7 +371,8 @@ export const Overview: React.FC = () => {
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
-                router.push(Constants.FEEDBACK_FORM_ROUTE)
+                window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+                router.push(Constants.REQUEST_LIST_ROUTE)
               }}
               handleSecondaryButtonClick={() => {
                 router.push(Constants.REQUEST_LIST_ROUTE)
