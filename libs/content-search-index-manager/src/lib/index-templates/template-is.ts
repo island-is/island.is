@@ -145,6 +145,9 @@ export const template = {
       externalLinks: {
         type: 'integer',
       },
+      popularityScore: {
+        type: 'double',
+      },
       termPool: {
         type: 'completion',
         analyzer: 'termIcelandic',

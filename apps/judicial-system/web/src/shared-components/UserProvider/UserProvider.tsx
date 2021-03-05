@@ -1,7 +1,6 @@
 import { User } from '@island.is/judicial-system/types'
 import { gql, useQuery } from '@apollo/client'
 import React, { createContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import Cookies from 'js-cookie'
 
@@ -34,8 +33,6 @@ const UserProvider: React.FC = ({ children }) => {
   )
   const [user, setUser] = useState<User>()
 
-  const location = useLocation()
-
   const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
   const loggedInUser = data?.currentUser
 
@@ -44,7 +41,7 @@ const UserProvider: React.FC = ({ children }) => {
       setUser(loggedInUser)
       setIsAuthenticated(true)
     }
-  }, [location, setUser, loggedInUser, user])
+  }, [setUser, loggedInUser, user])
 
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>

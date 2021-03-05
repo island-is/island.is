@@ -5,6 +5,7 @@ import {
   GridRow,
   GridColumn,
   FormStepper,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -16,7 +17,6 @@ import { Sections } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Loading from '../Loading/Loading'
-import { AlertBanner } from '../AlertBanner/AlertBanner'
 import * as styles from './PageLayout.treat'
 
 interface PageProps {
