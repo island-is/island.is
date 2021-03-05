@@ -55,6 +55,17 @@ class App {
               await elastic.updateIndexTemplate(locale, esPackages)
               logger.info('updated template', { newIndexName })
               await elastic.importContentToIndex(locale, newIndexName, 'full')
+
+              const oldIndexName = await elastic.getPreviousIndex(locale)
+              if (oldIndexName) {
+                await elastic.migratePopularityScores(
+                  oldIndexName,
+                  newIndexName,
+                )
+                logger.info('Popularity scores from previous index migrated', {
+                  oldIndexName,
+                })
+              }
             } catch (error) {
               logger.error('Failed to migrate to new index', {
                 locale,
@@ -65,28 +76,6 @@ class App {
               await elastic.removeIndexIfExists(newIndexName)
               // resolve the promise instead of throw to let migrations for other indices finish
               return error
-            }
-
-            // try to migrate the popularity scores
-            const oldIndexName = await elastic.getPreviousIndex(locale)
-
-            if (oldIndexName) {
-              try {
-                await elastic.migratePopularityScores(
-                  oldIndexName,
-                  newIndexName,
-                )
-                logger.info('Popularity scores from previous index migrated', {
-                  oldIndexName,
-                })
-              } catch (error) {
-                logger.error('Failed to migrate popularity scores', {
-                  locale,
-                  oldIndexName,
-                  newIndexName,
-                  error: error.message,
-                })
-              }
             }
           } else {
             logger.info(
