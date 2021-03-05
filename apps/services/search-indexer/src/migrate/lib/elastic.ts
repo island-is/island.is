@@ -171,35 +171,6 @@ export const removeIndexIfExists = async (indexName: string) => {
 }
 
 /**
- * Read all documents from the old index and write their popularity scores to
- * the documents with corresponding ids in the new index
- *
- * @param {string} oldIndex
- * @param {string} newIndex
- */
-export const migratePopularityScores = async (
-  oldIndex: string,
-  newIndex: string,
-) => {
-  const oldScores = await getAllPopularityScores(oldIndex)
-
-  const requests = []
-
-  oldScores.forEach((x) => {
-    if (x.score > 0) {
-      requests.push({
-        update: { _index: newIndex, _id: x.id },
-      })
-      requests.push({
-        doc: { popularityScore: x.score },
-      })
-    }
-  })
-
-  await esService.bulkRequest(newIndex, requests)
-}
-
-/**
  * Returns all document ids and popularity scores from a given index
  *
  * @param {string} oldIndex
@@ -238,6 +209,35 @@ export const getAllPopularityScores = async (index: string) => {
     })
   }
   return scores
+}
+
+/**
+ * Read all documents from the old index and write their popularity scores to
+ * the documents with corresponding ids in the new index
+ *
+ * @param {string} oldIndex
+ * @param {string} newIndex
+ */
+export const migratePopularityScores = async (
+  oldIndex: string,
+  newIndex: string,
+) => {
+  const oldScores = await getAllPopularityScores(oldIndex)
+
+  const requests = []
+
+  oldScores.forEach((x) => {
+    if (x.score > 0) {
+      requests.push({
+        update: { _index: newIndex, _id: x.id },
+      })
+      requests.push({
+        doc: { popularityScore: x.score },
+      })
+    }
+  })
+
+  await esService.bulkRequest(newIndex, requests)
 }
 
 /**
