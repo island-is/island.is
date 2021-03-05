@@ -53,10 +53,16 @@ export class AuthService {
       const ulist = JSON.parse(userList)
       const picked = ulist.find((o) => o.nationalId === user.nationalId)
       if (!picked) {
+        console.log('getUserRole user not found in list => user is citizen')
         let u = user as User
         u.role = 'citizen'
+        console.log('getUserRole return user:' + JSON.stringify(u, null, 2))
         return u
       } else {
+        console.log('getUserRole user found in list return user')
+        console.log(
+          'getUserRole return user:' + JSON.stringify(picked, null, 2),
+        )
         return picked
       }
     } catch (error) {
@@ -90,7 +96,9 @@ export class AuthService {
     // this.logger.info('checkRole for user start...')
     console.log('checkRole for user start...')
     try {
+      console.log('ulist->' + JSON.stringify(userList, null, 2))
       const ulist = JSON.parse(userList)
+      console.log('ulist->' + JSON.stringify(ulist, null, 2))
       const picked = ulist.find((o) => o.nationalId === user.nationalId)
       if (!picked) {
         // this.logger.info('checkRole user not found in userList')
