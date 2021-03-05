@@ -3482,22 +3482,22 @@
               "yarn nx run judicial-system-web:build-next:production",
               "yarn nx run judicial-system-web:build-server:production"
             ]
+          }
+        },
+        "build-next": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/judicial-system/web",
+            "outputPath": "dist/apps/judicial-system/web"
           },
-          "build-next": {
-            "builder": "@nrwl/next:build",
-            "options": {
-              "root": "apps/judicial-system/web",
-              "outputPath": "dist/apps/judicial-system/web"
-            },
-            "configurations": {
-              "production": {
-                "fileReplacements": [
-                  {
-                    "replace": "apps/judicial-system/web/src/environments/environment.ts",
-                    "with": "apps/judicial-system/web/src/environments/environment.prod.ts"
-                  }
-                ]
-              }
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/web/src/environments/environment.ts",
+                  "with": "apps/judicial-system/web/src/environments/environment.prod.ts"
+                }
+              ]
             }
           }
         },
