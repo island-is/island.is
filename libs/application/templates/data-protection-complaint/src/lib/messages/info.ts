@@ -34,6 +34,17 @@ export const info = {
       defaultMessage: 'Vinsamlegast fylltu út uppýsingar',
       description: 'Organization or Institution page description',
     },
+    commissionsPageTitle: {
+      id: 'dpac.application:section.info.commissionsPageTitle',
+      defaultMessage: 'Umboð og upplýsingar fyrir annan en sjálfan þig',
+      description: 'Commissions page title',
+    },
+    commissionsPageDescription: {
+      id: 'dpac.application:section.info.commissionsPageDescriptions',
+      defaultMessage: `Til þess að senda inn kvörtun fyrir annan en þig sjálfan þarft þú skila inn umboðskjali. Þegar þú hefur fyllt út umboðsskjalið þá þarftu að hlaða því upp hér.
+      Þú getur sótt umboðsskjal hér til útfyllingar.`,
+      description: 'Commissions page description',
+    },
   }),
   labels: defineMessages({
     myself: {
@@ -95,6 +106,21 @@ export const info = {
       id: 'dpac.application:section.info.organizationOrInstitutionName',
       defaultMessage: 'Nafn félagssamtaka',
       description: 'Organization or institution name',
+    },
+    commissionsDocumentsHeader: {
+      id: 'dpac.application:section.info.commissionsDocumentsHeader',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Header of the commissions file upload field',
+    },
+    commissionsDocumentsDescription: {
+      id: 'dpac.application:section.info.commissionsDocumentsDescription',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+      description: 'Description of the commissions file upload field',
+    },
+    commissionsDocumentsButtonLabel: {
+      id: 'dpac.application:section.info.commissionsDocumentsButtonLabel',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
+      description: 'Label of the commissions file upload field button',
     },
   }),
 }

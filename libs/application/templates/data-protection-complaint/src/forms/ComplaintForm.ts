@@ -10,8 +10,9 @@ import {
   buildCustomField,
   FormValue,
   buildSubSection,
+  buildFileUploadField,
 } from '@island.is/application/core'
-import { YES } from '../shared'
+import { FILE_SIZE_LIMIT, YES } from '../shared'
 import { section, delimitation, errorCards, info } from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
 
@@ -315,9 +316,20 @@ export const ComplaintForm: Form = buildForm({
           },
           children: [
             buildMultiField({
-              title: 'Umboð',
-              description: 'Lýsing',
+              title: info.general.commissionsPageTitle,
+              description: info.general.commissionsPageDescription,
               children: [
+                buildFileUploadField({
+                  id: 'comissions.documents',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: info.labels.commissionsDocumentsHeader,
+                  uploadDescription:
+                    info.labels.commissionsDocumentsDescription,
+                  uploadButtonLabel:
+                    info.labels.commissionsDocumentsButtonLabel,
+                }),
                 buildTextField({
                   id: 'commissions.name',
                   title: info.labels.name,

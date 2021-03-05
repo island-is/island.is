@@ -53,7 +53,7 @@ export const section = defineMessages({
   },
   organizationOrInstitution: {
     id: 'dpac.application:section.organizationOrInstitution',
-    defaultMessage: 'Upplýsingar um félagasamtök / stofnun',
+    defaultMessage: 'Félagasamtök / stofnun',
     description: 'Details about the organizationOrInstitution',
   },
   commissions: {
