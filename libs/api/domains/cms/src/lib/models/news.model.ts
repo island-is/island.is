@@ -32,7 +32,7 @@ export class News {
   date!: string
 
   @Field(() => [SliceUnion], { nullable: true })
-  content?: Array<typeof SliceUnion>
+  content: Array<typeof SliceUnion> = []
 
   @Field(() => [GenericTag])
   genericTags?: GenericTag[]

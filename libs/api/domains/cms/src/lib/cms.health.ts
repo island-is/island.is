@@ -10,7 +10,7 @@ import dns from 'dns'
 
 @Injectable()
 export class CmsHealthIndicator extends HealthIndicator {
-  constructor(
+  constructor (
     private dns: DNSHealthIndicator,
     private health: HealthCheckService,
   ) {
@@ -22,7 +22,7 @@ export class CmsHealthIndicator extends HealthIndicator {
   a ping test here might cause such failures
   e.g. contentful starts to timeout our ping test gets 504 response and fails the readiness check and the whole api goes into standby and stops accepting traffic
   */
-  canUrlBeResolved(key: string, url: string): Promise<HealthIndicatorResult> {
+  canUrlBeResolved (key: string, url: string): Promise<HealthIndicatorResult> {
     return new Promise((resolve, reject) => {
       dns.lookup(url, (err) => {
         if (err)
@@ -37,7 +37,13 @@ export class CmsHealthIndicator extends HealthIndicator {
     })
   }
 
-  async isHealthy(): Promise<HealthIndicatorResult> {
+  async isHealthy (): Promise<HealthIndicatorResult> {
+    if (!process.env.ELASTIC_NODE) {
+      throw new HealthCheckError(
+        'Cms check failed',
+        `ELASTIC_NODE environment variable not provided, is ${process.env.ELASTIC_NODE}`,
+      )
+    }
     const requiredUrls = {
       contentful: process.env.CONTENTFUL_HOST,
       elasticsearch: new URL(process.env.ELASTIC_NODE).hostname,
@@ -45,7 +51,7 @@ export class CmsHealthIndicator extends HealthIndicator {
 
     const response = await this.health.check(
       Object.entries(requiredUrls).map(([key, url]) => () =>
-        this.canUrlBeResolved(key, url),
+        this.canUrlBeResolved(key, url ?? ''),
       ),
     )
 

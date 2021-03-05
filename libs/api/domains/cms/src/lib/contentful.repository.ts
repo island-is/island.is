@@ -9,7 +9,7 @@ const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 type ContentfulQuery = any
 
 const validLocales = ['is-IS', 'en', '*']
-export const localeMap = {
+export const localeMap: { [key: string]: string } = {
   is: 'is-IS',
   en: 'en',
 }
@@ -18,13 +18,13 @@ type Result<T> = Promise<EntryCollection<T>>
 
 @Injectable()
 export class ContentfulRepository {
-  private client: ContentfulClientApi
+  private client!: ContentfulClientApi
 
-  constructor() {
+  constructor () {
     logger.debug('Created Contentful repository')
   }
 
-  getClient(): ContentfulClientApi {
+  getClient (): ContentfulClientApi {
     if (!accessToken) {
       throw new Error(
         'Missing Contentful environment variables: CONTENTFUL_ACCESS_TOKEN',
@@ -43,7 +43,7 @@ export class ContentfulRepository {
     })
   }
 
-  async getLocales() {
+  async getLocales () {
     const locales = await this.getClient().getLocales()
     return locales.items.map(({ code, name, fallbackCode }) => ({
       code,
@@ -52,7 +52,7 @@ export class ContentfulRepository {
     }))
   }
 
-  async getLocalizedEntries<Fields>(
+  async getLocalizedEntries<Fields> (
     languageCode: undefined | null | string,
     query: ContentfulQuery,
   ): Result<Fields> {

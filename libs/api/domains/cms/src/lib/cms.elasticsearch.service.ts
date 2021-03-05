@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   dateResolution,
   ElasticService,
+  elasticTagField,
   sortDirection,
 } from '@island.is/content-search-toolkit'
 import { ArticleCategory } from './models/articleCategory.model'
@@ -18,9 +19,9 @@ import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor(private elasticService: ElasticService) {}
+  constructor (private elasticService: ElasticService) {}
 
-  async getArticleCategories(
+  async getArticleCategories (
     index: string,
     { size }: { size?: number },
   ): Promise<ArticleCategory[]> {
@@ -35,17 +36,17 @@ export class CmsElasticsearchService {
     )
 
     return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
-      JSON.parse(response._source.response),
+      JSON.parse(response._source.response ?? '[]'),
     )
   }
 
-  async getArticles(
+  async getArticles (
     index: string,
     input: GetArticlesInput,
   ): Promise<Article[]> {
     const query = {
       types: ['webArticle'],
-      tags: [],
+      tags: [] as elasticTagField[],
       sort: { 'title.sort': 'asc' as sortDirection },
       size: input.size,
     }
@@ -63,11 +64,11 @@ export class CmsElasticsearchService {
       query,
     )
     return articlesResponse.hits.hits.map<Article>((response) =>
-      JSON.parse(response._source.response),
+      JSON.parse(response._source.response ?? '[]'),
     )
   }
 
-  async getNews(
+  async getNews (
     index: string,
     { size, page, order, month, year, tag }: GetNewsInput,
   ): Promise<NewsList> {
@@ -112,12 +113,12 @@ export class CmsElasticsearchService {
     return {
       total: articlesResponse.hits.total.value,
       items: articlesResponse.hits.hits.map<News>((response) =>
-        JSON.parse(response._source.response),
+        response._source.response ? JSON.parse(response._source.response) : [],
       ),
     }
   }
 
-  async getNewsDates(
+  async getNewsDates (
     index: string,
     { order, tag }: GetNewsDatesInput,
   ): Promise<string[]> {
@@ -147,12 +148,16 @@ export class CmsElasticsearchService {
     )
 
     // we return dates as array of strings on the format y-M
-    return newsDatesResponse.aggregations.dates.buckets.map(
-      (aggregationResult) => aggregationResult.key_as_string,
-    )
+    if (newsDatesResponse.aggregations) {
+      return newsDatesResponse.aggregations.dates.buckets.map(
+        (aggregationResult) => aggregationResult.key_as_string,
+      )
+    } else {
+      return []
+    }
   }
 
-  async getSingleDocumentTypeBySlug<RequestedType>(
+  async getSingleDocumentTypeBySlug<RequestedType> (
     index: string,
     { type, slug }: { type: string; slug: string },
   ): Promise<RequestedType | null> {
@@ -166,10 +171,13 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleMenuByName(
+  async getSingleMenuByName (
     index: string,
     { name }: GetMenuInput,
   ): Promise<Menu | null> {
+    if (!name) {
+      return null
+    }
     // return a single news item by slug
     const query = { types: ['webMenu'], tags: [{ type: 'name', key: name }] }
     const menuResponse = await this.elasticService.getDocumentsByMetaData(
@@ -181,18 +189,26 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleMenu<RequestedMenuType>(
+  async getSingleMenu<RequestedMenuType> (
     index: string,
     { id }: GetSingleMenuInput,
   ): Promise<RequestedMenuType | null> {
     // return a single menu by id
+    if (!id) {
+      return null
+    }
     const menuResponse = await this.elasticService.findById(index, id)
     const response = menuResponse.body?._source?.response
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleAboutPage(index: string, id: string): Promise<AboutPage> {
+  async getSingleAboutPage (
+    index: string,
+    id: string,
+  ): Promise<AboutPage | null> {
     const aboutPageDocument = await this.elasticService.findById(index, id)
-    return JSON.parse(aboutPageDocument.body?._source?.response)
+    return aboutPageDocument.body?._source?.response
+      ? JSON.parse(aboutPageDocument.body?._source?.response)
+      : null
   }
 }

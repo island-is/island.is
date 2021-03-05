@@ -1,8 +1,12 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { ILifeEventPage } from '../generated/contentfulTypes'
+import {
+  ILifeEventPage,
+  ILifeEventPageFields,
+} from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { Entry } from 'contentful'
 
 @ObjectType()
 export class LifeEventPage {
@@ -34,7 +38,7 @@ export class LifeEventPage {
 export const mapLifeEventPage = ({
   fields,
   sys,
-}: ILifeEventPage): LifeEventPage => ({
+}: ILifeEventPage | Entry<ILifeEventPageFields>): LifeEventPage => ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',

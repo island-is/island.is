@@ -65,7 +65,7 @@ export class Article {
   responsibleParty?: Array<Organization>
 
   @Field(() => [SubArticle])
-  subArticles?: Array<SubArticle>
+  subArticles: Array<SubArticle> = []
 
   @Field(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>

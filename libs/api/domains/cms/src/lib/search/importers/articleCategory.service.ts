@@ -11,7 +11,7 @@ import { createTerms } from './utils'
 @Injectable()
 export class ArticleCategorySyncService
   implements CmsSyncProvider<IArticleCategory> {
-  processSyncData(entries: processSyncDataInput<IArticleCategory>) {
+  processSyncData (entries: processSyncDataInput<IArticleCategory>) {
     logger.info('Processing sync data for article category')
 
     // only process articles that we consider not to be empty and dont have circular structures
@@ -23,21 +23,21 @@ export class ArticleCategorySyncService
     )
   }
 
-  doMapping(entries: IArticleCategory[]) {
+  doMapping (entries: IArticleCategory[]) {
     logger.info('Mapping article category', { count: entries.length })
 
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapArticleCategory(entry)
-          const content = mapped.description
+          const content = mapped.description ?? ''
           return {
             _id: mapped.slug,
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
             type: 'webArticleCategory',
-            termPool: createTerms([mapped.title, mapped.description]),
+            termPool: createTerms([mapped.title, content]),
             response: JSON.stringify({
               ...mapped,
               typename: 'ArticleCategory',

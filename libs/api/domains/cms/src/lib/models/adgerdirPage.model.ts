@@ -20,7 +20,7 @@ export class AdgerdirPage {
   longDescription?: string
 
   @Field(() => [SliceUnion])
-  content?: Array<typeof SliceUnion>
+  content: Array<typeof SliceUnion> = []
 
   @Field({ nullable: true })
   objective?: string
