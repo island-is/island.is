@@ -1,9 +1,9 @@
 import type { AppProps /*, AppContext */ } from 'next/app'
 import { ApolloProvider } from '@apollo/client'
 import React from 'react'
+import { globalStyles } from '@island.is/island-ui/core'
 import { UserProvider, Header } from '../src/shared-components'
 import { client } from '../graphql'
-import { globalStyles } from '@island.is/island-ui/core'
 
 function MyApp({ Component, pageProps }: AppProps) {
   globalStyles()

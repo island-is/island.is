@@ -4,8 +4,6 @@ import {
   CaseAppealDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { MemoryRouter, Route } from 'react-router-dom'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   mockCaseQueries,
   mockJudgeQuery,

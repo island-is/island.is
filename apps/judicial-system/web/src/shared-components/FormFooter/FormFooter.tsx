@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 
-import * as styles from './FormFooter.treat'
 import { useRouter } from 'next/router'
+import * as styles from './FormFooter.treat'
 interface Props {
   previousUrl?: string
   previousIsDisabled?: boolean

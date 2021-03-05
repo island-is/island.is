@@ -22,7 +22,6 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
   CaseState,
@@ -53,8 +52,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
-import useDateTime from '../../../utils/hooks/useDateTime'
 import { useRouter } from 'next/router'
+import useDateTime from '../../../utils/hooks/useDateTime'
 
 interface CaseData {
   case?: Case

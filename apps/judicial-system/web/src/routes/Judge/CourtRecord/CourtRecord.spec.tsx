@@ -1,7 +1,5 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route } from 'react-router-dom'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,

@@ -64,9 +64,9 @@ import {
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
-import { useRouter } from 'next/router'
 
 interface SigningModalProps {
   workingCase: Case

@@ -1,5 +1,6 @@
+import React from 'react'
 import StepOne from '@island.is/judicial-system-web/src/routes/Prosecutor/CreateDetentionRequest/StepOne/StepOne'
-import { CaseType } from 'libs/judicial-system/types/src'
+import { CaseType } from '@island.is/judicial-system/types'
 
 const NewTravelBan = () => {
   return <StepOne type={CaseType.TRAVEL_BAN} />

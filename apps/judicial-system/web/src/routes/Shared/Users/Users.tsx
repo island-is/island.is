@@ -10,8 +10,8 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useQuery } from '@apollo/client'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import * as styles from './Users.treat'
 import { useRouter } from 'next/router'
+import * as styles from './Users.treat'
 
 interface UserData {
   users: User[]

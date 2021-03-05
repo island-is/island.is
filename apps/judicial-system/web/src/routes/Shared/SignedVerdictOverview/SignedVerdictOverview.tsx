@@ -13,7 +13,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,

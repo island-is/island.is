@@ -3534,7 +3534,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/judicial-system/web/tsconfig.app.json",
+              "apps/judicial-system/web/tsconfig.json",
               "apps/judicial-system/web/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/judicial-system/web/**/*"]

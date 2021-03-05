@@ -109,7 +109,6 @@ export const DetentionRequests: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    console.log(user)
     if (resCases && !cases) {
       // Remove deleted cases
       const casesWithoutDeleted = resCases.filter((c: Case) => {

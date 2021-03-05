@@ -26,7 +26,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useParams } from 'react-router-dom'
 import {
   AccusedPleaDecision,
   Case,
@@ -50,10 +49,10 @@ import {
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
-import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case

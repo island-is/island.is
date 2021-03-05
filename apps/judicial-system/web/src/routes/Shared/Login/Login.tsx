@@ -3,8 +3,8 @@ import { Text, Button, Box, AlertMessage } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
-import * as styles from './Login.treat'
 import { useRouter } from 'next/router'
+import * as styles from './Login.treat'
 
 const Login = () => {
   const router = useRouter()
@@ -20,7 +20,6 @@ const Login = () => {
      * that any logged in user is logged out.
      */
     if (user) {
-      console.log(user)
       api.logOut()
     }
   }, [user])
