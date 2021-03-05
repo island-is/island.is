@@ -1,4 +1,4 @@
-import { Application, FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/core'
 import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 import { User } from '@island.is/api/domains/national-registry'
 
@@ -28,9 +28,9 @@ const dataToUse = ({
   key: string
 }): FormValue => {
   const mockData = (answers.mockData as FormValue)?.[key] as FormValue
-  const data = externalData[key]
+  const data = externalData[key] as FormValue
   if (answers.useMocks === 'no') {
-    return data as FormValue
+    return data
   }
   return mockData || data
 }
