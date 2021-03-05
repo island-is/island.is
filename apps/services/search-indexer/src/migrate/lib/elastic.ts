@@ -184,8 +184,11 @@ export const getAllPopularityScores = async (index: string) => {
     index,
     body: {
       query: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        match_all: {},
+        range: {
+          popularityScore: {
+            gt: 0,
+          },
+        },
       },
       size: 100,
       sort: [{ _id: { order: 'asc' } }],
@@ -198,7 +201,7 @@ export const getAllPopularityScores = async (index: string) => {
     data.body.hits?.hits.forEach((x) => {
       scores.push({
         id: x._id,
-        score: x._source.popularityScore ?? 0,
+        score: x._source.popularityScore,
       })
     })
 
@@ -227,14 +230,12 @@ export const migratePopularityScores = async (
   const requests = []
 
   oldScores.forEach((x) => {
-    if (x.score > 0) {
-      requests.push({
-        update: { _index: newIndex, _id: x.id },
-      })
-      requests.push({
-        doc: { popularityScore: x.score },
-      })
-    }
+    requests.push({
+      update: { _index: newIndex, _id: x.id },
+    })
+    requests.push({
+      doc: { popularityScore: x.score },
+    })
   })
 
   await esService.bulkRequest(newIndex, requests)
