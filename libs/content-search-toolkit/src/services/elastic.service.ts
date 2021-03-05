@@ -97,6 +97,10 @@ export class ElasticService {
       return false
     }
 
+    await this.bulkRequest(index, requests)
+  }
+
+  async bulkRequest(index: string, requests) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const chunkSize = 100 // this has to be an even number
@@ -120,7 +124,7 @@ export class ElasticService {
 
       return true
     } catch (error) {
-      logger.error('Elasticsearch request failed on bulk index', error)
+      logger.error('Elasticsearch request failed on bulk import', error)
       throw error
     }
   }
