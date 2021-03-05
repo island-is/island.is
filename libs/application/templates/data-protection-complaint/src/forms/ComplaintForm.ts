@@ -7,12 +7,11 @@ import {
   buildRadioField,
   buildTextField,
   buildMultiField,
-  buildRepeater,
   buildCustomField,
   FormValue,
   buildSubSection,
 } from '@island.is/application/core'
-import { NO, YES } from '../shared'
+import { YES } from '../shared'
 import { section, delimitation, errorCards, info } from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
 
