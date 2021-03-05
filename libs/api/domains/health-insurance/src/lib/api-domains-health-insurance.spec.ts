@@ -7,7 +7,7 @@ import {
   HEALTH_INSURANCE_CONFIG,
 } from './soap'
 import { BucketService } from './bucket.service'
-import { VistaSkjalInput } from './types'
+import { VistaSkjalInput } from '@island.is/health-insurance'
 import { VistaSkjalModel } from './graphql/models'
 
 describe('apiDomainsHealthInsurance', () => {
@@ -23,6 +23,8 @@ describe('healthInsuranceTest', () => {
     password: '',
     username: '',
     wsdlUrl: '',
+    clientID: '',
+    xroadID: '',
   }
 
   beforeEach(async () => {
@@ -182,6 +184,7 @@ describe('healthInsuranceTest', () => {
       previousCountryCode: 'VN',
       previousIssuingInstitution: 'The gioi',
       isHealthInsuredInPreviousCountry: 0,
+      hasHealthInsuranceRightInPreviousCountry: 0,
     }
     const appNumber = 570
     const kennitala = '0123456789'

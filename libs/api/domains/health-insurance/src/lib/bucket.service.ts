@@ -3,7 +3,7 @@ import * as AWS from 'aws-sdk'
 import * as S3 from 'aws-sdk/clients/s3'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-const BUCKET_NAME = 'dev-island-is-sjukra'
+const BUCKET_NAME = 'island-is-dev-storage-application-system'
 const REGION = 'eu-west-1'
 
 const s3 = new AWS.S3({

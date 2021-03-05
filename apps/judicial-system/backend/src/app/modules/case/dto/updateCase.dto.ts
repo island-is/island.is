@@ -34,7 +34,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: CaseGender })
   readonly accusedGender?: CaseGender
 
   @IsOptional()

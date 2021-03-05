@@ -99,6 +99,7 @@
   - [X-Road Collector](apps/services/xroad-collector/README.md)
 - [Car Recycling - Skilavottorð](apps/skilavottord/README.md)
 - [Web](apps/web/README.md)
+  - [Subpages](apps/web/docs/subpages.md)
 
 ## Libs
 
