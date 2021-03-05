@@ -3,20 +3,13 @@ import { environment } from '../../../environments'
 import { User } from '../user'
 import { Role, AuthUser } from './auth.types'
 
-const { userList } = environment.skilavottord
-
-const userListTest = [
-  {
-    nationalId: '2811638099',
-    name: 'Tómas Árni Jónsson',
-    role: 'developer',
-    partnerId: '',
-  },
-]
-
 @Injectable()
 export class AuthService {
-  constructor() {}
+  userListTest: [User]
+  constructor() {
+    const { userList } = environment.skilavottord
+    const userListTest = JSON.parse(userList)
+  }
   // // TODO
   // getRole(user: AuthUser): Role {
   //   const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
@@ -29,8 +22,10 @@ export class AuthService {
     try {
       // this.logger.info('getRole start...')
       console.log('getRole start...')
-      const ulist = JSON.parse(userList)
-      const picked = ulist.find((o) => o.nationalId === user.nationalId)
+      // const ulist = JSON.parse(userList)
+      const picked = this.userListTest.find(
+        (o) => o.nationalId === user.nationalId,
+      )
       //TODO if not found
       // this.logger.info('getRole return value:' + picked.role)
       console.log('getRole return value:' + picked.role)
@@ -60,8 +55,10 @@ export class AuthService {
       // this.logger.info('getUserRole start...')
       console.log('getUserRole start...')
       // const ulist = JSON.parse(userList)
-      const ulist = userListTest
-      const picked = ulist.find((o) => o.nationalId === user.nationalId)
+      // const ulist = this.userListTest
+      const picked = this.userListTest.find(
+        (o) => o.nationalId === user.nationalId,
+      )
       if (!picked) {
         console.log('getUserRole user not found in list => user is citizen')
         let u = user as User
@@ -106,10 +103,12 @@ export class AuthService {
     // this.logger.info('checkRole for user start...')
     console.log('checkRole for user start...')
     try {
-      console.log('ulist->' + JSON.stringify(userList, null, 2))
-      const ulist = JSON.parse(userList)
-      console.log('ulist->' + JSON.stringify(ulist, null, 2))
-      const picked = ulist.find((o) => o.nationalId === user.nationalId)
+      console.log('ulist->' + JSON.stringify(this.userListTest, null, 2))
+      // const ulist = JSON.parse(userList)
+      // console.log('ulist->' + JSON.stringify(ulist, null, 2))
+      const picked = this.userListTest.find(
+        (o) => o.nationalId === user.nationalId,
+      )
       if (!picked) {
         // this.logger.info('checkRole user not found in userList')
         console.log('checkRole user not found in userList return false')
