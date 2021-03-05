@@ -18,12 +18,37 @@ export function applicantData(answers: FormValue, externalData: FormValue) {
   }
 }
 
+const dataToUse = ({
+  answers,
+  externalData,
+  key,
+}: {
+  answers: FormValue
+  externalData: FormValue
+  key: string
+}): FormValue => {
+  const mockData = (answers.mockData as FormValue)?.[key] as FormValue
+  const data = externalData[key] as FormValue
+  if (answers.useMocks === 'no') {
+    return data
+  }
+  return mockData || data
+}
+
 export function variablesForResidenceChange(
   answers: FormValue,
   externalData: FormValue,
 ) {
-  const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
-  const childrenNationalRegistry = externalData.childrenNationalRegistry as FormValue
+  const parentBNationalRegistry = dataToUse({
+    answers,
+    externalData,
+    key: 'parentNationalRegistry',
+  })
+  const childrenNationalRegistry = dataToUse({
+    answers,
+    externalData,
+    key: 'childrenNationalRegistry',
+  })
   const selectedChildrenNames = (answers.selectChild as unknown) as Array<
     string
   >
