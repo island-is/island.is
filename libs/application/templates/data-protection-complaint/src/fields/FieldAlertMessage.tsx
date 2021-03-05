@@ -1,4 +1,4 @@
-import { AlertMessage } from 'libs/island-ui/core/src'
+import { AlertMessage } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
