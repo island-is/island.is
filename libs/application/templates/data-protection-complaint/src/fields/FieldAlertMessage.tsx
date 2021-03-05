@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 
+// TODO: Optional prop to render buttons
 export const FieldAlertMessage: FC<FieldBaseProps> = ({
   application,
   field,

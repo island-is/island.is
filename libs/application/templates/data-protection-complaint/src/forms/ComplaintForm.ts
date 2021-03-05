@@ -318,6 +318,8 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'comissionsSection',
               title: info.general.commissionsPageTitle,
+              // TODO: We probably need a custom component for the description
+              // so we can include the document link
               description: info.general.commissionsPageDescription,
               children: [
                 buildFileUploadField({
