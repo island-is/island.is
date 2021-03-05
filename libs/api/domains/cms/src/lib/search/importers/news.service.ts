@@ -10,7 +10,7 @@ import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class NewsSyncService implements CmsSyncProvider<INews> {
-  processSyncData (entries: processSyncDataInput<INews>) {
+  processSyncData(entries: processSyncDataInput<INews>) {
     logger.info('Processing sync data for news')
 
     // only process news that we consider not to be empty and dont have circular structures
@@ -22,7 +22,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
     )
   }
 
-  doMapping (entries: INews[]) {
+  doMapping(entries: INews[]) {
     logger.info('Mapping news', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {

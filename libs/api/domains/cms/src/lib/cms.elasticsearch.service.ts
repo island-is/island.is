@@ -19,9 +19,9 @@ import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 
 @Injectable()
 export class CmsElasticsearchService {
-  constructor (private elasticService: ElasticService) {}
+  constructor(private elasticService: ElasticService) {}
 
-  async getArticleCategories (
+  async getArticleCategories(
     index: string,
     { size }: { size?: number },
   ): Promise<ArticleCategory[]> {
@@ -40,7 +40,7 @@ export class CmsElasticsearchService {
     )
   }
 
-  async getArticles (
+  async getArticles(
     index: string,
     input: GetArticlesInput,
   ): Promise<Article[]> {
@@ -68,7 +68,7 @@ export class CmsElasticsearchService {
     )
   }
 
-  async getNews (
+  async getNews(
     index: string,
     { size, page, order, month, year, tag }: GetNewsInput,
   ): Promise<NewsList> {
@@ -118,7 +118,7 @@ export class CmsElasticsearchService {
     }
   }
 
-  async getNewsDates (
+  async getNewsDates(
     index: string,
     { order, tag }: GetNewsDatesInput,
   ): Promise<string[]> {
@@ -157,7 +157,7 @@ export class CmsElasticsearchService {
     }
   }
 
-  async getSingleDocumentTypeBySlug<RequestedType> (
+  async getSingleDocumentTypeBySlug<RequestedType>(
     index: string,
     { type, slug }: { type: string; slug: string },
   ): Promise<RequestedType | null> {
@@ -171,7 +171,7 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleMenuByName (
+  async getSingleMenuByName(
     index: string,
     { name }: GetMenuInput,
   ): Promise<Menu | null> {
@@ -189,7 +189,7 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleMenu<RequestedMenuType> (
+  async getSingleMenu<RequestedMenuType>(
     index: string,
     { id }: GetSingleMenuInput,
   ): Promise<RequestedMenuType | null> {
@@ -202,7 +202,7 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleAboutPage (
+  async getSingleAboutPage(
     index: string,
     id: string,
   ): Promise<AboutPage | null> {
