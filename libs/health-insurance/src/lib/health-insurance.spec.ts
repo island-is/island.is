@@ -8,6 +8,7 @@ import {
 } from './soap'
 import { VistaSkjalInput } from './types'
 import { VistaSkjalModel } from './graphql/models'
+import { BucketService } from './bucket/bucket.service'
 
 describe('healthInsurance', () => {
   it('should work', () => {
@@ -38,7 +39,7 @@ describe('healthInsuranceTest', () => {
           provide: HEALTH_INSURANCE_CONFIG,
           useValue: config,
         },
-        // BucketService,
+        BucketService,
       ],
     }).compile()
     hapi = moduleRef.get<HealthInsuranceAPI>(HealthInsuranceAPI)
@@ -64,6 +65,7 @@ describe('healthInsuranceTest', () => {
       previousCountryCode: 'VN',
       previousIssuingInstitution: 'The gioi',
       isHealthInsuredInPreviousCountry: 0,
+      hasHealthInsuranceRightInPreviousCountry: 0,
     }
     const appNumber = 570
     it('apply Health Insurance application tjekk', async () => {

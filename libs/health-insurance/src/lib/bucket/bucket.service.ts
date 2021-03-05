@@ -3,6 +3,7 @@ import * as AWS from 'aws-sdk'
 import * as S3 from 'aws-sdk/clients/s3'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+// TODO: get bucket name from url - STOP HARD CODE
 const BUCKET_NAME = 'island-is-dev-storage-application-system'
 const REGION = 'eu-west-1'
 
@@ -34,7 +35,6 @@ export class BucketService {
   async getFileFromUrl(urlToFile: string): Promise<S3.GetObjectOutput> {
     const spurl = urlToFile.split('/')
     const fn = spurl[spurl.length - 1]
-    // console.log(fn)
     return this.getFile(fn)
   }
 
@@ -62,15 +62,4 @@ export class BucketService {
       )
     })
   }
-
-  // /* for test */
-  // async getNumberOfFiles(): Promise<number> {
-  //   this.logger.info('getNumberOfFiles in bucket,  ...')
-  //   const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
-  //   let num = 0
-  //   for (const x of list.Contents!) {
-  //     num++
-  //   }
-  //   return num
-  // }
 }

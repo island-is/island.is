@@ -1,14 +1,8 @@
 import { FormValue } from '@island.is/application/core'
-import {
-  ParentResidenceChange,
-  PersonResidenceChange,
-} from '@island.is/application/templates/children-residence-change'
+import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 import { User } from '@island.is/api/domains/national-registry'
 
-export function applicantData(
-  answers: FormValue,
-  externalData: FormValue,
-): ParentResidenceChange {
+export function applicantData(answers: FormValue, externalData: FormValue) {
   const nationalRegistry = externalData.nationalRegistry as FormValue
   const nationalRegistryData = (nationalRegistry.data as unknown) as User
 
@@ -29,17 +23,21 @@ export function variablesForResidenceChange(
   externalData: FormValue,
 ) {
   const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
-  const childrenAppliedFor = (answers.selectChild as unknown) as Array<
+  const childrenNationalRegistry = externalData.childrenNationalRegistry as FormValue
+  const selectedChildrenNames = (answers.selectChild as unknown) as Array<
+    string
+  >
+  const allChildren = (childrenNationalRegistry.data as unknown) as Array<
     PersonResidenceChange
   >
-  const parentB = (parentBNationalRegistry.data as unknown) as ParentResidenceChange
 
-  parentB.email = answers.parentBEmail as string
-  parentB.phoneNumber = answers.parentBPhoneNumber as string
+  const parentA = applicantData(answers, externalData) as PersonResidenceChange
+  const parentB = (parentBNationalRegistry.data as unknown) as PersonResidenceChange
+  const childrenAppliedFor = allChildren.filter((c) =>
+    selectedChildrenNames.includes(c.name),
+  )
+  const expiry = answers.selectDuration as Array<string>
+  const reason = answers.residenceChangeReason as string
 
-  const parentA = applicantData(answers, externalData)
-
-  const expiry = answers.expiry as string
-
-  return { parentA, parentB, childrenAppliedFor, expiry }
+  return { parentA, parentB, childrenAppliedFor, expiry, reason }
 }
