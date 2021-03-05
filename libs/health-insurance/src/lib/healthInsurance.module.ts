@@ -1,27 +1,27 @@
 import { DynamicModule } from '@nestjs/common'
 
-// import { BucketService } from './bucket.service'
 import {
   HealthInsuranceAPI,
   HealthInsuranceConfig,
   HEALTH_INSURANCE_CONFIG,
   SoapClient,
 } from './soap'
+import { BucketService } from './bucket/bucket.service'
 
 export class HealthInsuranceModule {
   static register(config: HealthInsuranceConfig): DynamicModule {
     return {
       module: HealthInsuranceModule,
       providers: [
-        // BucketService,
         SoapClient,
         HealthInsuranceAPI,
+        BucketService,
         {
           provide: HEALTH_INSURANCE_CONFIG,
           useValue: config,
         },
       ],
-      exports: [HealthInsuranceAPI],
+      exports: [HealthInsuranceAPI, SoapClient],
     }
   }
 }
