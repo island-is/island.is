@@ -1,3 +1,4 @@
+import https, { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
 
 import { DynamicModule } from '@nestjs/common'
@@ -7,11 +8,24 @@ import {
   AuthenticateApi,
   CreateCustodyCaseApi,
   CreateThingbokApi,
+  RequestContext,
+  FetchParams,
 } from '../../gen/fetch'
+
+function injectAgentMiddleware(agent: Agent) {
+  return async (context: RequestContext): Promise<FetchParams> => {
+    const { url, init } = context
+
+    return { url, init: { ...init, agent } } as FetchParams
+  }
+}
 
 export interface CourtClientModuleOptions {
   xRoadPath: string
   xRoadClient: string
+  clientCert: string
+  clientKey: string
+  clientCa: string
 }
 
 export class CourtClientModule {
@@ -24,6 +38,18 @@ export class CourtClientModule {
       fetchApi: fetch,
       basePath: config.xRoadPath,
       headers,
+      middleware: [
+        {
+          pre: injectAgentMiddleware(
+            new https.Agent({
+              cert: config.clientCert,
+              key: config.clientKey,
+              ca: config.clientCa,
+              rejectUnauthorized: false,
+            }),
+          ),
+        },
+      ],
     })
 
     const exportedApis = [
