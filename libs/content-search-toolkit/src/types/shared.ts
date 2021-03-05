@@ -22,5 +22,16 @@ export interface SyncRequest {
   remove: string[]
 }
 
+export type sortableFields =
+  | 'dateUpdated'
+  | 'dateCreated'
+  | 'title.sort'
+  | 'popularityScore'
+
+export type sortRule = {
+  [key in sortableFields]?: {
+    order: SortDirection
+  }
+}
 registerEnumType(SortDirection, { name: 'SortDirection' })
 registerEnumType(SortField, { name: 'SortField' })

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import {
   dateResolution,
   ElasticService,
-  sortableFields,
   SortDirection,
   SortField,
+  sortRule,
 } from '@island.is/content-search-toolkit'
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
@@ -28,7 +28,7 @@ export class CmsElasticsearchService {
   ): Promise<ArticleCategory[]> {
     const query = {
       types: ['webArticleCategory'],
-      sort: { 'title.sort': SortDirection.ASC },
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size,
     }
     const categoryResponse = await this.elasticService.getDocumentsByMetaData(
@@ -48,12 +48,15 @@ export class CmsElasticsearchService {
     const query = {
       types: ['webArticle'],
       tags: [],
-      sort: { 'title.sort': SortDirection.ASC } as sortableFields,
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size: input.size,
     }
 
     if (input.sort === SortField.POPULAR) {
-      query.sort = { popularityScore: SortDirection.DESC, ...query.sort }
+      query.sort = [
+        { popularityScore: { order: SortDirection.DESC } },
+        ...query.sort,
+      ]
     }
 
     if (input.category) {
@@ -103,7 +106,7 @@ export class CmsElasticsearchService {
 
     const query = {
       types: ['webNews'],
-      sort: { dateCreated: order },
+      sort: [{ dateCreated: { order } }] as sortRule[],
       ...dateQuery,
       ...tagQuery,
       page,
