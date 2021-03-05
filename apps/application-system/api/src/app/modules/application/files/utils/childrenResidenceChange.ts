@@ -1,4 +1,4 @@
-import { FormValue } from '@island.is/application/core'
+import { Application, FormValue } from '@island.is/application/core'
 import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 import { User } from '@island.is/api/domains/national-registry'
 
@@ -18,12 +18,37 @@ export function applicantData(answers: FormValue, externalData: FormValue) {
   }
 }
 
+const dataToUse = ({
+  answers,
+  externalData,
+  key,
+}: {
+  answers: FormValue
+  externalData: FormValue
+  key: string
+}): FormValue => {
+  const mockData = (answers.mockData as FormValue)?.[key] as FormValue
+  const data = externalData[key]
+  if (answers.useMocks === 'no') {
+    return data as FormValue
+  }
+  return mockData || data
+}
+
 export function variablesForResidenceChange(
   answers: FormValue,
   externalData: FormValue,
 ) {
-  const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
-  const childrenNationalRegistry = externalData.childrenNationalRegistry as FormValue
+  const parentBNationalRegistry = dataToUse({
+    answers,
+    externalData,
+    key: 'parentNationalRegistry',
+  })
+  const childrenNationalRegistry = dataToUse({
+    answers,
+    externalData,
+    key: 'childrenNationalRegistry',
+  })
   const selectedChildrenNames = (answers.selectChild as unknown) as Array<
     string
   >
