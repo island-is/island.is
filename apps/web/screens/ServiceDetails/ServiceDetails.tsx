@@ -108,10 +108,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
       href: n('linkDesignSystem'),
       title: n('linkDesignSystemText'),
     },
-    {
-      href: n('linkContentPolicy'),
-      title: n('linkContentPolicyText'),
-    },
   ]
   const { activeLocale } = useI18n()
   return (
