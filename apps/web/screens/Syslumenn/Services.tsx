@@ -23,6 +23,7 @@ import {
   QueryGetArticlesArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  SortField,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -277,7 +278,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           organization: 'syslumenn',
           lang: locale as ContentLanguage,
-          sort: (query.sort as string) ?? 'popular',
+          sort: query.sort === 'title' ? SortField.Title : SortField.Popular,
         },
       },
     }),

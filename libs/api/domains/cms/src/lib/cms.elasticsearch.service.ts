@@ -3,7 +3,8 @@ import {
   dateResolution,
   ElasticService,
   sortableFields,
-  sortDirection,
+  SortDirection,
+  SortField,
 } from '@island.is/content-search-toolkit'
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
@@ -27,7 +28,7 @@ export class CmsElasticsearchService {
   ): Promise<ArticleCategory[]> {
     const query = {
       types: ['webArticleCategory'],
-      sort: { 'title.sort': 'asc' as sortDirection },
+      sort: { 'title.sort': SortDirection.ASC },
       size,
     }
     const categoryResponse = await this.elasticService.getDocumentsByMetaData(
@@ -47,12 +48,12 @@ export class CmsElasticsearchService {
     const query = {
       types: ['webArticle'],
       tags: [],
-      sort: { 'title.sort': 'asc' as sortDirection } as sortableFields,
+      sort: { 'title.sort': SortDirection.ASC } as sortableFields,
       size: input.size,
     }
 
-    if (input.sort === 'popular') {
-      query.sort = { popularityScore: 'desc' as sortDirection, ...query.sort }
+    if (input.sort === SortField.POPULAR) {
+      query.sort = { popularityScore: SortDirection.DESC, ...query.sort }
     }
 
     if (input.category) {
@@ -102,7 +103,7 @@ export class CmsElasticsearchService {
 
     const query = {
       types: ['webNews'],
-      sort: { dateCreated: order as sortDirection },
+      sort: { dateCreated: order },
       ...dateQuery,
       ...tagQuery,
       page,

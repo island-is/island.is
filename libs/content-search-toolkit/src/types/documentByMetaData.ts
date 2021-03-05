@@ -1,10 +1,10 @@
-import { elasticTagField, sortDirection } from './shared'
+import { elasticTagField, SortDirection } from './shared'
 
 export type sortableFields = {
-  dateUpdated?: sortDirection
-  dateCreated?: sortDirection
-  'title.sort'?: sortDirection
-  popularityScore?: sortDirection
+  dateUpdated?: SortDirection
+  dateCreated?: SortDirection
+  'title.sort'?: SortDirection
+  popularityScore?: SortDirection
 }
 
 interface MetaPropsBase {
