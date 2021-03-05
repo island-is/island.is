@@ -77,4 +77,3 @@ my-service.island.is/v1/users/1/photos/1
 
 - [Google: Resource Oriented Design](https://cloud.google.com/apis/design/resources)
 - [Ratros Y: Designing APIs](https://medium.com/@ratrosy/designing-apis-4eed43409f93)
-- [Arnulf Christl: Towards a Resource Oriented Future](http://arnulf.us/Towards_a_Resource_Oriented_Future)
