@@ -322,7 +322,7 @@ export const institutionApplicationMessages = {
     sectionInfoBulletThird: {
       id: 'ia.application:confirmation.section.infoBullet.third',
       defaultMessage:
-        'Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma 847 3759 eða á netfangið island@island.is',
+        'Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið island@island.is',
       description: 'Third information sentence, in bullet list',
     },
   }),

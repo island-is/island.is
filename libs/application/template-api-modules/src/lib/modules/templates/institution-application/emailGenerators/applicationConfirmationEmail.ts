@@ -1,6 +1,7 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 import { EmailTemplateGenerator } from '../../../../types'
+import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 
 export const generateConfirmationEmail: EmailTemplateGenerator = (props) => {
   const {
@@ -8,16 +9,25 @@ export const generateConfirmationEmail: EmailTemplateGenerator = (props) => {
     options: { locale },
   } = props
 
-  const institutionApplicant = get(application.answers, 'applicant.institution')
-  const applicantEmail = get(application.answers, 'contact.email')
+  const institutionName = get(application.answers, 'applicant.institution')
 
-  const subject = `Umsókn þín fyrir ${institutionApplicant} hefur verið móttekin.`
+  const contactEmail = get(application.answers, 'contact.email')
+
+  const secondaryContactEmail =
+    get(application.answers, 'secondaryContact.email') || ''
+
+  const subject = `Umsókn þín fyrir ${institutionName} hefur verið móttekin.`
+  const overview = applicationOverviewTemplate(application)
 
   const body = dedent(`
-        ${subject}
-        Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.
-        Við verðum í sambandi ef okkur vantar frekari upplýsingar.
-        Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma 847 3759 eða á netfangið island@island.is
+        <h2>Umsókn móttekin</h2>
+        <p>
+          Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar. </br>
+          Við verðum í sambandi ef okkur vantar frekari upplýsingar. </br>
+          Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið <a href="mailto:island@island.is">island@island.is</a> </br>
+        </p>
+        <h2>Yfirlit umsóknar</h2>
+        ${overview}
       `)
 
   return {
@@ -28,13 +38,14 @@ export const generateConfirmationEmail: EmailTemplateGenerator = (props) => {
     to: [
       {
         name: '',
-        address: applicantEmail as string,
+        address: contactEmail as string,
       },
     ],
+    cc: {
+      name: '',
+      address: secondaryContactEmail as string,
+    },
     subject,
-    html: `<p>${body
-      .split('')
-      .map((c) => (c === '\n' ? `<br />\n` : c))
-      .join('')}</p>`,
+    html: body,
   }
 }
