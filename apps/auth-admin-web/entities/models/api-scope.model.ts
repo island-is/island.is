@@ -10,11 +10,11 @@ export class ApiScope {
   public userClaims?: ApiScopeUserClaim[]
   required!: boolean
   emphasize!: boolean
-  grantToLegalGuardians?: boolean
-  grantToProcuringHolders?: boolean
-  allowExplicitDelegationGrant?: boolean
-  automaticDelegationGrant?: boolean
-  alsoForDelegatedUser?: boolean
+  grantToLegalGuardians!: boolean
+  grantToProcuringHolders!: boolean
+  allowExplicitDelegationGrant!: boolean
+  automaticDelegationGrant!: boolean
+  alsoForDelegatedUser!: boolean
   readonly created!: Date
   readonly modified?: Date
 }

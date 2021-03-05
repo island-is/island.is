@@ -8,8 +8,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      'UPDATE identity_resource SET grant_to_legal_guardians = null, grant_to_procuring_holders = null, allow_explicit_delegation_grant = null, automatic_delegation_grant = null, also_for_delegated_user = null',
-    )
+    return Promise.resolve([1])
   },
 }

@@ -8,8 +8,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      'UPDATE client SET supports_delegation = null, supports_legal_guardians = null, supports_procuring_holders = null, prompt_delegations = null',
-    )
+    return Promise.resolve([1])
   },
 }

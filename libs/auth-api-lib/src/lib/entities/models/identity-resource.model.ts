@@ -61,53 +61,53 @@ export class IdentityResource extends Model<IdentityResource> {
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  grant_to_legal_guardians?: boolean
+  grantToLegalGuardians!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  grant_to_procuring_holders?: boolean
+  grantToProcuringHolders!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  allow_explicit_delegation_grant?: boolean
+  allowExplicitDelegationGrant!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  automatic_delegation_grant?: boolean
+  automaticDelegationGrant!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  also_for_delegated_user?: boolean
+  alsoForDelegatedUser!: boolean
 
   @HasMany(() => IdentityResourceUserClaim)
   @ApiProperty()

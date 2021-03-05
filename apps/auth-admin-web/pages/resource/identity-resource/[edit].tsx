@@ -41,6 +41,7 @@ const Index: React.FC = () => {
       resourceId,
     )
     if (response) {
+      console.log(response)
       setIdentityResource(response)
     }
   }
