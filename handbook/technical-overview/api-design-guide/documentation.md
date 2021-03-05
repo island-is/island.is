@@ -14,6 +14,7 @@ The following fields, not marked as (_Optional_), are required for services to b
   - title — descriptive name of the API.
   - contact — information on who to contact about an issue with the service.
     - name — of the person or a department.
+    - url (_Optional_) — containing information on the person or department to contact.
     - email — fully qualified email.
   - x-category — What kind of data does this service work with.
     - Possible values: `open`, `official`, `personal`, `health`, `financial`.

@@ -6,7 +6,7 @@ When an error occurs in a API, the service should return the error to the callin
 
 ## Response body
 
-When an error occurs, a REST API should respond with an 4xx or 500x [HTTP status code](http-status-codes.md) and the response should contain an error object as described below.
+When an error occurs, a REST API should respond with an 4xx or 5xx [HTTP status code](http-status-codes.md) and the response should contain an error object as described below.
 
 ### Error object
 
