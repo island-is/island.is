@@ -7,16 +7,26 @@ const { userList } = environment.skilavottord
 
 @Injectable()
 export class AuthService {
-  roleArr: [User]
-  constructor() {
-    const { userList } = environment.skilavottord
-    this.roleArr = JSON.parse(userList)
-  }
+  constructor() {}
+  // // TODO
+  // getRole(user: AuthUser): Role {
+  //   const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+  //   //TODO if not found
+  //   return picked.role as Role
+  // }
+
   // TODO
   getRole(user: AuthUser): Role {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
-    //TODO if not found
-    return picked.role as Role
+    try {
+      // this.logger.info('getRole start...')
+      const ulist = JSON.parse(userList)
+      const picked = ulist.find((o) => o.nationalId === user.nationalId)
+      //TODO if not found
+      // this.logger.info('getRole return value:' + picked.role)
+      return picked.role as Role
+    } catch (error) {
+      // this.logger.error('getRole exception:' + error.message)
+    }
   }
 
   // //TODO
@@ -35,9 +45,28 @@ export class AuthService {
 
   // get user role
   getUserRole(user: AuthUser): User {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
-    return picked
+    try {
+      // this.logger.info('getUserRole start...')
+      const ulist = JSON.parse(userList)
+      const picked = ulist.find((o) => o.nationalId === user.nationalId)
+      if (!picked) {
+        let u = user as User
+        u.role = 'citizen'
+        return u
+      } else {
+        return picked
+      }
+    } catch (error) {
+      // this.logger.error('getUserRole exception.' + error.message)
+      console.log('getUserRole exception.' + error.message)
+    }
   }
+
+  // // get user role
+  // getUserRole(user: AuthUser): User {
+  //   const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
+  //   return picked
+  // }
 
   // // check role
   // checkRole(user: AuthUser, role: Role): boolean {

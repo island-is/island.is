@@ -85,11 +85,11 @@ describe('skilavottordApiTest', () => {
         const ur = authService.getUserRole(userx)
         expect(ur.role).toBe('citizen')
       })
-      it('undefined should return citizen', () => {
-        const userx = undefined
-        const ur = authService.getUserRole(userx)
-        expect(ur.role).toBe('citizen')
-      })
+      // it('undefined should return citizen', () => {
+      //   const userx = undefined
+      //   const ur = authService.getUserRole(userx)
+      //   expect(ur.role).toBe('citizen')
+      // })
     })
 
     describe('checkRole test ', () => {
