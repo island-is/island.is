@@ -1,19 +1,17 @@
 const withTreat = require('next-treat')()
-const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
+
 const {
   API_URL = 'http://localhost:3333',
   API_PATH = '/app/skilavottord/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
-  SENTRY_DSN,
 } = process.env
 const graphqlPath = '/api/graphql'
 
-module.exports = withTreat(
-  withHealthcheckConfig({
+module.exports = withTreat({
     webpack: (config, options) => {
-      if (!options.isServer) {
-        config.resolve.alias['@sentry/node'] = '@sentry/browser'
-      }
+      // if (!options.isServer) {
+      //   config.resolve.alias['@sentry/node'] = '@sentry/browser'
+      // }
       return config
     },
     serverRuntimeConfig: {
@@ -25,7 +23,6 @@ module.exports = withTreat(
       // Will be available on both server and client
       apiUrl: `${WEB_PUBLIC_URL}${API_PATH}`,
       graphqlEndpoint: `${API_PATH}${graphqlPath}`,
-      SENTRY_DSN,
     },
     env: {
       API_MOCKS: process.env.API_MOCKS || '',
@@ -34,7 +31,9 @@ module.exports = withTreat(
       // Will be available on both server and client
       graphqlUrl: '',
       graphqlEndpoint: graphqlPath,
-      SENTRY_DSN,
     },
-  }),
+    devIndicators: {
+      autoPrerender: false,
+    },
+  },
 )
