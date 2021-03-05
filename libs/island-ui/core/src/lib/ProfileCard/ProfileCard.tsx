@@ -46,7 +46,7 @@ export const ProfileCard: FC<ProfileCardProps> = ({
       {image && (
         <Box
           className={styles.image}
-          style={{ backgroundImage: `url(${image})` }}
+          style={{ backgroundImage: `url(${image}?w=400)` }}
         />
       )}
       <Box padding={3}>
