@@ -1,5 +1,8 @@
 module.exports = {
-  stories: ['../../core/src/**/*.stories.@(tsx|mdx)'],
+  stories: [
+    '../../core/src/**/*.stories.@(tsx|mdx)',
+    '../../../application/ui-fields/**/*.stories.@(tsx|mdx)',
+  ],
   addons: [
     '@storybook/addon-a11y/register',
     '@storybook/addon-docs',

@@ -15,6 +15,7 @@ interface Option {
   tooltip?: React.ReactNode
   excludeOthers?: boolean
 }
+
 interface Props {
   defaultValue?: string[]
   disabled?: boolean
@@ -27,6 +28,7 @@ interface Props {
   emphasize?: boolean
   onSelect?: (s: string) => void
 }
+
 export const RadioController: FC<Props> = ({
   defaultValue,
   disabled = false,

@@ -328,6 +328,7 @@
     "@zeit/next-source-maps": "0.0.3",
     "babel-jest": "26.2.2",
     "babel-loader": "8.0.6",
+    "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-imports": "2.0.0",
     "contentful-cli": "1.5.14",
     "cross-env": "7.0.2",
