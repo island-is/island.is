@@ -2,16 +2,13 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import * as S3 from 'aws-sdk/clients/s3'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+// import * as AmazonS3URI from 'amazon-s3-uri'
 
 const BUCKET_NAME = 'island-is-dev-storage-application-system'
-const REGION = 'eu-west-1'
-
-const s3 = new AWS.S3({
-  region: REGION,
-})
 
 @Injectable()
 export class BucketService {
+  private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   /* */
@@ -42,35 +39,17 @@ export class BucketService {
   async getFile(filename: string): Promise<S3.GetObjectOutput> {
     this.logger.info('get bucket file:' + filename)
     return new Promise((resolve, reject) => {
-      s3.createBucket(
-        {
-          Bucket: BUCKET_NAME,
-        },
-        function () {
-          const params = {
-            Bucket: BUCKET_NAME,
-            Key: filename,
-          }
-          s3.getObject(params, function (err, data) {
-            if (err) {
-              reject(err)
-            } else {
-              resolve(data)
-            }
-          })
-        },
-      )
+      const params = {
+        Bucket: BUCKET_NAME,
+        Key: filename,
+      }
+      this.s3.getObject(params, function (err, data) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
     })
   }
-
-  // /* for test */
-  // async getNumberOfFiles(): Promise<number> {
-  //   this.logger.info('getNumberOfFiles in bucket,  ...')
-  //   const list = await s3.listObjects({ Bucket: BUCKET_NAME }).promise()
-  //   let num = 0
-  //   for (const x of list.Contents!) {
-  //     num++
-  //   }
-  //   return num
-  // }
 }
