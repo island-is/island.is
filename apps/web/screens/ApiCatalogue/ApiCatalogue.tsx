@@ -225,10 +225,6 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       href: nn('linkDesignSystem'),
       title: nn('linkDesignSystemText'),
     },
-    {
-      href: nn('linkContentPolicy'),
-      title: nn('linkContentPolicyText'),
-    },
   ]
 
   return (
