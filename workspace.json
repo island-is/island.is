@@ -4605,7 +4605,7 @@
           }
         }
       },
-      "docker-next": {}
+      "docker-express": {}
     },
     "services-auth-api": {
       "root": "apps/services/auth-api",
