@@ -25,7 +25,7 @@ describe('Header', () => {
       <MockedProvider mocks={mockProsecutorQuery} addTypename={false}>
         <Router history={history}>
           <UserProvider>
-            <Header pathname={Constants.REQUEST_LIST_ROUTE} />
+            <Header />
           </UserProvider>
         </Router>
       </MockedProvider>,
@@ -51,7 +51,7 @@ describe('Header', () => {
       <MockedProvider mocks={mockAdminQuery} addTypename={false}>
         <Router history={history}>
           <UserProvider>
-            <Header pathname={Constants.USER_LIST_ROUTE} />
+            <Header />
           </UserProvider>
         </Router>
       </MockedProvider>,

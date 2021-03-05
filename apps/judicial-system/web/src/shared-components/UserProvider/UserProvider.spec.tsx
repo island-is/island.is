@@ -28,7 +28,7 @@ describe('UserProvider', () => {
         <MemoryRouter initialEntries={[Constants.REQUEST_LIST_ROUTE]}>
           <Route path={Constants.REQUEST_LIST_ROUTE}>
             <UserProvider>
-              <Header pathname={Constants.REQUEST_LIST_ROUTE} />
+              <Header />
             </UserProvider>
           </Route>
         </MemoryRouter>

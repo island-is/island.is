@@ -1,10 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../../dist/out-tsc",
+    "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "types": ["jest", "node"],
-    "composite": true
+    "jsx": "react"
   },
   "include": [
     "**/*.spec.ts",
@@ -12,9 +12,5 @@
     "**/*.spec.js",
     "**/*.spec.jsx",
     "**/*.d.ts"
-  ],
-  "files": [
-    "../../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
-    "../../../node_modules/@nrwl/react/typings/image.d.ts"
   ]
 }

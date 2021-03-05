@@ -5,27 +5,19 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "types": [
-      "node",
-      "jest"
-    ],
+    "types": ["node", "jest"],
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": true
   },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
   "files": [],
-  "include": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
     {
       "path": "./tsconfig.spec.json"
     }
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }
