@@ -35,7 +35,6 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     secondaryContactPhone,
   ].some((x) => !!x)
 
-
   const technicalConstraints = getValueViaPath(
     application.answers,
     'constraints.technical',
@@ -71,7 +70,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   ].some((x) => !!x)
 
   const attatchments = getValueViaPath(application.answers, 'attatchments') as []
-  const hasAttatchments = true
+  const hasAttatchments = attatchments && attatchments.length > 0
 
   return (
     <Box marginTop={4}>
