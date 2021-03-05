@@ -208,8 +208,9 @@ export class ElasticService {
     query: DocumentByMetaDataInput,
   ) {
     const results = await this.getDocumentsByMetaData(index, query)
-    this.updateDocumentPopularityScore(index, results.hits?.hits[0]._id)
-
+    if (results.hits?.hits.length) {
+      this.updateDocumentPopularityScore(index, results.hits?.hits[0]._id)
+    }
     return results
   }
 
@@ -237,8 +238,12 @@ export class ElasticService {
             },
           },
         },
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        retry_on_conflict: 1,
       })
       .catch((error) => {
+        // failing to update the popularity score is not the end of the world so
+        // we don't throw the error. we will see in the logs how common this is
         logger.error('Could not update popularityScore', error)
       })
   }
