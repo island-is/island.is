@@ -24,7 +24,6 @@ export class UserProfileProvider extends BasicDataProvider {
           return this.handleError()
         }
         const responseObj = response.data.getUserProfile
-        console.log('responseObj', responseObj)
         if (
           !responseObj?.mobilePhoneNumber ||
           !responseObj?.mobilePhoneNumberVerified ||
