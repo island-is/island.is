@@ -35,8 +35,8 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
-  const children = extractChildrenFromApplication(application)
   const answers = extractAnswersFromApplication(application)
+  const children = answers.selectedChildren
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
@@ -160,7 +160,10 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
       <Box marginTop={5}>
         <DescriptionText
           text={m.contract.general.description}
-          format={{ otherParent: parent.name }}
+          format={{
+            otherParent:
+              application.state === 'draft' ? parent.name : applicant.fullName,
+          }}
         />
       </Box>
       <Box marginTop={5}>
@@ -170,13 +173,14 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
           })}
         </Text>
         {children.map((child) => (
-          <Text key={child.name}>{child.name}</Text>
+          <Text key={child}>{child}</Text>
         ))}
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={2}>
-          {formatMessage(m.contract.labels.otherParentContactInformation)}
+          {formatMessage(m.contract.labels.contactInformation)}
         </Text>
+        {/* TODO: Make this the contact information for parent B also when we add that to the flow */}
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
           {answers.contactInformation.email}
