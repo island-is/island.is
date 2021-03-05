@@ -12,7 +12,7 @@ The documentation works in two different ways:
 
 ### Root `README.md` within `handbook` directory
 
-`README.md` files from each directory inside the `handbook` directory are used to create the navigation structure when running the `yarn gitbook` command.
+`README.md` files from directories inside the [`handbook/` directory](../) are used to create the navigation structure when running the `yarn gitbook` command.
 
 {% hint style="warning" %}
 You MUST create a `README.md` with a `H1` heading ([example](https://raw.githubusercontent.com/island-is/island.is/main/handbook/technical-overview/auth/README.md)) — but apart from that, you may leave it empty and GitBook will automatically display the [sub file structure](../technical-overview/auth).
