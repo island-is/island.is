@@ -16,6 +16,7 @@ import { BucketTypePrefix, DokobitFileName } from './utils/constants'
 import {
   applicantData,
   variablesForResidenceChange,
+  dataToUse,
 } from './utils/childrenResidenceChange'
 import { AwsService } from './aws.service'
 import {
@@ -103,7 +104,18 @@ export class FileService {
 
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const { phoneNumber, name } = applicantData(answers, externalData)
+        const name =
+          application.state === 'draft'
+            ? applicantData(answers, externalData).name
+            : ((dataToUse({
+                answers,
+                externalData,
+                key: 'parentNationalRegistry',
+              }).data as FormValue).name as string)
+        const phoneNumber =
+          application.state === 'draft'
+            ? applicantData(answers, externalData).phoneNumber
+            : (answers.parentBPhoneNumber as string)
         return await this.handleChildrenResidenceChangeSignature(
           pdfType,
           application.id,

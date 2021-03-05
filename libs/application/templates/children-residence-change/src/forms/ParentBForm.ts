@@ -6,6 +6,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
+import { parentBContactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ParentBForm: Form = buildForm({
@@ -14,6 +15,18 @@ export const ParentBForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
+    buildSection({
+      id: 'contact',
+      title: m.contactInfo.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'parentBContactInfo',
+          title: m.contactInfo.general.pageTitle,
+          childInputIds: parentBContactInfoIds,
+          component: 'ContactInfo',
+        }),
+      ],
+    }),
     buildSection({
       id: 'approveTermsParentB',
       title: m.section.effect,

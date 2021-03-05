@@ -13,7 +13,7 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
-import { contactInfoIds } from '../fields/ContactInfo'
+import { parentAContactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -112,9 +112,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           title: m.contactInfo.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'contactInfo',
+              id: 'parentAContactInfo',
               title: m.contactInfo.general.pageTitle,
-              childInputIds: contactInfoIds,
+              childInputIds: parentAContactInfoIds,
               component: 'ContactInfo',
             }),
           ],

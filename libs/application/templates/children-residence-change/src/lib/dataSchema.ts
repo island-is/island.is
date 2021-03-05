@@ -8,10 +8,14 @@ export const dataSchema = z.object({
   selectChild: z
     .array(z.string())
     .min(1, { message: error.validation.selectChild.defaultMessage }),
-  email: z.string().email(error.validation.invalidEmail.defaultMessage),
-  phoneNumber: z
-    .string()
-    .min(7, { message: error.validation.invalidPhoneNumber.defaultMessage }),
+  parentAEmail: z.string().email(error.validation.invalidEmail.defaultMessage),
+  parentAPhoneNumber: z.string().min(7, {
+    message: error.validation.invalidPhoneNumber.defaultMessage,
+  }),
+  parentBEmail: z.string().email(error.validation.invalidEmail.defaultMessage),
+  parentBPhoneNumber: z.string().min(7, {
+    message: error.validation.invalidPhoneNumber.defaultMessage,
+  }),
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),

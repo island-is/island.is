@@ -44,9 +44,13 @@ export const extractAnswersFromApplication = (application: Application) => {
     selectedDuration: application.answers.selectDuration as string[],
     reason: application.answers.residenceChangeReason as string,
     interview: application.answers.interview as 'yes' | 'no',
-    contactInformation: {
-      email: application.answers.email,
-      phoneNumber: application.answers.phoneNumber,
+    parentAContactInfo: {
+      email: application.answers.parentAEmail,
+      phoneNumber: application.answers.parentAPhoneNumber,
+    },
+    parentBContactInfo: {
+      email: application.answers.parentBEmail,
+      phoneNumber: application.answers.parentBPhoneNumber,
     },
   }
 }

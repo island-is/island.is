@@ -6,20 +6,31 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { contactInfo } from '../../lib/messages'
 import { extractUserInfoFromApplication } from '../../lib/utils'
 
-const emailId = 'email'
-const phoneNumberId = 'phoneNumber'
+const parentAEmailId = 'parentAEmail'
+const parentAPhoneNumberId = 'parentAPhoneNumber'
 
-export const contactInfoIds = [emailId, phoneNumberId]
+export const parentAContactInfoIds = [parentAEmailId, parentAPhoneNumberId]
 
-const ContactInfo = ({ errors, application }: FieldBaseProps) => {
+const parentBEmailId = 'parentBEmail'
+const parentBPhoneNumberId = 'parentBPhoneNumber'
+
+export const parentBContactInfoIds = [parentBEmailId, parentBPhoneNumberId]
+
+const ContactInfo = ({ errors, application, field }: FieldBaseProps) => {
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
   const { formatMessage } = useIntl()
   const { setValue, register } = useFormContext()
   const userInfo = extractUserInfoFromApplication(application)
-  const emailError = errors?.email
-  const phoneNumberError = errors?.phoneNumber
+  const emailId =
+    field.id === 'parentAContactInfo' ? parentAEmailId : parentBEmailId
+  const phoneNumberId =
+    field.id === 'parentAContactInfo'
+      ? parentAPhoneNumberId
+      : parentBPhoneNumberId
+  const emailError = errors?.[emailId]
+  const phoneNumberError = errors?.[phoneNumberId]
   return (
     <>
       <Box marginTop={3}>
