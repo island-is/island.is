@@ -5,10 +5,9 @@ import { Role, AuthUser } from './auth.types'
 
 @Injectable()
 export class AuthService {
-  userListTest: [User]
+  static userListTest: [User] = JSON.parse(environment.skilavottord.userList)
   constructor() {
-    const { userList } = environment.skilavottord
-    const userListTest = JSON.parse(userList)
+    console.log('----->' + JSON.stringify(AuthService.userListTest, null, 2))
   }
   // // TODO
   // getRole(user: AuthUser): Role {
@@ -23,7 +22,7 @@ export class AuthService {
       // this.logger.info('getRole start...')
       console.log('getRole start...')
       // const ulist = JSON.parse(userList)
-      const picked = this.userListTest.find(
+      const picked = AuthService.userListTest.find(
         (o) => o.nationalId === user.nationalId,
       )
       //TODO if not found
@@ -56,7 +55,7 @@ export class AuthService {
       console.log('getUserRole start...')
       // const ulist = JSON.parse(userList)
       // const ulist = this.userListTest
-      const picked = this.userListTest.find(
+      const picked = AuthService.userListTest.find(
         (o) => o.nationalId === user.nationalId,
       )
       if (!picked) {
@@ -103,10 +102,10 @@ export class AuthService {
     // this.logger.info('checkRole for user start...')
     console.log('checkRole for user start...')
     try {
-      console.log('ulist->' + JSON.stringify(this.userListTest, null, 2))
+      console.log('ulist->' + JSON.stringify(AuthService.userListTest, null, 2))
       // const ulist = JSON.parse(userList)
       // console.log('ulist->' + JSON.stringify(ulist, null, 2))
-      const picked = this.userListTest.find(
+      const picked = AuthService.userListTest.find(
         (o) => o.nationalId === user.nationalId,
       )
       if (!picked) {
