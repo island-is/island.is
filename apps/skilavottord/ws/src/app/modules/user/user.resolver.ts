@@ -38,30 +38,10 @@ export class UserResolver {
     let RoleForUser: Role = 'citizen' // citizen is the deault role
     RoleForUser = authService.getRole(RoleUser)
 
+    //TODO: test
+    currUser.partnerId = authService.getPartnerId(currUser.nationalId)
     currUser.role = RoleForUser
-    if (
-      currUser.nationalId === '1811673949' ||
-      currUser.nationalId === '2405843609' ||
-      currUser.nationalId === '2811638099'
-    ) {
-      currUser.partnerId = '104' // This is partner Id for Hringras, to be fixed later
-    } else if (
-      currUser.nationalId === '2211692989' ||
-      currUser.nationalId === '2808714009' ||
-      currUser.nationalId === '3108654949' ||
-      currUser.nationalId === '2512942099' ||
-      currUser.nationalId === '0306942609' ||
-      currUser.nationalId === '1207952879'
-    ) {
-      currUser.partnerId = '221' // This is partner Id for Fura, to be fixed later
-    } else if (
-      currUser.role === 'recyclingCompany' ||
-      currUser.role === 'developer'
-    ) {
-      currUser.partnerId = '110' // This is partner Id for Vaka, to be fixed later (no need list vaka users)
-    } else {
-      currUser.partnerId = null // Normal citizen user
-    }
+
     /* this.logger.info(
       `  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role} - ${currUser.partnerId}`,
     )*/
