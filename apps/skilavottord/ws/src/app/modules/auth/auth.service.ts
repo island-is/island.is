@@ -101,6 +101,9 @@ export class AuthService {
   checkRole(user: AuthUser, role: Role): boolean {
     // this.logger.info('checkRole for user start...')
     console.log('checkRole for user start...')
+    console.log('at start of checkRole User:' + user)
+    console.log('at start of checkRole User:' + JSON.stringify(user, null, 2))
+    console.log('at start of checkRole Role:' + role)
     try {
       console.log('ulist->' + JSON.stringify(AuthService.userListTest, null, 2))
       // const ulist = JSON.parse(userList)
@@ -111,6 +114,8 @@ export class AuthService {
       if (!picked) {
         // this.logger.info('checkRole user not found in userList')
         console.log('checkRole user not found in userList return false')
+        console.log('User:' + JSON.stringify(user, null, 2))
+        console.log('Role:' + role)
         return false
       } else {
         const r = picked.role as Role

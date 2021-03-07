@@ -31,10 +31,26 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
     if (throwOnUnAuthorized && (err || !user)) {
       throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
-    if (!authService.checkRole(user, role)) {
-      throw new ForbiddenError('Forbidden')
+    console.log('auth.guard before calling checkRole...')
+    console.log('at start of checkRole User:' + user)
+    console.log('at start of checkRole User:' + JSON.stringify(user, null, 2))
+    console.log('at start of checkRole Role:' + role)
+    if (typeof user === 'boolean') {
+      console.log(
+        '++++++++++++++++++++++++user was boolean strange case +++++++++++++++++',
+      )
+      return user
+    } else {
+      if (!authService.checkRole(user, role)) {
+        throw new ForbiddenError('Forbidden')
+      }
+      return user
     }
-    return user
+    // if (!user) {
+    // user.name = 'Gaur'
+    //user.nationalId = '1234567890'
+    //    role = 'citizen'
+    // }
   }
 }
 

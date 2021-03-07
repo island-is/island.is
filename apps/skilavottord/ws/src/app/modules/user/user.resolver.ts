@@ -15,6 +15,7 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   skilavottordUser(@CurrentUser() user: AuthUser): User {
     this.logger.info('--- skilavottordUser starting ---')
+    this.logger.info('--- user:' + JSON.stringify(user))
     if (!user) {
       this.logger.info('  - User does not exist')
       return null
@@ -24,6 +25,7 @@ export class UserResolver {
     currUser.nationalId = user.nationalId
     currUser.name = user.name
     currUser.mobile = user.mobile
+    this.logger.info('--- currUser(log1):' + JSON.stringify(currUser))
     const roleUser: AuthUser = {
       nationalId: user.nationalId,
       mobile: user.mobile,
@@ -36,7 +38,7 @@ export class UserResolver {
       currUser.partnerId = userRole.partnerId
       currUser.role = userRole.role
     }
-    this.logger.info('--- skilavottordUser:' + JSON.stringify(currUser))
+    this.logger.info('--- currUser(log2):' + JSON.stringify(currUser))
     this.logger.info('--- skilavottordUser ending ---')
     return currUser
   }
