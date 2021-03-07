@@ -1,58 +1,77 @@
 import { Injectable } from '@nestjs/common'
-import { environment } from '../../../environments'
-import { User } from '../user'
 import { Role, AuthUser } from './auth.types'
+
+const DEVELOPERS = [
+  /* Deloitte */
+  '2310765229', // Vésteinn Viðarsson
+  '0602773039', // Bjarki Már Flosason
+  '1505664449', // Rúnar Sigurður Guðlaugsson
+  '0301665909', // Sigurgeir Guðmundsson
+  '2311862559', // Quan Dong
+  '2811638099', // Tómas Árni Jónsson
+  '0101302129', // Gervimaður Noregur
+]
+
+const RECYCLINGCOMPANY = [
+  /* Deloitte og DI test */
+  '0905665129', // Friðbjörn Hólm Ólafsson
+  /* Vaka */
+  '0706765599', // Sigríður Björk Þórisdóttir
+  '1310734109', // Reynir Þór Guðmundsson admin later
+  '1110892489', // Ari Halldór Hjaltason
+  '0409842919', // Gísli Rúnar Svanbergsson
+  '3108002360', // Viktoría Sól Reynisdóttir
+  '2309695079', // Valdemar Örn Haraldsson
+  '0910872009', // Tómas Kári Kristinsson
+  '0601756089', // Greta Björg Egilsdóttir
+  '0709804529', // Halldór Örn Kristjánsson
+  /* Hringrás   */
+  '1811673949', // Tryggvi Daníel Sigurðsson admin later
+  '2405843609', // Þórdís Jónsdóttir
+  /* Fura   */
+  '2211692989', // Úlfar Haraldsson admin later
+  '2808714009', // Dagný Michelle Jónsdóttir
+  '3108654949', // Ólafía Sigurjónsdóttir
+  '2512942099', // Marjón Pétur Benediktsson
+  '0306942609', // Karítas Þorvaldsdóttir
+  '1207952879', // Anton Örn  Kærnested
+]
+
+const RECYCLINGFUND = [
+  /* Urvinnslusjodur test  */
+  '3005594339', // Ólafur Kjartansson admin later
+  '0202614989', // Guðlaugur Gylfi Sverrisson normal
+  '0305695639', // Ása Hauksdóttir  admin later
+]
 
 @Injectable()
 export class AuthService {
-  roleArr: [User]
-  constructor() {
-    const { userList } = environment.skilavottord
-    this.roleArr = JSON.parse(userList)
-  }
-  // TODO
   getRole(user: AuthUser): Role {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
-    //TODO if not found
-    return picked.role as Role
-  }
-
-  // //TODO
-  // getUserRoleNew(user: AuthUser): User {
-  //   const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
-  //   let curruser = new User()
-  //   // curruser.nationalId = user.nationalId
-  //   if (!picked) {
-  //     // curruser.role = 'citizen'
-  //   } else {
-  //     // curruser.role = picked.role
-  //     // curruser.partnerId = picked.partnerId
-  //   }
-  //   return null
-  // }
-
-  // get user role
-  getUserRole(user: AuthUser): User {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
-    return picked
-  }
-
-  // check role
-  checkRole(user: AuthUser, role: Role): boolean {
-    const picked = this.roleArr.find((o) => o.nationalId === user.nationalId)
-    if (!picked) {
-      return false
+    if (RECYCLINGCOMPANY.includes(user.nationalId)) {
+      return 'recyclingCompany'
+    } else if (RECYCLINGFUND.includes(user.nationalId)) {
+      return 'recyclingFund'
+    } else if (DEVELOPERS.includes(user.nationalId)) {
+      return 'developer'
     } else {
-      const r = picked.role as Role
-      return (
-        r === 'developer' || r === 'recyclingCompany' || r === 'recyclingFund'
-      )
+      return 'citizen'
     }
-    return false
   }
 
-  // test
-  static test(): string {
-    return 'test'
+  checkRole(user: AuthUser, role: Role): boolean {
+    switch (role) {
+      case 'recyclingCompany':
+        return RECYCLINGCOMPANY.includes(user.nationalId)
+      case 'recyclingFund':
+        return RECYCLINGFUND.includes(user.nationalId)
+      case 'developer':
+        return DEVELOPERS.includes(user.nationalId)
+      default: {
+        if (role) {
+          return false
+        }
+        return true
+      }
+    }
   }
 }
