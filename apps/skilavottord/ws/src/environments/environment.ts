@@ -36,7 +36,7 @@ export default {
   skilavottord: {
     userList:
       process.env.SKILAVOTTORD_USER_LIST ??
-      '[{"nationalId":"0301665909","name":"Sigurgeir Guðmundsson","role":"developer","partnerId":""},{"nationalId":"2811638099","name":"Tómas Árni Jónsson","role":"developer","partnerId":""}]',
+      '[{"nationalId":"0301665909","name":"Sigurgeir Guðmundsson","role":"developer","partnerId":""},{"nationalId":"2812638099","name":"Tómas Árni Jónsson","role":"developer","partnerId":""}]',
   },
   backendUrl: 'http://localhost:3333',
 }

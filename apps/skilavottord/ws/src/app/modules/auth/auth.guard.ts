@@ -42,13 +42,14 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
       return user
     } else {
       if (!authService.checkRole(user, role)) {
-        throw new ForbiddenError('Forbidden')
+        throw new ForbiddenError('Forbidden +++')
       }
       return user
     }
+
     // if (!user) {
     // user.name = 'Gaur'
-    //user.nationalId = '1234567890'
+    //user.nationalId    = '1234567890'
     //    role = 'citizen'
     // }
   }
