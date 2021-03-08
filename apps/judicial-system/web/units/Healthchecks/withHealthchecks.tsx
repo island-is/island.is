@@ -1,5 +1,6 @@
-import React from 'react'
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import dns from 'dns'
+import React from 'react'
 
 const checkExternalDependency = (url: string) =>
   new Promise((resolve, reject) => {
