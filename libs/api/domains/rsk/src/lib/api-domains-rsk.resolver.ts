@@ -13,10 +13,10 @@ import { CurrentUserCompanies } from './models/currentUserCompanies.model'
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class RSKResolver {
-  constructor (private RSKService: RSKService) {}
+  constructor(private RSKService: RSKService) {}
 
   @Query(() => [CurrentUserCompanies])
-  async rskGetCurrentUserCompanies (@CurrentUser() user: User) {
+  async rskGetCurrentUserCompanies(@CurrentUser() user: User) {
     return this.RSKService.getCompaniesByNationalId(user.nationalId)
   }
 }

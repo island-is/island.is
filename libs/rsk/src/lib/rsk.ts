@@ -1,5 +1,4 @@
 import { Inject } from '@nestjs/common'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { Base64 } from 'js-base64'
@@ -27,11 +26,9 @@ export interface CompanyRegistryMember {
 }
 
 export class RSKService extends RESTDataSource {
-  constructor (
+  constructor(
     @Inject(RSK_OPTIONS)
     private readonly options: RSKServiceOptions,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {
     super()
     const config: any = {}
@@ -39,7 +36,7 @@ export class RSKService extends RESTDataSource {
     this.initialize({} as DataSourceConfig<any>)
   }
 
-  willSendRequest (request: RequestOptions) {
+  willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set(
       'Authorization',
@@ -49,22 +46,15 @@ export class RSKService extends RESTDataSource {
     )
   }
 
-  async getCompaniesByNationalId (
+  async getCompaniesByNationalId(
     nationalId: string,
   ): Promise<CompanyRegistryMember[]> {
-    try {
-      const response = await this.get<RSKCompaniesResponse | null>(
-        `${nationalId}/companies`,
-        {
-          cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-        },
-      )
-      return response?.MemberCompanies ?? []
-    } catch (err) {
-      this.logger.error(err)
-      throw new Error(
-        'Error occurred while requesting members from company registry',
-      )
-    }
+    const response = await this.get<RSKCompaniesResponse | null>(
+      `${nationalId}/companies`,
+      {
+        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
+      },
+    )
+    return response?.MemberCompanies ?? []
   }
 }

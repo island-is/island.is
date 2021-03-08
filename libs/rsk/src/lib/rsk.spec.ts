@@ -1,24 +1,27 @@
 import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
-import { LoggingModule } from '@island.is/logging'
 import { RSKCompaniesResponse, RSKService, RSK_OPTIONS } from './rsk'
+import { Base64 } from 'js-base64'
 
 // MOCK START
-enum responseCondition {
+enum expectedResult {
   SUCCESS = 'success',
   NOT_FOUND = 'notFound',
   EMPTY = 'empty',
+  SERVER_ERROR = 'serverError',
 }
 interface RSKRestResponse {
   status: 200 | 404 | 500
   body?: RSKCompaniesResponse
 }
+
+// we use ssn param to define success or error case here
 const createRSKCompaniesResponse = (
-  condition: responseCondition,
+  condition: expectedResult,
 ): RSKRestResponse => {
   switch (condition) {
-    case responseCondition.SUCCESS: {
+    case expectedResult.SUCCESS: {
       return {
         status: 200,
         body: {
@@ -43,13 +46,18 @@ const createRSKCompaniesResponse = (
         },
       }
     }
-    case responseCondition.EMPTY: {
+    case expectedResult.EMPTY: {
       return {
         status: 200,
         body: {},
       }
     }
-    case responseCondition.NOT_FOUND:
+    case expectedResult.SERVER_ERROR: {
+      return {
+        status: 500,
+      }
+    }
+    case expectedResult.NOT_FOUND:
     default: {
       return {
         status: 404,
@@ -58,17 +66,28 @@ const createRSKCompaniesResponse = (
   }
 }
 
+// we just check username to return fail. or success case
+const hasAuth = (authHeader: string) => {
+  const [username] = Base64.decode(authHeader.substring(6)).split(':')
+  return username === expectedResult.SUCCESS
+}
+
 const rskDomain = 'http://testDomain.is'
 const rskUrl = (path: string) => new URL(path, rskDomain).toString()
 
 const handlers = [
+  // serve as an auth middleware
+  rest.get('*', (req, res, ctx) => {
+    if (!hasAuth(req.headers.get('Authorization') ?? '')) {
+      return res(ctx.status(403), ctx.json(''))
+    }
+  }),
   rest.get(
     rskUrl('/companyregistry/members/:condition/companies'),
     (req, res, ctx) => {
       const { params } = req
-      console.log('params.condition', params.condition)
       const response = createRSKCompaniesResponse(params.condition)
-      return res(ctx.status(response.status), ctx.json(response.body))
+      return res(ctx.status(response.status), ctx.json(response?.body ?? ''))
     },
   ),
 ]
@@ -76,52 +95,69 @@ const handlers = [
 startMocking(handlers)
 // MOCK END
 
-describe('rsk service', () => {
+const getNestModule = async (condition: expectedResult) => {
+  const moduleRef = await Test.createTestingModule({
+    providers: [
+      RSKService,
+      {
+        provide: RSK_OPTIONS,
+        useValue: {
+          username: condition === 'empty' ? '' : condition, // this condition defines success or failure
+          password: condition === 'empty' ? '' : 'pass123',
+          url: rskDomain,
+        },
+      },
+    ],
+  }).compile()
+
+  return moduleRef.get<RSKService>(RSKService)
+}
+
+describe('getCompaniesByNationalId', () => {
   let rskService: RSKService
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [LoggingModule],
-      providers: [
-        RSKService,
-        {
-          provide: RSK_OPTIONS,
-          useValue: {
-            username: 'tester',
-            password: 'pass123',
-            url: rskDomain,
-          },
-        },
-      ],
-    }).compile()
-
-    rskService = moduleRef.get<RSKService>(RSKService)
+    rskService = await getNestModule(expectedResult.SUCCESS)
   })
 
   it('should return success', async () => {
     const results = await rskService.getCompaniesByNationalId(
-      responseCondition.SUCCESS,
+      expectedResult.SUCCESS,
     )
-    expect(results).toEqual(
-      createRSKCompaniesResponse(responseCondition.SUCCESS).body
-        ?.MemberCompanies,
-    )
+    const successResults = createRSKCompaniesResponse(expectedResult.SUCCESS)
+      .body?.MemberCompanies
+    expect(results).toEqual(successResults)
   })
 
   it('should return empty array when use has no company', async () => {
     const results = await rskService.getCompaniesByNationalId(
-      responseCondition.EMPTY,
+      expectedResult.EMPTY,
     )
     expect(results).toEqual([])
   })
 
-  it('should set auth header', async () => {
-    const results = await rskService.getCompaniesByNationalId(
-      responseCondition.EMPTY,
-    )
-
-    expect(results).toEqual([])
+  it('should throw on error', async () => {
+    await expect(
+      rskService.getCompaniesByNationalId(expectedResult.NOT_FOUND),
+    ).rejects.toThrow()
+    await expect(
+      rskService.getCompaniesByNationalId(expectedResult.SERVER_ERROR),
+    ).rejects.toThrow()
   })
 })
 
-// TODO: Make MSW return auth error when username/password is not correct
+describe('rsk auth', () => {
+  it('should return error on failed auth', async () => {
+    const rskService = await getNestModule(expectedResult.SERVER_ERROR)
+    await expect(
+      rskService.getCompaniesByNationalId(expectedResult.SUCCESS),
+    ).rejects.toThrow()
+  })
+
+  it('should return error on empty auth', async () => {
+    const rskService = await getNestModule(expectedResult.EMPTY)
+    await expect(
+      rskService.getCompaniesByNationalId(expectedResult.SUCCESS),
+    ).rejects.toThrow()
+  })
+})
