@@ -4623,6 +4623,122 @@
         }
       }
     },
+    "service-portal-education-career": {
+      "root": "libs/service-portal/education-career",
+      "sourceRoot": "libs/service-portal/education-career/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-career/tsconfig.lib.json",
+              "libs/service-portal/education-career/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-career/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-career/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-education-degree": {
+      "root": "libs/service-portal/education-degree",
+      "sourceRoot": "libs/service-portal/education-degree/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-degree/tsconfig.lib.json",
+              "libs/service-portal/education-degree/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-degree/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-degree/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-education-license": {
+      "root": "libs/service-portal/education-license",
+      "sourceRoot": "libs/service-portal/education-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-license/tsconfig.lib.json",
+              "libs/service-portal/education-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-education-student-assessment": {
+      "root": "libs/service-portal/education-student-assessment",
+      "sourceRoot": "libs/service-portal/education-student-assessment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-student-assessment/tsconfig.lib.json",
+              "libs/service-portal/education-student-assessment/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-student-assessment/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-student-assessment/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal-eligibility": {
       "root": "libs/service-portal/eligibility",
       "sourceRoot": "libs/service-portal/eligibility/src",
