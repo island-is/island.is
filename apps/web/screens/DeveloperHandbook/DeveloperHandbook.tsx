@@ -97,7 +97,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                   </Box>
                   <Box marginBottom="gutter">
                     <Navigation
-                      baseId="service-list-navigation"
+                      baseId="handbook-navigation"
                       colorScheme="blue"
                       isMenuDialog
                       items={navigationItems}
