@@ -13,7 +13,7 @@ import { dataSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
-enum States {
+export enum ApplicationStates {
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
 }
@@ -34,9 +34,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   name: 'Children residence change application',
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: ApplicationStates.DRAFT,
     states: {
-      [States.DRAFT]: {
+      [ApplicationStates.DRAFT]: {
         meta: {
           name: applicationName,
           progress: 0.33,
@@ -60,11 +60,11 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         },
         on: {
           ASSIGN: {
-            target: States.IN_REVIEW,
+            target: ApplicationStates.IN_REVIEW,
           },
         },
       },
-      [States.IN_REVIEW]: {
+      [ApplicationStates.IN_REVIEW]: {
         entry: 'assignToOtherParent',
         meta: {
           name: applicationName,
@@ -77,6 +77,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   Promise.resolve(module.ParentBForm),
                 ),
               write: 'all',
+            },
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationConfirmation').then((module) =>
+                  Promise.resolve(module.ApplicationConfirmation),
+                ),
             },
           ],
         },
@@ -103,6 +110,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (
+      application.assignees.includes(id) &&
+      application.answers.useMocks === 'yes' &&
+      application.state === ApplicationStates.IN_REVIEW
+    ) {
+      return Roles.ParentB
+    }
     if (id === application.applicant) {
       return Roles.ParentA
     }

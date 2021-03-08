@@ -1,8 +1,12 @@
 import get from 'lodash/get'
 import { logger } from '@island.is/logging'
+import AmazonS3URI from 'amazon-s3-uri'
 
 import { Application } from '@island.is/application/core'
-import { VistaSkjalInput } from '@island.is/api/domains/health-insurance'
+import {
+  ApplyHealthInsuranceInputs,
+  VistaSkjalInput,
+} from '@island.is/health-insurance'
 
 const extractAnswer = <T>(object: unknown, key: string): T | null => {
   const value = get(object, key, null) as T | null | undefined
@@ -22,7 +26,7 @@ const extractAnswerFromJson = (object: unknown, key: string) => {
 
 export const transformApplicationToHealthInsuranceDTO = (
   application: Application,
-): VistaSkjalInput => {
+): ApplyHealthInsuranceInputs => {
   logger.info(`Start transform Application to Health Insurance DTO`)
   /*
    * Convert userStatus:
@@ -69,17 +73,35 @@ export const transformApplicationToHealthInsuranceDTO = (
   // There is 2 fields to add information in frontend
   // But there is only one tag in API
   // Merge 2 fields together
-  const addInfo = `additional comments: ${
-    extractAnswer(application.answers, 'additionalRemarks') ?? ''
-  }. isHealthInsuredInPreviousCountry reason: ${
-    extractAnswer(application.answers, 'formerInsurance.entitlementReason') ??
-    ''
-  }`
+  let addInfo = ''
+  if (extractAnswer(application.answers, 'additionalRemarks')) {
+    addInfo += `Additional comments: ${extractAnswer(
+      application.answers,
+      'additionalRemarks',
+    )}.`
+  }
+  if (extractAnswer(application.answers, 'formerInsurance.entitlementReason')) {
+    addInfo += `IsHealthInsuredInPreviousCountry reason: ${extractAnswer(
+      application.answers,
+      'formerInsurance.entitlementReason',
+    )}`
+  }
 
-  return {
+  let bucketName = ''
+  if (arrFiles.length > 0) {
+    try {
+      const arrUrl: string[] = Object.values(application.attachments) ?? []
+      const { region, bucket, key } = AmazonS3URI(arrUrl[0])
+      bucketName = bucket
+    } catch (err) {
+      logger.error(`Failed to obtain bucket's name`)
+      throw new Error(`Failed to obtain bucket's name`)
+    }
+  }
+  const vistaskjal: VistaSkjalInput = {
     applicationNumber: application.id,
     applicationDate: application.modified,
-    nationalId: '0123456789', // NOT send naltionalId through graphQL
+    nationalId: application.applicant,
     foreignNationalId:
       extractAnswer(application.answers, 'formerInsurance.personalId') ?? '',
     name: extractAnswer(application.answers, 'applicant.name') ?? '',
@@ -112,10 +134,20 @@ export const transformApplicationToHealthInsuranceDTO = (
     previousIssuingInstitution:
       extractAnswer(application.answers, 'formerInsurance.institution') ?? '',
     isHealthInsuredInPreviousCountry:
+      extractAnswer(application.answers, 'formerInsurance.registration') ==
+      'yes'
+        ? 1
+        : 0,
+    hasHealthInsuranceRightInPreviousCountry:
       extractAnswer(application.answers, 'formerInsurance.entitlement') == 'yes'
         ? 1
         : 0,
     additionalInformation: addInfo,
     attachmentsFileNames: arrFiles,
+  }
+
+  return {
+    vistaskjal: vistaskjal,
+    bucketName: bucketName,
   }
 }

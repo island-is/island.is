@@ -7,8 +7,8 @@ import {
   FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
-import { ReviewFieldProps, Status, StatusTypes } from '../../types'
+import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../../constants'
+import { ReviewFieldProps, Status } from '../../types'
 import ChildrenInfoMessage from '../ChildrenInfoMessage/ChildrenInfoMessage'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
@@ -47,7 +47,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
             }
             options={[
               {
-                label: m.statusEmployed.defaultMessage,
+                label: formatText(m.statusEmployed, application, formatMessage),
                 value: StatusTypes.EMPLOYED,
                 tooltip: formatText(
                   m.statusEmployedInformation,
@@ -56,7 +56,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
                 ),
               },
               {
-                label: m.statusStudent.defaultMessage,
+                label: formatText(m.statusStudent, application, formatMessage),
                 value: StatusTypes.STUDENT,
                 tooltip: formatText(
                   m.statusStudentInformation,
@@ -78,7 +78,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
                 ),
               },
               {
-                label: m.statusOther.defaultMessage,
+                label: formatText(m.statusOther, application, formatMessage),
                 value: StatusTypes.OTHER,
                 tooltip: formatText(
                   m.statusOtherInformation,

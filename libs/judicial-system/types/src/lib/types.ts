@@ -270,7 +270,3 @@ export interface SignatureConfirmationResponse {
 export interface CreateCustodyCourtCase {
   policeCaseNumber: string
 }
-
-export interface CreateCustodyCourtCaseResponse {
-  courtCaseNumber: string
-}

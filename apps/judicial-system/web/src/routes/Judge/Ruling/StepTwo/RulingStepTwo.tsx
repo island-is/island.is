@@ -23,12 +23,11 @@ import {
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -49,11 +48,13 @@ import {
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { useRouter } from 'next/router'
 
 export const RulingStepTwo: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },

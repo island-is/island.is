@@ -7,25 +7,43 @@ import { DocumentProviderInput } from './DocumentProviderInput'
 import { Helpdesk } from '@island.is/api/schema'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { useUpdateHelpDesk, HelpDeskInput } from '../../shared'
+import {
+  useUpdateHelpDesk,
+  HelpDeskInput,
+} from '../../shared/useUpdateHelpDesk'
+import {
+  useCreateHelpDesk,
+  CreateHelpDeskInput,
+} from '../../shared/useCreateHelpDesk'
 
 interface Props {
-  helpDesk: Helpdesk
+  helpDesk?: Helpdesk | null
   organisationId: string
+  organisationNationalId: string
 }
 
 export const DocumentProviderHelpDeskForm: FC<Props> = ({
   helpDesk,
   organisationId,
+  organisationNationalId,
 }) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
-  const { updateHelpDesk, loading } = useUpdateHelpDesk(organisationId)
+  const { updateHelpDesk, loading: loadingUpdate } = useUpdateHelpDesk(
+    organisationId,
+  )
+  const { createHelpDesk, loading: loadingCreate } = useCreateHelpDesk(
+    organisationId,
+    organisationNationalId,
+  )
 
   const onSubmit = (data: { helpDesk: Helpdesk }) => {
-    if (data?.helpDesk) {
+    if (data?.helpDesk && helpDesk) {
       const input: HelpDeskInput = { ...data.helpDesk, id: helpDesk.id }
       updateHelpDesk(input)
+    } else {
+      const input: CreateHelpDeskInput = data.helpDesk
+      createHelpDesk(input)
     }
   }
 
@@ -41,7 +59,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="helpDesk.email"
-            defaultValue={helpDesk?.email}
+            defaultValue={helpDesk?.email ?? ''}
             rules={{
               required: {
                 value: true,
@@ -64,7 +82,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
           <DocumentProviderInput
             control={control}
             name="helpDesk.phoneNumber"
-            defaultValue={helpDesk?.phoneNumber}
+            defaultValue={helpDesk?.phoneNumber ?? ''}
             rules={{
               required: {
                 value: true,
@@ -119,7 +137,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
               type="submit"
               variant="primary"
               icon="arrowForward"
-              loading={loading}
+              loading={loadingUpdate || loadingCreate}
             >
               {formatMessage(m.SingleProviderSaveButton)}
             </Button>

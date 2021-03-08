@@ -5,7 +5,7 @@ import { Organisation } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../lib/messages'
 
-const getOrganisationQuery = gql`
+export const getOrganisationQuery = gql`
   query GetOrganisationQuery($input: String!) {
     getProviderOrganisation(nationalId: $input) {
       id

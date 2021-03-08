@@ -7,9 +7,12 @@ import {
 } from '@island.is/judicial-system/court-client'
 
 import { environment } from '../../../environments'
-import { CreateCustodyCourtCaseResponse } from './models'
 
 let authenticationToken: string
+
+function stripResult(str: string): string {
+  return str.slice(1, str.length - 1)
+}
 
 @Injectable()
 export class CourtService {
@@ -22,10 +25,12 @@ export class CourtService {
 
   private async login() {
     try {
-      authenticationToken = await this.authenticateApi.authenticate({
+      const str = await this.authenticateApi.authenticate({
         username: environment.courtService.username,
         password: environment.courtService.password,
       })
+
+      authenticationToken = stripResult(str)
     } catch (error) {
       this.logger.error('Unable to log into court service', error)
 
@@ -34,7 +39,7 @@ export class CourtService {
   }
 
   private async wrappedRequest(
-    request: (authenticationToken: string) => Promise<string>,
+    request: () => Promise<string>,
     isRetry = false,
   ): Promise<string> {
     if (!authenticationToken || isRetry) {
@@ -42,7 +47,7 @@ export class CourtService {
     }
 
     try {
-      return await request(authenticationToken)
+      return await request()
     } catch (error) {
       this.logger.error('Error while creating court case', error)
       if (isRetry) {
@@ -53,20 +58,15 @@ export class CourtService {
     }
   }
 
-  async createCustodyCourtCase(
-    policeCaseNumber: string,
-  ): Promise<CreateCustodyCourtCaseResponse> {
-    const courtCaseNumber = await this.wrappedRequest(
-      async (authenticationToken: string) =>
-        this.createCustodyCaseApi.createCustodyCase({
-          basedOn: 'Rannsóknarhagsmunir',
-          sourceNumber: policeCaseNumber,
-          authenticationToken,
-        }),
+  async createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
+    const courtCaseNumber = await this.wrappedRequest(() =>
+      this.createCustodyCaseApi.createCustodyCase({
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+        authenticationToken,
+      }),
     )
 
-    this.logger.info(`Created court case ${courtCaseNumber}`)
-
-    return { courtCaseNumber }
+    return stripResult(courtCaseNumber)
   }
 }

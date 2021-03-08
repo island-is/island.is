@@ -13,6 +13,7 @@ import {
   featured,
   genericPage,
   referenceLink,
+  frontpage as createFrontpage,
 } from './factories'
 import orderBy from 'lodash/orderBy'
 import { Article } from '../../types'
@@ -44,17 +45,22 @@ export const store = createStore(() => {
     return articles
   }, [])
 
-  const menu = createMenu()
-
   const groupedMenu = createGroupedMenu()
 
   const alertBanner = createAlertBanner()
+
+  const menu = createMenu()
 
   const newsList = orderBy(news.list(12), ['date'], ['desc'])
 
   const lifeEvents = lifeEvent.list(6, {
     category: () => faker.random.arrayElement(articleCategories),
   })
+
+  const frontpage = {
+    ...createFrontpage(),
+    ...{ namespace: { namespace: 'homepage', fields: '{}' } },
+  }
 
   const frontPageSliders = frontPageSlider.list(3)
 
@@ -68,6 +74,7 @@ export const store = createStore(() => {
 
   return {
     homepage,
+    frontpage,
     frontPageSliders,
     lifeEvents,
     newsList,
