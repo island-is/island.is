@@ -15,6 +15,7 @@ import {
   AboutLatestNews,
   LogoList,
   BulletList,
+  Main,
 } from '@island.is/web/components'
 import {
   Text,
@@ -184,6 +185,8 @@ const PageHeader: FC<PageHeaderProps> = ({
       </GridContainer>
       <SidebarLayout
         isSticky={false}
+        addMainLandmark={false}
+        addAsideLandmark={false}
         fullWidthContent
         hiddenOnTablet
         sidebarContent={
@@ -276,7 +279,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'HeadingSlice':
       return (
         <div key={slice.id} id={slice.id}>
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingTop={[8, 6, 15]} paddingBottom={[4, 5, 10]}>
               <Heading {...slice} />
             </Box>
@@ -286,7 +294,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'LinkCardSlice':
       return (
         <Box key={slice.id} id={slice.id} backgroundPattern="dotted">
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingTop={8} paddingBottom={[4, 5, 10]}>
               <LinkCardList {...slice} />
             </Box>
@@ -296,7 +309,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'MailingListSignupSlice':
       return (
         <Box key={slice.id} id={slice.id} background="blue100">
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingTop={[4, 4, 10]} paddingBottom={[4, 3, 7]}>
               <RenderForm
                 namespace={namespace}
@@ -312,7 +330,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'StorySlice':
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingTop={[8, 8, 12]} paddingBottom={[12, 8, 10]}>
               <StoryList
                 {...slice}
@@ -328,7 +351,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'LatestNewsSlice':
       return (
         <div key={slice.id} id={slice.id}>
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingTop={[8, 8, 15]} paddingBottom={[4, 6, 12]}>
               <AboutLatestNews {...slice} namespace={namespace} />
             </Box>
@@ -338,7 +366,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'LogoListSlice':
       return (
         <div key={slice.id} id={slice.id} className={styles.gradient}>
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingTop={[8, 8, 12]} paddingBottom={4}>
               <LogoList
                 {...slice}
@@ -351,7 +384,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'BulletListSlice':
       return (
         <div id={slice.id} key={slice.id}>
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingBottom={[8, 5, 10]}>
               <BulletList
                 bullets={slice.bullets.map((bullet) => {
@@ -377,7 +415,12 @@ const Section: FC<SectionProps> = ({ slice, namespace }) => {
     case 'TabSection':
       return (
         <Box key={slice.id} id={slice.id} backgroundPattern="dotted">
-          <SidebarLayout hiddenOnTablet={true} sidebarContent={null}>
+          <SidebarLayout
+            hiddenOnTablet={true}
+            sidebarContent={null}
+            addMainLandmark={false}
+            addAsideLandmark={false}
+          >
             <Box paddingTop={2} paddingBottom={[0, 5, 10]}>
               <Tabs
                 label={slice?.title}
@@ -433,7 +476,7 @@ const AboutPageScreen: Screen<AboutPageProps> = ({
     [page.slices, page.pageHeader],
   )
   return (
-    <>
+    <Main>
       <Head>
         <title>{page.title}</title>
         <meta name="description" content={page.seoDescription} />
@@ -461,7 +504,7 @@ const AboutPageScreen: Screen<AboutPageProps> = ({
           </Box>
         </GridContainer>
       </Box>
-    </>
+    </Main>
   )
 }
 

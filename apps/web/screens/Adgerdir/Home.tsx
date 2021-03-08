@@ -179,7 +179,7 @@ const Home: Screen<HomeProps> = ({
         </ColorSchemeContext.Provider>
       </Box>
 
-      <Main>
+      <Main addId={false}>
         <CovidColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
           <Box marginBottom={10}>
             <Box className={covidStyles.bg}>

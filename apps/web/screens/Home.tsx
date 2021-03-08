@@ -26,6 +26,7 @@ import {
   SearchInput,
   FrontpageSlider,
   LatestNewsSection,
+  Main,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
@@ -92,66 +93,68 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
     </Box>
   )
   return (
-    <div style={{ overflow: 'hidden' }}>
-      <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
-        <FrontpageSlider
-          slides={page.slides as FrontpageSliderType[]}
-          searchContent={searchContent}
-        />
-      </Section>
-      <Section
-        aria-labelledby="lifeEventsAriaTitle"
-        paddingTop={4}
-        backgroundBleed={{
-          bleedAmount: 150,
-          mobileBleedAmount: 250,
-          bleedDirection: 'bottom',
-          fromColor: 'white',
-          toColor: 'purple100',
-          bleedInMobile: true,
-        }}
-      >
-        <LifeEventsCardsSection
-          title={n('lifeEventsTitle')}
-          titleProps={{
-            id: 'lifeEventsAriaTitle',
-            as: 'h2',
+    <Main>
+      <div style={{ overflow: 'hidden' }}>
+        <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
+          <FrontpageSlider
+            slides={page.slides as FrontpageSliderType[]}
+            searchContent={searchContent}
+          />
+        </Section>
+        <Section
+          aria-labelledby="lifeEventsAriaTitle"
+          paddingTop={4}
+          backgroundBleed={{
+            bleedAmount: 150,
+            mobileBleedAmount: 250,
+            bleedDirection: 'bottom',
+            fromColor: 'white',
+            toColor: 'purple100',
+            bleedInMobile: true,
           }}
-          linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
-          lifeEvents={page.lifeEvents}
-        />
-      </Section>
-      <Section
-        paddingTop={[8, 8, 6]}
-        paddingBottom={[8, 8, 6]}
-        background="purple100"
-        aria-labelledby="serviceCategoriesTitle"
-      >
-        <Categories
-          title={n('articlesTitle')}
-          titleId="serviceCategoriesTitle"
-          cards={cards}
-        />
-      </Section>
-      <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
-        <LatestNewsSection
-          label={gn('newsAndAnnouncements')}
-          labelId="latestNewsTitle"
-          items={news}
-        />
-      </Section>
-      <Section paddingY={[8, 8, 8, 10, 15]} aria-labelledby="ourGoalsTitle">
-        <IntroductionSection
-          subtitle={n('ourGoalsSubTitle')}
-          title={n('ourGoalsTitle')}
-          titleId="ourGoalsTitle"
-          introText={n('ourGoalsIntro')}
-          text={n('ourGoalsText')}
-          linkText={n('ourGoalsButtonText')}
-          linkUrl={{ href: n('ourGoalsLink') }}
-        />
-      </Section>
-    </div>
+        >
+          <LifeEventsCardsSection
+            title={n('lifeEventsTitle')}
+            titleProps={{
+              id: 'lifeEventsAriaTitle',
+              as: 'h2',
+            }}
+            linkTitle={n('seeAllLifeEvents', 'Sjá alla lífsviðburði')}
+            lifeEvents={page.lifeEvents}
+          />
+        </Section>
+        <Section
+          paddingTop={[8, 8, 6]}
+          paddingBottom={[8, 8, 6]}
+          background="purple100"
+          aria-labelledby="serviceCategoriesTitle"
+        >
+          <Categories
+            title={n('articlesTitle')}
+            titleId="serviceCategoriesTitle"
+            cards={cards}
+          />
+        </Section>
+        <Section paddingTop={[8, 8, 6]} aria-labelledby="latestNewsTitle">
+          <LatestNewsSection
+            label={gn('newsAndAnnouncements')}
+            labelId="latestNewsTitle"
+            items={news}
+          />
+        </Section>
+        <Section paddingY={[8, 8, 8, 10, 15]} aria-labelledby="ourGoalsTitle">
+          <IntroductionSection
+            subtitle={n('ourGoalsSubTitle')}
+            title={n('ourGoalsTitle')}
+            titleId="ourGoalsTitle"
+            introText={n('ourGoalsIntro')}
+            text={n('ourGoalsText')}
+            linkText={n('ourGoalsButtonText')}
+            linkUrl={{ href: n('ourGoalsLink') }}
+          />
+        </Section>
+      </div>
+    </Main>
   )
 }
 

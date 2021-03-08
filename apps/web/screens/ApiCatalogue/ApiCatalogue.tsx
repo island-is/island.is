@@ -233,9 +233,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
 
   return (
     <SubpageLayout
+      addMainLandmark={true}
       main={
         <SidebarLayout
           addMainLandmark={false}
+          addAsideLandmark={false}
           paddingTop={[0, 0, 9]}
           paddingBottom={[4, 4, 12]}
           sidebarContent={
@@ -339,6 +341,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
           content={
             <SidebarLayout
               addMainLandmark={false}
+              addAsideLandmark={false}
               paddingTop={[3, 3, 5]}
               paddingBottom={[0, 0, 6]}
               sidebarContent={

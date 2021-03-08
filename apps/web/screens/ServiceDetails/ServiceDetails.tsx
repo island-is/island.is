@@ -122,8 +122,11 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const { activeLocale } = useI18n()
   return (
     <SubpageLayout
+      addMainLandmark={true}
       main={
         <SidebarLayout
+          addMainLandmark={false}
+          addAsideLandmark={false}
           paddingTop={[0, 0, 9]}
           paddingBottom={[4, 4, 6]}
           sidebarContent={

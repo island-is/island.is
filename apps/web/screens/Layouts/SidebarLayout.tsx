@@ -17,6 +17,7 @@ interface SidebarLayoutProps {
   hiddenOnTablet?: boolean
   fullWidthContent?: boolean
   addMainLandmark?: boolean
+  addAsideLandmark?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
 }
@@ -27,6 +28,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   hiddenOnTablet = false,
   fullWidthContent = false,
   addMainLandmark = true,
+  addAsideLandmark = true,
   paddingTop = [0, 0, 8],
   paddingBottom = 6,
   children,
@@ -41,6 +43,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         position={isSticky ? 'relative' : undefined}
       >
         <Box
+          component={addAsideLandmark ? 'aside' : 'div'}
           printHidden
           className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
           display={
