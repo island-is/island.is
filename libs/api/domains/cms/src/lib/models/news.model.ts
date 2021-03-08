@@ -35,7 +35,7 @@ export class News {
   content: Array<typeof SliceUnion> = []
 
   @Field(() => [GenericTag])
-  genericTags?: GenericTag[]
+  genericTags: GenericTag[] = []
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({

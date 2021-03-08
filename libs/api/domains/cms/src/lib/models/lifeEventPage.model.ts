@@ -38,7 +38,7 @@ export class LifeEventPage {
 export const mapLifeEventPage = ({
   fields,
   sys,
-}: ILifeEventPage | Entry<ILifeEventPageFields>): LifeEventPage => ({
+}: ILifeEventPage): LifeEventPage => ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',

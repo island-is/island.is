@@ -12,7 +12,7 @@ export class Menu {
   id!: string
 
   @Field()
-  title?: string
+  title: string = ''
 
   @Field(() => [Link])
   links?: Link[]
