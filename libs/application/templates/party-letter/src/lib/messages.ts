@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   companySelection: {
     id: 'ple.application:company.selection',
-    defaultMessage: 'Veldu félag',
+    defaultMessage: 'Kennitala framboðs',
     description: 'Company selection title',
   },
   partyLetterSelection: {

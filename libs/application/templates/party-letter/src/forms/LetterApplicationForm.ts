@@ -4,8 +4,11 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubSection,
   buildSubmitField,
   buildTextField,
+  buildDataProviderItem,
+  buildExternalDataProvider,
   Form,
   FormModes,
   buildCustomField,
@@ -15,35 +18,80 @@ import { m } from '../lib/messages'
 const partyLetters = ['A', 'B', 'C', 'X', 'H', 'I', 'O', 'P', 'Q', 'T', 'R']
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
-  title: 'Framboðsstafur',
+  title: 'Listabókstafur',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'company',
-      title: m.companySection,
+      id: 'companySelection',
+      title: m.companySelection.defaultMessage,
       children: [
-        buildCustomField({
-          id: 'intro',
-          title: 'Title',
-          component: 'UserCompaniesField',
-        }),
         buildRadioField({
-          id: 'companyNationalId',
-          title: m.companySelection,
+          id: 'selectKennitala',
+          title: m.companySelection.defaultMessage,
+          largeButtons: true,
+          width: 'half',
           options: [
-            { value: '0000000000', label: 'Sjálfstæðisflokkurinn' },
-            { value: '1111111111', label: 'Bæjar bakarí' },
+            {
+              label: 'Demókrataflokkurinn',
+              subLabel: '000000-0000',
+              value: '000000-0000',
+            },
+            {
+              label: 'Verzlunin Kaffi',
+              subLabel: '101010-0000',
+              value: '101010-0000',
+            },
+            {
+              label: 'Jón Jónsson',
+              subLabel: '111111-0000',
+              value: '111111-0000',
+            },
           ],
         }),
       ],
     }),
     buildSection({
+      id: 'termsAndConditions',
+      title: 'Skilmálar',
+      children: [
+        buildExternalDataProvider({
+          id: 'approveTermsAndConditions',
+          title: 'Samþykkja skilmála',
+          subTitle: 'Eftirfarandi reglur og skilmálar gilda um meðmælendalista',
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'dmr',
+              type: 'DmrProvider',
+              title: 'Dómsmálaráðuneyti',
+              subTitle: 'Skilmálar og reglugerðir',
+            }),
+            buildDataProviderItem({
+              id: 'family',
+              type: 'FamilyInformationProvider',
+              title: 'Yfirkjörstjórn',
+              subTitle:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            }),
+            buildDataProviderItem({
+              id: 'pregnancyStatus',
+              type: 'PregnancyStatus',
+              title: 'Ísland.is',
+              subTitle:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            }),
+          ],
+        }),
+      ],
+    }),
+
+    buildSection({
       id: 'partyLetter',
-      title: 'Stafur',
+      title: 'Velja listabókstaf',
       children: [
         buildRadioField({
           id: 'partyLetter',
           title: m.partyLetterSelection,
+          width: 'half',
           options: partyLetters.map((letter) => ({
             value: letter,
             label: letter,
@@ -53,7 +101,19 @@ export const LetterApplicationForm: Form = buildForm({
     }),
     buildSection({
       id: 'partyName',
-      title: 'Nafn',
+      title: 'Nafn flokks',
+      children: [
+        buildTextField({
+          id: 'partyName',
+          title: m.partyName,
+          format: 'text',
+        }),
+      ],
+    }),
+
+    buildSection({
+      id: 'partyName',
+      title: 'Safna meðmælum',
       children: [
         buildMultiField({
           title: '',
