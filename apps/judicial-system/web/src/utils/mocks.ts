@@ -13,7 +13,7 @@ import {
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 

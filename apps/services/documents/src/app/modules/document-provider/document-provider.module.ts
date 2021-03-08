@@ -10,6 +10,8 @@ import { Organisation } from './models/organisation.model'
 import { Provider } from './models/provider.model'
 import { TechnicalContact } from './models/technicalContact.model'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { Changelog } from './models/changelog.model'
+import { ChangelogController } from './controllers/changelog.controller'
 
 @Module({
   imports: [
@@ -19,12 +21,14 @@ import { SequelizeConfigService } from '../../sequelizeConfig.service'
       Helpdesk,
       Provider,
       TechnicalContact,
+      Changelog,
     ]),
   ],
   controllers: [
     OrganisationController,
     ProviderController,
     DocumentsInfraController,
+    ChangelogController,
   ],
   providers: [DocumentProviderService, SequelizeConfigService],
 })

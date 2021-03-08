@@ -15,6 +15,7 @@ import {
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
+import { BucketService } from '../bucket/bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -23,6 +24,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -30,6 +33,8 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
+    @Inject(BucketService)
+    private bucketService: BucketService,
   ) {}
 
   public async getProfun(): Promise<string> {
@@ -42,9 +47,10 @@ export class HealthInsuranceAPI {
     return res.ProfunType.radnumer_si ?? null
   }
 
-  // Apply Insurance without attachment
+  // Apply Health Insurance
   public async applyInsurance(
     appNumber: number,
+    bucketName: string,
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
     logger.info(`--- Starting applyInsurance api call ---`)
@@ -83,6 +89,8 @@ export class HealthInsuranceAPI {
         fyrrautgafulandkodi: inputObj.previousCountryCode,
         fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+        tryggingaretturfyrralandi:
+          inputObj.hasHealthInsuranceRightInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
     }
@@ -99,7 +107,11 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
-          innihald: '', // TODO: await this.bucketService.getFileContentAsBase64(filename),
+          // files are saved under 'application id' folder
+          innihald: await this.bucketService.getFileContentAsBase64(
+            `${inputObj.applicationNumber}/${filename}`,
+            bucketName,
+          ),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)
       }
@@ -176,6 +188,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {

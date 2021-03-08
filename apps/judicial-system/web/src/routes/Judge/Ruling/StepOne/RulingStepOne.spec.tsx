@@ -1,7 +1,6 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route } from 'react-router-dom'
 import { MockedProvider } from '@apollo/client/testing'
 
 import {
@@ -15,12 +14,15 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { RulingStepOne } from './RulingStepOne'
 
 describe('/domari-krafa/urskurdur', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_3' },
+    }))
 
     // Act and Assert
     render(
@@ -54,15 +56,9 @@ describe('/domari-krafa/urskurdur', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id_3`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -97,6 +93,10 @@ describe('/domari-krafa/urskurdur', () => {
 
   test('should not have a disabled continue button by default if case data is valid', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     /**
@@ -120,15 +120,9 @@ describe('/domari-krafa/urskurdur', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -142,6 +136,10 @@ describe('/domari-krafa/urskurdur', () => {
 
   test('should not display the isolation checkbox if the case decision is REJECTING', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -158,15 +156,9 @@ describe('/domari-krafa/urskurdur', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -187,6 +179,10 @@ describe('/domari-krafa/urskurdur', () => {
 
   test('should not display the isolation checkbox if the case decision is ACCEPTING_ALTERNATIVE_TRAVEL_BAN', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -203,15 +199,9 @@ describe('/domari-krafa/urskurdur', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.RULING_STEP_ONE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.RULING_STEP_ONE_ROUTE}/:id`}>
-              <RulingStepOne />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <RulingStepOne />
+        </UserProvider>
       </MockedProvider>,
     )
 
