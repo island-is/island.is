@@ -7,6 +7,7 @@ interface SubpageProps {
   details?: ReactNode
   paddingTop?: ResponsiveSpace
   mainPaddingBottom?: ResponsiveSpace
+  addMainLandmark?: boolean
 }
 
 export const SubpageLayout: FC<SubpageProps> = ({
@@ -14,9 +15,10 @@ export const SubpageLayout: FC<SubpageProps> = ({
   details,
   paddingTop,
   mainPaddingBottom,
+  addMainLandmark = false,
 }) => {
   return (
-    <Main>
+    <Main addLandmark={addMainLandmark}>
       <Box width="full" paddingTop={paddingTop}>
         <Box paddingBottom={mainPaddingBottom}>
           <GridContainer>{main}</GridContainer>
