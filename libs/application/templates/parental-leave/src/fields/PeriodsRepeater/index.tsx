@@ -21,22 +21,6 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   }
   const dobDate = new Date(dob)
 
-  // TODO: Leaving this here for dev testing,
-  // will remove once we have real data from
-  // the api
-  // const otherParentPeriods: Period[] = [
-  //   {
-  //     startDate: dob,
-  //     endDate: '2021-05-17T00:00:00.000Z',
-  //     ratio: 50,
-  //   },
-  //   {
-  //     startDate: '2021-03-13T00:00:00.000Z',
-  //     endDate: '2021-10-03T00:00:00.000Z',
-  //     ratio: 50,
-  //   },
-  // ]
-
   const editable = application.state === 'draft'
   return (
     <Box>
@@ -55,7 +39,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
           periods={formatPeriods(application.answers.periods as Period[])}
-          // TODO: Remove this as above
+          // TODO: Once we have the data, add the otherParentPeriods here.
           // periods={formatPeriods(
           //   application.answers.periods as Period[],
           //   editable ? otherParentPeriods : [],
