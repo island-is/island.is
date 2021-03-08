@@ -4,13 +4,15 @@ import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 
-// TODO: Optional prop to render buttons
 export const FieldAlertMessage: FC<FieldBaseProps> = ({
   application,
   field,
+  ...props
 }) => {
   const { title, description } = field
   const { formatMessage } = useLocale()
+
+  console.log('default value', (props as any).defaultValue)
 
   return (
     <Box marginBottom={5}>

@@ -44,14 +44,22 @@ export const ComplaintForm: Form = buildForm({
                   largeButtons: true,
                   width: 'half',
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'inCourtProceedingsAlert',
-                  title: errorCards.inCourtProceedingsTitle,
-                  description: errorCards.inCourtProceedingsDescription,
-                  condition: (formValue) =>
-                    formValue.inCourtProceedings === YES,
-                }),
+                buildCustomField(
+                  {
+                    component: 'FieldAlertMessage',
+                    id: 'inCourtProceedingsAlert',
+                    title: errorCards.inCourtProceedingsTitle,
+                    description: errorCards.inCourtProceedingsDescription,
+                    // TODO: The application system is not passing props down to custom components
+                    // Use defaultValue as a workaround until that gets fixed
+                    defaultValue: 'https://example.com/',
+                    condition: (formValue) =>
+                      formValue.inCourtProceedings === YES,
+                  },
+                  {
+                    url: 'https://example.com/',
+                  },
+                ),
               ],
             }),
           ],
@@ -188,7 +196,7 @@ export const ComplaintForm: Form = buildForm({
           id: 'applicant',
           title: section.applicant.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
               onBehalf === OnBehalf.MYSELF ||
               onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
@@ -311,7 +319,7 @@ export const ComplaintForm: Form = buildForm({
           id: 'commissions',
           title: section.commissions.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
             return onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
           },
           children: [
