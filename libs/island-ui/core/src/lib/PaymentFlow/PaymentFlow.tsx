@@ -106,11 +106,13 @@ export const frames = {
         </>
       }
     >
-      <Text variant="small" marginBottom={1}>
-        Greiðslukort
-      </Text>
       <Box marginBottom={2}>
-        <Input label="Nafn korthafa" placeholder="Nafnið þitt" name="nafn" />
+        <Input
+          size="sm"
+          label="Nafn korthafa"
+          placeholder="Nafnið þitt"
+          name="nafn"
+        />
       </Box>
       <Box marginBottom={2}>
         <Input
@@ -125,6 +127,7 @@ export const frames = {
         <Box display="flex" marginBottom={2}>
           <Box marginRight={1}>
             <Input
+              size="sm"
               label="CVC"
               placeholder="Öryggiskóði"
               name="cvc"
@@ -133,6 +136,7 @@ export const frames = {
           </Box>
           <Box marginLeft={1}>
             <Input
+              size="sm"
               label="Gildistími"
               placeholder="00/00"
               name="gildistimi"
