@@ -10,7 +10,6 @@ export interface Status {
 interface FileType {
   name: string
   key: string
-  url: string
 }
 
 export interface FormerInsurance {
