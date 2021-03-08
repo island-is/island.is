@@ -11,18 +11,18 @@ export class AuthService {
   static RECYCLINGFUND = []
   static userListEnv: [User] = JSON.parse(environment.skilavottord.userList)
   constructor() {
-    console.log(
-      '-userListEnv---->' + JSON.stringify(AuthService.userListEnv, null, 2),
-    )
+    // console.log(
+    //   '-userListEnv---->' + JSON.stringify(AuthService.userListEnv, null, 2),
+    // )
     if (!AuthService.instance) {
       AuthService.instance++
       AuthService.loadArray()
     }
-    console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
-    console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
-    console.log(
-      '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
-    )
+    // console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
+    // console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
+    // console.log(
+    //   '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
+    // )
   }
   getRole(user: AuthUser): Role {
     if (AuthService.RECYCLINGCOMPANY.includes(user.nationalId)) {
@@ -63,11 +63,11 @@ export class AuthService {
         AuthService.RECYCLINGCOMPANY.push(user.nationalId)
       }
     })
-    console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
-    console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
-    console.log(
-      '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
-    )
+    // console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
+    // console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
+    // console.log(
+    //   '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
+    // )
   }
 
   // TODO test
@@ -76,12 +76,12 @@ export class AuthService {
       (user) => nationalId === user.nationalId,
     )
     if (userFound) {
-      console.log(
-        'getPatnerId:user found,partnerId(' + userFound.partnerId + ')',
-      )
+      // console.log(
+      //   'getPatnerId:user found,partnerId(' + userFound.partnerId + ')',
+      // )
       return userFound.partnerId
     } else {
-      console.log('getPatnerId: user.partnerId not found return null')
+      // console.log('getPatnerId: user.partnerId not found return null')
       return null
     }
   }
