@@ -40,7 +40,6 @@ const HealthInsuranceSchema = z.object({
   }),
   children: z.string().nonempty(),
   hasAdditionalInfo: z.enum([YES, NO]),
-  additionalFiles: z.array(FileSchema),
   additionalRemarks: z.string().optional(),
   confirmCorrectInfo: z.boolean().refine((v) => v),
 })
