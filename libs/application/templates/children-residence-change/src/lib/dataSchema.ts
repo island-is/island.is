@@ -2,6 +2,7 @@ import { error } from './messages/index'
 import * as z from 'zod'
 
 export const dataSchema = z.object({
+  useMocks: z.enum(['yes', 'no']).optional(),
   approveExternalData: z.boolean().refine((v) => v, {
     message: error.validation.approveChildrenResidenceChange.defaultMessage,
   }),
@@ -9,9 +10,10 @@ export const dataSchema = z.object({
     .array(z.string())
     .min(1, { message: error.validation.selectChild.defaultMessage }),
   email: z.string().email(error.validation.invalidEmail.defaultMessage),
-  phoneNumber: z
-    .string()
-    .min(7, { message: error.validation.invalidPhoneNumber.defaultMessage }),
+  phoneNumber: z.string().min(7, {
+    message: error.validation.invalidPhoneNumber.defaultMessage,
+  }),
+  residenceChangeReason: z.string().optional(),
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
@@ -21,6 +23,9 @@ export const dataSchema = z.object({
   //   .refine((v) => v, {
   //     message: 'Velja þarf valmöguleika',
   //   }),
+  selectDuration: z.enum(['temporary', 'permanent']).refine((v) => v, {
+    message: error.validation.interview.defaultMessage,
+  }),
   interview: z.enum(['yes', 'no']).refine((v) => v, {
     message: error.validation.interview.defaultMessage,
   }),
@@ -31,3 +36,5 @@ export const dataSchema = z.object({
     .array(z.string())
     .length(3, error.validation.approveTerms.defaultMessage),
 })
+
+export type answersSchema = z.infer<typeof dataSchema>

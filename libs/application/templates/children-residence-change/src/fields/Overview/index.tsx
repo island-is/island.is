@@ -26,8 +26,12 @@ import {
   FileSignatureStatus,
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
-
-const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
+import { CRCApplication } from '../../types'
+interface Props extends FieldBaseProps {
+  application: CRCApplication
+}
+const Overview = ({ application, setBeforeSubmitCallback }: Props) => {
+  const { answers } = application
   const [fileSignatureState, dispatchFileSignature] = useReducer(
     fileSignatureReducer,
     initialFileSignatureState,
@@ -35,8 +39,8 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
-  const answers = extractAnswersFromApplication(application)
-  const children = answers.selectedChildren
+  // const answers = extractAnswersFromApplication(application)
+  const children = answers.selectChild
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
