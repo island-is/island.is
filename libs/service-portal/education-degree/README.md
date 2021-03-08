@@ -1,4 +1,4 @@
-# service-portal-education-degree
+# Service Portal Education Degree
 
 This library was generated with [Nx](https://nx.dev).
 
