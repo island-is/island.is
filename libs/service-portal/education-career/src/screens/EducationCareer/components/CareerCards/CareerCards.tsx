@@ -1,23 +1,11 @@
 import React, { ReactNode } from 'react'
-import { MessageDescriptor } from 'react-intl'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { gql, useQuery } from '@apollo/client'
-import { Query, License } from '@island.is/api/schema'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  SkeletonLoader,
-  Text,
-  Table as T,
-} from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as styles from './CareerCard.treat'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
 const CareerCards = () => {
-  useNamespaces('sp.driving-license')
   return (
     <ActionCard
       eyebrow="Menntamálastofnun"

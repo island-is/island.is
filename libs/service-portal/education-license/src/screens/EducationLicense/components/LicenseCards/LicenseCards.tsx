@@ -1,17 +1,8 @@
 import React, { ReactNode } from 'react'
-import { MessageDescriptor } from 'react-intl'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
-import { Query, License } from '@island.is/api/schema'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  SkeletonLoader,
-  Text,
-  Table as T,
-} from '@island.is/island-ui/core'
+import { Query } from '@island.is/api/schema'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as styles from './LicenseCard.treat'
 
 const educationLicenseQuery = gql`
@@ -26,8 +17,7 @@ const educationLicenseQuery = gql`
 `
 
 const LicenseCards = () => {
-  const { data, loading } = useQuery<Query>(educationLicenseQuery)
-  useNamespaces('sp.driving-license')
+  const { data } = useQuery<Query>(educationLicenseQuery)
   return (
     <>
       {data?.educationLicense.map((license) => (
@@ -85,23 +75,6 @@ const LicenseCards = () => {
     </>
   )
 }
-
-const LoadingPlaceholder = () => (
-  <T.Row>
-    <T.Data>
-      <SkeletonLoader />
-    </T.Data>
-    <T.Data>
-      <SkeletonLoader />
-    </T.Data>
-    <T.Data>
-      <SkeletonLoader />
-    </T.Data>
-    <T.Data>
-      <SkeletonLoader />
-    </T.Data>
-  </T.Row>
-)
 
 interface ActionCard {
   eyebrow?: string

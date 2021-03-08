@@ -1,7 +1,5 @@
 import React from 'react'
-import { MessageDescriptor } from 'react-intl'
 
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query, License } from '@island.is/api/schema'
 import {
@@ -25,7 +23,6 @@ const educationLicenseQuery = gql`
 
 const LicenseTable = () => {
   const { data, loading } = useQuery<Query>(educationLicenseQuery)
-  useNamespaces('sp.driving-license')
   return (
     <>
       <T.Table>
