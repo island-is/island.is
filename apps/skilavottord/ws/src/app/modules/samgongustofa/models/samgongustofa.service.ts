@@ -18,7 +18,7 @@ export class SamgongustofaService {
   async getVehicleInformation(nationalId: string) {
     try {
       this.logger.info(
-        `---- Starting getVehicleInformation call on ${nationalId} ----`,
+        'Starting getVehicleInformation call on ${nationalId}'
       )
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
