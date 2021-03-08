@@ -60,10 +60,6 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
       href: n('linkDesignSystem'),
       title: n('linkDesignSystemText'),
     },
-    {
-      href: n('linkContentPolicy'),
-      title: n('linkContentPolicyText'),
-    },
   ]
 
   return (
