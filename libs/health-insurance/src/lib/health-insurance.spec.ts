@@ -87,7 +87,7 @@ describe('healthInsuranceTest', () => {
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
       expect(
-        await hapi.applyInsurance(appNumber, bucketName, inputs),
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
       ).toStrictEqual(vistaskjal)
     })
     it('apply Health Insurance application return true with comment', async () => {
@@ -109,7 +109,7 @@ describe('healthInsuranceTest', () => {
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
       expect(
-        await hapi.applyInsurance(appNumber, bucketName, inputs),
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
       ).toStrictEqual(vistaskjal)
     })
 
@@ -119,7 +119,7 @@ describe('healthInsuranceTest', () => {
       })
 
       expect(async () => {
-        await hapi.applyInsurance(570, bucketName, inputs)
+        await hapi.applyInsurance(570, bucketName, [], inputs)
       }).rejects.toThrowError('Some unexpected error')
     })
 
@@ -148,7 +148,7 @@ describe('healthInsuranceTest', () => {
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
       expect(
-        await hapi.applyInsurance(appNumber, bucketName, inputs),
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
       ).toStrictEqual(vistaskjal)
     })
 
@@ -169,7 +169,7 @@ describe('healthInsuranceTest', () => {
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
       expect(
-        await hapi.applyInsurance(appNumber, bucketName, inputs),
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
       ).toStrictEqual(vistaskjal)
     })
   })
