@@ -255,24 +255,26 @@ const Layout: NextComponentType<
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
-          <AlertBanner
-            title={alertBannerContent.title}
-            description={alertBannerContent.description}
-            link={{
-              href: alertBannerContent.link.url,
-              title: alertBannerContent.link.text,
-            }}
-            variant={alertBannerContent.bannerVariant as AlertBannerVariants}
-            dismissable={alertBannerContent.isDismissable}
-            onDismiss={() => {
-              if (alertBannerContent.dismissedForDays !== 0) {
-                Cookies.set(alertBannerId, 'hide', {
-                  expires: alertBannerContent.dismissedForDays,
-                })
-              }
-            }}
-            dismissLabel={n('alertBannerDismissLabel', 'Loka')}
-          />
+          <section aria-label={n('alertBannerTitle', 'Tilkynning')}>
+            <AlertBanner
+              title={alertBannerContent.title}
+              description={alertBannerContent.description}
+              link={{
+                href: alertBannerContent.link.url,
+                title: alertBannerContent.link.text,
+              }}
+              variant={alertBannerContent.bannerVariant as AlertBannerVariants}
+              dismissable={alertBannerContent.isDismissable}
+              onDismiss={() => {
+                if (alertBannerContent.dismissedForDays !== 0) {
+                  Cookies.set(alertBannerId, 'hide', {
+                    expires: alertBannerContent.dismissedForDays,
+                  })
+                }
+              }}
+              dismissLabel={n('alertBannerDismissLabel', 'Loka')}
+            />
+          </section>
         )}
         <PageLoader />
         <MenuTabsContext.Provider
