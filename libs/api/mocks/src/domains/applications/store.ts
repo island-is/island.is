@@ -24,5 +24,15 @@ export const store = createStore(() => {
       familyRelation: 'child',
     },
   ]
-  return { applications, familyMembers }
+
+  const userCompanies = [
+    {
+      ErProkuruhafi: '1',
+      ErStjorn: '0',
+      Kennitala: '0000000000',
+      Nafn: 'Tester Testson',
+      StadaAdila: 'Standandi',
+    },
+  ]
+  return { applications, familyMembers, userCompanies }
 })
