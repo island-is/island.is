@@ -22,6 +22,17 @@ export const resolvers: Resolvers = {
     nationalRegistryFamily: () => {
       return store.familyMembers
     },
+    rskGetCurrentUserCompanies: () => {
+      return [
+        {
+          ErProkuruhafi: '1',
+          ErStjorn: '0',
+          Kennitala: '0000000000',
+          Nafn: 'Tester Testson',
+          StadaAdila: 'Standandi',
+        },
+      ]
+    },
   },
   Mutation: {
     createApplication: (parent, args) => {
