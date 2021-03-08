@@ -13,7 +13,7 @@ export const generateApplicationEmail: EmailTemplateGenerator = (props) => {
     options: { locale },
   } = props
   const recpient =
-    process.env.INSTITUTION_APPLICATION_RECIPIENT || 'olafur@sendiradid.is'
+    process.env.INSTITUTION_APPLICATION_RECIPIENT || 'development@island.is'
 
   const institutionName = get(application.answers, 'applicant.institution')
 
