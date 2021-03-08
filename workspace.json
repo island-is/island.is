@@ -4639,9 +4639,9 @@
             "jestConfig": "apps/services/auth-admin-api/jest.config.js",
             "passWithNoTests": true
           }
-        }
-      },
-      "docker-express": {}
+        },
+        "docker-express": {}
+      }
     },
     "services-auth-api": {
       "root": "apps/services/auth-api",
