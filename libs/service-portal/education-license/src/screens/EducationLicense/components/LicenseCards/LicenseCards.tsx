@@ -20,8 +20,8 @@ const LicenseCards = () => {
   const { data } = useQuery<Query>(educationLicenseQuery)
   return (
     <>
-      {data?.educationLicense.map((license) => (
-        <Box marginBottom={3}>
+      {data?.educationLicense.map((license, index) => (
+        <Box marginBottom={3} key={index}>
           <ActionCard
             eyebrow={license.school}
             imgPlaceholder={'MRN'}
@@ -35,43 +35,6 @@ const LicenseCards = () => {
           />
         </Box>
       ))}
-      {data?.educationLicense.map((license) => (
-        <Box marginBottom={3}>
-          <ActionCard
-            eyebrow={license.school}
-            imgPlaceholder={'HÍ'}
-            title={`Leyfisbréf - ${license.programme}`}
-            description={license.date}
-            CTA={
-              <Button variant="text" icon="download" iconType="outline" nowrap>
-                Sækja skjal
-              </Button>
-            }
-          />
-        </Box>
-      ))}
-      {data?.educationLicense.map((license) => (
-        <Box marginBottom={3}>
-          <ActionCard
-            title={`Leyfisbréf - ${license.programme}`}
-            description={license.date}
-            CTA={
-              <Button variant="text" icon="download" iconType="outline" nowrap>
-                Sækja skjal
-              </Button>
-            }
-          />
-        </Box>
-      ))}
-      {data?.educationLicense.length === 0 && (
-        <Box marginTop={2}>
-          <AlertMessage
-            type="info"
-            title="Engin leyfisbréf fundust"
-            message="Ef eitthvað er í ólagi hér er gott að hafa samband við leyfisbref@leyfisbref.is"
-          />
-        </Box>
-      )}
     </>
   )
 }
