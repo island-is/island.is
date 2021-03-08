@@ -13,8 +13,8 @@ export interface RSKServiceOptions {
   ttl?: number
 }
 
-interface RSKCompaniesResponse {
-  MemberCompanies: CompanyRegistryMember[]
+export interface RSKCompaniesResponse {
+  MemberCompanies?: CompanyRegistryMember[]
 }
 
 export interface CompanyRegistryMember {
@@ -27,7 +27,7 @@ export interface CompanyRegistryMember {
 }
 
 export class RSKService extends RESTDataSource {
-  constructor(
+  constructor (
     @Inject(RSK_OPTIONS)
     private readonly options: RSKServiceOptions,
     @Inject(LOGGER_PROVIDER)
@@ -39,7 +39,7 @@ export class RSKService extends RESTDataSource {
     this.initialize({} as DataSourceConfig<any>)
   }
 
-  willSendRequest(request: RequestOptions) {
+  willSendRequest (request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set(
       'Authorization',
@@ -49,19 +49,17 @@ export class RSKService extends RESTDataSource {
     )
   }
 
-  async getCompaniesByNationalId(
+  async getCompaniesByNationalId (
     nationalId: string,
   ): Promise<CompanyRegistryMember[]> {
     try {
-      this.logger.info('Getting companies by national id', { nationalId }) // TODO: Get green light on logging this
       const response = await this.get<RSKCompaniesResponse | null>(
         `${nationalId}/companies`,
         {
           cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
         },
       )
-      console.log('response', response)
-      return response ? response.MemberCompanies : []
+      return response?.MemberCompanies ?? []
     } catch (err) {
       this.logger.error(err)
       throw new Error(
