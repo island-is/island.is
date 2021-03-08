@@ -255,28 +255,31 @@ const Layout: NextComponentType<
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
-          <AlertBanner
-            title={alertBannerContent.title}
-            description={alertBannerContent.description}
-            link={{
-              ...(!!alertBannerContent.link &&
-                !!alertBannerContent.linkTitle && {
-                  href: linkResolver(alertBannerContent.link.type as LinkType, [
-                    alertBannerContent.link.slug,
-                  ]).href,
-                  title: alertBannerContent.linkTitle,
-                }),
-            }}
-            variant={alertBannerContent.bannerVariant as AlertBannerVariants}
-            dismissable={alertBannerContent.isDismissable}
-            onDismiss={() => {
-              if (alertBannerContent.dismissedForDays !== 0) {
-                Cookies.set(alertBannerId, 'hide', {
-                  expires: alertBannerContent.dismissedForDays,
-                })
-              }
-            }}
-          />
+          <section aria-label={n('alertBannerTitle', 'Tilkynning')}>
+            <AlertBanner
+              title={alertBannerContent.title}
+              description={alertBannerContent.description}
+              link={{
+                ...(!!alertBannerContent.link &&
+                  !!alertBannerContent.linkTitle && {
+                    href: linkResolver(
+                      alertBannerContent.link.type as LinkType,
+                      [alertBannerContent.link.slug],
+                    ).href,
+                    title: alertBannerContent.linkTitle,
+                  }),
+              }}
+              variant={alertBannerContent.bannerVariant as AlertBannerVariants}
+              dismissable={alertBannerContent.isDismissable}
+              onDismiss={() => {
+                if (alertBannerContent.dismissedForDays !== 0) {
+                  Cookies.set(alertBannerId, 'hide', {
+                    expires: alertBannerContent.dismissedForDays,
+                  })
+                }
+              }}
+            />
+          </section>
         )}
         <PageLoader />
         <MenuTabsContext.Provider
