@@ -88,7 +88,7 @@ export const transformApplicationToHealthInsuranceDTO = (
   }
 
   let bucketName = ''
-  let attachmentNames = []
+  const attachmentNames = []
   if (arrFiles.length > 0) {
     try {
       const arrUrl: string[] = Object.values(application.attachments) ?? []
