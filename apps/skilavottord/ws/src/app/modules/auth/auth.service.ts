@@ -20,7 +20,9 @@ export class AuthService {
     }
     console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
     console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
-    console.log('-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY))
+    console.log(
+      '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
+    )
   }
   getRole(user: AuthUser): Role {
     if (AuthService.RECYCLINGCOMPANY.includes(user.nationalId)) {
@@ -63,7 +65,9 @@ export class AuthService {
     })
     console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
     console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
-    console.log('-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY))
+    console.log(
+      '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
+    )
   }
 
   // TODO test
