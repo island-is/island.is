@@ -27,7 +27,12 @@ export const FieldAlertMessage: FC<FieldBaseProps> = ({
               {formatText(description, application, formatMessage)}{' '}
               {buttonUrl && (
                 <Link href={buttonUrl}>
-                  <Button variant="text" icon="open" size="small">
+                  <Button
+                    variant="text"
+                    icon="open"
+                    iconType="outline"
+                    size="small"
+                  >
                     {formatText(
                       sharedFields.moreInfoButtonLabel,
                       application,

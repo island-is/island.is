@@ -84,4 +84,14 @@ export const sharedFields = defineMessages({
     defaultMessage: 'Nánari upplýsingar hér',
     description: 'More Info Button Label',
   },
+  yes: {
+    id: 'dpac.application:sharedFields.yes',
+    defaultMessage: 'Já',
+    description: 'Used to give an affirmative response',
+  },
+  no: {
+    id: 'dpac.application:sharedFields.no',
+    defaultMessage: 'Nei',
+    description: 'Used to give a negative response',
+  },
 })

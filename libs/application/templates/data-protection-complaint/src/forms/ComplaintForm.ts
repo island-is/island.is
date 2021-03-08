@@ -13,15 +13,22 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, YES } from '../shared'
-import { section, delimitation, errorCards, info } from '../lib/messages'
+import {
+  section,
+  delimitation,
+  errorCards,
+  info,
+  application,
+  sharedFields,
+} from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
 
-const yesOption = { value: 'yes', label: 'Já' }
-const noOption = { value: 'no', label: 'Nei' }
+const yesOption = { value: 'yes', label: sharedFields.yes }
+const noOption = { value: 'no', label: sharedFields.no }
 
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
-  title: 'Atvinnuleysisbætur',
+  title: application.name,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
