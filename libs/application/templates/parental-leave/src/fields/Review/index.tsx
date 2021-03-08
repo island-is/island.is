@@ -101,19 +101,21 @@ const Review: FC<ReviewScreenProps> = ({
   }
   const dobDate = new Date(dob)
 
-  // TODO: This will also come from somewhere in the external data
-  const otherParentPeriods: Period[] = [
-    {
-      startDate: dob,
-      endDate: '2021-05-17T00:00:00.000Z',
-      ratio: 50,
-    },
-    {
-      startDate: '2021-03-13T00:00:00.000Z',
-      endDate: '2021-10-03T00:00:00.000Z',
-      ratio: 50,
-    },
-  ]
+  // TODO: Leaving this here for dev testing,
+  // will remove once we have real data from
+  // the api
+  // const otherParentPeriods: Period[] = [
+  //   {
+  //     startDate: dob,
+  //     endDate: '2021-05-17T00:00:00.000Z',
+  //     ratio: 50,
+  //   },
+  //   {
+  //     startDate: '2021-03-13T00:00:00.000Z',
+  //     endDate: '2021-10-03T00:00:00.000Z',
+  //     ratio: 50,
+  //   },
+  // ]
 
   return (
     <div>
@@ -478,10 +480,12 @@ const Review: FC<ReviewScreenProps> = ({
                 titleSmall={formatMessage(
                   parentalLeaveFormMessages.shared.dateOfBirthTitle,
                 )}
-                periods={formatPeriods(
-                  application.answers.periods as Period[],
-                  otherParentPeriods,
-                )}
+                // TODO: Remove this as above
+                //  periods={formatPeriods(
+                //   application.answers.periods as Period[],
+                //   otherParentPeriods,
+                // )}
+                periods={formatPeriods(application.answers.periods as Period[])}
               />
               {editable && (
                 <Box paddingTop={3}>
