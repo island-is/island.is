@@ -1,5 +1,6 @@
 import { style, globalStyle } from 'treat'
 import { themeUtils, theme } from '@island.is/island-ui/theme'
+import { relative } from 'path'
 
 export const wrapper = style({
   position: 'relative',
@@ -17,12 +18,20 @@ export const wrapper = style({
 export const item = style({
   display: 'flex',
   minWidth: '100%',
-  paddingRight: 24,
   flexFlow: 'column',
 })
 
 globalStyle(`${wrapper} .alice-carousel__wrapper`, {
   overflow: 'visible',
+  position: 'relative',
+  width: `calc(100% + 16px)`,
+  left: -16,
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: `calc(100% + 24px)`,
+      left: -24,
+    },
+  }),
 })
 
 globalStyle(`${wrapper} .alice-carousel__dots`, {
