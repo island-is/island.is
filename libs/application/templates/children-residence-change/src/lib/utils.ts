@@ -44,9 +44,9 @@ export const extractAnswersFromApplication = (application: Application) => {
     selectedDuration: application.answers.selectDuration as string[],
     reason: application.answers.residenceChangeReason as string,
     interview: application.answers.interview as 'yes' | 'no',
-    contactInformation: {
-      email: application.answers.email,
-      phoneNumber: application.answers.phoneNumber,
+    parentA: {
+      email: (application.answers.parentA as FormValue).email,
+      phoneNumber: (application.answers.parentA as FormValue).phoneNumber,
     },
   }
 }

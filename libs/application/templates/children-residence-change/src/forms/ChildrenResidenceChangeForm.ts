@@ -11,9 +11,10 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
+  buildTextField,
+  Application,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
-import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -111,11 +112,31 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'contact',
           title: m.contactInfo.general.sectionTitle,
           children: [
-            buildCustomField({
+            buildMultiField({
               id: 'contactInfo',
               title: m.contactInfo.general.pageTitle,
-              childInputIds: contactInfoIds,
-              component: 'ContactInfo',
+              description: m.contactInfo.general.description,
+              children: [
+                buildTextField({
+                  id: 'parentA.email',
+                  title: m.contactInfo.inputs.emailLabel,
+                  variant: 'email',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      email?: string
+                    })?.email,
+                }),
+                buildTextField({
+                  id: 'parentA.phoneNumber',
+                  title: m.contactInfo.inputs.phoneNumberLabel,
+                  variant: 'tel',
+                  format: '###-####',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    })?.mobilePhoneNumber,
+                }),
+              ],
             }),
           ],
         }),
