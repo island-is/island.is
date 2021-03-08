@@ -85,18 +85,18 @@ export class AuthService {
 
 // TODO implement in getPartnerId
 // if (
-//   currUser.nationalId === '1811673949' ||
-//   currUser.nationalId === '2405843609' ||
-//   currUser.nationalId === '2811638099'
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111'
 // ) {
 //   currUser.partnerId = '104' // This is partner Id for Hringras, to be fixed later
 // } else if (
-//   currUser.nationalId === '2211692989' ||
-//   currUser.nationalId === '2808714009' ||
-//   currUser.nationalId === '3108654949' ||
-//   currUser.nationalId === '2512942099' ||
-//   currUser.nationalId === '0306942609' ||
-//   currUser.nationalId === '1207952879'
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111'
 // ) {
 //   currUser.partnerId = '221' // This is partner Id for Fura, to be fixed later
 // } else if (
