@@ -1,5 +1,5 @@
 {
-  "extends": "../../../.eslintrc",
+  "extends": ["../../../../.eslintrc.react.json"],
   "rules": {},
   "ignorePatterns": ["!**/*"]
 }
