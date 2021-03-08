@@ -89,28 +89,6 @@ const Review: FC<ReviewScreenProps> = ({
     [application],
   )
 
-  const dob = getExpectedDateOfBirth(application)
-  const { data, error, loading } = useQuery(getEstimatedPayments, {
-    variables: {
-      input: {
-        dateOfBirth: dob,
-        period: [
-          {
-            from: '2021-01-01',
-            to: '2021-01-01',
-            ratio: 100,
-            approved: true,
-            paid: true,
-          },
-        ],
-      },
-    },
-  })
-  if (!dob) {
-    return null
-  }
-  const dobDate = new Date(dob)
-
   const { data: pensionFundData } = useQuery<PensionFundsQuery>(GetPensionFunds)
   const pensionFundOptions =
     pensionFundData?.getPensionFunds.map(({ id, name }) => ({
@@ -133,6 +111,28 @@ const Review: FC<ReviewScreenProps> = ({
       label: name,
       value: id,
     })) ?? []
+
+  const dob = getExpectedDateOfBirth(application)
+  const { data, error, loading } = useQuery(getEstimatedPayments, {
+    variables: {
+      input: {
+        dateOfBirth: dob,
+        period: [
+          {
+            from: '2021-01-01',
+            to: '2021-01-01',
+            ratio: 100,
+            approved: true,
+            paid: true,
+          },
+        ],
+      },
+    },
+  })
+  if (!dob) {
+    return null
+  }
+  const dobDate = new Date(dob)
 
   return (
     <div>
