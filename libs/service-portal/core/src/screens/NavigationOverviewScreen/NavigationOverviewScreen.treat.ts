@@ -1,4 +1,4 @@
-import { themeUtils } from 'libs/island-ui/theme/src'
+import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from 'treat'
 
 export const image = style({
