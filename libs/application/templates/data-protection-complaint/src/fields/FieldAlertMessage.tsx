@@ -1,18 +1,20 @@
-import { AlertMessage } from '@island.is/island-ui/core'
+import { AlertMessage, Button, Link } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
+import { sharedFields } from '../lib/messages'
 
 export const FieldAlertMessage: FC<FieldBaseProps> = ({
   application,
   field,
-  ...props
 }) => {
   const { title, description } = field
   const { formatMessage } = useLocale()
 
-  console.log('default value', (props as any).defaultValue)
+  // TODO: This should be passed down as a custom prop
+  // but support is not available in the application system atm
+  const buttonUrl = field.defaultValue as string | undefined
 
   return (
     <Box marginBottom={5}>
@@ -20,9 +22,22 @@ export const FieldAlertMessage: FC<FieldBaseProps> = ({
         type="info"
         title={formatText(title, application, formatMessage)}
         message={
-          description
-            ? formatText(description, application, formatMessage)
-            : undefined
+          description ? (
+            <>
+              {formatText(description, application, formatMessage)}{' '}
+              {buttonUrl && (
+                <Link href={buttonUrl}>
+                  <Button variant="text" icon="open" size="small">
+                    {formatText(
+                      sharedFields.moreInfoButtonLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Button>
+                </Link>
+              )}
+            </>
+          ) : undefined
         }
       />
     </Box>

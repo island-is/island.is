@@ -77,3 +77,11 @@ export const section = defineMessages({
     description: 'Application Received',
   },
 })
+
+export const sharedFields = defineMessages({
+  moreInfoButtonLabel: {
+    id: 'dpac.application:sharedFields.moreInfoButtonLabel',
+    defaultMessage: 'Nánari upplýsingar hér',
+    description: 'More Info Button Label',
+  },
+})
