@@ -33,22 +33,11 @@ import { NO, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
-interface SelectItem {
-  id: string
-  name: string
-}
-
-type UnionQuery = {
-  getUnions: Array<SelectItem>
-}
-
-type PensionFundsQuery = {
-  getPensionFunds: Array<SelectItem>
-}
-
-type PrivatePensionFundsQuery = {
-  getPrivatePensionFunds: Array<SelectItem>
-}
+import {
+  UnionQuery,
+  PensionFundsQuery,
+  PrivatePensionFundsQuery,
+} from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',

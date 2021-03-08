@@ -30,12 +30,22 @@ import {
   getExpectedDateOfBirth,
   getOtherParentOptions,
 } from '../../parentalLeaveUtils'
-import { Period } from '../../types'
+import {
+  PensionFundsQuery,
+  Period,
+  PrivatePensionFundsQuery,
+  UnionQuery,
+} from '../../types'
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO } from '../../constants'
+import {
+  GetPensionFunds,
+  GetPrivatePensionFunds,
+  GetUnions,
+} from '../../graphql/queries'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
@@ -100,6 +110,29 @@ const Review: FC<ReviewScreenProps> = ({
     return null
   }
   const dobDate = new Date(dob)
+
+  const { data: pensionFundData } = useQuery<PensionFundsQuery>(GetPensionFunds)
+  const pensionFundOptions =
+    pensionFundData?.getPensionFunds.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    })) ?? []
+
+  const { data: privatePensionFundData } = useQuery<PrivatePensionFundsQuery>(
+    GetPrivatePensionFunds,
+  )
+  const privatePensionFundOptions =
+    privatePensionFundData?.getPrivatePensionFunds.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    })) ?? []
+
+  const { data: unionData } = useQuery<UnionQuery>(GetUnions)
+  const unionOptions =
+    unionData?.getUnions.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    })) ?? []
 
   return (
     <div>
@@ -272,7 +305,7 @@ const Review: FC<ReviewScreenProps> = ({
                       name="payments.pensionFund"
                       disabled={false}
                       id="payments.pensionFund"
-                      options={[{ label: 'TODO', value: 'todo' }]}
+                      options={pensionFundOptions}
                     />
                   ) : (
                     <Text>
@@ -294,7 +327,7 @@ const Review: FC<ReviewScreenProps> = ({
                       name="payments.union"
                       disabled={false}
                       id="payments.union"
-                      options={[{ label: 'TODO', value: 'todo' }]}
+                      options={unionOptions}
                     />
                   ) : (
                     <Text>
@@ -370,7 +403,7 @@ const Review: FC<ReviewScreenProps> = ({
                           name="payments.pensionFund"
                           disabled={false}
                           id="payments.pensionFund"
-                          options={[{ label: 'TODO', value: 'todo' }]}
+                          options={privatePensionFundOptions}
                         />
                       ) : (
                         <Text>
@@ -392,7 +425,7 @@ const Review: FC<ReviewScreenProps> = ({
                           name="payments.union"
                           disabled={false}
                           id="payments.union"
-                          options={[{ label: 'TODO', value: 'todo' }]}
+                          options={unionOptions}
                         />
                       ) : (
                         <Text>

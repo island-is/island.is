@@ -20,3 +20,20 @@ export interface Payment {
     paid: boolean
   }
 }
+
+interface SelectItem {
+  id: string
+  name: string
+}
+
+export type UnionQuery = {
+  getUnions: Array<SelectItem>
+}
+
+export type PensionFundsQuery = {
+  getPensionFunds: Array<SelectItem>
+}
+
+export type PrivatePensionFundsQuery = {
+  getPrivatePensionFunds: Array<SelectItem>
+}
