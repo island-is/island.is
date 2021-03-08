@@ -20,7 +20,6 @@ import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
 import {
   Header,
-  Main,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -296,9 +295,7 @@ const Layout: NextComponentType<
               />
             </ColorSchemeContext.Provider>
           )}
-          <Main>
-            {wrapContent ? <Box width="full">{children}</Box> : children}
-          </Main>
+          {wrapContent ? <Box width="full">{children}</Box> : children}
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
