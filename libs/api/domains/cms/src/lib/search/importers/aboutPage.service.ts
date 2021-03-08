@@ -22,7 +22,7 @@ interface ProcessedData {
 @Injectable()
 export class AboutPageSyncService
   implements CmsSyncProvider<IPage | IAboutSubPage, ProcessedData> {
-  processSyncData (
+  processSyncData(
     entries: processSyncDataInput<IPage | IAboutSubPage>,
   ): ProcessedData {
     // only process pages that we consider not to be empty and dont have circular structures
@@ -57,7 +57,7 @@ export class AboutPageSyncService
     return { aboutPages, aboutSubPages }
   }
 
-  doMapping (entries: ProcessedData) {
+  doMapping(entries: ProcessedData) {
     logger.info('Mapping about page', { count: entries.aboutPages.length })
 
     return entries.aboutPages
