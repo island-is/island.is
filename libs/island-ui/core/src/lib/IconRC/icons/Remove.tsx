@@ -9,7 +9,7 @@ const SvgRemove = ({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="remove_svg__ionicon"
+      className="Remove_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
