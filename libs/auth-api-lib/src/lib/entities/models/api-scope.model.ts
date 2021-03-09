@@ -61,53 +61,53 @@ export class ApiScope extends Model<ApiScope> {
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  grantToLegalGuardians?: boolean
+  grantToLegalGuardians!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  grantToProcuringHolders?: boolean
+  grantToProcuringHolders!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  allowExplicitDelegationGrant?: boolean
+  allowExplicitDelegationGrant!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  automaticDelegationGrant?: boolean
+  automaticDelegationGrant!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  alsoForDelegatedUser?: boolean
+  alsoForDelegatedUser!: boolean
 
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()
