@@ -26,7 +26,6 @@ export class GrantTypeService extends BaseService {
 
   /** Create a Grant Type  */
   static async create(grantType: GrantTypeDTO): Promise<GrantType | null> {
-    console.log(grantType)
     return BaseService.POST(`grants`, grantType)
   }
 
