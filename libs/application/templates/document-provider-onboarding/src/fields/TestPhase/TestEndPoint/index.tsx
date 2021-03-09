@@ -46,8 +46,21 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   const [updateEndpoint, { loading }] = useMutation(
     updateTestEndpointMutation,
     {
-      onError: () =>
-        setTestEndPointError(m.testEndPointErrorMessage.defaultMessage),
+      onError: (error) => {
+        if (error.message.includes('Unique key violation')) {
+          setTestEndPointError(
+            formatText(
+              m.testEndPointErrorMessageUniqueKeyViolation,
+              application,
+              formatMessage,
+            ),
+          )
+        } else {
+          setTestEndPointError(
+            formatText(m.testEndPointErrorMessage, application, formatMessage),
+          )
+        }
+      },
     },
   )
 
@@ -75,9 +88,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-      if (!result) {
-        setTestEndPointError(m.testEndPointErrorMessage.defaultMessage)
-      } else {
+      if (result) {
         setendPointVariables([
           {
             id: '1',

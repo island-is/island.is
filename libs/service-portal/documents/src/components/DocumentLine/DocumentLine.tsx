@@ -36,7 +36,7 @@ const isIosDevice = () => {
   )
 }
 
-// Only used for none ios devices
+// Only used for non ios devices
 const openPdfInNewTab = (url: string, fileName: string) => {
   if (typeof window === 'undefined') {
     return

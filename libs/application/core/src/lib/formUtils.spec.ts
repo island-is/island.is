@@ -130,7 +130,7 @@ describe('formatText', () => {
     state: '',
     typeId: ApplicationTypes.EXAMPLE,
   }
-  const formatMessage: (descriptor: StaticText, values?: any) => string = (
+  const formatMessage: (descriptor: StaticText, values?: unknown) => string = (
     descriptor,
   ) => descriptor as string
   it('should return plain text as is', () => {
@@ -153,6 +153,38 @@ describe('formatText', () => {
         formatMessage,
       ),
     ).toBe('Oh you are awesome too!')
+  })
+  it('should pass values of StaticText object into formatMessage', () => {
+    const valueSpy = jest.fn()
+    const expectedValues = {
+      hello: 'world',
+    }
+
+    expect(valueSpy).toHaveBeenCalledTimes(0)
+
+    const formatMessageWithValueSpy: (
+      descriptor: StaticText,
+      values?: unknown,
+    ) => string = (descriptor, values) => {
+      if (values) {
+        valueSpy(values)
+      }
+
+      return descriptor as string
+    }
+
+    formatText(
+      {
+        id: 'test',
+        description: 'Some description',
+        values: expectedValues,
+      },
+      application,
+      formatMessageWithValueSpy,
+    )
+
+    expect(valueSpy).toHaveBeenCalledTimes(1)
+    expect(valueSpy).toHaveBeenLastCalledWith(expectedValues)
   })
 })
 

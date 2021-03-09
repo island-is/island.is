@@ -153,6 +153,10 @@ export const GET_HOMESTAYS_QUERY = gql`
       name
       city
       manager
+      guests
+      rooms
+      propertyId
+      apartmentId
     }
   }
 `

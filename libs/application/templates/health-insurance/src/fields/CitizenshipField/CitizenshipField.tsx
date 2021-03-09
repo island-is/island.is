@@ -5,7 +5,7 @@ import { Box, Input } from '@island.is/island-ui/core'
 import { Citizenship } from '@island.is/api/schema'
 import { CountryDataResult, ExternalDataNationalRegistry } from '../../types'
 
-const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
+const CitizenshipField: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field
   const citizenship = (getValueViaPath(
     application.externalData,
@@ -22,9 +22,9 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
       .then((res) => res.json())
       .then((data: CountryDataResult) => {
         if (!data.status) {
-          const { name, regionalBlocs } = data
+          const { regionalBlocs } = data
           const regions = regionalBlocs.map((blocs) => blocs.acronym)
-          setCountryData(JSON.stringify({ name, countryCode, regions }))
+          setCountryData(JSON.stringify({ ...citizenship, regions }))
         }
       })
   }
@@ -46,4 +46,4 @@ const CountrySelectField: FC<FieldBaseProps> = ({ field, application }) => {
   )
 }
 
-export default CountrySelectField
+export default CitizenshipField

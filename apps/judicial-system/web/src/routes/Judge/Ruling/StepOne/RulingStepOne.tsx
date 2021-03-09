@@ -1,22 +1,18 @@
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   Accordion,
   Box,
-  DatePicker,
-  GridColumn,
-  GridRow,
   Input,
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   FormFooter,
   PageLayout,
   PoliceRequestAccordionItem,
-  TimeInputField,
   BlueBox,
   CaseNumbers,
+  DateTime,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
@@ -25,19 +21,17 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { useParams } from 'react-router-dom'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -54,7 +48,9 @@ import {
 import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
-import * as styles from './RulingStepOne.treat'
+import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import { useRouter } from 'next/router'
+
 interface CaseData {
   case?: Case
 }
@@ -62,7 +58,6 @@ interface CaseData {
 export const RulingStepOne: React.FC = () => {
   const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
   const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
     '',
@@ -70,10 +65,17 @@ export const RulingStepOne: React.FC = () => {
   const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
     '',
   )
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+  const { isValidDate: isValidCustodyEndDate } = useDateTime({
+    date: workingCase?.custodyEndDate,
+  })
+  const { isValidTime: isValidCustodyEndTime } = useDateTime({
+    time: custodyEndTimeRef.current?.value,
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -130,25 +132,6 @@ export const RulingStepOne: React.FC = () => {
       setWorkingCase(theCase)
     }
   }, [workingCase, setWorkingCase, data, updateCase])
-
-  useEffect(() => {
-    let requiredFields: { value: string; validations: Validation[] }[] = [
-      { value: workingCase?.ruling || '', validations: ['empty'] },
-    ]
-    if (workingCase?.decision !== CaseDecision.REJECTING) {
-      requiredFields = requiredFields.concat([
-        { value: workingCase?.custodyEndDate || '', validations: ['empty'] },
-        {
-          value: custodyEndTimeRef.current?.value || '',
-          validations: ['empty', 'time-format'],
-        },
-      ])
-    }
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields) || !workingCase.decision)
-    }
-  }, [workingCase, isStepIllegal])
 
   return (
     <PageLayout
@@ -315,88 +298,71 @@ export const RulingStepOne: React.FC = () => {
                     : 'Farbann'}
                 </Text>
               </Box>
-              <BlueBox>
-                <div className={styles.custodyEndDateContainer}>
-                  <DatePicker
-                    id="custodyEndDate"
-                    label={
-                      workingCase.type === CaseType.CUSTODY &&
-                      workingCase.decision === CaseDecision.ACCEPTING
-                        ? 'Gæsluvarðhald til'
-                        : 'Farbann til'
-                    }
-                    placeholderText="Veldu dagsetningu"
-                    locale="is"
-                    selected={
-                      workingCase.custodyEndDate
-                        ? parseISO(workingCase.custodyEndDate?.toString())
-                        : null
-                    }
-                    errorMessage={custodyEndDateErrorMessage}
-                    hasError={custodyEndDateErrorMessage !== ''}
-                    handleCloseCalendar={(date) =>
-                      setAndSendDateToServer(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        date,
-                        workingCase,
-                        true,
-                        setWorkingCase,
-                        updateCase,
-                        setCustodyEndDateErrorMessage,
+              <DateTime
+                datepickerId="custodyEndDate"
+                datepickerLabel={
+                  workingCase.type === CaseType.CUSTODY &&
+                  workingCase.decision === CaseDecision.ACCEPTING
+                    ? 'Gæsluvarðhald til'
+                    : 'Farbann til'
+                }
+                selectedDate={
+                  workingCase.custodyEndDate
+                    ? parseISO(workingCase.custodyEndDate?.toString())
+                    : null
+                }
+                datepickerErrorMessage={custodyEndDateErrorMessage}
+                handleCloseCalander={(date) =>
+                  setAndSendDateToServer(
+                    'custodyEndDate',
+                    workingCase.custodyEndDate,
+                    date,
+                    workingCase,
+                    true,
+                    setWorkingCase,
+                    updateCase,
+                    setCustodyEndDateErrorMessage,
+                  )
+                }
+                dateIsRequired
+                timeName="custodyEndTime"
+                timeRef={custodyEndTimeRef}
+                timeDefaultValue={
+                  workingCase.custodyEndDate?.includes('T')
+                    ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                    : workingCase.requestedCustodyEndDate?.includes('T')
+                    ? formatDate(
+                        workingCase.requestedCustodyEndDate,
+                        TIME_FORMAT,
                       )
-                    }
-                    required
-                  />
-
-                  <TimeInputField
-                    onChange={(evt) =>
-                      validateAndSetTime(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        setWorkingCase,
-                        custodyEndTimeErrorMessage,
-                        setCustodyEndTimeErrorMessage,
-                      )
-                    }
-                    onBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'custodyEndDate',
-                        workingCase.custodyEndDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
-                        workingCase,
-                        updateCase,
-                        setCustodyEndTimeErrorMessage,
-                      )
-                    }
-                  >
-                    <Input
-                      data-testid="custodyEndTime"
-                      name="custodyEndTime"
-                      label="Tímasetning (kk:mm)"
-                      placeholder="Veldu tíma"
-                      ref={custodyEndTimeRef}
-                      defaultValue={
-                        workingCase.custodyEndDate?.includes('T')
-                          ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                          : workingCase.requestedCustodyEndDate?.includes('T')
-                          ? formatDate(
-                              workingCase.requestedCustodyEndDate,
-                              TIME_FORMAT,
-                            )
-                          : undefined
-                      }
-                      hasError={custodyEndTimeErrorMessage !== ''}
-                      errorMessage={custodyEndTimeErrorMessage}
-                      required
-                    />
-                  </TimeInputField>
-                </div>
-              </BlueBox>
+                    : undefined
+                }
+                timeOnChange={(evt) =>
+                  validateAndSetTime(
+                    'custodyEndDate',
+                    workingCase.custodyEndDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    setWorkingCase,
+                    custodyEndTimeErrorMessage,
+                    setCustodyEndTimeErrorMessage,
+                  )
+                }
+                timeOnBlur={(evt) =>
+                  validateAndSendTimeToServer(
+                    'custodyEndDate',
+                    workingCase.custodyEndDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    updateCase,
+                    setCustodyEndTimeErrorMessage,
+                  )
+                }
+                timeErrorMessage={custodyEndTimeErrorMessage}
+                timeIsRequired
+              />
             </Box>
           )}
           {workingCase.type === CaseType.CUSTODY &&
@@ -427,7 +393,13 @@ export const RulingStepOne: React.FC = () => {
           <FormFooter
             previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
-            nextIsDisabled={isStepIllegal}
+            nextIsDisabled={
+              !workingCase.decision ||
+              !validate(workingCase.ruling || '', 'empty').isValid ||
+              (workingCase.decision !== CaseDecision.REJECTING &&
+                (!isValidCustodyEndDate?.isValid ||
+                  !isValidCustodyEndTime?.isValid))
+            }
           />
         </>
       ) : null}

@@ -20,6 +20,9 @@ export default {
       },
     },
   },
+  fileStorage: {
+    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
+  },
   nationalRegistry: {
     baseSoapUrl: process.env.SOFFIA_SOAP_URL,
     user: process.env.SOFFIA_USER,
@@ -31,6 +34,8 @@ export default {
     baseUrl: process.env.XROAD_BASE_PATH,
     username: process.env.HEALTH_INSURANCE_XROAD_USERNAME,
     password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD,
+    clientID: process.env.XROAD_CLIENT_ID,
+    xroadID: process.env.XROAD_HEALTH_INSURANCE_ID,
   },
   userProfile: {
     userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,

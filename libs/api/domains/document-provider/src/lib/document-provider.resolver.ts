@@ -24,6 +24,8 @@ import {
   CreateProviderInput,
   UpdateContactInput,
   UpdateHelpdeskInput,
+  CreateContactInput,
+  CreateHelpdeskInput,
 } from './dto'
 import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
@@ -34,8 +36,10 @@ export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
 
   @Query(() => [Organisation])
-  async getProviderOrganisations(): Promise<Organisation[]> {
-    return this.documentProviderService.getOrganisations()
+  async getProviderOrganisations(
+    @CurrentUser() user: User,
+  ): Promise<Organisation[]> {
+    return this.documentProviderService.getOrganisations(user.authorization)
   }
 
   @Query(() => Organisation)
@@ -45,6 +49,13 @@ export class DocumentProviderResolver {
     return this.documentProviderService.getOrganisation(nationalId)
   }
 
+  @Query(() => Boolean)
+  async organisationExists(
+    @Args('nationalId') nationalId: string,
+  ): Promise<boolean> {
+    return await this.documentProviderService.organisationExists(nationalId)
+  }
+
   @Mutation(() => Organisation, { nullable: true })
   async createOrganisation(
     @Args('input') input: CreateOrganisationInput,
@@ -52,7 +63,10 @@ export class DocumentProviderResolver {
   ): Promise<Organisation | null> {
     logger.info(`createOrganisation: user: ${user.nationalId}`)
 
-    return this.documentProviderService.createOrganisation(input)
+    return this.documentProviderService.createOrganisation(
+      input,
+      user.authorization,
+    )
   }
 
   @Mutation(() => Organisation)
@@ -65,7 +79,26 @@ export class DocumentProviderResolver {
       `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${id}`,
     )
 
-    return this.documentProviderService.updateOrganisation(id, input)
+    return this.documentProviderService.updateOrganisation(
+      id,
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Contact, { nullable: true })
+  async createAdministrativeContact(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact | null> {
+    logger.info(`createAdministrativeContact: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createAdministrativeContact(
+      organisationId,
+      input,
+      user.authorization,
+    )
   }
 
   @Mutation(() => Contact)
@@ -83,6 +116,22 @@ export class DocumentProviderResolver {
       organisationId,
       administrativeContactId,
       contact,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Contact, { nullable: true })
+  async createTechnicalContact(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact | null> {
+    logger.info(`createTechnicalContact: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createTechnicalContact(
+      organisationId,
+      input,
+      user.authorization,
     )
   }
 
@@ -101,6 +150,22 @@ export class DocumentProviderResolver {
       organisationId,
       technicalContactId,
       contact,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Helpdesk, { nullable: true })
+  async createHelpdesk(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateHelpdeskInput,
+    @CurrentUser() user: User,
+  ): Promise<Helpdesk | null> {
+    logger.info(`createHelpdesk: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createHelpdesk(
+      organisationId,
+      input,
+      user.authorization,
     )
   }
 
@@ -119,6 +184,7 @@ export class DocumentProviderResolver {
       organisationId,
       helpdeskId,
       helpdesk,
+      user.authorization,
     )
   }
 
@@ -181,6 +247,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProvider(
       input.nationalId,
       input.clientName,
+      user.authorization,
     )
   }
 
@@ -197,6 +264,7 @@ export class DocumentProviderResolver {
       input.endpoint,
       input.providerId,
       input.xroad || false,
+      user.authorization,
     )
   }
 }

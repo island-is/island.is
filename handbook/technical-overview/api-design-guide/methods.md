@@ -42,17 +42,17 @@ An API has a `Message` resource and it provides the standard [CRUD](https://en.w
 
 ```text
 GET    https://api.island.is/v1/messages
-GET    https://api.island.is/v1/messages/{messageId}
+GET    https://api.island.is/v1/messages/:messageId
 POST   https://api.island.is/v1/messages
-PUT    https://api.island.is/v1/messages/{messageId}
-DELETE https://api.island.is/v1/messages/{messageId}
+PUT    https://api.island.is/v1/messages/:messageId
+DELETE https://api.island.is/v1/messages/:messageId
 ```
 
 Then there is a requirement to provide a functionality to be able to archive and unarchive a single message and a batch of messages. The archiving and unarchiving of a single message is then provided by:
 
 ```text
-POST   https://api.island.is/v1/messages/{messageId}/archives
-DELETE https://api.island.is/v1/messages/{messageId}/archives
+POST   https://api.island.is/v1/messages/:messageId/archives
+DELETE https://api.island.is/v1/messages/:messageId/archives
 ```
 
 The batch archiving is provided by

@@ -17,7 +17,6 @@ import {
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import {
@@ -33,7 +32,7 @@ import {
   CaseQuery,
   TransitionCaseMutation,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -43,6 +42,7 @@ import {
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 
 interface CaseData {
@@ -50,7 +50,8 @@ interface CaseData {
 }
 
 export const JudgeOverview: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const [
     courtCaseNumberErrorMessage,
     setCourtCaseNumberErrorMessage,
@@ -248,40 +249,33 @@ export const JudgeOverview: React.FC = () => {
               {constructProsecutorDemands(workingCase)}
             </Box>
             <div className={styles.infoSection}>
-              <Box marginBottom={2}>
-                <Text variant="h3" as="h3">
-                  Lagaákvæði
-                </Text>
-              </Box>
-              <Box>
-                <Box marginBottom={2} data-testid="lawsBroken">
-                  <Box marginBottom={1}>
-                    <Text variant="eyebrow" color="blue400">
-                      Lagaákvæði sem brot varða við
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.lawsBroken}
-                    </span>
+              <Box marginBottom={6} data-testid="lawsBroken">
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Lagaákvæði sem brot varða við
                   </Text>
                 </Box>
-                <Box marginBottom={2} data-testid="custodyProvisions">
-                  <Box marginBottom={1}>
-                    <Text variant="eyebrow" color="blue400">
-                      Lagaákvæði sem krafan er byggð á
-                    </Text>
-                  </Box>
-                  {workingCase.custodyProvisions?.map(
-                    (custodyProvision: CaseCustodyProvisions, index) => {
-                      return (
-                        <div key={index}>
-                          <Text>{laws[custodyProvision]}</Text>
-                        </div>
-                      )
-                    },
-                  )}
+                <Text>
+                  <span className={styles.breakSpaces}>
+                    {workingCase.lawsBroken}
+                  </span>
+                </Text>
+              </Box>
+              <Box data-testid="custodyProvisions">
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Lagaákvæði sem krafan er byggð á
+                  </Text>
                 </Box>
+                {workingCase.custodyProvisions?.map(
+                  (custodyProvision: CaseCustodyProvisions, index) => {
+                    return (
+                      <div key={index}>
+                        <Text>{laws[custodyProvision]}</Text>
+                      </div>
+                    )
+                  },
+                )}
               </Box>
             </div>
             <div

@@ -1,29 +1,27 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
-import {
-  ParentResidenceChange,
-  PersonResidenceChange,
-} from '@island.is/application/templates/children-residence-change'
-import { Constants } from './constants'
+import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
+import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
 export async function generateResidenceChangePdf(
   childrenAppliedFor: Array<PersonResidenceChange>,
-  parentA: ParentResidenceChange,
-  parentB: ParentResidenceChange,
-  expiry: string,
+  parentA: PersonResidenceChange,
+  parentB: PersonResidenceChange,
+  expiry: Array<string>,
+  reason: string,
 ): Promise<Buffer> {
   const doc = new PDFDocument({
-    size: Constants.PAGE_SIZE,
+    size: PdfConstants.PAGE_SIZE,
     margins: {
-      top: Constants.VERTICAL_MARGIN,
-      bottom: Constants.VERTICAL_MARGIN,
-      left: Constants.HORIZONTAL_MARGIN,
-      right: Constants.HORIZONTAL_MARGIN,
+      top: PdfConstants.VERTICAL_MARGIN,
+      bottom: PdfConstants.VERTICAL_MARGIN,
+      left: PdfConstants.HORIZONTAL_MARGIN,
+      right: PdfConstants.HORIZONTAL_MARGIN,
     },
   })
 
-  const parentHomeAddress = (parent: ParentResidenceChange) => {
+  const parentHomeAddress = (parent: PersonResidenceChange) => {
     return `${parent.address}, ${parent.postalCode} ${parent.city}`
   }
 
@@ -36,26 +34,27 @@ export async function generateResidenceChangePdf(
     doc.font(font).fontSize(fontSize).lineGap(lineGap).text(text)
   }
 
-  const addParentToDoc = (header: string, parent: ParentResidenceChange) => {
+  const addParentToDoc = (header: string, parent: PersonResidenceChange) => {
     addToDoc(
-      Constants.BOLD_FONT,
-      Constants.SUB_HEADER_FONT_SIZE,
-      Constants.NORMAL_LINE_GAP,
+      PdfConstants.BOLD_FONT,
+      PdfConstants.SUB_HEADER_FONT_SIZE,
+      PdfConstants.NORMAL_LINE_GAP,
       header,
     )
+
     addToDoc(
-      Constants.NORMAL_FONT,
-      Constants.VALUE_FONT_SIZE,
-      Constants.NO_LINE_GAP,
-      `Nafn: ${parent.name}`,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.VALUE_FONT_SIZE,
+      PdfConstants.NO_LINE_GAP,
+      `Nafn og kennitala: ${parent.name}, ${parent.ssn}`,
     )
 
-    doc
-      .text(`Kennitala: ${parent.ssn}`)
-      .text(`Netfang: ${parent.email}`)
-      .text(`Símanúmer: ${parent.phoneNumber}`)
-      .lineGap(Constants.LARGE_LINE_GAP)
-      .text(`Heimilisfang: ${parentHomeAddress(parent)}`)
+    addToDoc(
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.VALUE_FONT_SIZE,
+      PdfConstants.LARGE_LINE_GAP,
+      `Heimilisfang: ${parentHomeAddress(parent)}`,
+    )
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -63,40 +62,45 @@ export async function generateResidenceChangePdf(
   doc
     .image(
       DistrictCommissionerLogo,
-      doc.page.width - Constants.HORIZONTAL_MARGIN - Constants.IMAGE_WIDTH,
-      Constants.VERTICAL_MARGIN,
-      { fit: [Constants.IMAGE_WIDTH, Constants.IMAGE_HEIGHT], align: 'right' },
+      doc.page.width -
+        PdfConstants.HORIZONTAL_MARGIN -
+        PdfConstants.IMAGE_WIDTH,
+      PdfConstants.VERTICAL_MARGIN,
+      {
+        fit: [PdfConstants.IMAGE_WIDTH, PdfConstants.IMAGE_HEIGHT],
+        align: 'right',
+      },
     )
     .moveDown()
 
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Samningur foreldra með sameiginlega forsjá um breytt lögheimili barna',
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.LARGE_LINE_GAP,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.LARGE_LINE_GAP,
     'skv. 32.gr. barnalaga nr. 76/2003',
   )
 
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Barn/börn undir 18 ára aldri sem erindið varðar',
   )
 
   childrenAppliedFor.map((c, i) =>
     addToDoc(
-      Constants.NORMAL_FONT,
-      Constants.VALUE_FONT_SIZE,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.VALUE_FONT_SIZE,
       i === childrenAppliedFor.length - 1
-        ? Constants.LARGE_LINE_GAP
-        : Constants.NO_LINE_GAP,
+        ? PdfConstants.LARGE_LINE_GAP
+        : PdfConstants.NO_LINE_GAP,
       `Nafn og kennitala barns: ${c.name}, ${c.ssn}`,
     ),
   )
@@ -105,40 +109,147 @@ export async function generateResidenceChangePdf(
   addParentToDoc('Foreldri B', parentB)
 
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Lögheimilsbreyting:',
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.VALUE_FONT_SIZE,
-    Constants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${parentHomeAddress(parentA)}`,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    `Fyrra lögheimili: ${parentA.name}, Foreldri A`,
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.VALUE_FONT_SIZE,
-    Constants.LARGE_LINE_GAP,
-    `Fyrra lögheimili: ${parentHomeAddress(parentB)}`,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.LARGE_LINE_GAP,
+    `Nýtt lögheimili: ${parentB.name}, Foreldri B`,
   )
 
+  if (reason) {
+    addToDoc(
+      PdfConstants.BOLD_FONT,
+      PdfConstants.SUB_HEADER_FONT_SIZE,
+      PdfConstants.NORMAL_LINE_GAP,
+      'Tilefni breytingar',
+    )
+
+    addToDoc(
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.VALUE_FONT_SIZE,
+      PdfConstants.LARGE_LINE_GAP,
+      reason,
+    )
+  }
+
   addToDoc(
-    Constants.BOLD_FONT,
-    Constants.SUB_HEADER_FONT_SIZE,
-    Constants.NORMAL_LINE_GAP,
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
     'Gildistími samnings',
   )
 
   addToDoc(
-    Constants.NORMAL_FONT,
-    Constants.VALUE_FONT_SIZE,
-    Constants.NO_LINE_GAP,
-    expiry === Constants.PERMANENT
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.LARGE_LINE_GAP,
+    expiry[0] === PdfConstants.PERMANENT
       ? 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.'
-      : `Samningurinn gildir til ${expiry}`,
+      : `Samningurinn gildir til ${expiry[1]}`,
+  )
+
+  addToDoc(
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
+    'Um réttaráhrif þess að barn hafi lögheimili hjá foreldri með sameiginlega forsjá:',
+  )
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    'Litið er svo á að barn hafi fasta búsetu hjá því foreldri sem það á lögheimili hjá. Barn á rétt til að umgangast með reglubundnum hætti það foreldri sem það býr ekki hjá og bera foreldrarnir sameiginlega þá skyldu að tryggja rétt barns til umgengni.',
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    'Skráning lögheimilis hefur margvísleg áhrif á ýmsum réttarsviðum. Sem dæmi má nefna að skyldur sveitarfélaga til að veita þjónustu innan velferðarkerfisins, t.d. samkvæmt lögum um félagsþjónustu sveitarfélaga, lögum um leikskóla og lögum um grunnskóla. Önnur þjónusta miðast einnig við búsetu í tilteknu umdæmi svo samkvæmt lögum um málefni fatlaðra. Þá miða lagareglur stundum gagngert við lögheimili, t.d. lagaákvæði um birtingar í lögum um meðferð einkamála og sakamála og reglur barnaverndarlaga um samstarf og samþykki foreldra vegna tiltekinna ráðstafana.',
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    'Foreldrið sem barn er með lögheimili hjá, á rétt á að fá meðlag með barninu frá hinu foreldrinu.',
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    'Foreldrið sem barn á lögheimili hjá hefur stöðu einstæðs foreldris samvkæmt skattalögum. Barnabætur vegna barns greiðast framfæranda barns og er við mat á því hver telst framfærandi fyrst og fremst litið til þess hjá hverjum barn er skráð til lögheimilis í árslok hjá Þjóðskrá. Sjá nánar á www.rsk.is',
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    'Um ákvarðanatöku foreldra með sameiginlega forsjá er fjallað í 28. gr. a barnalaga en þar segir:',
+  )
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    '„Þegar foreldrar fara sameiginlega með forsjá barns skulu þeir taka sameiginlega allar meiri háttar ákvarðanir sem varða barn. Ef foreldrar búa ekki saman hefur það foreldri sem barn á lögheimili hjá heimild til þess að taka afgerandi ákvarðanir um daglegt líf barnsins, svo sem um hvar barnið skuli eiga lögheimili innan lands, um val á leikskóla, grunnskóla og daggæslu, venjulega eða nauðsynlega heilbrigðisþjónustu og reglubundið tómstundastarf. Foreldrar sem fara saman með forsjá barns skulu þó ávallt leitast við að hafa samráð áður en þessum málefnum barns er ráðið til lykta. Ef annað forsjáforeldra barns er hindrað í að sinna forsjárskyldum sínum eru nauðsynlegar ákvarðanir hins um persónulega hagi barns gildar.“',
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    'Samþykki beggja foreldra með sameiginlega forsjá þarf til þess að barn fari til útlanda. Hægt er að krefjast úrskurðar sýslumanns vegna ágreinins foreldra um utanlandsferð barns.',
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    'Þegar annað foreldra á umgengisrétt við barn samkvæmt samningi, úrskurði, dómi eða dómsátt, ber hvoru foreldri að tilkynna hinu með minnst sex vikna fyrirvara, ef foreldri hyggst flytja lögheimili sitt og/eða barnsins hvort sem er innan lands eða utan',
+  )
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    '* “Foreldrar“ eru hér einnig þeir stjúpforeldrar sem hafa fengið forsjá samvkæmt sérstökum samningi a grundvelli 29. gr. a. barnalaga',
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    `Undirritaður/uð, ${parentA.name}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
   )
 
   doc.end()

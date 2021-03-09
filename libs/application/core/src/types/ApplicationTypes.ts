@@ -8,5 +8,22 @@ export enum ApplicationTypes {
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
+  DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
+  PARTY_LETTER = 'PartyLetter',
   INSTITUTION_APPLICATION = 'InstitutionApplication',
+}
+
+export const ApplicationTranslations = {
+  ExampleForm: 'example.application',
+  Passport: null,
+  DrivingLessons: 'dl.application',
+  DrivingLicense: 'dl.application',
+  ParentalLeave: 'pl.application',
+  MetaApplication: null,
+  DocumentProviderOnboarding: 'dpo.application',
+  HealthInsurance: 'hi.application',
+  ChildrenResidenceChange: 'crc.application',
+  DataProtectionAuthorityComplaint: 'dpac.application',
+  PartyLetter: 'ple.application',
+  INSTITUTION_APPLICATION: 'ia.application',
 }

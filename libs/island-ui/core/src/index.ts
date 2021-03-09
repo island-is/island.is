@@ -70,7 +70,6 @@ export * from './lib/Grid/GridRow/GridRow'
 export * from './lib/Columns/Columns'
 export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
-export * from './lib/Sleeve/Sleeve'
 export * from './lib/Divider/Divider'
 
 // Navigation

@@ -21,7 +21,6 @@ import {
 import {
   getConclusion,
   getAppealDecisionText,
-  isNextDisabled,
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -48,25 +47,25 @@ import {
   SignatureConfirmationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { useHistory, useParams } from 'react-router-dom'
 import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   getTimeFromDate,
   validateAndSendTimeToServer,
   validateAndSetTime,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
+import useDateTime from '../../../utils/hooks/useDateTime'
 import * as style from './Confirmation.treat'
 
 interface SigningModalProps {
@@ -82,7 +81,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   requestSignatureResponse,
   setModalVisible,
 }) => {
-  const history = useHistory()
+  const router = useRouter()
   const [
     signatureConfirmationResponse,
     setSignatureConfirmationResponse,
@@ -250,11 +249,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
         signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
       }
       handlePrimaryButtonClick={() => {
-        history.push(Constants.FEEDBACK_FORM_ROUTE)
+        router.push(Constants.FEEDBACK_FORM_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
-          history.push(Constants.REQUEST_LIST_ROUTE)
+          router.push(Constants.REQUEST_LIST_ROUTE)
         } else {
           setModalVisible(false)
         }
@@ -268,9 +267,10 @@ interface CaseData {
 }
 
 export const Confirmation: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
@@ -279,11 +279,13 @@ export const Confirmation: React.FC = () => {
     RequestSignatureResponse
   >()
 
-  const { id } = useParams<{ id: string }>()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+  const { isValidTime: isValidCourtEndTime } = useDateTime({
+    time: getTimeFromDate(workingCase?.courtEndTime),
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -311,19 +313,6 @@ export const Confirmation: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: getTimeFromDate(workingCase?.courtEndTime) || '',
-        validations: ['empty', 'time-format'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, isStepIllegal])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -614,7 +603,7 @@ export const Confirmation: React.FC = () => {
             previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={isStepIllegal}
+            nextIsDisabled={!isValidCourtEndTime?.isValid}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
             hideNextButton={workingCase.judge?.id !== user?.id}

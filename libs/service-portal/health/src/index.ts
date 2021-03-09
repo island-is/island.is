@@ -1,7 +1,6 @@
 import {
   ServicePortalModule,
   ServicePortalPath,
-  userHasAccessToScope,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
@@ -9,7 +8,7 @@ import { lazy } from 'react'
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
   widgets: () => [],
-  routes: async () => {
+  routes: () => {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Heilsa',

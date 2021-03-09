@@ -152,12 +152,20 @@ return <div>{formatMessage(message)}</div>
 
 We are supporting both TextField and Markdown for the translations. If you want to define markdown messages, you will need to add a `#markdown` to the end of the string's id. That will show the Markdown editor within Contentful.
 
+{% hint style="warning" %}
+We only allow headings from H2 to H4. The rest will be converted as paragraph in Contentful.
+{% endhint %}
+
+{% hint style="warning" %}
+There is only one way to do line breaks for the markdown messages. It has to be an escape line break character defined two times `\\n\\n`. This only required when doing `defineMessage` -> Contentful. After running the `extract-strings` script and publishing the changes on Contentful, you will get normal line breaks `\n` back from the GraphQL API and will be able to pass it down to `markdown-to-jsx`.
+{% endhint %}
+
 ```typescript
 const message = defineMessage({
   id: 'global:title#markdown',
   defaultMessage: 'Some copy with **markdown** in it.',
   description:
-    'It will be rendered as _markdown_ in the Contentful UI extension as well',
+    '## Heading followed by a new line.\\n\\nIt will be rendered as _markdown_ in the Contentful UI extension as well',
 })
 ```
 

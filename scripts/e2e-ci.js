@@ -62,6 +62,7 @@ const target = argv.name.replace('-e2e', '')
 // prettier-ignore
 const CMD = {
   BUILD: `yarn nx run ${target}:build:production${argv['skip-cache'] ? ' --skip-nx-cache' : ''}`,
+  EXTRACT_ENV: `scripts/ci/dockerfile-assets/bash/extract-environment.sh ${argv.dist}`,
   SERVE_NEXT: [
     `${argv.dist}/main.js`
   ],
@@ -82,6 +83,10 @@ const CMD = {
     }`,
 }
 
+const ENV = {
+  SI_PUBLIC_CONFIGCAT_SDK_KEY: 'asdf',
+}
+
 const build = async () => {
   console.log(`Building ${target}...`)
   const start = new Date().getTime()
@@ -97,6 +102,21 @@ const build = async () => {
 
   const end = new Date().getTime()
   console.log(`Build complete in ${Math.round((end - start) / 1000)} seconds.`)
+}
+
+const extractEnv = async () => {
+  console.log(`Extracting environment for ${target}...`)
+
+  try {
+    const result = await pexec(CMD.EXTRACT_ENV, {
+      env: { ...process.env, ...ENV },
+    })
+    console.log(result.stdout)
+  } catch (err) {
+    console.log(err.stdout)
+    console.log(err.stderr)
+    process.exit(1)
+  }
 }
 
 const serve = () => {
@@ -123,6 +143,7 @@ const serve = () => {
 const main = async () => {
   let exitCode = 0
   await build()
+  await extractEnv()
   let serveChild = serve()
 
   console.log(`Starting test command \n${CMD.TEST}`)
@@ -130,6 +151,15 @@ const main = async () => {
   try {
     const testResult = await pexec(CMD.TEST)
     console.log(testResult.stdout)
+    console.log(testResult.stderr)
+
+    // Tests can fail without the command exiting with code 1
+    // So to be sure that all tests where successful we check
+    // for the string 'All specs passed!'
+    if (!testResult.stdout.includes('All specs passed!')) {
+      console.log('Tests have failed. See output above for further details.')
+      exitCode = 1
+    }
   } catch (err) {
     exitCode = 1
     console.log(err.stdout)

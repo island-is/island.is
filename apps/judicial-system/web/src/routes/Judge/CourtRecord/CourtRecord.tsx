@@ -16,7 +16,6 @@ import {
   CaseNumbers,
   BlueBox,
 } from '@island.is/judicial-system-web/src/shared-components'
-import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   capitalize,
@@ -27,7 +26,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useParams } from 'react-router-dom'
 import {
   AccusedPleaDecision,
   Case,
@@ -39,7 +37,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -51,6 +49,9 @@ import {
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
+import useDateTime from '../../../utils/hooks/useDateTime'
+import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
 
 interface CaseData {
@@ -73,10 +74,14 @@ export const CourtRecord: React.FC = () => {
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
   ] = useState('')
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+  const { isValidTime: isValidCourtStartTime } = useDateTime({
+    time: formatDate(workingCase?.courtStartTime, TIME_FORMAT),
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -480,25 +485,12 @@ export const CourtRecord: React.FC = () => {
             previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
             nextIsDisabled={
-              isNextDisabled([
-                {
-                  value:
-                    formatDate(workingCase.courtStartTime, TIME_FORMAT) || '',
-                  validations: ['empty', 'time-format'],
-                },
-                {
-                  value: workingCase.courtAttendees || '',
-                  validations: ['empty'],
-                },
-                {
-                  value: workingCase.policeDemands || '',
-                  validations: ['empty'],
-                },
-                {
-                  value: workingCase.litigationPresentations || '',
-                  validations: ['empty'],
-                },
-              ]) || workingCase.accusedPleaDecision === null
+              !isValidCourtStartTime?.isValid ||
+              !validate(workingCase.courtAttendees || '', 'empty').isValid ||
+              !validate(workingCase.policeDemands || '', 'empty').isValid ||
+              !validate(workingCase.litigationPresentations || '', 'empty')
+                .isValid ||
+              workingCase.accusedPleaDecision === null
             }
           />
         </>

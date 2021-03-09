@@ -7,8 +7,13 @@ import {
   buildExternalDataProvider,
   buildCustomField,
   buildSubSection,
+  buildMultiField,
+  buildSubmitField,
+  DefaultEvents,
+  buildRadioField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
+import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -17,6 +22,38 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'mockData',
+      title: 'Mock data',
+      children: [
+        buildMultiField({
+          id: 'mockMulti',
+          title: '',
+          children: [
+            buildRadioField({
+              id: 'useMocks',
+              title: 'Nota gervigögn',
+              options: [
+                {
+                  value: 'yes',
+                  label: 'Já',
+                },
+                {
+                  value: 'no',
+                  label: 'Nei',
+                },
+              ],
+            }),
+            buildCustomField({
+              id: 'mockData',
+              title: 'Mock data',
+              component: 'MockData',
+              condition: (answers) => answers.useMocks === 'yes',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'backgroundInformation',
       title: m.section.backgroundInformation,
@@ -49,6 +86,12 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.title,
                 }),
+                buildDataProviderItem({
+                  id: 'userProfile',
+                  type: 'UserProfileProvider',
+                  title: '',
+                  subTitle: '',
+                }),
               ],
             }),
           ],
@@ -65,12 +108,13 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'otherParent',
-          title: m.otherParent.general.sectionTitle,
+          id: 'contact',
+          title: m.contactInfo.general.sectionTitle,
           children: [
             buildCustomField({
               id: 'contactInfo',
-              title: m.otherParent.general.pageTitle,
+              title: m.contactInfo.general.pageTitle,
+              childInputIds: contactInfoIds,
               component: 'ContactInfo',
             }),
           ],
@@ -122,8 +166,19 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       children: [
         buildCustomField({
           id: 'approveTerms',
-          title: 'Hvaða áhrif hefur breytingin?',
+          title: m.terms.general.pageTitle,
           component: 'Terms',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'interview',
+      title: m.interview.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'interview',
+          title: m.interview.general.pageTitle,
+          component: 'Interview',
         }),
       ],
     }),
@@ -131,10 +186,27 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       id: 'overview',
       title: m.section.overview,
       children: [
-        buildCustomField({
-          id: 'residenceChangeReview',
+        buildMultiField({
+          id: 'residenceChangeOverview',
           title: m.contract.general.pageTitle,
-          component: 'Overview',
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReview',
+              title: m.contract.general.pageTitle,
+              component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'assign',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.ASSIGN,
+                  name: m.application.signature,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),

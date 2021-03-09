@@ -21,17 +21,22 @@ import { m } from '../../forms/messages'
 import useModalContent from '../../hooks/useModalContent'
 
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
-  const { typeId, externalData } = application
+  const { externalData } = application
 
   const { formatMessage, lang } = useLocale()
-  const history = useHistory()
   const content = useModalContent(externalData)
+  const backUrl =
+    lang === 'is'
+      ? 'https://www.island.is/umsokn-um-sjukratryggingu'
+      : 'https://www.island.is/en/apply-for-health-insurance'
 
   return (
     <ModalBase
       baseId="healthInsuranceErrorModal"
       initialVisibility={true}
       className={`${styles.dialog} ${styles.background} ${styles.center}`}
+      modalLabel="Error prompt"
+      // hideOnClickOutside={false}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <Box
@@ -62,18 +67,14 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
               </Text>
             </Stack>
             <GridRow align="spaceBetween" className={styles.gridFix}>
-              <GridColumn span={['12/12', '12/12', '1/3']}>
+              <GridColumn span={['12/12', '12/12', '1/3']} paddingTop={[2, 0]}>
                 <Button
                   size="default"
                   variant="ghost"
                   colorScheme="destructive"
                   onClick={() => {
                     closeModal()
-                    history.push(
-                      lang === 'is'
-                        ? '../umsokn-um-sjukratryggingu'
-                        : '../en/apply-for-health-insurance',
-                    )
+                    window.location.href = backUrl
                   }}
                   fluid
                 >

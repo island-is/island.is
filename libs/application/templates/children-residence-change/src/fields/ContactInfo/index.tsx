@@ -3,49 +3,50 @@ import { useIntl } from 'react-intl'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
-import { otherParent } from '../../lib/messages'
-import { extractParentFromApplication } from '../../lib/utils'
+import { contactInfo } from '../../lib/messages'
+import { extractUserInfoFromApplication } from '../../lib/utils'
 
-const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
-  const { id } = field
+const emailId = 'email'
+const phoneNumberId = 'phoneNumber'
+
+export const contactInfoIds = [emailId, phoneNumberId]
+
+const ContactInfo = ({ errors, application }: FieldBaseProps) => {
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
   }
   const { formatMessage } = useIntl()
-  const { setValue } = useFormContext()
-  const parent = extractParentFromApplication(application)
-  // TODO: add validation
+  const { setValue, register } = useFormContext()
+  const userInfo = extractUserInfoFromApplication(application)
+  const emailError = errors?.email
+  const phoneNumberError = errors?.phoneNumber
   return (
     <>
       <Box marginTop={3}>
-        <Text variant="intro">
-          {formatMessage(otherParent.general.intro, {
-            parentName: parent.name,
-            parentSSN: parent.ssn,
-          })}
-        </Text>
         <Text marginTop={3}>
-          {formatMessage(otherParent.general.description)}
+          {formatMessage(contactInfo.general.description)}
         </Text>
       </Box>
       <Box marginTop={5}>
         <Controller
-          name="email"
-          defaultValue={getValue('contactInfo')?.[0]}
+          name={emailId}
+          defaultValue={getValue(emailId) || userInfo.email}
           render={({ value, onChange }) => {
             return (
               <Input
-                id={`${id}[0]`}
-                name={`${id}[0]`}
+                ref={register}
+                id={emailId}
+                name={emailId}
                 backgroundColor="blue"
-                type="text"
-                label={formatMessage(otherParent.inputs.emailLabel)}
+                type="email"
+                label={formatMessage(contactInfo.inputs.emailLabel)}
                 value={value}
-                hasError={!!error}
+                hasError={emailError !== undefined}
+                errorMessage={emailError as string}
                 required={true}
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(`${id}[0]`, e.target.value)
+                  setValue(emailId, e.target.value)
                 }}
               />
             )
@@ -54,22 +55,24 @@ const ContactInfo = ({ error, application, field }: FieldBaseProps) => {
       </Box>
       <Box marginTop={2}>
         <Controller
-          name="phonenumber"
-          defaultValue={getValue('contactInfo')?.[1]}
+          name={phoneNumberId}
+          defaultValue={getValue(phoneNumberId) || userInfo.mobilePhoneNumber}
           render={({ value, onChange }) => {
             return (
               <Input
-                id={`${id}[1]`}
-                name={`${id}[1]`}
+                ref={register}
+                id={phoneNumberId}
+                name={phoneNumberId}
                 backgroundColor="blue"
                 type="tel"
-                label={formatMessage(otherParent.inputs.phoneNumberLabel)}
+                label={formatMessage(contactInfo.inputs.phoneNumberLabel)}
                 value={value}
                 required={true}
-                hasError={!!error}
+                hasError={phoneNumberError !== undefined}
+                errorMessage={phoneNumberError as string}
                 onChange={(e) => {
                   onChange(e.target.value)
-                  setValue(`${id}[1]`, e.target.value)
+                  setValue(phoneNumberId, e.target.value)
                 }}
               />
             )

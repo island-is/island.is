@@ -66,9 +66,7 @@ const autoSchemaFile = environment.production
       baseApiUrl: environment.applicationSystem.baseApiUrl,
     }),
     DirectorateOfLabourModule.register(),
-    FileUploadModule.register({
-      uploadBucket: environment.fileUploadService.uploadBucket,
-    }),
+    FileUploadModule.register({ fileStorage: environment.fileStorage }),
     DocumentModule.register({
       basePath: environment.documentService.basePath,
       clientId: environment.documentService.clientId,
@@ -104,6 +102,8 @@ const autoSchemaFile = environment.production
       baseUrl: environment.healthInsurance.baseUrl,
       username: environment.healthInsurance.username,
       password: environment.healthInsurance.password,
+      clientID: environment.healthInsurance.clientID,
+      xroadID: environment.healthInsurance.xroadID,
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:

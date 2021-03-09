@@ -7,44 +7,23 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import { error } from './messages/index'
+import { extractParentFromApplication } from './utils'
+import { assign } from 'xstate'
+import { dataSchema } from './dataSchema'
 
-type Events =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ABORT }
+type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
-enum Roles {
-  APPLICANT = 'applicant',
+export enum ApplicationStates {
+  DRAFT = 'draft',
+  IN_REVIEW = 'inReview',
 }
 
-const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v, {
-    message: error.validation.approveChildrenResidenceChange.defaultMessage,
-  }),
-  selectChild: z
-    .array(z.string())
-    .min(1, { message: error.validation.selectChild.defaultMessage }),
-  email: z.string().email(error.validation.invalidEmail.defaultMessage),
-  phoneNumber: z
-    .string()
-    .min(7, { message: error.validation.invalidPhoneNumber.defaultMessage }),
-  confirmResidenceChangeInfo: z
-    .array(z.string())
-    .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
-  // selectDuration: z
-  //   .enum(['temporary', 'permanent'])
-  //   .optional()
-  //   .refine((v) => v, {
-  //     message: 'Velja þarf valmöguleika',
-  //   }),
-  approveTerms: z
-    .array(z.string())
-    .length(3, error.validation.approveTerms.defaultMessage),
-})
+enum Roles {
+  ParentA = 'parentA',
+  ParentB = 'parentB',
+}
+
+const applicationName = 'Umsókn um breytt lögheimili barns'
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -53,34 +32,77 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
   name: 'Children residence change application',
-  dataSchema: dataSchema,
+  dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: ApplicationStates.DRAFT,
     states: {
-      draft: {
+      [ApplicationStates.DRAFT]: {
         meta: {
-          name: 'Umsókn um breytt lögheimili barns',
+          name: applicationName,
           progress: 0.33,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ParentA,
               formLoader: () =>
                 import('../forms/ChildrenResidenceChangeForm').then((module) =>
                   Promise.resolve(module.ChildrenResidenceChangeForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.ASSIGN,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: {
-            target: 'inReview',
+          ASSIGN: {
+            target: ApplicationStates.IN_REVIEW,
           },
         },
       },
+      [ApplicationStates.IN_REVIEW]: {
+        entry: 'assignToOtherParent',
+        meta: {
+          name: applicationName,
+          progress: 0.66,
+          roles: [
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/ParentBForm').then((module) =>
+                  Promise.resolve(module.ParentBForm),
+                ),
+              write: 'all',
+            },
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationConfirmation').then((module) =>
+                  Promise.resolve(module.ApplicationConfirmation),
+                ),
+            },
+          ],
+        },
+      },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToOtherParent: assign((context) => {
+        const otherParent = extractParentFromApplication(context.application)
+
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            assignees: [otherParent.ssn],
+          },
+        }
+      }),
     },
   },
 
@@ -88,7 +110,20 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    return Roles.APPLICANT
+    if (
+      application.assignees.includes(id) &&
+      application.answers.useMocks === 'yes' &&
+      application.state === ApplicationStates.IN_REVIEW
+    ) {
+      return Roles.ParentB
+    }
+    if (id === application.applicant) {
+      return Roles.ParentA
+    }
+    if (application.assignees.includes(id)) {
+      return Roles.ParentB
+    }
+    return undefined
   },
 }
 

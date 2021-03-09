@@ -1,7 +1,5 @@
 import React from 'react'
-import { createMemoryHistory } from 'history'
 import { render, screen } from '@testing-library/react'
-import { Route, Router } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 
@@ -12,17 +10,15 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import Overview from './Overview'
 
 describe('/domari-krafa with an ID', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id_2`
-    history.push(route)
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act and Assert
     render(
@@ -38,13 +34,9 @@ describe('/domari-krafa with an ID', () => {
         ]}
         addTypename={false}
       >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
     userEvent.type(
@@ -61,11 +53,10 @@ describe('/domari-krafa with an ID', () => {
 
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id_2`
-    history.push(route)
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act
     render(
@@ -73,13 +64,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -91,11 +78,10 @@ describe('/domari-krafa with an ID', () => {
 
   test('should display the approprieate custody restrictions if there are any', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id`
-    history.push(route)
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -103,13 +89,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -120,11 +102,10 @@ describe('/domari-krafa with an ID', () => {
 
   test('should display the appropriate custody provisions', async () => {
     // Arrange
-    const history = createMemoryHistory()
-
-    // Ensure our route has an ID
-    const route = `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/test_id`
-    history.push(route)
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -132,13 +113,9 @@ describe('/domari-krafa with an ID', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <Router history={history}>
-          <UserProvider>
-            <Route path={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/:id`}>
-              <Overview />
-            </Route>
-          </UserProvider>
-        </Router>
+        <UserProvider>
+          <Overview />
+        </UserProvider>
       </MockedProvider>,
     )
 

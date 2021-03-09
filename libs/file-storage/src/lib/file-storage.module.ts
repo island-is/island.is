@@ -1,14 +1,16 @@
-import { DynamicModule } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import { FileStorageService } from './file-storage.service'
 import {
-  FileStorageConfig,
   FILE_STORAGE_CONFIG,
-} from './config/fileStorageConfig'
+  FileStorageConfig,
+} from './file-storage.configuration'
 
+@Module({})
 export class FileStorageModule {
-  static register(config: FileStorageConfig): DynamicModule {
+  static register(config: FileStorageConfig) {
     return {
       module: FileStorageModule,
+      controllers: [],
       providers: [
         FileStorageService,
         {
