@@ -180,7 +180,7 @@ const StudentAssessmentTable = () => {
                       }
                       if (breakdown.progressRating) {
                         return (
-                          <T.Row>
+                          <T.Row key={index}>
                             <T.Data box={dataBox}>{breakdown.subject}</T.Data>
                             <T.Data box={dataBox} colSpan={4}>
                               {breakdown.progressRating}
@@ -189,7 +189,7 @@ const StudentAssessmentTable = () => {
                         )
                       }
                       return (
-                        <T.Row>
+                        <T.Row key={index}>
                           <T.Data box={dataBox}>{breakdown.subject}</T.Data>
                           <T.Data box={dataBox}>{breakdown.rate}</T.Data>
                           <T.Data box={dataBox}>
