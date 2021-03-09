@@ -11,8 +11,9 @@ import {
   FormValue,
   buildSubSection,
   buildFileUploadField,
+  buildRepeater,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, YES } from '../shared'
+import { FILE_SIZE_LIMIT, YES, NO } from '../shared'
 import {
   section,
   delimitation,
@@ -20,11 +21,12 @@ import {
   info,
   application,
   sharedFields,
+  complaint,
 } from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
 
-const yesOption = { value: 'yes', label: sharedFields.yes }
-const noOption = { value: 'no', label: sharedFields.no }
+const yesOption = { value: YES, label: sharedFields.yes }
+const noOption = { value: NO, label: sharedFields.no }
 
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
@@ -220,6 +222,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'applicant.nationalId',
                   title: info.labels.nationalId,
+                  format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
                 }),
@@ -251,6 +254,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'applicant.phoneNumber',
                   title: info.labels.tel,
+                  format: '###-####',
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
@@ -280,6 +284,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'organizationOrInstitution.nationalId',
                   title: info.labels.nationalId,
+                  format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
                 }),
@@ -311,6 +316,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'organizationOrInstitution.phoneNumber',
                   title: info.labels.tel,
+                  format: '###-####',
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
@@ -352,7 +358,79 @@ export const ComplaintForm: Form = buildForm({
                   id: 'commissions.persons',
                   title: info.labels.commissionsPerson,
                   component: 'CommissionFieldRepeater',
-                  defaultValue: [{ name: '', nationalId: '' }],
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'complaint',
+      title: section.complaint.defaultMessage,
+      children: [
+        buildSubSection({
+          id: 'complainee',
+          title: section.complainee.defaultMessage,
+          children: [
+            buildMultiField({
+              id: 'complaineeMultiField',
+              title: complaint.general.complaineePageTitle,
+              description: complaint.general.complaineePageDescription,
+              space: 1,
+              children: [
+                buildCustomField({
+                  id: 'complaineeNameLabel',
+                  title: complaint.general.complaineePageTitle,
+                  component: 'FieldLabel',
+                }),
+                buildTextField({
+                  id: 'complainee.name',
+                  title: complaint.labels.complaineeName,
+                  backgroundColor: 'blue',
+                }),
+                buildCustomField({
+                  id: 'complaineeInfoLabel',
+                  title: complaint.labels.complaineeInfoLabel,
+                  component: 'FieldLabel',
+                }),
+                buildTextField({
+                  id: 'complainee.address',
+                  title: complaint.labels.complaineeAddress,
+                  backgroundColor: 'blue',
+                }),
+                buildTextField({
+                  id: 'complainee.nationalId',
+                  title: complaint.labels.complaineeNationalId,
+                  format: '######-####',
+                  backgroundColor: 'blue',
+                }),
+                buildRadioField({
+                  id: 'complainee.operatesWithinEurope',
+                  title: complaint.labels.complaineeOperatesWithinEurope,
+                  options: [yesOption, noOption],
+                  largeButtons: true,
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'complainee.countryOfOperation',
+                  title: complaint.labels.complaineeCountryOfOperation,
+                  backgroundColor: 'blue',
+                  condition: (formValue) => {
+                    const operatesWithinEurope = (formValue.complainee as FormValue)
+                      ?.operatesWithinEurope
+                    return operatesWithinEurope === 'yes'
+                  },
+                }),
+                buildCustomField({
+                  id: 'complaineeoperatesWithinEuropeMessage',
+                  title: complaint.labels.complaineeOperatesWithinEuropeMessage,
+                  component: 'FieldAlertMessage',
+                  condition: (formValue) => {
+                    const operatesWithinEurope = (formValue.complainee as FormValue)
+                      ?.operatesWithinEurope
+                    return operatesWithinEurope === 'yes'
+                  },
                 }),
               ],
             }),

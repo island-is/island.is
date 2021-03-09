@@ -56,6 +56,7 @@ export const DataProtectionComplaintSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
+    // TODO: This should be required
     documents: z.array(FileSchema),
     persons: z
       .array(
@@ -68,4 +69,20 @@ export const DataProtectionComplaintSchema = z.object({
       )
       .nonempty(),
   }),
+  complainee: z.object({
+    name: z.string().nonempty(),
+    address: z.string().nonempty(),
+    nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
+    operatesWithinEurope: z.enum([YES, NO]),
+    countryOfOperation: z.string().optional(),
+  }),
+  additionalComplainees: z.array(
+    z.object({
+      name: z.string().nonempty(),
+      address: z.string().nonempty(),
+      nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
+      operatesWithinEurope: z.enum([YES, NO]),
+      countryOfOperation: z.string().optional(),
+    }),
+  ),
 })
