@@ -30,7 +30,7 @@ import {
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 
-interface applicantContactInfo {
+interface ApplicantContactInfo {
   email: string
   phoneNumber: string
 }
@@ -38,7 +38,7 @@ interface applicantContactInfo {
 const getApplicantContactInfo = (
   answers: FormValue,
   key: string,
-): applicantContactInfo => {
+): ApplicantContactInfo => {
   return {
     email: (answers[key] as FormValue).email as string,
     phoneNumber: (answers[key] as FormValue).phoneNumber as string,
