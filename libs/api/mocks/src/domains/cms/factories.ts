@@ -18,6 +18,7 @@ import {
   Menu,
   MenuLinkWithChildren,
   News,
+  Organization,
   ReferenceLink,
   SectionWithImage,
   Slice,
@@ -49,12 +50,14 @@ export const image = factory<SystemMetadata<Image>>({
 })
 
 export const html = factory<Html>({
+  __typename: 'Html',
   typename: 'Html',
   id: () => faker.random.uuid(),
   document: () => wysiwyg(),
 })
 
 export const sectionWithImage = factory<SystemMetadata<SectionWithImage>>({
+  __typename: 'SectionWithImage',
   typename: 'SectionWithImage',
   id: () => faker.random.uuid(),
   title: () => title(),
@@ -68,6 +71,14 @@ export const slice = simpleFactory(
     return factory()
   },
 )
+
+export const organization = factory<Organization>({
+  id: () => faker.random.uuid(),
+  shortTitle: () => faker.random.word(),
+  title: () => faker.company.companyName(),
+  slug: slugify('title'),
+  tag: () => [],
+})
 
 export const subArticle = factory<SubArticle>({
   id: () => faker.random.uuid(),
@@ -96,6 +107,9 @@ export const article = factory<SystemMetadata<Article>>({
       ? subArticle.list(faker.random.number({ min: 1, max: 4 }))
       : [],
   relatedArticles: () => [],
+  organization: () => [organization()],
+  relatedOrganization: () => organization.list(3),
+  responsibleParty: () => organization.list(3),
   group: null,
   subgroup: null,
 })
