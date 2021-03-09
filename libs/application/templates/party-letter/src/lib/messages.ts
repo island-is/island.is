@@ -13,7 +13,7 @@ export const m = defineMessages({
   },
   partyLetterSelection: {
     id: 'ple.application:party.letterSelection',
-    defaultMessage: 'Veldu listabókstaf',
+    defaultMessage: 'Velja listabókstaf',
     description: 'Select party letter title',
   },
   partyName: {

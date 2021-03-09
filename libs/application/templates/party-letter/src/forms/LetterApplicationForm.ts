@@ -4,23 +4,30 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildSubSection,
   buildSubmitField,
   buildTextField,
-  buildDataProviderItem,
-  buildExternalDataProvider,
   Form,
   FormModes,
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 
-const partyLetters = ['A', 'B', 'C', 'X', 'H', 'I', 'O', 'P', 'Q', 'T', 'R']
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
   title: 'Listabókstafur',
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'recommendations',
+      title: 'Safna meðmælum',
+      children: [
+        buildCustomField({
+          id: 'gatherRecommendations',
+          title: 'Safna meðmælum',
+          component: 'Recommendations',
+        }),
+      ],
+    }),
     buildSection({
       id: 'companySelection',
       title: m.companySelection.defaultMessage,
@@ -50,7 +57,7 @@ export const LetterApplicationForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
+    /* buildSection({
       id: 'termsAndConditions',
       title: 'Skilmálar',
       children: [
@@ -82,20 +89,16 @@ export const LetterApplicationForm: Form = buildForm({
           ],
         }),
       ],
-    }),
+    }),*/
 
     buildSection({
       id: 'partyLetter',
-      title: 'Velja listabókstaf',
+      title: m.partyLetterSelection,
       children: [
-        buildRadioField({
+        buildCustomField({
           id: 'partyLetter',
           title: m.partyLetterSelection,
-          width: 'half',
-          options: partyLetters.map((letter) => ({
-            value: letter,
-            label: letter,
-          })),
+          component: 'PartyLetter',
         }),
       ],
     }),
@@ -103,17 +106,24 @@ export const LetterApplicationForm: Form = buildForm({
       id: 'partyName',
       title: 'Nafn flokks',
       children: [
-        buildTextField({
+        buildMultiField({
           id: 'partyName',
           title: m.partyName,
-          format: 'text',
+          children: [
+            buildTextField({
+              id: 'partyNameInput',
+              title: 'Nafn',
+              width: 'half',
+              placeholder: m.partyName,
+            }),
+          ],
         }),
       ],
     }),
 
     buildSection({
       id: 'partyName',
-      title: 'Safna meðmælum',
+      title: 'Yfirlit',
       children: [
         buildMultiField({
           title: '',
