@@ -232,7 +232,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       id="grantToLegalGuardians"
                       name="grantToLegalGuardians"
                       type="checkbox"
-                      defaultChecked={props.identityResource.grantToLegalGuardians}
+                      defaultChecked={
+                        props.identityResource.grantToLegalGuardians
+                      }
                       className="api-scope-form__checkbox"
                       title="Should legal guardians automatically get this scope for their wards"
                     />
@@ -251,7 +253,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       id="grantToProcuringHolders"
                       name="grantToProcuringHolders"
                       type="checkbox"
-                      defaultChecked={props.identityResource.grantToProcuringHolders}
+                      defaultChecked={
+                        props.identityResource.grantToProcuringHolders
+                      }
                       className="api-scope-form__checkbox"
                       title="Should procuring holders automatically get this scope for their organisations"
                     />
@@ -289,7 +293,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       id="automaticDelegationGrant"
                       name="automaticDelegationGrant"
                       type="checkbox"
-                      defaultChecked={props.identityResource.automaticDelegationGrant}
+                      defaultChecked={
+                        props.identityResource.automaticDelegationGrant
+                      }
                       className="api-scope-form__checkbox"
                       title="Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile"
                     />
@@ -308,7 +314,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       id="alsoForDelegatedUser"
                       name="alsoForDelegatedUser"
                       type="checkbox"
-                      defaultChecked={props.identityResource.alsoForDelegatedUser}
+                      defaultChecked={
+                        props.identityResource.alsoForDelegatedUser
+                      }
                       className="api-scope-form__checkbox"
                       title="Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity"
                     />
