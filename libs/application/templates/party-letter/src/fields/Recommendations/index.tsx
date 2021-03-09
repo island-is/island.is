@@ -11,14 +11,12 @@ const SIGNATURES = [
     name: 'Örvar Þór Sigurðsson',
     nationalRegistry: '1991921335',
     address: 'Baugholt 15',
-    hasWarning: false,
   },
   {
     date: '21.01.2021',
     name: 'Þórhildur Tyrfingsdóttir',
     nationalRegistry: '1991921335',
     address: 'Miðskógar 17',
-    hasWarning: false,
   },
   {
     date: '21.01.2021',
@@ -32,21 +30,19 @@ const SIGNATURES = [
     name: 'Brian Johannesen',
     nationalRegistry: '1991921335',
     address: 'Reykjavík',
-    hasWarning: false,
   },
   {
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalRegistry: '1991921335',
     address: 'Baugholt 15',
-    hasWarning: false,
   },
   {
     date: '21.01.2021',
     name: 'Örvar Þór Sigurðsson',
     nationalRegistry: '1991921335',
     address: 'Baugholt 15',
-    hasWarning: false,
+    hasWarning: true,
   },
 ]
 

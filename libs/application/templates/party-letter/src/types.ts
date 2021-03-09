@@ -3,5 +3,5 @@ export interface Signature {
   name: string
   nationalRegistry: string
   address: string
-  hasWarning: boolean
+  hasWarning?: boolean
 }

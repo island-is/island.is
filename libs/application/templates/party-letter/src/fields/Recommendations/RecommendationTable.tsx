@@ -15,25 +15,32 @@ const RecommendationTable: FC<RecommendationProps> = ({
   signatures,
 }) => {
   const { formatMessage } = useLocale()
-
-  const renderRow = (signature: Signature) => {
+  const renderRow = (signature: Signature, index: number) => {
     const cell = Object.entries(signature)
-
     return (
-      <T.Row>
-        {cell.map(([key, value]) => {
-          console.log(key, value, signature.hasWarning)
+      <T.Row key={index}>
+        {cell.map(([_key, value], i) => {
           if (typeof value === 'string')
             return (
               <T.Data
+                key={i}
                 box={{
                   background: signature.hasWarning ? 'yellow200' : 'white',
                   textAlign: value === signature.address ? 'right' : 'left',
-                  overflow: signature.hasWarning ? 'visible' : undefined,
-                  position: 'relative',
                 }}
               >
-                {value}
+                {signature.hasWarning && value === signature.address ? (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="spaceBetween"
+                  >
+                    {value}
+                    <Icon icon="warning" color="blue400" />
+                  </Box>
+                ) : (
+                  value
+                )}
               </T.Data>
             )
         })}
@@ -42,21 +49,23 @@ const RecommendationTable: FC<RecommendationProps> = ({
   }
 
   return (
-    <T.Table box={{ overflow: 'visible' }}>
-      <T.Head>
-        <T.Row>
-          <T.HeadData>Dags skráðkóli</T.HeadData>
-          <T.HeadData>Nafn</T.HeadData>
-          <T.HeadData>Kennitala</T.HeadData>
-          <T.HeadData box={{ textAlign: 'right' }}>Heimilisfang</T.HeadData>
-        </T.Row>
-      </T.Head>
-      <T.Body>
-        {signatures &&
-          signatures.length &&
-          signatures.map((signature) => renderRow(signature))}
-      </T.Body>
-    </T.Table>
+    <>
+      <T.Table>
+        <T.Head>
+          <T.Row>
+            <T.HeadData>Dags skráðkóli</T.HeadData>
+            <T.HeadData>Nafn</T.HeadData>
+            <T.HeadData>Kennitala</T.HeadData>
+            <T.HeadData box={{ textAlign: 'right' }}>Heimilisfang</T.HeadData>
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {signatures &&
+            signatures.length &&
+            signatures.map((signature, index) => renderRow(signature, index))}
+        </T.Body>
+      </T.Table>
+    </>
   )
 }
 
