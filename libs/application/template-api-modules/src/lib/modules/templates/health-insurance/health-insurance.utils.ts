@@ -88,15 +88,15 @@ export const transformApplicationToHealthInsuranceDTO = (
   }
 
   let bucketName = ''
-  const attachmentNames: string[] = []
+  const attachmentNames = []
   if (arrFiles.length > 0) {
     try {
-      // const arrUrl: string[] = Object.values(application.attachments) ?? []
-      Object.values(application.attachments).forEach((url) => {
-        const { region, bucket, key } = AmazonS3URI(url)
+      const arrUrl: string[] = Object.values(application.attachments) ?? []
+      for ( let i = 0; i < arrUrl.length; i++){
+        const { region, bucket, key } = AmazonS3URI(arrUrl[i])
         bucketName = bucket
         attachmentNames.push(key)
-      })
+      }
     } catch (err) {
       logger.error(`Failed to obtain bucket's name`)
       throw new Error(`Failed to obtain bucket's name`)
