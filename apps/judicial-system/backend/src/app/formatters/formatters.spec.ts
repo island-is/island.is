@@ -822,9 +822,6 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 describe('formatDefenderCourtDateEmailNotification', () => {
   test('should format defender court date notification', () => {
     // Arrange
-    const type = CaseType.CUSTODY
-    const accusedNationalId = '1212129999'
-    const accusedName = 'Robbi Ræningi'
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const courtDate = new Date('2020-12-19T10:19')
@@ -832,9 +829,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
-      type,
-      accusedNationalId,
-      accusedName,
       court,
       courtCaseNumber,
       courtDate,
@@ -843,15 +837,12 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu (sjá viðhengi).<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Sakborningur: Robbi Ræningi, kt. 121212-9999.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
     )
   })
 
   test('should format defender court date notification for travel ban', () => {
     // Arrange
-    const type = CaseType.TRAVEL_BAN
-    const accusedNationalId = '1212129999'
-    const accusedName = 'Robbi Ræningi'
     const court = 'Héraðsdómur Norðurlands'
     const courtCaseNumber = 'R-77/2021'
     const courtDate = new Date('2020-12-19T10:19')
@@ -859,9 +850,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
-      type,
-      accusedNationalId,
-      accusedName,
       court,
       courtCaseNumber,
       courtDate,
@@ -870,7 +858,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur staðfest fyrirtökutíma fyrir farbannskröfu (sjá viðhengi).<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Sakborningur: Robbi Ræningi, kt. 121212-9999.<br /><br />Dómstóllinn hefur skráð þig sem verjanda sakbornings.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn, 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
     )
   })
 })
