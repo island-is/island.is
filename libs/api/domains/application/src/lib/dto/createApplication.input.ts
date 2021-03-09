@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsObject,
   IsArray,
+  IsBoolean,
 } from 'class-validator'
 import { CreateApplicationDtoTypeIdEnum } from '../../../gen/fetch'
 
@@ -15,28 +16,32 @@ registerEnumType(CreateApplicationDtoTypeIdEnum, {
 
 @InputType()
 export class CreateApplicationInput {
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   applicant!: string
 
-  @Field((type) => [String])
+  @Field(() => [String])
   @IsArray()
   assignees!: string[]
 
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   state!: string
 
-  @Field((type) => graphqlTypeJson, { nullable: true })
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()
   attachments?: object
 
-  @Field((type) => CreateApplicationDtoTypeIdEnum)
+  @Field(() => CreateApplicationDtoTypeIdEnum)
   @IsEnum(CreateApplicationDtoTypeIdEnum)
   typeId!: CreateApplicationDtoTypeIdEnum
 
-  @Field((type) => graphqlTypeJson)
+  @Field(() => graphqlTypeJson)
   @IsObject()
   answers!: object
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  completed!: boolean
 }

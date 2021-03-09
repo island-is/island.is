@@ -1,40 +1,43 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Op } from 'sequelize'
+import {
+  ExternalData,
+  FormValue,
+  ApplicationTypes,
+} from '@island.is/application/core'
+
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import {
-  ApplicationTypes,
-  ExternalData,
-  FormValue,
-} from '@island.is/application/core'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {}
+  ) { }
 
-  async findById(id: string): Promise<Application | null> {
-    this.logger.debug(`Finding application by id - "${id}"`)
-    return this.applicationModel.findOne({
-      where: { id },
-    })
+  async findOneById(id: string): Promise<Application | null> {
+    return this.applicationModel.findOne({ where: { id } })
   }
 
-  async findAll(): Promise<Application[]> {
+  async findAllByNationalIdAndType(
+    nationalId: string,
+    typeId?: ApplicationTypes,
+    completed?: boolean,
+  ): Promise<Application[]> {
     return this.applicationModel.findAll({
-      order: [['modified', 'DESC']],
-    })
-  }
-
-  async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {
-    return this.applicationModel.findAll({
-      where: { typeId },
+      where: {
+        ...(typeId ? { typeId: typeId } : {}),
+        ...(completed !== undefined
+          ? { completed: { [Op.eq]: completed } }
+          : {}),
+        [Op.or]: [
+          { applicant: nationalId },
+          { assignees: { [Op.contains]: [nationalId] } },
+        ],
+      },
       order: [['modified', 'DESC']],
     })
   }

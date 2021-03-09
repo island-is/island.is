@@ -9,10 +9,10 @@ import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
+import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))
@@ -30,7 +30,7 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class ApplicationService {
-  constructor(private applicationApi: ApplicationsApi) {}
+  constructor(private applicationApi: ApplicationsApi) { }
 
   async findOne(id: string, authorization: string) {
     return await this.applicationApi
@@ -41,18 +41,18 @@ export class ApplicationService {
       .catch(handleError)
   }
 
-  async findAll(authorization: string) {
-    return await this.applicationApi
-      .applicationControllerFindAll({ authorization })
-      .catch(handleError)
-  }
-
-  async findAllByType(
+  async findAll(
+    nationalId: string,
     authorization: string,
-    typeId: ApplicationResponseDtoTypeIdEnum,
+    input: ApplicationApplicationsInput,
   ) {
     return await this.applicationApi
-      .applicationControllerFindAllByType({ authorization, typeId })
+      .applicationControllerFindAll({
+        nationalId,
+        authorization,
+        typeId: input?.typeId,
+        completed: input?.completed,
+      })
       .catch(handleError)
   }
 

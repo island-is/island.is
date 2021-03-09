@@ -85,4 +85,12 @@ export class Application extends Model<Application> {
   })
   @ApiProperty()
   externalData!: object
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  })
+  @ApiProperty()
+  completed!: boolean
 }

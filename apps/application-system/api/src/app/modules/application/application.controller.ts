@@ -11,6 +11,7 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
+  Query,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -21,6 +22,7 @@ import {
   ApiParam,
   ApiTags,
   ApiHeader,
+  ApiQuery,
 } from '@nestjs/swagger'
 import {
   Application as BaseApplication,
@@ -68,13 +70,12 @@ import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
-
 interface DecodedAssignmentToken {
   applicationId: string
   state: string
 }
 
+// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -89,20 +90,13 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
-  @Get('applications')
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findAll(): Promise<ApplicationResponseDto[]> {
-    return await this.applicationService.findAll()
-  }
-
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<ApplicationResponseDto> {
-    const application = await this.applicationService.findById(id)
+    const application = await this.applicationService.findOneById(id)
 
     if (!application) {
       throw new NotFoundException(
@@ -113,13 +107,38 @@ export class ApplicationController {
     return application
   }
 
-  @Get('applications/type/:typeId')
+  @Get('users/:nationalId/applications')
+  @ApiParam({
+    name: 'nationalId',
+    type: String,
+    required: true,
+    description: `User's nationalId to get all the applications from.`,
+    allowEmptyValue: false,
+  })
+  @ApiQuery({
+    name: 'typeId',
+    required: false,
+    enum: ApplicationTypes,
+    description: 'To filter by application type.',
+  })
+  @ApiQuery({
+    name: 'completed',
+    required: false,
+    type: 'boolean',
+    description: 'To filter by application in progress or completed.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
-  async findAllByType(
-    @Param('typeId') typeId: ApplicationTypes,
+  async findAll(
+    @NationalId() nationalId: string,
+    @Query('typeId') typeId?: ApplicationTypes,
+    @Query('completed') completed?: boolean,
   ): Promise<ApplicationResponseDto[]> {
-    return await this.applicationService.findAllByType(typeId)
+    return await this.applicationService.findAllByNationalIdAndType(
+      nationalId,
+      typeId,
+      completed,
+    )
   }
 
   @Post('applications')
@@ -154,7 +173,7 @@ export class ApplicationController {
       throw new BadRequestException('Invalid token')
     }
 
-    const existingApplication = await this.applicationService.findById(
+    const existingApplication = await this.applicationService.findOneById(
       decodedToken.applicationId,
     )
 
@@ -351,7 +370,7 @@ export class ApplicationController {
       authorization,
     )
 
-    // TODO: should not have to specificially check for updatedApplication
+    // TODO: should not have to specifically check for updatedApplication
     // because of return type on this.changeState
     if (hasChanged === true && updatedApplication) {
       return updatedApplication

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { GET_APPLICATION } from '@island.is/application/graphql'
+import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import { RefetchProvider } from '../context/RefetchContext'
 
 import {
@@ -31,7 +31,7 @@ const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
 }> = ({ applicationId, nationalRegistryId }) => {
-  const { data, error, loading, refetch } = useQuery(GET_APPLICATION, {
+  const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
       input: {
         id: applicationId,
@@ -44,7 +44,7 @@ const ApplicationLoader: FC<{
     notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
-  const application = data?.getApplication
+  const application = data?.applicationApplication
 
   if (!applicationId || error) {
     return <NotFound />

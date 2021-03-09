@@ -82,6 +82,11 @@ export class ApplicationResponseDto {
   @IsNumber()
   progress?: number
 
+  @ApiProperty()
+  @Expose()
+  @IsBoolean()
+  completed!: boolean
+
   constructor(partial: Partial<ApplicationResponseDto>) {
     Object.assign(this, partial)
   }

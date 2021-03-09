@@ -26,4 +26,5 @@ export interface Application {
   externalData: ExternalData
   name?: string
   progress?: number
+  completed: boolean
 }

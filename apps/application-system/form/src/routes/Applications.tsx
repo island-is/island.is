@@ -5,7 +5,7 @@ import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
-  GET_APPLICATIONS_BY_TYPE,
+  APPLICATION_APPLICATIONS,
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -33,7 +33,7 @@ export const Applications: FC = () => {
   const nationalRegistryId = userInfo?.profile?.nationalId
 
   const { data, loading, error: applicationsError } = useQuery(
-    GET_APPLICATIONS_BY_TYPE,
+    APPLICATION_APPLICATIONS,
     {
       variables: {
         input: { typeId: type },
@@ -60,13 +60,14 @@ export const Applications: FC = () => {
           typeId: type,
           assignees: [nationalRegistryId],
           answers: {},
+          completed: false,
         },
       },
     })
   }
 
   useEffect(() => {
-    if (data && isEmpty(data.getApplicationsByType)) {
+    if (data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
   }, [data])
@@ -93,14 +94,14 @@ export const Applications: FC = () => {
 
   return (
     <Page>
-      {!loading && !isEmpty(data?.getApplicationsByType) && (
+      {!loading && !isEmpty(data?.applicationApplications) && (
         <Box padding="containerGutter">
           <Box marginTop={5} marginBottom={5}>
             <Text variant="h1">{formatMessage(coreMessages.applications)}</Text>
           </Box>
 
           <Stack space={2}>
-            {(data?.getApplicationsByType ?? []).map(
+            {(data?.applicationApplications ?? []).map(
               (application: Application) => (
                 <ActionCard
                   key={application.id}

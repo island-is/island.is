@@ -1,8 +1,6 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
-import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
-import { GetApplicationInput } from './dto/getApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -20,6 +18,8 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { ApplicationApplicationInput } from './dto/applicationApplication.input'
+import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -27,28 +27,22 @@ export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
   @Query(() => Application, { nullable: true })
-  async getApplication(
-    @Args('input') input: GetApplicationInput,
+  async applicationApplication(
+    @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.findOne(input.id, user.authorization)
   }
 
   @Query(() => [Application], { nullable: true })
-  async getApplications(
+  async applicationApplications(
+    @Args('input') input: ApplicationApplicationsInput,
     @CurrentUser() user: User,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAll(user.authorization)
-  }
-
-  @Query(() => [Application], { nullable: true })
-  async getApplicationsByType(
-    @Args('input') input: GetApplicationsByTypeInput,
-    @CurrentUser() user: User,
-  ): Promise<Application[] | null> {
-    return this.applicationService.findAllByType(
+    return this.applicationService.findAll(
+      user.nationalId,
       user.authorization,
-      input.typeId,
+      input,
     )
   }
 

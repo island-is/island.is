@@ -41,6 +41,7 @@ const ApplicationCard: FC<Props> = ({
       paddingX={4}
       border="standard"
       borderRadius="large"
+      style={{ opacity: isComplete ? 0.5 : 1 }}
     >
       <a href={url} target="_blank" rel="noopener noreferrer">
         <Stack space={1}>
@@ -85,8 +86,8 @@ const ApplicationCard: FC<Props> = ({
           >
             <Text>
               {isComplete
-                ? formatMessage(m.cardStatusCopyDone, { name })
-                : formatMessage(m.cardStatusCopyInProgress, { name })}
+                ? formatMessage(m.cardStatusCopyDone)
+                : formatMessage(m.cardStatusCopyInProgress)}
             </Text>
 
             <Text variant="small">{date}</Text>

@@ -22,6 +22,11 @@ export const m = defineMessages({
     defaultMessage: 'Sjá allar umsóknir',
     description: 'Button copy for the application redirect',
   },
+  completedButton: {
+    id: 'sp.applications:completed.button',
+    defaultMessage: 'Sjá lokið umsóknir',
+    description: 'Button to load completed applications',
+  },
   listCopy: {
     id: 'sp.applications:list.copy',
     defaultMessage:
@@ -45,12 +50,12 @@ export const m = defineMessages({
   },
   cardStatusCopyDone: {
     id: 'sp.applications:card.status.copy.done',
-    defaultMessage: 'Þú hefur lokið umsóknarferli fyrir {name}',
+    defaultMessage: 'Þú hefur lokið umsóknarferli fyrir',
     description: 'Copy description of the done status on the application card',
   },
   cardStatusCopyInProgress: {
     id: 'sp.applications:card.status.copy.inProgress',
-    defaultMessage: 'Þú hefur ekki lokið umsóknarferli fyrir {name}',
+    defaultMessage: 'Þú hefur ekki lokið umsóknarferli fyrir',
     description:
       'Copy description of the in progress status on the application card',
   },
