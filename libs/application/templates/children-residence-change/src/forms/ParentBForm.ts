@@ -38,6 +38,7 @@ export const ParentBForm: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
+            }),
           ],
         }),
       ],
