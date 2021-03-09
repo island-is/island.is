@@ -91,8 +91,22 @@ export interface IAlertBannerFields {
   /** description */
   description?: string | undefined
 
-  /** link */
-  link?: ILink | undefined
+  /** Link title */
+  linkTitle?: string | undefined
+
+  /** Link */
+  link?:
+    | IAboutSubPage
+    | IArticle
+    | IArticleCategory
+    | ISubArticle
+    | ILifeEventPage
+    | ILinkUrl
+    | INews
+    | IPage
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
 
   /** Is dismissable */
   isDismissable: boolean
@@ -343,9 +357,6 @@ export interface IAuctionFields {
 
   /** Content */
   content?: Document | undefined
-
-  /** Content Old */
-  contentOld?: string | undefined
 
   /** Organization */
   organization: IOrganization
@@ -715,9 +726,6 @@ export interface IFooterItemFields {
 
   /** Content */
   content?: Document | undefined
-
-  /** Content Old */
-  contentOld?: string | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -739,16 +747,13 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
 
 export interface IFrontpageFields {
   /** Title */
-  title?: string | undefined
+  title: string
 
   /** Featured */
   featured?: IFeatured[] | undefined
 
   /** Slides */
   slides?: IFrontpageSlider[] | undefined
-
-  /** Namespace */
-  namespace?: IUiConfiguration | undefined
 
   /** Life Events */
   lifeEvents?: ILifeEventPage[] | undefined
@@ -1744,9 +1749,6 @@ export interface IOneColumnTextFields {
   /** Title */
   title: string
 
-  /** Content Old */
-  contentOld?: string | undefined
-
   /** Content */
   content?: Document | undefined
 
@@ -1901,9 +1903,6 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
-  /** Description Old */
-  descriptionOld?: string | undefined
-
   /** Description */
   description?: Document | undefined
 
@@ -1912,7 +1911,13 @@ export interface IOrganizationSubpageFields {
 
   /** Slices */
   slices?:
-    | (IDistricts | IOffices | IOneColumnText | ITwoColumnText)[]
+    | (
+        | IAccordionSlice
+        | IDistricts
+        | IOffices
+        | IOneColumnText
+        | ITwoColumnText
+      )[]
     | undefined
 
   /** Slice Custom Renderer */
@@ -2383,40 +2388,6 @@ export interface ISliceConnectedComponent
     contentType: {
       sys: {
         id: 'sliceConnectedComponent'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IStaffCardFields {
-  /** Name */
-  name: string
-
-  /** Intro */
-  intro?: string | undefined
-
-  /** Email */
-  email?: string | undefined
-
-  /** Phone */
-  phone?: string | undefined
-
-  /** Logo */
-  logo?: Asset | undefined
-}
-
-export interface IStaffCard extends Entry<IStaffCardFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'staffCard'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2958,9 +2929,6 @@ export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
 
-  /** Left Content Old */
-  leftContentOld?: string | undefined
-
   /** Left Content */
   leftContent?: Document | undefined
 
@@ -2969,9 +2937,6 @@ export interface ITwoColumnTextFields {
 
   /** Right Title */
   rightTitle?: string | undefined
-
-  /** Right Content Old */
-  rightContentOld?: string | undefined
 
   /** Right Content */
   rightContent?: Document | undefined
@@ -3379,7 +3344,6 @@ export type CONTENT_TYPE =
   | 'sectionWithImage'
   | 'sideMenu'
   | 'sliceConnectedComponent'
-  | 'staffCard'
   | 'statistic'
   | 'statistics'
   | 'story'
