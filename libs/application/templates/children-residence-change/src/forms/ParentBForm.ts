@@ -31,10 +31,6 @@ export const ParentBForm: Form = buildForm({
               title: m.contactInfo.inputs.emailLabel,
               variant: 'email',
               backgroundColor: 'blue',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
             }),
             buildTextField({
               id: 'parentB.phoneNumber',
@@ -42,11 +38,6 @@ export const ParentBForm: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
           ],
         }),
       ],
