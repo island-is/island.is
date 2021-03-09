@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -26,6 +26,11 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
   const { id, title } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<PersonField>({ name: id })
+
+  useEffect(() => {
+    // The repeater should include one line by default
+    if (fields.length === 0) handleAddPerson()
+  }, [fields])
 
   const handleAddPerson = () =>
     append({

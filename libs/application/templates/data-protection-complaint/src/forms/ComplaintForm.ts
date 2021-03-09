@@ -352,6 +352,7 @@ export const ComplaintForm: Form = buildForm({
                   id: 'commissions.persons',
                   title: info.labels.commissionsPerson,
                   component: 'CommissionFieldRepeater',
+                  defaultValue: [{ name: '', nationalId: '' }],
                 }),
               ],
             }),
