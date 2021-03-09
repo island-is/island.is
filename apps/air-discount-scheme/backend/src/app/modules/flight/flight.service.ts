@@ -36,6 +36,9 @@ const availableFinancialStates = [
   financialStateMachine.states[States.sentDebit].key,
 ]
 
+const CONNECTING_FLIGHT_GRACE_PERIOD_IN_HOURS = 12
+const REYKJAVIK_FLIGHT_CODES = ['RVK', 'REK']
+
 @Injectable()
 export class FlightService {
   constructor(
@@ -57,6 +60,43 @@ export class FlightService {
     ) {
       return true
     } else if (postalcode === ADS_POSTAL_CODES['Vestmannaeyjar']) {
+      return true
+    }
+    return false
+  }
+
+  hasConnectingFlightPotentialFromFlightLegs(
+    firstFlight: FlightLeg,
+    secondFlight: FlightLeg,
+  ): boolean {
+    // If neither flight is connected to Reykjavik in any way
+    // then it is not eligible
+    if (
+      !REYKJAVIK_FLIGHT_CODES.includes(firstFlight.destination) &&
+      !REYKJAVIK_FLIGHT_CODES.includes(firstFlight.origin) &&
+      !REYKJAVIK_FLIGHT_CODES.includes(secondFlight.destination) &&
+      !REYKJAVIK_FLIGHT_CODES.includes(secondFlight.origin)
+    ) {
+      return false
+    }
+
+    let deltaHours =
+      (secondFlight.date.getTime() - firstFlight.date.getTime()) /
+      (1000 * 60 * 60)
+
+    // The order must be flipped if we subtract the first intended chronological leg
+    // from the second intended chronological leg
+    if (
+      REYKJAVIK_FLIGHT_CODES.includes(secondFlight.origin) ||
+      REYKJAVIK_FLIGHT_CODES.includes(firstFlight.destination)
+    ) {
+      deltaHours = -deltaHours
+    }
+
+    if (
+      deltaHours >= 0 &&
+      deltaHours <= CONNECTING_FLIGHT_GRACE_PERIOD_IN_HOURS
+    ) {
       return true
     }
     return false

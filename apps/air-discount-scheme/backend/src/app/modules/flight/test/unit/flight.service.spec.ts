@@ -166,4 +166,178 @@ describe('PublicFlightController', () => {
       })
     })
   })
+
+  describe('hasConnectingFlightPotentialFromFlightLegs', () => {
+    const rvkAk10 = {
+      date: new Date(Date.parse('2020-02-02T10:00')),
+      origin: 'RVK',
+      destination: 'AK',
+    }
+
+    const rvkAk22 = {
+      date: new Date(Date.parse('2020-02-02T22:00')),
+      origin: 'RVK',
+      destination: 'AK',
+    }
+
+    const akRvk12 = {
+      date: new Date(Date.parse('2020-02-02T12:00')),
+      origin: 'AK',
+      destination: 'RVK',
+    }
+
+    const akRvk16 = {
+      date: new Date(Date.parse('2020-02-02T16:00')),
+      origin: 'AK',
+      destination: 'RVK',
+    }
+
+    const akRvk22 = {
+      date: new Date(Date.parse('2020-02-02T22:00')),
+      origin: 'AK',
+      destination: 'RVK',
+    }
+
+    const akRvk23 = {
+      date: new Date(Date.parse('2020-02-02T23:00')),
+      origin: 'AK',
+      destination: 'RVK',
+    }
+
+    const akGrims10 = {
+      date: new Date(Date.parse('2020-02-02T10:00')),
+      origin: 'AK',
+      destination: 'GRIMS',
+    }
+
+    const akGrims12 = {
+      date: new Date(Date.parse('2020-02-02T12:00')),
+      origin: 'AK',
+      destination: 'GRIMS',
+    }
+
+    const akGrims22 = {
+      date: new Date(Date.parse('2020-02-02T22:00')),
+      origin: 'AK',
+      destination: 'GRIMS',
+    }
+
+    const akGrims23 = {
+      date: new Date(Date.parse('2020-02-02T23:00')),
+      origin: 'AK',
+      destination: 'GRIMS',
+    }
+
+    const grimsAk10 = {
+      date: new Date(Date.parse('2020-02-02T10:00')),
+      origin: 'GRIMS',
+      destination: 'AK',
+    }
+
+    const grimsAk23 = {
+      date: new Date(Date.parse('2020-02-02T23:00')),
+      origin: 'GRIMS',
+      destination: 'AK',
+    }
+
+    const akVopn20 = {
+      date: new Date(Date.parse('2020-02-02T20:00')),
+      origin: 'AK',
+      destination: 'VOPN',
+    }
+
+    it('from Reykjavik: connecting flight not allowed before', async () => {
+      const result = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        rvkAk22 as FlightLeg,
+        akGrims12 as FlightLeg,
+      )
+      expect(result).toBe(false)
+
+      // Flipping parameter order should not matter
+      const result2 = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        akGrims12 as FlightLeg,
+        rvkAk22 as FlightLeg,
+      )
+      expect(result2).toBe(false)
+    })
+
+    it('from Reykjavik: connecting flight not allowed more than 12 hours away', async () => {
+      const result = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        rvkAk10 as FlightLeg,
+        akGrims23 as FlightLeg,
+      )
+      expect(result).toBe(false)
+
+      // Flipping parameter order should not matter
+      const result2 = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        akGrims23 as FlightLeg,
+        rvkAk10 as FlightLeg,
+      )
+      expect(result2).toBe(false)
+    })
+
+    it('from Reykjavik: allowed if connecting flight is within 12 hours, inclusive', async () => {
+      const result = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        akGrims12 as FlightLeg,
+        rvkAk10 as FlightLeg,
+      )
+      expect(result).toBe(true)
+
+      const result2 = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        rvkAk10 as FlightLeg,
+        akGrims22 as FlightLeg,
+      )
+      expect(result2).toBe(true)
+
+      const result3 = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        rvkAk10 as FlightLeg,
+        akGrims10 as FlightLeg,
+      )
+      expect(result3).toBe(true)
+    })
+
+    it('to Reykjavik: not allowed if connecting flight is after', async () => {
+      const result = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        grimsAk23 as FlightLeg,
+        akRvk12 as FlightLeg,
+      )
+      expect(result).toBe(false)
+    })
+
+    it('to Reykjavik: not allowed if connecting flight more than 12 hours before', async () => {
+      const result = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        akRvk23 as FlightLeg,
+        grimsAk10 as FlightLeg,
+      )
+      expect(result).toBe(false)
+    })
+
+    it('to Reykjavik: allowed if connecting flight is within 12 hours, inclusive, before', async () => {
+      const result = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        akRvk23 as FlightLeg,
+        grimsAk23 as FlightLeg,
+      )
+      expect(result).toBe(true)
+
+      const result2 = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        grimsAk10 as FlightLeg,
+        akRvk16 as FlightLeg,
+      )
+      expect(result2).toBe(true)
+
+      const result3 = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        grimsAk10 as FlightLeg,
+        akRvk22 as FlightLeg,
+      )
+      expect(result3).toBe(true)
+    })
+
+    it('should have Reykjavik as a destination or origin in either flight', async () => {
+      const result = flightService.hasConnectingFlightPotentialFromFlightLegs(
+        grimsAk10 as FlightLeg,
+        akVopn20 as FlightLeg,
+      )
+      expect(result).toBe(false)
+    })
+  })
 })
