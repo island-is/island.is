@@ -10,13 +10,17 @@ export const infoSection = style({
   borderTop: `2px solid ${theme.color.purple100}`,
 })
 
-export const createGoProCaseContainer = style({
-  display: 'grid',
-  gridTemplateColumns: '144px 1fr',
-  columnGap: theme.spacing[2],
+export const createCourtCaseContainer = style({
+  display: 'flex',
 })
 
-export const createGoProCaseButton = style({
+export const createCourtCaseButton = style({
   display: 'flex',
   maxHeight: theme.spacing[8],
+  width: '144px',
+  marginRight: theme.spacing[2],
+})
+
+export const createCourtCaseInput = style({
+  flex: 1,
 })

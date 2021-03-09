@@ -200,8 +200,8 @@ export const JudgeOverview: React.FC = () => {
               </Text>
             </Box>
             <BlueBox>
-              <div className={styles.createGoProCaseContainer}>
-                <div className={styles.createGoProCaseButton}>
+              <div className={styles.createCourtCaseContainer}>
+                <div className={styles.createCourtCaseButton}>
                   <Button
                     size="small"
                     onMouseDown={() => setIsClickingCreateCase(true)}
@@ -214,43 +214,45 @@ export const JudgeOverview: React.FC = () => {
                     Stofna mál
                   </Button>
                 </div>
-                <Input
-                  data-testid="courtCaseNumber"
-                  name="courtCaseNumber"
-                  label="Mál nr."
-                  placeholder="Málsnúmer birtist hér með því að smella á stofna mál"
-                  size="sm"
-                  disabled={creatingCustodyCourtCase}
-                  value={workingCase.courtCaseNumber}
-                  errorMessage={courtCaseNumberErrorMessage}
-                  hasError={
-                    !creatingCustodyCourtCase &&
-                    !isClickingCreateCase &&
-                    courtCaseNumberErrorMessage !== ''
-                  }
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'courtCaseNumber',
-                      event,
-                      ['empty'],
-                      workingCase,
-                      setWorkingCase,
-                      courtCaseNumberErrorMessage,
-                      setCourtCaseNumberErrorMessage,
-                    )
-                  }
-                  onBlur={(event) => {
-                    validateAndSendToServer(
-                      'courtCaseNumber',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtCaseNumberErrorMessage,
-                    )
-                  }}
-                  required
-                />
+                <div className={styles.createCourtCaseInput}>
+                  <Input
+                    data-testid="courtCaseNumber"
+                    name="courtCaseNumber"
+                    label="Mál nr."
+                    placeholder="Málsnúmer birtist hér með því að smella á stofna mál"
+                    size="sm"
+                    disabled={creatingCustodyCourtCase}
+                    value={workingCase.courtCaseNumber}
+                    errorMessage={courtCaseNumberErrorMessage}
+                    hasError={
+                      !creatingCustodyCourtCase &&
+                      !isClickingCreateCase &&
+                      courtCaseNumberErrorMessage !== ''
+                    }
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'courtCaseNumber',
+                        event,
+                        ['empty'],
+                        workingCase,
+                        setWorkingCase,
+                        courtCaseNumberErrorMessage,
+                        setCourtCaseNumberErrorMessage,
+                      )
+                    }
+                    onBlur={(event) => {
+                      validateAndSendToServer(
+                        'courtCaseNumber',
+                        event.target.value,
+                        ['empty'],
+                        workingCase,
+                        updateCase,
+                        setCourtCaseNumberErrorMessage,
+                      )
+                    }}
+                    required
+                  />
+                </div>
               </div>
             </BlueBox>
           </Box>
