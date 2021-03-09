@@ -21,6 +21,8 @@ export interface Payment {
   }
 }
 
+// TODO: Confirm if these types are generated out of the vmst-client through openapi.
+// https://github.com/island-is/island.is/pull/3161#discussion_r590334125
 interface SelectItem {
   id: string
   name: string
