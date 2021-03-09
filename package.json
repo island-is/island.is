@@ -360,18 +360,14 @@
     "webpack-bundle-analyzer": "3.9.0"
   },
   "resolutions": {
-    "@graphql-tools/git-loader": "6.2.6",
-    "@testing-library/dom": "7.29.1",
     "axios": "0.21.1",
     "immer": "8.0.1",
     "marked": "2.0.0",
     "node-forge": "0.10.0",
     "object-path": "0.11.5",
     "serialize-javascript": "4.0.0",
-    "webpack": "4.44.1",
     "xml-crypto": "2.0.0",
     "prismjs": "1.23.0",
-    "urijs": "1.19.6",
     "elliptic": "6.5.4"
   }
 }
