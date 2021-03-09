@@ -51,6 +51,7 @@ export class HealthInsuranceAPI {
   public async applyInsurance(
     appNumber: number,
     bucketName: string,
+    attachmentNames: string[],
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
     logger.info(`--- Starting applyInsurance api call ---`)
@@ -99,6 +100,14 @@ export class HealthInsuranceAPI {
     // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
     const arrAttachments = inputObj.attachmentsFileNames
     if (arrAttachments && arrAttachments.length > 0) {
+      if (arrAttachments.length !== attachmentNames.length) {
+        logger.error(
+          `Failed to extract filenames or bucket's attachment filenames`,
+        )
+        throw new Error(
+          `Failed to extract filenames or bucket's attachment filenames`,
+        )
+      }
       logger.info(`Start getting attachments`)
       const fylgiskjol: Fylgiskjol = {
         fylgiskjal: [],
@@ -107,9 +116,8 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
-          // files are saved under 'application id' folder
           innihald: await this.bucketService.getFileContentAsBase64(
-            `${inputObj.applicationNumber}/${filename}`,
+            attachmentNames[i],
             bucketName,
           ),
         }

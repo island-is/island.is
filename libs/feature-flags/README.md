@@ -34,7 +34,7 @@ then wrap your application using `<FeatureFlagContextProvider>`.
                 'isAwesomeFeatureEnabled',
                 false,
                 {
-                    uuid: 'sindri',
+                    id: 'sindri',
                 },
                 )
                 setShowAwesome(featureEnabled as boolean)

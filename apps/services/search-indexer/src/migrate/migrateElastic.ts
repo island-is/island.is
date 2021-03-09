@@ -55,6 +55,22 @@ class App {
               await elastic.updateIndexTemplate(locale, esPackages)
               logger.info('updated template', { newIndexName })
               await elastic.importContentToIndex(locale, newIndexName, 'full')
+
+              const oldIndexName = await elastic.getPreviousIndex(locale)
+              if (oldIndexName) {
+                await elastic.migratePopularityScores(
+                  oldIndexName,
+                  newIndexName,
+                )
+                logger.info('Popularity scores from previous index migrated', {
+                  oldIndexName,
+                })
+              } else {
+                logger.info(
+                  'No older index found, skipping popularity score migration',
+                  { locale },
+                )
+              }
             } catch (error) {
               logger.error('Failed to migrate to new index', {
                 locale,

@@ -15,7 +15,7 @@ const featureFlagClient = createClient({
 })
 
 export const useModules = () => {
-  const [{ modules }, dispatch] = useStore()
+  const [{ modules, userInfo }, dispatch] = useStore()
 
   async function filterModulesBasedOnFeatureFlags() {
     const flagValues = await Promise.all(
@@ -24,6 +24,14 @@ export const useModules = () => {
         return featureFlagClient.getValue(
           `isServicePortal${capKey}ModuleEnabled`,
           false,
+          userInfo && userInfo.profile.sid
+            ? {
+                id: userInfo.profile.sid,
+                attributes: {
+                  nationalId: userInfo.profile.nationalId,
+                },
+              }
+            : undefined,
         )
       }),
     )
