@@ -111,7 +111,7 @@ const Homestay: Screen<HomestayProps> = ({
         items: navList,
       }}
     >
-      <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
+      <Box paddingBottom={4}>
         <Text variant="h1" as="h2">
           {subpage.title}
         </Text>

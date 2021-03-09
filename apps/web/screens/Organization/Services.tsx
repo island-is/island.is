@@ -79,7 +79,8 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url === '/stofnanir/syslumenn/thjonusta',
+      active:
+        primaryLink.url === `/stofnanir/${organizationPage.slug}/thjonusta`,
     }),
   )
 
@@ -204,11 +205,14 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-            <Text variant="h1" as="h1" marginBottom={4}>
+            <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
               {n('allServices', 'Öll þjónusta')}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12', '6/12', '4/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '6/12', '6/12', '4/12']}
+            paddingBottom={[4, 4, 0]}
+          >
             <Select
               backgroundColor="white"
               icon="chevronDown"

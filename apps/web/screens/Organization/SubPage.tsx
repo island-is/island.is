@@ -111,12 +111,12 @@ const SubPage: Screen<SubPageProps> = ({
       fullWidthContent={true}
     >
       <GridContainer>
-        <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
+        <Box paddingBottom={4}>
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
             >
-              <Box marginBottom={6}>
+              <Box marginBottom={2}>
                 <Text variant="h1" as="h2">
                   {subpage.title}
                 </Text>
