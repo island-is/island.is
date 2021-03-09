@@ -410,13 +410,22 @@ export const Confirmation: React.FC = () => {
               </Text>
             </Box>
           </Box>
-          <Box component="section" marginBottom={10}>
+          <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Úrskurðarorð
               </Text>
             </Box>
-            <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
+            <Box marginBottom={3}>
+              {getConclusion(workingCase, true)}
+              {workingCase.additionToConclusion && (
+                <Box marginTop={1}>
+                  <Text variant="intro">
+                    {workingCase.additionToConclusion}
+                  </Text>
+                </Box>
+              )}
+            </Box>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={1}>
