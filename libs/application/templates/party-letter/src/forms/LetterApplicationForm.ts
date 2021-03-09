@@ -9,7 +9,11 @@ import {
   Form,
   FormModes,
   buildCustomField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
+  Application,
 } from '@island.is/application/core'
+import { UserCompany } from '../dataProviders/CurrentUserCompanies'
 import { m } from '../lib/messages'
 
 export const LetterApplicationForm: Form = buildForm({
@@ -17,6 +21,45 @@ export const LetterApplicationForm: Form = buildForm({
   title: 'Listabókstafur',
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'termsAndConditions',
+      title: 'Skilmálar',
+      children: [
+        buildExternalDataProvider({
+          id: 'approveTermsAndConditions',
+          title: 'Samþykkja skilmála',
+          subTitle: 'Eftirfarandi reglur og skilmálar gilda um meðmælendalista',
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'dmr',
+              type: undefined,
+              title: 'Dómsmálaráðuneyti',
+              subTitle: 'Skilmálar og reglugerðir',
+            }),
+            buildDataProviderItem({
+              id: 'family',
+              type: undefined,
+              title: 'Yfirkjörstjórn',
+              subTitle:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: 'Persónupplýsingar úr þjóðskrá',
+              subTitle: 'Frekar skýring hér',
+            }),
+            buildDataProviderItem({
+              id: 'userCompanies',
+              type: 'CurrentUserCompaniesProvider',
+              title: 'Ísland.is',
+              subTitle:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'recommendations',
       title: 'Safna meðmælum',
@@ -37,60 +80,29 @@ export const LetterApplicationForm: Form = buildForm({
           title: m.companySelection.defaultMessage,
           largeButtons: true,
           width: 'half',
-          options: [
-            {
-              label: 'Demókrataflokkurinn',
-              subLabel: '000000-0000',
-              value: '000000-0000',
-            },
-            {
-              label: 'Verzlunin Kaffi',
-              subLabel: '101010-0000',
-              value: '101010-0000',
-            },
-            {
-              label: 'Jón Jónsson',
-              subLabel: '111111-0000',
-              value: '111111-0000',
-            },
-          ],
+          options: (application: Application) => {
+            const companies = application.externalData.userCompanies
+              .data as UserCompany[]
+            const nationalRegistry =
+              application.externalData.nationalRegistry.data
+
+            console.log('nationalRegistry', nationalRegistry)
+            return [
+              {
+                label: 'This is current users name',
+                subLabel: '000000-0000',
+                value: '000000-0000',
+              },
+              ...companies.map((company) => ({
+                label: company.Nafn,
+                subLabel: company.Kennitala,
+                value: company.Kennitala,
+              })),
+            ]
+          },
         }),
       ],
     }),
-    /* buildSection({
-      id: 'termsAndConditions',
-      title: 'Skilmálar',
-      children: [
-        buildExternalDataProvider({
-          id: 'approveTermsAndConditions',
-          title: 'Samþykkja skilmála',
-          subTitle: 'Eftirfarandi reglur og skilmálar gilda um meðmælendalista',
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'dmr',
-              type: 'DmrProvider',
-              title: 'Dómsmálaráðuneyti',
-              subTitle: 'Skilmálar og reglugerðir',
-            }),
-            buildDataProviderItem({
-              id: 'family',
-              type: 'FamilyInformationProvider',
-              title: 'Yfirkjörstjórn',
-              subTitle:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            }),
-            buildDataProviderItem({
-              id: 'pregnancyStatus',
-              type: 'PregnancyStatus',
-              title: 'Ísland.is',
-              subTitle:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            }),
-          ],
-        }),
-      ],
-    }),*/
-
     buildSection({
       id: 'partyLetter',
       title: m.partyLetterSelection,
