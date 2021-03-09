@@ -15,6 +15,7 @@ export const CaseQuery = gql`
       accusedGender
       defenderName
       defenderEmail
+      sendRequestToDefender
       court
       arrestDate
       requestedCourtDate
@@ -46,6 +47,7 @@ export const CaseQuery = gql`
       courtAttendees
       policeDemands
       courtDocuments
+      additionToConclusion
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
