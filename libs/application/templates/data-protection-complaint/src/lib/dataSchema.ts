@@ -6,7 +6,7 @@ import * as kennitala from 'kennitala'
 export enum OnBehalf {
   MYSELF = 'myself',
   MYSELF_AND_OR_OTHERS = 'myselfAndOrOthers',
-  COMPANY = 'company',
+  OTHERS = 'others',
   ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
 }
 
@@ -30,22 +30,12 @@ export const DataProtectionComplaintSchema = z.object({
     message: error.concernsLibel.defaultMessage,
   }),
   info: z.object({
-    onBehalf: z
-      .enum([
-        OnBehalf.MYSELF,
-        OnBehalf.MYSELF_AND_OR_OTHERS,
-        OnBehalf.COMPANY,
-        OnBehalf.ORGANIZATION_OR_INSTITUTION,
-      ])
-      .refine(
-        (p) =>
-          p === OnBehalf.MYSELF ||
-          p === OnBehalf.MYSELF_AND_OR_OTHERS ||
-          p === OnBehalf.ORGANIZATION_OR_INSTITUTION,
-        {
-          message: error.onBehalfOfACompany.defaultMessage,
-        },
-      ),
+    onBehalf: z.enum([
+      OnBehalf.MYSELF,
+      OnBehalf.MYSELF_AND_OR_OTHERS,
+      OnBehalf.OTHERS,
+      OnBehalf.ORGANIZATION_OR_INSTITUTION,
+    ]),
   }),
   applicant: z.object({
     name: z.string().nonempty(),

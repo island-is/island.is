@@ -177,7 +177,7 @@ export const ComplaintForm: Form = buildForm({
                       value: OnBehalf.MYSELF_AND_OR_OTHERS,
                       label: info.labels.myselfAndOrOthers,
                     },
-                    { value: OnBehalf.COMPANY, label: info.labels.company },
+                    { value: OnBehalf.OTHERS, label: info.labels.others },
                     {
                       value: OnBehalf.ORGANIZATION_OR_INSTITUTION,
                       label: info.labels.organizationInstitution,
@@ -187,13 +187,9 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                 }),
                 buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'info.onBehalfOfACompanyAlertMessage',
-                  title: errorCards.onBehalfOfACompanyTitle,
-                  description: errorCards.onBehalfOfACompanyDescription,
-                  condition: (formValue) =>
-                    (formValue.info as FormValue)?.onBehalf ===
-                    OnBehalf.COMPANY,
+                  id: 'onBehalfDescription',
+                  title: '',
+                  component: 'CompanyDisclaimer',
                 }),
               ],
             }),
@@ -206,7 +202,8 @@ export const ComplaintForm: Form = buildForm({
             const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
               onBehalf === OnBehalf.MYSELF ||
-              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS ||
+              onBehalf === OnBehalf.OTHERS
             )
           },
           children: [
@@ -327,7 +324,10 @@ export const ComplaintForm: Form = buildForm({
           title: section.commissions.defaultMessage,
           condition: (formValue) => {
             const onBehalf = (formValue.info as FormValue)?.onBehalf
-            return onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+            return (
+              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS ||
+              onBehalf === OnBehalf.OTHERS
+            )
           },
           children: [
             buildMultiField({

@@ -53,13 +53,13 @@ export const info = {
     },
     myselfAndOrOthers: {
       id: 'dpac.application:section.info.myselfAndOrOthers',
-      defaultMessage: 'Mig ásamt öðrum / í umboði',
+      defaultMessage: 'Mig ásamt í umboði fyrir aðra',
       description: 'Myself and others',
     },
-    company: {
-      id: 'dpac.application:section.info.company',
-      defaultMessage: 'Fyrirtæki',
-      description: 'Company',
+    others: {
+      id: 'dpac.application:section.info.others',
+      defaultMessage: 'Í umboði fyrir aðra',
+      description: 'Others',
     },
     organizationInstitution: {
       id: 'dpac.application:section.info.organizationInstitution',
@@ -135,6 +135,17 @@ export const info = {
       id: 'dpac.application:section.info.commissionsAddMoreButtonLabel',
       defaultMessage: 'Bæta við aðila',
       description: 'Commissions add more button label',
+    },
+    companyDisclaimer: {
+      id: 'dpac.application:section.info.companyDisclaimer',
+      defaultMessage: 'Ekki er hægt að leggja inn kvörtun fyrir fyrirtæki',
+      description:
+        'Informs people that a complaint can not be registered on behalf of companies',
+    },
+    companyDisclaimerButtonLabel: {
+      id: 'dpac.application:section.info.companyDisclaimerButtonLabel',
+      defaultMessage: 'Nánari upplýsingar hér',
+      description: 'Label of the more info button in the company disclaimer',
     },
   }),
 }
