@@ -20,8 +20,10 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import * as styles from './FormShell.treat'
 import ErrorBoundary from '../components/ErrorBoundary'
+import { useHistorySync } from '../hooks/useHistorySync'
+import { useApplicationTitle } from '../hooks/useApplicationTitle'
+import * as styles from './FormShell.treat'
 
 export const FormShell: FC<{
   application: Application
@@ -39,9 +41,14 @@ export const FormShell: FC<{
       activeScreen: 0,
       screens: [],
       sections: [],
+      historyReason: 'initial',
     },
     initializeReducer,
   )
+
+  useHistorySync(state, dispatch)
+  useApplicationTitle(state)
+
   const {
     activeScreen,
     application: storedApplication,
@@ -49,9 +56,8 @@ export const FormShell: FC<{
     screens,
   } = state
 
-  const { mode = FormModes.APPLYING } = state.form
+  const { mode = FormModes.APPLYING, renderLastScreenButton } = state.form
   const showProgressTag = mode !== FormModes.APPLYING
-
   const currentScreen = screens[activeScreen]
   const FormLogo = form.logo
 
@@ -116,6 +122,7 @@ export const FormShell: FC<{
                     }
                     activeScreenIndex={activeScreen}
                     numberOfScreens={screens.length}
+                    renderLastScreenButton={renderLastScreenButton}
                     screen={currentScreen}
                     mode={mode}
                   />

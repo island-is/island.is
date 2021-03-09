@@ -12,23 +12,21 @@ const schema = z.object({
       return asNumber > 0
     }),
     name: z.string().nonempty().max(256),
-    minString: z.string().min(7),
-    email: z.string().email(),
+    minString: z.string().min(7).optional(),
+    email: z.string().email().optional(),
   }),
   optionalEnum: z.enum(['yes', 'no']).optional(),
   requiredString: z.string(),
-  someArray: z.array(
-    z.object({
-      a: z.string().nonempty(),
-      b: z.string().nonempty(),
-      c: z.string().nonempty(),
-      d: z.string().refine((v) => v !== 'invalid'),
-    }),
-  ),
 })
 
+const invalidValue = 'Invalid value.'
+const invalidEmail = 'Invalid email'
+const invalidInput = 'Invalid input'
+const expectedNumberReceivedString = 'Expected number, received string'
+const expectedStringReceivedNumber = 'Expected string, received number'
+
 describe('validateAnswers', () => {
-  it('should pick non-nested types from the schema', () => {
+  it('should return no errors for non-nested types from valid values', () => {
     expect(
       validateAnswers(schema, {
         requiredString: 'asdf',
@@ -41,14 +39,14 @@ describe('validateAnswers', () => {
       }),
     ).toBeUndefined()
   })
-  it('should pick partial nested object from the schema', () => {
+  it('should return no errors for valid nested value', () => {
     const formValue = {
       nested: { name: 'asdf', numeric: '22' },
     }
 
     expect(validateAnswers(schema, formValue)).toBeUndefined()
   })
-  it('should pick partial nested object and non-nested values as well from the schema', () => {
+  it('should pick partial nested object and non-nested values as well from the schema and return no errors', () => {
     const formValue = {
       nested: { name: 'asdf', numeric: '22' },
       requiredString: 'yes',
@@ -86,10 +84,12 @@ describe('validateAnswers', () => {
       nonEmptyNestedStringSchema,
       invalidFormValue,
     )
+
     expect(schemaValidationError).toEqual({
-      'person.nationalId': expect.anything(),
-      'person.age': expect.anything(),
-      'person.email': expect.anything(),
+      person: invalidValue,
+      'person.nationalId': invalidValue,
+      'person.age': invalidValue,
+      'person.email': invalidEmail,
     })
   })
 
@@ -97,9 +97,9 @@ describe('validateAnswers', () => {
     const veryNestedSchema = z.object({
       requiredString: z.string(),
       nested: z.object({
-        name: z.string().nonempty(),
+        name: z.string().nonempty().optional(),
         deep: z.object({
-          age: z.number().positive(),
+          age: z.number().positive().optional(),
           soDeep: z.object({
             id: z.number(),
           }),
@@ -142,10 +142,35 @@ describe('validateAnswers', () => {
       anotherBadFormValue,
     )
     expect(secondSchemaValidationError).toEqual({
-      'nested.deep.soDeep.id': expect.anything(),
+      nested: expectedNumberReceivedString,
+      'nested.deep': expectedNumberReceivedString,
+      'nested.deep.soDeep': expectedNumberReceivedString,
+      'nested.deep.soDeep.id': expectedNumberReceivedString,
     })
   })
   describe('arrays', () => {
+    it('should validate empty arrays', () => {
+      const schemaWithArray = z.object({
+        anArray: z.array(z.string()).nonempty(),
+        somethingElse: z.number(),
+      })
+      const okFormValue = {
+        anArray: ['o', 'k'],
+        somethingElse: 4,
+      }
+      expect(validateAnswers(schemaWithArray, okFormValue)).toBeUndefined()
+
+      const badFormValue = {
+        anArray: [],
+      }
+      const schemaValidationError = validateAnswers(
+        schemaWithArray,
+        badFormValue,
+      )
+      expect(schemaValidationError).toEqual({
+        anArray: expect.anything(),
+      })
+    })
     it('should validate primitive array elements', () => {
       const schemaWithArray = z.object({
         anArray: z.array(z.string()),
@@ -172,8 +197,9 @@ describe('validateAnswers', () => {
         badFormValue,
       )
       expect(schemaValidationError).toEqual({
-        'anArray[1]': expect.anything(),
-        'anArray[2]': expect.anything(),
+        anArray: expectedStringReceivedNumber,
+        'anArray[1]': expectedStringReceivedNumber,
+        'anArray[2]': expectedStringReceivedNumber,
       })
     })
     it('should pick nested object inside an array from a schema', () => {
@@ -181,13 +207,16 @@ describe('validateAnswers', () => {
         person: z
           .array(
             z.object({
-              age: z.string().refine((x) => {
-                const asNumber = parseInt(x)
-                if (isNaN(asNumber)) {
-                  return false
-                }
-                return asNumber > 15
-              }),
+              age: z
+                .string()
+                .refine((x) => {
+                  const asNumber = parseInt(x)
+                  if (isNaN(asNumber)) {
+                    return false
+                  }
+                  return asNumber > 15
+                })
+                .optional(),
               name: z.string().nonempty().max(256),
             }),
           )
@@ -226,7 +255,9 @@ describe('validateAnswers', () => {
       }
       const secondError = validateAnswers(schemaWithArray, anotherBadFormValue)
       expect(secondError).toEqual({
-        'person[0].age': expect.anything(),
+        person: invalidInput,
+        'person[0]': invalidInput,
+        'person[0].age': invalidInput,
       })
     })
     it('should skip null elements in the array if the validation is not strict', () => {
@@ -234,21 +265,27 @@ describe('validateAnswers', () => {
       const schemaWithArray = z.object({
         person: z
           .array(
-            z.object({
-              age: z.string().refine((x) => {
-                const asNumber = parseInt(x)
-                if (isNaN(asNumber)) {
-                  return false
-                }
-                return asNumber > 15
-              }),
-              name: z.string().nonempty().max(256),
-            }),
+            z
+              .object({
+                age: z
+                  .string()
+                  .refine((x) => {
+                    const asNumber = parseInt(x)
+                    if (isNaN(asNumber)) {
+                      return false
+                    }
+                    return asNumber > 15
+                  })
+                  .optional(),
+                name: z.string().max(256).optional(),
+              })
+              .nullable(),
           )
           .max(5)
           .nonempty(),
         requiredString: z.string().nonempty(),
       })
+
       const okFormValue = {
         requiredString: 'yes',
         person: [null, { name: 'Name' }],
@@ -279,7 +316,32 @@ describe('validateAnswers', () => {
         person: [null, { name: 'bam', age: 1 }],
       } as FormValue
       const secondError = validateAnswers(schemaWithArray, anotherBadFormValue)
-      expect(secondError).toEqual({ 'person[1].age': expect.anything() })
+      expect(secondError).toEqual({
+        person: invalidInput,
+        'person[1]': invalidInput,
+        'person[1].age': invalidInput,
+      })
+    })
+
+    it('should return default error message for invalid value', () => {
+      const schema = z.object({ value: z.boolean().refine((v) => v) })
+
+      const value = { value: false } as FormValue
+
+      expect(validateAnswers(schema, value)).toEqual({ value: invalidValue })
+    })
+
+    it('should return custom error message for invalid value', () => {
+      const expectedMessage = 'this is my message'
+      const schema = z.object({
+        value: z.boolean().refine((v) => v, { message: expectedMessage }),
+      })
+
+      const value = { value: false } as FormValue
+
+      expect(validateAnswers(schema, value)).toEqual({
+        value: expectedMessage,
+      })
     })
   })
 })

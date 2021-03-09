@@ -19,6 +19,7 @@ import * as coreStyles from './react-datepicker.treat'
 import { Input, InputProps } from '../Input/Input'
 import { VisuallyHidden } from 'reakit'
 import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
+import range from 'lodash/range'
 
 const languageConfig = {
   is: {
@@ -41,6 +42,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   placeholderText,
   locale = 'en',
   minDate,
+  maxDate,
   selected,
   disabled = false,
   hasError = false,
@@ -55,6 +57,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   size = 'md',
   icon = 'calendar',
   iconType = 'outline',
+  minYear,
+  maxYear,
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -87,6 +91,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           selected={selected ?? startDate}
           locale={currentLanguage.locale}
           minDate={minDate}
+          maxDate={maxDate}
           dateFormat={currentLanguage.format}
           showPopperArrow={false}
           popperPlacement="bottom-start"
@@ -133,7 +138,12 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             />
           }
           renderCustomHeader={(props) => (
-            <CustomHeader locale={currentLanguage.locale} {...props} />
+            <CustomHeader
+              locale={currentLanguage.locale}
+              minYear={minYear}
+              maxYear={maxYear}
+              {...props}
+            />
           )}
         />
       </div>
@@ -178,7 +188,10 @@ const CustomHeader = ({
   decreaseMonth,
   increaseMonth,
   changeMonth,
+  changeYear,
   locale,
+  minYear,
+  maxYear,
 }: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
@@ -188,6 +201,8 @@ const CustomHeader = ({
     }
     return undefined
   })
+  const years =
+    minYear && maxYear && minYear < maxYear && range(minYear, maxYear + 1)
   return (
     <div className={styles.customHeaderContainer}>
       <button
@@ -220,11 +235,26 @@ const CustomHeader = ({
             </option>
           ))}
         </select>
-        <Text variant="h4" as="span">
-          {getYear(date)}
-        </Text>
+        {years && years.length > 0 ? (
+          <select
+            className={styles.headerSelect}
+            value={date.getFullYear()}
+            onChange={({ target: { value } }) => changeYear(parseInt(value))}
+          >
+            {years.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <Text variant="h4" as="span">
+            {getYear(date)}
+          </Text>
+        )}
       </div>
       <button
+        data-testid="datepickerIncreaseMonth"
         type="button"
         onClick={increaseMonth}
         className={styles.increaseButton}

@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 
-import { deleteCookie } from '../utils/cookies'
+import { deleteCookie } from '@island.is/judicial-system-web/src/utils/cookies'
 
 const { API_URL = '' } = process.env
 export const apiUrl = API_URL

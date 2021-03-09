@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsNotEmpty, IsDate } from 'class-validator'
+import { IsString, IsBoolean, IsNotEmpty, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiResourcesDTO {
@@ -42,4 +42,10 @@ export class ApiResourcesDTO {
     example: true,
   })
   readonly showInDiscoveryDocument!: boolean
+
+  @IsOptional()
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
 }

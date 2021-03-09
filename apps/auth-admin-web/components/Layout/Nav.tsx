@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { isLoggedIn } from '../../utils/auth.utils'
 import { useSession } from 'next-auth/client'
+import { SessionInfo } from './../../entities/common/SessionInfo'
 
 const Nav: React.FC = () => {
   const [session, loading] = useSession()
   const router = useRouter()
 
-  if (!isLoggedIn(session, loading)) {
+  if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
     return <div className="nav-logged-out"></div>
   }
 
@@ -48,6 +49,13 @@ const Nav: React.FC = () => {
           <Link href="/users">
             <a className={router?.pathname === '/users' ? 'active' : ''}>
               Users
+            </a>
+          </Link>
+        </li>
+        <li className="nav__container">
+          <Link href="/admin">
+            <a className={router?.pathname.includes('admin') ? 'active' : ''}>
+              Admin control
             </a>
           </Link>
         </li>

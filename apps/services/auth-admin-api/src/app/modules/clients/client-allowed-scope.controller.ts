@@ -21,7 +21,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('client-allowed-scope')
-@Controller('client-allowed-scope')
+@Controller('backend/client-allowed-scope')
 export class ClientAllowedScopeController {
   constructor(private readonly clientsService: ClientsService) {}
 

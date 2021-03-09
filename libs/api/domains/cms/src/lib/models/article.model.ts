@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { IArticle } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
+import { Link, mapLink } from './link.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup, mapArticleSubgroup } from './articleSubgroup.model'
@@ -57,11 +58,20 @@ export class Article {
   @Field(() => [Organization], { nullable: true })
   organization?: Array<Organization>
 
+  @Field(() => [Organization], { nullable: true })
+  relatedOrganization?: Array<Organization>
+
+  @Field(() => [Organization], { nullable: true })
+  responsibleParty?: Array<Organization>
+
   @Field(() => [SubArticle])
   subArticles: Array<SubArticle>
 
   @Field(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>
+
+  @Field(() => [Link], { nullable: true })
+  relatedContent?: Array<Link>
 
   @Field(() => Image, { nullable: true })
   featuredImage?: Image
@@ -96,10 +106,23 @@ export const mapArticle = ({
       (organization) => organization.fields?.title && organization.fields?.slug,
     )
     .map(mapOrganization),
+  relatedOrganization: (fields.relatedOrganization ?? [])
+    .filter(
+      (relatedOrganization) =>
+        relatedOrganization.fields?.title && relatedOrganization.fields?.slug,
+    )
+    .map(mapOrganization),
+  responsibleParty: (fields.responsibleParty ?? [])
+    .filter(
+      (responsibleParty) =>
+        responsibleParty.fields?.title && responsibleParty.fields?.slug,
+    )
+    .map(mapOrganization),
   subArticles: (fields.subArticles ?? [])
     .filter((subArticle) => subArticle.fields?.title && subArticle.fields?.slug)
     .map(mapSubArticle),
   relatedArticles: [], // populated by resolver
+  relatedContent: (fields.relatedContent ?? []).map(mapLink),
   featuredImage: mapImage(fields.featuredImage),
   showTableOfContents: fields.showTableOfContents ?? false,
 })

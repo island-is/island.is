@@ -113,7 +113,7 @@ jobs:
         env:
           CHUNK_SIZE: 1
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh e2e)
+          CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
@@ -172,7 +172,7 @@ jobs:
       CYPRESS_PROJECT_ID: 4q7jz8
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
-      NX_API_MOCKS: 'true'
+      NODE_OPTIONS: --max-old-space-size=4096
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
@@ -199,6 +199,9 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
+
+      - name: Increase fs watchers for cypress
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}

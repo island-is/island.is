@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Inject,
   NotFoundException,
@@ -26,7 +27,7 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { UserService } from '../user'
-import { CaseService } from '../case'
+import { CaseService, isCaseBlockedFromUser } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
@@ -36,7 +37,11 @@ const prosecutorNotificationRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.HEADS_UP, NotificationType.READY_FOR_COURT],
+  dtoFieldValues: [
+    NotificationType.HEADS_UP,
+    NotificationType.READY_FOR_COURT,
+    NotificationType.REVOKED,
+  ],
 } as RolesRule
 
 // Allows judges to send court-date and ruling notifiications
@@ -45,6 +50,14 @@ const judgeNotificationRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [NotificationType.COURT_DATE, NotificationType.RULING],
+} as RolesRule
+
+// Allows registrars to send court-date
+const registrarNotificationRule = {
+  role: UserRole.REGISTRAR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'type',
+  dtoFieldValues: [NotificationType.COURT_DATE],
 } as RolesRule
 
 @UseGuards(RolesGuard)
@@ -63,17 +76,27 @@ export class NotificationController {
     private readonly logger: Logger,
   ) {}
 
-  private async findCaseById(id: string) {
+  private async findCaseById(id: string, user: User) {
     const existingCase = await this.caseService.findById(id)
 
     if (!existingCase) {
       throw new NotFoundException(`Case ${id} does not exist`)
     }
 
+    if (isCaseBlockedFromUser(existingCase, user)) {
+      throw new ForbiddenException(
+        `User ${user.id} does not have access to case ${id}`,
+      )
+    }
+
     return existingCase
   }
 
-  @RolesRules(prosecutorNotificationRule, judgeNotificationRule)
+  @RolesRules(
+    prosecutorNotificationRule,
+    judgeNotificationRule,
+    registrarNotificationRule,
+  )
   @Post('notification')
   @ApiCreatedResponse({
     type: SendNotificationResponse,
@@ -84,12 +107,11 @@ export class NotificationController {
     @CurrentHttpUser() user: User,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.findCaseById(id, user)
 
     return this.notificationService.sendCaseNotification(
       notification,
       existingCase,
-      user,
     )
   }
 
@@ -101,8 +123,9 @@ export class NotificationController {
   })
   async getAllNotificationsById(
     @Param('id') id: string,
+    @CurrentHttpUser() user: User,
   ): Promise<Notification[]> {
-    const existingCase = await this.findCaseById(id)
+    const existingCase = await this.findCaseById(id, user)
 
     return this.notificationService.getAllCaseNotifications(existingCase)
   }

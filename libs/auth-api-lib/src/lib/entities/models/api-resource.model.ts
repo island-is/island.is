@@ -76,6 +76,16 @@ export class ApiResource extends Model<ApiResource> {
   })
   archived!: Date
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    defaultValue: null,
+  })
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
+
   @HasMany(() => ApiResourceUserClaim)
   @ApiProperty()
   userClaims?: ApiResourceUserClaim[]

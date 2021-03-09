@@ -15,7 +15,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('grants')
-@Controller('grants')
+@Controller('backend/grants')
 export class GrantTypeController {
   constructor(private readonly grantTypeService: GrantTypeService) {}
 

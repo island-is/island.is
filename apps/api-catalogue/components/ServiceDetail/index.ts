@@ -1,1 +1,0 @@
-export { ServiceDetail } from './ServiceDetail'

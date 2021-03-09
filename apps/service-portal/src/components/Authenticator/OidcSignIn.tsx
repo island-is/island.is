@@ -20,11 +20,17 @@ export const OidcSignIn: FC = () => {
         })
 
         setClientAuthToken(user.access_token)
-        history.push(typeof user.state === 'string' ? user.state : '/')
+
+        const url =
+          typeof user.state === 'string'
+            ? user.state.replace(/\/minarsidur\/?/i, '/')
+            : '/'
+
+        history.push(url)
       })
       .catch(function (error) {
-        // TODO: Handle error
-        console.log('error', error)
+        console.error(error)
+        window.location.replace(window.location.origin)
       })
   }, [])
 

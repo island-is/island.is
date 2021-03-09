@@ -14,7 +14,7 @@ The apps and libraries documentation and our handbook are hosted on [GitBook](ht
 
 ## Storybook
 
-The Ísland.is design system is developed and showcased using [Storybook](https://www.storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).
+The Ísland.is design system is developed and showcased using [Storybook](https://storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).
 
 ## Reading material
 
@@ -118,16 +118,37 @@ yarn nx dep-graph
 Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
 Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
 
-All secrets labeled with the `dev` label can be fetched using `yarn env-secrets`.
+All secrets labeled with the `dev` label can be fetched using `yarn get-secrets`.
 
 ### Fetch development secrets for your project
 
 ```bash
-yarn env-secrets <project> [options]
+yarn get-secrets <project> [options]
 ```
 
 **Example**:
 
 ```bash
-yarn env-secrets gjafakort --reset
+yarn get-secrets gjafakort --reset
 ```
+
+### Environment variables with static websites
+
+To be able to access environment variables in purely static projects, you need
+to do the following:
+
+1. In the index.html file, add `<!-- environment placeholder -->`.
+2. Use the `getStaticEnv` function from the `@island.is/utils/environment`
+   library to fetch your environment variables.
+3. Prefix your environment variables with `SI_PUBLIC_`, for example
+   `SI_PUBLIC_MY_VARIABLE`.
+
+NOTE: This is only to get environment variables when running in kubernetes, not
+for when running locally. So you should only use `getStaticEnv` in your
+`environment.prod.ts` file.
+
+What happens behind the scenes is that static projects have a bash script that
+runs when the docker container starts up. This script searches for references
+of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It
+then puts all the matches inside the index.html which is then served to the
+client.

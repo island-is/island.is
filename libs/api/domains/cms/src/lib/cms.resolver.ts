@@ -23,15 +23,14 @@ import { GetOrganizationsInput } from './dto/getOrganizations.input'
 import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
+import { GetErrorPageInput } from './dto/getErrorPage.input'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
-import { LandingPage } from './models/landingPage.model'
 import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
 import { GenericOverviewPage } from './models/genericOverviewPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
-import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
@@ -68,7 +67,17 @@ import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { SubpageHeader } from './models/subpageHeader.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
+import { ErrorPage } from './models/errorPage.model'
+import { OrganizationSubpage } from './models/organizationSubpage.model'
+import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { OrganizationPage } from './models/organizationPage.model'
+import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
+import { GetAuctionsInput } from './dto/getAuctions.input'
+import { Auction } from './models/auction.model'
+import { GetAuctionInput } from './dto/getAuction.input'
+import { Frontpage } from './models/frontpage.model'
+import { GetFrontpageInput } from './dto/getFrontpage.input'
 
 const { cacheTime } = environment
 
@@ -107,14 +116,6 @@ export class CmsResolver {
     @Args('input') input: GetAboutSubPageInput,
   ): Promise<AboutSubPage | null> {
     return this.cmsContentfulService.getAboutSubPage(input)
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => LandingPage, { nullable: true })
-  getLandingPage(
-    @Args('input') input: GetLandingPageInput,
-  ): Promise<LandingPage | null> {
-    return this.cmsContentfulService.getLandingPage(input)
   }
 
   // TODO: Change this so this won't link to non existing entries e.g. articles
@@ -162,6 +163,14 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => ErrorPage, { nullable: true })
+  getErrorPage(
+    @Args('input') input: GetErrorPageInput,
+  ): Promise<ErrorPage | null> {
+    return this.cmsContentfulService.getErrorPage(input)
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => Organization, { nullable: true })
   getOrganization(
     @Args('input') input: GetOrganizationInput,
@@ -170,6 +179,48 @@ export class CmsResolver {
       input?.slug ?? '',
       input?.lang ?? 'is-IS',
     )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OrganizationPage, { nullable: true })
+  getOrganizationPage(
+    @Args('input') input: GetOrganizationPageInput,
+  ): Promise<OrganizationPage | null> {
+    return this.cmsContentfulService.getOrganizationPage(
+      input.slug,
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OrganizationSubpage, { nullable: true })
+  getOrganizationSubpage(
+    @Args('input') input: GetOrganizationSubpageInput,
+  ): Promise<OrganizationSubpage | null> {
+    return this.cmsContentfulService.getOrganizationSubpage(
+      input.organizationSlug,
+      input.slug,
+      input?.lang ?? 'is-IS',
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Auction])
+  getAuctions(
+    @Args('input') input: GetAuctionsInput,
+  ): Promise<Auction[] | null> {
+    return this.cmsContentfulService.getAuctions(
+      input.lang,
+      input.organization,
+      input.year,
+      input.month,
+    )
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Auction)
+  getAuction(@Args('input') input: GetAuctionInput): Promise<Auction | null> {
+    return this.cmsContentfulService.getAuction(input.id, input.lang)
   }
 
   @Directive(cacheControlDirective())
@@ -272,6 +323,12 @@ export class CmsResolver {
   @Query(() => Homepage)
   getHomepage(@Args('input') input: GetHomepageInput): Promise<Homepage> {
     return this.cmsContentfulService.getHomepage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Frontpage)
+  getFrontpage(@Args('input') input: GetFrontpageInput): Promise<Frontpage> {
+    return this.cmsContentfulService.getFrontpage(input)
   }
 
   @Directive(cacheControlDirective())

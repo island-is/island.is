@@ -161,15 +161,7 @@ export const labelDisabledEmptyInput = {
   color: theme.color.blue300,
 }
 
-export const containerDisabled = {
-  backgroundColor: theme.color.blue100,
-}
-
-export const inputDisabled = {
-  backgroundColor: theme.color.blue100,
-  color: theme.color.dark400,
-}
-
+// Textarea state
 export const textarea = {
   fontSize: 16,
   fontWeight: theme.typography.light,

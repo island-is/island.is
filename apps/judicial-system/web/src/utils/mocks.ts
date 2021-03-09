@@ -5,29 +5,54 @@ import {
   CaseDecision,
   CaseGender,
   CaseState,
+  CaseType,
   UpdateCase,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { CaseQuery, UpdateCaseMutation } from '../graphql'
-import { UserQuery } from '../shared-components/UserProvider/UserProvider'
+import {
+  CaseQuery,
+  UpdateCaseMutation,
+} from '@island.is/judicial-system-web/graphql'
+import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 export const mockProsecutor = {
   role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
+  institution: {
+    name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+  },
 } as User
 
 export const mockJudge = {
+  id: 'judge_1',
   role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
+  institution: {
+    name: 'Héraðsdómur Reykjavíkur',
+  },
+} as User
+
+export const mockRegistrar = {
+  id: 'registrar_1',
+  role: UserRole.REGISTRAR,
+  name: 'Alfred Thaddeus Crane Pennyworth',
+  title: 'dómritari',
+} as User
+
+export const mockAdmin = {
+  role: UserRole.ADMIN,
+  name: 'Adrian Administrator',
 } as User
 
 const testCase1 = {
   id: 'test_id',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -36,7 +61,6 @@ const testCase1 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-16T19:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16T19:51:28.224Z',
   lawsBroken: 'string',
   custodyProvisions: [
@@ -56,7 +80,7 @@ const testCase1 = {
   courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ',
@@ -74,16 +98,16 @@ const testCase2 = {
   id: 'test_id_2',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '111111-1110',
+  accusedNationalId: '000000-0000',
   accusedName: 'Jon Harring',
   accusedAddress: 'Harringvej 2',
   accusedGender: CaseGender.MALE,
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -103,7 +127,7 @@ const testCase2 = {
   courtEndTime: null,
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -116,14 +140,13 @@ const testCase2 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase3 = {
   id: 'test_id_3',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.DRAFT,
   policeCaseNumber: '010-0000-0191',
   accusedNationalId: '1111110000',
@@ -133,7 +156,6 @@ const testCase3 = {
   court: 'string',
   arrestDate: null,
   requestedCourtDate: null,
-  alternativeTravelBan: false,
   requestedCustodyEndDate: null,
   lawsBroken: null,
   custodyProvisions: [],
@@ -149,8 +171,9 @@ const testCase3 = {
   courtStartTime: null,
   courtEndTime: '2020-09-16T19:51:00.000Z',
   courtAttendees: null,
+  courtRoom: '999',
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: null,
@@ -163,14 +186,13 @@ const testCase3 = {
   judge: null,
   defenderName: '',
   defenderEmail: '',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase4 = {
   id: 'test_id_4',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -199,7 +221,7 @@ const testCase4 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
@@ -212,14 +234,13 @@ const testCase4 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase5 = {
   id: 'test_id_5',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -229,7 +250,6 @@ const testCase5 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -249,7 +269,7 @@ const testCase5 = {
   courtEndTime: '2020-09-16',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
@@ -259,17 +279,16 @@ const testCase5 = {
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
-  judge: null,
+  judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase6 = {
   id: 'test_id_6',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -279,7 +298,6 @@ const testCase6 = {
   court: 'string',
   arrestDate: null,
   requestedCourtDate: null,
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -299,7 +317,7 @@ const testCase6 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
@@ -313,14 +331,13 @@ const testCase6 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase7 = {
   id: 'test_id_7',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -330,7 +347,6 @@ const testCase7 = {
   court: 'string',
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -350,7 +366,7 @@ const testCase7 = {
   courtEndTime: '2020-09-16',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -363,14 +379,13 @@ const testCase7 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
 }
 
 const testCase8 = {
   id: 'test_id_8',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   accusedNationalId: 'string',
@@ -380,7 +395,6 @@ const testCase8 = {
   court: 'string',
   arrestDate: null,
   requestedCourtDate: null,
-  alternativeTravelBan: false,
   requestedCustodyEndDate: '2020-09-16',
   lawsBroken: null,
   custodyProvisions: [],
@@ -400,7 +414,7 @@ const testCase8 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   policeDemands: null,
-  accusedPlea: null,
+  accusedPleaAnnouncement: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -411,22 +425,22 @@ const testCase8 = {
   prosecutorAppealDecision: null,
   prosecutorAppealAnnouncement: null,
   isCustodyEndDateInThePast: true,
-
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  requestedDefenderName: 'Saul Goodman',
-  requestedDefenderEmail: 'saul@goodman.com',
+  parentCase: {
+    custodyEndDate: '2021-01-18T19:50:08.033Z',
+  },
 }
 
 export const mockJudgeQuery = [
   {
     request: {
-      query: UserQuery,
+      query: CurrentUserQuery,
     },
     result: {
       data: {
-        user: mockJudge,
+        currentUser: mockJudge,
       },
     },
   },
@@ -435,11 +449,37 @@ export const mockJudgeQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: UserQuery,
+      query: CurrentUserQuery,
     },
     result: {
       data: {
-        user: mockProsecutor,
+        currentUser: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockAdminQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockAdmin,
+      },
+    },
+  },
+]
+
+export const mockUsersQuery = [
+  {
+    request: {
+      query: UsersQuery,
+    },
+    result: {
+      data: {
+        users: [mockProsecutor, mockJudge, mockRegistrar],
       },
     },
   },

@@ -21,6 +21,7 @@
     "no-cond-assign": ["warn", "except-parens"],
     "no-const-assign": "warn",
     "no-control-regex": "warn",
+    "no-console": "warn",
     "no-delete-var": "warn",
     "no-dupe-args": "warn",
     "no-dupe-keys": "warn",
@@ -188,6 +189,7 @@
     ],
     "getter-return": "warn",
     "import/first": "error",
+    "import/order": "error",
     "import/no-amd": "error",
     "import/no-webpack-loader-syntax": "error",
     "react/forbid-foreign-prop-types": [
@@ -248,6 +250,7 @@
     "@typescript-eslint/no-array-constructor": "warn",
     "@typescript-eslint/no-namespace": "error",
     "no-use-before-define": "off",
+    "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-use-before-define": [
       "warn",
       {

@@ -148,7 +148,6 @@ export const Input = forwardRef(
           className={cn(styles.container, styles.containerSizes[size], {
             [styles.hasError]: hasError,
             [styles.hasFocus]: hasFocus,
-            [styles.containerDisabled]: disabled,
             [styles.fixedFocusState]: fixedFocusState,
             [styles.noLabel]: !label,
           })}
@@ -244,7 +243,11 @@ export const Input = forwardRef(
           )}
         </Box>
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={id}>
+          <div
+            className={styles.errorMessage}
+            id={id}
+            data-testid="inputErrorMessage"
+          >
             {errorMessage}
           </div>
         )}

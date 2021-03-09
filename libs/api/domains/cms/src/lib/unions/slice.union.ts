@@ -22,6 +22,12 @@ import {
   IContactUs,
   ILocation,
   ITellUsAStory,
+  IDistricts,
+  IFeaturedArticles,
+  IOneColumnText,
+  ITwoColumnText,
+  IOffices,
+  IAccordionSlice,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -60,6 +66,18 @@ import { mapTeamList, TeamList } from '../models/teamList.model'
 import { ContactUs, mapContactUs } from '../models/contactUs.model'
 import { Location, mapLocation } from '../models/location.model'
 import { mapTellUsAStory, TellUsAStory } from '../models/tellUsAStory.model'
+import { Districts, mapDistricts } from '../models/districts.model'
+import {
+  FeaturedArticles,
+  mapFeaturedArticles,
+} from '../models/featuredArticles.model'
+import { mapTwoColumnText, TwoColumnText } from '../models/twoColumnText.model'
+import { mapOffices, Offices } from '../models/offices.model'
+import { mapOneColumnText, OneColumnText } from '../models/oneColumnText.model'
+import {
+  AccordionSlice,
+  mapAccordionSlice,
+} from '../models/accordionSlice.model'
 
 type SliceTypes =
   | ITimeline
@@ -81,6 +99,12 @@ type SliceTypes =
   | IContactUs
   | ILocation
   | ITellUsAStory
+  | IDistricts
+  | IFeaturedArticles
+  | IOneColumnText
+  | ITwoColumnText
+  | IOffices
+  | IAccordionSlice
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -107,6 +131,12 @@ export const SliceUnion = createUnionType({
     Html,
     Image,
     Asset,
+    Districts,
+    FeaturedArticles,
+    OneColumnText,
+    TwoColumnText,
+    Offices,
+    AccordionSlice,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -152,6 +182,18 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapLocation(slice as ILocation)
     case 'tellUsAStory':
       return mapTellUsAStory(slice as ITellUsAStory)
+    case 'districts':
+      return mapDistricts(slice as IDistricts)
+    case 'featuredArticles':
+      return mapFeaturedArticles(slice as IFeaturedArticles)
+    case 'oneColumnText':
+      return mapOneColumnText(slice as IOneColumnText)
+    case 'twoColumnText':
+      return mapTwoColumnText(slice as ITwoColumnText)
+    case 'offices':
+      return mapOffices(slice as IOffices)
+    case 'accordionSlice':
+      return mapAccordionSlice(slice as IAccordionSlice)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

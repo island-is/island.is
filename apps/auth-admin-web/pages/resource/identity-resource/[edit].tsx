@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import IdentityResourceCreateForm from '../../../components/Resource/forms/IdentityResourceCreateForm'
-import IdentityResourcesDTO from '../../../entities/dtos/identity-resources.dto'
+import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { useRouter } from 'next/router'
 import { ResourcesService } from '../../../services/ResourcesService'
@@ -10,8 +10,6 @@ import { IdentityResourceStep } from '../../../entities/common/IdentityResources
 import IdentityResourceUserClaimsForm from '../../../components/Resource/forms/IdentityResourceUserClaimsForm'
 import StepEnd from '../../../components/common/StepEnd'
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
-import { GetServerSideProps, NextPageContext } from 'next'
-import { withAuthentication } from './../../../utils/auth.utils'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -67,7 +65,7 @@ const Index: React.FC = () => {
     router.push('/resources/identity-resources')
   }
 
-  const handleIdentityResourceSaved = (resourceSaved: IdentityResourcesDTO) => {
+  const handleIdentityResourceSaved = (resourceSaved: IdentityResourceDTO) => {
     if (resourceSaved) {
       getResource(resourceId as string)
       handleNext()
@@ -134,11 +132,3 @@ const Index: React.FC = () => {
   }
 }
 export default Index
-
-export const getServerSideProps = withAuthentication(
-  async (context: NextPageContext) => {
-    return {
-      props: {},
-    }
-  },
-)

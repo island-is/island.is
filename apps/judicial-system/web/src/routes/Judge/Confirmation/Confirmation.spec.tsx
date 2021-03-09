@@ -1,24 +1,26 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { Confirmation } from './Confirmation'
 import {
   CaseAppealDecision,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { MemoryRouter, Route } from 'react-router-dom'
-import * as Constants from '../../../utils/constants'
 import {
   mockCaseQueries,
   mockJudgeQuery,
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { MockedProvider } from '@apollo/client/testing'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import userEvent from '@testing-library/user-event'
+import { Confirmation } from './Confirmation'
 
 describe('Confirmation route', () => {
   test(`should not allow users to continue unless every required field has been filled out`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_5' },
+    }))
 
     // Act
     render(
@@ -34,42 +36,71 @@ describe('Confirmation route', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_5`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
-              <Confirmation />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
       </MockedProvider>,
     )
 
     // Assert
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Staðfesta og hefja undirritun/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Staðfesta og hefja undirritun/i,
+      }),
     ).toBeDisabled()
 
-    userEvent.type(screen.getByLabelText('Þinghaldi lauk *'), '15:55')
+    userEvent.type(
+      await screen.findByLabelText('Þinghaldi lauk (kk:mm) *'),
+      '15:55',
+    )
 
     expect(
-      await waitFor(
-        () =>
-          screen.getByRole('button', {
-            name: /Staðfesta og hefja undirritun/i,
-          }) as HTMLButtonElement,
-      ),
+      await screen.findByRole('button', {
+        name: /Staðfesta og hefja undirritun/i,
+      }),
     ).not.toBeDisabled()
+  })
+
+  test(`should not allow users to continue if the user is not the assigned judge`, async () => {
+    // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_6' },
+    }))
+
+    // Act
+    render(
+      <MockedProvider
+        mocks={[
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockUpdateCaseMutation([
+            {
+              courtStartTime: '2020-09-16T15:55:000Z',
+            } as UpdateCase,
+          ]),
+        ]}
+        addTypename={false}
+      >
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
+      </MockedProvider>,
+    )
+
+    expect(
+      await screen.findByText(
+        'Einungis skráður dómari getur undirritað úrskurð',
+      ),
+    ).toBeInTheDocument()
   })
 
   test(`should not display prosecutor or judge appeal announcements if appeal decition is not ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
 
     // Act
     render(
@@ -77,15 +108,9 @@ describe('Confirmation route', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
-              <Confirmation />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -100,6 +125,10 @@ describe('Confirmation route', () => {
 
   test(`should display prosecutor and judge appeal announcements if appeal decition is ${CaseAppealDecision.APPEAL}`, async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -107,24 +136,19 @@ describe('Confirmation route', () => {
         mocks={[...mockCaseQueries, ...mockJudgeQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.CONFIRMATION_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.CONFIRMATION_ROUTE}/:id`}>
-              <Confirmation />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <Confirmation />
+        </UserProvider>
       </MockedProvider>,
     )
 
     // Assert
     expect(
-      await waitFor(() => screen.getByText('accusedAppealAnnouncement test')),
+      await screen.findByText('accusedAppealAnnouncement test'),
     ).toBeInTheDocument()
+
     expect(
-      screen.getByText('prosecutorAppealAnnouncement test'),
+      await screen.findByText('prosecutorAppealAnnouncement test'),
     ).toBeInTheDocument()
   })
 })

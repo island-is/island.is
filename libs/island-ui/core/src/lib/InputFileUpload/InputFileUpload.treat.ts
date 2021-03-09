@@ -12,6 +12,7 @@ export const container = style({
 export const uploadedFile = style({
   border: `1px solid ${theme.color.blue200}`,
   transition: 'background .5s ease',
+  lineHeight: 0,
 })
 
 export const progressIconAnimation = style({

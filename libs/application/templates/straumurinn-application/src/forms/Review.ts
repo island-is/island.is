@@ -12,48 +12,49 @@ import {
   buildSubmitField,
   FormModes,
   buildCustomField,
-  buildIntroductionField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from './messages'
 
 export const Review: Form = buildForm({
   id: ApplicationTypes.META_APPLICATION,
-  name: FormModes.REVIEW,
+  title: 'Úrvinnsla',
+  mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
-      name: 'Umsókn um aðild að Straumnum',
+      title: 'Umsókn um aðild að Straumnum',
       children: [
         buildMultiField({
           id: 'general',
-          name: '',
+          title: '',
           children: [
-            buildDividerField({ name: 'Stofnun' }),
+            buildDividerField({ title: 'Stofnun' }),
             buildTextField({
               id: 'institution.institutionName',
-              name: m.institutionName,
+              title: m.institutionName,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'institution.institutionSSN',
-              name: m.institutionSSN,
+              title: m.institutionSSN,
               disabled: true,
               width: 'half',
               format: '######-####',
               placeholder: '000000-0000',
             }),
 
-            buildDividerField({ name: 'Umsækjandi/rétthafi' }),
+            buildDividerField({ title: 'Umsækjandi/rétthafi' }),
             buildTextField({
               id: 'applicant.contact',
-              name: m.contactName,
+              title: m.contactName,
               disabled: true,
               width: 'half',
             }),
             buildTextField({
               id: 'applicant.ssn',
-              name: m.contactSsn,
+              title: m.contactSsn,
               width: 'half',
               disabled: true,
               format: '######-####',
@@ -61,21 +62,21 @@ export const Review: Form = buildForm({
             }),
             buildTextField({
               id: 'applicant.email',
-              name: m.contactEmail,
+              title: m.contactEmail,
               disabled: true,
               width: 'half',
               variant: 'email',
             }),
             buildTextField({
               id: 'applicant.phone',
-              name: m.contactPhone,
+              title: m.contactPhone,
               disabled: true,
               width: 'half',
               variant: 'tel',
             }),
             buildCheckboxField({
               id: 'applicant.isValidApplicant',
-              name: '',
+              title: '',
               disabled: true,
               width: 'full',
               options: [
@@ -85,20 +86,20 @@ export const Review: Form = buildForm({
                 },
               ],
             }),
-            buildDividerField({ name: 'Tengiliðir' }),
+            buildDividerField({ title: 'Tengiliðir' }),
             buildCustomField({
               id: 'technicalContact',
-              name: m.technicalContact,
+              title: m.technicalContact,
               component: 'ContactTable',
             }),
             buildCustomField({
               id: 'businessContact',
-              name: m.businessContact,
+              title: m.businessContact,
               component: 'ContactTable',
             }),
             buildCheckboxField({
               id: 'confirmation.isTermsAccepted',
-              name: '',
+              title: '',
               width: 'full',
               disabled: true,
               options: [
@@ -110,7 +111,7 @@ export const Review: Form = buildForm({
             }),
             buildSubmitField({
               id: 'approvedByReviewer',
-              name: m.reviewQuestion,
+              title: m.reviewQuestion,
               placement: 'screen',
               actions: [
                 { event: 'APPROVE', name: m.approveOption, type: 'primary' },
@@ -119,10 +120,10 @@ export const Review: Form = buildForm({
             }),
           ],
         }),
-        buildIntroductionField({
+        buildDescriptionField({
           id: 'final',
-          name: 'Takk fyrir',
-          introduction:
+          title: 'Takk fyrir',
+          description:
             'Úrvinnslu þinni er lokið. Umsókn er komin áfram í ferlinu.',
         }),
       ],

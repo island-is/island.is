@@ -5,7 +5,6 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 export const isEmpty = style({})
 
 const buttonBase = {
-  display: 'flex',
   alignItems: 'center',
   fontWeight: theme.typography.semiBold,
   borderRadius: 8,
@@ -197,6 +196,7 @@ type UtilityColors = (
   borderHover: string,
   textDisabled: string,
   borderDisabled: string,
+  borderHoverWidth?: number,
 ) => Style
 
 const primaryColors: PrimaryColors = (
@@ -280,6 +280,7 @@ const utilityColors: UtilityColors = (
   borderHover,
   textDisabled,
   borderDisabled,
+  borderHoverWidth = 1,
 ) => ({
   backgroundColor: theme.color.transparent,
   boxShadow: `inset 0 0 0 1px ${border}`,
@@ -293,7 +294,7 @@ const utilityColors: UtilityColors = (
   },
   ':hover': {
     backgroundColor: theme.color.transparent,
-    boxShadow: `inset 0 0 0 2px ${borderHover}`,
+    boxShadow: `inset 0 0 0 ${borderHoverWidth}px ${borderHover}`,
     color: textHover,
   },
   selectors: {
@@ -400,6 +401,7 @@ export const colors = {
       theme.color.white,
       theme.color.dark200,
       theme.color.blue100,
+      2,
     ),
     light: utilityColors(
       theme.color.dark400,
@@ -413,7 +415,6 @@ export const colors = {
 }
 
 export const circle = style({
-  display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: '50%',
@@ -484,11 +485,7 @@ export const icon = style({
     [`${size.textSmall} &`]: {
       marginBottom: -3,
     },
-    ...utilityIconColor(
-      'default',
-      theme.color.blue400,
-      theme.color.blueberry400,
-    ),
+    ...utilityIconColor('default', theme.color.blue400, theme.color.blue400),
     ...utilityIconColor(
       'destructive',
       theme.color.red600,

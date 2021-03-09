@@ -1,6 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { SortField } from '@island.is/content-search-toolkit'
 
 @InputType()
 export class GetArticlesInput {
@@ -8,9 +9,15 @@ export class GetArticlesInput {
   @IsString()
   lang: ElasticsearchIndexLocale
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  category: string
+  @IsOptional()
+  category?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  organization?: string
 
   @Field(() => Int, { nullable: true })
   @IsInt()
@@ -18,4 +25,8 @@ export class GetArticlesInput {
   @Max(1000)
   @IsOptional()
   size?: number = 100
+
+  @Field(() => SortField, { nullable: true })
+  @IsOptional()
+  sort?: SortField = SortField.TITLE
 }

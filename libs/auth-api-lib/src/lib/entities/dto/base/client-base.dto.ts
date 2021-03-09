@@ -234,8 +234,7 @@ export abstract class ClientBaseDTO {
   })
   readonly allowRememberConsent!: boolean
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({
     example: 'set_client_claims_prefix',
   })
@@ -275,4 +274,38 @@ export abstract class ClientBaseDTO {
     example: true,
   })
   readonly requireClientSecret!: boolean
+
+  @IsOptional()
+  @ApiProperty({
+    example: null,
+  })
+  contactEmail!: string
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly supportsDelegation!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly supportsLegalGuardians!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly supportsProcuringHolders!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: true,
+  })
+  readonly promptDelegations!: boolean
 }

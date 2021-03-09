@@ -1,9 +1,19 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 
+import {
+  capitalize,
+  formatAccusedByGender,
+  formatDate,
+  NounCases,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
+import {
+  AccusedPleaDecision,
+  Case,
+  CaseGender,
+} from '@island.is/judicial-system/types'
 import AccordionListItem from '../AccordionListItem/AccordionListItem'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -18,15 +28,27 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Text>
       </Box>
       <Box marginBottom={3}>
-        <Text>
-          {`Þinghald frá kl. ${formatDate(
-            workingCase.courtStartTime,
-            TIME_FORMAT,
-          )} til kl. ${formatDate(
-            workingCase.courtEndTime,
-            TIME_FORMAT,
-          )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
-        </Text>
+        {workingCase.courtEndTime ? (
+          <Text>
+            {`Þinghald frá kl. ${formatDate(
+              workingCase.courtStartTime,
+              TIME_FORMAT,
+            )} til kl. ${formatDate(
+              workingCase.courtEndTime,
+              TIME_FORMAT,
+            )} ${formatDate(workingCase.courtEndTime, 'PP')}`}
+          </Text>
+        ) : (
+          <>
+            <Text>
+              {`Þinghald frá kl. ${formatDate(
+                workingCase.courtStartTime,
+                TIME_FORMAT,
+              )}`}
+            </Text>
+            <Text>Þinghaldi er ekki lokið</Text>
+          </>
+        )}
       </Box>
       <AccordionListItem title="Krafa lögreglu" breakSpaces>
         <Text>{workingCase.policeDemands}</Text>
@@ -35,20 +57,55 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Text>{workingCase.courtAttendees}</Text>
       </AccordionListItem>
       <AccordionListItem title="Dómskjöl">
+        <Text>Krafa lögreglu þingmerkt nr. 1.</Text>
         <Text>
-          Rannsóknargögn málsins liggja frammi. Krafa lögreglu þingmerkt nr. 1.
+          Rannsóknargögn málsins liggja frammi.
+          <br />
+          <br />
+          {workingCase.courtDocuments?.map((courtDocument, index) => {
+            return (
+              <>
+                {`${capitalize(courtDocument)} þingmerkt nr. ${index + 2}.`}
+                {index <= (workingCase.courtDocuments || []).length && (
+                  <>
+                    <br />
+                    <br />
+                  </>
+                )}
+              </>
+            )
+          })}
         </Text>
       </AccordionListItem>
-      <AccordionListItem title="Réttindi kærða">
+      <AccordionListItem
+        title={`Réttindi ${formatAccusedByGender(
+          workingCase.accusedGender || CaseGender.OTHER,
+          NounCases.DATIVE,
+        )}`}
+      >
         <Text>
-          Kærða er bent á að honum sé óskylt að svara spurningum er varða brot
-          það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008.
-          Kærði er enn fremur áminntur um sannsögli kjósi hann að tjá sig um
-          sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
+          Sakborning er bent á að honum sé óskylt að svara spurningum er varða
+          brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr.
+          88/2008. Sakborning er enn fremur áminntur um sannsögli kjósi hann að
+          tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.
         </Text>
       </AccordionListItem>
-      <AccordionListItem title="Afstaða kærða" breakSpaces>
-        <Text>{workingCase.accusedPlea}</Text>
+      <AccordionListItem
+        title={`Afstaða ${formatAccusedByGender(
+          workingCase.accusedGender || CaseGender.OTHER,
+          NounCases.DATIVE,
+        )}`}
+        breakSpaces
+      >
+        <Text>
+          {`${
+            workingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
+              ? `Kærði hafnar kröfunni. `
+              : workingCase.accusedPleaDecision === AccusedPleaDecision.ACCEPT
+              ? `Kærði samþykkir kröfuna. `
+              : ''
+          }${workingCase.accusedPleaAnnouncement}`}
+        </Text>
       </AccordionListItem>
       <AccordionListItem title="Málflutningur" breakSpaces>
         <Text>{workingCase.litigationPresentations}</Text>

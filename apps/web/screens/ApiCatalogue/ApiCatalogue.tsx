@@ -12,9 +12,6 @@ import {
   Button,
   GridContainer,
   LoadingIcon,
-  Filter,
-  FilterInput,
-  FilterMultiChoice,
   Navigation,
   Link,
 } from '@island.is/island-ui/core'
@@ -23,6 +20,8 @@ import {
   ServiceList,
   SubpageDetailsContent,
   SubpageMainContent,
+  RichText,
+  ApiCatalogueFilter,
 } from '@island.is/web/components'
 
 import getConfig from 'next/config'
@@ -46,7 +45,6 @@ import {
   GET_SUBPAGE_HEADER_QUERY,
 } from '../queries'
 import { useNamespace } from '@island.is/web/hooks'
-import RichText from '@island.is/web/components/RichText/RichText'
 import { useI18n } from '@island.is/web/i18n'
 import { useQuery } from '@apollo/client'
 import {
@@ -212,11 +210,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const navigationItems = [
     {
       active: true,
-      href: linkResolver('webservicespage').as,
+      href: linkResolver('webservicespage').href,
       title: nn('linkServicesText'),
     },
     {
-      href: linkResolver('handbookpage').as,
+      href: linkResolver('handbookpage').href,
       title: nn('linkHandbookNavText'),
     },
     {
@@ -227,16 +225,14 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
       href: nn('linkDesignSystem'),
       title: nn('linkDesignSystemText'),
     },
-    {
-      href: nn('linkContentPolicy'),
-      title: nn('linkContentPolicyText'),
-    },
   ]
 
   return (
     <SubpageLayout
       main={
         <SidebarLayout
+          paddingTop={[0, 0, 9]}
+          paddingBottom={[4, 4, 12]}
           sidebarContent={
             <Navigation
               baseId="service-list-navigation"
@@ -244,7 +240,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               items={navigationItems}
               title={nn('linkThrounText')}
               titleLink={{
-                href: linkResolver('developerspage').as,
+                href: linkResolver('developerspage').href,
               }}
             />
           }
@@ -254,19 +250,19 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               <Box>
                 <Box display={['inline', 'inline', 'none']}>
                   {/* Show when a device */}
-                  <Box paddingBottom="gutter">
+                  <Box paddingBottom={3}>
                     <Button
                       colorScheme="default"
                       preTextIcon="arrowBack"
                       size="small"
                       variant="text"
                     >
-                      <Link href={linkResolver('developerspage').as}>
+                      <Link {...linkResolver('developerspage')}>
                         {nn('linkThrounText')}
                       </Link>
                     </Button>
                   </Box>
-                  <Box marginBottom="gutter">
+                  <Box marginBottom={3}>
                     <Navigation
                       baseId="service-list-navigation"
                       colorScheme="blue"
@@ -274,7 +270,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                       items={navigationItems}
                       title={nn('linkThrounText')}
                       titleLink={{
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage').href,
                       }}
                     />
                   </Box>
@@ -285,12 +281,12 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                     items={[
                       {
                         title: nn('linkIslandIsText'),
-                        href: linkResolver('homepage').as,
+                        href: linkResolver('homepage').href,
                       },
 
                       {
                         title: nn('linkThrounText'),
-                        href: linkResolver('developerspage').as,
+                        href: linkResolver('developerspage').href,
                       },
                     ]}
                   />
@@ -337,9 +333,11 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
           }
           content={
             <SidebarLayout
+              paddingTop={[3, 3, 5]}
+              paddingBottom={[0, 0, 6]}
               sidebarContent={
                 <Box paddingRight={[0, 0, 3]}>
-                  <Filter
+                  <ApiCatalogueFilter
                     labelClear={fn('clear')}
                     labelOpen={fn('openFilterButton')}
                     labelClose={fn('closeFilter')}
@@ -355,35 +353,70 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                         access: [],
                       })
                     }
-                  >
-                    <FilterInput
-                      placeholder={fn('search')}
-                      name="filterInput"
-                      value={parameters.query}
-                      onChange={(value) =>
-                        setParameters({ ...parameters, query: value })
-                      }
-                    ></FilterInput>
-                    <FilterMultiChoice
-                      labelClear={fn('clearCategory')}
-                      onChange={({ categoryId, selected }) => {
-                        setParameters({
-                          ...parameters,
-                          [categoryId]: selected,
-                        })
-                      }}
-                      onClear={(categoryId) =>
-                        setParameters({
-                          ...parameters,
-                          [categoryId]: [],
-                        })
-                      }
-                      categories={filterCategories}
-                    ></FilterMultiChoice>
-                  </Filter>
+                    inputPlaceholder={fn('search')}
+                    inputValue={parameters.query}
+                    onInputChange={(value) =>
+                      setParameters({ ...parameters, query: value })
+                    }
+                    labelCategoryClear={fn('clearCategory')}
+                    onCategoryChange={({ categoryId, selected }) => {
+                      setParameters({
+                        ...parameters,
+                        [categoryId]: selected,
+                      })
+                    }}
+                    onCategoryClear={(categoryId) =>
+                      setParameters({
+                        ...parameters,
+                        [categoryId]: [],
+                      })
+                    }
+                    categories={filterCategories}
+                  />
                 </Box>
               }
             >
+              <Box display={['block', 'block', 'none']} paddingBottom={4}>
+                {/* <ApiCatalogueFilter isDialog={true} /> */}
+                <ApiCatalogueFilter
+                  isDialog={true}
+                  labelClear={fn('clear')}
+                  labelOpen={fn('openFilterButton')}
+                  labelClose={fn('closeFilter')}
+                  labelResult={fn('mobileResult')}
+                  labelTitle={fn('mobileTitle')}
+                  resultCount={data?.getApiCatalogue?.services?.length ?? 0}
+                  onFilterClear={() =>
+                    setParameters({
+                      query: '',
+                      pricing: [],
+                      data: [],
+                      type: [],
+                      access: [],
+                    })
+                  }
+                  inputPlaceholder={fn('search')}
+                  inputValue={parameters.query}
+                  onInputChange={(value) =>
+                    setParameters({ ...parameters, query: value })
+                  }
+                  labelCategoryClear={fn('clearCategory')}
+                  onCategoryChange={({ categoryId, selected }) => {
+                    setParameters({
+                      ...parameters,
+                      [categoryId]: selected,
+                    })
+                  }}
+                  onCategoryClear={(categoryId) =>
+                    setParameters({
+                      ...parameters,
+                      [categoryId]: [],
+                    })
+                  }
+                  categories={filterCategories}
+                />
+              </Box>
+
               {(error || data?.getApiCatalogue?.services.length < 1) && (
                 <GridContainer>
                   {error ? (
@@ -398,7 +431,7 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
               {data?.getApiCatalogue?.services.length > 0 && (
                 <GridContainer>
                   <ServiceList
-                    baseUrl={linkResolver('webservicespage').as + '/'}
+                    baseUrl={linkResolver('webservicespage').href + '/'}
                     services={data?.getApiCatalogue?.services}
                     tagDisplayNames={filterContent}
                   />

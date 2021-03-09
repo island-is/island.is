@@ -1,4 +1,5 @@
 import React, { FC, memo, ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import {
   renderSlices,
   defaultRenderComponent,
@@ -6,7 +7,9 @@ import {
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import { LinkContext, Link } from '@island.is/island-ui/core'
-import { TellUsAStory, ContactUs } from '@island.is/web/components'
+
+const TellUsAStory = dynamic(() => import('../TellUsAStory/TellUsAStory'))
+const ContactUs = dynamic(() => import('../ContactUs/ContactUs'))
 
 const renderComponent = (
   slice: SliceType,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ApiScopesDTO } from '../../../entities/dtos/api-scopes-dto'
+import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import ResourceListDisplay from './ListDisplay'
@@ -16,7 +16,7 @@ const ApiScopeList: React.FC = () => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [scopeToRemove, setScopeToRemove] = React.useState('')
 
-  const edit = (apiScope: ApiScopesDTO) => {
+  const edit = (apiScope: ApiScopeDTO) => {
     router.push(`/resource/api-scope/${encodeURIComponent(apiScope.name)}`)
   }
 

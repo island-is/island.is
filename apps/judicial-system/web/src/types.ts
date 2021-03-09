@@ -13,6 +13,9 @@ export interface RequiredField {
 export enum Sections {
   PROSECUTOR = 0,
   JUDGE = 1,
+  // We skip 2 because that step has the ruling, i.e. the SignedVerdictPage, which has no subsections.
+  EXTENSION = 3,
+  JUDGE_EXTENSION = 4,
 }
 
 export enum ProsecutorSubsections {
@@ -33,3 +36,9 @@ export enum JudgeSubsections {
 }
 
 export type ReactSelectOption = { label: string; value: string | number }
+
+export enum LoginErrorCodes {
+  UNAUTHORIZED = 'innskraning-ekki-notandi',
+  UNAUTHENTICATED = 'innskraning-utrunnin',
+  LOGIN_FAILED = 'innskraning-ogild',
+}

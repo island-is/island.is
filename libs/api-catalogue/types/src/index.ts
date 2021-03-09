@@ -1,4 +1,7 @@
 export * from './lib/service.model'
+export * from './lib/serviceDetail.model'
+export * from './lib/serviceEnvironment.model'
+export * from './lib/externalLinks.model'
 export * from './lib/xroadIdentifier.model'
 export * from './lib/provider.model'
 export * from './lib/openapi.model'

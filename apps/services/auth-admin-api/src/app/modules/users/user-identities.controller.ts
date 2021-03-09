@@ -25,7 +25,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('user-identities')
-@Controller('user-identities')
+@Controller('backend/user-identities')
 export class UserIdentitiesController {
   constructor(private readonly userIdentityService: UserIdentitiesService) {}
 

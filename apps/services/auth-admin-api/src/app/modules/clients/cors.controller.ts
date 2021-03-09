@@ -19,7 +19,7 @@ import { NationalIdGuard } from '../access/national-id-guard'
 @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('cors')
-@Controller('cors')
+@Controller('backend/cors')
 export class CorsController {
   constructor(private readonly clientsService: ClientsService) {}
 

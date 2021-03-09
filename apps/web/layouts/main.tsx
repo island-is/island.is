@@ -8,20 +8,25 @@ import {
   AlertBanner,
   AlertBannerVariants,
   Hidden,
+  ButtonTypes,
+  ColorSchemeContext,
+  ColorSchemes,
 } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
-import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 import { useRouter } from 'next/router'
-import { Header, Main, PageLoader } from '../components'
-import { GET_GROUPED_MENU_QUERY, GET_MENU_QUERY } from '../screens/queries/Menu'
+import {
+  Header,
+  Main,
+  PageLoader,
+  SkipToMainContent,
+} from '@island.is/web/components'
+import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
-  QueryGetMenuArgs,
-  GetMenuQuery,
   GetGroupedMenuQuery,
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
@@ -31,6 +36,7 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
   QueryGetGroupedMenuArgs,
+  Menu,
 } from '../graphql/schema'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -43,7 +49,15 @@ import {
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
 import { Locale } from '../i18n/I18n'
-import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import {
+  LinkType,
+  useLinkResolver,
+  linkResolver as LinkResolver,
+} from '../hooks/useLinkResolver'
+import { stringHash } from '@island.is/web/utils/stringHash'
+
+const IS_MOCK =
+  process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -65,6 +79,8 @@ export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
+  headerColorScheme?: ColorSchemes
+  headerButtonColorScheme?: ButtonTypes['colorScheme']
   showFooter?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
@@ -102,6 +118,8 @@ const Layout: NextComponentType<
   showSearchInHeader = true,
   wrapContent = true,
   showHeader = true,
+  headerColorScheme,
+  headerButtonColorScheme,
   showFooter = true,
   categories,
   topMenuCustomLinks,
@@ -146,7 +164,7 @@ const Layout: NextComponentType<
       links: categories.map((x) => {
         return {
           title: x.title,
-          ...linkResolver(x.__typename as LinkType, [x.slug]),
+          href: linkResolver(x.__typename as LinkType, [x.slug]).href,
         }
       }),
     },
@@ -158,7 +176,9 @@ const Layout: NextComponentType<
     },
   ]
 
-  const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
+  const alertBannerId = `alert-${stringHash(
+    JSON.stringify(alertBannerContent),
+  )}`
 
   return (
     <GlobalContextProvider namespace={namespace}>
@@ -231,11 +251,10 @@ const Layout: NextComponentType<
             content="https://island.is/island-fb-1200x630.png"
             key="twitterImage"
           />
-          <script
-            key="246covid-chat-panel"
-            src="https://246covid-island.boost.ai/chatPanel/chatPanel.js"
-          ></script>
         </Head>
+        <SkipToMainContent
+          title={n('skipToMainContent', 'Fara beint í efnið')}
+        />
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
             title={alertBannerContent.title}
@@ -262,10 +281,15 @@ const Layout: NextComponentType<
           }}
         >
           {showHeader && (
-            <Header
-              showSearchInHeader={showSearchInHeader}
-              megaMenuData={megaMenuData}
-            />
+            <ColorSchemeContext.Provider
+              value={{ colorScheme: headerColorScheme }}
+            >
+              <Header
+                buttonColorScheme={headerButtonColorScheme}
+                showSearchInHeader={showSearchInHeader}
+                megaMenuData={megaMenuData}
+              />
+            </ColorSchemeContext.Provider>
           )}
           <Main>
             {wrapContent ? <Box width="full">{children}</Box> : children}
@@ -351,13 +375,9 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   const [
     categories,
     alertBanner,
-    upperMenuInfo,
-    upperMenuContact,
-    lowerMenu,
-    middleMenu,
-    tagsMenu,
     namespace,
     megaMenuData,
+    footerMenuData,
   ] = await Promise.all([
     apolloClient
       .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
@@ -377,46 +397,6 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getAlertBanner),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer upper info', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer upper contact', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer lower', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer middle', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
-    apolloClient
-      .query<GetMenuQuery, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
-        variables: {
-          input: { name: 'Footer tags', lang },
-        },
-      })
-      .then((res) => res.data.getMenu),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -439,33 +419,89 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
         },
       })
       .then((res) => res.data.getGroupedMenu),
+    apolloClient
+      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+        query: GET_GROUPED_MENU_QUERY,
+        variables: {
+          input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
+        },
+      })
+      .then((res) => res.data.getGroupedMenu),
   ])
-
+  const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
+
+  const mapLinks = (item: Menu) =>
+    item.menuLinks.map((x) => {
+      const href = LinkResolver(
+        x.link.type as LinkType,
+        [x.link.slug],
+        lang as Locale,
+      ).href.trim()
+
+      // If a link type is an url string and the url has the same origin, strip the origin part out
+      // so that the Link component does not treat it as an external url.
+      return {
+        title: x.title,
+        href: href.startsWith(origin) ? href.replace(origin, '') : href,
+      }
+    })
+
+  const initialFooterMenu = {
+    footerUpperInfo: [],
+    footerUpperContact: [],
+    footerLowerMenu: [],
+    footerTagsMenu: [],
+    footerMiddleMenu: [],
+  }
+
+  const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
+    if (IS_MOCK) {
+      const key = Object.keys(menus)[idx]
+      if (key) {
+        menus[key] = mapLinks(menu as Menu)
+      }
+      return menus
+    }
+
+    switch (menu.id) {
+      // Footer lower
+      case '6vTuiadpCKOBhAlSjYY8td':
+        menus.footerLowerMenu = mapLinks(menu as Menu)
+        break
+      // Footer middle
+      case '7hSbSQm5F5EBc0KxPTFVAS':
+        menus.footerMiddleMenu = mapLinks(menu as Menu)
+        break
+      // Footer tags
+      case '6oGQDyWos4xcKX9BdMHd5R':
+        menus.footerTagsMenu = mapLinks(menu as Menu)
+        break
+      // Footer upper
+      case '62Zh6hUc3bi0JwNRnqV8Nm':
+        menus.footerUpperInfo = mapLinks(menu as Menu)
+        break
+      // Footer upper contact
+      case '5yUCZ4U6aZ8rZ9Jigme7GI':
+        menus.footerUpperContact = mapLinks(menu as Menu)
+        break
+      default:
+        break
+    }
+
+    return menus
+  }, initialFooterMenu)
 
   return {
     categories,
-    alertBannerContent: alertBanner,
-    footerUpperInfo: (upperMenuInfo.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerUpperContact: (upperMenuContact.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
-    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url }) => ({
-      title: text,
-      href: url,
-    })),
+    alertBannerContent: {
+      ...alertBanner,
+      showAlertBanner:
+        alertBanner.showAlertBanner &&
+        (!req?.headers.cookie ||
+          req.headers.cookie?.indexOf(alertBannerId) === -1),
+    },
+    ...footerMenu,
     namespace,
     respOrigin,
     megaMenuData: {

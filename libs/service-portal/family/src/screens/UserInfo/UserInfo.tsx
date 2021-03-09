@@ -47,7 +47,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={5}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
@@ -57,7 +57,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
                   defaultMessage: 'Mínar upplýsingar',
                 })}
               </Text>
-              <Text as="p">
+              <Text as="p" variant="intro">
                 {formatMessage({
                   id: 'sp.family:user-info-description',
                   defaultMessage:

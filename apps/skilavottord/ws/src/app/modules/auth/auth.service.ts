@@ -1,49 +1,35 @@
 import { Injectable } from '@nestjs/common'
+import { environment } from '../../../environments'
+import { User } from '../user'
 import { Role, AuthUser } from './auth.types'
-
-const DEVELOPERS = [
-  /* Deloitte */
-  '2310765229', // Vésteinn Viðarsson
-  '0602773039', // Bjarki Már Flosason
-  '1505664449', // Rúnar Sigurður Guðlaugsson
-  '0301665909', // Sigurgeir Guðmundsson
-  '2311862559', // Quan Dong
-  '2811638099', // Tómas Árni Jónsson
-  '0101302129', // Gervimaður Noregur
-]
-
-const RECYCLINGCOMPANY = [
-  /* Deloitte og DI test */
-  '0905665129', // Friðbjörn Hólm Ólafsson
-  /* Vaka */
-  '0706765599', // Sigríður Björk Þórisdóttir
-  '1310734109', // Reynir Þór Guðmundsson admin later
-  '1110892489', // Ari Halldór Hjaltason
-  '0409842919', // Gísli Rúnar Svanbergsson
-  '3108002360', // Viktoría Sól Reynisdóttir
-  /* Hringrás   */
-  '1811673949', // Tryggvi Daníel Sigurðsson admin later
-  '2405843609', // Þórdís Jónsdóttir
-  /* Fura   */
-  '2211692989', // Úlfar Haraldsson admin later
-  '2808714009', // Dagný Michelle Jónsdóttir
-]
-
-const RECYCLINGFUND = [
-  /* Urvinnslusjodur test  */
-  '3005594339', // Ólafur Kjartansson admin later
-  '0202614989', // Guðlaugur Gylfi Sverrisson normal
-  '0305695639', // Ása Hauksdóttir  admin later
-]
 
 @Injectable()
 export class AuthService {
+  static instance = 0
+  static DEVELOPERS = []
+  static RECYCLINGCOMPANY = []
+  static RECYCLINGFUND = []
+  static userListEnv: [User] = JSON.parse(environment.skilavottord.userList)
+  constructor() {
+    // console.log(
+    //   '-userListEnv---->' + JSON.stringify(AuthService.userListEnv, null, 2),
+    // )
+    if (!AuthService.instance) {
+      AuthService.instance++
+      AuthService.loadArray()
+    }
+    // console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
+    // console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
+    // console.log(
+    //   '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
+    // )
+  }
   getRole(user: AuthUser): Role {
-    if (RECYCLINGCOMPANY.includes(user.nationalId)) {
+    if (AuthService.RECYCLINGCOMPANY.includes(user.nationalId)) {
       return 'recyclingCompany'
-    } else if (RECYCLINGFUND.includes(user.nationalId)) {
+    } else if (AuthService.RECYCLINGFUND.includes(user.nationalId)) {
       return 'recyclingFund'
-    } else if (DEVELOPERS.includes(user.nationalId)) {
+    } else if (AuthService.DEVELOPERS.includes(user.nationalId)) {
       return 'developer'
     } else {
       return 'citizen'
@@ -53,11 +39,11 @@ export class AuthService {
   checkRole(user: AuthUser, role: Role): boolean {
     switch (role) {
       case 'recyclingCompany':
-        return RECYCLINGCOMPANY.includes(user.nationalId)
+        return AuthService.RECYCLINGCOMPANY.includes(user.nationalId)
       case 'recyclingFund':
-        return RECYCLINGFUND.includes(user.nationalId)
+        return AuthService.RECYCLINGFUND.includes(user.nationalId)
       case 'developer':
-        return DEVELOPERS.includes(user.nationalId)
+        return AuthService.DEVELOPERS.includes(user.nationalId)
       default: {
         if (role) {
           return false
@@ -66,4 +52,62 @@ export class AuthService {
       }
     }
   }
+
+  static loadArray() {
+    AuthService.userListEnv.forEach((user) => {
+      if (user.role == 'developer') {
+        AuthService.DEVELOPERS.push(user.nationalId)
+      } else if (user.role == 'recyclingFund') {
+        AuthService.RECYCLINGFUND.push(user.nationalId)
+      } else if (user.role == 'recyclingCompany') {
+        AuthService.RECYCLINGCOMPANY.push(user.nationalId)
+      }
+    })
+    // console.log('-DEVELOPERS' + JSON.stringify(AuthService.DEVELOPERS))
+    // console.log('-RECYCLINGFUND' + JSON.stringify(AuthService.RECYCLINGFUND))
+    // console.log(
+    //   '-RECYCLINGCOMPANY' + JSON.stringify(AuthService.RECYCLINGCOMPANY),
+    // )
+  }
+
+  // TODO test
+  getPartnerId(nationalId: string): string {
+    const userFound = AuthService.userListEnv.find(
+      (user) => nationalId === user.nationalId,
+    )
+    if (userFound) {
+      // console.log(
+      //   'getPatnerId:user found,partnerId(' + userFound.partnerId + ')',
+      // )
+      return userFound.partnerId
+    } else {
+      // console.log('getPatnerId: user.partnerId not found return null')
+      return null
+    }
+  }
 }
+
+// TODO implement in getPartnerId
+// if (
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111'
+// ) {
+//   currUser.partnerId = '104' // This is partner Id for Hringras, to be fixed later
+// } else if (
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111' ||
+//   currUser.nationalId === '1111111111'
+// ) {
+//   currUser.partnerId = '221' // This is partner Id for Fura, to be fixed later
+// } else if (
+//   currUser.role === 'recyclingCompany' ||
+//   currUser.role === 'developer'
+// ) {
+//   currUser.partnerId = '110' // This is partner Id for Vaka, to be fixed later (no need list vaka users)
+// } else {
+//   currUser.partnerId = null // Normal citizen user
+// }

@@ -1,17 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useRef, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import NextLink from 'next/link'
 import {
   ContentBlock,
   Box,
   Stack,
-  BreadcrumbsDeprecated as Breadcrumbs,
-  Link,
   Inline,
-  GridRow,
   Text,
-  GridColumn,
 } from '@island.is/island-ui/core'
-import { Slice as SliceType } from '@island.is/island-ui/contentful'
+import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -21,16 +19,12 @@ import {
   QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  AdgerdirArticles,
-  HeadWithSocialSharing,
-  RichText,
-  Intro,
-  ChatPanel,
-} from '@island.is/web/components'
-import { Tag } from '@island.is/web/components/Adgerdir/UI/Tag/Tag'
-import { Button } from '@island.is/web/components/Adgerdir/UI/Button/Button'
-import { ColorSchemeContext } from '@island.is/web/components/Adgerdir/UI/ColorSchemeContext/ColorSchemeContext'
+import { HeadWithSocialSharing, ChatPanel } from '@island.is/web/components'
+import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
+import { Tag } from './components/UI/Tag/Tag'
+import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
+import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
+import { ColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
 import {
   GET_ADGERDIR_PAGE_QUERY,
   GET_NAMESPACE_QUERY,
@@ -42,8 +36,9 @@ import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useNamespace } from '@island.is/web/hooks'
-import * as covidStyles from '@island.is/web/components/Adgerdir/UI/styles/styles.treat'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
+
+import * as covidStyles from './components/UI/styles/styles.treat'
 
 interface AdgerdirArticleProps {
   article: Query['getAdgerdirPage']
@@ -58,27 +53,22 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
   tags,
   namespace,
 }) => {
+  const portalRef = useRef()
+  const [mounted, setMounted] = useState(false)
+
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
+  useEffect(() => {
+    portalRef.current = document.querySelector('#__next')
+    setMounted(true)
+  }, [])
+
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
-  const description = article.longDescription || article.description
-
-  const renderButton =
-    article.link && article.link.trim().length > 0 ? (
-      <Link href={article.link}>
-        <Button iconType="outline" icon="open" fluid>
-          {article.linkButtonText ?? n('seeMoreDetails')}
-        </Button>
-      </Link>
-    ) : article.linkButtonText && article.linkButtonText.trim().length > 0 ? (
-      <Button iconType="outline" icon="open" disabled fluid>
-        {article.linkButtonText ?? n('seeMoreDetails')}
-      </Button>
-    ) : null
+  const processEntry = article.processEntry
 
   return (
     <>
@@ -90,7 +80,6 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         sidebarContent={
           <Box marginBottom={10}>
             <Stack space={3}>
-              {renderButton}
               <Stack space={1}>
                 <Text variant="eyebrow">
                   <span className={covidStyles.text}>
@@ -112,40 +101,63 @@ const AdgerdirArticle: Screen<AdgerdirArticleProps> = ({
         }
       >
         <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs>
-            <span className={covidStyles.text}>
-              <Link {...linkResolver('homepage')}>
-                <a>Ísland.is</a>
-              </Link>
-            </span>
-            <span className={covidStyles.text}>
-              <Link {...linkResolver('adgerdirfrontpage')}>
-                <a>{n('covidAdgerdir', 'Covid aðgerðir')}</a>
-              </Link>
-            </span>
-            <Tag>{n('adgerdir', 'Aðgerðir')}</Tag>
-          </Breadcrumbs>
+          <Breadcrumbs
+            tagVariant="green"
+            items={[
+              {
+                title: 'Ísland.is',
+                typename: 'homepage',
+                href: '/',
+              },
+              {
+                title: n('covidAdgerdir', 'Covid aðgerðir'),
+                typename: 'adgerdirfrontpage',
+                href: '/covid-adgerdir',
+              },
+              { title: n('adgerdir', 'Aðgerðir'), isTag: true },
+            ]}
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...linkResolver(typename as LinkType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
         </Box>
 
         <Stack space={2}>
           <Text variant="h1" as="h1">
             {article.title}
           </Text>
-          {description ? <Intro>{description}</Intro> : null}
+          {!!processEntry && (
+            <Box marginTop={3} display={['none', 'none', 'block']} printHidden>
+              <ProcessEntry {...processEntry} />
+            </Box>
+          )}
         </Stack>
-        <RichText
-          body={article.content as SliceType[]}
-          config={{ defaultPadding: [2, 2, 4], skipGrid: true }}
-          locale={activeLocale}
-        />
-        <GridRow>
-          <GridColumn
-            paddingTop={4}
-            span={['12/12', '6/12', '6/12', '5/12', '4/12']}
-          >
-            {renderButton}
-          </GridColumn>
-        </GridRow>
+        {richText(
+          (article ?? article).content as SliceType[],
+          undefined,
+          activeLocale,
+        )}
+        <Box>
+          {!!processEntry &&
+            mounted &&
+            createPortal(
+              <Box
+                marginTop={5}
+                display={['block', 'block', 'none']}
+                printHidden
+              >
+                <ProcessEntry fixed {...processEntry} />
+              </Box>,
+              portalRef.current,
+            )}
+        </Box>
       </SidebarLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'green' }}>
         <Box className={covidStyles.bg}>

@@ -33,7 +33,6 @@ function partialSchemaValidation(
   answers: FormValue,
   originalSchema: Schema,
   error: SchemaValidationError | undefined,
-  isStrict?: boolean,
   currentPath = '',
 ): SchemaValidationError | undefined {
   Object.keys(answers).forEach((key) => {
@@ -44,46 +43,37 @@ function partialSchemaValidation(
     const trimmedSchema = originalSchema.pick
       ? originalSchema.pick({ [key]: true })
       : originalSchema
-    if (typeof answer === 'object') {
-      if (answer.length) {
-        // answer is array
+
+    try {
+      trimmedSchema.parse({ [key]: answer })
+    } catch (e) {
+      error = populateError(error, e, newPath)
+
+      if (Array.isArray(answer)) {
         const arrayElements = answer as Answer[]
         arrayElements.forEach((el, index) => {
-          const elementPath = `${newPath}[${index}]`
-          if (typeof el === 'object') {
-            if (!isStrict && el !== null) {
+          try {
+            trimmedSchema.parse({ [key]: [el] })
+          } catch (e) {
+            const elementPath = `${newPath}[${index}]`
+            error = populateError(error, e, elementPath)
+            if (el !== null && typeof el === 'object') {
               error = partialSchemaValidation(
                 el as FormValue,
                 trimmedSchema?.shape[key]?._def?.type,
                 error,
-                isStrict,
                 elementPath,
               )
             }
-          } else {
-            try {
-              trimmedSchema.parse({ [key]: [el] })
-            } catch (e) {
-              error = populateError(error, e, elementPath)
-            }
           }
         })
-      } else {
-        // answer is normal object
+      } else if (typeof answer === 'object') {
         error = partialSchemaValidation(
           answer as FormValue,
           originalSchema.shape[key],
           error,
-          isStrict,
           newPath,
         )
-      }
-    } else {
-      // answer is primitive
-      try {
-        trimmedSchema.parse({ [key]: answer })
-      } catch (e) {
-        error = populateError(error, e, newPath)
       }
     }
   })
@@ -97,7 +87,7 @@ export function validateAnswers(
   isFullSchemaValidation?: boolean,
 ): SchemaValidationError | undefined {
   if (!isFullSchemaValidation) {
-    return partialSchemaValidation(answers, dataSchema, undefined, false, '')
+    return partialSchemaValidation(answers, dataSchema, undefined)
   }
 
   try {

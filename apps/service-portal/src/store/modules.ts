@@ -1,37 +1,32 @@
 import { ServicePortalModule } from '@island.is/service-portal/core'
-import { applicationsModule } from '@island.is/service-portal/applications'
+import { documentProviderModule } from '@island.is/service-portal/document-provider'
 import { documentsModule } from '@island.is/service-portal/documents'
-import { settingsModule } from '@island.is/service-portal/settings'
-import { financeModule } from '@island.is/service-portal/finance'
 import { familyModule } from '@island.is/service-portal/family'
-import { healthModule } from '@island.is/service-portal/health'
-import { educationModule } from '@island.is/service-portal/education'
-import { assetsModule } from '@island.is/service-portal/assets'
-import { eligibilityModule } from '@island.is/service-portal/eligibility'
-import { drivingLicenseModule } from '@island.is/service-portal/driving-license'
-import { environment as env } from '../environments'
+import { financeModule } from '@island.is/service-portal/finance'
+import { settingsModule } from '@island.is/service-portal/settings'
 
-type ModuleFeatureFlag = keyof typeof env.featureFlags
+// NOTE:
+// Modules should only be here if they are production ready
+// or if they are ready for beta testing. Modules that are ready
+// for beta testing should be feature flagged.
+//
+// To feature flag a module add it to the featureFlaggedMoudles below
+// and create a feature flag in Configcat called
+// `isServicePortalFinanceModuleEnabled` where your module is called `finance`.
 
-const mapper: Record<ModuleFeatureFlag, ServicePortalModule> = {
-  applications: applicationsModule,
+export type ModuleKeys =
+  | 'documentProvider'
+  | 'documents'
+  | 'family'
+  | 'finance'
+  | 'settings'
+
+export const featureFlaggedModules: ModuleKeys[] = ['documentProvider']
+
+export const modules: Record<ModuleKeys, ServicePortalModule> = {
+  documentProvider: documentProviderModule,
   documents: documentsModule,
-  settings: settingsModule,
-  finance: financeModule,
   family: familyModule,
-  health: healthModule,
-  education: educationModule,
-  delegation: eligibilityModule,
-  assets: assetsModule,
-  drivingLicense: drivingLicenseModule,
-}
-
-export const modules = () => {
-  const arr: ServicePortalModule[] = []
-  Object.keys(env.featureFlags).forEach((k) => {
-    const key = k as ModuleFeatureFlag
-    if (env.featureFlags[key]) arr.push(mapper[key])
-  })
-
-  return arr
+  finance: financeModule,
+  settings: settingsModule,
 }

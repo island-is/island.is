@@ -2,8 +2,9 @@ const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
+  BASE_PATH = '/app/skilavottord',
   API_URL = 'http://localhost:3333',
-  API_PATH = '/skilavottord/api',
+  API_PATH = '/app/skilavottord/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   SENTRY_DSN,
 } = process.env
@@ -29,11 +30,14 @@ module.exports = withTreat(
       graphqlEndpoint: `${API_PATH}${graphqlPath}`,
       SENTRY_DSN,
     },
-    basePath: '/skilavottord',
+    env: {
+      API_MOCKS: process.env.API_MOCKS || '',
+    },
+    basePath: `${BASE_PATH}`,
     async redirects() {
       return [
         {
-          source: '/skilavottord',
+          source: `${BASE_PATH}`,
           destination: '/',
           basePath: false,
           permanent: false,

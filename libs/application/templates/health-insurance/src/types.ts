@@ -1,10 +1,36 @@
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, FormText } from '@island.is/application/core'
+import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
+import { StatusTypes } from './constants'
 
-export enum StatusTypes {
-  PENSIONER = 'pensioner',
-  STUDENT = 'student',
-  OTHER = 'other',
-  EMPLOYED = 'employed',
+export interface Status {
+  type: StatusTypes
+  confirmationOfStudies: FileType[]
+}
+
+interface FileType {
+  name: string
+  key: string
+}
+
+export interface FormerInsurance {
+  registration: string
+  country: string
+  personalId: string
+  confirmationOfResidencyDocument: FileType[]
+  institution?: string
+  entitlement: string
+  entitlementReason: string
+}
+
+export interface Applicant {
+  name: string
+  nationalId: string
+  address: string
+  postalCode: string
+  city: string
+  email: string
+  phoneNumber: string
+  citizenship: string
 }
 
 export interface AdditionalInfoType {
@@ -22,4 +48,30 @@ export interface MissingInfoType {
 export interface ReviewFieldProps extends FieldBaseProps {
   isEditable: boolean
   index?: number
+}
+
+export interface ContentType {
+  title: FormText
+  description: FormText | (() => void)
+  buttonText: FormText
+  buttonAction: () => void
+}
+
+export type CountryDataResult = {
+  status?: number
+  name: string
+  alpha2Code: string
+  regionalBlocs: CountryReginalBlocs[]
+}
+
+type CountryReginalBlocs = {
+  acronym: string
+}
+
+export interface ExternalDataNationalRegistry {
+  data: NationalRegistryUser
+}
+
+export interface ExternalDataUserProfile {
+  data: UserProfile
 }

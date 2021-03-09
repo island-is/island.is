@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
-import { isNextDisabled } from '../../../../utils/stepHelper'
+import {
+  constructProsecutorDemands,
+  isNextDisabled,
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
-import { FormFooter } from '../../../../shared-components/FormFooter'
-import * as Constants from '../../../../utils/constants'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import { useParams } from 'react-router-dom'
+import {
+  FormFooter,
+  PageLayout,
+  BlueBox,
+} from '@island.is/judicial-system-web/src/shared-components'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -21,21 +26,20 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
 
 export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-
-  const { id } = useParams<{ id: string }>()
-
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-
   const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] = useState<
     string
   >('')
 
-  const { data } = useQuery(CaseQuery, {
+  const router = useRouter()
+  const id = router.query.id
+
+  const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
   })
@@ -47,15 +51,10 @@ export const StepFour: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    const getCurrentCase = async () => {
-      setIsLoading(true)
-      setWorkingCase(resCase)
-      setIsLoading(false)
-    }
     if (id && !workingCase && resCase) {
-      getCurrentCase()
+      setWorkingCase(resCase)
     }
-  }, [id, setIsLoading, workingCase, setWorkingCase, resCase])
+  }, [id, workingCase, setWorkingCase, resCase])
 
   useEffect(() => {
     const requiredFields: { value: string; validations: Validation[] }[] = [
@@ -93,12 +92,17 @@ export const StepFour: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.PROSECUTOR}
+      activeSection={
+        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
+      }
       activeSubSection={
         ProsecutorSubsections.CREATE_DETENTION_REQUEST_STEP_FOUR
       }
-      isLoading={isLoading}
+      isLoading={loading}
       notFound={data?.case === undefined}
+      decision={workingCase?.decision}
+      parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -107,7 +111,45 @@ export const StepFour: React.FC = () => {
               Greinargerð
             </Text>
           </Box>
-
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={4}>
+              <Text as="h3" variant="h3">
+                Dómkröfutexti{' '}
+                <Tooltip text="Hér er hægt að bæta texta við dómkröfur, t.d. ef óskað er eftir öðrum úrræðum til vara." />
+              </Text>
+            </Box>
+            <BlueBox>
+              <Box marginBottom={3}>
+                {constructProsecutorDemands(workingCase, true)}
+              </Box>
+              <Input
+                name="prosecutorDemands"
+                label="Bæta texta við dómkröfur"
+                placeholder="Hér er hægt að bæta texta við dómkröfurnar eftir þörfum..."
+                defaultValue={workingCase?.otherDemands}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'otherDemands',
+                    event,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'otherDemands',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
+                rows={7}
+                textarea
+              />
+            </BlueBox>
+          </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
@@ -243,6 +285,7 @@ export const StepFour: React.FC = () => {
             </Box>
           </Box>
           <FormFooter
+            previousUrl={`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`}
             nextUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
             nextIsDisabled={isStepIllegal}
           />

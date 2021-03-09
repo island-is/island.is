@@ -14,6 +14,7 @@ export interface MappedData {
   pdfLinks?: number
   wordLinks?: number
   externalLinks?: number
+  popularityScore?: number
   type: string
   termPool?: string[]
   response?: string

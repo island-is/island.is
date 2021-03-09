@@ -27,12 +27,16 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
       title
       description
       longDescription
+      processEntry {
+        id
+        type
+        processTitle
+        processLink
+        openLinkInModal
+        buttonText
+      }
       content {
-        ... on Html {
-          __typename
-          id
-          document
-        }
+        ...AllSlices
       }
       tags {
         id
@@ -42,6 +46,7 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
       linkButtonText
     }
   }
+  ${slices}
 `
 
 export const GET_ADGERDIR_TAGS_QUERY = gql`

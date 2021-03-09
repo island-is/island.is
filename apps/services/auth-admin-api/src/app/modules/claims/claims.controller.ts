@@ -1,13 +1,13 @@
 import { ClaimsService, Claim } from '@island.is/auth-api-lib'
 import { Controller, Get, UseGuards } from '@nestjs/common'
-import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
 // @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('claims')
-@Controller()
+@Controller('backend')
 export class ClaimsController {
   constructor(private readonly claimsService: ClaimsService) {}
 

@@ -42,11 +42,12 @@ class YayAPI extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     const timestamp = new Date().toISOString()
-    const words = md5(`${yay.apiKey}-${yay.secretKey}-${timestamp}`)
-    const signature = Base64.stringify(words)
+    request.headers.set(
+      'X-Signature',
+      (md5(`${yay.apiKey}-${yay.secretKey}-${timestamp}`) as unknown) as string,
+    )
     request.headers.set('ApiKey', yay.apiKey)
     request.headers.set('X-Timestamp', timestamp)
-    request.headers.set('X-Signature', signature)
   }
 
   async getGiftCards(

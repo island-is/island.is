@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import {
@@ -10,17 +10,183 @@ import {
 import { logger } from '@island.is/logging'
 
 import { DocumentProviderService } from './document-provider.service'
-import { ClientCredentials, AudienceAndScope, TestResult } from './models'
+import {
+  ClientCredentials,
+  AudienceAndScope,
+  TestResult,
+  Organisation,
+  Contact,
+  Helpdesk,
+} from './models'
 import {
   RunEndpointTestsInput,
   UpdateEndpointInput,
   CreateProviderInput,
+  UpdateContactInput,
+  UpdateHelpdeskInput,
+  CreateContactInput,
+  CreateHelpdeskInput,
 } from './dto'
+import { CreateOrganisationInput } from './dto/createOrganisation.input'
+import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
+
+  @Query(() => [Organisation])
+  async getProviderOrganisations(
+    @CurrentUser() user: User,
+  ): Promise<Organisation[]> {
+    return this.documentProviderService.getOrganisations(user.authorization)
+  }
+
+  @Query(() => Organisation)
+  async getProviderOrganisation(
+    @Args('nationalId') nationalId: string,
+  ): Promise<Organisation> {
+    return this.documentProviderService.getOrganisation(nationalId)
+  }
+
+  @Query(() => Boolean)
+  async organisationExists(
+    @Args('nationalId') nationalId: string,
+  ): Promise<boolean> {
+    return await this.documentProviderService.organisationExists(nationalId)
+  }
+
+  @Mutation(() => Organisation, { nullable: true })
+  async createOrganisation(
+    @Args('input') input: CreateOrganisationInput,
+    @CurrentUser() user: User,
+  ): Promise<Organisation | null> {
+    logger.info(`createOrganisation: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createOrganisation(
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Organisation)
+  async updateOrganisation(
+    @Args('id') id: string,
+    @Args('input') input: UpdateOrganisationInput,
+    @CurrentUser() user: User,
+  ): Promise<Organisation> {
+    logger.info(
+      `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${id}`,
+    )
+
+    return this.documentProviderService.updateOrganisation(
+      id,
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Contact, { nullable: true })
+  async createAdministrativeContact(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact | null> {
+    logger.info(`createAdministrativeContact: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createAdministrativeContact(
+      organisationId,
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Contact)
+  async updateAdministrativeContact(
+    @Args('organisationId') organisationId: string,
+    @Args('administrativeContactId') administrativeContactId: string,
+    @Args('contact') contact: UpdateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact> {
+    logger.info(
+      `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${organisationId}, administrativeContactId: ${administrativeContactId}`,
+    )
+
+    return this.documentProviderService.updateAdministrativeContact(
+      organisationId,
+      administrativeContactId,
+      contact,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Contact, { nullable: true })
+  async createTechnicalContact(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact | null> {
+    logger.info(`createTechnicalContact: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createTechnicalContact(
+      organisationId,
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Contact)
+  async updateTechnicalContact(
+    @Args('organisationId') organisationId: string,
+    @Args('technicalContactId') technicalContactId: string,
+    @Args('contact') contact: UpdateContactInput,
+    @CurrentUser() user: User,
+  ): Promise<Contact> {
+    logger.info(
+      `updateTechnicalContact: user: ${user.nationalId}, organisationId: ${organisationId}, technicalContactId: ${technicalContactId}`,
+    )
+
+    return this.documentProviderService.updateTechnicalContact(
+      organisationId,
+      technicalContactId,
+      contact,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Helpdesk, { nullable: true })
+  async createHelpdesk(
+    @Args('organisationId') organisationId: string,
+    @Args('input') input: CreateHelpdeskInput,
+    @CurrentUser() user: User,
+  ): Promise<Helpdesk | null> {
+    logger.info(`createHelpdesk: user: ${user.nationalId}`)
+
+    return this.documentProviderService.createHelpdesk(
+      organisationId,
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => Helpdesk)
+  async updateHelpdesk(
+    @Args('organisationId') organisationId: string,
+    @Args('helpdeskId') helpdeskId: string,
+    @Args('helpdesk') helpdesk: UpdateHelpdeskInput,
+    @CurrentUser() user: User,
+  ): Promise<Helpdesk> {
+    logger.info(
+      `updateHelpdesk: user: ${user.nationalId}, organisationId: ${organisationId}, helpdeskId: ${helpdeskId}`,
+    )
+
+    return this.documentProviderService.updateHelpdesk(
+      organisationId,
+      helpdeskId,
+      helpdesk,
+      user.authorization,
+    )
+  }
 
   @Mutation(() => ClientCredentials)
   async createTestProvider(
@@ -49,6 +215,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.updateEndpointOnTest(
       input.endpoint,
       input.providerId,
+      input.xroad || false,
     )
   }
 
@@ -80,6 +247,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProvider(
       input.nationalId,
       input.clientName,
+      user.authorization,
     )
   }
 
@@ -95,6 +263,8 @@ export class DocumentProviderResolver {
     return this.documentProviderService.updateEndpoint(
       input.endpoint,
       input.providerId,
+      input.xroad || false,
+      user.authorization,
     )
   }
 }

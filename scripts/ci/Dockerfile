@@ -19,6 +19,8 @@ ADD . .
 FROM src as builder
 ARG APP
 ENV APP=${APP}
+ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
@@ -55,12 +57,15 @@ CMD [ "main.js" ]
 FROM output-base as output-next
 # image with build of an Next.js app
 
+ENV PORT=4200
+
 COPY --from=builder /build/${APP_HOME}/next.config.js /webapp
 COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder /build/${APP_HOME}/public /webapp/public
 COPY --from=builder /build/${APP_DIST_HOME}/.next /webapp/.next
+COPY --from=builder /build/${APP_DIST_HOME}/main.js* /webapp
 
-ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]
+ENTRYPOINT [ "node", "main.js" ]
 
 FROM nginx:1.19.2-alpine as output-static
 
@@ -73,6 +78,13 @@ LABEL commit=${GIT_SHA}
 ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_SHA=${GIT_SHA}
 ENV APP=${APP}
+ENV BASEPATH=/
 
-ADD scripts/ci/dockerfile-config/static-nginx.conf /etc/nginx/conf.d/default.conf
+RUN mkdir -p /etc/nginx/templates
+RUN apk add bash && \
+    curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && \
+    chmod a+x /tmp/jq-linux64 && \
+    mv /tmp/jq-linux64 /usr/bin/jq
+ADD scripts/ci/dockerfile-assets/nginx/* /etc/nginx/templates
+ADD scripts/ci/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html

@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -18,6 +19,8 @@ import {
   CaseCustodyRestrictions,
   CaseGender,
   CaseDecision,
+  CaseType,
+  AccusedPleaDecision,
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
@@ -43,6 +46,13 @@ export class Case extends Model<Case> {
   @UpdatedAt
   @ApiProperty()
   modified: Date
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseType),
+  })
+  type: CaseType
 
   @Column({
     type: DataType.ENUM,
@@ -93,14 +103,14 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  requestedDefenderName: string
+  defenderName: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  requestedDefenderEmail: string
+  defenderEmail: string
 
   @Column({
     type: DataType.STRING,
@@ -124,18 +134,18 @@ export class Case extends Model<Case> {
   requestedCourtDate: Date
 
   @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  alternativeTravelBan: boolean
-
-  @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
   requestedCustodyEndDate: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  otherDemands: string
 
   @Column({
     type: DataType.STRING,
@@ -159,6 +169,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
   requestedCustodyRestrictions: CaseCustodyRestrictions[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requestedOtherRestrictions: string
 
   @Column({
     type: DataType.STRING,
@@ -215,20 +232,6 @@ export class Case extends Model<Case> {
   courtRoom: string
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderName: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderEmail: string
-
-  @Column({
     type: DataType.DATE,
     allowNull: true,
   })
@@ -257,11 +260,26 @@ export class Case extends Model<Case> {
   policeDemands: string
 
   @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtDocuments: string[]
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(AccusedPleaDecision),
+  })
+  @ApiProperty({ enum: AccusedPleaDecision })
+  accusedPleaDecision: AccusedPleaDecision
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  accusedPlea: string
+  accusedPleaAnnouncement: string
 
   @Column({
     type: DataType.STRING,
@@ -348,4 +366,32 @@ export class Case extends Model<Case> {
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
   judge: User
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  registrarId: string
+
+  @BelongsTo(() => User, 'registrarId')
+  @ApiProperty({ type: User })
+  registrar: User
+
+  @ForeignKey(() => Case)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  parentCaseId: string
+
+  @BelongsTo(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  parentCase: Case
+
+  @HasOne(() => Case, 'parentCaseId')
+  @ApiProperty({ type: Case })
+  childCase: Case
 }

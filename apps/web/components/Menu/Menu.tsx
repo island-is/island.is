@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
-import { SearchInput } from '..'
+import { SearchInput } from '@island.is/web/components'
 import { LanguageToggler } from '../LanguageToggler'
 
 interface MegaMenuLink {
@@ -73,7 +73,6 @@ export const Menu: FC<Props> = ({
       renderLogo={(logo, closeModal) => (
         <Link
           href={activeLocale === 'en' ? '/en' : '/'}
-          as={activeLocale === 'en' ? '/en' : '/'}
           onClick={() => {
             closeModal()
           }}
@@ -88,7 +87,7 @@ export const Menu: FC<Props> = ({
       }
       renderLink={({ className, text, href }, closeModal) => {
         return (
-          <Link {...href} onClick={closeModal}>
+          <Link href={href} onClick={closeModal}>
             <span className={className}>{text}</span>
           </Link>
         )
@@ -96,7 +95,7 @@ export const Menu: FC<Props> = ({
       renderMyPagesButton={(button) => {
         return <Link href="//minarsidur.island.is/">{button}</Link>
       }}
-      renderLanguageSwitch={(languageSwitch, isMobile) => (
+      renderLanguageSwitch={(isMobile) => (
         <LanguageToggler
           dialogId={
             isMobile ? 'menu-language-toggle-mobile' : 'menu-language-toggle'

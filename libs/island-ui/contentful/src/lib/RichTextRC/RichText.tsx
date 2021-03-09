@@ -104,17 +104,28 @@ type RichText = (
         }
       }
     | { renderNode?: {}; renderMark?: {}; renderComponent?: {} },
+  locale?: 'is' | 'en',
 ) => React.ReactNode
 
 export const richText: RichText = (
   documents,
   opt = { renderNode: {}, renderMark: {}, renderComponent: {} },
+  locale = 'is',
 ) => {
   const options = {
+    renderText: (text) => {
+      return text.split('\n').reduce((children, textSegment, index) => {
+        return [...children, index > 0 && <br key={index} />, textSegment]
+      }, [])
+    },
     renderNode: { ...defaultRenderNode, ...opt.renderNode },
     renderMark: { ...defaultRenderMark, ...opt.renderMark },
   }
-  const renderComponent = { ...defaultRenderComponent, ...opt.renderComponent }
+  const renderComponent = {
+    ...defaultRenderComponent,
+    ...opt.renderComponent,
+    locale,
+  }
   return documents.map((slice) => {
     if (slice.__typename === 'Html') {
       return (
@@ -130,7 +141,7 @@ export const richText: RichText = (
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}
       >
-        {renderComponent[slice.__typename]?.(slice)}
+        {renderComponent[slice.__typename]?.(slice, locale)}
       </Box>
     )
   })

@@ -1,4 +1,8 @@
-import { extractAnswersToSubmitFromScreen } from './utils'
+import {
+  extractAnswersToSubmitFromScreen,
+  isJSONObject,
+  parseMessage,
+} from './utils'
 import {
   ExternalDataProviderScreen,
   FieldDef,
@@ -190,6 +194,44 @@ describe('ui-shell-utils', () => {
           arrayField: [{ a: 1, b: 2, c: 3 }, { a: 4 }],
         })
       })
+    })
+  })
+
+  describe('isJSONObject', () => {
+    it('return true if the message is a valid JSON object', () => {
+      expect(
+        isJSONObject('{"field":true,"otherField":"isAString"}'),
+      ).toBeTruthy()
+    })
+
+    it('return false if the message looks like a JSON but is not valid', () => {
+      expect(isJSONObject('{field:true,fake:"itsnot"}')).toBeFalsy()
+    })
+
+    it('return false if the message is a string', () => {
+      expect(isJSONObject('error message')).toBeFalsy()
+    })
+
+    it('return false if the message contains brackets in the middle of the message', () => {
+      expect(
+        isJSONObject('error message with {brackets} in the middle'),
+      ).toBeFalsy()
+    })
+  })
+
+  describe('parseMessage', () => {
+    it(`return an object if it's a stringified json object`, () => {
+      expect(parseMessage('{"field":"value"}')).toMatchObject({
+        field: 'value',
+      })
+    })
+
+    it(`return an object if it's a stringified json object`, () => {
+      expect(parseMessage('{field:value}')).toStrictEqual('{field:value}')
+    })
+
+    it('return a string if the message is only a string', () => {
+      expect(parseMessage('error message')).toStrictEqual('error message')
     })
   })
 })

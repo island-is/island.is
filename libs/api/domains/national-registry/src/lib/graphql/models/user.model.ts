@@ -3,6 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Gender, MaritalStatus } from '../../types'
 import { BanMarking } from './banMarking.model'
 import { Address } from './address.model'
+import { Citizenship } from './citizenship.model'
 
 @ObjectType()
 export class NationalRegistryUser {
@@ -21,8 +22,8 @@ export class NationalRegistryUser {
   @Field(() => String, { nullable: true })
   birthPlace?: string
 
-  @Field(() => String, { nullable: true })
-  citizenship?: string
+  @Field(() => Citizenship, { nullable: true })
+  citizenship?: Citizenship
 
   @Field(() => String, { nullable: true })
   religion?: string
@@ -39,6 +40,6 @@ export class NationalRegistryUser {
   @Field(() => Date)
   birthday!: string
 
-  @Field(() => Address)
-  address!: Address
+  @Field(() => Address, { nullable: true })
+  address?: Address
 }

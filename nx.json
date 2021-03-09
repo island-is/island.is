@@ -42,22 +42,15 @@
     "air-discount-scheme-web": {
       "tags": []
     },
-    "air-discount-scheme/web-e2e": {
+    "air-discount-scheme-web-e2e": {
       "tags": [],
       "implicitDependencies": ["air-discount-scheme-web"]
     },
     "api": {
       "tags": []
     },
-    "api-catalogue": {
-      "tags": []
-    },
     "api-catalogue-consts": {
       "tags": []
-    },
-    "api-catalogue-e2e": {
-      "tags": [],
-      "implicitDependencies": ["api-catalogue"]
     },
     "api-catalogue-elastic": {
       "tags": []
@@ -95,6 +88,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-education": {
+      "tags": []
+    },
     "api-domains-file-upload": {
       "tags": []
     },
@@ -102,6 +98,9 @@
       "tags": []
     },
     "api-domains-national-registry": {
+      "tags": []
+    },
+    "api-domains-syslumenn": {
       "tags": []
     },
     "api-domains-translations": {
@@ -114,9 +113,6 @@
       "tags": []
     },
     "api-schema": {
-      "tags": []
-    },
-    "application-api-template-utils": {
       "tags": []
     },
     "application-core": {
@@ -138,10 +134,16 @@
       "tags": [],
       "implicitDependencies": ["application-system-form"]
     },
+    "application-template-api-modules": {
+      "tags": []
+    },
     "application-template-loader": {
       "tags": []
     },
-    "application-templates-children-domicile-transfer": {
+    "application-templates-children-residence-change": {
+      "tags": []
+    },
+    "application-templates-data-protection-complaint": {
       "tags": []
     },
     "application-templates-document-provider-onboarding": {
@@ -160,6 +162,9 @@
       "tags": []
     },
     "application-templates-parental-leave": {
+      "tags": []
+    },
+    "application-templates-party-letter": {
       "tags": []
     },
     "application-templates-passport": {
@@ -214,10 +219,16 @@
     "contentful-importer": {
       "tags": []
     },
+    "contentful-translation-extension": {
+      "tags": []
+    },
     "dokobit-signing": {
       "tags": []
     },
     "email-service": {
+      "tags": []
+    },
+    "feature-flags": {
       "tags": []
     },
     "file-storage": {
@@ -246,13 +257,22 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
     "infra-express-server": {
+      "tags": []
+    },
+    "infra-metrics": {
       "tags": []
     },
     "infra-monitoring": {
       "tags": []
     },
     "infra-nest-server": {
+      "tags": []
+    },
+    "infra-next-server": {
       "tags": []
     },
     "infra-tracing": {
@@ -269,7 +289,8 @@
       "tags": []
     },
     "island-ui-storybook": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["island-ui-core"]
     },
     "island-ui-theme": {
       "tags": []
@@ -292,6 +313,9 @@
     "judicial-system-consts": {
       "tags": []
     },
+    "judicial-system-court-client": {
+      "tags": []
+    },
     "judicial-system-formatters": {
       "tags": []
     },
@@ -301,9 +325,12 @@
     "judicial-system-web": {
       "tags": []
     },
-    "judicial-system/web-e2e": {
+    "judicial-system-web-e2e": {
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
+    },
+    "judicial-system-xrd-api": {
+      "tags": []
     },
     "localization": {
       "tags": []
@@ -381,6 +408,9 @@
     "services-auth-api": {
       "tags": []
     },
+    "services-documents": {
+      "tags": []
+    },
     "services-search-indexer": {
       "tags": []
     },
@@ -389,6 +419,9 @@
     },
     "services-xroad-collector": {
       "tags": ["api-catalogue-services"]
+    },
+    "shared-babel": {
+      "tags": []
     },
     "shared-connected": {
       "tags": []
@@ -414,12 +447,21 @@
     "skilavottord-web": {
       "tags": []
     },
+    "skilavottord-web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["skilavottord-web"]
+    },
     "skilavottord-ws": {
       "tags": []
     },
-    "skilavottord/web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["skilavottord-web"]
+    "utils-api": {
+      "tags": []
+    },
+    "utils-environment": {
+      "tags": []
+    },
+    "vmst-client": {
+      "tags": []
     },
     "web": {
       "tags": []

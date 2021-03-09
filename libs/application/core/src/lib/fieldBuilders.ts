@@ -1,5 +1,11 @@
 import { FormatInputValueFunction } from 'react-number-format'
+import { Colors } from '@island.is/island-ui/theme'
+import type {
+  DatePickerBackgroundColor,
+  InputBackgroundColor,
+} from '@island.is/island-ui/core'
 
+import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -21,14 +27,10 @@ import {
   MaybeWithApplication,
   AsyncSelectField,
   Context,
+  RecordObject,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
-import { FormText } from '../types/Form'
-import { Colors } from '@island.is/island-ui/theme'
-import {
-  DatePickerBackgroundColor,
-  InputBackgroundColor,
-} from '@island.is/island-ui/core'
+import { FormText, FormTextArray } from '../types/Form'
 
 interface SelectOption {
   label: string
@@ -187,6 +189,7 @@ export function buildSelectField(data: {
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
+  backgroundColor?: InputBackgroundColor
 }): SelectField {
   const {
     condition,
@@ -199,6 +202,7 @@ export function buildSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -214,6 +218,7 @@ export function buildSelectField(data: {
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 
@@ -229,6 +234,7 @@ export function buildAsyncSelectField(data: {
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
+  backgroundColor?: InputBackgroundColor
 }): AsyncSelectField {
   const {
     condition,
@@ -242,6 +248,7 @@ export function buildAsyncSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -258,6 +265,7 @@ export function buildAsyncSelectField(data: {
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 
@@ -312,19 +320,29 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
+    childInputIds?: string[]
     title: FormText
     description?: FormText
     component: string
     defaultValue?: MaybeWithApplication<unknown>
   },
-  props?: object,
+  props?: RecordObject,
 ): CustomField {
-  const { condition, defaultValue, id, title, description, component } = data
+  const {
+    condition,
+    defaultValue,
+    id,
+    title,
+    description,
+    component,
+    childInputIds,
+  } = data
   return {
     children: undefined,
     defaultValue,
     condition,
     id,
+    childInputIds,
     title,
     description,
     type: FieldTypes.CUSTOM,
@@ -338,9 +356,9 @@ export function buildFileUploadField(data: {
   id: string
   title: FormText
   introduction: FormText
-  uploadHeader?: string
-  uploadDescription?: string
-  uploadButtonLabel?: string
+  uploadHeader?: FormText
+  uploadDescription?: FormText
+  uploadButtonLabel?: FormText
   uploadMultiple?: boolean
   uploadAccept?: string
   maxSize?: number
@@ -390,8 +408,8 @@ export function buildDividerField(data: {
 }
 
 export function buildKeyValueField(data: {
-  label: React.ReactNode
-  value: MaybeWithApplication<React.ReactNode>
+  label: FormText
+  value: FormText | FormTextArray
   width?: FieldWidth
 }): KeyValueField {
   const { label, value, width = 'full' } = data
@@ -424,4 +442,14 @@ export function buildSubmitField(data: {
     type: FieldTypes.SUBMIT,
     component: FieldComponents.SUBMIT,
   }
+}
+
+export function buildFieldOptions(
+  maybeOptions: MaybeWithApplication<Option[]>,
+  application: Application,
+): Option[] {
+  if (typeof maybeOptions === 'function') {
+    return maybeOptions(application)
+  }
+  return maybeOptions
 }

@@ -1,14 +1,17 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  FieldBaseProps,
+  getValueViaPath,
+  ValidAnswers,
+} from '@island.is/application/core'
+import { Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { m, mm } from '../../lib/messages'
-import { defaultMonths } from '../../config'
-import { YES, NO } from '../../constants'
 
-type ValidAnswers = 'yes' | 'no' | undefined
+import BoxChart, { BoxChartKey } from '../components/BoxChart'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import { defaultMonths, maxMonths } from '../../config'
+import { YES, NO } from '../../constants'
 
 const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   const { formatMessage } = useLocale()
@@ -22,13 +25,12 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     currentAnswer,
   )
 
-  const numberOfBoxes =
-    statefulAnswer === NO ? defaultMonths : defaultMonths + 1
+  const numberOfBoxes = statefulAnswer === NO ? defaultMonths : maxMonths
 
   const boxChartKeys: BoxChartKey[] = [
     {
       label: () => ({
-        ...m.yourRightsInMonths,
+        ...parentalLeaveFormMessages.shared.yourRightsInMonths,
         values: { months: defaultMonths },
       }),
       bulletStyle: 'blue',
@@ -40,12 +42,23 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
       <Box paddingY={3}>
         <RadioController
           id={field.id}
+          error={error}
           defaultValue={
             statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
           options={[
-            { label: formatMessage(m.requestRightsYes), value: YES },
-            { label: formatMessage(m.requestRightsNo), value: NO },
+            {
+              label: formatMessage(
+                parentalLeaveFormMessages.shared.requestRightsYes,
+              ),
+              value: YES,
+            },
+            {
+              label: formatMessage(
+                parentalLeaveFormMessages.shared.requestRightsNo,
+              ),
+              value: NO,
+            },
           ]}
           onSelect={(newAnswer) => {
             setStatefulAnswer(newAnswer as ValidAnswers)
@@ -53,11 +66,6 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
           largeButtons
         />
       </Box>
-      {error && (
-        <Box color="red400" padding={2}>
-          <Text color="red400">{formatMessage(mm.errors.requiredAnswer)}</Text>
-        </Box>
-      )}
 
       {/* No answer yet, so show them the last box as gray */}
       {!statefulAnswer && (

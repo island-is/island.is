@@ -26,6 +26,7 @@ export type Icon =
   | 'documents'
   | 'download'
   | 'ellipse'
+  | 'ellipsisVertical'
   | 'fileTrayFull'
   | 'filter'
   | 'heart'
@@ -37,8 +38,10 @@ export type Icon =
   | 'menu'
   | 'notifications'
   | 'open'
+  | 'pencil'
   | 'people'
   | 'person'
+  | 'playCircle'
   | 'reader'
   | 'receipt'
   | 'removeCircle'
@@ -56,6 +59,7 @@ export default {
     add: 'Add',
     arrowForward: 'ArrowForward',
     arrowBack: 'ArrowBack',
+    arrowDown: 'ArrowDown',
     arrowUp: 'ArrowUp',
     attach: 'Attach',
     business: 'Business',
@@ -78,6 +82,7 @@ export default {
     documents: 'Documents',
     download: 'Download',
     ellipse: 'Ellipse',
+    ellipsisVertical: 'EllipsisVertical',
     fileTrayFull: 'FileTrayFull',
     filter: 'Filter',
     heart: 'Heart',
@@ -89,8 +94,10 @@ export default {
     menu: 'Menu',
     notifications: 'Notifications',
     open: 'Open',
+    pencil: 'Pencil',
     people: 'People',
     person: 'Person',
+    playCircle: 'PlayCircle',
     reader: 'Reader',
     receipt: 'Receipt',
     removeCircle: 'RemoveCircle',
@@ -105,9 +112,10 @@ export default {
   outline: {
     accessibility: 'AccessibilityOutline',
     add: 'AddOutline',
-    arrowForward: 'ArrowForwardOutline',
-    arrowBack: 'ArrowBackOutline',
-    arrowUp: 'ArrowUpOutline',
+    arrowForward: 'ArrowForward',
+    arrowBack: 'ArrowBack',
+    arrowDown: 'ArrowDown',
+    arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
     business: 'BusinessOutline',
     calendar: 'CalendarOutline',
@@ -119,16 +127,17 @@ export default {
     chatbubble: 'ChatbubbleOutline',
     checkmark: 'Checkmark',
     checkmarkCircle: 'CheckmarkCircleOutline',
-    chevronBack: 'ChevronBackOutline',
-    chevronUp: 'ChevronUpOutline',
-    chevronDown: 'ChevronDownOutline',
-    chevronForward: 'ChevronForwardOutline',
+    chevronBack: 'ChevronBack',
+    chevronUp: 'ChevronUp',
+    chevronDown: 'ChevronDown',
+    chevronForward: 'ChevronForward',
     closeCircle: 'CloseCircleOutline',
-    close: 'CloseOutline',
+    close: 'Close',
     copy: 'CopyOutline',
     documents: 'DocumentsOutline',
     download: 'DownloadOutline',
     ellipse: 'EllipseOutline',
+    ellipsisVertical: 'EllipsisVerticalOutline',
     fileTrayFull: 'FileTrayFullOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',
@@ -140,8 +149,10 @@ export default {
     menu: 'MenuOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
+    pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
+    playCircle: 'PlayCircleOutline',
     reader: 'ReaderOutline',
     receipt: 'ReceiptOutline',
     removeCircle: 'RemoveCircleOutline',
@@ -151,6 +162,6 @@ export default {
     wallet: 'WalletOutline',
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
-    remove: 'RemoveOutline',
+    remove: 'Remove',
   },
 }

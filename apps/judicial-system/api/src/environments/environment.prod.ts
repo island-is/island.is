@@ -11,5 +11,18 @@ export default {
     serviceName: 'judicial-system-api',
     region: process.env.AUDIT_TRAIL_REGION,
   },
+  xRoad: {
+    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV,
+    clientId: process.env.XROAD_CLIENT_ID,
+    clientCert: process.env.XROAD_CLIENT_CERT,
+    clientKey: process.env.XROAD_CLIENT_KEY,
+    clientCa: process.env.XROAD_CLIENT_PEM,
+  },
+  courtService: {
+    apiPath: process.env.XROAD_COURT_API_PATH,
+    memberCode: process.env.XROAD_COURT_MEMBER_CODE,
+    username: process.env.COURT_USERNAME,
+    password: process.env.COURT_PASSWORD,
+  },
   backendUrl: process.env.BACKEND_URL,
 }

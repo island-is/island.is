@@ -13,11 +13,17 @@ import union from 'lodash/union'
 import {
   AccessCategory,
   DataCategory,
+  Environment,
   PricingCategory,
   ProviderType,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { serviceIdSort, exceptionHandler } from './utils'
+import {
+  serviceIdSort,
+  exceptionHandler,
+  parseServiceCode,
+  parseVersionNumber,
+} from './utils'
 
 @Injectable()
 export class RestMetadataService {
@@ -39,14 +45,20 @@ export class RestMetadataService {
 
       const service: Service = {
         id: serviceId,
-        name: '',
+        title: '',
         owner: '',
+        summary: '',
         description: '',
         pricing: [],
         data: [],
         access: [AccessCategory.XROAD],
         type: [TypeCategory.REST],
-        xroadIdentifier: [],
+        environments: [
+          {
+            environment: Environment.DEVELOPMENT, // TODO: Needs to be environment aware
+            details: [],
+          },
+        ],
       }
 
       if (provider.type === ProviderType.PUBLIC) {
@@ -58,14 +70,32 @@ export class RestMetadataService {
         const spec = await this.getOpenApi(sorted[i])
 
         if (spec && this.validateSpec(spec)) {
-          // The list is sorted for the latest service version to be the last element
-          // so name, owner and description will be from the latest version.
-          service.name = spec.info.title
+          // The list is sorted for the latest service version to be
+          // the last element so name, owner and description will
+          // be from the latest version.
+          service.title = spec.info.title
           service.owner = provider.name
           service.description = spec.info.description ?? ''
           service.data = union(service.data, spec.info['x-category'])
           service.pricing = union(service.pricing, spec.info['x-pricing'])
-          service.xroadIdentifier.push(sorted[i])
+
+          // TODO: This needs to be environment aware
+          service.environments[0].details.push({
+            version: parseVersionNumber(sorted[i].serviceCode!),
+            title: spec.info.title,
+            summary: '', // TODO: We should have a short summary
+            description: spec.info.description ?? '',
+            type: TypeCategory.REST,
+            data: spec.info['x-category'] ?? [],
+            pricing: spec.info['x-pricing'] ?? [],
+            links: {
+              responsibleParty: spec.info['x-links']?.responsibleParty ?? '',
+              bugReport: spec.info['x-links']?.bugReport ?? '',
+              documentation: spec.info['x-links']?.documentation ?? '',
+              featureRequest: spec.info['x-links']?.featureRequest ?? '',
+            },
+            xroadIdentifier: sorted[i],
+          })
         } else {
           logger.error(
             `OpenAPI not found or is invalid for service code ${sorted[i].memberCode}/${sorted[i].subsystemCode}/${sorted[i].serviceCode}`,
@@ -73,7 +103,7 @@ export class RestMetadataService {
         }
       }
 
-      if (service.name) services.push(service)
+      if (service.title) services.push(service)
     }
 
     logger.info(
@@ -148,7 +178,7 @@ export class RestMetadataService {
         item.memberClass &&
         item.subsystemCode
       ) {
-        const serviceCode = item.serviceCode.split('-')[0]
+        const serviceCode = parseServiceCode(item.serviceCode)
         const mappedItem: XroadIdentifier = {
           instance: item.xroadInstance,
           memberClass: item.memberClass,
@@ -210,7 +240,7 @@ export class RestMetadataService {
    * @param xroadIdentifier
    */
   private createServiceId(xroadIdentifier: XroadIdentifier): string {
-    const serviceCode = xroadIdentifier.serviceCode?.split('-')[0]
+    const serviceCode = parseServiceCode(xroadIdentifier.serviceCode!)
     const serviceId = `${xroadIdentifier.instance}_${xroadIdentifier.memberClass}_${xroadIdentifier.memberCode}_${xroadIdentifier.subsystemCode}_${serviceCode}`
 
     //Remove tokens that interrupt URLs

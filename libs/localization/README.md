@@ -2,11 +2,15 @@
 
 This library provides components to support Internationalization in nextjs and react projects using [Formatjs](https://formatjs.io/).
 
+{% hint style="warning" %}
+You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` environnement variable to run the extract script. You can create it [here in contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types).
+{% endhint %}
+
 ## Usage in Next.js
 
-### **Wrap your App with the `appWithLocale` HOC**
+### Wrap your App with the `appWithLocale` HOC
 
-```tsx
+```typescript
 import { appWithLocale } from '@island.is/localization'
 
 function MyApp({ Component, pageProps }) {
@@ -16,9 +20,9 @@ function MyApp({ Component, pageProps }) {
 export default appWithLocale(MyApp)
 ```
 
-### **Fetch namespaces by wrapping your Pages with the `withLocale` HOC**
+### Fetch namespaces by wrapping your Pages with the `withLocale` HOC
 
-```tsx
+```typescript
 import { withLocale } from '@island.is/localization'
 
 const Home = () => {
@@ -39,9 +43,9 @@ export default withLocale(['global', 'yourNamespace'])(Home)
 
 ## Usage in a React application
 
-### **Wrap your Application with the `<LocaleProvider>`**
+### Wrap your Application with the `<LocaleProvider>`
 
-```tsx
+```typescript
 import { defaultLanguage, LocaleProvider } from '@island.is/localization'
 
 const App = () => {
@@ -53,9 +57,9 @@ const App = () => {
 }
 ```
 
-### **Fetch namespaces by wrapping your component with the `withLocale` HOC or use the `useNamespaces` hook**
+### Fetch namespaces by wrapping your component with the `withLocale` HOC or use the `useNamespaces` hook
 
-```tsx
+```typescript
 const Home = () => {
   const { loadingMessages } = useNamespaces(['gloable', 'yourNamespace'])
   const { formatMessage } = useLocale()
@@ -76,14 +80,14 @@ const Home = () => {
 export default Home
 ```
 
-## **Message Declaration**
+## Message Declaration
 
 To declare a message you have to provide an `id` and a `defaultMessage`, `description` is optional but recommended.
 You can declare a message by:
 
 - Using `formatMessage` method from the `useLocale` hook
 
-```tsx
+```typescript
 const { formatMessage } = useLocale();
 
 return (
@@ -102,7 +106,7 @@ return (
 
 - Using React API `<FormattedMessage />`
 
-```tsx
+```typescript
 import { FormattedMessage } from 'react-intl'
 
 return (
@@ -119,7 +123,7 @@ return (
 
 - Pre-declaring using `defineMessage` or `defineMessages` for later consumption
 
-```tsx
+```typescript
 const message = defineMessage({
   id: 'global:title',
   defaultMessage: 'Default title',
@@ -144,7 +148,28 @@ const { formatMessage } = useLocale()
 return <div>{formatMessage(message)}</div>
 ```
 
-## **Message Extraction**
+## Markdown support
+
+We are supporting both TextField and Markdown for the translations. If you want to define markdown messages, you will need to add a `#markdown` to the end of the string's id. That will show the Markdown editor within Contentful.
+
+{% hint style="warning" %}
+We only allow headings from H2 to H4. The rest will be converted as paragraph in Contentful.
+{% endhint %}
+
+{% hint style="warning" %}
+There is only one way to do line breaks for the markdown messages. It has to be an escape line break character defined two times `\\n\\n`. This only required when doing `defineMessage` -> Contentful. After running the `extract-strings` script and publishing the changes on Contentful, you will get normal line breaks `\n` back from the GraphQL API and will be able to pass it down to `markdown-to-jsx`.
+{% endhint %}
+
+```typescript
+const message = defineMessage({
+  id: 'global:title#markdown',
+  defaultMessage: 'Some copy with **markdown** in it.',
+  description:
+    '## Heading followed by a new line.\\n\\nIt will be rendered as _markdown_ in the Contentful UI extension as well',
+})
+```
+
+## Message Extraction
 
 Add the `extract-strings` script to `workspace.json`. Running this script will extract messages from the project and create or update a Namespace entry in Contentful, if the namespace did not exist it will need to be published in Contentful before the client can query the entry.
 
@@ -157,7 +182,7 @@ Add the `extract-strings` script to `workspace.json`. Running this script will e
       "extract-strings": {
         "builder": "@nrwl/workspace:run-commands",
         "options": {
-          "command": "yarn ts-node libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
+          "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract '{pathToComponents}/*.{js,ts,tsx}'"
         }
       }
     }

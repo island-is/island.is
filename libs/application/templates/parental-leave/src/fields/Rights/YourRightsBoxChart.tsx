@@ -1,10 +1,16 @@
 import React, { FC } from 'react'
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { Box, Text } from '@island.is/island-ui/core'
 import { Application, getValueViaPath } from '@island.is/application/core'
-import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { maxDaysToGiveOrReceive, defaultMonths } from '../../config'
+
+import BoxChart, { BoxChartKey } from '../components/BoxChart'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import {
+  maxDaysToGiveOrReceive,
+  defaultMonths,
+  minMonths,
+  maxMonths,
+} from '../../config'
 import { YES } from '../../constants'
 
 interface YourRightsBoxChartProps {
@@ -47,22 +53,26 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
   ) as number
 
   const requestDaysStringKey =
-    requestDaysAnswer === 1 ? m.requestRightsDay : m.requestRightsDays
+    requestDaysAnswer === 1
+      ? parentalLeaveFormMessages.shared.requestRightsDay
+      : parentalLeaveFormMessages.shared.requestRightsDays
 
   const yourRightsWithGivenDaysStringKey =
     maxDays - giveDaysAnswer === 1
-      ? m.yourRightsInMonthsAndDay
-      : m.yourRightsInMonthsAndDays
+      ? parentalLeaveFormMessages.shared.yourRightsInMonthsAndDay
+      : parentalLeaveFormMessages.shared.yourRightsInMonthsAndDays
 
   const giveDaysStringKey =
-    giveDaysAnswer === 1 ? m.giveRightsDay : m.giveRightsDays
+    giveDaysAnswer === 1
+      ? parentalLeaveFormMessages.shared.giveRightsDay
+      : parentalLeaveFormMessages.shared.giveRightsDays
 
   const boxChartKeys =
     requestRightsAnswer === YES
       ? [
           {
             label: () => ({
-              ...m.yourRightsInMonths,
+              ...parentalLeaveFormMessages.shared.yourRightsInMonths,
               values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
@@ -81,7 +91,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
             label: () => ({
               ...yourRightsWithGivenDaysStringKey,
               values: {
-                months: defaultMonths - 1,
+                months: minMonths,
                 day: maxDays - giveDaysAnswer,
               },
             }),
@@ -91,7 +101,7 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
       : [
           {
             label: () => ({
-              ...m.yourRightsInMonths,
+              ...parentalLeaveFormMessages.shared.yourRightsInMonths,
               values: { months: defaultMonths },
             }),
             bulletStyle: 'blue',
@@ -108,20 +118,19 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
     })
   }
 
-  const numberOfBoxes =
-    requestRightsAnswer === YES ? defaultMonths + 1 : defaultMonths
+  const numberOfBoxes = requestRightsAnswer === YES ? maxMonths : defaultMonths
 
   return (
     <Box marginY={3} key={'YourRightsBoxChart'}>
       <BoxChart
         application={application}
         titleLabel={() => ({
-          ...m.monthsTotal,
+          ...parentalLeaveFormMessages.shared.monthsTotal,
           values: { months: numberOfBoxes },
         })}
         boxes={numberOfBoxes}
         calculateBoxStyle={(index) => {
-          if (index === defaultMonths - 1 && giveRightsAnswer === YES) {
+          if (index === minMonths && giveRightsAnswer === YES) {
             return 'grayWithLines'
           }
           if (index === defaultMonths && requestRightsAnswer === 'yes') {
@@ -133,7 +142,12 @@ const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
       />
       {showDisclaimer && (
         <Box marginTop={5}>
-          <Text> {formatMessage(m.rightsTotalSmallPrint)}</Text>
+          <Text>
+            {' '}
+            {formatMessage(
+              parentalLeaveFormMessages.shared.rightsTotalSmallPrint,
+            )}
+          </Text>
         </Box>
       )}
     </Box>

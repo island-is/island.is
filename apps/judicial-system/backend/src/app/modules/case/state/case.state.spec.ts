@@ -1,5 +1,7 @@
-import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 import { ForbiddenException } from '@nestjs/common'
+
+import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
+
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
@@ -299,20 +301,20 @@ describe('Transition Case', () => {
     expect(res).toStrictEqual(CaseState.DELETED)
   })
 
-  it('should not delete a submitted case', () => {
-    // Arrange
-    const act = () => transitionCase(CaseTransition.DELETE, CaseState.SUBMITTED)
+  it('should delete a submitted case', () => {
+    // Act
+    const res = transitionCase(CaseTransition.DELETE, CaseState.SUBMITTED)
 
-    // Act and assert
-    expect(act).toThrow(ForbiddenException)
+    // Assert
+    expect(res).toStrictEqual(CaseState.DELETED)
   })
 
-  it('should not delete a received case', () => {
-    // Arrange
-    const act = () => transitionCase(CaseTransition.DELETE, CaseState.RECEIVED)
+  it('should delete a received case', () => {
+    // Act
+    const res = transitionCase(CaseTransition.DELETE, CaseState.RECEIVED)
 
-    // Act and assert
-    expect(act).toThrow(ForbiddenException)
+    // Assert
+    expect(res).toStrictEqual(CaseState.DELETED)
   })
 
   it('should not delete an accepted case', () => {

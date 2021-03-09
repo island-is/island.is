@@ -2,6 +2,7 @@ const path = require('path')
 const withTreat = require('next-treat')()
 const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
 // These modules need to be transpiled for IE11 support. This is not ideal,
@@ -16,7 +17,7 @@ const transpileModules = [
 const withTM = require('next-transpile-modules')(transpileModules)
 const { API_URL = 'http://localhost:4444', SENTRY_DSN } = process.env
 const graphqlPath = '/api/graphql'
-const { DISABLE_API_CATALOGUE } = process.env
+const { DISABLE_API_CATALOGUE, DISABLE_SYSLUMENN_PAGE } = process.env
 
 module.exports = withTreat(
   withTM(
@@ -26,11 +27,19 @@ module.exports = withTreat(
           config.resolve.alias['@sentry/node'] = '@sentry/browser'
         }
 
-        if (process.env.ANALYZE === 'true') {
+        if (process.env.ANALYZE === 'true' && !isServer) {
           config.plugins.push(
             new DuplicatesPlugin({
               emitErrors: false,
               verbose: true,
+            }),
+          )
+
+          config.plugins.push(
+            new StatoscopeWebpackPlugin({
+              saveTo: 'dist/apps/web/statoscope.html',
+              saveStatsTo: 'dist/apps/web/stats.json',
+              statsOptions: { all: true, source: false },
             }),
           )
 
@@ -79,10 +88,11 @@ module.exports = withTreat(
         graphqlEndpoint: graphqlPath,
         SENTRY_DSN,
         disableApiCatalog: DISABLE_API_CATALOGUE,
+        disableSyslumennPage: DISABLE_SYSLUMENN_PAGE,
       },
 
       env: {
-        API_MOCKS: process.env.API_MOCKS,
+        API_MOCKS: process.env.API_MOCKS || '',
       },
     }),
   ),

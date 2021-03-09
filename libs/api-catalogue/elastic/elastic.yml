@@ -6,6 +6,9 @@ services:
     environment:
       - discovery.type=single-node
       - 'ES_JAVA_OPTS=-Xms2g -Xmx2g'
+      # allow CORS requests from http://localhost:8080
+      - http.cors.enabled=true
+      - http.cors.allow-origin="http://localhost:8080"
     ulimits:
       memlock:
         soft: -1

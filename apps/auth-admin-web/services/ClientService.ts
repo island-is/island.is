@@ -17,16 +17,21 @@ import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logo
 import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model'
 import { ClientSecret } from '../entities/models/client-secret.model'
 import { Client } from '../entities/models/client.model'
-import { IdpRestriction } from '../entities/models/idp-restriction.model'
+import { IdpProvider } from '../entities/models/IdpProvider.model'
 import { BaseService } from './BaseService'
 
 export class ClientService extends BaseService {
   /** Gets all clients with paging */
   static async findAndCountAll(
+    searchString: string,
     page: number,
     count: number,
   ): Promise<{ rows: Client[]; count: number } | null> {
-    return BaseService.GET(`clients/?page=${page}&count=${count}`)
+    return BaseService.GET(
+      `clients/?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
+    )
   }
 
   /** Gets a client by it's id */
@@ -43,6 +48,60 @@ export class ClientService extends BaseService {
   static async update(client: ClientDTO, id: string): Promise<Client | null> {
     delete client.clientId
     return BaseService.PUT(`clients/${encodeURIComponent(id)}`, client)
+  }
+
+  /** Sets default grant type and allowed scope */
+  static async setDefaults(client: Client, baseUrl?: string): Promise<boolean> {
+    let response = true
+    const scopeResponse = ClientService.addAllowedScope({
+      clientId: client.clientId,
+      scopeName: 'openid',
+    })
+    if (!scopeResponse) response = false
+    if (client.clientType === 'machine') {
+      const grantResponse = ClientService.addGrantType({
+        clientId: client.clientId,
+        grantType: 'client_credentials',
+      })
+      if (!grantResponse) response = false
+    } else {
+      const grantResponse = ClientService.addGrantType({
+        clientId: client.clientId,
+        grantType: 'authorization_code',
+      })
+      if (!grantResponse) response = false
+    }
+
+    if (baseUrl) {
+      if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.substr(0, baseUrl.length - 2)
+      }
+      const callBackUri = ClientService.addRedirectUri({
+        clientId: client.clientId,
+        redirectUri: baseUrl + '/signin-oidc',
+      })
+      if (!callBackUri) {
+        response = false
+      }
+
+      const postLogOutUri = ClientService.addPostLogoutRedirectUri({
+        clientId: client.clientId,
+        redirectUri: baseUrl,
+      })
+      if (!postLogOutUri) {
+        response = false
+      }
+
+      const corsOrigin = ClientService.addAllowedCorsOrigin({
+        clientId: client.clientId,
+        origin: baseUrl,
+      })
+      if (!corsOrigin) {
+        response = false
+      }
+    }
+
+    return response
   }
 
   /** Deletes client */
@@ -195,8 +254,45 @@ export class ClientService extends BaseService {
     )
   }
 
-  /** Get IDP restrictions  */
-  static async findAllIdpRestrictions(): Promise<IdpRestriction[] | null> {
+  /** Get IDP providers that can be restricted by client */
+  static async findAllIdpProviders(): Promise<IdpProvider[] | null> {
     return BaseService.GET(`idp-restriction`)
+  }
+
+  static async getClientsCsv(): Promise<any[] | null> {
+    const result = await BaseService.GET(
+      `clients?page=${1}&count=${Number.MAX_SAFE_INTEGER}`,
+    )
+    return result.rows.map((r) => ClientService.toClientCsv(r))
+  }
+
+  static toClientCsv = (client: Client): any[] => {
+    return [
+      client.clientId,
+      client.clientType,
+      client.clientName,
+      client.description,
+      client.nationalId,
+      client.contactEmail,
+      client.created,
+      client.modified,
+      client.enabled,
+      client.archived,
+    ]
+  }
+
+  static getClientsCsvHeaders(): string[] {
+    return [
+      'ClientId',
+      'ClientType',
+      'ClientName',
+      'Description',
+      'NationalId',
+      'Contact',
+      'Created',
+      'Modified',
+      'Enabled',
+      'Archived',
+    ]
   }
 }

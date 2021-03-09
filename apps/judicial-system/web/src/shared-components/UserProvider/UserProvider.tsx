@@ -1,7 +1,6 @@
 import { User } from '@island.is/judicial-system/types'
 import { gql, useQuery } from '@apollo/client'
 import React, { createContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import Cookies from 'js-cookie'
 
@@ -13,38 +12,36 @@ interface UserProvider {
 
 export const UserContext = createContext<UserProvider>({})
 
-export const UserQuery = gql`
-  query UserQuery {
-    user {
+export const CurrentUserQuery = gql`
+  query CurrentUserQuery {
+    currentUser {
+      id
       name
       title
       role
+      institution {
+        id
+        name
+      }
     }
   }
 `
 
-const USER_MOCKED =
-  process.env.NODE_ENV === 'development' && process.env.NX_API_MOCKS === 'true'
-
-export const UserProvider: React.FC = ({ children }) => {
+const UserProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(Cookies.get(CSRF_COOKIE_NAME)),
   )
   const [user, setUser] = useState<User>()
 
-  const location = useLocation()
-
-  const { data } = useQuery(UserQuery, { fetchPolicy: 'no-cache' })
-  const loggedInUser = USER_MOCKED
-    ? { name: 'User', role: 'user', title: 'Mr.' }
-    : data?.user
+  const { data } = useQuery(CurrentUserQuery, { fetchPolicy: 'no-cache' })
+  const loggedInUser = data?.currentUser
 
   useEffect(() => {
     if (loggedInUser && !user) {
       setUser(loggedInUser)
       setIsAuthenticated(true)
     }
-  }, [location, setUser, loggedInUser, user])
+  }, [setUser, loggedInUser, user])
 
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
@@ -52,3 +49,5 @@ export const UserProvider: React.FC = ({ children }) => {
     </UserContext.Provider>
   )
 }
+
+export default UserProvider

@@ -17,15 +17,18 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
     import('@island.is/application/templates/health-insurance'),
-<<<<<<< HEAD
   [ApplicationTypes.STRAUMURINN]: () =>
     import('@island.is/application/templates/straumurinn-application'),
   [ApplicationTypes.X_ROAD]: () =>
     import('@island.is/application/templates/x-road-application'),
-=======
   [ApplicationTypes.CHILDREN_DOMICILE_TRANSFER]: () =>
     import('@island.is/application/templates/children-domicile-transfer'),
->>>>>>> 52a080a1df03b118a06b8812db17b1fc47a85ca3
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: () =>
+    import('@island.is/application/templates/children-residence-change'),
+  [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
+    import('@island.is/application/templates/data-protection-complaint'),
+  [ApplicationTypes.PARTY_LETTER]: () =>
+    import('@island.is/application/templates/party-letter'),
 }
 
 export default templates

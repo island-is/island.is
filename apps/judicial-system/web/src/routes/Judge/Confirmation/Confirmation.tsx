@@ -8,59 +8,65 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { FormFooter } from '../../../shared-components/FormFooter'
-import Modal from '../../../shared-components/Modal/Modal'
 import {
-  constructConclusion,
+  FormFooter,
+  Modal,
+  PoliceRequestAccordionItem,
+  CourtRecordAccordionItem,
+  TimeInputField,
+  PdfButton,
+  CaseNumbers,
+  PageLayout,
+} from '@island.is/judicial-system-web/src/shared-components'
+import {
+  getConclusion,
   getAppealDecisionText,
-  isNextDisabled,
-} from '../../../utils/stepHelper'
-import * as Constants from '../../../utils/constants'
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   formatDate,
   formatCustodyRestrictions,
   TIME_FORMAT,
   formatAlternativeTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
-import { parseTransition } from '../../../utils/formatters'
-import { AppealDecisionRole, JudgeSubsections, Sections } from '../../../types'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  AppealDecisionRole,
+  JudgeSubsections,
+  Sections,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Case,
   CaseAppealDecision,
   CaseDecision,
-  CaseGender,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   UpdateCase,
 } from '@island.is/judicial-system/types'
-import { useHistory, useParams } from 'react-router-dom'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components/PageLayout/PageLayout'
-import PoliceRequestAccordionItem from '@island.is/judicial-system-web/src/shared-components/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
-import * as style from './Confirmation.treat'
 import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import CourtRecordAccordionItem from '../../../shared-components/CourtRecordAccordionItem/CourtRecordAccordionItem'
 import {
   RequestSignatureMutation,
   SignatureConfirmationQuery,
-} from '../../../utils/mutations'
-import { Validation } from '../../../utils/validate'
-import TimeInputField from '../../../shared-components/TimeInputField/TimeInputField'
+} from '@island.is/judicial-system-web/src/utils/mutations'
 import {
   getTimeFromDate,
   validateAndSendTimeToServer,
   validateAndSetTime,
-} from '../../../utils/formHelper'
-import PdfButton from '../../../shared-components/PdfButton/PdfButton'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
+import useDateTime from '../../../utils/hooks/useDateTime'
+import * as style from './Confirmation.treat'
 
 interface SigningModalProps {
   workingCase: Case
@@ -75,7 +81,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   requestSignatureResponse,
   setModalVisible,
 }) => {
-  const history = useHistory()
+  const router = useRouter()
   const [
     signatureConfirmationResponse,
     setSignatureConfirmationResponse,
@@ -129,8 +135,6 @@ const SigningModal: React.FC<SigningModalProps> = ({
           judge: resCase.judge,
         })
       } catch (e) {
-        console.log(e)
-
         // TODO: Handle error
       }
 
@@ -173,21 +177,21 @@ const SigningModal: React.FC<SigningModalProps> = ({
         // TODO: Handle error
       }
     } catch (e) {
-      console.log(e)
-
       // TODO: Handle error
     }
   }, [sendNotificationMutation, workingCase.id])
 
   useEffect(() => {
     const completeSigning = async (
-      resSignatureResponse: SignatureConfirmationResponse,
+      resSignatureConfirmationResponse: SignatureConfirmationResponse,
     ) => {
-      await transitionCase()
+      if (resSignatureConfirmationResponse.documentSigned) {
+        await transitionCase()
 
-      await sendNotification()
+        await sendNotification()
+      }
 
-      setSignatureConfirmationResponse(resSignatureResponse)
+      setSignatureConfirmationResponse(resSignatureConfirmationResponse)
     }
 
     if (resSignatureConfirmationResponse) {
@@ -245,11 +249,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
         signatureConfirmationResponse ? 'Gefa endurgjöf á gáttina' : ''
       }
       handlePrimaryButtonClick={() => {
-        history.push(Constants.FEEDBACK_FORM_ROUTE)
+        router.push(Constants.FEEDBACK_FORM_ROUTE)
       }}
       handleSecondaryButtonClick={async () => {
         if (signatureConfirmationResponse?.documentSigned === true) {
-          history.push(Constants.DETENTION_REQUESTS_ROUTE)
+          router.push(Constants.REQUEST_LIST_ROUTE)
         } else {
           setModalVisible(false)
         }
@@ -263,9 +267,10 @@ interface CaseData {
 }
 
 export const Confirmation: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
@@ -274,11 +279,13 @@ export const Confirmation: React.FC = () => {
     RequestSignatureResponse
   >()
 
-  const { id } = useParams<{ id: string }>()
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
+  })
+  const { isValidTime: isValidCourtEndTime } = useDateTime({
+    time: getTimeFromDate(workingCase?.courtEndTime),
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -306,19 +313,6 @@ export const Confirmation: React.FC = () => {
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
-
-  useEffect(() => {
-    const requiredFields: { value: string; validations: Validation[] }[] = [
-      {
-        value: getTimeFromDate(workingCase?.courtEndTime) || '',
-        validations: ['empty', 'time-format'],
-      },
-    ]
-
-    if (workingCase) {
-      setIsStepIllegal(isNextDisabled(requiredFields))
-    }
-  }, [workingCase, isStepIllegal])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -360,10 +354,14 @@ export const Confirmation: React.FC = () => {
 
   return (
     <PageLayout
-      activeSection={Sections.JUDGE}
+      activeSection={
+        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
+      }
       activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={loading}
       notFound={data?.case === undefined}
+      parentCaseDecision={workingCase?.parentCase?.decision}
+      caseType={workingCase?.type}
     >
       {workingCase ? (
         <>
@@ -389,7 +387,7 @@ export const Confirmation: React.FC = () => {
               variant="h2"
               as="h2"
             >{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <Text fontWeight="semiBold">{`LÖKE málsnr. ${workingCase.policeCaseNumber}`}</Text>
+            <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box marginBottom={9}>
             <Accordion>
@@ -418,14 +416,14 @@ export const Confirmation: React.FC = () => {
                 Úrskurðarorð
               </Text>
             </Box>
-            <Box marginBottom={3}>{constructConclusion(workingCase)}</Box>
+            <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={1}>
               <Text variant="h3">
                 {workingCase.judge
                   ? `${workingCase.judge.name} ${workingCase.judge.title}`
-                  : `${user?.name} ${user?.title}`}
+                  : `Enginn dómari skráður`}
               </Text>
             </Box>
             <Text>
@@ -449,6 +447,7 @@ export const Confirmation: React.FC = () => {
                 {getAppealDecisionText(
                   AppealDecisionRole.ACCUSED,
                   workingCase.accusedAppealDecision,
+                  workingCase.accusedGender,
                 )}
               </Text>
             </Box>
@@ -456,6 +455,7 @@ export const Confirmation: React.FC = () => {
               {getAppealDecisionText(
                 AppealDecisionRole.PROSECUTOR,
                 workingCase.prosecutorAppealDecision,
+                workingCase.accusedGender,
               )}
             </Text>
             {(workingCase.accusedAppealAnnouncement ||
@@ -484,29 +484,33 @@ export const Confirmation: React.FC = () => {
               </Box>
             )}
           </Box>
-          {workingCase.decision === CaseDecision.ACCEPTING && (
-            <Box marginBottom={7}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  Tilhögun gæsluvarðhalds
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
+          {workingCase.decision === CaseDecision.ACCEPTING &&
+            workingCase.type === CaseType.CUSTODY && (
+              <Box marginBottom={7}>
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    Tilhögun gæsluvarðhalds
+                  </Text>
+                </Box>
+                <Box marginBottom={2}>
+                  <Text>
+                    {formatCustodyRestrictions(
+                      workingCase.accusedGender,
+                      workingCase.custodyRestrictions,
+                    )}
+                  </Text>
+                </Box>
                 <Text>
-                  {formatCustodyRestrictions(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                    workingCase.custodyRestrictions || [],
-                  )}
+                  Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                  bera atriði er lúta að framkvæmd gæsluvarðhaldsins undir
+                  dómara.
                 </Text>
               </Box>
-              <Text>
-                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd gæsluvarðhaldsins undir dómara.
-              </Text>
-            </Box>
-          )}
-          {workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN && (
+            )}
+          {(workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            (workingCase.type === CaseType.TRAVEL_BAN &&
+              workingCase.decision === CaseDecision.ACCEPTING)) && (
             <Box marginBottom={7}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
@@ -516,19 +520,23 @@ export const Confirmation: React.FC = () => {
               <Box marginBottom={2}>
                 <Text>
                   {formatAlternativeTravelBanRestrictions(
-                    workingCase.accusedGender || CaseGender.OTHER,
-                    workingCase.custodyRestrictions || [],
-                  )}
+                    workingCase.accusedGender,
+                    workingCase.custodyRestrictions,
+                    workingCase.otherRestrictions,
+                  )
+                    .split('\n')
+                    .map((str, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{str}</Text>
+                        </div>
+                      )
+                    })}
                 </Text>
               </Box>
-              {workingCase.otherRestrictions && (
-                <Box marginBottom={2}>
-                  <Text>{workingCase.otherRestrictions}</Text>
-                </Box>
-              )}
               <Text>
-                Dómari bendir kærða/umboðsaðila á að honum sé heimilt að bera
-                atriði er lúta að framkvæmd farbannsins undir dómara.
+                Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að
+                bera atriði er lúta að framkvæmd farbannsins undir dómara.
               </Text>
             </Box>
           )}
@@ -569,7 +577,7 @@ export const Confirmation: React.FC = () => {
                     <Input
                       data-testid="courtEndTime"
                       name="courtEndTime"
-                      label="Þinghaldi lauk"
+                      label="Þinghaldi lauk (kk:mm)"
                       placeholder="Veldu tíma"
                       defaultValue={formatDate(
                         workingCase.courtEndTime,
@@ -585,14 +593,25 @@ export const Confirmation: React.FC = () => {
             </GridContainer>
           </Box>
           <Box marginBottom={15}>
-            <PdfButton caseId={workingCase.id} />
+            <PdfButton
+              caseId={workingCase.id}
+              title="Opna PDF þingbók og úrskurð"
+              pdfType="ruling"
+            />
           </Box>
           <FormFooter
-            nextUrl={Constants.DETENTION_REQUESTS_ROUTE}
+            previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+            nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={isStepIllegal}
+            nextIsDisabled={!isValidCourtEndTime?.isValid}
             onNextButtonClick={handleNextButtonClick}
             nextIsLoading={isRequestingSignature}
+            hideNextButton={workingCase.judge?.id !== user?.id}
+            infoBoxText={
+              workingCase.judge?.id !== user?.id
+                ? 'Einungis skráður dómari getur undirritað úrskurð'
+                : undefined
+            }
           />
           {modalVisible && (
             <SigningModal

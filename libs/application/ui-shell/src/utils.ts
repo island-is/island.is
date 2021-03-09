@@ -56,6 +56,16 @@ export function extractAnswersToSubmitFromScreen(
     const repeaterId = baseId.split('[')[0] ?? ''
     return pick(data, [repeaterId])
   }
+  if (
+    screen.type === FieldTypes.CUSTOM &&
+    screen.childInputIds &&
+    screen.childInputIds.length > 1
+  ) {
+    return pick(
+      data,
+      screen.childInputIds.map((id) => id),
+    )
+  }
   switch (screen.type) {
     case FormItemTypes.MULTI_FIELD:
       return pick(
@@ -68,4 +78,29 @@ export function extractAnswersToSubmitFromScreen(
     default:
       return pick(data, [screenId])
   }
+}
+
+export const isJSONObject = (message?: string): boolean => {
+  if (!message) {
+    return false
+  }
+
+  try {
+    JSON.parse(message)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function parseMessage(message?: string) {
+  if (!message) {
+    return undefined
+  }
+
+  if (isJSONObject(message)) {
+    return JSON.parse(message)
+  }
+
+  return message
 }

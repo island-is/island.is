@@ -38,3 +38,5 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
     </div>
   )
 }
+
+export const BreadcrumbsDeprecated = Breadcrumbs

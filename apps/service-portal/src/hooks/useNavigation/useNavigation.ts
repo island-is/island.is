@@ -7,6 +7,7 @@ import {
 import { useStore } from '../../store/stateProvider'
 import cloneDeep from 'lodash/cloneDeep'
 import { User } from 'oidc-client'
+import { environment as env } from '../../environments'
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,

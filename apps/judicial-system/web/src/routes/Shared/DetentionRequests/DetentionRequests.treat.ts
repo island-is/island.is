@@ -21,6 +21,9 @@ export const logoContainer = style({
 export const detentionRequestsTable = style({
   gridRow: '3',
   gridColumn: '1 / -1',
+  borderSpacing: 0,
+  borderCollapse: 'collapse',
+  overflow: 'hidden',
 
   // Needed for Safari.
   width: '100%',
@@ -34,19 +37,17 @@ export const detentionRequestsError = style({
 export const thead = style({
   background: theme.color.blue100,
   boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
+  textAlign: 'left',
 })
 
 export const deleteButtonContainer = style({
-  display: 'flex',
-  alignItems: 'center',
-  width: 0,
-  overflow: 'hidden',
+  maxWidth: '0',
+  height: '100%',
   visibility: 'hidden',
   transition: 'all .5s ease-in-out',
 
   selectors: {
     '&.open': {
-      width: '150px',
       visibility: 'visible',
     },
   },
@@ -61,61 +62,46 @@ export const thButton = style({
 })
 
 export const tableRowContainer = style({
-  display: 'flex',
-  flex: 1,
-  alignItems: 'center',
-  minWidth: '100%',
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
-  float: 'right',
   transition: 'all .5s ease-in-out',
 
   selectors: {
     '&.isDeleting': {
-      minWidth: 'calc(100% + 100px)',
+      transform: 'translateX(-150px)',
     },
   },
 })
 
 export const largeColumn = style({
-  // The width needed to make sure a 33 character name doesn't wrap
-  minWidth: 334,
-  whiteSpace: 'nowrap',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+      // The width needed to make sure a 33 character name doesn't wrap
+      maxWidth: 334,
+      whiteSpace: 'nowrap',
+    },
+  },
 })
 
 export const accusedName = style({
+  display: 'block',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 })
 
-export const tr = style({
-  display: 'flex',
-  flex: 1,
-})
-
 export const th = style({
-  display: 'flex',
-  flex: 1,
-  padding: '12px 24px',
-  width: 'auto',
+  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
 })
 
 export const td = style({
-  display: 'flex',
-  flex: 1,
-  padding: theme.spacing[3],
-  width: 'auto',
-
   selectors: {
+    [`&:not(${deleteButtonContainer})`]: {
+      padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+    },
     '&.secondLast': {
-      flex: 0,
-      justifyContent: 'flex-end',
       marginLeft: 'auto',
       height: '100%',
       padding: 0,
-    },
-    '&.flexDirectionCol': {
-      flexDirection: 'column',
     },
   },
 })
@@ -124,22 +110,24 @@ export const deleteButton = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100px',
-  height: '100px',
-  borderRadius: theme.border.radius.large,
+  marginRight: 24,
+  padding: 10,
+  minWidth: 36,
+  minHeight: 36,
+  borderRadius: theme.border.radius.circle,
   outline: 'none',
+  transition: 'all .4s ease-out',
 
   selectors: {
     '&:focus': {
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
     '&:hover': {
-      backgroundColor: theme.color.transparent,
       boxShadow: `inset 0 0 0 2px ${theme.color.blueberry400}`,
       color: theme.color.blueberry400,
     },
     '&:focus:active': {
-      backgroundColor: theme.color.transparent,
+      backgroundColor: theme.color.mint400,
       boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },

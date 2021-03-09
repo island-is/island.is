@@ -7,7 +7,7 @@
     "project": "./tsconfig.*?.json"
   },
   "ignorePatterns": ["**/*"],
-  "plugins": ["@typescript-eslint", "@nrwl/nx"],
+  "plugins": ["@typescript-eslint", "@nrwl/nx", "eslint-plugin-local-rules"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -43,9 +43,11 @@
     "no-restricted-imports": [
       "error",
       {
-        "paths": ["lodash", "date-fns", "date-fns/locale", "."]
+        "paths": ["lodash", "date-fns", "date-fns/locale", "styled-components", "."]
       }
-    ]
+    ],
+    "local-rules/disallow-kennitalas": 1
+
   },
   "overrides": [
     {

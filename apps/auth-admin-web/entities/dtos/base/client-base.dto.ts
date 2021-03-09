@@ -33,11 +33,16 @@ export abstract class ClientBaseDTO {
     this.backChannelLogoutUri = null
     this.allowRememberConsent = true
     this.clientClaimsPrefix = 'client__'
-    this.clientName = ''
+    this.clientName = null
     this.clientUri = null
     this.description = null
     this.protocolType = ''
     this.requireClientSecret = true
+    this.contactEmail = ''
+    this.supportsDelegation = false
+    this.promptDelegations = false
+    this.supportsLegalGuardians = false
+    this.supportsProcuringHolders = false
   }
 
   nationalId: string
@@ -72,10 +77,15 @@ export abstract class ClientBaseDTO {
   frontChannelLogoutSessionRequired: boolean
   backChannelLogoutUri: string | null
   allowRememberConsent: boolean
-  clientClaimsPrefix: string
-  clientName: string
+  clientClaimsPrefix?: string
+  clientName?: string
   clientUri: string | null
   description: string | null
   protocolType: string
   requireClientSecret: boolean
+  contactEmail: string
+  supportsDelegation!: boolean
+  supportsLegalGuardians!: boolean
+  supportsProcuringHolders!: boolean
+  promptDelegations!: boolean
 }

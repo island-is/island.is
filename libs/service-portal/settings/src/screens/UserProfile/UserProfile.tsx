@@ -9,7 +9,6 @@ import { defineMessage } from 'react-intl'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { UserInfoLine } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '@island.is/service-portal/family'
-import { Link } from 'react-router-dom'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
@@ -18,7 +17,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
 
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={5}>
         <Text variant="h1" as="h1">
           {formatMessage({
             id: 'service.portal:settings',
@@ -42,21 +41,19 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
             <Box display="flex" alignItems="center">
               <Box marginRight={2}>{userProfile?.email || ''}</Box>
               {userProfile?.email && userProfile?.emailVerified === true ? (
-                <Tag variant="darkerMint" outlined>
+                <Tag variant="darkerMint" outlined disabled>
                   {formatMessage({
                     id: 'sp.settings:verified',
                     defaultMessage: 'Staðfest',
                   })}
                 </Tag>
               ) : userProfile?.email && userProfile?.emailVerified === false ? (
-                <Link to={ServicePortalPath.UserProfileEditEmail}>
-                  <Tag variant="red">
-                    {formatMessage({
-                      id: 'sp.settings:not-verified',
-                      defaultMessage: 'Óstaðfest',
-                    })}
-                  </Tag>
-                </Link>
+                <Tag variant="red" disabled>
+                  {formatMessage({
+                    id: 'sp.settings:not-verified',
+                    defaultMessage: 'Óstaðfest',
+                  })}
+                </Tag>
               ) : (
                 <div />
               )}
@@ -76,7 +73,7 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
               <Box marginRight={2}>{userProfile?.mobilePhoneNumber || ''}</Box>
               {userProfile?.mobilePhoneNumber &&
               userProfile?.mobilePhoneNumberVerified === true ? (
-                <Tag variant="darkerMint" outlined>
+                <Tag variant="darkerMint" outlined disabled>
                   {formatMessage({
                     id: 'sp.settings:verified',
                     defaultMessage: 'Staðfest',
@@ -84,14 +81,12 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
                 </Tag>
               ) : userProfile?.mobilePhoneNumber &&
                 userProfile?.mobilePhoneNumberVerified === false ? (
-                <Link to={ServicePortalPath.UserProfileEditPhoneNumber}>
-                  <Tag variant="red">
-                    {formatMessage({
-                      id: 'sp.settings:not-verified',
-                      defaultMessage: 'Óstaðfest',
-                    })}
-                  </Tag>
-                </Link>
+                <Tag variant="red" disabled>
+                  {formatMessage({
+                    id: 'sp.settings:not-verified',
+                    defaultMessage: 'Óstaðfest',
+                  })}
+                </Tag>
               ) : (
                 <div />
               )}

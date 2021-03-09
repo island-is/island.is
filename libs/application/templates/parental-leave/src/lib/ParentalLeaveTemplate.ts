@@ -1,4 +1,5 @@
 import { assign } from 'xstate'
+import set from 'lodash/set'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -8,29 +9,10 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import { ApplicationAPITemplateAction } from '@island.is/application/api-template-utils'
 
-import {
-  generateAssignParentTemplate,
-  generateAssignReviewerTemplate,
-} from '../emailTemplateGenerators'
 import { dataSchema, SchemaFormValues } from './dataSchema'
-import { YES } from '../constants'
-
-interface ApiTemplateUtilActions {
-  [key: string]: ApplicationAPITemplateAction
-}
-
-const TEMPLATE_API_ACTIONS: ApiTemplateUtilActions = {
-  assignParentThroughEmail: {
-    type: 'assignThroughEmail',
-    generateTemplate: generateAssignParentTemplate,
-  },
-  assignReviewerThroughEmail: {
-    type: 'assignThroughEmail',
-    generateTemplate: generateAssignReviewerTemplate,
-  },
-}
+import { answerValidators } from './answerValidators'
+import { YES, NO, API_MODULE_ACTIONS } from '../constants'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -38,6 +20,7 @@ type Events =
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.EDIT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -57,9 +40,18 @@ enum States {
   APPROVED = 'approved',
 }
 
+function hasEmployer(context: ApplicationContext) {
+  const currentApplicationAnswers = context.application.answers as {
+    employer: { isSelfEmployed: typeof YES | typeof NO }
+  }
+
+  return currentApplicationAnswers.employer.isSelfEmployed === NO
+}
+
 function needsOtherParentApproval(context: ApplicationContext) {
   const currentApplicationAnswers = context.application
     .answers as SchemaFormValues
+
   return currentApplicationAnswers.requestRights.isRequestingRights === YES
 }
 
@@ -108,15 +100,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        invoke: {
-          src: {
-            type: 'apiTemplateUtils',
-            action: TEMPLATE_API_ACTIONS.assignParentThroughEmail,
-          },
-        },
+        exit: 'clearAssignees',
         meta: {
           name: 'Needs other parent approval',
           progress: 0.4,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignOtherParent,
+          },
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -139,14 +129,23 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.EMPLOYER_WAITING_TO_ASSIGN,
-          },
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.EMPLOYER_WAITING_TO_ASSIGN,
+              cond: hasEmployer,
+            },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+          ],
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.OTHER_PARENT_ACTION]: {
@@ -160,21 +159,23 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        invoke: {
-          src: {
-            type: 'apiTemplateUtils',
-            action: TEMPLATE_API_ACTIONS.assignReviewerThroughEmail,
-            // TODO: handle async onDone / onError when transitioning states
-          },
-        },
+        exit: 'saveEmployerNationalRegistryId',
         meta: {
           name: 'Waiting to assign employer',
           progress: 0.4,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.assignEmployer,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -182,15 +183,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.DRAFT },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
+        exit: 'clearAssignees',
         meta: {
           name: 'Employer Approval',
           progress: 0.5,
@@ -217,16 +222,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
-              read: {
-                answers: ['spread', 'periods'],
-                externalData: ['pregnancyStatus', 'parentalLeaves'],
-              },
+              read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.VINNUMALASTOFNUN_APPROVAL },
           ABORT: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -240,14 +244,22 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
         meta: {
           name: 'Vinnumálastofnun Approval',
           progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -255,12 +267,15 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
         },
         on: {
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.VINNUMALASTOFNUN_ACTION]: {
@@ -274,16 +289,35 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
+              write: 'all',
             },
           ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+              write: 'all',
+            },
+          ],
         },
         type: 'final' as const,
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+        },
       },
     },
   },
@@ -293,8 +327,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
         if (
-          currentApplicationAnswers.requestRights.isRequestingRights ===
-            'yes' &&
+          currentApplicationAnswers.requestRights.isRequestingRights === YES &&
           currentApplicationAnswers.otherParentId !== undefined &&
           currentApplicationAnswers.otherParentId !== ''
         ) {
@@ -308,6 +341,30 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         }
         return context
       }),
+      saveEmployerNationalRegistryId: assign((context, event) => {
+        // Only save if employer gets assigned
+        if (event.type !== DefaultEvents.ASSIGN) {
+          return context
+        }
+
+        const { application } = context
+
+        const { answers } = application
+
+        set(answers, 'employer.nationalRegistryId', application.assignees[0])
+
+        return {
+          ...context,
+          application,
+        }
+      }),
+      clearAssignees: assign((context) => ({
+        ...context,
+        application: {
+          ...context.application,
+          assignees: [],
+        },
+      })),
     },
   },
   mapUserToRole(
@@ -322,6 +379,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default ParentalLeaveTemplate

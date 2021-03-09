@@ -9,22 +9,27 @@ import { LocaleContext } from './LocaleContext'
 export function useLocale() {
   const intl = useIntl()
   const contextValue = useContext(LocaleContext)
-  const lang = contextValue === null ? null : contextValue.lang
+  const lang = contextValue === null ? undefined : contextValue.lang
 
   function formatMessage(
     descriptor: MessageDescriptor | string,
     values?: any,
   ): string {
-    if (!descriptor || typeof descriptor === 'string')
+    if (!descriptor || typeof descriptor === 'string') {
       return descriptor as string
+    }
 
     return intl.formatMessage(descriptor, values)
   }
 
-  function formatDateFns(date: string, str = 'dd MMM yyyy') {
+  function formatDateFns(date: string | number | Date, str = 'dd MMM yyyy') {
     const locale = lang === 'en' ? en : is
+    const parsedDate =
+      typeof date === 'string' || typeof date === 'number'
+        ? new Date(date)
+        : date
 
-    return format(new Date(date), str, { locale })
+    return format(parsedDate, str, { locale })
   }
 
   return {

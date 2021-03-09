@@ -79,8 +79,9 @@ export class DocumentProviderClientTest {
   async updateEndpoint(
     providerId: string,
     endpoint: string,
+    xroad: boolean,
   ): Promise<AudienceAndScope> {
-    const requestRoute = `/api/DocumentProvider/updateendpoint?providerId=${providerId}&endpoint=${endpoint}`
+    const requestRoute = `/api/DocumentProvider/updateendpoint?providerId=${providerId}&endpoint=${endpoint}&xroad=${xroad}`
     return await this.postRequest<AudienceAndScope>(requestRoute)
   }
 

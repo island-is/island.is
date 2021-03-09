@@ -1,9 +1,9 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+// import { UseGuards } from '@nestjs/common'
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 import {
-  IdsAuthGuard,
-  ScopesGuard,
+  // IdsAuthGuard,
+  // ScopesGuard,
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
@@ -62,5 +62,10 @@ export class DirectorateOfLabourResolver {
   @Query(() => [PensionFund], { nullable: true })
   async getPensionFunds(): Promise<PensionFund[] | null> {
     return this.directorateOfLabourService.getPensionFunds()
+  }
+
+  @Query(() => [PensionFund], { nullable: true })
+  async getPrivatePensionFunds(): Promise<PensionFund[] | null> {
+    return this.directorateOfLabourService.getPrivatePensionFunds()
   }
 }

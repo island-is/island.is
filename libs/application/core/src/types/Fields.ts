@@ -4,26 +4,15 @@ import {
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormItem } from './Form'
+import { FormText, FormTextArray, FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
 
-export interface Option {
-  value: string
-  label: FormText
-  tooltip?: FormText
-  excludeOthers?: boolean
-}
-
-interface SelectOption {
-  label: string
-  value: string | number
-}
-
+export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((a: Application) => T)
-
+export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TextFieldVariant =
   | 'text'
@@ -36,6 +25,19 @@ export type TextFieldVariant =
 export type Context = {
   application: Application
   apolloClient: ApolloClient<object>
+}
+
+export interface Option {
+  value: string
+  label: FormText
+  subLabel?: string
+  tooltip?: FormText
+  excludeOthers?: boolean
+}
+
+interface SelectOption {
+  label: string
+  value: string | number
 }
 
 export interface BaseField extends FormItem {
@@ -119,6 +121,7 @@ export interface SelectField extends BaseField {
   options: MaybeWithApplication<Option[]>
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   placeholder?: FormText
+  backgroundColor?: InputBackgroundColor
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -128,6 +131,7 @@ export interface AsyncSelectField extends BaseField {
   loadOptions: (c: Context) => Promise<Option[]>
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   loadingError?: FormText
+  backgroundColor?: InputBackgroundColor
 }
 
 export interface TextField extends BaseField {
@@ -146,10 +150,10 @@ export interface TextField extends BaseField {
 export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
-  readonly introduction: FormText
-  readonly uploadHeader?: string
-  readonly uploadDescription?: string
-  readonly uploadButtonLabel?: string
+  readonly introduction?: FormText
+  readonly uploadHeader?: FormText
+  readonly uploadDescription?: FormText
+  readonly uploadButtonLabel?: FormText
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
@@ -170,8 +174,8 @@ export interface DividerField extends BaseField {
 
 export interface KeyValueField extends BaseField {
   readonly type: FieldTypes.KEY_VALUE
-  label: React.ReactNode
-  value: React.ReactNode
+  label: FormText
+  value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
 }
 
@@ -179,6 +183,7 @@ export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
   props?: object
+  childInputIds?: string[]
 }
 
 export type Field =

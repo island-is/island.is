@@ -12,8 +12,6 @@ import {
   BadRequestException,
   UseInterceptors,
   Optional,
-  UseGuards,
-  Req,
 } from '@nestjs/common'
 
 import omit from 'lodash/omit'
@@ -36,20 +34,29 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
+  PdfTypes,
 } from '@island.is/application/core'
+import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
 } from '@island.is/application/template-loader'
+import { TemplateAPIService } from '@island.is/application/template-api-modules'
+
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
+import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
+import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
+import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
+import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
+import { PresignedUrlDto } from './dto/presignedUrl.dto'
 import {
   buildDataProviders,
   buildExternalData,
@@ -63,17 +70,19 @@ import {
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
+import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
+import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
+import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
-import { EmailService } from '@island.is/email-service'
-import { environment } from '../../../environments'
-import { ApplicationAPITemplateUtils } from '@island.is/application/api-template-utils'
 import { NationalId } from './tools/nationalId.decorator'
+import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
-interface DecodedToken {
+interface DecodedAssignmentToken {
   applicationId: string
+  state: string
 }
 
 @ApiTags('applications')
@@ -85,7 +94,8 @@ interface DecodedToken {
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly emailService: EmailService,
+    private readonly templateAPIService: TemplateAPIService,
+    private readonly fileService: FileService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
@@ -130,13 +140,9 @@ export class ApplicationController {
   @UseInterceptors(ApplicationSerializer)
   async findApplicantApplications(
     @Param('nationalRegistryId') nationalRegistryId: string,
-    // @Req() request: Request,
     @Query('typeId') typeId?: string,
   ): Promise<ApplicationResponseDto[]> {
-    // const user = request.user as User
-
     const whereOptions: WhereOptions = {
-      // applicant: user.nationalId, TODO use this when user is in the request
       applicant: nationalRegistryId,
     }
 
@@ -198,8 +204,11 @@ export class ApplicationController {
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
     @NationalId() nationalId: string,
+    @AuthorizationHeader() authorization: string,
   ): Promise<ApplicationResponseDto> {
-    const decodedToken = verifyToken<DecodedToken>(assignApplicationDto.token)
+    const decodedToken = verifyToken<DecodedAssignmentToken>(
+      assignApplicationDto.token,
+    )
 
     if (decodedToken === null) {
       throw new BadRequestException('Invalid token')
@@ -213,9 +222,17 @@ export class ApplicationController {
       throw new NotFoundException('No application found')
     }
 
-    const template = await getApplicationTemplateByTypeId(
-      existingApplication.typeId as ApplicationTypes,
-    )
+    if (existingApplication.state !== decodedToken.state) {
+      throw new NotFoundException('Application no longer in assignable state')
+    }
+
+    // TODO check if assignee is still the same?
+    // decodedToken.assignedEmail === get(existingApplication.answers, decodedToken.emailPath)
+    // throw new BadRequestException('Invalid token')
+
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
+
     // TODO
     if (template === null) {
       throw new BadRequestException(
@@ -230,32 +247,14 @@ export class ApplicationController {
       assignees,
     }
 
-    const helper = new ApplicationTemplateHelper(mergedApplication, template)
-
-    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+    const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
-      {
-        jwtSecret: environment.auth.jwtSecret,
-        emailService: this.emailService,
-        clientLocationOrigin: environment.clientLocationOrigin,
-      },
-    )
-
-    const [hasChanged, newState, newApplication] = helper.changeState(
+      template,
       DefaultEvents.ASSIGN,
-      apiTemplateUtils,
+      authorization,
     )
 
-    if (hasChanged) {
-      const {
-        updatedApplication,
-      } = await this.applicationService.updateApplicationState(
-        existingApplication.id,
-        newState, // TODO maybe ban more complicated states....
-        newApplication.answers,
-        newApplication.assignees,
-      )
-
+    if (hasChanged && updatedApplication) {
       return updatedApplication
     }
 
@@ -280,6 +279,7 @@ export class ApplicationController {
     @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     const newAnswers = application.answers as FormValue
+
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
@@ -291,6 +291,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       newAnswers,
     )
+
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
@@ -318,7 +319,7 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
-    @Req() req: Request,
+    @AuthorizationHeader() authorization: string,
     @NationalId() nationalId: string,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
@@ -329,13 +330,12 @@ export class ApplicationController {
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
     )
-    const headers = (req.headers as unknown) as { authorization?: string }
 
     const results = await callDataProviders(
       buildDataProviders(
         externalDataDto,
         templateDataProviders,
-        headers.authorization ?? '',
+        authorization ?? '',
       ),
       existingApplication as BaseApplication,
     )
@@ -370,10 +370,10 @@ export class ApplicationController {
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
     @NationalId() nationalId: string,
+    @AuthorizationHeader() authorization: string,
   ): Promise<ApplicationResponseDto> {
-    const template = await getApplicationTemplateByTypeId(
-      existingApplication.typeId as ApplicationTypes,
-    )
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
     // TODO
     if (template === null) {
       throw new BadRequestException(
@@ -404,36 +404,86 @@ export class ApplicationController {
       answers: mergedAnswers,
     }
 
-    const helper = new ApplicationTemplateHelper(mergedApplication, template)
-
-    const apiTemplateUtils = new ApplicationAPITemplateUtils(
+    const [hasChanged, updatedApplication] = await this.changeState(
       mergedApplication,
-      {
-        jwtSecret: environment.auth.jwtSecret,
-        emailService: this.emailService,
-        clientLocationOrigin: environment.clientLocationOrigin,
-      },
-    )
-
-    const [hasChanged, newState, newApplication] = helper.changeState(
+      template,
       updateApplicationStateDto.event,
-      apiTemplateUtils,
+      authorization,
     )
 
-    if (hasChanged) {
-      const {
-        updatedApplication,
-      } = await this.applicationService.updateApplicationState(
-        existingApplication.id,
-        newState, // TODO maybe ban more complicated states....
-        newApplication.answers,
-        newApplication.assignees,
-      )
-
+    // TODO: should not have to specificially check for updatedApplication
+    // because of return type on this.changeState
+    if (hasChanged === true && updatedApplication) {
       return updatedApplication
     }
 
     return existingApplication
+  }
+
+  async changeState(
+    application: BaseApplication,
+    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    event: string,
+    authorization: string,
+  ): Promise<[false] | [true, BaseApplication]> {
+    const helper = new ApplicationTemplateHelper(application, template)
+
+    const [hasChanged, newState, newApplication] = helper.changeState(event)
+
+    if (!hasChanged) {
+      return [false]
+    }
+
+    const update = await this.applicationService.updateApplicationState(
+      application.id,
+      newState,
+      newApplication.answers,
+      newApplication.assignees,
+    )
+
+    const updatedApplication = update.updatedApplication as BaseApplication
+    const newStateOnEntry = helper.getStateOnEntry(newState)
+
+    if (newStateOnEntry !== null) {
+      const { apiModuleAction, onSuccessEvent, onErrorEvent } = newStateOnEntry
+
+      const [success] = await this.templateAPIService.performAction({
+        templateId: template.type,
+        type: apiModuleAction,
+        props: {
+          application: updatedApplication,
+          authorization,
+        },
+      })
+
+      let nextEvent: string | null = null
+
+      if (success && onSuccessEvent) {
+        nextEvent = onSuccessEvent
+      } else if (!success && onErrorEvent) {
+        nextEvent = onErrorEvent
+      }
+
+      if (nextEvent !== null) {
+        // We now have to make a nested changeState call that might
+        // further update the already updated application
+        const [
+          hasChangedAgain,
+          furtherUpdatedApplication,
+        ] = await this.changeState(
+          updatedApplication,
+          template,
+          nextEvent,
+          authorization,
+        )
+
+        if (hasChangedAgain && furtherUpdatedApplication) {
+          return [true, furtherUpdatedApplication]
+        }
+      }
+    }
+
+    return [true, updatedApplication]
   }
 
   @Put('applications/:id/attachments')
@@ -496,5 +546,91 @@ export class ApplicationController {
     )
 
     return updatedApplication
+  }
+
+  @Put('applications/:id/createPdf')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to create a pdf for',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: PresignedUrlResponseDto })
+  async createPdf(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: CreatePdfDto,
+  ): Promise<PresignedUrlResponseDto> {
+    const url = await this.fileService.createPdf(application, input.type)
+
+    return { url }
+  }
+
+  @Put('applications/:id/requestFileSignature')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description:
+      'The id of the application which the file signature is requested for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: RequestFileSignatureResponseDto })
+  async requestFileSignature(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: RequestFileSignatureDto,
+  ): Promise<RequestFileSignatureResponseDto> {
+    const {
+      controlCode,
+      documentToken,
+    } = await this.fileService.requestFileSignature(application, input.type)
+
+    return { controlCode, documentToken }
+  }
+
+  @Put('applications/:id/uploadSignedFile')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application which the file was created for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: UploadSignedFileResponseDto })
+  async uploadSignedFile(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Body() input: UploadSignedFileDto,
+  ): Promise<UploadSignedFileResponseDto> {
+    await this.fileService.uploadSignedFile(
+      application,
+      input.documentToken,
+      input.type,
+    )
+
+    return {
+      documentSigned: true,
+    }
+  }
+
+  @Get('applications/:id/:pdfType/presignedUrl')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application which the file was created for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: PresignedUrlResponseDto })
+  async getPresignedUrl(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    application: Application,
+    @Param('pdfType') type: PdfTypes,
+  ): Promise<PresignedUrlResponseDto> {
+    const url = this.fileService.getPresignedUrl(application, type)
+
+    return { url }
   }
 }

@@ -47,27 +47,10 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
     return res.redirect('/error')
   }
 
+  const { returnUrl } = req.cookies[REDIRECT_COOKIE.name] || {}
   const { user } = verifyResult
-  const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
-  res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
-  if (!redirectCookie) {
-    logger.error('Redirect cookie not sent', {
-      extra: {
-        userAuthId: user.authId,
-      },
-    })
-    return res.redirect('/api/auth/login')
-  }
-
-  const { authId, returnUrl } = redirectCookie
-  if (!user || authId !== user?.authId) {
-    logger.error('Could not verify user authenticity', {
-      extra: {
-        userAuthId: user.authId,
-        authId,
-        returnUrl,
-      },
-    })
+  if (!user) {
+    logger.error('Could not verify user authenticity')
     return res.redirect('/error')
   }
 
@@ -109,7 +92,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
       ...ACCESS_TOKEN_COOKIE.options,
       maxAge,
     })
-    .redirect(!returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
+    .redirect(returnUrl ?? '/notandi')
 })
 
 router.get(

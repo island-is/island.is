@@ -1,7 +1,13 @@
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useForm, Controller } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -34,7 +40,7 @@ interface HelpDeskContact {
 }
 
 export interface FormData {
-  applicant: Applicant
+  organisation: Applicant
   administrativeContact: AdministrativeContact
   technicalContact: TechnicalContact
   helpDeskContact: HelpDeskContact
@@ -44,49 +50,89 @@ export interface FormData {
 interface Props {
   data: FormData
   onSubmit: (data: FormData) => void
+  isFetching: boolean
 }
 
-export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
+export const DocumentProviderBasicInfo: FC<Props> = ({
+  data,
+  onSubmit,
+  isFetching,
+}) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
   return (
     <Box marginY={3}>
-      {/* skoda betur a morgun */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={4}>
             <Text variant="h3" as="h3">
-              Stofnun
+              {formatMessage(m.SingleProviderInstitutionHeading)}
             </Text>
           </Box>
           <Box marginBottom={2}>
-            <Controller
-              control={control}
-              name="applicant.name"
-              defaultValue={data?.applicant?.name}
-              render={({ onChange, value, name }) => (
-                <Input
-                  name={name}
-                  value={value}
-                  onChange={onChange}
-                  label="Nafn á stofnun"
-                  placeholder="Nafn a stofnun"
-                />
-              )}
-            />
+            {isFetching ? (
+              <SkeletonLoader borderRadius="large" height={80} />
+            ) : (
+              <Controller
+                control={control}
+                name="applicant.name"
+                defaultValue={data?.organisation?.name}
+                rules={{
+                  required: {
+                    value: true,
+                    message: formatMessage(
+                      m.SingleProviderInstitutionNameError,
+                    ),
+                  },
+                }}
+                render={({ onChange, value, name }) => (
+                  <Input
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    label={formatMessage(m.SingleProviderInstitutionNameLabel)}
+                    placeholder={formatMessage(
+                      m.SingleProviderInstitutionNamePlaceholder,
+                    )}
+                    hasError={errors.applicant?.name}
+                    errorMessage={errors.applicant?.name?.message}
+                  />
+                )}
+              />
+            )}
           </Box>
           <Box marginBottom={2}>
             <Controller
               control={control}
               name="applicant.nationalId"
-              defaultValue={data?.applicant?.nationalId}
+              defaultValue={data?.organisation?.nationalId}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionNationalIdError,
+                  ),
+                },
+                pattern: {
+                  value: /([0-9]){6}-?([0-9]){4}/,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionNationalIdFormatError,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Kennitala stofnunar"
-                  placeholder="Kennitala stofnunar"
+                  label={formatMessage(
+                    m.SingleProviderInstitutionNationalIdLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderInstitutionNationalIdPlaceholder,
+                  )}
+                  hasError={errors.applicant?.nationalId}
+                  errorMessage={errors.applicant?.nationalId?.message}
                 />
               )}
             />
@@ -95,14 +141,30 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.email"
-              defaultValue={data?.applicant?.email}
+              defaultValue={data?.organisation?.email}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(m.SingleProviderInstitutionEmailError),
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionEmailFormatError,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Netfang"
-                  placeholder="Netfang"
+                  label={formatMessage(m.SingleProviderInstitutionEmailLabel)}
+                  placeholder={formatMessage(
+                    m.SingleProviderInstitutionEmailPlaceholder,
+                  )}
+                  hasError={errors.applicant?.email}
+                  errorMessage={errors.applicant?.email?.message}
                 />
               )}
             />
@@ -111,14 +173,46 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.phoneNumber"
-              defaultValue={data?.applicant?.phoneNumber}
+              defaultValue={data?.organisation?.phoneNumber}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionPhonenumberError,
+                  ),
+                },
+                minLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionPhonenumberErrorLength,
+                  ),
+                },
+                maxLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionPhonenumberErrorLength,
+                  ),
+                },
+                pattern: {
+                  value: /^\d+$/,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionPhonenumberErrorOnlyNumbers,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Símanúmer"
-                  placeholder="Símanúmer"
+                  label={formatMessage(
+                    m.SingleProviderInstitutionPhonenumberLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderInstitutionPhonenumberPlaceholder,
+                  )}
+                  hasError={errors.applicant?.phoneNumber}
+                  errorMessage={errors.applicant?.phoneNumber?.message}
                 />
               )}
             />
@@ -127,14 +221,26 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.address"
-              defaultValue={data?.applicant?.address}
+              defaultValue={data?.organisation?.address}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionAddressError,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Heimilsfang"
-                  placeholder="Heimilsfang"
+                  label={formatMessage(m.SingleProviderInstitutionAddressLabel)}
+                  placeholder={formatMessage(
+                    m.SingleProviderInstitutionAddressPlaceholder,
+                  )}
+                  hasError={errors.applicant?.address}
+                  errorMessage={errors.applicant?.address?.message}
                 />
               )}
             />
@@ -143,14 +249,22 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
             <Controller
               control={control}
               name="applicant.zipCode"
-              defaultValue={data?.applicant?.zipCode}
+              defaultValue={data?.organisation?.zipCode}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(m.DashBoardDescription),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Póstnúmer"
-                  placeholder="Póstnúmer"
+                  label={formatMessage(m.DashBoardDescription)}
+                  placeholder={formatMessage(m.DashBoardDescription)}
+                  hasError={errors.applicant?.zipCode}
+                  errorMessage={errors.applicant?.zipCode?.message}
                 />
               )}
             />
@@ -159,7 +273,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
         <Box marginBottom={4}>
           <Box marginBottom={4}>
             <Text variant="h3" as="h3">
-              Ábyrgðarmaður
+              {formatMessage(m.SingleProviderResponsibleContactHeading)}
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -167,13 +281,27 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="administrativeContact.name"
               defaultValue={data?.administrativeContact?.name}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderResponsibleContactNameError,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Nafn"
-                  placeholder="Nafn"
+                  label={formatMessage(
+                    m.SingleProviderResponsibleContactNameLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderResponsibleContactNamePlaceholder,
+                  )}
+                  hasError={errors.administrativeContact?.name}
+                  errorMessage={errors.administrativeContact?.name?.message}
                 />
               )}
             />
@@ -183,13 +311,31 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="administrativeContact.email"
               defaultValue={data?.administrativeContact?.email}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(m.SingleProviderInstitutionEmailError),
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: formatMessage(
+                    m.SingleProviderInstitutionEmailFormatError,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Netfang"
-                  placeholder="Netfang"
+                  label={formatMessage(
+                    m.SingleProviderResponsibleContactEmailLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderResponsibleContactEmailPlaceholder,
+                  )}
+                  hasError={errors.administrativeContact?.email}
+                  errorMessage={errors.administrativeContact?.email?.message}
                 />
               )}
             />
@@ -199,13 +345,47 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="administrativeContact.phoneNumber"
               defaultValue={data?.administrativeContact?.phoneNumber}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderResponsibleContactPhonenumberError,
+                  ),
+                },
+                minLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderResponsibleContactPhonenumberErrorLength,
+                  ),
+                },
+                maxLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderResponsibleContactPhonenumberErrorLength,
+                  ),
+                },
+                pattern: {
+                  value: /^\d+$/,
+                  message: formatMessage(
+                    m.SingleProviderResponsibleContactPhonenumberErrorOnlyNumbers,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Símanúmer"
-                  placeholder="Símanúmer"
+                  label={formatMessage(
+                    m.SingleProviderResponsibleContactPhoneNumberLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderResponsibleContactPhoneNumberPlaceholder,
+                  )}
+                  hasError={errors.administrativeContact?.phoneNumber}
+                  errorMessage={
+                    errors.administrativeContact?.phoneNumber?.message
+                  }
                 />
               )}
             />
@@ -214,7 +394,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
         <Box marginBottom={4}>
           <Box marginBottom={4}>
             <Text variant="h3" as="h3">
-              Tæknilegur tengiliður
+              {formatMessage(m.SingleProviderTechnicalContactHeading)}
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -222,13 +402,27 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="technicalContact.name"
               defaultValue={data?.technicalContact?.name}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderTechnicalContactNameError,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Nafn"
-                  placeholder="Nafn"
+                  label={formatMessage(
+                    m.SingleProviderTechnicalContactNameLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderTechnicalContactNamePlaceholder,
+                  )}
+                  hasError={errors.technicalContact?.name}
+                  errorMessage={errors.technicalContact?.name?.message}
                 />
               )}
             />
@@ -238,13 +432,33 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="technicalContact.email"
               defaultValue={data?.technicalContact?.email}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderTechnicalContactEmailError,
+                  ),
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: formatMessage(
+                    m.SingleProviderTechnicalContactEmailErrorFormat,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Netfang"
-                  placeholder="Netfang"
+                  label={formatMessage(
+                    m.SingleProviderTechnicalContactEmailLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderTechnicalContactEmailPlaceholder,
+                  )}
+                  hasError={errors.technicalContact?.email}
+                  errorMessage={errors.technicalContact?.email?.message}
                 />
               )}
             />
@@ -254,13 +468,45 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="technicalContact.phoneNumber"
               defaultValue={data?.technicalContact?.phoneNumber}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderTechnicalContactPhonenumberError,
+                  ),
+                },
+                minLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderTechnicalContactPhonenumberErrorLength,
+                  ),
+                },
+                maxLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderTechnicalContactPhonenumberErrorLength,
+                  ),
+                },
+                pattern: {
+                  value: /^\d+$/,
+                  message: formatMessage(
+                    m.SingleProviderTechnicalContactPhonenumberErrorOnlyNumbers,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Símanúmer"
-                  placeholder="Símanúmer"
+                  label={formatMessage(
+                    m.SingleProviderTechnicalContactPhoneNumberLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderTechnicalContactPhoneNumberPlaceholder,
+                  )}
+                  hasError={errors.technicalContact?.phoneNumber}
+                  errorMessage={errors.technicalContact?.phoneNumber?.message}
                 />
               )}
             />
@@ -269,7 +515,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
         <Box marginBottom={4}>
           <Box marginBottom={4}>
             <Text variant="h3" as="h3">
-              Notendaaðstoð
+              {formatMessage(m.SingleProviderUserHelpContactHeading)}
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -277,13 +523,31 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="helpDeskContact.email"
               defaultValue={data?.helpDeskContact?.email}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(m.SingleProviderUserHelpEmailError),
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: formatMessage(
+                    m.SingleProviderUserHelpEmailErrorFormat,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Netfang"
-                  placeholder="Netfang"
+                  label={formatMessage(
+                    m.SingleProviderUserHelpContactEmailLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderUserHelpContactEmailPlaceholder,
+                  )}
+                  hasError={errors.helpDeskContact?.email}
+                  errorMessage={errors.helpDeskContact?.email?.message}
                 />
               )}
             />
@@ -293,13 +557,45 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
               control={control}
               name="helpDeskContact.phoneNumber"
               defaultValue={data?.helpDeskContact?.phoneNumber}
+              rules={{
+                required: {
+                  value: true,
+                  message: formatMessage(
+                    m.SingleProviderUserHelpPhonenumberError,
+                  ),
+                },
+                minLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderUserHelpPhonenumberErrorLength,
+                  ),
+                },
+                maxLength: {
+                  value: 7,
+                  message: formatMessage(
+                    m.SingleProviderUserHelpPhonenumberErrorLength,
+                  ),
+                },
+                pattern: {
+                  value: /^\d+$/,
+                  message: formatMessage(
+                    m.SingleProviderUserHelpPhonenumberErrorOnlyNumbers,
+                  ),
+                },
+              }}
               render={({ onChange, value, name }) => (
                 <Input
                   name={name}
                   value={value}
                   onChange={onChange}
-                  label="Símanúmer"
-                  placeholder="Símanúmer"
+                  label={formatMessage(
+                    m.SingleProviderUserHelpContactPhoneNumberLabel,
+                  )}
+                  placeholder={formatMessage(
+                    m.SingleProviderUserHelpContactPhoneNumberPlaceholder,
+                  )}
+                  hasError={errors.helpDeskContact?.phoneNumber}
+                  errorMessage={errors.helpDeskContact?.phoneNumber?.message}
                 />
               )}
             />
@@ -315,12 +611,12 @@ export const DocumentProviderBasicInfo: FC<Props> = ({ data, onSubmit }) => {
           <Box marginTop={[1, 0]}>
             <Link to={ServicePortalPath.DocumentProviderDocumentProviders}>
               <Button variant="ghost">
-                {formatMessage(m.SettingsEditEndPointsBackButton)}
+                {formatMessage(m.SingleProviderBackButton)}
               </Button>
             </Link>
           </Box>
           <Button type="submit" variant="primary" icon="arrowForward">
-            {formatMessage(m.SettingsEditEndPointsSaveButton)}
+            {formatMessage(m.SingleProviderSaveButton)}
           </Button>
         </Box>
       </form>

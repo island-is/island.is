@@ -3,7 +3,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
 import NextLink from 'next/link'
-import { Slice as SliceType } from '@island.is/island-ui/contentful'
+import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
@@ -14,7 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  RichText,
   AnchorNavigation,
   BackgroundImage,
   HeadWithSocialSharing,
@@ -61,23 +60,23 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         imageWidth={image.width.toString()}
         imageHeight={image.height.toString()}
       />
-      <GridRow>
-        <Box
-          marginBottom={[4, 4, 4, 8]}
-          display="inlineBlock"
-          width="full"
-          printHidden
-        >
-          <BackgroundImage
-            ratio="12:4"
-            background="transparent"
-            boxProps={{ background: 'white' }}
-            image={image}
-          />
-        </Box>
-      </GridRow>
 
-      <GridContainer>
+      <GridContainer id="main-content">
+        <GridRow>
+          <Box
+            marginBottom={[4, 4, 4, 8]}
+            display="inlineBlock"
+            width="full"
+            printHidden
+          >
+            <BackgroundImage
+              ratio="12:4"
+              background="transparent"
+              boxProps={{ background: 'white' }}
+              image={image}
+            />
+          </Box>
+        </GridRow>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
             <GridRow>
@@ -91,15 +90,16 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                       {
                         title: 'Ísland.is',
                         href: '/',
+                        typename: 'homepage',
                       },
                       {
-                        isTag: true,
-                        title: n('lifeEventTitle', 'Lífsviðburður'),
+                        title: n('lifeEvents', 'Lífsviðburðir'),
+                        href: linkResolver('lifeevents').href,
                       },
                     ]}
-                    renderLink={(link) => {
+                    renderLink={(link, { href }) => {
                       return (
-                        <NextLink {...linkResolver('homepage')} passHref>
+                        <NextLink href={href} passHref>
                           {link}
                         </NextLink>
                       )
@@ -127,10 +127,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Box paddingTop={[3, 3, 4]}>
-                  <RichText
-                    body={content as SliceType[]}
-                    config={{ defaultPadding: [2, 2, 4] }}
-                  />
+                  {richText(content as SliceType[])}
                 </Box>
               </GridColumn>
             </GridRow>

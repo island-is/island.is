@@ -16,33 +16,22 @@ type Events =
   | { type: 'ABORT' }
 
 const dataSchema = z.object({
-  type: z.array(z.enum(['general', 'trailer', 'bike'])).nonempty(),
+  type: z.array(z.enum(['car', 'trailer', 'motorcycle'])).nonempty(),
   subType: z.array(z.string()).nonempty(),
   approveExternalData: z.boolean().refine((v) => v),
-  address: z.object({
-    home: z.string().nonempty(),
-    postcode: z.string(),
-    city: z.string().nonempty(),
-  }),
-  user: z.object({
-    name: z.string().nonempty(),
-    phoneNumber: z.string().min(7),
-    nationalId: z.string().refine((x) => kennitala.isPerson(x)),
-    email: z.string().email().nonempty(),
-    country: z.string().nonempty(),
-  }),
   healthDeclaration: z.object({
-    usesContactGlasses: z.boolean(),
-    hasEpilepsy: z.boolean(),
-    hasHeartDisease: z.boolean(),
-    hasMentalIllness: z.boolean(),
-    usesMedicalDrugs: z.boolean(),
-    isAlcoholic: z.boolean(),
-    hasDiabetes: z.boolean(),
-    isDisabled: z.boolean(),
-    hasOtherDiseases: z.boolean(),
+    usesContactGlasses: z.enum(['yes', 'no']),
+    hasEpilepsy: z.enum(['yes', 'no']),
+    hasHeartDisease: z.enum(['yes', 'no']),
+    hasMentalIllness: z.enum(['yes', 'no']),
+    usesMedicalDrugs: z.enum(['yes', 'no']),
+    isAlcoholic: z.enum(['yes', 'no']),
+    hasDiabetes: z.enum(['yes', 'no']),
+    isDisabled: z.enum(['yes', 'no']),
+    hasOtherDiseases: z.enum(['yes', 'no']),
   }),
   teacher: z.string().nonempty(),
+  willBringAlongData: z.array(z.enum(['certificate', 'picture'])).nonempty(),
 })
 
 const template: ApplicationTemplate<

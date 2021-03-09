@@ -10,6 +10,10 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
+import { CreatePdfInput } from './dto/createPdf.input'
+import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
+import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
+import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -18,6 +22,9 @@ import {
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch'
+import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
+import { PresignedUrlResponse } from './dto/presignedUrl.response'
+import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -129,5 +136,43 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.assignApplication(input, user.authorization)
+  }
+
+  @Mutation(() => PresignedUrlResponse, { nullable: true })
+  async createPdfPresignedUrl(
+    @Args('input') input: CreatePdfInput,
+    @CurrentUser() user: User,
+  ): Promise<PresignedUrlResponse> {
+    return this.applicationService.createPdfPresignedUrl(
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => RequestFileSignatureResponse, { nullable: true })
+  requestFileSignature(
+    @Args('input') input: RequestFileSignatureInput,
+    @CurrentUser() user: User,
+  ): Promise<RequestFileSignatureResponse> {
+    return this.applicationService.requestFileSignature(
+      input,
+      user.authorization,
+    )
+  }
+
+  @Mutation(() => UploadSignedFileResponse, { nullable: true })
+  uploadSignedFile(
+    @Args('input') input: UploadSignedFileInput,
+    @CurrentUser() user: User,
+  ): Promise<UploadSignedFileResponse> {
+    return this.applicationService.uploadSignedFile(input, user.authorization)
+  }
+
+  @Query(() => PresignedUrlResponse, { nullable: true })
+  getPresignedUrl(
+    @Args('input') input: GetPresignedUrlInput,
+    @CurrentUser() user: User,
+  ): Promise<PresignedUrlResponse> {
+    return this.applicationService.presignedUrl(input, user.authorization)
   }
 }

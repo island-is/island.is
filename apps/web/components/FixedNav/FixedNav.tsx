@@ -4,9 +4,10 @@ import * as styles from './FixedNav.treat'
 import {
   ContentBlock,
   Box,
-  ButtonDeprecated as Button,
+  Button,
   FocusableBox,
   Logo,
+  Link,
 } from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
@@ -50,9 +51,12 @@ export const FixedNav: FC = () => {
           alignItems="center"
           justifyContent="spaceBetween"
         >
-          <FocusableBox {...linkResolver('homepage')} marginRight={2}>
-            <Logo iconOnly solid={true} />
-          </FocusableBox>
+          <Link {...linkResolver('homepage')}>
+            <FocusableBox marginRight={2}>
+              <Logo iconOnly solid={true} />
+            </FocusableBox>
+          </Link>
+
           <Box
             display="flex"
             height="full"
@@ -74,8 +78,9 @@ export const FixedNav: FC = () => {
             </Box>
             <Box marginLeft={2}>
               <Button
-                white
-                variant="menu"
+                variant="ghost"
+                colorScheme="negative"
+                size="small"
                 icon="arrowUp"
                 onClick={() => {
                   window.scrollTo(0, 0)

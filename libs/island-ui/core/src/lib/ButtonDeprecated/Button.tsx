@@ -327,3 +327,5 @@ const LeftContentContainer: FC = ({ children }) => {
     </>
   )
 }
+
+export { Button as ButtonDeprecated }

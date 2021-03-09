@@ -34,6 +34,10 @@ export const label = style({
   fontSize: theme.typography.baseFontSize,
   fontWeight: theme.typography.light,
 })
+export const labelText = style({
+  display: 'flex',
+  flexDirection: 'column',
+})
 export const labelChecked = style({
   fontWeight: theme.typography.medium,
 })
@@ -42,12 +46,19 @@ export const checkboxDisabled = style({
   borderColor: theme.color.blue200,
 })
 export const largeLabel = style({
-  padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
+  alignItems: 'center',
+  padding: `${theme.spacing[3]}px ${theme.spacing[2]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
+    },
+  },
 })
 export const checkbox = style({
   alignItems: 'center',
   backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.standard,
   display: 'flex',
   flexShrink: 0,
   height: checkboxSize,

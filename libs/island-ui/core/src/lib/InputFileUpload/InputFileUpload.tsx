@@ -4,16 +4,16 @@ import { useDropzone } from 'react-dropzone'
 import * as styles from './InputFileUpload.treat'
 
 import { Box } from '../Box/Box'
-import { Typography } from '../Typography/Typography'
+import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import { Icon, IconTypes } from '../Icon/Icon'
+import { Icon } from '../IconRC/Icon'
+import { Icon as IconTypes } from '../IconRC/iconMap'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
 export interface UploadFile {
   name: string
-  url?: string
   key?: string
   status?: UploadFileStatus
   percent?: number
@@ -29,7 +29,6 @@ export const fileToObject = (
     name: file.name,
     percent: 0,
     originalFileObj: file,
-    url: '',
     status: status || 'done',
   }
 }
@@ -79,7 +78,7 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
       case 'done':
         return 'close'
       default:
-        return 'loading'
+        return 'reload'
     }
   }
 
@@ -99,21 +98,33 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
       marginBottom={2}
       width="full"
       position="relative"
+      title={file.name}
       className={styles.uploadedFile}
       onClick={(e) => e.stopPropagation()}
     >
-      <Typography variant="pSmall">{file.name}</Typography>
-      <Box
-        cursor={!isUploading ? 'pointer' : undefined}
-        onClick={(e) => {
-          e.stopPropagation()
-          if (!isUploading) onRemoveClick(file)
-        }}
-      >
-        <Box className={isUploading ? styles.progressIconAnimation : undefined}>
-          <Icon type={statusIcon(file.status)} />
-        </Box>
-      </Box>
+      <Text truncate variant="small">
+        {file.name}
+      </Text>
+      {isUploading ? (
+        <div
+          className={styles.progressIconAnimation}
+          aria-label="Hleð upp skrá"
+        >
+          <Icon color="blue400" icon={statusIcon(file.status)} />
+        </div>
+      ) : (
+        <button
+          type={'button'}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (!isUploading) onRemoveClick(file)
+          }}
+          aria-label="Fjarlægja skrá"
+        >
+          <Icon color="blue400" icon={statusIcon(file.status)} />
+        </button>
+      )}
+
       <UploadingIndicator percent={file.percent} />
     </Box>
   )
@@ -194,8 +205,8 @@ export const InputFileUpload = ({
       className={styles.container}
       {...getRootProps({ style })}
     >
-      <Typography variant="h4">{header}</Typography>
-      <Typography variant="p">{description}</Typography>
+      <Text variant="h4">{header}</Text>
+      <Text>{description}</Text>
       <Box marginY={4}>
         <Button variant="ghost" icon="attach">
           {buttonLabel}

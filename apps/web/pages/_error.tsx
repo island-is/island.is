@@ -1,21 +1,33 @@
 import React from 'react'
 import * as Sentry from '@sentry/node'
-import { GetUrlQuery, QueryGetUrlArgs } from '@island.is/web/graphql/schema'
-import { GET_URL_QUERY } from '@island.is/web/screens/queries'
+import {
+  GetUrlQuery,
+  QueryGetUrlArgs,
+  ErrorPageQuery,
+  QueryGetErrorPageArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_URL_QUERY, GET_ERROR_PAGE } from '@island.is/web/screens/queries'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
 import ErrorScreen from '../screens/Error/Error'
-import { getLocaleFromPath } from '../i18n/withLocale'
 import Layout, { LayoutProps } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
 import { withApollo } from '../graphql/withApollo'
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
+import { NextPageContext } from 'next'
+import { getLocaleFromPath } from '../i18n/withLocale'
 
 type ErrorPageProps = {
   statusCode: number
   locale: Locale
   layoutProps: LayoutProps
+  errorPage: ErrorPageQuery['getErrorPage']
 }
+
+type ErrorPageInitialProps = {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+} & NextPageContext
 
 class ErrorPage extends React.Component<ErrorPageProps> {
   state = { renderError: false }
@@ -27,7 +39,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
   }
 
   render() {
-    const { layoutProps, locale, statusCode } = this.props
+    const { layoutProps, locale, statusCode, errorPage } = this.props
     const { renderError } = this.state
 
     if (layoutProps && !renderError) {
@@ -37,7 +49,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         return (
           <I18n locale={locale} translations={layoutProps.namespace}>
             <Layout {...layoutProps}>
-              <ErrorScreen statusCode={statusCode} />
+              <ErrorScreen errPage={errorPage} statusCode={statusCode} />
             </Layout>
           </I18n>
         )
@@ -46,15 +58,16 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     }
 
     // fallback to simpler version if we're unable to use the Layout for any reason
-    return <ErrorScreen statusCode={statusCode} />
+    return <ErrorScreen errPage={errorPage} statusCode={statusCode} />
   }
 
-  static async getInitialProps(props /*: NextPageContext*/) {
+  static async getInitialProps(props: ErrorPageInitialProps) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
     const locale = getLocaleFromPath(asPath)
 
-    if (!asPath.startsWith('/_next') && statusCode === 404) {
+    // check if we have a redirect condition
+    if (statusCode === 404) {
       const path = asPath
         .trim()
         .replace(/\/\/+/g, '/')
@@ -62,32 +75,22 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         .toLowerCase()
 
       const redirectProps = await getRedirectProps({
-        path,
+        path: path,
         apolloClient: props.apolloClient,
         locale,
       })
 
       if (redirectProps) {
-        const { pageType, page } = redirectProps
+        const { type, slug } = redirectProps
 
         // Found an URL content type that contained this
         // path (which has a page assigned to it) so we redirect to that page
-        if (pageType && page) {
-          let type: string
-          if (pageType === 'vidspyrna-frontpage') {
-            type = 'adgerdirfrontpage'
-          } else {
-            type = pageType
-          }
-
-          const url = linkResolver(type as LinkType, [page.slug], locale).as
-
-          if (!process.browser) {
-            res.writeHead(302, { Location: url })
-            res.end()
-          } else {
-            return (window.location.href = url)
-          }
+        const url = linkResolver(type as LinkType, [slug], locale).href
+        if (!process.browser) {
+          res.writeHead(302, { Location: url })
+          res.end()
+        } else {
+          return (window.location.href = url)
         }
       }
     }
@@ -109,11 +112,17 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       res.statusCode = statusCode
     }
 
-    // we'll attempt to use the layout component, but if it goes wrong we'll
+    // we'll attempt to get the required data to display page, but if it goes wrong we'll
     // show a simplified error page without any header or footer
     let layoutProps: LayoutProps = null
+    let pageProps: any = null
     try {
       layoutProps = await Layout.getInitialProps({ ...props, locale })
+      pageProps = await getPageProps({
+        apolloClient: props.apolloClient,
+        locale,
+        statusCode,
+      })
       // eslint-disable-next-line no-empty
     } catch {}
 
@@ -123,18 +132,20 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
     await Sentry.flush(2000)
 
-    return { statusCode, locale, layoutProps }
+    return {
+      statusCode,
+      locale,
+      layoutProps,
+      errorPage: pageProps,
+    }
   }
 }
 
 export default withApollo(ErrorPage)
 
 export interface RedirectProps {
-  pageType: string
-  page: {
-    slug: string
-    contentType: string
-  }
+  slug: string
+  type: string
 }
 
 interface GetRedirectPropsProps {
@@ -147,10 +158,8 @@ const getRedirectProps = async ({
   path,
   apolloClient,
   locale,
-}: GetRedirectPropsProps): Promise<RedirectProps | null> => {
-  const {
-    data: { getUrl },
-  } = await apolloClient
+}: GetRedirectPropsProps) => {
+  const { getUrl } = await apolloClient
     .query<GetUrlQuery, QueryGetUrlArgs>({
       query: GET_URL_QUERY,
       variables: {
@@ -160,16 +169,33 @@ const getRedirectProps = async ({
         },
       },
     })
-    .then((r) => r)
+    .then((response) => response.data)
 
-  const pageType = getUrl?.page?.contentType ?? null
+  return getUrl?.page ?? null
+}
 
-  if (!pageType) {
-    return null
-  }
+interface GetErrorPageProps {
+  statusCode: number
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+}
 
-  return {
-    pageType,
-    page: getUrl.page,
-  }
+const getPageProps = async ({
+  statusCode,
+  apolloClient,
+  locale,
+}: GetErrorPageProps) => {
+  const { getErrorPage } = await apolloClient
+    .query<ErrorPageQuery, QueryGetErrorPageArgs>({
+      query: GET_ERROR_PAGE,
+      variables: {
+        input: {
+          lang: locale as string,
+          errorCode: statusCode.toString(),
+        },
+      },
+    })
+    .then((response) => response.data)
+
+  return getErrorPage
 }

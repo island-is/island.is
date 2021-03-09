@@ -15,6 +15,10 @@ export enum AuditedAction {
   REQUEST_SIGNATURE = 'REQUEST_SIGNATURE',
   CONFIRM_SIGNATURE = 'CONFIRM_SIGNATURE',
   SEND_NOTIFICATION = 'SEND_NOTIFICATION',
+  EXTEND = 'EXTEND',
+  CREATE_USER = 'CREATE_USER',
+  UPDATE_USER = 'UPDATE_USER',
+  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
 }
 
 export interface AuditTrailOptions {
@@ -34,12 +38,12 @@ export class AuditTrailService {
   private formatMessage(
     userId: string,
     action: AuditedAction,
-    caseIds: string | string[],
+    ids: string | string[],
   ) {
     const message = {
       user: userId,
       action,
-      cases: caseIds,
+      entities: ids,
     }
 
     // The generic logger expects a string, whereas the CloudWatch trail expect a json object
@@ -79,11 +83,11 @@ export class AuditTrailService {
     }
   }
 
-  audit(userId: string, action: AuditedAction, caseIds: string | string[]) {
+  audit(userId: string, action: AuditedAction, ids: string | string[]) {
     if (!this.trail) {
       throw new ReferenceError('Audit trail has not been initialized')
     }
 
-    this.trail?.info(this.formatMessage(userId, action, caseIds))
+    this.trail?.info(this.formatMessage(userId, action, ids))
   }
 }

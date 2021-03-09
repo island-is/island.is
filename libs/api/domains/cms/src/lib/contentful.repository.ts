@@ -38,7 +38,7 @@ export class ContentfulRepository {
     return createClient({
       space,
       accessToken,
-      environment: 'master',
+      environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
       host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
     })
   }

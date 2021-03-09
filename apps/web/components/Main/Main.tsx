@@ -8,7 +8,6 @@ export const Main: React.FC = ({ children }) => {
   const boxProps: BoxProps = shouldAddLandmark
     ? {
         component: 'main',
-        id: 'main-content',
         tabIndex: -1,
         outline: 'none',
       }
