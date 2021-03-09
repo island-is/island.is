@@ -274,6 +274,13 @@ export class Case extends Model<Case> {
   courtDocuments: string[]
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  additionToConclusion: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: true,
     values: Object.values(AccusedPleaDecision),

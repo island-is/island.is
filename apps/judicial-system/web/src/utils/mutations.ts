@@ -62,6 +62,7 @@ export const CreateCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
+      additionToConclusion
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
@@ -154,6 +155,7 @@ export const ExtendCaseMutation = gql`
       courtAttendees
       policeDemands
       courtDocuments
+      additionToConclusion
       accusedPleaDecision
       accusedPleaAnnouncement
       litigationPresentations
