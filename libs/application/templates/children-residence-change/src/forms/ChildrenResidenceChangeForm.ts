@@ -121,6 +121,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   id: 'parentA.email',
                   title: m.contactInfo.inputs.emailLabel,
                   variant: 'email',
+                  backgroundColor: 'blue',
                   defaultValue: (application: Application) =>
                     (application.externalData.userProfile?.data as {
                       email?: string
@@ -131,6 +132,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   title: m.contactInfo.inputs.phoneNumberLabel,
                   variant: 'tel',
                   format: '###-####',
+                  backgroundColor: 'blue',
                   defaultValue: (application: Application) =>
                     (application.externalData.userProfile?.data as {
                       mobilePhoneNumber?: string

@@ -15,7 +15,6 @@ import {
 } from '@island.is/application/graphql'
 import {
   extractParentFromApplication,
-  extractChildrenFromApplication,
   extractAnswersFromApplication,
   constructParentAddressString,
   extractApplicantFromApplication,
@@ -159,6 +158,9 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
 
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
+  // TODO: Look into if we want to do this in a different way - using the application state seems wrong
+  const contactInfoKey = application.state === 'draft' ? 'parentA' : 'parentB'
+
   return (
     <>
       <SignatureModal
@@ -199,14 +201,13 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
         <Text variant="h4" marginBottom={2}>
           {formatMessage(m.contract.labels.contactInformation)}
         </Text>
-        {/* TODO: Make this the contact information for parent B also when we add that to the flow */}
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
-          {getApplicantContactInfo(answers, 'parentA').email}
+          {getApplicantContactInfo(answers, contactInfoKey).email}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
         <Text fontWeight="medium">
-          {getApplicantContactInfo(answers, 'parentA').phoneNumber}
+          {getApplicantContactInfo(answers, contactInfoKey).phoneNumber}
         </Text>
       </Box>
       {answers.reason && (

@@ -48,6 +48,10 @@ export const extractAnswersFromApplication = (application: Application) => {
       email: (application.answers.parentA as FormValue).email,
       phoneNumber: (application.answers.parentA as FormValue).phoneNumber,
     },
+    parentB: {
+      email: (application.answers.parentB as FormValue).email,
+      phoneNumber: (application.answers.parentB as FormValue).phoneNumber,
+    },
   }
 }
 

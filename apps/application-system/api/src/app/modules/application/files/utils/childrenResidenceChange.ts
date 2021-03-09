@@ -18,7 +18,7 @@ export function applicantData(answers: FormValue, externalData: FormValue) {
   }
 }
 
-const dataToUse = ({
+export const dataToUse = ({
   answers,
   externalData,
   key,
