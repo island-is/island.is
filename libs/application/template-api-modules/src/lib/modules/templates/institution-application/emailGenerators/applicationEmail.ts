@@ -1,19 +1,30 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
+import { SendMailOptions } from 'nodemailer'
 export interface nodemailAttachment {
   filename: string
   href: string
 }
 
-export const generateApplicationEmail: EmailTemplateGenerator = (props) => {
+interface ApplicationEmail {
+  (
+    props: EmailTemplateGeneratorProps,
+    applicationSender: string,
+    applicationRecipient: string,
+  ): SendMailOptions
+}
+
+export const generateApplicationEmail: ApplicationEmail = (
+  props,
+  applicationSender,
+  applicationRecipient,
+): SendMailOptions => {
   const {
     application,
     options: { locale },
   } = props
-  const recpient =
-    process.env.INSTITUTION_APPLICATION_RECIPIENT || 'development@island.is'
 
   const institutionName = get(application.answers, 'applicant.institution')
 
@@ -35,13 +46,13 @@ export const generateApplicationEmail: EmailTemplateGenerator = (props) => {
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: 'Stafrænt Ísland',
+      address: applicationSender,
     },
     to: [
       {
         name: '',
-        address: recpient,
+        address: applicationRecipient,
       },
     ],
     attachments: mailAttachments,

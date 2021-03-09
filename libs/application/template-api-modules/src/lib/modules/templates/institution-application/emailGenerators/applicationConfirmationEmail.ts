@@ -1,9 +1,19 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
+import { SendMailOptions } from 'nodemailer'
+interface ConfirmationEmail {
+  (
+    props: EmailTemplateGeneratorProps,
+    senderEmailAddress: string,
+  ): SendMailOptions
+}
 
-export const generateConfirmationEmail: EmailTemplateGenerator = (props) => {
+export const generateConfirmationEmail: ConfirmationEmail = (
+  props,
+  senderEmailAddress,
+) => {
   const {
     application,
     options: { locale },
@@ -32,8 +42,8 @@ export const generateConfirmationEmail: EmailTemplateGenerator = (props) => {
 
   return {
     from: {
-      name: 'Devland.is',
-      address: 'development@island.is',
+      name: '',
+      address: senderEmailAddress,
     },
     to: [
       {

@@ -19,7 +19,7 @@ export interface TemplateApiModuleActionProps {
   authorization: string
 }
 
-interface EmailTemplateGeneratorProps {
+export interface EmailTemplateGeneratorProps {
   application: Application
   options: {
     clientLocationOrigin: string
