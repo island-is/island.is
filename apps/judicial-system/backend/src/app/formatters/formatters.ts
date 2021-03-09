@@ -313,7 +313,7 @@ export function formatPrisonRulingEmailNotification(
     isExtension,
     previousDecision,
   )}${
-    additionToConclusion ? `<br />${additionToConclusion}` : ''
+    additionToConclusion ? `<br /><br />${additionToConclusion}` : ''
   }<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
     accusedAppealDecision,
     capitalize(formatAccusedByGender(accusedGender)),

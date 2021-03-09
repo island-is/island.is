@@ -274,10 +274,6 @@ export class Case extends Model<Case> {
   additionToConclusion: string
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @Column({
     type: DataType.ENUM,
     allowNull: true,
     values: Object.values(AccusedPleaDecision),
