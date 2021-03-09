@@ -81,7 +81,12 @@ export const Menu: FC<Props> = ({
         </Link>
       )}
       menuButton={
-        <Button variant="utility" icon="menu" colorScheme={buttonColorScheme}>
+        <Button
+          variant="utility"
+          icon="menu"
+          data-cy="main-menu-button"
+          colorScheme={buttonColorScheme}
+        >
           {t.menuCaption}
         </Button>
       }

@@ -35,4 +35,9 @@ describe('homepage', () => {
       `/lifsvidburdir`,
     )
   })
+
+  it('should display the main menu overlay', () => {
+    cy.get(`[data-cy="main-menu-button"]:visible`).click()
+    cy.get(`[data-dialog-ref="Menu"]`).should('exist').should('be.visible')
+  })
 })

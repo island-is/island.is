@@ -302,6 +302,7 @@ const Category: Screen<CategoryProps> = ({
                   <Link
                     href={linkResolver(typename as LinkType, slug).href}
                     onClick={() => setHashArray([])}
+                    data-cy={`categories-navigation-link`}
                     passHref
                   >
                     {link}
