@@ -1,4 +1,7 @@
 'use strict'
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
 const client_id = 'ids-admin'
 
