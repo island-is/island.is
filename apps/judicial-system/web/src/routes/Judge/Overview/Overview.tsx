@@ -45,7 +45,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
-import { CreateCustodyCourtCaseMutation } from '../../../utils/mutations'
+import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import { getFeature } from '@island.is/judicial-system-web/src/services/api'
 import * as styles from './Overview.treat'
 
 interface CaseData {
@@ -67,6 +68,10 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
+  const [
+    showCreateCustodyCourtCase,
+    setShowCreateCustodyCourtCase,
+  ] = useState<boolean>(false)
 
   const [
     createCustodyCourtCaseMutation,
@@ -77,29 +82,36 @@ export const JudgeOverview: React.FC = () => {
 
   const createCase = async (): Promise<void> => {
     if (creatingCustodyCourtCase === false) {
-      const { data, errors } = await createCustodyCourtCaseMutation({
-        variables: {
-          input: {
-            caseId: workingCase?.id,
-            policeCaseNumber: workingCase?.policeCaseNumber,
+      try {
+        const { data, errors } = await createCustodyCourtCaseMutation({
+          variables: {
+            input: {
+              caseId: workingCase?.id,
+              policeCaseNumber: workingCase?.policeCaseNumber,
+            },
           },
-        },
-      })
-      if (data && workingCase && !errors) {
-        setAndSendToServer(
-          'courtCaseNumber',
-          data.createCustodyCourtCase.courtCaseNumber,
-          workingCase,
-          setWorkingCase,
-          updateCase,
-        )
+        })
 
-        setCourtCaseNumberErrorMessage('')
-      } else {
-        setCourtCaseNumberErrorMessage(
-          'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
-        )
+        if (data && workingCase && !errors) {
+          setAndSendToServer(
+            'courtCaseNumber',
+            data.createCustodyCourtCase.courtCaseNumber,
+            workingCase,
+            setWorkingCase,
+            updateCase,
+          )
+
+          setCourtCaseNumberErrorMessage('')
+
+          return
+        }
+      } catch (error) {
+        // Catch all so we can set an eror message
       }
+
+      setCourtCaseNumberErrorMessage(
+        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+      )
     }
   }
 
@@ -173,6 +185,16 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, transitionCaseMutation])
 
   useEffect(() => {
+    const tryToShowFeature = async () => {
+      setShowCreateCustodyCourtCase(
+        await getFeature('CREATE_CUSTODY_COURT_CASE'),
+      )
+    }
+
+    tryToShowFeature()
+  }, [setShowCreateCustodyCourtCase])
+
+  useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
@@ -213,31 +235,34 @@ export const JudgeOverview: React.FC = () => {
             <BlueBox>
               <div className={styles.createCourtCaseContainer}>
                 <Box display="flex">
-                  {!workingCase.setCourtCaseNumberManually && (
-                    <div className={styles.createCourtCaseButton}>
-                      <Button
-                        size="small"
-                        onClick={createCase}
-                        loading={creatingCustodyCourtCase}
-                        disabled={!!workingCase.courtCaseNumber}
-                        fluid
-                      >
-                        Stofna mál
-                      </Button>
-                    </div>
-                  )}
+                  {showCreateCustodyCourtCase &&
+                    !workingCase.setCourtCaseNumberManually && (
+                      <div className={styles.createCourtCaseButton}>
+                        <Button
+                          size="small"
+                          onClick={createCase}
+                          loading={creatingCustodyCourtCase}
+                          disabled={!!workingCase.courtCaseNumber}
+                          fluid
+                        >
+                          Stofna mál
+                        </Button>
+                      </div>
+                    )}
                   <div className={styles.createCourtCaseInput}>
                     <Input
                       data-testid="courtCaseNumber"
                       name="courtCaseNumber"
                       label="Mál nr."
                       placeholder={
+                        !showCreateCustodyCourtCase ||
                         workingCase.setCourtCaseNumberManually
                           ? 'R-X/ÁÁÁÁ'
                           : 'Málsnúmer birtist hér með því að smella á stofna mál'
                       }
                       size="sm"
                       backgroundColor={
+                        !showCreateCustodyCourtCase ||
                         workingCase.setCourtCaseNumberManually
                           ? 'white'
                           : 'blue'
@@ -245,11 +270,15 @@ export const JudgeOverview: React.FC = () => {
                       value={workingCase.courtCaseNumber || ''}
                       icon={
                         workingCase.courtCaseNumber &&
+                        showCreateCustodyCourtCase &&
                         !workingCase.setCourtCaseNumberManually
                           ? 'checkmark'
                           : undefined
                       }
-                      disabled={!workingCase.setCourtCaseNumberManually}
+                      disabled={
+                        showCreateCustodyCourtCase &&
+                        !workingCase.setCourtCaseNumberManually
+                      }
                       errorMessage={courtCaseNumberErrorMessage}
                       hasError={
                         !creatingCustodyCourtCase &&
@@ -278,7 +307,8 @@ export const JudgeOverview: React.FC = () => {
                       }}
                       required
                     />
-                    {workingCase.setCourtCaseNumberManually && (
+                    {(!showCreateCustodyCourtCase ||
+                      workingCase.setCourtCaseNumberManually) && (
                       <Box marginTop={1}>
                         <Text variant="eyebrow" color="blue400">
                           Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
@@ -289,6 +319,7 @@ export const JudgeOverview: React.FC = () => {
                   </div>
                 </Box>
                 {courtCaseNumberErrorMessage &&
+                  showCreateCustodyCourtCase &&
                   !workingCase.setCourtCaseNumberManually && (
                     <div className={styles.enterCaseNrManuallyButton}>
                       <Button
