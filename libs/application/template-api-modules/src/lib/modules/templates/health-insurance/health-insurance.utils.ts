@@ -92,7 +92,7 @@ export const transformApplicationToHealthInsuranceDTO = (
   if (arrFiles.length > 0) {
     try {
       const arrUrl: string[] = Object.values(application.attachments) ?? []
-      for ( let i = 0; i < arrUrl.length; i++){
+      for (let i = 0; i < arrUrl.length; i++) {
         const { region, bucket, key } = AmazonS3URI(arrUrl[i])
         bucketName = bucket
         attachmentNames.push(key)
