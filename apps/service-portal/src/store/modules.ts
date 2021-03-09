@@ -31,7 +31,14 @@ export type ModuleKeys =
   | 'educationCareer'
   | 'educationStudentAssessment'
 
-export const featureFlaggedModules: ModuleKeys[] = ['documentProvider']
+export const featureFlaggedModules: ModuleKeys[] = [
+  'documentProvider',
+  'education',
+  'educationDegree',
+  'educationLicense',
+  'educationCareer',
+  'educationStudentAssessment',
+]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
