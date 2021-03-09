@@ -37,9 +37,6 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const create = async (data: FormOutput): Promise<void> => {
-    console.log('NAME')
-    console.log(data.grantType.name)
-
     if (isEditing) {
       const response = await GrantTypeService.update(
         data.grantType,
