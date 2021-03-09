@@ -286,6 +286,7 @@ export function formatPrisonRulingEmailNotification(
   judgeTitle: string,
   isExtension: boolean,
   previousDecision: CaseDecision,
+  additionToConclusion?: string,
 ): string {
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
     courtEndTime,
@@ -311,7 +312,9 @@ export function formatPrisonRulingEmailNotification(
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
     isExtension,
     previousDecision,
-  )}<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
+  )}${
+    additionToConclusion ? `<br />${additionToConclusion}` : ''
+  }<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
     accusedAppealDecision,
     capitalize(formatAccusedByGender(accusedGender)),
     false,

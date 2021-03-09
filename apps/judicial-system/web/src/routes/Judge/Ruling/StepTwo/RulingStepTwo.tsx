@@ -109,7 +109,7 @@ export const RulingStepTwo: React.FC = () => {
             <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
-            <Box marginBottom={10}>
+            <Box marginBottom={6}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Úrskurðarorð
