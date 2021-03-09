@@ -156,6 +156,9 @@ export class Case implements TCase {
   readonly accusedAppealDecision?: CaseAppealDecision
 
   @Field({ nullable: true })
+  readonly additionToConclusion?: string
+
+  @Field({ nullable: true })
   readonly accusedAppealAnnouncement?: string
 
   @Field(() => String, { nullable: true })

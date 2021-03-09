@@ -152,6 +152,7 @@ export interface Case {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
+  additionToConclusion?: string
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string
@@ -228,6 +229,7 @@ export interface UpdateCase {
   courtAttendees?: string
   policeDemands?: string
   courtDocuments?: string[]
+  additionToConclusion?: string
   accusedPleaDecision?: AccusedPleaDecision
   accusedPleaAnnouncement?: string
   litigationPresentations?: string

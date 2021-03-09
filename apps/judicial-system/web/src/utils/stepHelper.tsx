@@ -82,9 +82,9 @@ const getRejectingConclusion = (wc: Case) => {
   const isTravelBan = wc.type === CaseType.TRAVEL_BAN
 
   return (
-    <Text variant="intro">
+    <Text>
       {`Kröfu um að ${genderFormattedAccusedName}, `}
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text as="span" fontWeight="semiBold">
         {accusedNameAndNationalId}
       </Text>
       {`, sæti${isExtension ? ' áframhaldandi' : ''} ${
@@ -120,25 +120,23 @@ const getAcceptingConclusion = (wc: Case) => {
     wc.custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
 
   return (
-    <Text variant="intro">
+    <Text>
       {genderFormattedAccusedName},
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text as="span" fontWeight="semiBold">
         {` ${accusedNameAndNationalId}`}
       </Text>
-      <Text as="span" variant="intro">
+      <Text as="span">
         {`, skal sæta${isExtension ? ' áframhaldandi' : ''} ${
           isTravelBan ? 'farbanni' : 'gæsluvarðhaldi'
         }, þó ekki lengur en til`}
       </Text>
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text as="span" fontWeight="semiBold">
         {` ${formattedCustodyEndDateAndTime}.`}
       </Text>
       {accusedShouldBeInIsolation && (
         <>
-          <Text as="span" variant="intro">
-            {` ${genderFormattedAccusedName} skal `}
-          </Text>
-          <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+          <Text as="span">{` ${genderFormattedAccusedName} skal `}</Text>
+          <Text as="span" fontWeight="semiBold">
             sæta einangrun
           </Text>
           <Text as="span" variant="intro">
@@ -172,18 +170,16 @@ const getAcceptingAlternativeTravelBanConclusion = (wc: Case): JSX.Element => {
     ?.replace(' kl.', ', kl.')}`
 
   return (
-    <Text variant="intro">
+    <Text>
       {genderFormattedAccusedName},
       <Text
         as="span"
-        variant="intro"
-        color="blue400"
         fontWeight="semiBold"
       >{` ${accusedNameAndNationalId}`}</Text>
       {`, skal sæta${
         isExtension ? ' áframhaldandi' : ''
       } farbanni, þó ekki lengur en til`}
-      <Text as="span" variant="intro" color="blue400" fontWeight="semiBold">
+      <Text as="span" fontWeight="semiBold">
         {` ${formattedCustodyEndDateAndTime}.`}
       </Text>
     </Text>

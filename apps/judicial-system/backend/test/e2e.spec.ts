@@ -318,6 +318,11 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.otherRestrictions || null).toBe(
     caseTwo.otherRestrictions || null,
   )
+
+  expect(caseOne.additionToConclusion || null).toBe(
+    caseTwo.additionToConclusion || null,
+  )
+
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )

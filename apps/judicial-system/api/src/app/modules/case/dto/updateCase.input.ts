@@ -131,6 +131,10 @@ export class UpdateCaseInput implements UpdateCase {
   readonly courtDocuments?: string[]
 
   @Allow()
+  @Field({ nullable: true })
+  readonly additionToConclusion?: string
+
+  @Allow()
   @Field(() => String, { nullable: true })
   readonly accusedPleaDecision?: AccusedPleaDecision
 

@@ -115,10 +115,35 @@ export const RulingStepTwo: React.FC = () => {
                   Úrskurðarorð
                 </Text>
               </Box>
-              <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
-              <Text variant="h4" fontWeight="light">
-                Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
-              </Text>
+              <BlueBox>
+                <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
+                <Input
+                  name="additionToConclusion"
+                  label="Bæta texta við úrskurðarorð"
+                  placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
+                  defaultValue={workingCase?.additionToConclusion}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'additionToConclusion',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'additionToConclusion',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  rows={7}
+                  textarea
+                />
+              </BlueBox>
             </Box>
           </Box>
           <Box component="section" marginBottom={8}>

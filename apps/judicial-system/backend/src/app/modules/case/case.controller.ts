@@ -101,6 +101,7 @@ const judgeUpdateRule = {
     'accusedPleaAnnouncement',
     'litigationPresentations',
     'ruling',
+    'additionToConclusion',
     'decision',
     'custodyEndDate',
     'custodyRestrictions',
