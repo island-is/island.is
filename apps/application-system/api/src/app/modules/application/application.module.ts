@@ -13,7 +13,6 @@ import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 
 const XROAD_BASE_PATH_WITH_ENV = process.env.XROAD_BASE_PATH_WITH_ENV ?? ''
-
 // import { AuthModule } from '@island.is/auth-nest-tools'
 
 let BullModule: DynamicModule
@@ -51,7 +50,9 @@ if (process.env.INIT_SCHEMA === 'true') {
       baseApiUrl: environment.baseApiUrl,
     }),
     SequelizeModule.forFeature([Application]),
-    FileStorageModule,
+    FileStorageModule.register({
+      uploadBucket: environment.fileUploadService.uploadBucket
+    }),
     BullModule,
   ],
   controllers: [ApplicationController],

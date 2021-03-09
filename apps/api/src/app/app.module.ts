@@ -66,7 +66,9 @@ const autoSchemaFile = environment.production
       baseApiUrl: environment.applicationSystem.baseApiUrl,
     }),
     DirectorateOfLabourModule.register(),
-    FileUploadModule,
+    FileUploadModule.register({
+      uploadBucket: environment.fileUploadService.uploadBucket,
+    }),
     DocumentModule.register({
       basePath: environment.documentService.basePath,
       clientId: environment.documentService.clientId,

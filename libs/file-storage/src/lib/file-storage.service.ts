@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
-
-const uploadBucket = 'testing-islandis-sen' // TODO get from env and update to correct bucket
-
+import {
+  FileStorageConfig,
+  FILE_STORAGE_CONFIG,
+} from './config/fileStorageConfig'
 AWS.config.update({ region: 'eu-west-1' })
 
 @Injectable()
 export class FileStorageService {
+  constructor(
+    @Inject(FILE_STORAGE_CONFIG) private uploadConfig: FileStorageConfig,
+  ) {}
   private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
   generatePresignedPost(filename: string): Promise<AWS.S3.PresignedPost> {
@@ -15,7 +19,7 @@ export class FileStorageService {
     console.log('generatePresignedPost with id: ', `${filename}_${fileId}`)
 
     const params = {
-      Bucket: uploadBucket,
+      Bucket: this.uploadConfig.uploadBucket,
       Expires: 10000000, //time to expire in seconds, TODO select length
 
       Fields: {

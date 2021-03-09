@@ -26,4 +26,7 @@ export default {
     jwtSecret: 'supersecret',
   },
   fsS3Bucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+  fileUploadService: {
+    uploadBucket:  process.env.FILE_STORAGE_UPLOAD_BUCKET ?? 'testing-islandis-sen'
+  },
 }

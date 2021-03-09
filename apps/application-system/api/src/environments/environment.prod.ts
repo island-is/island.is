@@ -21,4 +21,7 @@ export default {
     jwtSecret: process.env.AUTH_JWT_SECRET,
   },
   fsS3Bucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
+  fileUploadService: {
+    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
+  },
 }
