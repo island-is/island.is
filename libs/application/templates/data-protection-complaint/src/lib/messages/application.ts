@@ -53,7 +53,7 @@ export const section = defineMessages({
   },
   organizationOrInstitution: {
     id: 'dpac.application:section.organizationOrInstitution',
-    defaultMessage: 'Upplýsingar um félagasamtök / stofnun',
+    defaultMessage: 'Félagasamtök / stofnun',
     description: 'Details about the organizationOrInstitution',
   },
   commissions: {
@@ -75,5 +75,23 @@ export const section = defineMessages({
     id: 'dpac.application:section.received',
     defaultMessage: 'Staðfesting',
     description: 'Application Received',
+  },
+})
+
+export const sharedFields = defineMessages({
+  moreInfoButtonLabel: {
+    id: 'dpac.application:sharedFields.moreInfoButtonLabel',
+    defaultMessage: 'Nánari upplýsingar hér',
+    description: 'More Info Button Label',
+  },
+  yes: {
+    id: 'dpac.application:sharedFields.yes',
+    defaultMessage: 'Já',
+    description: 'Used to give an affirmative response',
+  },
+  no: {
+    id: 'dpac.application:sharedFields.no',
+    defaultMessage: 'Nei',
+    description: 'Used to give a negative response',
   },
 })

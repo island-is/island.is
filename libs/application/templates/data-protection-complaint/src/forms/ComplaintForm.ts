@@ -10,17 +10,25 @@ import {
   buildCustomField,
   FormValue,
   buildSubSection,
+  buildFileUploadField,
 } from '@island.is/application/core'
-import { YES } from '../shared'
-import { section, delimitation, errorCards, info } from '../lib/messages'
+import { FILE_SIZE_LIMIT, YES } from '../shared'
+import {
+  section,
+  delimitation,
+  errorCards,
+  info,
+  application,
+  sharedFields,
+} from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
 
-const yesOption = { value: 'yes', label: 'Já' }
-const noOption = { value: 'no', label: 'Nei' }
+const yesOption = { value: 'yes', label: sharedFields.yes }
+const noOption = { value: 'no', label: sharedFields.no }
 
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
-  title: 'Atvinnuleysisbætur',
+  title: application.name,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -43,14 +51,22 @@ export const ComplaintForm: Form = buildForm({
                   largeButtons: true,
                   width: 'half',
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'inCourtProceedingsAlert',
-                  title: errorCards.inCourtProceedingsTitle,
-                  description: errorCards.inCourtProceedingsDescription,
-                  condition: (formValue) =>
-                    formValue.inCourtProceedings === YES,
-                }),
+                buildCustomField(
+                  {
+                    component: 'FieldAlertMessage',
+                    id: 'inCourtProceedingsAlert',
+                    title: errorCards.inCourtProceedingsTitle,
+                    description: errorCards.inCourtProceedingsDescription,
+                    // TODO: The application system is not passing props down to custom components
+                    // Use defaultValue as a workaround until that gets fixed
+                    defaultValue: 'https://example.com/',
+                    condition: (formValue) =>
+                      formValue.inCourtProceedings === YES,
+                  },
+                  {
+                    url: 'https://example.com/',
+                  },
+                ),
               ],
             }),
           ],
@@ -187,7 +203,7 @@ export const ComplaintForm: Form = buildForm({
           id: 'applicant',
           title: section.applicant.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
               onBehalf === OnBehalf.MYSELF ||
               onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
@@ -310,19 +326,32 @@ export const ComplaintForm: Form = buildForm({
           id: 'commissions',
           title: section.commissions.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
             return onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
           },
           children: [
             buildMultiField({
-              title: 'Umboð',
-              description: 'Lýsing',
+              id: 'comissionsSection',
+              title: info.general.commissionsPageTitle,
+              // TODO: We probably need a custom component for the description
+              // so we can include the document link
+              description: info.general.commissionsPageDescription,
               children: [
-                buildTextField({
-                  id: 'commissions.name',
-                  title: info.labels.name,
-                  backgroundColor: 'blue',
-                  width: 'half',
+                buildFileUploadField({
+                  id: 'commissions.documents',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: info.labels.commissionsDocumentsHeader,
+                  uploadDescription:
+                    info.labels.commissionsDocumentsDescription,
+                  uploadButtonLabel:
+                    info.labels.commissionsDocumentsButtonLabel,
+                }),
+                buildCustomField({
+                  id: 'commissions.persons',
+                  title: info.labels.commissionsPerson,
+                  component: 'CommissionFieldRepeater',
                 }),
               ],
             }),

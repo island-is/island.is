@@ -10,6 +10,12 @@ export enum OnBehalf {
   ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
 }
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string(),
+})
+
 export const DataProtectionComplaintSchema = z.object({
   inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
     message: error.inCourtProceedings.defaultMessage,
@@ -58,5 +64,18 @@ export const DataProtectionComplaintSchema = z.object({
     city: z.string().nonempty(),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
+  }),
+  commissions: z.object({
+    documents: z.array(FileSchema),
+    persons: z
+      .array(
+        z.object({
+          name: z.string().nonempty(),
+          nationalId: z
+            .string()
+            .refine((x) => (x ? kennitala.isPerson(x) : false)),
+        }),
+      )
+      .nonempty(),
   }),
 })
