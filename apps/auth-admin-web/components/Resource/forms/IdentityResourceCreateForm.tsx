@@ -24,8 +24,6 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     if (props.identityResource && props.identityResource.name) {
       setIsEditing(true)
       setAvailable(true)
-
-      console.log(props.identityResource)
     }
   }, [props.identityResource])
 
@@ -41,8 +39,6 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
 
   const save = async (data: IdentityResourceDTO) => {
     let response = null
-
-    console.log(data)
 
     if (!isEditing) {
       response = await ResourcesService.createIdentityResource(data)
