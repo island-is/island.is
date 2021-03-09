@@ -31,11 +31,7 @@ const DescriptionFormField: FC<{
             {' '}
             <Tooltip
               placement="top"
-              text={formatText(
-                field.tooltip,
-                application,
-                formatMessage,
-              )}
+              text={formatText(field.tooltip, application, formatMessage)}
             />
           </>
         )}
