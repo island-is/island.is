@@ -4,7 +4,7 @@ import { defineMessage } from 'react-intl'
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/service-portal/core'
-import { DegreeTable } from './components/DegreeTable'
+import { DegreeCards } from './components/DegreeCards'
 
 function EducationDegree(): JSX.Element {
   useNamespaces('sp.education-degree')
@@ -23,7 +23,7 @@ function EducationDegree(): JSX.Element {
         })}
         img="/assets/images/educationGrades.svg"
       />
-      <DegreeTable />
+      <DegreeCards />
     </Box>
   )
 }
