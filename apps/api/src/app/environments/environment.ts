@@ -72,8 +72,5 @@ export default {
     url: process.env.SYSLUMENN_HOST ?? '',
     username: process.env.SYSLUMENN_USERNAME ?? '',
     password: process.env.SYSLUMENN_PASSWORD ?? '',
-  },
-  fileUploadService: {
-    uploadBucket:  process.env.FILE_STORAGE_UPLOAD_BUCKET ?? 'testing-islandis'
   }
 }
