@@ -3,7 +3,7 @@ const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
   API_URL = 'http://localhost:3333',
-  API_PATH = '/app/skilavottord/api',
+  API_PATH = '/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
 } = process.env
 const graphqlPath = '/api/graphql'
@@ -24,18 +24,10 @@ module.exports = withTreat(
     publicRuntimeConfig: {
       // Will be available on both server and client
       apiUrl: `${WEB_PUBLIC_URL}${API_PATH}`,
-      graphqlEndpoint: `${API_PATH}${graphqlPath}`,
+      graphqlEndpoint: graphqlPath,
     },
     env: {
       API_MOCKS: process.env.API_MOCKS || '',
-    },
-    publicRuntimeConfig: {
-      // Will be available on both server and client
-      graphqlUrl: '',
-      graphqlEndpoint: graphqlPath,
-    },
-    devIndicators: {
-      autoPrerender: false,
     },
   }),
 )
