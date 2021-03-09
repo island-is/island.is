@@ -190,8 +190,8 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            paddingTop={[4, 4, 0]}
-            paddingBottom={[4, 4, 6]}
+            paddingTop={[0, 0, 0]}
+            paddingBottom={[2, 2, 6]}
             span={['12/12', '12/12', '12/12', '12/12', '6/12']}
           >
             <Select
@@ -210,7 +210,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
             />
           </GridColumn>
           <GridColumn
-            paddingTop={[4, 4, 0]}
+            paddingTop={[2, 2, 0]}
             paddingBottom={[4, 4, 6]}
             span={['12/12', '12/12', '12/12', '12/12', '6/12']}
           >
