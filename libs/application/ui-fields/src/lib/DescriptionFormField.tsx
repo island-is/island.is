@@ -22,9 +22,11 @@ const DescriptionFormField: FC<{
           {formatText(field.title, application, formatMessage)}
         </Text>
       )}
-      <Markdown>
-        {formatText(field.description, application, formatMessage)}
-      </Markdown>
+      <Text>
+        <Markdown>
+          {formatText(field.description, application, formatMessage)}
+        </Markdown>
+      </Text>
     </div>
   )
 }
