@@ -25,12 +25,11 @@ const textOverride = {
 
 const DescriptionText = ({ text, format }: Props) => {
   const { formatMessage } = useIntl()
+  const markdown = formatMessage(text, format)
+  const formattedMarkdown = markdown.replace(/&#39;/g, '&apos;')
   return (
     <Markdown
       options={{
-        namedCodesToUnicode: {
-          ['#39']: '\u0027',
-        },
         forceBlock: true,
         overrides: {
           p: textOverride,
@@ -48,7 +47,7 @@ const DescriptionText = ({ text, format }: Props) => {
         },
       }}
     >
-      {formatMessage(text, format)}
+      {formattedMarkdown}
     </Markdown>
   )
 }
