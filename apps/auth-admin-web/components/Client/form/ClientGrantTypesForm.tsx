@@ -4,7 +4,7 @@ import { GrantType } from '../../../entities/models/grant-type.model'
 import { ClientGrantTypeDTO } from '../../../entities/dtos/client-grant-type.dto'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
-import { GrantService } from '../../../services/GrantService'
+import { GrantTypeService } from '../../../services/GrantTypeService'
 
 interface Props {
   clientId: string
@@ -22,7 +22,7 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getGrantTypes = async () => {
-    const response = await GrantService.findAll()
+    const response = await GrantTypeService.findAll()
     if (response) {
       setGrantTypes(response)
     }
