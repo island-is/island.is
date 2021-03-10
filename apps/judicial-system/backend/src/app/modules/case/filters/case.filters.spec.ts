@@ -107,7 +107,7 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { prosecutor_id: { [Op.is]: null } }, // eslint-disable-line @typescript-eslint/camelcase
+            { prosecutor_id: { [Op.is]: null } },
             {
               '$prosecutor.institution_id$': 'Institution Id',
             },

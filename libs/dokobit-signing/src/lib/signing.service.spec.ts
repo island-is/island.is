@@ -21,7 +21,7 @@ const testDocumentContent = 'Test Document Content'
 const testSignUrl = `${testOptions.url}/mobile/sign.json?access_token=${testOptions.accessToken}`
 const testSignResponse = {
   status: 'ok',
-  control_code: 'Test Control Code', // eslint-disable-line @typescript-eslint/camelcase
+  control_code: 'Test Control Code',
   token: 'Test Document Token',
 }
 

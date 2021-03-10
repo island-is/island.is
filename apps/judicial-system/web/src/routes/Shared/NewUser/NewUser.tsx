@@ -35,9 +35,10 @@ export const NewUser: React.FC = () => {
     document.title = 'Nýr notandi - Réttarvörslugátt'
   }, [])
 
-  const { data: institutionData, loading: institutionLoading } = useQuery<
-    InstitutionData
-  >(InstitutionsQuery, {
+  const {
+    data: institutionData,
+    loading: institutionLoading,
+  } = useQuery<InstitutionData>(InstitutionsQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })

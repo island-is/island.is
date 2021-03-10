@@ -4,7 +4,7 @@ import {
   formatText,
   DescriptionField,
 } from '@island.is/application/core'
-import { Text } from '@island.is/island-ui/core'
+import { Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import Markdown from 'markdown-to-jsx'
 
@@ -22,9 +22,20 @@ const DescriptionFormField: FC<{
           {formatText(field.title, application, formatMessage)}
         </Text>
       )}
-      <Markdown>
-        {formatText(field.description, application, formatMessage)}
-      </Markdown>
+      <Text>
+        <Markdown>
+          {formatText(field.description, application, formatMessage)}
+        </Markdown>
+        {field.tooltip && (
+          <>
+            {' '}
+            <Tooltip
+              placement="top"
+              text={formatText(field.tooltip, application, formatMessage)}
+            />
+          </>
+        )}
+      </Text>
     </div>
   )
 }

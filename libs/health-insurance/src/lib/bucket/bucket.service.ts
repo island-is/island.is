@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import * as S3 from 'aws-sdk/clients/s3'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import AmazonS3URI from 'amazon-s3-uri'
 
 @Injectable()
 export class BucketService {
@@ -9,18 +10,16 @@ export class BucketService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   /* */
-  async getFileContentAsBase64(
-    filename: string,
-    bucketName: string,
-  ): Promise<string> {
+  async getFileContentAsBase64(filename: string): Promise<string> {
     this.logger.info('getFileContent base64...')
     try {
-      const sm = await this.getFile(filename, bucketName)
+      const { region, bucket, key } = AmazonS3URI(filename)
+      const sm = await this.getFile(key, bucket)
       if (sm.Body) {
-        this.logger.info('found file:' + filename)
+        this.logger.info('found file:' + key)
         return sm.Body.toString('base64')
       } else {
-        throw new Error('error getting file:' + filename)
+        throw new Error('error getting file:' + key)
       }
     } catch (error) {
       this.logger.error(error.message)

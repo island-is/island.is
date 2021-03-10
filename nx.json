@@ -1,5 +1,4 @@
 {
-  "npmScope": "island.is",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -9,6 +8,10 @@
     "nx.json": "*",
     "tsconfig.base.json": "*"
   },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -464,8 +467,5 @@
       "tags": [],
       "implicitDependencies": ["web"]
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   }
 }
