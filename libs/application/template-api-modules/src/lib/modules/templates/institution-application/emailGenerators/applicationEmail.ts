@@ -3,7 +3,8 @@ import get from 'lodash/get'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
-export interface nodemailAttachment {
+
+export interface NodemailAttachment {
   filename: string
   href: string
 }
@@ -34,10 +35,10 @@ export const generateApplicationEmail: ApplicationEmail = (
   const mailAttachments = attachments
     ? attachments.map(
         (attachment) =>
-          <nodemailAttachment>{
+          ({
             filename: get(attachment, 'name'),
             href: `${get(attachment, 'url')}/${get(attachment, 'key')}`,
-          },
+          } as NodemailAttachment),
       )
     : []
 
