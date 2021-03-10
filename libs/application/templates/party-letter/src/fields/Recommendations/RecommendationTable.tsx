@@ -27,10 +27,12 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
                   <Box
                     display="flex"
                     alignItems="center"
-                    justifyContent="spaceBetween"
+                    justifyContent="flexEnd"
                   >
                     {value}
-                    <Icon icon="warning" color="blue400" />
+                    <Box marginLeft={2}>
+                      <Icon icon="warning" color="blue400" />
+                    </Box>
                   </Box>
                 ) : (
                   value

@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text, Button } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
+import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
+import CopyLink from './CopyLink'
 import RecommendationTable from './RecommendationTable'
 
 const SIGNATURES = [
@@ -45,52 +45,57 @@ const SIGNATURES = [
   },
 ]
 
-// Todo look into if this exists as util somewhere..
-const copyToClipboard = (str: string) => {
-  const el = document.createElement('textarea')
-  el.value = str
-  el.setAttribute('readonly', '')
-  el.style.position = 'absolute'
-  el.style.opacity = '0'
-  document.body.appendChild(el)
-  el.select()
-  document.execCommand('copy')
-  document.body.removeChild(el)
-}
-
 const Recommendations: FC<FieldBaseProps> = ({ application }) => {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [signatures, setSignatures] = useState(SIGNATURES)
+  const [showWarning, setShowWarning] = useState(false)
+
   return (
     <Box marginBottom={8}>
-      <FieldDescription description={'Hér er hlekkur til að afrita'} />
-      <Box
-        background="blue100"
-        display="flex"
-        justifyContent="spaceBetween"
-        padding={3}
-        marginY={3}
-        borderRadius="large"
-      >
-        <Text variant="h5" color="blue400">
-          www.island.is/listabókstafur/128877634/
-        </Text>
-        <Box>
-          <Button
-            onClick={() =>
-              copyToClipboard('www.island.is/listabókstafur/128877634/')
-            }
-            type="button"
-            variant="text"
-          >
-            Afrita tengil
-          </Button>
-        </Box>
-      </Box>
+      <CopyLink
+        linkUrl="www.island.is/listabókstafur/128877634/"
+        fieldDescription="Hér er hlekkur til að senda út á fólk"
+      />
       <Text variant="h3">{`${SIGNATURES.length} nöfn á lista (300)`}</Text>
-      <Box marginTop={3}>
-        <RecommendationTable
-          application={application}
-          signatures={SIGNATURES}
-        />
+      <Box marginTop={2}>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={3}
+        >
+          <Checkbox
+            label="Sjá einungis vafaatkvæði"
+            checked={showWarning}
+            onChange={() => {
+              setShowWarning(!showWarning)
+              setSearchTerm('')
+              showWarning
+                ? setSignatures(SIGNATURES)
+                : setSignatures(signatures.filter((x) => x.hasWarning))
+            }}
+          />
+          <Input
+            name="flightLeg.from"
+            placeholder="Leitaðu hér"
+            icon="search"
+            backgroundColor="blue"
+            size="sm"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setSignatures(
+                SIGNATURES.filter((x) => x.name.startsWith(e.target.value)),
+              )
+            }}
+          />
+        </Box>
+        {signatures && signatures.length > 0 && (
+          <RecommendationTable
+            application={application}
+            signatures={signatures}
+          />
+        )}
       </Box>
     </Box>
   )
