@@ -348,7 +348,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
           : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
           ? `Kærði hafnar kröfunni. `
           : ''
-      } ${existingCase.accusedPleaAnnouncement}`,
+      }${existingCase.accusedPleaAnnouncement || ''}`,
       {
         lineGap: 6,
         paragraphGap: 0,
