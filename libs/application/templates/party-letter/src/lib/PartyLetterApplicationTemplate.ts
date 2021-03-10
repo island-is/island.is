@@ -8,7 +8,8 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'
-import { isCompany } from 'kennitala'
+import { isValid } from 'kennitala'
+import { answerValidators } from './answerValidators'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -20,7 +21,7 @@ enum Roles {
   SIGNATUREE = 'signaturee',
 }
 const dataSchema = z.object({
-  companyNationalId: z.string().refine((x) => (x ? isCompany(x) : false)),
+  selectKennitala: z.string().refine((x) => (x ? isValid(x) : false)),
   partyLetter: z.string().length(1),
   partyName: z.string(),
   signatures: z.array(z.string()),
@@ -121,6 +122,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     }
     return Roles.APPLICANT
   },
+  answerValidators,
 }
 
 export default PartyLetterApplicationTemplate

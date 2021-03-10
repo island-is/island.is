@@ -77,7 +77,7 @@ export const LetterApplicationForm: Form = buildForm({
       title: m.companySelection.defaultMessage,
       children: [
         buildRadioField({
-          id: 'selectKennitala',
+          id: 'partyNationalId',
           title: m.companySelection.defaultMessage,
           largeButtons: true,
           width: 'half',
@@ -90,8 +90,8 @@ export const LetterApplicationForm: Form = buildForm({
             return [
               {
                 label: nationalRegistry.fullName,
-                subLabel: nationalRegistry.nationalId,
-                value: nationalRegistry.nationalId,
+                subLabel: application.applicant,
+                value: application.applicant,
               },
               ...companies.map((company) => ({
                 label: company.Nafn,
