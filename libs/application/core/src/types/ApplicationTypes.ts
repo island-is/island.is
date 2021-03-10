@@ -25,5 +25,5 @@ export const ApplicationTranslations = {
   ChildrenResidenceChange: 'crc.application',
   DataProtectionAuthorityComplaint: 'dpac.application',
   PartyLetter: 'ple.application',
-  INSTITUTION_APPLICATION: 'ia.application',
+  InstitutionApplication: 'ia.application',
 }
