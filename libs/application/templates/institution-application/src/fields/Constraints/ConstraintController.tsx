@@ -17,7 +17,7 @@ const ConstraintController: FC<Props> = ({
   tooltip,
   defaultValue,
 }) => {
-  const { register, setValue, getValues } = useFormContext()
+  const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
   return (
     <Stack space={2}>

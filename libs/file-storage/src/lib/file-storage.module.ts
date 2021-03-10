@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { FileStorageService } from './file-storage.service'
 import {
   FILE_STORAGE_CONFIG,
