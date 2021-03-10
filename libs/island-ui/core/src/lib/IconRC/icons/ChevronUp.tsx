@@ -9,7 +9,7 @@ const SvgChevronUp = ({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="chevron-up_svg__ionicon"
+      className="ChevronUp_svg__ionicon"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
@@ -20,7 +20,7 @@ const SvgChevronUp = ({
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={48}
+        strokeWidth={32}
         d="M112 328l144-144 144 144"
       />
     </svg>

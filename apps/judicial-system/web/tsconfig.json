@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "preserve",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -12,12 +12,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
   "files": [],
-  "include": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
     {
       "path": "./tsconfig.spec.json"
     }

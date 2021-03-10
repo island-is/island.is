@@ -15,7 +15,7 @@ const HEALTH_INSURANCE_XROAD_WSDLURL =
   process.env.HEALTH_INSURANCE_XROAD_WSDLURL ??
   'https://test-huld.sjukra.is/islandrg?wsdl'
 const HEALTH_INSURANCE_XROAD_BASEURL =
-  process.env.XROAD_BASE_PATH_WITH_ENV ?? 'http://localhost:8080'
+  process.env.XROAD_BASE_PATH ?? 'http://localhost:8080'
 const HEALTH_INSURANCE_XROAD_USERNAME =
   process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? ''
 const HEALTH_INSURANCE_XROAD_PASSWORD =

@@ -170,6 +170,42 @@ describe('answerValidators', () => {
     })
   })
 
+  it('should return error if personal id is greater than 20', () => {
+    const newFormerInsuranceAnswers = {
+      registration: YES,
+      country: JSON.stringify({ name: 'Greenland' }),
+      personalId: '012345678901234567890',
+    }
+
+    expect(
+      answerValidators['formerInsurance'](
+        newFormerInsuranceAnswers,
+        baseApplication,
+      ),
+    ).toStrictEqual({
+      message: 'Should be at most 20 characters long',
+      path: 'formerInsurance.personalId',
+    })
+  })
+
+  it('should return error if personal id is less than 6', () => {
+    const newFormerInsuranceAnswers = {
+      registration: YES,
+      country: JSON.stringify({ name: 'Greenland' }),
+      personalId: '000',
+    }
+
+    expect(
+      answerValidators['formerInsurance'](
+        newFormerInsuranceAnswers,
+        baseApplication,
+      ),
+    ).toStrictEqual({
+      message: 'Should be at least 6 characters',
+      path: 'formerInsurance.personalId',
+    })
+  })
+
   it('should return error if moving from Greenland but not attached file', () => {
     const newFormerInsuranceAnswers = {
       registration: YES,
