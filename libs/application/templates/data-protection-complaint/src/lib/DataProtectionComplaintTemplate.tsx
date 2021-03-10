@@ -21,6 +21,10 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 
+export enum API_MODULE_ACTIONS {
+  sendApplication = 'sendApplication',
+}
+
 const DataProtectionComplaintTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<DataProtectionComplaintEvent>,
@@ -53,6 +57,14 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         on: {
           SUBMIT: {
             target: 'inReview',
+          },
+        },
+      },
+      inReview: {
+        meta: {
+          name: 'inReview',
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
           },
         },
       },

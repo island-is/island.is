@@ -10,6 +10,7 @@ import {
   buildCustomField,
   FormValue,
   buildSubSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import { YES } from '../shared'
 import { section, delimitation, errorCards, info } from '../lib/messages'
@@ -187,7 +188,7 @@ export const ComplaintForm: Form = buildForm({
           id: 'applicant',
           title: section.applicant.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
+            const onBehalf = (formValue.info as FormValue)?.onBehalf ?? ''
             return (
               onBehalf === OnBehalf.MYSELF ||
               onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
@@ -310,7 +311,7 @@ export const ComplaintForm: Form = buildForm({
           id: 'commissions',
           title: section.commissions.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
+            const onBehalf = (formValue.info as FormValue)?.onBehalf ?? ''
             return onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
           },
           children: [
@@ -339,6 +340,19 @@ export const ComplaintForm: Form = buildForm({
           title: 'Vel gert!',
           description:
             'Þú ert komin/n út á enda, ef þú ýtir á næsta skref þá læsist umsóknin',
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: 'Klára stuff',
+
+          actions: [
+            {
+              event: 'SUBMIT',
+              name: 'Klára stuff',
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),
