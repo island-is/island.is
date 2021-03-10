@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'application-system-api',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../../coverage/apps/application-system/api',
   setupFiles: ['./test/environment.jest.ts'],
   setupFilesAfterEnv: ['./test/setup.ts'],
@@ -10,4 +9,5 @@ module.exports = {
       tsConfig: '<rootDir>/tsconfig.spec.json',
     },
   },
+  displayName: 'application-system-api',
 }

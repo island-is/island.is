@@ -361,7 +361,7 @@ export class ResourcesService {
     identityResource: IdentityResourcesDTO,
   ): Promise<IdentityResource> {
     this.logger.debug('Creating a new identity resource')
-
+    console.log(identityResource)
     return await this.identityResourceModel.create({ ...identityResource })
   }
 
@@ -370,8 +370,9 @@ export class ResourcesService {
     identityResource: IdentityResourcesDTO,
     name: string,
   ): Promise<IdentityResource | null> {
+    console.log('NAME:' + name)
     this.logger.debug('Updating identity resource with name: ', name)
-
+    console.log(identityResource)
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }

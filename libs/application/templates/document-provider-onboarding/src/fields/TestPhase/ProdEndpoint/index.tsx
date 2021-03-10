@@ -38,7 +38,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
   )
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [prodEndPointExists, setprodEndPointExists] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     formValue.productionEndPointObject?.prodEndPointExists || '',
   )

@@ -8,13 +8,18 @@ describe('ChildrenResidenceChange', () => {
 
     const expectedReason = 'reason'
 
-    const expectedParentA: PersonResidenceChange = {
+    const expectedParentA: PersonResidenceChange & {
+      phoneNumber: string
+      email: string
+    } = {
       id: 'parent a ssn',
       name: 'parent a name',
       ssn: 'parent a ssn',
       postalCode: 'parent a postal code',
       address: 'parent a address',
       city: 'parent a city',
+      phoneNumber: '111-2222',
+      email: 'email@email.is',
     }
 
     const expectedParentB: PersonResidenceChange = {
@@ -41,6 +46,10 @@ describe('ChildrenResidenceChange', () => {
       selectDuration: expectedExpiry,
       residenceChangeReason: expectedReason,
       selectChild: [expectedChildrenAppliedFor[0].name],
+      parentA: {
+        phoneNumber: '111-2222',
+        email: 'email@email.is',
+      },
     }
 
     const externalData: FormValue = {

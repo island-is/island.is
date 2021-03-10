@@ -436,43 +436,43 @@ export class Client extends Model<Client> {
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  supportsDelegation?: boolean
+  supportsDelegation!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  supportsLegalGuardians?: boolean
+  supportsLegalGuardians!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  supportsProcuringHolders?: boolean
+  supportsProcuringHolders!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: false,
   })
   @ApiProperty({
     example: true,
   })
-  promptDelegations?: boolean
+  promptDelegations!: boolean
 
   @CreatedAt
   @ApiProperty()
