@@ -2,6 +2,41 @@ import { Case } from '../models'
 import { transformCase } from './case.transformer'
 
 describe('transformCase', () => {
+  describe('sendRequestToDefender', () => {
+    it('should set undefined to false', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.sendRequestToDefender).toBe(false)
+    })
+
+    it('should leave false unchanged', () => {
+      // Arrange
+      const theCase = { sendRequestToDefender: false } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.sendRequestToDefender).toBe(false)
+    })
+
+    it('should leave true unchanged', () => {
+      // Arrange
+      const theCase = { sendRequestToDefender: true } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.sendRequestToDefender).toBe(true)
+    })
+  })
+
   describe('isCourtDateInThePast', () => {
     it('should not set court date in the past if no court date', () => {
       // Arrange

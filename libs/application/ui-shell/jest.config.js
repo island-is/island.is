@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'application-ui-shell',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
     '^.+\\.svg$': 'jest-transform-stub',
@@ -9,4 +8,5 @@ module.exports = {
   coverageDirectory: '../../../coverage/libs/application/ui-shell',
   setupFilesAfterEnv: ['./jest.setup.ts'],
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  displayName: 'application-ui-shell',
 }

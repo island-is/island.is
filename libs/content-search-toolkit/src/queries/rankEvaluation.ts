@@ -32,10 +32,8 @@ export const rankEvaluationQuery = ({
     ],
     requests: Object.entries(termRatings).map(([searchTerm, ratings]) => ({
       id: searchTerm,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       template_id: 'search_query',
       params: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         query_string: searchTerm,
       },
       ratings,

@@ -113,6 +113,13 @@ export class Case extends Model<Case> {
   defenderEmail: string
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  sendRequestToDefender: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -211,6 +218,13 @@ export class Case extends Model<Case> {
   prosecutor: User
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  setCourtCaseNumberManually: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -265,6 +279,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   courtDocuments: string[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  additionToConclusion: string
 
   @Column({
     type: DataType.ENUM,
