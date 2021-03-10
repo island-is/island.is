@@ -13,12 +13,14 @@ const terms = z
   .length(3, error.validation.approveTerms.defaultMessage)
 
 export const dataSchema = z.object({
+  useMocks: z.enum(['yes', 'no']).optional(),
   approveExternalData: z.boolean().refine((v) => v, {
     message: error.validation.approveChildrenResidenceChange.defaultMessage,
   }),
   selectChild: z
     .array(z.string())
     .min(1, { message: error.validation.selectChild.defaultMessage }),
+  residenceChangeReason: z.string().optional(),
   parentA: parentContactInfo,
   parentB: parentContactInfo,
   approveTerms: terms,
@@ -32,7 +34,10 @@ export const dataSchema = z.object({
   //   .refine((v) => v, {
   //     message: 'Velja þarf valmöguleika',
   //   }),
+  selectDuration: z.array(z.string()),
   interview: z.enum(['yes', 'no']).refine((v) => v, {
     message: error.validation.interview.defaultMessage,
   }),
 })
+
+export type answersSchema = z.infer<typeof dataSchema>
