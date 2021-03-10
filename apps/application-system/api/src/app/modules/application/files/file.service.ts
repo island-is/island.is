@@ -7,21 +7,17 @@ import {
 import { generateResidenceChangePdf } from './utils/pdf'
 import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
-import { FormValue } from '@island.is/application/core'
 import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { BucketTypePrefix, DokobitFileName } from './utils/constants'
-import {
-  applicantData,
-  variablesForResidenceChange,
-} from './utils/childrenResidenceChange'
 import { AwsService } from './aws.service'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from '../application.configuration'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 
 @Injectable()
 export class FileService {
@@ -38,35 +34,11 @@ export class FileService {
   ): Promise<string | undefined> {
     this.validateApplicationType(application.typeId)
 
-    const answers = application.answers as FormValue
-    const externalData = application.externalData as FormValue
-
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const {
-          parentA,
-          parentB,
-          childrenAppliedFor,
-          expiry,
-          reason,
-        } = variablesForResidenceChange(answers, externalData)
-        const bucket = this.getBucketName()
-
-        const pdfBuffer = await generateResidenceChangePdf(
-          childrenAppliedFor,
-          parentA,
-          parentB,
-          expiry,
-          reason,
+        return await this.createChildrenResidencePdf(
+          application as CRCApplication,
         )
-
-        const fileName = `${
-          BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]
-        }/${application.id}.pdf`
-
-        await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
-
-        return this.awsService.getPresignedUrl(bucket, fileName)
       }
     }
   }
@@ -98,17 +70,14 @@ export class FileService {
   ): Promise<SigningServiceResponse> {
     this.validateApplicationType(application.typeId)
 
-    const answers = application.answers as FormValue
-    const externalData = application.externalData as FormValue
-
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const { phoneNumber, name } = applicantData(answers, externalData)
+        const crcApplication = application as CRCApplication
         return await this.handleChildrenResidenceChangeSignature(
           pdfType,
-          application.id,
-          name,
-          phoneNumber,
+          crcApplication.id,
+          crcApplication.externalData.nationalRegistry.data.fullName,
+          crcApplication.answers.phoneNumber,
         )
       }
     }
@@ -120,6 +89,38 @@ export class FileService {
     const bucket = this.getBucketName()
 
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
+
+    return this.awsService.getPresignedUrl(bucket, fileName)
+  }
+
+  private async createChildrenResidencePdf(application: CRCApplication) {
+    const bucket = this.getBucketName()
+
+    // TODO: Remove ternary for usemocks once we move mock data to externalData
+    const selectedChildren =
+      application.answers.useMocks === 'no'
+        ? application.externalData.childrenNationalRegistry.data.filter((c) =>
+            application.answers.selectChild.includes(c.name),
+          )
+        : application.answers.mockData.childrenNationalRegistry.data.filter(
+            (c) => application.answers.selectChild.includes(c.name),
+          )
+
+    const pdfBuffer = await generateResidenceChangePdf(
+      selectedChildren,
+      application.externalData.nationalRegistry.data,
+      application.answers.useMocks === 'no'
+        ? application.externalData.parentNationalRegistry.data
+        : application.answers.mockData.parentNationalRegistry.data,
+      application.answers.selectDuration,
+      application.answers.residenceChangeReason,
+    )
+
+    const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
+      application.id
+    }.pdf`
+
+    await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
 
     return this.awsService.getPresignedUrl(bucket, fileName)
   }

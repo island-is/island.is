@@ -66,6 +66,7 @@ describe('FileService', () => {
       created: new Date(),
       attachments: {},
       answers: answers ?? {
+        useMocks: 'no',
         email: parentA.email,
         selectChild: [child.name],
         phoneNumber: parentA.phoneNumber,
@@ -195,7 +196,7 @@ describe('FileService', () => {
   })
 
   it('should throw error for request file signature since phone number is missing', async () => {
-    const application = createApplication({})
+    const application = createApplication({ useMocks: 'no' })
 
     const act = async () =>
       await service.requestFileSignature(
