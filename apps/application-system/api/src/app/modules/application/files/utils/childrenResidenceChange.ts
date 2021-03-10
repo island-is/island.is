@@ -10,15 +10,15 @@ export function applicantData(answers: FormValue, externalData: FormValue) {
     id: nationalRegistryData.nationalId,
     name: nationalRegistryData.fullName,
     ssn: nationalRegistryData.nationalId,
-    phoneNumber: answers.phoneNumber as string,
-    email: answers.email as string,
+    phoneNumber: (answers.parentA as FormValue).phoneNumber as string,
+    email: (answers.parentA as FormValue).email as string,
     address: nationalRegistryData.address?.streetAddress as string,
     postalCode: nationalRegistryData.address?.postalCode as string,
     city: nationalRegistryData.address?.city as string,
   }
 }
 
-const dataToUse = ({
+export const dataToUse = ({
   answers,
   externalData,
   key,
