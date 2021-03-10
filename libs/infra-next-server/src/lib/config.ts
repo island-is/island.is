@@ -10,7 +10,7 @@ export const getNextConfig = (appDir: string, dev: boolean) => {
       fileReplacements: [],
     }
     const context = {
-      workspaceRoot: process.cwd(),
+      root: process.cwd(),
     }
 
     // UPGRADE WARNING: Calling @nrwl/next internals. Be sure to test.

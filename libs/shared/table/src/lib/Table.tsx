@@ -104,16 +104,16 @@ export const Table = <T extends object>(
   }
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - 'CSSProperties | undefined' is not assignable to type 'React.CSSProperties | undefined' ?
     <table {...getTableProps()} className={styles.table}>
       <thead className={styles.header}>
         {headerGroups.map((headerGroup) => (
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore - Same as above
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore - Same as above
               <th {...column.getHeaderProps()}>
                 <Text variant="h5">{column.render('Header')}</Text>
@@ -122,7 +122,7 @@ export const Table = <T extends object>(
           </tr>
         ))}
       </thead>
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-ignore */}
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
       {/* @ts-ignore - Same as above */}
       <tbody {...getTableBodyProps()}>
         {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||

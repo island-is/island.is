@@ -14,7 +14,7 @@ import {
   RadioController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import { useDefaultValue } from '../useDefaultValue'
+import { getDefaultValue } from '../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -71,7 +71,7 @@ const RadioFormField: FC<Props> = ({
           name={id}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
-            useDefaultValue(field, application)
+            getDefaultValue(field, application)
           }
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,

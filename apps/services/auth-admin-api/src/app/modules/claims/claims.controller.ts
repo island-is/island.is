@@ -4,7 +4,6 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-// @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('claims')
 @Controller('backend')

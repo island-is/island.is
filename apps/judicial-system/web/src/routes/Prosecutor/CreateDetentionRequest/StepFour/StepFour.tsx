@@ -32,9 +32,10 @@ export const StepFour: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] = useState<
-    string
-  >('')
+  const [
+    legalArgumentsErrorMessage,
+    setLegalArgumentsErrorMessage,
+  ] = useState<string>('')
 
   const router = useRouter()
   const id = router.query.id
