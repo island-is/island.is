@@ -30,12 +30,7 @@ import {
   getExpectedDateOfBirth,
   getOtherParentOptions,
 } from '../../parentalLeaveUtils'
-import {
-  PensionFundsQuery,
-  Period,
-  PrivatePensionFundsQuery,
-  UnionQuery,
-} from '../../types'
+
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
@@ -46,6 +41,11 @@ import {
   GetPrivatePensionFunds,
   GetUnions,
 } from '../../graphql/queries'
+import {
+  GetPensionFundsQuery,
+  GetPrivatePensionFundsQuery,
+  GetUnionsQuery,
+} from '../../types/schema'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
@@ -89,25 +89,27 @@ const Review: FC<ReviewScreenProps> = ({
     [application],
   )
 
-  const { data: pensionFundData } = useQuery<PensionFundsQuery>(GetPensionFunds)
-  const pensionFundOptions =
-    pensionFundData?.getPensionFunds.map(({ id, name }) => ({
-      label: name,
-      value: id,
-    })) ?? []
-
-  const { data: privatePensionFundData } = useQuery<PrivatePensionFundsQuery>(
-    GetPrivatePensionFunds,
+  const { data: pensionFundData } = useQuery<GetPensionFundsQuery>(
+    GetPensionFunds,
   )
-  const privatePensionFundOptions =
-    privatePensionFundData?.getPrivatePensionFunds.map(({ id, name }) => ({
+  const pensionFundOptions =
+    pensionFundData?.getPensionFunds?.map(({ id, name }) => ({
       label: name,
       value: id,
     })) ?? []
 
-  const { data: unionData } = useQuery<UnionQuery>(GetUnions)
+  const { data: privatePensionFundData } = useQuery<
+    GetPrivatePensionFundsQuery
+  >(GetPrivatePensionFunds)
+  const privatePensionFundOptions =
+    privatePensionFundData?.getPrivatePensionFunds?.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    })) ?? []
+
+  const { data: unionData } = useQuery<GetUnionsQuery>(GetUnions)
   const unionOptions =
-    unionData?.getUnions.map(({ id, name }) => ({
+    unionData?.getUnions?.map(({ id, name }) => ({
       label: name,
       value: id,
     })) ?? []

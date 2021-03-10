@@ -34,10 +34,10 @@ import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
 import {
-  UnionQuery,
-  PensionFundsQuery,
-  PrivatePensionFundsQuery,
-} from '../types'
+  GetPensionFundsQuery,
+  GetPrivatePensionFundsQuery,
+  GetUnionsQuery,
+} from '../types/schema'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -211,13 +211,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<
-                      PensionFundsQuery
+                      GetPensionFundsQuery
                     >({
                       query: GetPensionFunds,
                     })
 
                     return (
-                      data?.getPensionFunds.map(({ id, name }) => ({
+                      data?.getPensionFunds?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
@@ -230,12 +230,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<UnionQuery>({
+                    const { data } = await apolloClient.query<GetUnionsQuery>({
                       query: GetUnions,
                     })
 
                     return (
-                      data?.getUnions.map(({ id, name }) => ({
+                      data?.getUnions?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
@@ -270,13 +270,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
                     const { data } = await apolloClient.query<
-                      PrivatePensionFundsQuery
+                      GetPrivatePensionFundsQuery
                     >({
                       query: GetPrivatePensionFunds,
                     })
 
                     return (
-                      data?.getPrivatePensionFunds.map(({ id, name }) => ({
+                      data?.getPrivatePensionFunds?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
