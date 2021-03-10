@@ -18,7 +18,6 @@ import {
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
-  ApiOAuth2,
   ApiOkResponse,
   ApiQuery,
   ApiTags,
@@ -28,7 +27,6 @@ import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 import { FullAdminAccessGuard } from './full-admin-access-guard'
 
-// @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('admin-access')
 @Controller('backend/admin-access')
