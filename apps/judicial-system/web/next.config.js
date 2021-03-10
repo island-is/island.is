@@ -6,7 +6,7 @@ const {
   WEB_PUBLIC_URL = 'http://localhost:4200',
 } = process.env
 
-const apiPath = '/api',
+const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 
 module.exports = withTreat(
