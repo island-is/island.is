@@ -8,6 +8,7 @@ export enum ApplicationTypes {
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
+  DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   PARTY_LETTER = 'PartyLetter',
 }
 
@@ -21,5 +22,6 @@ export const ApplicationTranslations = {
   DocumentProviderOnboarding: 'dpo.application',
   HealthInsurance: 'hi.application',
   ChildrenResidenceChange: 'crc.application',
+  DataProtectionAuthorityComplaint: 'dpac.application',
   PartyLetter: 'ple.application',
 }

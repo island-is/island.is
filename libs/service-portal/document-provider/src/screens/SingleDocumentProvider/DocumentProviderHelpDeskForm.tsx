@@ -19,11 +19,13 @@ import {
 interface Props {
   helpDesk?: Helpdesk | null
   organisationId: string
+  organisationNationalId: string
 }
 
 export const DocumentProviderHelpDeskForm: FC<Props> = ({
   helpDesk,
   organisationId,
+  organisationNationalId,
 }) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
@@ -32,6 +34,7 @@ export const DocumentProviderHelpDeskForm: FC<Props> = ({
   )
   const { createHelpDesk, loading: loadingCreate } = useCreateHelpDesk(
     organisationId,
+    organisationNationalId,
   )
 
   const onSubmit = (data: { helpDesk: Helpdesk }) => {

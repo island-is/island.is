@@ -139,7 +139,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const putResponse = await server
-      .put(`/application/${response.body.id}`)
+      .put(`/applications/${response.body.id}`)
       .send({
         answers: {
           careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
@@ -168,14 +168,14 @@ describe('Application system API', () => {
       .expect(201)
 
     const newStateResponse = await server
-      .put(`/application/${response.body.id}/submit`)
+      .put(`/applications/${response.body.id}/submit`)
       .send({ event: 'SUBMIT' })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('inReview')
 
     const failedResponse = await server
-      .put(`/application/${response.body.id}`)
+      .put(`/applications/${response.body.id}`)
       .send({
         answers: {
           dreamJob: 'firefighter',
@@ -205,7 +205,7 @@ describe('Application system API', () => {
       .expect(201)
 
     const newStateResponse = await server
-      .put(`/application/${response.body.id}/submit`)
+      .put(`/applications/${response.body.id}/submit`)
       .send({
         event: 'SUBMIT',
         answers: {
@@ -238,14 +238,14 @@ describe('Application system API', () => {
       .expect(201)
 
     await server
-      .put(`/application/${response.body.id}/submit`)
+      .put(`/applications/${response.body.id}/submit`)
       .send({
         event: 'SUBMIT',
       })
       .expect(200)
 
     const finalStateResponse = await server
-      .put(`/application/${response.body.id}/submit`)
+      .put(`/applications/${response.body.id}/submit`)
       .send({
         event: 'APPROVE',
         answers: {
@@ -278,14 +278,14 @@ describe('Application system API', () => {
       .expect(201)
 
     const newStateResponse = await server
-      .put(`/application/${response.body.id}/submit`)
+      .put(`/applications/${response.body.id}/submit`)
       .send({ event: 'SUBMIT' })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('inReview')
 
     const failedResponse = await server
-      .put(`/application/${response.body.id}/externalData`)
+      .put(`/applications/${response.body.id}/externalData`)
       .send({
         dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
       })
@@ -298,7 +298,7 @@ describe('Application system API', () => {
 
   it('should fail when PUT-ing an application that does not exist', async () => {
     const response = await server
-      .put('/application/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
+      .put('/applications/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
       .send({
         applicant: nationalId,
         attachments: {},
@@ -332,7 +332,7 @@ describe('Application system API', () => {
 
     const { id } = response.body
     const putResponse = await server
-      .put(`/application/${id}`)
+      .put(`/applications/${id}`)
       .send({
         answers: {
           usage: 1,
@@ -346,7 +346,7 @@ describe('Application system API', () => {
     expect(putResponse.body.answers.spread).toBe(22)
   })
 
-  it('PUT /application/:id should not be able to overwrite external data', async () => {
+  it('PUT /applications/:id should not be able to overwrite external data', async () => {
     const response = await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
@@ -360,7 +360,7 @@ describe('Application system API', () => {
 
     const { id } = response.body
     const putResponse = await server
-      .put(`/application/${id}`)
+      .put(`/applications/${id}`)
       .send({
         externalData: {
           test: { asdf: 'asdf' },
@@ -420,7 +420,7 @@ describe('Application system API', () => {
     )
   })
 
-  it('PUT application/:id/createPdf should return a presigned url', async () => {
+  it('PUT applications/:id/createPdf should return a presigned url', async () => {
     const expectPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
@@ -441,7 +441,7 @@ describe('Application system API', () => {
     })
 
     const res = await server
-      .put(`/application/${postResponse.body.id}/createPdf`)
+      .put(`/applications/${postResponse.body.id}/createPdf`)
       .send({
         type: type,
       })
@@ -451,7 +451,7 @@ describe('Application system API', () => {
     expect(res.body).toEqual({ url: 'presignedurl' })
   })
 
-  it('PUT application/:id/requestFileSignature should return a documentToken and controlCode', async () => {
+  it('PUT applications/:id/requestFileSignature should return a documentToken and controlCode', async () => {
     const expectedControlCode = '0000'
     const expectedDocumentToken = 'token'
     const type = 'ChildrenResidenceChange'
@@ -476,7 +476,7 @@ describe('Application system API', () => {
     })
 
     const res = await server
-      .put(`/application/${postResponse.body.id}/requestFileSignature`)
+      .put(`/applications/${postResponse.body.id}/requestFileSignature`)
       .send({
         type: type,
       })
@@ -489,7 +489,7 @@ describe('Application system API', () => {
     })
   })
 
-  it('GET application/:id/presignedUrl should return a presigned url', async () => {
+  it('GET applications/:id/presignedUrl should return a presigned url', async () => {
     const expectedPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
@@ -510,7 +510,7 @@ describe('Application system API', () => {
     })
 
     const res = await server
-      .get(`/application/${postResponse.body.id}/${type}/presignedUrl`)
+      .get(`/applications/${postResponse.body.id}/${type}/presignedUrl`)
       .send({
         type: type,
       })
@@ -520,7 +520,7 @@ describe('Application system API', () => {
     expect(res.body).toEqual({ url: expectedPresignedUrl })
   })
 
-  it('PUT application/:id/uploadSignedFile should return that document has been signed', async () => {
+  it('PUT applications/:id/uploadSignedFile should return that document has been signed', async () => {
     const type = 'ChildrenResidenceChange'
     const fileService: FileService = app.get<FileService>(FileService)
     jest
@@ -539,7 +539,7 @@ describe('Application system API', () => {
     })
 
     const res = await server
-      .put(`/application/${postResponse.body.id}/uploadSignedFile`)
+      .put(`/applications/${postResponse.body.id}/uploadSignedFile`)
       .send({
         type: type,
         documentToken: '0000',

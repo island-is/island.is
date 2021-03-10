@@ -1,5 +1,5 @@
 const { stat, writeFile } = require('fs')
-const { exec } = require('child_process')
+const { spawn } = require('child_process')
 const { promisify } = require('util')
 
 /**
@@ -25,6 +25,21 @@ const TARGETS = [
   'schemas/codegen', // Output clients schemas (*.d.ts) based on codegen.yml
 ]
 
+const exec = (command) => {
+  return new Promise((resolve, reject) => {
+    const cmd = spawn(command, { stdio: 'inherit', shell: true })
+    cmd.on('exit', (exitCode) => {
+      if (exitCode === 0) {
+        resolve()
+      } else {
+        const error = new Error('Command exited with non-zero exit code.')
+        error.code = exitCode
+        reject(error)
+      }
+    })
+  })
+}
+
 const fileExists = async (path) =>
   !!(await promisify(stat)(path).catch((_) => false))
 
@@ -39,18 +54,14 @@ const main = async () => {
     console.log(`--> Running command for ${target}\n`)
 
     try {
-      await promisify(exec)(
+      await exec(
         `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6 ${
           skipCache ? '--skip-nx-cache' : ''
         }`,
       )
-        .then((res) => console.log(res.stdout))
-        .catch((err) => {
-          throw new Error(err.stdout)
-        })
     } catch (err) {
-      console.error(`Error while running generate-schemas: ${err}`)
-      process.exit(err.code)
+      console.error(`Error running command: ${err.message}`)
+      process.exit(err.code || 1)
     }
   }
 }

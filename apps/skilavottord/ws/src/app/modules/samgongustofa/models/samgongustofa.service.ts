@@ -17,9 +17,7 @@ export class SamgongustofaService {
 
   async getVehicleInformation(nationalId: string) {
     try {
-      this.logger.info(
-        `---- Starting getVehicleInformation call on ${nationalId} ----`,
-      )
+      this.logger.info('Starting getVehicleInformation call on ${nationalId}')
       const { soapUrl, soapUsername, soapPassword } = environment.samgongustofa
 
       const parser = new xml2js.Parser()

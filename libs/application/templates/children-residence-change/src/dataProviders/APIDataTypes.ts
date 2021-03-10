@@ -7,7 +7,9 @@ export interface PersonResidenceChange {
   city: string
 }
 
-export interface ParentResidenceChange extends PersonResidenceChange {
-  phoneNumber?: string
-  email?: string
+export interface UserInfo {
+  email: string
+  emailVerified: boolean
+  mobilePhoneNumber: string
+  mobilePhoneNumberVerified: boolean
 }

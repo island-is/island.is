@@ -8,6 +8,7 @@ import {
 } from './soap'
 import { VistaSkjalInput } from './types'
 import { VistaSkjalModel } from './graphql/models'
+import { BucketService } from './bucket/bucket.service'
 
 describe('healthInsurance', () => {
   it('should work', () => {
@@ -22,6 +23,8 @@ describe('healthInsuranceTest', () => {
     password: '',
     username: '',
     wsdlUrl: '',
+    clientID: '',
+    xroadID: '',
   }
 
   beforeEach(async () => {
@@ -36,7 +39,7 @@ describe('healthInsuranceTest', () => {
           provide: HEALTH_INSURANCE_CONFIG,
           useValue: config,
         },
-        // BucketService,
+        BucketService,
       ],
     }).compile()
     hapi = moduleRef.get<HealthInsuranceAPI>(HealthInsuranceAPI)
@@ -62,8 +65,10 @@ describe('healthInsuranceTest', () => {
       previousCountryCode: 'VN',
       previousIssuingInstitution: 'The gioi',
       isHealthInsuredInPreviousCountry: 0,
+      hasHealthInsuranceRightInPreviousCountry: 0,
     }
     const appNumber = 570
+    const bucketName = ''
     it('apply Health Insurance application tjekk', async () => {
       /*eslint-disable */
       const res = {
@@ -81,9 +86,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
+      ).toStrictEqual(vistaskjal)
     })
     it('apply Health Insurance application return true with comment', async () => {
       /*eslint-disable */
@@ -103,9 +108,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
+      ).toStrictEqual(vistaskjal)
     })
 
     it('should normalize thrown errors', async () => {
@@ -114,7 +119,7 @@ describe('healthInsuranceTest', () => {
       })
 
       expect(async () => {
-        await hapi.applyInsurance(570, inputs)
+        await hapi.applyInsurance(570, bucketName, [], inputs)
       }).rejects.toThrowError('Some unexpected error')
     })
 
@@ -142,9 +147,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
+      ).toStrictEqual(vistaskjal)
     })
 
     it('apply Health Insurance application return false', async () => {
@@ -163,9 +168,9 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
-        vistaskjal,
-      )
+      expect(
+        await hapi.applyInsurance(appNumber, bucketName, [], inputs),
+      ).toStrictEqual(vistaskjal)
     })
   })
 })

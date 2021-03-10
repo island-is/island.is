@@ -3,13 +3,13 @@ import React, { useEffect } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
 import { Institution, User } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
-import { useHistory, useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   InstitutionsQuery,
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
+import { useRouter } from 'next/router'
 import UserForm from '../UserForm/UserForm'
 
 interface UserData {
@@ -25,9 +25,8 @@ interface InstitutionData {
 }
 
 export const ChangeUser: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
-
-  const history = useHistory()
+  const router = useRouter()
+  const id = router.query.id
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UserQuery,
@@ -71,7 +70,7 @@ export const ChangeUser: React.FC = () => {
       })
     }
 
-    history.push(Constants.USER_LIST_ROUTE)
+    router.push(Constants.USER_LIST_ROUTE)
   }
 
   return (

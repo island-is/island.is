@@ -24,6 +24,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseState,
   CaseTransition,
   User,
   UserRole,
@@ -66,6 +67,7 @@ const prosecutorUpdateRule = {
     'accusedGender',
     'defenderName',
     'defenderEmail',
+    'sendRequestToDefender',
     'court',
     'arrestDate',
     'requestedCourtDate',
@@ -101,6 +103,7 @@ const judgeUpdateRule = {
     'accusedPleaAnnouncement',
     'litigationPresentations',
     'ruling',
+    'additionToConclusion',
     'decision',
     'custodyEndDate',
     'custodyRestrictions',
@@ -281,10 +284,16 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, existingCase.state)
 
-    const {
-      numberOfAffectedRows,
-      updatedCase,
-    } = await this.caseService.update(id, { state } as UpdateCaseDto)
+    const update = { state }
+
+    if (state === CaseState.DELETED) {
+      update['parentCaseId'] = null
+    }
+
+    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
+      id,
+      update as UpdateCaseDto,
+    )
 
     if (numberOfAffectedRows === 0) {
       throw new ConflictException(

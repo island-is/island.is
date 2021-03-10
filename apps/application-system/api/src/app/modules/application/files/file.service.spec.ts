@@ -44,6 +44,17 @@ describe('FileService', () => {
     email: 'email2@email2.is',
   }
 
+  const child = {
+    id: 'id',
+    name: 'child',
+    ssn: '123456-7890',
+    postalCode: '101',
+    address: 'Borgartún',
+    city: 'Reykjavík',
+    phoneNumber: '222-3333',
+    email: 'email3@email3.is',
+  }
+
   const createApplication = (answers?: object, typeId?: string) =>
     (({
       id: applicationId,
@@ -56,6 +67,7 @@ describe('FileService', () => {
       attachments: {},
       answers: answers ?? {
         email: parentA.email,
+        selectChild: [child.name],
         phoneNumber: parentA.phoneNumber,
         parentB: {
           email: parentB.email,
@@ -71,6 +83,11 @@ describe('FileService', () => {
         },
         nationalRegistry: {
           data: { ...parentA },
+          status: 'success',
+          date: new Date(),
+        },
+        childrenNationalRegistry: {
+          data: [child],
           status: 'success',
           date: new Date(),
         },

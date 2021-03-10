@@ -21,6 +21,9 @@ export const logoContainer = style({
 export const detentionRequestsTable = style({
   gridRow: '3',
   gridColumn: '1 / -1',
+  borderSpacing: 0,
+  borderCollapse: 'collapse',
+  overflow: 'hidden',
 
   // Needed for Safari.
   width: '100%',
@@ -34,6 +37,7 @@ export const detentionRequestsError = style({
 export const thead = style({
   background: theme.color.blue100,
   boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
+  textAlign: 'left',
 })
 
 export const deleteButtonContainer = style({

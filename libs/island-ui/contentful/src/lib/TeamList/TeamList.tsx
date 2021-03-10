@@ -20,7 +20,7 @@ export const TeamList: FC<TeamListProps> = ({ teamMembers }) => {
             <ProfileCard
               title={member.name}
               description={member.title}
-              image={member.image.url}
+              image={`${member.image.url}?w=400`}
               heightFull
             />
           </Box>

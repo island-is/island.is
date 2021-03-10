@@ -23,12 +23,11 @@ import {
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -49,11 +48,13 @@ import {
   NounCases,
 } from '@island.is/judicial-system/formatters'
 import { getConclusion } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { useRouter } from 'next/router'
 
 export const RulingStepTwo: React.FC = () => {
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { id } = useParams<{ id: string }>()
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
@@ -108,16 +109,41 @@ export const RulingStepTwo: React.FC = () => {
             <CaseNumbers workingCase={workingCase} />
           </Box>
           <Box component="section" marginBottom={8}>
-            <Box marginBottom={10}>
+            <Box marginBottom={6}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   Úrskurðarorð
                 </Text>
               </Box>
-              <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
-              <Text variant="h4" fontWeight="light">
-                Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.
-              </Text>
+              <BlueBox>
+                <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
+                <Input
+                  name="additionToConclusion"
+                  label="Bæta texta við úrskurðarorð"
+                  placeholder="Hér er hægt að bæta texta við úrskurðarorð eftir þörfum"
+                  defaultValue={workingCase?.additionToConclusion}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'additionToConclusion',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'additionToConclusion',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  rows={7}
+                  textarea
+                />
+              </BlueBox>
             </Box>
           </Box>
           <Box component="section" marginBottom={8}>

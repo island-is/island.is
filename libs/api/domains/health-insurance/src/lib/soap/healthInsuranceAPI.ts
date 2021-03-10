@@ -15,9 +15,8 @@ import {
   Fylgiskjal,
   Fylgiskjol,
 } from './dto'
-import { SoapClient } from './soapClient'
+import { SoapClient, VistaSkjalInput } from '@island.is/health-insurance'
 import { VistaSkjalModel } from '../graphql/models'
-import { VistaSkjalInput } from '../types'
 import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
@@ -27,6 +26,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -131,7 +132,7 @@ export class HealthInsuranceAPI {
     const vistaSkjalBody: GetVistaSkjalBody = {
       sjukratryggingumsokn: {
         einstaklingur: {
-          kennitala: '0101671089', //nationalId,
+          kennitala: nationalId,
           erlendkennitala: inputObj.foreignNationalId,
           nafn: inputObj.name,
           heimili: inputObj.address ?? '',
@@ -163,6 +164,8 @@ export class HealthInsuranceAPI {
         fyrrautgafulandkodi: inputObj.previousCountryCode,
         fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+        tryggingaretturfyrralandi:
+          inputObj.hasHealthInsuranceRightInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
     }
@@ -179,6 +182,8 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
+          // here is application-system id + filename
+          // TODO: need to fix
           innihald: await this.bucketService.getFileContentAsBase64(filename),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)
@@ -255,6 +260,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {
