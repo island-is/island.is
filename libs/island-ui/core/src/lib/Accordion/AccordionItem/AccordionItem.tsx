@@ -232,10 +232,9 @@ export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
   )
 }
 
-export const SidebarAccordion: FC<Omit<
-  AccordionItemBaseProps,
-  'labelVariant' | 'iconVariant'
->> = (props) => {
+export const SidebarAccordion: FC<
+  Omit<AccordionItemBaseProps, 'labelVariant' | 'iconVariant'>
+> = (props) => {
   return (
     <AccordionItem {...props} labelVariant="default" iconVariant="sidebar">
       {props.children}

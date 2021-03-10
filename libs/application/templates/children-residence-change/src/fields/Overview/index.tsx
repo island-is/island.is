@@ -142,6 +142,9 @@ const Overview = ({
 
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
+  // TODO: Look into if we want to do this in a different way - using the application state seems wrong
+  const contactInfoKey = application.state === 'draft' ? 'parentA' : 'parentB'
+
   return (
     <>
       <SignatureModal
@@ -182,13 +185,12 @@ const Overview = ({
         <Text variant="h4" marginBottom={2}>
           {formatMessage(m.contract.labels.contactInformation)}
         </Text>
-        {/* TODO: Make this the contact information for parent B also when we add that to the flow */}
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
-          {answers.email}
+          {answers[contactInfoKey].email}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers.phoneNumber}</Text>
+        <Text fontWeight="medium">{answers[contactInfoKey].phoneNumber}</Text>
       </Box>
       {answers.residenceChangeReason && (
         <Box marginTop={4}>
