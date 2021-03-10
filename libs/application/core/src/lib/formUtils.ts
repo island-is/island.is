@@ -50,7 +50,7 @@ export function getValueViaPath(
         .call(path, regexp)
         .filter(Boolean)
         .reduce(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           (res, key) => (res !== null && res !== undefined ? res[key] : res),
           obj,

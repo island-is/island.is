@@ -77,9 +77,10 @@ const Review: FC<ReviewScreenProps> = ({
     ) as ValidOtherParentAnswer,
   )
 
-  const [statefulPrivatePension, setStatefulPrivatePension] = useState<
-    ValidAnswers
-  >(
+  const [
+    statefulPrivatePension,
+    setStatefulPrivatePension,
+  ] = useState<ValidAnswers>(
     getValueViaPath(
       application.answers,
       'usePrivatePensionFund',

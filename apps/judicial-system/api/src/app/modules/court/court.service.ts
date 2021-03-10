@@ -59,13 +59,15 @@ export class CourtService {
   }
 
   async createCustodyCourtCase(policeCaseNumber: string): Promise<string> {
-    const courtCaseNumber = await this.wrappedRequest(() =>
-      this.createCustodyCaseApi.createCustodyCase({
-        basedOn: 'Rannsóknarhagsmunir',
-        sourceNumber: policeCaseNumber,
-        authenticationToken,
-      }),
-    )
+    const courtCaseNumber = environment.production
+      ? await this.wrappedRequest(() =>
+          this.createCustodyCaseApi.createCustodyCase({
+            basedOn: 'Rannsóknarhagsmunir',
+            sourceNumber: policeCaseNumber,
+            authenticationToken,
+          }),
+        )
+      : 'R-1337/2021'
 
     return stripResult(courtCaseNumber)
   }

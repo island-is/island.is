@@ -46,9 +46,10 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
       value: x.environment,
     }
   })
-  const [selectedEnviromentOption, setSelectedEnviromentOption] = useState<
-    Option
-  >(enviromentOptions[0])
+  const [
+    selectedEnviromentOption,
+    setSelectedEnviromentOption,
+  ] = useState<Option>(enviromentOptions[0])
 
   const [versionOptions, setVersionOptions] = useState<Option[]>(
     service.environments[0].details.map((x) => {
