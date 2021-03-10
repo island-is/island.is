@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-// Confirmation
 export const delimitation = {
   general: defineMessages({
     pageTitle: {
