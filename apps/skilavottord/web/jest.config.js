@@ -1,8 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  name: 'skilavottord-web',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
     '^.+\\.[tj]sx?$': 'ts-jest',
@@ -13,4 +12,5 @@ module.exports = {
   },
   coverageDirectory: '../../../coverage/apps/skilavottord/web',
   globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  displayName: 'skilavottord-web',
 }

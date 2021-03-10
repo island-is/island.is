@@ -4,7 +4,7 @@ import { Resolver } from 'react-hook-form'
 import { ResolverContext } from '../types'
 
 // TODO type this properly
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const resolver: Resolver<FormValue, ResolverContext> = (
   formValue,
