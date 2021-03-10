@@ -31,10 +31,12 @@ Prerequisites
 - Add `aws_access_key_id`, `aws_secret_access_key` and `aws_session_token` from `island-is-development01` to your AWS credentials file `~/.aws/credentials`
 
 2. Make sure the following environment variables are set:
-  ```bash
-  SOFFIA_PASS
-  SOFFIA_USER
-  ```
+
+```bash
+SOFFIA_PASS
+SOFFIA_USER
+```
+
 - A good way to get environment variables is to run `yarn get-secrets service-portal`
 
 3. Get kubeconfig
@@ -49,11 +51,12 @@ Prerequisites
 ### Current user companies provider
 
 Make sure the following environment variable is set
+
 ```bash
 RSK_API_PASSWORD
 ```
-- A good way to get environment variables is to run `yarn get-secrets service-portal`
 
+- A good way to get environment variables is to run `yarn get-secrets service-portal`
 
 ## Code owners and maintainers
 
