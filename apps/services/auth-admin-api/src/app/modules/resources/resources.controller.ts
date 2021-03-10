@@ -28,7 +28,6 @@ import {
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
-  ApiOAuth2,
   ApiOkResponse,
   ApiQuery,
   ApiTags,
@@ -37,7 +36,6 @@ import {
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-// @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('resources')
 @Controller('backend')
