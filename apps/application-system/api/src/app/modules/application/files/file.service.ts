@@ -18,6 +18,7 @@ import {
   ApplicationConfig,
 } from '../application.configuration'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { User } from '@island.is/api/domains/national-registry'
 
 @Injectable()
 export class FileService {
@@ -108,7 +109,7 @@ export class FileService {
 
     const pdfBuffer = await generateResidenceChangePdf(
       selectedChildren,
-      application.externalData.nationalRegistry.data,
+      (application.externalData.nationalRegistry.data as unknown) as User,
       application.answers.useMocks === 'no'
         ? application.externalData.parentNationalRegistry.data
         : application.answers.mockData.parentNationalRegistry.data,

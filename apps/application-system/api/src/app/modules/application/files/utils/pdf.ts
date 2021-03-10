@@ -3,11 +3,11 @@ import streamBuffers from 'stream-buffers'
 import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { User } from '@island.is/api/domains/national-registry'
 
 export async function generateResidenceChangePdf(
   childrenAppliedFor: Array<PersonResidenceChange>,
-  parentA: NationalRegistryUser,
+  parentA: User,
   parentB: PersonResidenceChange,
   expiry: Array<string>,
   reason?: string,
