@@ -104,6 +104,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly setCourtCaseNumberManually?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
   @Allow()
