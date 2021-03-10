@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'judicial-system-backend',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../../coverage/apps/judicial-system/backend',
   setupFiles: ['./test/environment.jest.ts'],
   setupFilesAfterEnv: ['./test/setup.ts'],
@@ -10,4 +9,5 @@ module.exports = {
       tsConfig: '<rootDir>/tsconfig.spec.json',
     },
   },
+  displayName: 'judicial-system-backend',
 }

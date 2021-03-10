@@ -1,15 +1,14 @@
 'use strict'
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      'UPDATE client SET supports_delegation = false, supports_legal_guardians = false, supports_procuring_holders = false, prompt_delegations = false',
-    )
+    return Promise.resolve([1])
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query(
-      'UPDATE client SET supports_delegation = null, supports_legal_guardians = null, supports_procuring_holders = null, prompt_delegations = null',
-    )
+    return Promise.resolve([1])
   },
 }
