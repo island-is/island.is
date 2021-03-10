@@ -105,6 +105,7 @@ export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
   readonly description: FormText
+  tooltip?: FormText
 }
 
 export interface RadioField extends BaseField {

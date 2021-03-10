@@ -124,12 +124,14 @@ export function buildDescriptionField(data: {
   id: string
   title: FormText
   description: FormText
+  tooltip?: FormText
 }): DescriptionField {
-  const { condition, id, title, description } = data
+  const { condition, id, title, description, tooltip } = data
   return {
     children: undefined,
     condition,
     description,
+    tooltip,
     id,
     title,
     type: FieldTypes.DESCRIPTION,

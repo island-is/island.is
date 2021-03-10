@@ -30,226 +30,222 @@ const MockData = ({ application }: FieldBaseProps) => {
   const numberOfChildenArray = [...Array(numberOfChildren).keys()]
   return (
     <>
-      <>
-        <Box marginTop={5}>
-          <Text>Foreldri B</Text>
-          <Box marginTop={2}>
-            <Controller
-              name={`${parentNationalRegistry}.ssn`}
-              defaultValue={getValue(`${parentNationalRegistry}.ssn`)}
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    ref={register}
-                    id={`${parentNationalRegistry}.ssn`}
-                    name={`${parentNationalRegistry}.ssn`}
-                    backgroundColor="blue"
-                    type="text"
-                    label="Kennitala"
-                    value={value}
-                    onChange={(e) => {
-                      onChange(e.target.value)
-                      setValue(`${parentNationalRegistry}.ssn`, e.target.value)
-                    }}
-                  />
-                )
-              }}
-            />
-          </Box>
-          <Box marginTop={2}>
-            <Controller
-              name={`${parentNationalRegistry}.name`}
-              defaultValue={
-                getValue(`${parentNationalRegistry}.name`) ||
-                parentBDefaults.name
-              }
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    ref={register}
-                    id={`${parentNationalRegistry}.name`}
-                    name={`${parentNationalRegistry}.name`}
-                    backgroundColor="blue"
-                    type="text"
-                    label="Nafn"
-                    value={value}
-                    onChange={(e) => {
-                      onChange(e.target.value)
-                      setValue(`${parentNationalRegistry}.name`, e.target.value)
-                    }}
-                  />
-                )
-              }}
-            />
-          </Box>
-          <Box marginTop={2}>
-            <Controller
-              name={`${parentNationalRegistry}.address`}
-              defaultValue={
-                getValue(`${parentNationalRegistry}.address`) ||
-                parentBDefaults.address
-              }
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    ref={register}
-                    id={`${parentNationalRegistry}.address`}
-                    name={`${parentNationalRegistry}.address`}
-                    backgroundColor="blue"
-                    type="text"
-                    label="Heimilisfang"
-                    value={value}
-                    onChange={(e) => {
-                      onChange(e.target.value)
-                      setValue(
-                        `${parentNationalRegistry}.address`,
-                        e.target.value,
-                      )
-                    }}
-                  />
-                )
-              }}
-            />
-          </Box>
-          <Box marginTop={2}>
-            <Controller
-              name={`${parentNationalRegistry}.postalCode`}
-              defaultValue={
-                getValue(`${parentNationalRegistry}.postalCode`) ||
-                parentBDefaults.postalCode
-              }
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    ref={register}
-                    id={`${parentNationalRegistry}.postalCode`}
-                    name={`${parentNationalRegistry}.postalCode`}
-                    backgroundColor="blue"
-                    type="text"
-                    label="Póstnúmer"
-                    value={value}
-                    onChange={(e) => {
-                      onChange(e.target.value)
-                      setValue(
-                        `${parentNationalRegistry}.postalCode`,
-                        e.target.value,
-                      )
-                    }}
-                  />
-                )
-              }}
-            />
-          </Box>
-          <Box marginTop={2}>
-            <Controller
-              name={`${parentNationalRegistry}.city`}
-              defaultValue={
-                getValue(`${parentNationalRegistry}.city`) ||
-                parentBDefaults.city
-              }
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    ref={register}
-                    id={`${parentNationalRegistry}.city`}
-                    name={`${parentNationalRegistry}.city`}
-                    backgroundColor="blue"
-                    type="text"
-                    label="Sveitafélag"
-                    value={value}
-                    onChange={(e) => {
-                      onChange(e.target.value)
-                      setValue(`${parentNationalRegistry}.city`, e.target.value)
-                    }}
-                  />
-                )
-              }}
-            />
-          </Box>
-        </Box>
-
-        <Box marginTop={5}>
-          <select
-            name="numberOfChildren"
-            onChange={(e) => setNumberOfChildren(parseInt(e.target.value))}
-            defaultValue={numberOfChildren.toString()}
-          >
-            <option value="0">Veldu hversu mörg börn</option>
-            {numberOfChildrenArray.map((item) => {
+      <Box marginTop={5}>
+        <Text>Foreldri B</Text>
+        <Box marginTop={2}>
+          <Controller
+            name={`${parentNationalRegistry}.ssn`}
+            defaultValue={getValue(`${parentNationalRegistry}.ssn`)}
+            render={({ value, onChange }) => {
               return (
-                <option key={item} value={item}>
-                  {item}
-                </option>
+                <Input
+                  ref={register}
+                  id={`${parentNationalRegistry}.ssn`}
+                  name={`${parentNationalRegistry}.ssn`}
+                  backgroundColor="blue"
+                  type="text"
+                  label="Kennitala"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value)
+                    setValue(`${parentNationalRegistry}.ssn`, e.target.value)
+                  }}
+                />
               )
-            })}
-          </select>
+            }}
+          />
         </Box>
-        {numberOfChildenArray.map((c) => {
-          return (
-            <Box key={c} marginTop={3}>
-              <Text>Barn {c + 1}</Text>
-              <Box marginTop={2}>
-                <Controller
-                  name={`${childrenNationalRegistry}[${c}].name`}
-                  defaultValue={
-                    getValue(`${childrenNationalRegistry}[${c}].name`) ||
-                    `Barn ${c + 1}`
-                  }
-                  render={({ value, onChange }) => {
-                    return (
-                      <Input
-                        ref={register}
-                        id={`${childrenNationalRegistry}[${c}].name`}
-                        name={`${childrenNationalRegistry}[${c}].name`}
-                        backgroundColor="blue"
-                        type="text"
-                        label="Nafn"
-                        value={value}
-                        onChange={(e) => {
-                          onChange(e.target.value)
-                          setValue(
-                            `${childrenNationalRegistry}[${c}].name`,
-                            e.target.value,
-                          )
-                        }}
-                      />
+        <Box marginTop={2}>
+          <Controller
+            name={`${parentNationalRegistry}.name`}
+            defaultValue={
+              getValue(`${parentNationalRegistry}.name`) || parentBDefaults.name
+            }
+            render={({ value, onChange }) => {
+              return (
+                <Input
+                  ref={register}
+                  id={`${parentNationalRegistry}.name`}
+                  name={`${parentNationalRegistry}.name`}
+                  backgroundColor="blue"
+                  type="text"
+                  label="Nafn"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value)
+                    setValue(`${parentNationalRegistry}.name`, e.target.value)
+                  }}
+                />
+              )
+            }}
+          />
+        </Box>
+        <Box marginTop={2}>
+          <Controller
+            name={`${parentNationalRegistry}.address`}
+            defaultValue={
+              getValue(`${parentNationalRegistry}.address`) ||
+              parentBDefaults.address
+            }
+            render={({ value, onChange }) => {
+              return (
+                <Input
+                  ref={register}
+                  id={`${parentNationalRegistry}.address`}
+                  name={`${parentNationalRegistry}.address`}
+                  backgroundColor="blue"
+                  type="text"
+                  label="Heimilisfang"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value)
+                    setValue(
+                      `${parentNationalRegistry}.address`,
+                      e.target.value,
                     )
                   }}
                 />
-              </Box>
-              <Box marginTop={2}>
-                <Controller
-                  name={`${childrenNationalRegistry}[${c}].ssn`}
-                  defaultValue={
-                    getValue(`${childrenNationalRegistry}[${c}].ssn`) ||
-                    Math.floor(Math.random() * 9000000000) + 1000000000
-                  }
-                  render={({ value, onChange }) => {
-                    return (
-                      <Input
-                        ref={register}
-                        id={`${childrenNationalRegistry}[${c}].ssn`}
-                        name={`${childrenNationalRegistry}[${c}].ssn`}
-                        backgroundColor="blue"
-                        type="text"
-                        label="Kennitala"
-                        value={value}
-                        onChange={(e) => {
-                          onChange(e.target.value)
-                          setValue(
-                            `${childrenNationalRegistry}[${c}].ssn`,
-                            e.target.value,
-                          )
-                        }}
-                      />
+              )
+            }}
+          />
+        </Box>
+        <Box marginTop={2}>
+          <Controller
+            name={`${parentNationalRegistry}.postalCode`}
+            defaultValue={
+              getValue(`${parentNationalRegistry}.postalCode`) ||
+              parentBDefaults.postalCode
+            }
+            render={({ value, onChange }) => {
+              return (
+                <Input
+                  ref={register}
+                  id={`${parentNationalRegistry}.postalCode`}
+                  name={`${parentNationalRegistry}.postalCode`}
+                  backgroundColor="blue"
+                  type="text"
+                  label="Póstnúmer"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value)
+                    setValue(
+                      `${parentNationalRegistry}.postalCode`,
+                      e.target.value,
                     )
                   }}
                 />
-              </Box>
+              )
+            }}
+          />
+        </Box>
+        <Box marginTop={2}>
+          <Controller
+            name={`${parentNationalRegistry}.city`}
+            defaultValue={
+              getValue(`${parentNationalRegistry}.city`) || parentBDefaults.city
+            }
+            render={({ value, onChange }) => {
+              return (
+                <Input
+                  ref={register}
+                  id={`${parentNationalRegistry}.city`}
+                  name={`${parentNationalRegistry}.city`}
+                  backgroundColor="blue"
+                  type="text"
+                  label="Sveitafélag"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value)
+                    setValue(`${parentNationalRegistry}.city`, e.target.value)
+                  }}
+                />
+              )
+            }}
+          />
+        </Box>
+      </Box>
+
+      <Box marginTop={5}>
+        <select
+          name="numberOfChildren"
+          onChange={(e) => setNumberOfChildren(parseInt(e.target.value))}
+          defaultValue={numberOfChildren.toString()}
+        >
+          <option value="0">Veldu hversu mörg börn</option>
+          {numberOfChildrenArray.map((item) => {
+            return (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            )
+          })}
+        </select>
+      </Box>
+      {numberOfChildenArray.map((c) => {
+        return (
+          <Box key={c} marginTop={3}>
+            <Text>Barn {c + 1}</Text>
+            <Box marginTop={2}>
+              <Controller
+                name={`${childrenNationalRegistry}[${c}].name`}
+                defaultValue={
+                  getValue(`${childrenNationalRegistry}[${c}].name`) ||
+                  `Barn ${c + 1}`
+                }
+                render={({ value, onChange }) => {
+                  return (
+                    <Input
+                      ref={register}
+                      id={`${childrenNationalRegistry}[${c}].name`}
+                      name={`${childrenNationalRegistry}[${c}].name`}
+                      backgroundColor="blue"
+                      type="text"
+                      label="Nafn"
+                      value={value}
+                      onChange={(e) => {
+                        onChange(e.target.value)
+                        setValue(
+                          `${childrenNationalRegistry}[${c}].name`,
+                          e.target.value,
+                        )
+                      }}
+                    />
+                  )
+                }}
+              />
             </Box>
-          )
-        })}
-      </>
+            <Box marginTop={2}>
+              <Controller
+                name={`${childrenNationalRegistry}[${c}].ssn`}
+                defaultValue={
+                  getValue(`${childrenNationalRegistry}[${c}].ssn`) ||
+                  Math.floor(Math.random() * 9000000000) + 1000000000
+                }
+                render={({ value, onChange }) => {
+                  return (
+                    <Input
+                      ref={register}
+                      id={`${childrenNationalRegistry}[${c}].ssn`}
+                      name={`${childrenNationalRegistry}[${c}].ssn`}
+                      backgroundColor="blue"
+                      type="text"
+                      label="Kennitala"
+                      value={value}
+                      onChange={(e) => {
+                        onChange(e.target.value)
+                        setValue(
+                          `${childrenNationalRegistry}[${c}].ssn`,
+                          e.target.value,
+                        )
+                      }}
+                    />
+                  )
+                }}
+              />
+            </Box>
+          </Box>
+        )
+      })}
     </>
   )
 }

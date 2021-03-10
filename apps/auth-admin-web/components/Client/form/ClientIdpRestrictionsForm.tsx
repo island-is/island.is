@@ -37,7 +37,6 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   }, [allowAll])
 
   const add = async (name: string) => {
-    console.log('add')
     const createObj = {
       name: name,
       clientId: props.clientId,
@@ -52,7 +51,6 @@ const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
   }
 
   const remove = async (name: string) => {
-    console.log('remove')
     const response = await ClientService.removeIdpRestriction(
       props.clientId,
       name,
