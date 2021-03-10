@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Inline, Text } from 'libs/island-ui/core/src'
+import { Box, Button, Divider, Inline, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { complaint, sharedFields } from '../../lib/messages'
