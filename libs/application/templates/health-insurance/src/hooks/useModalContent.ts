@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ExternalData } from '@island.is/application/core'
 import {
+  sortApplicationsByDateAscending,
   hasHealthInsurance,
   hasActiveDraftApplication,
   hasPendingApplications,
@@ -19,9 +20,7 @@ export const useModalContent = (externalData: ExternalData) => {
 
   const getFirstCreatedApplicationId = () => {
     const applications = externalData?.applications.data as Applications[]
-    const sortedApplications = applications
-      .slice()
-      .sort((a, b) => (new Date(a.created) > new Date(b.created) ? 1 : -1))
+    const sortedApplications = sortApplicationsByDateAscending(applications)
     return sortedApplications[0]?.id
   }
 

@@ -48,6 +48,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly sendRequestToDefender?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
   readonly court?: string
 
   @Allow()
@@ -129,6 +133,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field(() => [String], { nullable: true })
   readonly courtDocuments?: string[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly additionToConclusion?: string
 
   @Allow()
   @Field(() => String, { nullable: true })
