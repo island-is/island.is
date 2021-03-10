@@ -59,6 +59,56 @@ export class ApiScope extends Model<ApiScope> {
   })
   showInDiscoveryDocument!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  grantToLegalGuardians!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  grantToProcuringHolders!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  allowExplicitDelegationGrant!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  automaticDelegationGrant!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  alsoForDelegatedUser!: boolean
+
   @HasMany(() => ApiScopeUserClaim)
   @ApiProperty()
   userClaims?: ApiScopeUserClaim[]
