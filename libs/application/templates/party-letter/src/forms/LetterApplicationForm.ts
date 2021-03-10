@@ -13,6 +13,7 @@ import {
   buildDataProviderItem,
   Application,
 } from '@island.is/application/core'
+import { User } from '@island.is/api/domains/national-registry'
 import { UserCompany } from '../dataProviders/CurrentUserCompanies'
 import { m } from '../lib/messages'
 
@@ -83,15 +84,14 @@ export const LetterApplicationForm: Form = buildForm({
           options: (application: Application) => {
             const companies = application.externalData.userCompanies
               .data as UserCompany[]
-            const nationalRegistry =
-              application.externalData.nationalRegistry.data
+            const nationalRegistry = application.externalData.nationalRegistry
+              .data as User
 
-            console.log('nationalRegistry', nationalRegistry)
             return [
               {
-                label: 'This is current users name',
-                subLabel: '000000-0000',
-                value: '000000-0000',
+                label: nationalRegistry.fullName,
+                subLabel: nationalRegistry.nationalId,
+                value: nationalRegistry.nationalId,
               },
               ...companies.map((company) => ({
                 label: company.Nafn,

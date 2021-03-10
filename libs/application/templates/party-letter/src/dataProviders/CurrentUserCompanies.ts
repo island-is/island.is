@@ -36,8 +36,7 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
         const userCompanies = response.data?.rskGetCurrentUserCompanies ?? []
         userCompanies.forEach((company) => {
           // only add companies that this user does not have procurement for
-          // TODO: REMOVE THIS BEFORE MERGER! This should equal the string '1'
-          if (company.ErProkuruhafi === '0') {
+          if (company.ErProkuruhafi === '1') {
             uniqueAllowedCompanies.set(company.Kennitala, company)
           }
         })
