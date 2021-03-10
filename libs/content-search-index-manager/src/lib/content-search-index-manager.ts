@@ -24,7 +24,7 @@ export const getElasticVersion = (): string => {
 }
 
 export const getElasticsearchIndexBase = (locale: ElasticsearchIndexLocale) =>
-  `island-${locale}`
+  process.env.ELASTIC_INDEX_OVERWRITE ?? `island-${locale}`
 
 // returns current index by default for a given locale
 export const getElasticsearchIndex = (
