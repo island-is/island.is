@@ -47,6 +47,8 @@ import {
   GetUnionsQuery,
 } from '../../types/schema'
 
+import { Period } from '../../types'
+
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
 interface ReviewScreenProps {
