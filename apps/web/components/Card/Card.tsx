@@ -130,11 +130,9 @@ export const Card: FC<CardProps> = ({
             <Box
               display="flex"
               width="full"
-              marginTop={2}
               justifyContent="center"
               flexGrow={1}
-              marginBottom={2}
-              style={{ height: 200 }}
+              style={{ height: stackImage ? 150 : 100 }}
             >
               <BackgroundImage
                 positionX={!stackImage ? 'right' : null}
