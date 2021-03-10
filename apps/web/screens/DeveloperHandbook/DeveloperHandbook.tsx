@@ -60,10 +60,6 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
       href: n('linkDesignSystem'),
       title: n('linkDesignSystemText'),
     },
-    {
-      href: n('linkContentPolicy'),
-      title: n('linkContentPolicyText'),
-    },
   ]
 
   return (
@@ -101,7 +97,7 @@ const DeveloperHandbook: Screen<DeveloperHandbookProps> = ({
                   </Box>
                   <Box marginBottom="gutter">
                     <Navigation
-                      baseId="service-list-navigation"
+                      baseId="handbook-navigation"
                       colorScheme="blue"
                       isMenuDialog
                       items={navigationItems}

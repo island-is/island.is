@@ -28,6 +28,9 @@ const DescriptionText = ({ text, format }: Props) => {
   return (
     <Markdown
       options={{
+        namedCodesToUnicode: {
+          ['#39']: '\u0027',
+        },
         forceBlock: true,
         overrides: {
           p: textOverride,

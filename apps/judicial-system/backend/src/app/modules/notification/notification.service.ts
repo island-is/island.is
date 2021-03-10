@@ -313,9 +313,6 @@ export class NotificationService {
 
     const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
-      existingCase.type,
-      existingCase.accusedNationalId,
-      existingCase.accusedName,
       existingCase.court,
       existingCase.courtCaseNumber,
       existingCase.courtDate,
