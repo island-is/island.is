@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import axios from 'axios'
 import qs from 'qs'
 import { logger } from '@island.is/logging'

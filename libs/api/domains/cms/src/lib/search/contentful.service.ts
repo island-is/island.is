@@ -194,7 +194,6 @@ export class ContentfulService {
   ): Promise<Entry<any>[]> {
     const data = await this.contentfulClient.getEntries({
       include: this.defaultIncludeDepth,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       links_to_entry: linkId,
       locale: this.contentfulLocaleMap[locale],
     })

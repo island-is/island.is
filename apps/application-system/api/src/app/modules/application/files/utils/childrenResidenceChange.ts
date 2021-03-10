@@ -10,15 +10,15 @@ export function applicantData(answers: FormValue, externalData: FormValue) {
     id: nationalRegistryData.nationalId,
     name: nationalRegistryData.fullName,
     ssn: nationalRegistryData.nationalId,
-    phoneNumber: answers.phoneNumber as string,
-    email: answers.email as string,
+    phoneNumber: (answers.parentA as FormValue).phoneNumber as string,
+    email: (answers.parentA as FormValue).email as string,
     address: nationalRegistryData.address?.streetAddress as string,
     postalCode: nationalRegistryData.address?.postalCode as string,
     city: nationalRegistryData.address?.city as string,
   }
 }
 
-const dataToUse = ({
+export const dataToUse = ({
   answers,
   externalData,
   key,
@@ -49,12 +49,8 @@ export function variablesForResidenceChange(
     externalData,
     key: 'childrenNationalRegistry',
   })
-  const selectedChildrenNames = (answers.selectChild as unknown) as Array<
-    string
-  >
-  const allChildren = (childrenNationalRegistry.data as unknown) as Array<
-    PersonResidenceChange
-  >
+  const selectedChildrenNames = (answers.selectChild as unknown) as Array<string>
+  const allChildren = (childrenNationalRegistry.data as unknown) as Array<PersonResidenceChange>
 
   const parentA = applicantData(answers, externalData) as PersonResidenceChange
   const parentB = (parentBNationalRegistry.data as unknown) as PersonResidenceChange
