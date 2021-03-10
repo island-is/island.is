@@ -3,11 +3,7 @@ import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Text } from 'libs/island-ui/core/src'
 import React, { FC } from 'react'
 
-export const FieldLabel: FC<FieldBaseProps> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const FieldLabel: FC<FieldBaseProps> = ({ application, field }) => {
   const { title } = field
   const { formatMessage } = useLocale()
 

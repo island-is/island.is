@@ -99,4 +99,14 @@ export const sharedFields = defineMessages({
     defaultMessage: 'Nei',
     description: 'Used to give a negative response',
   },
+  edit: {
+    id: 'dpac.application:sharedFields.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
+  remove: {
+    id: 'dpac.application:sharedFields.remove',
+    defaultMessage: 'Eyða',
+    description: 'Remove',
+  },
 })

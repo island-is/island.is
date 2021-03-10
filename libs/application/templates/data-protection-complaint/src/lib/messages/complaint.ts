@@ -61,5 +61,15 @@ export const complaint = {
         'Ath. Ef viðkomandi aðili er með starfsemi í öðru landi getur úrvinnsla umsóknar dregist um 4-6 mánuði.',
       description: 'Notifies the user that the response might take longer',
     },
+    complaineeAddPerson: {
+      id: 'dpac.application:section.complaint.labels.complaineeAddPerson',
+      defaultMessage: 'Beinist kvörtunin að fleiri aðilum?',
+      description: 'Does the complaint regard other people',
+    },
+    complaineeAdd: {
+      id: 'dpac.application:section.complaint.labels.complaineeAdd',
+      defaultMessage: 'Bæta við aðila',
+      description: 'Add other complainees',
+    },
   }),
 }
