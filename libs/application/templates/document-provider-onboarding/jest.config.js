@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'application-templates-document-provider-onboarding',
-  preset: '../../../../jest.config.js',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -10,4 +9,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '../../../../coverage/libs/application/templates/document-provider-onboarding',
+  displayName: 'application-templates-document-provider-onboarding',
 }
