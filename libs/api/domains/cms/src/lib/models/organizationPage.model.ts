@@ -6,6 +6,7 @@ import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { Image, mapImage } from './image.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 import { FooterItem, mapFooterItem } from './footerItem.model'
+import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -21,6 +22,12 @@ export class OrganizationPage {
   @Field()
   description: string
 
+  @Field()
+  theme: string
+
+  @Field()
+  themeProperties?: string
+
   @Field(() => [SliceUnion])
   slices: Array<typeof SliceUnion>
 
@@ -35,6 +42,9 @@ export class OrganizationPage {
 
   @Field(() => [FooterItem], { nullable: true })
   footerItems?: Array<FooterItem>
+
+  @Field(() => [SidebarCard], { nullable: true })
+  sidebarCards?: Array<SidebarCard>
 }
 
 export const mapOrganizationPage = ({
@@ -45,6 +55,10 @@ export const mapOrganizationPage = ({
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   description: fields.description ?? '',
+  theme: fields.theme ?? '',
+  themeProperties: fields.themeProperties
+    ? JSON.stringify(fields.themeProperties)
+    : '',
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   organization: fields.organization
@@ -52,4 +66,5 @@ export const mapOrganizationPage = ({
     : null,
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
+  sidebarCards: (fields.sidebarCards ?? []).map(mapSidebarCard),
 })
