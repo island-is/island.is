@@ -316,15 +316,6 @@ export class ResourcesController {
     return await this.resourcesService.deleteApiResource(name)
   }
 
-  @Get('user-claims/:name')
-  async getResourceUserClaims(@Param('name') name: string): Promise<any> {
-    if (!name) {
-      throw new BadRequestException('Name must be provided')
-    }
-
-    return await this.resourcesService.getResourceUserClaims(name)
-  }
-
   @Post('identity-resource-user-claims/:identityResourceName/:claimName')
   async addResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,

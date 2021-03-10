@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { prepareConfig } from '@nrwl/next/src/utils/config'
 
 export const getNextConfig = (appDir: string, dev: boolean) => {

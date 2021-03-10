@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -478,36 +479,6 @@ export class ResourcesService {
     )
 
     return result[0]
-  }
-
-  async getResourceUserClaims(name: string): Promise<any> {
-    this.logger.debug('Getting user claims with name: ', name)
-
-    if (!name) {
-      throw new BadRequestException('Name must be provided')
-    }
-
-    /* 
-    TODO: Create a table with all the claim names and get that list instead of distinct I.claim_name 
-    TODO: Find out how to return an interface instead of any. 
-          'sequelize.query' seems to support it with sequelize.query<T> but having difficulties implementing it error free
-    */
-    const [results, metadata] = await this.sequelize.query(
-      `select distinct I.claim_name, (
-        SELECT CAST(
-           CASE WHEN EXISTS(
-             SELECT * FROM identity_resource_user_claim where identity_resource_name like '${name}' and claim_name = I.claim_name
-            ) THEN True 
-           ELSE False
-           END 
-        AS BOOLEAN)
-      ) as exists, 'Lorem ipsum' as claim_description
-      from identity_resource_user_claim I
-      order by exists desc
-      LIMIT 8`,
-    )
-
-    return results
   }
 
   async addResourceUserClaim(

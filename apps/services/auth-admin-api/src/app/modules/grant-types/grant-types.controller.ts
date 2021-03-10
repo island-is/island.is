@@ -131,7 +131,7 @@ export class GrantTypeController {
   @Scopes('@identityserver.api/authentication')
   @Delete(':name')
   @ApiOkResponse({ type: Number })
-  async deleteGrantType(@Param('name') name: string): Promise<Number | null> {
+  async deleteGrantType(@Param('name') name: string): Promise<number | null> {
     if (!name) {
       throw new BadRequestException('name must be provided')
     }

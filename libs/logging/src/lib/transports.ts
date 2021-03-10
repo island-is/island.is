@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import * as Sentry from '@sentry/node'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const TransportStream = require('winston-transport')

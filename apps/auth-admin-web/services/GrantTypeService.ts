@@ -38,7 +38,7 @@ export class GrantTypeService extends BaseService {
   }
 
   /** Soft deleta a Grant Type  */
-  static async delete(name: string): Promise<Number | null> {
+  static async delete(name: string): Promise<number | null> {
     return BaseService.DELETE(`grants/${encodeURIComponent(name)}`)
   }
 }
