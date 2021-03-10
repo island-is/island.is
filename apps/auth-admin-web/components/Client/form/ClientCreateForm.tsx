@@ -364,7 +364,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         readOnly={isEditing}
                         name="baseUrl"
                         type="text"
-                        ref={register({ required: isEditing })}
+                        ref={register({ required: !isEditing })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
                         placeholder="https://localhost:4200"
