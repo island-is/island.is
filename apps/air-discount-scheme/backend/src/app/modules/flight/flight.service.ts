@@ -102,6 +102,36 @@ export class FlightService {
     return false
   }
 
+  // Assume: connecting flight means,
+  //         `leg` is not connected to Reykjavík
+  async isFlightLegConnectingFlight(
+    nationalId: string,
+    incomingLeg: FlightLeg
+  ): Promise<boolean> {
+    // Get all flights for the surrounding years
+    const currentYear = new Date(Date.now()).getFullYear()
+    const lastYear = currentYear - 1
+    const nextYear = currentYear + 1
+
+    let flights = [
+      ...await this.findFlightsByYearAndNationalId(nationalId, currentYear.toString()),
+      ...await this.findFlightsByYearAndNationalId(nationalId, nextYear.toString()),
+      ...await this.findFlightsByYearAndNationalId(nationalId, lastYear.toString())
+    ]
+
+    // If a user flightLeg exists such that the incoming flightLeg makes a valid connection
+    // pair, return true
+    for(const flight of flights) {
+      for(const flightLeg of flight.flightLegs) {
+        if(this.hasConnectingFlightPotentialFromFlightLegs(flightLeg, incomingLeg)) {
+          return true
+        }
+      }
+    }
+
+    return false
+  }
+
   async countThisYearsFlightLegsByNationalId(
     nationalId: string,
   ): Promise<FlightLegSummary> {
@@ -217,6 +247,13 @@ export class FlightService {
 
   findThisYearsFlightsByNationalId(nationalId: string): Promise<Flight[]> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
+    return this.findFlightsByYearAndNationalId(nationalId, currentYear)
+  }
+
+  findFlightsByYearAndNationalId(
+    nationalId: string,
+    year: string
+  ): Promise<Flight[]> {
     return this.flightModel.findAll({
       where: Sequelize.and(
         Sequelize.where(
@@ -225,7 +262,7 @@ export class FlightService {
             'year',
             Sequelize.fn('date', Sequelize.col('booking_date')),
           ),
-          currentYear,
+          year
         ),
         { nationalId },
       ),
@@ -235,7 +272,7 @@ export class FlightService {
           where: { financialState: availableFinancialStates },
         },
       ],
-    })
+    })   
   }
 
   create(
