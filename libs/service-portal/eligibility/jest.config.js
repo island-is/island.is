@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'service-portal-eligibility',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -9,4 +8,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/service-portal/eligibility',
+  displayName: 'service-portal-eligibility',
 }

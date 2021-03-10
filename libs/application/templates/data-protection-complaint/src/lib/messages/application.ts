@@ -53,7 +53,7 @@ export const section = defineMessages({
   },
   organizationOrInstitution: {
     id: 'dpac.application:section.organizationOrInstitution',
-    defaultMessage: 'Upplýsingar um félagasamtök / stofnun',
+    defaultMessage: 'Félagasamtök / stofnun',
     description: 'Details about the organizationOrInstitution',
   },
   commissions: {
@@ -66,6 +66,11 @@ export const section = defineMessages({
     defaultMessage: 'Kvörtun',
     description: 'Complaint',
   },
+  complainee: {
+    id: 'dpac.application:section.complainee',
+    defaultMessage: 'Sá sem er kvartað yfir',
+    description: 'The one who is being complained about',
+  },
   overview: {
     id: 'dpac.application:section.overview',
     defaultMessage: 'Yfirlit og samþykki',
@@ -75,5 +80,33 @@ export const section = defineMessages({
     id: 'dpac.application:section.received',
     defaultMessage: 'Staðfesting',
     description: 'Application Received',
+  },
+})
+
+export const sharedFields = defineMessages({
+  moreInfoButtonLabel: {
+    id: 'dpac.application:sharedFields.moreInfoButtonLabel',
+    defaultMessage: 'Nánari upplýsingar hér',
+    description: 'More Info Button Label',
+  },
+  yes: {
+    id: 'dpac.application:sharedFields.yes',
+    defaultMessage: 'Já',
+    description: 'Used to give an affirmative response',
+  },
+  no: {
+    id: 'dpac.application:sharedFields.no',
+    defaultMessage: 'Nei',
+    description: 'Used to give a negative response',
+  },
+  edit: {
+    id: 'dpac.application:sharedFields.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
+  remove: {
+    id: 'dpac.application:sharedFields.remove',
+    defaultMessage: 'Eyða',
+    description: 'Remove',
   },
 })
