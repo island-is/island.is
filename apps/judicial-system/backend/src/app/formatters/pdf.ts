@@ -464,6 +464,14 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
         paragraphGap: 0,
       },
     )
+  if (existingCase.additionToConclusion) {
+    doc.text(' ').text(existingCase.additionToConclusion, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .text(
