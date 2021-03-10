@@ -52,10 +52,11 @@
   }
 
   section {
-    background: #eae8e8;
-    border: dotted 1px black;
+    border: solid 2px #9a9191;
     padding: 10px 0 30px 0;
-    margin-bottom: 20px;
+    margin: 20px 0;
+    border-left: none;
+    border-right: none;
     h3 {
       margin-left: 18px;
       font-size: 1rem;
