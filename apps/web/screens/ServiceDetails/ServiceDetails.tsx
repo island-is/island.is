@@ -59,9 +59,10 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   const { linkResolver } = useLinkResolver()
-  const [selectedServiceDetail, setselectedServiceDetail] = useState<
-    ServiceDetail
-  >(service.environments[0].details[0])
+  const [
+    selectedServiceDetail,
+    setselectedServiceDetail,
+  ] = useState<ServiceDetail>(service.environments[0].details[0])
   //TODO look into how to initialize
 
   const xroadIdentifierToOpenApiInput = (xroadIdentifier: XroadIdentifier) => {
@@ -69,9 +70,12 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     return identifier
   }
 
-  const [selectedGetOpenApiInput, setSelectedGetOpenApiInput] = useState<
-    GetOpenApiInput
-  >(xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier))
+  const [
+    selectedGetOpenApiInput,
+    setSelectedGetOpenApiInput,
+  ] = useState<GetOpenApiInput>(
+    xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier),
+  )
 
   const setApiContent = (serviceDetail: ServiceDetail) => {
     setselectedServiceDetail(serviceDetail)

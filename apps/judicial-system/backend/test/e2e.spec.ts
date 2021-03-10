@@ -378,7 +378,7 @@ describe('User', () => {
     let dbUser: CUser
 
     await User.findOne({
-      where: { national_id: judgeNationalId }, // eslint-disable-line @typescript-eslint/camelcase
+      where: { national_id: judgeNationalId },
       include: [{ model: Institution, as: 'institution' }],
     })
       .then((value) => {
@@ -411,7 +411,7 @@ describe('User', () => {
 
     await User.destroy({
       where: {
-        national_id: data.nationalId, // eslint-disable-line @typescript-eslint/camelcase
+        national_id: data.nationalId,
       },
     })
       .then(() => {
@@ -458,7 +458,7 @@ describe('User', () => {
 
     await User.destroy({
       where: {
-        national_id: nationalId, // eslint-disable-line @typescript-eslint/camelcase
+        national_id: nationalId,
       },
     })
       .then(() => {

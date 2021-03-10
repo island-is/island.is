@@ -49,12 +49,8 @@ export function variablesForResidenceChange(
     externalData,
     key: 'childrenNationalRegistry',
   })
-  const selectedChildrenNames = (answers.selectChild as unknown) as Array<
-    string
-  >
-  const allChildren = (childrenNationalRegistry.data as unknown) as Array<
-    PersonResidenceChange
-  >
+  const selectedChildrenNames = (answers.selectChild as unknown) as Array<string>
+  const allChildren = (childrenNationalRegistry.data as unknown) as Array<PersonResidenceChange>
 
   const parentA = applicantData(answers, externalData) as PersonResidenceChange
   const parentB = (parentBNationalRegistry.data as unknown) as PersonResidenceChange
