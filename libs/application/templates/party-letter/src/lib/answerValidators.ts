@@ -47,8 +47,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       ...userCompanies.map((company) => company.Kennitala),
     ]
 
-    console.log(allowedNationalIds)
-
     if (allowedNationalIds.includes(newNationalId)) {
       return undefined
     } else {
