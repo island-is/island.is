@@ -16,6 +16,7 @@ import {
   InfoCard,
   PdfButton,
   BlueBox,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -65,6 +66,7 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [modalVisible, setModalVisible] = useState<boolean>()
 
   const [
     createCustodyCourtCaseMutation,
@@ -83,8 +85,7 @@ export const JudgeOverview: React.FC = () => {
           },
         },
       })
-
-      if (data && workingCase && errors?.length === 1818811) {
+      if (data && workingCase && !errors) {
         setAndSendToServer(
           'courtCaseNumber',
           data.createCustodyCourtCase.courtCaseNumber,
@@ -111,7 +112,7 @@ export const JudgeOverview: React.FC = () => {
         setWorkingCase,
         updateCase,
       )
-
+      setModalVisible(true)
       setCourtCaseNumberErrorMessage('')
     }
   }
@@ -487,6 +488,16 @@ export const JudgeOverview: React.FC = () => {
               },
             ])}
           />
+          {modalVisible && (
+            <Modal
+              title="Slá inn málsnúmer"
+              text="Athugið að gögn verða sjálfkrafa vistuð og uppfærð á það málsnúmer sem slegið er inn."
+              handlePrimaryButtonClick={() => {
+                setModalVisible(false)
+              }}
+              primaryButtonText="Loka glugga"
+            />
+          )}
         </>
       ) : null}
     </PageLayout>
