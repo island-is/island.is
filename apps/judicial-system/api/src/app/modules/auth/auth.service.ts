@@ -11,6 +11,9 @@ export class AuthService {
   async findUser(nationalId: string): Promise<User | undefined> {
     const res = await fetch(
       `${environment.backendUrl}/api/user/?nationalId=${nationalId}`,
+      {
+        headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+      },
     )
 
     if (!res.ok) {

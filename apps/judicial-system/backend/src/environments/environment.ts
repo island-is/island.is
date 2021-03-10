@@ -1,7 +1,8 @@
 export default {
   production: false,
   auth: {
-    jwtSecret: 'securesecret',
+    jwtSecret: 'jwt-secret',
+    secretToken: 'secret-token',
   },
   notifications: {
     judgeMobileNumber: process.env.JUDGE_MOBILE_NUMBER,

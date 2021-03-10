@@ -4,7 +4,8 @@ export default {
     samlEntryPoint: 'https://innskraning.island.is/?id=judicial-system.local',
     audience: 'localhost:4200',
     allowAuthBypass: true,
-    jwtSecret: 'securesecret',
+    jwtSecret: 'jwt-secret',
+    secretToken: 'secret-token',
   },
   auditTrail: {
     useGenericLogger: true,
