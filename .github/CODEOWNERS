@@ -102,6 +102,8 @@
 /libs/api/domains/health-insurance/                                                   @island-is/deloitte
 /libs/health-insurance/                                                               @island-is/deloitte
 
+/apps/services/auth-api/                                                              @island-is/fuglar
+/apps/services/auth-admin-api/                                                        @island-is/fuglar
 /apps/auth-admin-web/                                                                 @island-is/fuglar
 /apps/auth-admin-web-e2e/                                                             @island-is/fuglar
 /libs/auth-api-lib/                                                                   @island-is/fuglar
