@@ -1,4 +1,4 @@
-# application-templates-institution-application
+# Application Templates Institution Application
 
 This library was generated with [Nx](https://nx.dev).
 
