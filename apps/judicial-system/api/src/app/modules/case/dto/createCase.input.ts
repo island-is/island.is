@@ -44,5 +44,9 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly sendRequestToDefender?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
   readonly court?: string
 }

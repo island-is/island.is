@@ -57,6 +57,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             accusedGender: theCase.accusedGender,
             defenderName: theCase.defenderName,
             defenderEmail: theCase.defenderEmail,
+            sendRequestToDefender: theCase.sendRequestToDefender,
             court: 'Héraðsdómur Reykjavíkur',
           },
         },
@@ -111,13 +112,14 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         created: '',
         modified: '',
         type: type,
-        state: CaseState.DRAFT,
+        state: CaseState.NEW,
         policeCaseNumber: '',
         accusedNationalId: '',
         accusedName: '',
         accusedAddress: '',
         defenderName: '',
         defenderEmail: '',
+        sendRequestToDefender: false,
         accusedGender: undefined,
       })
     }
