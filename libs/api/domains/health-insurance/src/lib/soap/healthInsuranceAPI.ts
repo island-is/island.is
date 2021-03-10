@@ -15,9 +15,8 @@ import {
   Fylgiskjal,
   Fylgiskjol,
 } from './dto'
-import { SoapClient } from './soapClient'
+import { SoapClient, VistaSkjalInput } from '@island.is/health-insurance'
 import { VistaSkjalModel } from '../graphql/models'
-import { VistaSkjalInput } from '../types'
 import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
@@ -165,6 +164,8 @@ export class HealthInsuranceAPI {
         fyrrautgafulandkodi: inputObj.previousCountryCode,
         fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+        tryggingaretturfyrralandi:
+          inputObj.hasHealthInsuranceRightInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
     }
@@ -181,6 +182,8 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
+          // here is application-system id + filename
+          // TODO: need to fix
           innihald: await this.bucketService.getFileContentAsBase64(filename),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)

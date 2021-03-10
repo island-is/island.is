@@ -11,7 +11,7 @@ import InputMask from 'react-input-mask'
 import { ValueType } from 'react-select/src/types'
 import { FormFooter } from '@island.is/judicial-system-web/src/shared-components'
 import { Institution, User, UserRole } from '@island.is/judicial-system/types'
-import { FormValidation } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { ReactSelectOption } from '../../../types'
 import { validate } from '../../../utils/validate'
 import * as styles from './UserForm.treat'
@@ -46,7 +46,7 @@ export const UserForm: React.FC<Props> = (props) => {
     (institution) => institution.label === user.institution?.name,
   )
 
-  const validations: FormValidation = {
+  const validations: FormSettings = {
     name: {
       validations: ['empty'],
       errorMessage: nameErrorMessage,
@@ -84,7 +84,9 @@ export const UserForm: React.FC<Props> = (props) => {
       const value = user[fieldName as keyof User] as string
 
       if (
-        validation.validations.some((v) => validate(value, v).isValid === false)
+        validation.validations?.some(
+          (v) => validate(value, v).isValid === false,
+        )
       ) {
         return false
       }
@@ -102,7 +104,7 @@ export const UserForm: React.FC<Props> = (props) => {
     const fieldValidation = validations[field]
 
     if (
-      !fieldValidation.validations.some(
+      !fieldValidation.validations?.some(
         (v) => validate(value, v).isValid === false,
       ) &&
       fieldValidation.setErrorMessage
@@ -115,7 +117,7 @@ export const UserForm: React.FC<Props> = (props) => {
     const fieldValidation = validations[field]
 
     const error = fieldValidation.validations
-      .map((v) => validate(value, v))
+      ?.map((v) => validate(value, v))
       .find((v) => v.isValid === false)
 
     if (error && fieldValidation.setErrorMessage) {

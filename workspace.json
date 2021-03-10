@@ -1635,6 +1635,44 @@
         }
       }
     },
+    "application-templates-data-protection-complaint": {
+      "root": "libs/application/templates/data-protection-complaint",
+      "sourceRoot": "libs/application/templates/data-protection-complaint/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/data-protection-complaint/tsconfig.lib.json",
+              "libs/application/templates/data-protection-complaint/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/data-protection-complaint/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/data-protection-complaint/src/**/*.{js,ts,tsx}'"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/data-protection-complaint/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/libs/application/templates/data-protection-complaint"
+          ]
+        }
+      }
+    },
     "application-templates-document-provider-onboarding": {
       "root": "libs/application/templates/document-provider-onboarding",
       "sourceRoot": "libs/application/templates/document-provider-onboarding/src",
@@ -1843,6 +1881,12 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/parental-leave/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/parental-leave/codegen.yml"
           }
         }
       }
@@ -3665,26 +3709,30 @@
     },
     "judicial-system-web": {
       "root": "apps/judicial-system/web",
-      "sourceRoot": "apps/judicial-system/web/src",
+      "sourceRoot": "apps/judicial-system/web",
       "projectType": "application",
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/web:build",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "dist/apps/judicial-system/web",
-            "index": "apps/judicial-system/web/src/index.html",
-            "main": "apps/judicial-system/web/src/main.tsx",
-            "polyfills": "apps/judicial-system/web/src/polyfills.ts",
-            "tsConfig": "apps/judicial-system/web/tsconfig.app.json",
-            "assets": [
-              "apps/judicial-system/web/src/favicon.ico",
-              "apps/judicial-system/web/src/mockServiceWorker.js"
-            ],
-            "styles": ["apps/judicial-system/web/src/styles.css"],
-            "scripts": [],
-            "webpackConfig": "apps/judicial-system/web/webpack.config.js",
-            "maxWorkers": 2
+            "commands": [
+              "yarn nx build-next judicial-system-web",
+              "yarn nx build-server judicial-system-web"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "args": "--prod"
+            }
+          }
+        },
+        "build-next": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/judicial-system/web",
+            "outputPath": "dist/apps/judicial-system/web"
           },
           "configurations": {
             "production": {
@@ -3693,35 +3741,39 @@
                   "replace": "apps/judicial-system/web/src/environments/environment.ts",
                   "with": "apps/judicial-system/web/src/environments/environment.prod.ts"
                 }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
               ]
             }
           },
           "outputs": ["{options.outputPath}"]
         },
-        "serve": {
-          "builder": "@nrwl/web:dev-server",
+        "build-server": {
+          "builder": "@nrwl/node:build",
           "options": {
-            "buildTarget": "judicial-system-web:build",
-            "proxyConfig": "apps/judicial-system/web/proxy.config.json"
+            "outputPath": "dist/apps/judicial-system/web",
+            "main": "apps/judicial-system/web/server.ts",
+            "tsConfig": "apps/judicial-system/web/tsconfig.json",
+            "maxWorkers": 2,
+            "assets": ["apps/judicial-system/web/next-modules"]
           },
           "configurations": {
             "production": {
-              "buildTarget": "judicial-system-web:build:production"
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
             }
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-web:build-server"
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "judicial-system-web:build:production"
           }
         },
         "lint": {
@@ -3729,7 +3781,7 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/judicial-system/web/tsconfig.app.json",
+              "apps/judicial-system/web/tsconfig.json",
               "apps/judicial-system/web/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/judicial-system/web/**/*"]
@@ -3743,7 +3795,7 @@
           },
           "outputs": ["coverage/apps/judicial-system/web"]
         },
-        "docker-static": {}
+        "docker-next": {}
       }
     },
     "judicial-system-web-e2e": {
@@ -3840,16 +3892,16 @@
             "jestConfig": "apps/judicial-system/xrd-api/jest.config.js",
             "passWithNoTests": true
           }
-        }
-      },
-      "schemas/build-openapi": {
-        "builder": "@nrwl/workspace:run-commands",
-        "options": {
-          "outputPath": "apps/judicial-system/xrd-api/src/openapi.yaml",
-          "command": "yarn ts-node -P apps/judicial-system/xrd-api/tsconfig.app.json apps/judicial-system/xrd-api/src/buildOpenApi.ts"
-        }
-      },
-      "docker-express": {}
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/judicial-system/xrd-api/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/judicial-system/xrd-api/tsconfig.app.json apps/judicial-system/xrd-api/src/buildOpenApi.ts"
+          }
+        },
+        "docker-express": {}
+      }
     },
     "localization": {
       "root": "libs/localization",
@@ -4834,7 +4886,8 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/services/auth-admin-api"]
-        }
+        },
+        "docker-express": {}
       }
     },
     "services-auth-api": {

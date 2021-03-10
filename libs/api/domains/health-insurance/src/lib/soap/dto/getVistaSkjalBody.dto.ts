@@ -14,6 +14,7 @@ interface Sjukratryggingumsokn {
   fyrrautgafulandkodi: string
   fyrriutgafustofnunlands: string
   tryggdurfyrralandi: number
+  tryggingaretturfyrralandi: number
   vidbotarupplysingar: string
   fylgiskjol?: Fylgiskjol
 }

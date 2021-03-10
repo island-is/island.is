@@ -110,6 +110,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    if (
+      application.assignees.includes(id) &&
+      application.answers.useMocks === 'yes' &&
+      application.state === ApplicationStates.IN_REVIEW
+    ) {
+      return Roles.ParentB
+    }
     if (id === application.applicant) {
       return Roles.ParentA
     }

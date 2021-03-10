@@ -137,6 +137,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
             defaultValue={selectedEnviromentOption}
             options={enviromentOptions}
             onChange={onSelectEnviroment}
+            disabled
           />
         </GridColumn>
         <GridColumn span={['6/12', '6/12', '6/12', '6/12', '3/12']}>

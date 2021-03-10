@@ -26,6 +26,12 @@ export const template = {
           lenient: true,
           synonyms_path: 'analyzers/{SYNONYMS}',
         },
+        icelandicDeCompounded: {
+          type: 'dictionary_decompounder',
+          word_list_path: 'analyzers/{HYPHENWHITELIST}',
+          max_subword_size: 18,
+          min_subword_size: 4,
+        },
       },
       analyzer: {
         baseIcelandic: {
@@ -36,6 +42,18 @@ export const template = {
             'icelandicSynonym',
             'icelandicStop',
             'icelandicKeyword',
+            'icelandicStemmer',
+          ],
+        },
+        compoundIcelandic: {
+          type: 'custom',
+          tokenizer: 'standard',
+          filter: [
+            'lowercase',
+            'icelandicSynonym',
+            'icelandicStop',
+            'icelandicKeyword',
+            'icelandicDeCompounded',
             'icelandicStemmer',
           ],
         },
@@ -69,7 +87,7 @@ export const template = {
           },
           compound: {
             type: 'text',
-            analyzer: 'baseIcelandic',
+            analyzer: 'compoundIcelandic',
           },
           keyword: {
             type: 'keyword',
@@ -125,6 +143,9 @@ export const template = {
       },
       externalLinks: {
         type: 'integer',
+      },
+      popularityScore: {
+        type: 'double',
       },
       termPool: {
         type: 'completion',

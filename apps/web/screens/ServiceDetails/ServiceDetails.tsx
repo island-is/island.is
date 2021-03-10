@@ -53,12 +53,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   openApiContent,
   service = null,
 }) => {
-  useScript(
-    'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js',
-    true,
-    'redoc',
-  )
-
   const n = useNamespace(strings)
   const nfc = useNamespace(filterContent)
   const noa = useNamespace(openApiContent)
@@ -117,10 +111,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     {
       href: n('linkDesignSystem'),
       title: n('linkDesignSystemText'),
-    },
-    {
-      href: n('linkContentPolicy'),
-      title: n('linkContentPolicyText'),
     },
   ]
   const { activeLocale } = useI18n()

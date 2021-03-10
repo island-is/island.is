@@ -1,34 +1,29 @@
 import { FormValue } from '@island.is/application/core'
-import {
-  ParentResidenceChange,
-  PersonResidenceChange,
-} from '@island.is/application/templates/children-residence-change'
+import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 import { variablesForResidenceChange } from './childrenResidenceChange'
 
 describe('ChildrenResidenceChange', () => {
   it('should create parameters for legal residence change from application answers and externalData', () => {
-    const expectedExpiry = 'expiry'
+    const expectedExpiry = ['expiry']
 
-    const expectedParentA: ParentResidenceChange = {
+    const expectedReason = 'reason'
+
+    const expectedParentA: PersonResidenceChange = {
       id: 'parent a ssn',
       name: 'parent a name',
       ssn: 'parent a ssn',
       postalCode: 'parent a postal code',
       address: 'parent a address',
       city: 'parent a city',
-      phoneNumber: '0009999',
-      email: 'thisisnotanemail',
     }
 
-    const expectedParentB: ParentResidenceChange = {
+    const expectedParentB: PersonResidenceChange = {
       id: 'parent b id',
       name: 'parent b name',
       ssn: 'parent b ssn',
       postalCode: 'parent b postal code',
       address: 'parent b address',
       city: 'parent b city',
-      phoneNumber: '0008888',
-      email: 'thisisneitheranemail',
     }
 
     const expectedChildrenAppliedFor: Array<PersonResidenceChange> = [
@@ -43,17 +38,9 @@ describe('ChildrenResidenceChange', () => {
     ]
 
     const answers: FormValue = {
-      expiry: expectedExpiry,
-      selectChild: [
-        {
-          ssn: expectedChildrenAppliedFor[0].ssn,
-          name: expectedChildrenAppliedFor[0].name,
-        },
-      ],
-      parentBEmail: expectedParentB.email as string,
-      parentBPhoneNumber: expectedParentB.phoneNumber as string,
-      email: expectedParentA.email as string,
-      phoneNumber: expectedParentA.phoneNumber as string,
+      selectDuration: expectedExpiry,
+      residenceChangeReason: expectedReason,
+      selectChild: [expectedChildrenAppliedFor[0].name],
     }
 
     const externalData: FormValue = {
@@ -78,6 +65,14 @@ describe('ChildrenResidenceChange', () => {
           },
         },
       },
+      childrenNationalRegistry: {
+        data: [
+          {
+            ssn: expectedChildrenAppliedFor[0].ssn,
+            name: expectedChildrenAppliedFor[0].name,
+          },
+        ],
+      },
     }
 
     const {
@@ -85,11 +80,13 @@ describe('ChildrenResidenceChange', () => {
       parentB,
       childrenAppliedFor,
       expiry,
+      reason,
     } = variablesForResidenceChange(answers, externalData)
 
     expect(expectedExpiry).toEqual(expiry)
     expect(expectedParentA).toEqual(parentA)
     expect(expectedParentB).toEqual(parentB)
+    expect(expectedReason).toEqual(reason)
 
     expectedChildrenAppliedFor.forEach((c, i) => {
       expect(c.name).toEqual(childrenAppliedFor[i].name)

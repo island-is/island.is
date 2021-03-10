@@ -25,14 +25,7 @@ describe('/domur/thingbok/:id', () => {
     )
   })
 
-  it('should require a valid accused plea announcement', () => {
-    cy.getByTestid('accusedPleaAnnouncement').click().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('accusedPleaAnnouncement').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
-  it('should require a valid accused plea announcement', () => {
+  it('should require a valid litigation presentation', () => {
     cy.getByTestid('litigationPresentations').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('litigationPresentations').type('lorem')

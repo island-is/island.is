@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { Contact } from '@island.is/api/schema'
 import { gql, useMutation } from '@apollo/client'
 import { m } from '../lib/messages'
+import { getOrganisationQuery } from '../shared/useGetOrganisation'
 
 const CREATE_TECHNICAL_CONTACT_MUTATION = gql`
   mutation CreateTechnicalContactMutation(
@@ -20,7 +21,10 @@ const CREATE_TECHNICAL_CONTACT_MUTATION = gql`
 
 export type CreateContactInput = Pick<Contact, 'name' | 'email' | 'phoneNumber'>
 
-export function useCreateTechnicalContact(organisationId: string) {
+export function useCreateTechnicalContact(
+  organisationId: string,
+  organisationNationalId: string,
+) {
   const [
     createTechnicalContactMutation,
     { called, loading, error },
@@ -45,6 +49,14 @@ export function useCreateTechnicalContact(organisationId: string) {
         organisationId,
         input,
       },
+      refetchQueries: [
+        {
+          query: getOrganisationQuery,
+          variables: {
+            input: organisationNationalId,
+          },
+        },
+      ],
     })
   }
 
