@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
+import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -44,6 +44,11 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly defenderEmail?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly sendRequestToDefender?: boolean
 
   @IsOptional()
   @IsString()
