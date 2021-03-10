@@ -546,6 +546,14 @@ export const withMainLayout = <T,>(
       Component.getInitialProps(ctx),
     ])
 
+    if ('isWhite' in componentProps) {
+      layoutConfig.headerColorScheme = 'white'
+      layoutConfig.headerButtonColorScheme = 'negative'
+    } else {
+      layoutConfig.headerColorScheme = 'blue'
+      layoutConfig.headerButtonColorScheme = 'light'
+    }
+
     return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }
   }
 

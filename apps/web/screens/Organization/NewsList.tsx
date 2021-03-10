@@ -7,6 +7,7 @@ import { Screen } from '../../types'
 import {
   Select as NativeSelect,
   OrganizationWrapper,
+  isWhite,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -45,6 +46,7 @@ import { NewsCard } from '../../components/NewsCard'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 const PERPAGE = 10
 
@@ -198,7 +200,9 @@ const NewsList: Screen<NewsListProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url.includes('/stofnanir/syslumenn/frett'),
+      active: primaryLink.url.includes(
+        `/stofnanir/${organizationPage.slug}/frett`,
+      ),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -357,7 +361,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -400,6 +404,12 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
+  if (!newsList) {
+    throw new CustomNextError(404, 'News not found')
+  }
+
+  const white = isWhite(getOrganizationPage.theme) ? { isWhite: true } : {}
+
   return {
     organizationPage: getOrganizationPage,
     newsList,
@@ -410,6 +420,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
+    ...white,
   }
 }
 

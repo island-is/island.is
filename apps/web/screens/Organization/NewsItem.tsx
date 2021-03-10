@@ -19,6 +19,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import {
   HeadWithSocialSharing,
+  isWhite,
   NewsArticle,
   OrganizationWrapper,
 } from '@island.is/web/components'
@@ -116,7 +117,7 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -125,7 +126,7 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_SINGLE_NEWS_ITEM_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug: query.newsSlug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -151,10 +152,13 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
+  const white = isWhite(getOrganizationPage.theme) ? { isWhite: true } : {}
+
   return {
     organizationPage: getOrganizationPage,
     newsItem,
     namespace,
+    ...white,
   }
 }
 

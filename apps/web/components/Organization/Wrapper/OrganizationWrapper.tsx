@@ -5,22 +5,15 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   Hidden,
-  Link,
   Navigation,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './OrganizationWrapper.treat'
 import NextLink from 'next/link'
-import {
-  HeadWithSocialSharing,
-  Main,
-  OrganizationFooter,
-  Sticky,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Main, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
+import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme/DigitalIcelandHeader'
 
 interface NavigationData {
   title: string
@@ -40,6 +33,39 @@ interface WrapperProps {
   fullWidthContent?: boolean
 }
 
+interface HeaderProps {
+  organizationPage: OrganizationPage
+}
+
+export const isWhite = (name: string) => {
+  const whiteThemes = ['syslumenn']
+
+  return whiteThemes.includes(name)
+}
+
+const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+  switch (organizationPage.theme) {
+    case 'syslumenn':
+      return <SyslumennHeader organizationPage={organizationPage} />
+      break
+    case 'digital_iceland':
+      return <DigitalIcelandHeader organizationPage={organizationPage} />
+      break
+    default:
+      return <h1>ok</h1>
+  }
+}
+
+const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
+  switch (organizationPage.theme) {
+    case 'syslumenn':
+      return <SyslumennFooter organizationPage={organizationPage} />
+      break
+    default:
+      return null
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -52,8 +78,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   fullWidthContent = false,
   children,
 }) => {
-  const isMobile = useWindowSize().width < theme.breakpoints.md
-
   return (
     <>
       <HeadWithSocialSharing
@@ -63,53 +87,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <Box className={styles.headerBg}>
-        <Box className={styles.headerWrapper}>
-          <SidebarLayout
-            sidebarContent={
-              !!organizationPage.organization.logo && (
-                <Link href="#">
-                  <Box
-                    borderRadius="circle"
-                    className={styles.iconCircle}
-                    background="white"
-                  >
-                    <img
-                      src={organizationPage.organization.logo.url}
-                      className={styles.headerLogo}
-                      alt=""
-                    />
-                  </Box>
-                </Link>
-              )
-            }
-          >
-            <Hidden above="sm">
-              <Link href="#">
-                <Box
-                  borderRadius="circle"
-                  className={styles.iconCircle}
-                  background="white"
-                >
-                  <img
-                    src={organizationPage.organization.logo.url}
-                    className={styles.headerLogo}
-                    alt=""
-                  />
-                </Box>
-              </Link>
-            </Hidden>
-            <Box
-              marginTop={[2, 2, 6]}
-              textAlign={['center', 'center', 'right']}
-            >
-              <Text variant="h1" color="white">
-                {organizationPage.title}
-              </Text>
-            </Box>
-          </SidebarLayout>
-        </Box>
-      </Box>
+      <OrganizationHeader organizationPage={organizationPage} />
       <Main>
         <SidebarLayout
           paddingTop={[2, 2, 9]}
@@ -119,7 +97,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             <Sticky>
               <Navigation
                 baseId="pageNav"
-                isMenuDialog={isMobile}
                 items={navigationData.items}
                 title={navigationData.title}
                 activeItemTitle={navigationData.activeItemTitle}
@@ -139,7 +116,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             <Box marginY={2}>
               <Navigation
                 baseId="pageNav"
-                isMenuDialog={isMobile}
+                isMenuDialog={true}
                 items={navigationData.items}
                 title={navigationData.title}
                 activeItemTitle={navigationData.activeItemTitle}
@@ -163,9 +140,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               )
             }}
           />
-          <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
-            <Text variant="intro">{organizationPage.description}</Text>
-          </Box>
+          {!!pageDescription && (
+            <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
+              <Text variant="intro">{pageDescription}</Text>
+            </Box>
+          )}
           <Hidden above="sm">{sidebarContent}</Hidden>
           <Box paddingTop={4}>{mainContent ?? children}</Box>
         </SidebarLayout>

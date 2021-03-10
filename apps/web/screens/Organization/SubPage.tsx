@@ -27,7 +27,7 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import { isWhite, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
@@ -225,15 +225,15 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
+  const white = isWhite(getOrganizationPage.theme) ? { isWhite: true } : {}
+
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
+    ...white,
   }
 }
 
-export default withMainLayout(SubPage, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(SubPage)

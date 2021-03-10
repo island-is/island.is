@@ -46,6 +46,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      theme
+      themeProperties
       menuLinks {
         primaryLink {
           text
@@ -75,6 +77,14 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         content {
           ...HtmlFields
         }
+        link {
+          text
+          url
+        }
+      }
+      sidebarCards {
+        type
+        content
         link {
           text
           url
