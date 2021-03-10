@@ -65,7 +65,7 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [enterCaseNrManually, setEnterCaseNrManually] = useState<boolean>()
+  const [enterCaseNrManually, setEnterCaseNrManually] = useState<boolean>(false)
 
   const [
     createCustodyCourtCaseMutation,
@@ -103,6 +103,10 @@ export const JudgeOverview: React.FC = () => {
     }
   }
 
+  const handleSetCaseNrManuallyClick = () => {
+    setCourtCaseNumberErrorMessage('')
+    setEnterCaseNrManually(true)
+  }
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -200,32 +204,38 @@ export const JudgeOverview: React.FC = () => {
             <BlueBox>
               <div className={styles.createCourtCaseContainer}>
                 <Box display="flex">
-                  <div className={styles.createCourtCaseButton}>
-                    <Button
-                      size="small"
-                      onClick={createCase}
-                      loading={creatingCustodyCourtCase}
-                      disabled={!!workingCase.courtCaseNumber}
-                      fluid
-                    >
-                      Stofna mál
-                    </Button>
-                  </div>
+                  {!enterCaseNrManually && (
+                    <div className={styles.createCourtCaseButton}>
+                      <Button
+                        size="small"
+                        onClick={createCase}
+                        loading={creatingCustodyCourtCase}
+                        disabled={!!workingCase.courtCaseNumber}
+                        fluid
+                      >
+                        Stofna mál
+                      </Button>
+                    </div>
+                  )}
                   <div className={styles.createCourtCaseInput}>
                     <Input
                       data-testid="courtCaseNumber"
                       name="courtCaseNumber"
                       label="Mál nr."
-                      placeholder="Málsnúmer birtist hér með því að smella á stofna mál"
+                      placeholder={
+                        enterCaseNrManually
+                          ? 'R-X/ÁÁÁÁ'
+                          : 'Málsnúmer birtist hér með því að smella á stofna mál'
+                      }
                       size="sm"
-                      backgroundColor="blue"
-                      value={
-                        workingCase.courtCaseNumber ||
-                        'Málsnúmer birtist hér með því að smella á stofna mál'
-                      }
+                      backgroundColor={enterCaseNrManually ? 'white' : 'blue'}
+                      value={workingCase.courtCaseNumber}
                       icon={
-                        workingCase.courtCaseNumber ? 'checkmark' : undefined
+                        workingCase.courtCaseNumber && !enterCaseNrManually
+                          ? 'checkmark'
+                          : undefined
                       }
+                      disabled={!enterCaseNrManually}
                       errorMessage={courtCaseNumberErrorMessage}
                       hasError={
                         !creatingCustodyCourtCase &&
@@ -253,13 +263,16 @@ export const JudgeOverview: React.FC = () => {
                         )
                       }}
                       required
-                      disabled
                     />
                   </div>
                 </Box>
-                {courtCaseNumberErrorMessage && (
+                {courtCaseNumberErrorMessage && !enterCaseNrManually && (
                   <div className={styles.enterCaseNrManuallyButton}>
-                    <Button variant="text" type="button">
+                    <Button
+                      variant="text"
+                      type="button"
+                      onClick={handleSetCaseNrManuallyClick}
+                    >
                       Slá inn málsnúmer
                     </Button>
                   </div>
