@@ -65,7 +65,6 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [enterCaseNrManually, setEnterCaseNrManually] = useState<boolean>(false)
 
   const [
     createCustodyCourtCaseMutation,
@@ -104,8 +103,17 @@ export const JudgeOverview: React.FC = () => {
   }
 
   const handleSetCaseNrManuallyClick = () => {
-    setCourtCaseNumberErrorMessage('')
-    setEnterCaseNrManually(true)
+    if (workingCase) {
+      setAndSendToServer(
+        'setCourtCaseNumberManually',
+        true,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      setCourtCaseNumberErrorMessage('')
+    }
   }
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -204,7 +212,7 @@ export const JudgeOverview: React.FC = () => {
             <BlueBox>
               <div className={styles.createCourtCaseContainer}>
                 <Box display="flex">
-                  {!enterCaseNrManually && (
+                  {!workingCase.setCourtCaseNumberManually && (
                     <div className={styles.createCourtCaseButton}>
                       <Button
                         size="small"
@@ -223,19 +231,24 @@ export const JudgeOverview: React.FC = () => {
                       name="courtCaseNumber"
                       label="Mál nr."
                       placeholder={
-                        enterCaseNrManually
+                        workingCase.setCourtCaseNumberManually
                           ? 'R-X/ÁÁÁÁ'
                           : 'Málsnúmer birtist hér með því að smella á stofna mál'
                       }
                       size="sm"
-                      backgroundColor={enterCaseNrManually ? 'white' : 'blue'}
+                      backgroundColor={
+                        workingCase.setCourtCaseNumberManually
+                          ? 'white'
+                          : 'blue'
+                      }
                       value={workingCase.courtCaseNumber}
                       icon={
-                        workingCase.courtCaseNumber && !enterCaseNrManually
+                        workingCase.courtCaseNumber &&
+                        !workingCase.setCourtCaseNumberManually
                           ? 'checkmark'
                           : undefined
                       }
-                      disabled={!enterCaseNrManually}
+                      disabled={!workingCase.setCourtCaseNumberManually}
                       errorMessage={courtCaseNumberErrorMessage}
                       hasError={
                         !creatingCustodyCourtCase &&
@@ -264,19 +277,28 @@ export const JudgeOverview: React.FC = () => {
                       }}
                       required
                     />
+                    {workingCase.setCourtCaseNumberManually && (
+                      <Box marginTop={1}>
+                        <Text variant="eyebrow" color="blue400">
+                          Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
+                          málsnúmer sem slegið er inn
+                        </Text>
+                      </Box>
+                    )}
                   </div>
                 </Box>
-                {courtCaseNumberErrorMessage && !enterCaseNrManually && (
-                  <div className={styles.enterCaseNrManuallyButton}>
-                    <Button
-                      variant="text"
-                      type="button"
-                      onClick={handleSetCaseNrManuallyClick}
-                    >
-                      Slá inn málsnúmer
-                    </Button>
-                  </div>
-                )}
+                {courtCaseNumberErrorMessage &&
+                  !workingCase.setCourtCaseNumberManually && (
+                    <div className={styles.enterCaseNrManuallyButton}>
+                      <Button
+                        variant="text"
+                        type="button"
+                        onClick={handleSetCaseNrManuallyClick}
+                      >
+                        Slá inn málsnúmer
+                      </Button>
+                    </div>
+                  )}
               </div>
             </BlueBox>
           </Box>
