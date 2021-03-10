@@ -221,9 +221,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<
-                      PensionFundsQuery
-                    >({
+                    const {
+                      data,
+                    } = await apolloClient.query<PensionFundsQuery>({
                       query: GetPensionFunds,
                     })
 
@@ -280,9 +280,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<
-                      PrivatePensionFundsQuery
-                    >({
+                    const {
+                      data,
+                    } = await apolloClient.query<PrivatePensionFundsQuery>({
                       query: GetPrivatePensionFunds,
                     })
 

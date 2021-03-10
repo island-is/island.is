@@ -395,10 +395,11 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
+  condition?: Condition
   title?: FormText
   color?: Colors
 }): DividerField {
-  const { title, color } = data
+  const { title, color, condition } = data
   return {
     id: '',
     children: undefined,
@@ -406,6 +407,7 @@ export function buildDividerField(data: {
     component: FieldComponents.DIVIDER,
     title: title ?? '',
     color,
+    condition,
   }
 }
 
