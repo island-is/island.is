@@ -4,5 +4,13 @@
   "trailingComma": "all",
   "arrowParens": "always",
   "plugins": ["./scripts/prettier-plugins/sort-projects"],
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "options": {
+        "parser": "babel-ts"
+      }
+    }
+  ]
 }
