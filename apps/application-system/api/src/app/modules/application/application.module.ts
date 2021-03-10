@@ -8,11 +8,10 @@ import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
-import { FileService } from './files/file.service'
+import { FileService, AwsService } from '@island.is/application/file-service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
-import { AwsService } from './files/aws.service'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
