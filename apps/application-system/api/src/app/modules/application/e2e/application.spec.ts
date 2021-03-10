@@ -6,7 +6,7 @@ import { EmailService } from '@island.is/email-service'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import * as tokenUtils from '../utils/tokenUtils'
-import { FileService } from '../files/file.service'
+import { FileService } from '@island.is/application/file-service'
 
 let app: INestApplication
 
