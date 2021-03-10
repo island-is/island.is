@@ -426,7 +426,6 @@ export class ResourcesController {
   async addApiResourceSecret(
     @Body() apiSecret: ApiResourceSecretDTO,
   ): Promise<ApiResourceSecret> {
-    console.log(apiSecret)
     if (!apiSecret) {
       throw new BadRequestException('The apiSecret object must be provided')
     }
