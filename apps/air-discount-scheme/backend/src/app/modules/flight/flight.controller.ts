@@ -19,6 +19,7 @@ import {
   ApiNoContentResponse,
   ApiExcludeEndpoint,
   ApiTags,
+  ApiResponse,
 } from '@nestjs/swagger'
 
 import IslandisLogin, { VerifyResult } from 'islandis-login'
@@ -50,6 +51,16 @@ export class PublicFlightController {
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
+
+  @Get('discounts/:discountCode/checkFlightStatus')
+  @ApiResponse({ type: CheckStatusModel })
+  async checkFlightStatus(
+    @Param() params: CheckFlightParams,
+    @Body() flight: CheckFlightBody,
+    @Req() request: HttpRequest,
+  ): Promise<CheckStatusModel> {
+    return false
+  }
 
   @Post('discounts/:discountCode/flights')
   @ApiCreatedResponse({ type: FlightViewModel })
@@ -96,13 +107,16 @@ export class PublicFlightController {
     }
 
     if (flight.flightLegs.length === 1) {
-      const incomingLeg = flight.flightLegs[0]
+      const incomingLeg = {
+        ...flight.flightLegs[0],
+        date: new Date(Date.parse(flight.flightLegs[0].date.toString()))
+      }
 
       if (
-        !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) ||
+        !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) &&
         !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.origin)
       ) {
-        const isConnectingFlight = this.flightService.isFlightLegConnectingFlight(
+        const isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
           discount.nationalId,
           incomingLeg as FlightLeg, // must have date, destination and origin
         )
