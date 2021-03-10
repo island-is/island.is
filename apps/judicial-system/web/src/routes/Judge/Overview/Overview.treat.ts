@@ -12,6 +12,7 @@ export const infoSection = style({
 
 export const createCourtCaseContainer = style({
   display: 'flex',
+  flexDirection: 'column',
 })
 
 export const createCourtCaseButton = style({
@@ -23,4 +24,9 @@ export const createCourtCaseButton = style({
 
 export const createCourtCaseInput = style({
   flex: 1,
+})
+
+export const enterCaseNrManuallyButton = style({
+  alignSelf: 'flex-end',
+  marginTop: theme.spacing[2],
 })

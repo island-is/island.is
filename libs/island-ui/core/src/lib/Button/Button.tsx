@@ -43,8 +43,6 @@ export interface ButtonProps {
   onClick?: NativeButtonProps['onClick']
   onFocus?: NativeButtonProps['onFocus']
   onBlur?: NativeButtonProps['onBlur']
-  onMouseDown?: NativeButtonProps['onMouseDown']
-  onMouseUp?: NativeButtonProps['onMouseUp']
   children?: ReactNode
   size?: Exclude<keyof typeof styles.size, 'utility' | 'textSmall'>
   disabled?: boolean

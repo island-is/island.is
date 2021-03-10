@@ -65,9 +65,7 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [isClickingCreateCase, setIsClickingCreateCase] = useState<boolean>(
-    false,
-  )
+  const [enterCaseNrManually, setEnterCaseNrManually] = useState<boolean>()
 
   const [
     createCustodyCourtCaseMutation,
@@ -78,7 +76,7 @@ export const JudgeOverview: React.FC = () => {
 
   const createCase = async (): Promise<void> => {
     if (creatingCustodyCourtCase === false) {
-      const { data } = await createCustodyCourtCaseMutation({
+      const { data, errors } = await createCustodyCourtCaseMutation({
         variables: {
           input: {
             caseId: workingCase?.id,
@@ -87,7 +85,7 @@ export const JudgeOverview: React.FC = () => {
         },
       })
 
-      if (workingCase && data?.createCustodyCourtCase.courtCaseNumber) {
+      if (data && workingCase && errors?.length === 1818811) {
         setAndSendToServer(
           'courtCaseNumber',
           data.createCustodyCourtCase.courtCaseNumber,
@@ -201,58 +199,71 @@ export const JudgeOverview: React.FC = () => {
             </Box>
             <BlueBox>
               <div className={styles.createCourtCaseContainer}>
-                <div className={styles.createCourtCaseButton}>
-                  <Button
-                    size="small"
-                    onMouseDown={() => setIsClickingCreateCase(true)}
-                    onMouseUp={() => setIsClickingCreateCase(false)}
-                    onClick={createCase}
-                    loading={creatingCustodyCourtCase}
-                    disabled={!!workingCase.courtCaseNumber}
-                    fluid
-                  >
-                    Stofna mál
-                  </Button>
-                </div>
-                <div className={styles.createCourtCaseInput}>
-                  <Input
-                    data-testid="courtCaseNumber"
-                    name="courtCaseNumber"
-                    label="Mál nr."
-                    placeholder="Málsnúmer birtist hér með því að smella á stofna mál"
-                    size="sm"
-                    disabled={creatingCustodyCourtCase}
-                    value={workingCase.courtCaseNumber}
-                    errorMessage={courtCaseNumberErrorMessage}
-                    hasError={
-                      !creatingCustodyCourtCase &&
-                      !isClickingCreateCase &&
-                      courtCaseNumberErrorMessage !== ''
-                    }
-                    onChange={(event) =>
-                      removeTabsValidateAndSet(
-                        'courtCaseNumber',
-                        event,
-                        ['empty'],
-                        workingCase,
-                        setWorkingCase,
-                        courtCaseNumberErrorMessage,
-                        setCourtCaseNumberErrorMessage,
-                      )
-                    }
-                    onBlur={(event) => {
-                      validateAndSendToServer(
-                        'courtCaseNumber',
-                        event.target.value,
-                        ['empty'],
-                        workingCase,
-                        updateCase,
-                        setCourtCaseNumberErrorMessage,
-                      )
-                    }}
-                    required
-                  />
-                </div>
+                <Box display="flex">
+                  <div className={styles.createCourtCaseButton}>
+                    <Button
+                      size="small"
+                      onClick={createCase}
+                      loading={creatingCustodyCourtCase}
+                      disabled={!!workingCase.courtCaseNumber}
+                      fluid
+                    >
+                      Stofna mál
+                    </Button>
+                  </div>
+                  <div className={styles.createCourtCaseInput}>
+                    <Input
+                      data-testid="courtCaseNumber"
+                      name="courtCaseNumber"
+                      label="Mál nr."
+                      placeholder="Málsnúmer birtist hér með því að smella á stofna mál"
+                      size="sm"
+                      backgroundColor="blue"
+                      value={
+                        workingCase.courtCaseNumber ||
+                        'Málsnúmer birtist hér með því að smella á stofna mál'
+                      }
+                      icon={
+                        workingCase.courtCaseNumber ? 'checkmark' : undefined
+                      }
+                      errorMessage={courtCaseNumberErrorMessage}
+                      hasError={
+                        !creatingCustodyCourtCase &&
+                        courtCaseNumberErrorMessage !== ''
+                      }
+                      onChange={(event) =>
+                        removeTabsValidateAndSet(
+                          'courtCaseNumber',
+                          event,
+                          ['empty'],
+                          workingCase,
+                          setWorkingCase,
+                          courtCaseNumberErrorMessage,
+                          setCourtCaseNumberErrorMessage,
+                        )
+                      }
+                      onBlur={(event) => {
+                        validateAndSendToServer(
+                          'courtCaseNumber',
+                          event.target.value,
+                          ['empty'],
+                          workingCase,
+                          updateCase,
+                          setCourtCaseNumberErrorMessage,
+                        )
+                      }}
+                      required
+                      disabled
+                    />
+                  </div>
+                </Box>
+                {courtCaseNumberErrorMessage && (
+                  <div className={styles.enterCaseNrManuallyButton}>
+                    <Button variant="text" type="button">
+                      Slá inn málsnúmer
+                    </Button>
+                  </div>
+                )}
               </div>
             </BlueBox>
           </Box>
