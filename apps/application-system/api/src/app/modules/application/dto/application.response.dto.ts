@@ -1,4 +1,7 @@
-import { ApplicationTypes } from '@island.is/application/core'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import {
@@ -60,7 +63,7 @@ export class ApplicationResponseDto {
   @ApiProperty({ enum: ApplicationTypes })
   @Expose()
   @IsEnum(ApplicationTypes)
-  typeId!: string
+  typeId!: ApplicationTypes
 
   @ApiProperty()
   @Expose()
@@ -82,10 +85,10 @@ export class ApplicationResponseDto {
   @IsNumber()
   progress?: number
 
-  @ApiProperty()
+  @ApiProperty({ enum: ApplicationStatus })
   @Expose()
-  @IsBoolean()
-  completed!: boolean
+  @IsEnum(ApplicationStatus)
+  status!: ApplicationStatus
 
   constructor(partial: Partial<ApplicationResponseDto>) {
     Object.assign(this, partial)

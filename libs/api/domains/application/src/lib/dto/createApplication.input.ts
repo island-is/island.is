@@ -6,12 +6,18 @@ import {
   IsEnum,
   IsObject,
   IsArray,
-  IsBoolean,
 } from 'class-validator'
-import { CreateApplicationDtoTypeIdEnum } from '../../../gen/fetch'
+import {
+  CreateApplicationDtoStatusEnum,
+  CreateApplicationDtoTypeIdEnum,
+} from '../../../gen/fetch'
 
 registerEnumType(CreateApplicationDtoTypeIdEnum, {
   name: 'CreateApplicationDtoTypeIdEnum',
+})
+
+registerEnumType(CreateApplicationDtoStatusEnum, {
+  name: 'CreateApplicationDtoStatusEnum',
 })
 
 @InputType()
@@ -41,7 +47,7 @@ export class CreateApplicationInput {
   @IsObject()
   answers!: object
 
-  @Field(() => Boolean)
-  @IsBoolean()
-  completed!: boolean
+  @Field(() => CreateApplicationDtoStatusEnum)
+  @IsEnum(CreateApplicationDtoStatusEnum)
+  status!: CreateApplicationDtoStatusEnum
 }

@@ -17,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   Application,
+  ApplicationStatus,
   ApplicationTypes,
   coreMessages,
 } from '@island.is/application/core'
@@ -60,7 +61,7 @@ export const Applications: FC = () => {
           typeId: type,
           assignees: [nationalRegistryId],
           answers: {},
-          completed: false,
+          status: ApplicationStatus.IN_PROGRESS,
         },
       },
     })

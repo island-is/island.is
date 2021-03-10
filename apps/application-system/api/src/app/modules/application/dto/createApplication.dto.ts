@@ -7,7 +7,10 @@ import {
   IsArray,
   IsBoolean,
 } from 'class-validator'
-import { ApplicationTypes } from '@island.is/application/core'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateApplicationDto {
@@ -42,7 +45,7 @@ export class CreateApplicationDto {
   readonly attachments?: object
 
   @IsNotEmpty()
-  @IsBoolean()
-  @ApiProperty()
-  readonly completed!: boolean
+  @IsEnum(ApplicationStatus)
+  @ApiProperty({ enum: ApplicationStatus })
+  readonly status!: ApplicationStatus
 }

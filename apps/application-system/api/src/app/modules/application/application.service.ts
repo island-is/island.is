@@ -5,6 +5,7 @@ import {
   ExternalData,
   FormValue,
   ApplicationTypes,
+  ApplicationStatus,
 } from '@island.is/application/core'
 
 import { Application } from './application.model'
@@ -16,23 +17,21 @@ export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
-  ) { }
+  ) {}
 
   async findOneById(id: string): Promise<Application | null> {
     return this.applicationModel.findOne({ where: { id } })
   }
 
-  async findAllByNationalIdAndType(
+  async findAllByNationalIdAndFilters(
     nationalId: string,
     typeId?: ApplicationTypes,
-    completed?: boolean,
+    status?: ApplicationStatus,
   ): Promise<Application[]> {
     return this.applicationModel.findAll({
       where: {
-        ...(typeId ? { typeId: typeId } : {}),
-        ...(completed !== undefined
-          ? { completed: { [Op.eq]: completed } }
-          : {}),
+        ...(typeId ? { typeId } : {}),
+        ...(status ? { status } : {}),
         [Op.or]: [
           { applicant: nationalId },
           { assignees: { [Op.contains]: [nationalId] } },
@@ -63,12 +62,13 @@ export class ApplicationService {
     state: string,
     answers: FormValue,
     assignees: string[],
+    status: ApplicationStatus,
   ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { state, answers, assignees },
+      { state, answers, assignees, status },
       {
         where: { id },
         returning: true,

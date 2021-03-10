@@ -1301,10 +1301,17 @@
             "cwd": "apps/application-system/api"
           }
         },
+        "migrate/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:migrate:undo --name {args.name}",
+            "cwd": "apps/application-system/api"
+          }
+        },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "sequelize-cli migration:generate --name $(whoami)",
+            "command": "sequelize-cli migration:generate --name {args.name}",
             "cwd": "apps/application-system/api"
           }
         },

@@ -7,7 +7,10 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApplicationTypes } from '@island.is/application/core'
+import {
+  ApplicationTypes,
+  ApplicationStatus,
+} from '@island.is/application/core'
 
 @Table({
   tableName: 'application',
@@ -68,7 +71,7 @@ export class Application extends Model<Application> {
     values: Object.values(ApplicationTypes),
   })
   @ApiProperty({ enum: ApplicationTypes })
-  typeId!: string
+  typeId!: ApplicationTypes
 
   @Column({
     type: DataType.JSONB,
@@ -87,10 +90,11 @@ export class Application extends Model<Application> {
   externalData!: object
 
   @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(ApplicationStatus),
+    defaultValue: ApplicationStatus.IN_PROGRESS,
   })
-  @ApiProperty()
-  completed!: boolean
+  @ApiProperty({ enum: ApplicationStatus })
+  status!: ApplicationStatus
 }

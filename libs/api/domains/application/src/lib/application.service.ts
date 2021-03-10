@@ -5,7 +5,11 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { ApplicationsApi } from '../../gen/fetch'
+import {
+  ApplicationResponseDtoStatusEnum,
+  ApplicationResponseDtoTypeIdEnum,
+  ApplicationsApi,
+} from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
@@ -30,7 +34,7 @@ const handleError = async (error: any) => {
 
 @Injectable()
 export class ApplicationService {
-  constructor(private applicationApi: ApplicationsApi) { }
+  constructor(private applicationApi: ApplicationsApi) {}
 
   async findOne(id: string, authorization: string) {
     return await this.applicationApi
@@ -51,7 +55,7 @@ export class ApplicationService {
         nationalId,
         authorization,
         typeId: input?.typeId,
-        completed: input?.completed,
+        status: input?.status,
       })
       .catch(handleError)
   }

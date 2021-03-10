@@ -31,6 +31,7 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -112,32 +113,32 @@ export class ApplicationController {
     name: 'nationalId',
     type: String,
     required: true,
-    description: `User's nationalId to get all the applications from.`,
+    description: `To get the applications for a specific user's national id.`,
     allowEmptyValue: false,
   })
   @ApiQuery({
     name: 'typeId',
     required: false,
     enum: ApplicationTypes,
-    description: 'To filter by application type.',
+    description: 'To filter applications by type.',
   })
   @ApiQuery({
-    name: 'completed',
+    name: 'status',
     required: false,
-    type: 'boolean',
-    description: 'To filter by application in progress or completed.',
+    enum: ApplicationStatus,
+    description: 'To filter applications by status.',
   })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   async findAll(
     @NationalId() nationalId: string,
     @Query('typeId') typeId?: ApplicationTypes,
-    @Query('completed') completed?: boolean,
+    @Query('status') status?: ApplicationStatus,
   ): Promise<ApplicationResponseDto[]> {
-    return await this.applicationService.findAllByNationalIdAndType(
+    return await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
-      completed,
+      status,
     )
   }
 
@@ -386,8 +387,9 @@ export class ApplicationController {
     authorization: string,
   ): Promise<[false] | [true, BaseApplication]> {
     const helper = new ApplicationTemplateHelper(application, template)
-
     const [hasChanged, newState, newApplication] = helper.changeState(event)
+    const status = helper.getApplicationStatus()
+    console.log('-status', status)
 
     if (!hasChanged) {
       return [false]
@@ -398,6 +400,7 @@ export class ApplicationController {
       newState,
       newApplication.answers,
       newApplication.assignees,
+      status,
     )
 
     const updatedApplication = update.updatedApplication as BaseApplication
