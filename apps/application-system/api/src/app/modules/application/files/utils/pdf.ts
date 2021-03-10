@@ -10,7 +10,7 @@ export async function generateResidenceChangePdf(
   parentA: NationalRegistryUser,
   parentB: PersonResidenceChange,
   expiry: Array<string>,
-  reason: string | undefined,
+  reason?: string,
 ): Promise<Buffer> {
   const doc = new PDFDocument({
     size: PdfConstants.PAGE_SIZE,
