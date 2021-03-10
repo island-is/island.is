@@ -28,11 +28,11 @@ const Terms = ({ field, error }: CRCFieldBaseProps) => {
           },
           {
             value: 'childSupport',
-            label: 'Ég skil að réttur til meðlagsgreiðslna flyst með barninu',
+            label: formatMessage(terms.childBenefitCheckbox.label),
           },
           {
             value: 'childBenefit',
-            label: 'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
+            label: formatMessage(terms.familySupportCheckbox.label),
           },
         ]}
       />
