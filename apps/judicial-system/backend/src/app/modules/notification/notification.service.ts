@@ -319,11 +319,26 @@ export class NotificationService {
       existingCase.courtRoom,
     )
 
+    let attachments = null
+
+    if (existingCase.sendRequestToDefender) {
+      const pdf = await generateRequestPdf(existingCase)
+
+      attachments = [
+        {
+          filename: `${existingCase.policeCaseNumber}.pdf`,
+          content: pdf,
+          encoding: 'binary',
+        },
+      ]
+    }
+
     return this.sendEmail(
       existingCase.defenderName,
       existingCase.defenderEmail,
       subject,
       html,
+      attachments,
     )
   }
 
@@ -393,6 +408,7 @@ export class NotificationService {
       existingCase.judge?.title,
       existingCase.parentCase !== null,
       existingCase.parentCase?.decision,
+      existingCase.additionToConclusion,
     )
 
     return this.sendEmail(
