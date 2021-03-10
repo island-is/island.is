@@ -26,7 +26,6 @@ export class HealthInsuranceService {
 
       const res = await this.healthInsuranceAPI.applyInsurance(
         570,
-        applyInputs.bucketName,
         applyInputs.attachmentNames,
         applyInputs.vistaskjal,
       )
