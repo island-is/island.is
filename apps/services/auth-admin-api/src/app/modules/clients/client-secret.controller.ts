@@ -11,11 +11,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-// @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('client-secret')
 @Controller('backend/client-secret')
