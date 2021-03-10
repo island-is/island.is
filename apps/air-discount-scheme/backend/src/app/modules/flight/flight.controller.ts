@@ -23,7 +23,7 @@ import {
 
 import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Flight, FlightLeg } from './flight.model'
-import { FlightService } from './flight.service'
+import { FlightService, REYKJAVIK_FLIGHT_CODES } from './flight.service'
 import {
   FlightViewModel,
   CreateFlightBody,
@@ -94,6 +94,26 @@ export class PublicFlightController {
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new ForbiddenException('Flight leg quota is exceeded')
     }
+
+    if (flight.flightLegs.length === 1) {
+      const incomingLeg = flight.flightLegs[0]
+
+      if (
+        !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) ||
+        !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.origin)
+      ) {
+        const isConnectingFlight = this.flightService.isFlightLegConnectingFlight(
+          discount.nationalId,
+          incomingLeg as FlightLeg, // must have date, destination and origin
+        )
+        if (!isConnectingFlight) {
+          throw new ForbiddenException(
+            'User does not meet the requirements for a connecting flight for this flight',
+          )
+        }
+      }
+    }
+
     const newFlight = await this.flightService.create(
       flight,
       user,

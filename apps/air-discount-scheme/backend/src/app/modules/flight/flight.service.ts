@@ -37,7 +37,7 @@ const availableFinancialStates = [
 ]
 
 const CONNECTING_FLIGHT_GRACE_PERIOD_IN_HOURS = 12
-const REYKJAVIK_FLIGHT_CODES = ['RVK', 'REK']
+export const REYKJAVIK_FLIGHT_CODES = ['RVK', 'REK']
 
 @Injectable()
 export class FlightService {
