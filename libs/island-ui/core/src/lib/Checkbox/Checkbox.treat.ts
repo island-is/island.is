@@ -56,6 +56,7 @@ export const largeLabel = style({
 })
 export const checkbox = style({
   alignItems: 'center',
+  alignSelf: 'center',
   backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
   borderRadius: theme.border.radius.standard,

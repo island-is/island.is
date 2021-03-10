@@ -3,9 +3,10 @@ const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 const {
   API_URL = 'http://localhost:3333',
-  API_PATH = '/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
 } = process.env
+
+const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 
 module.exports = withTreat(
@@ -18,12 +19,12 @@ module.exports = withTreat(
     },
     serverRuntimeConfig: {
       // Will only be available on the server side
-      apiUrl: API_URL,
-      graphqlEndpoint: graphqlPath,
+      apiUrl: `${API_URL}${apiPath}`,
+      graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
-      apiUrl: `${WEB_PUBLIC_URL}${API_PATH}`,
+      apiUrl: `${WEB_PUBLIC_URL}${apiPath}`,
       graphqlEndpoint: graphqlPath,
     },
     env: {
