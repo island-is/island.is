@@ -15,7 +15,7 @@ export class GrantTypeService {
 
   /** Get's all Grant Types  */
   async findAll(): Promise<GrantType[] | null> {
-    return this.grantTypeModel.findAll()
+    return this.grantTypeModel.findAll({ where: { archived: null } })
   }
 
   /** Get's all Grant Types and count */

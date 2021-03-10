@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
-import { GrantTypeDTO } from 'apps/auth-admin-web/entities/dtos/grant-type.dto'
-import { GrantType } from 'apps/auth-admin-web/entities/models/grant-type.model'
-import { GrantTypeService } from 'apps/auth-admin-web/services/GrantTypeService'
+import { GrantTypeDTO } from './../../../entities/dtos/grant-type.dto'
+import { GrantType } from './../../../entities/models/grant-type.model'
+import { GrantTypeService } from './../../../services/GrantTypeService'
 interface Props {
   grantType: GrantTypeDTO
   handleSaveButtonClicked?: (response: GrantType) => void
