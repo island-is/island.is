@@ -34,7 +34,7 @@ export const dataSchema = z.object({
   //   .refine((v) => v, {
   //     message: 'Velja þarf valmöguleika',
   //   }),
-  selectDuration: z.array(z.string()).optional(),
+  selectDuration: z.array(z.string()),
   interview: z.enum(['yes', 'no']).refine((v) => v, {
     message: error.validation.interview.defaultMessage,
   }),

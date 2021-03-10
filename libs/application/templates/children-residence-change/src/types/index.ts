@@ -28,7 +28,7 @@ export interface ExternalData {
     data: PersonResidenceChange
   }
   childrenNationalRegistry: {
-    data: PersonResidenceChange
+    data: PersonResidenceChange[]
   }
   userProfile: {
     data: UserInfo

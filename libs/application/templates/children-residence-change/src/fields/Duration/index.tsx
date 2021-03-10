@@ -12,7 +12,9 @@ import {
 export type ValidAnswers = 'permanent' | 'temporary' | undefined
 const Duration = ({ field, application, error }: CRCFieldBaseProps) => {
   // TODO: Fix when we fix the schema validation for this field
-  const currentAnswer = application.answers.selectDuration as ValidAnswers
+  const currentAnswer = application.answers.selectDuration
+    ? (application.answers.selectDuration[0] as ValidAnswers)
+    : undefined
   const { formatMessage } = useIntl()
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(

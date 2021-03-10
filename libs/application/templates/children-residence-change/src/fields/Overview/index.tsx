@@ -223,7 +223,7 @@ const Overview = ({
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
         <Text>
-          {answers.selectDuration && answers.selectDuration.length > 1
+          {answers.selectDuration.length > 1
             ? answers.selectDuration[1]
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
