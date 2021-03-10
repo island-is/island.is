@@ -242,7 +242,7 @@ export const JudgeOverview: React.FC = () => {
                           ? 'white'
                           : 'blue'
                       }
-                      value={workingCase.courtCaseNumber}
+                      value={workingCase.courtCaseNumber || ''}
                       icon={
                         workingCase.courtCaseNumber &&
                         !workingCase.setCourtCaseNumberManually
