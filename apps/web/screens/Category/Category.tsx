@@ -413,6 +413,7 @@ const Category: Screen<CategoryProps> = ({
                 key={index}
                 id={groupSlug}
                 ref={(el) => (itemsRef.current[index] = el)}
+                data-cy={`accordion-card`}
               >
                 <AccordionCard
                   id={`accordion-item-${groupSlug}`}
@@ -424,7 +425,7 @@ const Category: Screen<CategoryProps> = ({
                   onClick={() => {
                     handleAccordionClick(groupSlug)
                   }}
-                  data-cy={`accordion-item`}
+                  data-cy={`accordion-card-button`}
                 >
                   <Box paddingTop={2}>
                     {sortedSubgroupKeys.map((subgroup, index) => {

@@ -31,6 +31,19 @@ describe('/flokkur', () => {
       .first()
       .should('have.attr', 'aria-hidden', 'false')
   })
+  //other attempt
+  // it('should have visible content when accordion card clicked', () => {
+  //   cy.get(`[data-cy=accordion-card]`)
+  //     .first()
+  //     .find(`[data-cy=accordion-card-button]`)
+  //     .click()
+
+  //   cy.get(`[data-cy=accordion-card]`)
+  //     .first()
+  //     .find(`[data-cy=accordion-card-content]`)
+  //     .should('have.attr', 'aria-hidden', 'false')
+  //     .should('be.visible')
+  // })
 
   it('should link to next category in navigation', () => {
     cy.get(`[data-cy=categories-navigation-link]`)

@@ -206,7 +206,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
         <AnimateHeight
           duration={300}
           height={height}
-          data-cy={`accordion-item-content`}
+          data-cy={`accordion-card-content`}
         >
           <Box id={id} paddingTop={2}>
             {children}
