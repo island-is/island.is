@@ -36,12 +36,12 @@ function handleError(error: string, formatMessage: MessageFormatter): void {
 }
 
 type stateMapEntry = { [key: string]: reviewSectionState }
-type statesMap = {
+type StatesMap = {
   otherParent: stateMapEntry
   employer: stateMapEntry
   vinnumalastofnun: stateMapEntry
 }
-const statesMap: statesMap = {
+const statesMap: StatesMap = {
   otherParent: {
     otherParentApproval: reviewSectionState.inProgress,
     otherParentRequiresAction: reviewSectionState.requiresAction,
