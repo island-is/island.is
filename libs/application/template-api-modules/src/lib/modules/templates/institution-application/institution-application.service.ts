@@ -32,7 +32,11 @@ export class InstitutionApplicationService {
     )
 
     await this.sharedTemplateAPIService.sendEmail(
-      (props) => generateConfirmationEmail(props, this.institutionConfig.senderEmailAddress),
+      (props) =>
+        generateConfirmationEmail(
+          props,
+          this.institutionConfig.senderEmailAddress,
+        ),
       application,
     )
   }

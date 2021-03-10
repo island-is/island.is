@@ -13,13 +13,25 @@ const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
       <Stack space={6}>
         <BulletList>
           <Bullet>
-            {formatText(m.confirmation.sectionInfoBulletFirst, application, formatMessage)}
+            {formatText(
+              m.confirmation.sectionInfoBulletFirst,
+              application,
+              formatMessage,
+            )}
           </Bullet>
           <Bullet>
-            {formatText(m.confirmation.sectionInfoBulletSecond, application, formatMessage)}
+            {formatText(
+              m.confirmation.sectionInfoBulletSecond,
+              application,
+              formatMessage,
+            )}
           </Bullet>
           <Bullet>
-            {formatText(m.confirmation.sectionInfoBulletThird, application, formatMessage)}
+            {formatText(
+              m.confirmation.sectionInfoBulletThird,
+              application,
+              formatMessage,
+            )}
           </Bullet>
         </BulletList>
         <Box display="flex" justifyContent="center" size={1}>

@@ -72,5 +72,5 @@ export default {
     url: process.env.SYSLUMENN_HOST ?? '',
     username: process.env.SYSLUMENN_USERNAME ?? '',
     password: process.env.SYSLUMENN_PASSWORD ?? '',
-  }
+  },
 }

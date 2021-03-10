@@ -13,15 +13,30 @@ type FieldDescriptionProps = FieldBaseProps & {
   }
 }
 
-const FieldDescription: FC<FieldDescriptionProps> = ({ field, application }) => {
+const FieldDescription: FC<FieldDescriptionProps> = ({
+  field,
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const { props = {} } = field
 
   return (
     <Stack space={1}>
-      {props.subTitle && <Box marginTop={5}><Text variant="h4">{formatText(props.subTitle, application, formatMessage)}</Text></Box>}
-      {props.description && <Box marginBottom={2}><Text>{formatText(props.description, application, formatMessage)}</Text></Box>}
+      {props.subTitle && (
+        <Box marginTop={5}>
+          <Text variant="h4">
+            {formatText(props.subTitle, application, formatMessage)}
+          </Text>
+        </Box>
+      )}
+      {props.description && (
+        <Box marginBottom={2}>
+          <Text>
+            {formatText(props.description, application, formatMessage)}
+          </Text>
+        </Box>
+      )}
     </Stack>
   )
 }

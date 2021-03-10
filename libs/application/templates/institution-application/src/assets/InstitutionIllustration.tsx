@@ -3719,7 +3719,6 @@ const InstitutionIllustration: FC = () => {
           x1="24.0117"
           y1="129.776"
           x2="747.92"
-          
           y2="129.776"
           gradientUnits="userSpaceOnUse"
         >

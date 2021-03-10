@@ -28,11 +28,7 @@ const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
       {isEnabled ? (
         <Box marginTop={4}>
           <Stack space={3}>
-            <Box
-              display="flex"
-              position="relative"
-              alignItems="center"
-            >
+            <Box display="flex" position="relative" alignItems="center">
               <Box
                 className={styles.deleteIcon}
                 onClick={disableSecondaryContact}
@@ -44,22 +40,28 @@ const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
                   type="outline"
                 />
               </Box>
-              <Text variant="h4">{formatText(title, application, formatMessage)}</Text>
+              <Text variant="h4">
+                {formatText(title, application, formatMessage)}
+              </Text>
             </Box>
           </Stack>
         </Box>
       ) : (
-          <Box marginTop={4}>
-            <Button
-              icon="add"
-              variant="ghost"
-              size="small"
-              onClick={enableSecondaryContact}
-            >
-              {formatText(m.applicant.contactAddButtonLabel, application, formatMessage)}
-            </Button>
-          </Box>
-        )}
+        <Box marginTop={4}>
+          <Button
+            icon="add"
+            variant="ghost"
+            size="small"
+            onClick={enableSecondaryContact}
+          >
+            {formatText(
+              m.applicant.contactAddButtonLabel,
+              application,
+              formatMessage,
+            )}
+          </Button>
+        </Box>
+      )}
     </>
   )
 }
