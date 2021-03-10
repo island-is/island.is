@@ -10,7 +10,7 @@ import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.treat'
 
-export enum reviewSectionState {
+export enum ReviewSectionState {
   inProgress = 'In progress',
   requiresAction = 'Requires action',
   complete = 'Complete',
@@ -21,7 +21,7 @@ type ReviewSectionProps = {
   index: number
   title: string
   description: string
-  state?: reviewSectionState
+  state?: ReviewSectionState
 }
 
 const ReviewSection: FC<ReviewSectionProps> = ({
@@ -50,13 +50,13 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         className={cn(styles.sectionNumber, {
           [styles.sectionNumberNotStarted]: state === undefined,
           [styles.sectionNumberInProgress]:
-            state === reviewSectionState.inProgress,
+            state === ReviewSectionState.inProgress,
           [styles.sectionNumberRequiresAction]:
-            state === reviewSectionState.requiresAction,
-          [styles.sectionNumberComplete]: state === reviewSectionState.complete,
+            state === ReviewSectionState.requiresAction,
+          [styles.sectionNumberComplete]: state === ReviewSectionState.complete,
         })}
       >
-        {(state === reviewSectionState.complete && (
+        {(state === ReviewSectionState.complete && (
           <Icon color="white" size="small" icon="checkmark" />
         )) || <span className={styles.sectionNumberText}>{index}</span>}
       </Box>
@@ -75,7 +75,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           </Text>
         </Box>
 
-        {state === reviewSectionState.inProgress && (
+        {state === ReviewSectionState.inProgress && (
           <Box pointerEvents="none">
             <Tag variant="blue">
               {formatText(
@@ -86,7 +86,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
             </Tag>
           </Box>
         )}
-        {state === reviewSectionState.requiresAction && (
+        {state === ReviewSectionState.requiresAction && (
           <Box pointerEvents="none">
             <Tag variant="red">
               {formatText(

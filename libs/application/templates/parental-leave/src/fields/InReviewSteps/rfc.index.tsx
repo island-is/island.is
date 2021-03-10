@@ -14,7 +14,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import ReviewSection, { reviewSectionState } from './ReviewSection'
+import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
@@ -35,7 +35,7 @@ function handleError(error: string, formatMessage: MessageFormatter): void {
   )
 }
 
-type stateMapEntry = { [key: string]: reviewSectionState }
+type stateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
   otherParent: stateMapEntry
   employer: stateMapEntry
@@ -43,21 +43,21 @@ type StatesMap = {
 }
 const statesMap: StatesMap = {
   otherParent: {
-    otherParentApproval: reviewSectionState.inProgress,
-    otherParentRequiresAction: reviewSectionState.requiresAction,
-    employerApproval: reviewSectionState.complete,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    otherParentApproval: ReviewSectionState.inProgress,
+    otherParentRequiresAction: ReviewSectionState.requiresAction,
+    employerApproval: ReviewSectionState.complete,
+    vinnumalastofnunApproval: ReviewSectionState.complete,
   },
   employer: {
-    employerWaitingToAssign: reviewSectionState.inProgress,
-    employerApproval: reviewSectionState.inProgress,
-    employerRequiresAction: reviewSectionState.requiresAction,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    employerWaitingToAssign: ReviewSectionState.inProgress,
+    employerApproval: ReviewSectionState.inProgress,
+    employerRequiresAction: ReviewSectionState.requiresAction,
+    vinnumalastofnunApproval: ReviewSectionState.complete,
   },
   vinnumalastofnun: {
-    vinnumalastofnunApproval: reviewSectionState.inProgress,
-    vinnumalastofnunRequiresAction: reviewSectionState.requiresAction,
-    approved: reviewSectionState.complete,
+    vinnumalastofnunApproval: ReviewSectionState.inProgress,
+    vinnumalastofnunRequiresAction: ReviewSectionState.requiresAction,
+    approved: ReviewSectionState.complete,
   },
 }
 
