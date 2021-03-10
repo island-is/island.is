@@ -69,8 +69,11 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     otherConstraints,
   ].some((x) => !!x)
 
-  const attatchments = getValueViaPath(application.answers, 'attatchments') as []
-  const hasAttatchments = attatchments && attatchments.length > 0
+  const attatchments = getValueViaPath(
+    application.answers,
+    'attatchments',
+  ) as Array<any>
+  const hasAttatchments = attatchments && attatchments?.length > 0
 
   return (
     <Box marginTop={4}>
