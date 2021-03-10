@@ -1,7 +1,11 @@
 import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation, useLazyQuery } from '@apollo/client'
-import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  FormValue,
+  PdfTypes,
+} from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import {
   CREATE_PDF_PRESIGNED_URL,
@@ -11,7 +15,6 @@ import {
 } from '@island.is/application/graphql'
 import {
   extractParentFromApplication,
-  extractChildrenFromApplication,
   extractAnswersFromApplication,
   constructParentAddressString,
   extractApplicantFromApplication,
@@ -26,6 +29,21 @@ import {
   FileSignatureStatus,
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
+
+interface ApplicantContactInfo {
+  email: string
+  phoneNumber: string
+}
+
+const getApplicantContactInfo = (
+  answers: FormValue,
+  key: string,
+): ApplicantContactInfo => {
+  return {
+    email: (answers[key] as FormValue).email as string,
+    phoneNumber: (answers[key] as FormValue).phoneNumber as string,
+  }
+}
 
 const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
   const [fileSignatureState, dispatchFileSignature] = useReducer(
@@ -140,6 +158,9 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
 
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
+  // TODO: Look into if we want to do this in a different way - using the application state seems wrong
+  const contactInfoKey = application.state === 'draft' ? 'parentA' : 'parentB'
+
   return (
     <>
       <SignatureModal
@@ -180,14 +201,13 @@ const Overview = ({ application, setBeforeSubmitCallback }: FieldBaseProps) => {
         <Text variant="h4" marginBottom={2}>
           {formatMessage(m.contract.labels.contactInformation)}
         </Text>
-        {/* TODO: Make this the contact information for parent B also when we add that to the flow */}
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
-          {answers.contactInformation.email}
+          {getApplicantContactInfo(answers, contactInfoKey).email}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
         <Text fontWeight="medium">
-          {answers.contactInformation.phoneNumber}
+          {getApplicantContactInfo(answers, contactInfoKey).phoneNumber}
         </Text>
       </Box>
       {answers.reason && (

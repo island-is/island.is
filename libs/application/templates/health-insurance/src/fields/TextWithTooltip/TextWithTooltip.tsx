@@ -18,7 +18,7 @@ const TextWithTooltip: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingTop={6} className={styles.marginFix}>
+    <Box paddingTop={2} className={styles.marginFix}>
       <Text as="span">
         {formatText(
           field.title ? field.title : title,

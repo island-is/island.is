@@ -1,0 +1,121 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nrwl/nx", "eslint-plugin-local-rules"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              "lodash",
+              "date-fns",
+              "date-fns/locale",
+              "styled-components",
+              "."
+            ]
+          }
+        ],
+        "local-rules/disallow-kennitalas": 1
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
+      "parserOptions": {
+        "project": "./tsconfig.*?.json"
+      },
+      "rules": {
+        "@typescript-eslint/no-extra-semi": "off",
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-parameter-properties": "off",
+        "@typescript-eslint/ban-types": "warn",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "ignoreRestSiblings": true,
+            "argsIgnorePattern": "^_([0-9])?$",
+            "varsIgnorePattern": "^_([0-9])?$"
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "warn",
+          {
+            "selector": "default",
+            "format": ["camelCase"]
+          },
+          {
+            "selector": "variable",
+            "format": ["camelCase", "PascalCase", "UPPER_CASE"]
+          },
+          {
+            "selector": "variable",
+            "modifiers": ["destructured"],
+            "leadingUnderscore": "allow",
+            "format": ["camelCase", "PascalCase"]
+          },
+          {
+            "selector": "parameter",
+            "leadingUnderscore": "allow",
+            "format": ["camelCase", "PascalCase"]
+          },
+          {
+            "selector": "function",
+            "format": ["camelCase", "PascalCase"]
+          },
+          {
+            "selector": "objectLiteralMethod",
+            "format": ["camelCase", "PascalCase"],
+            "filter": {
+              "regex": "^(__resolveType)$",
+              "match": false
+            }
+          },
+          {
+            "selector": "property",
+            "format": null
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "typeAlias",
+            "format": ["camelCase", "PascalCase"]
+          },
+          {
+            "selector": "enumMember",
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": ["schema.d.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
+}
