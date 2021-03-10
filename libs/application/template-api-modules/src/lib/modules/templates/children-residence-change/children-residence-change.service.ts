@@ -22,7 +22,7 @@ export class ChildrenResidenceChangeService {
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     const s3FileName = `children-residence-change/${application.id}.pdf`
     const file = await this.awsService.getFile(this.presignedBucket, s3FileName)
-    const fileContent = file.Body?.toString()
+    const fileContent = file.Body?.toString('base64')
 
     if (!fileContent) {
       throw new Error('File content was undefined')

@@ -33,7 +33,7 @@ export class SyslumennClient {
     }
 
     const response: { data: ILogin } = await this.httpService
-      .post(`${this.clientConfig.url}/dev/v1/Innskraning`, config)
+      .post(`${this.clientConfig.url}/v1/Innskraning`, config)
       .toPromise()
 
     this.id = response.data.audkenni
@@ -44,8 +44,8 @@ export class SyslumennClient {
     await this.login()
 
     const url = year
-      ? `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.id}/${year}`
-      : `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.id}`
+      ? `${this.clientConfig.url}/v1/VirkarHeimagistingar/${this.id}/${year}`
+      : `${this.clientConfig.url}/v1/VirkarHeimagistingar/${this.id}`
 
     const response: { data: IHomestay[] } = await this.httpService
       .get(url)
@@ -73,6 +73,9 @@ export class SyslumennClient {
     } = await this.httpService
       .post(url, request, { headers: headers })
       .toPromise()
+      .catch((err) => {
+        throw err
+      })
 
     return response.data.skilabod
   }
