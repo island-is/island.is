@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, BulletList, Bullet } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
   RadioController,
@@ -10,7 +9,6 @@ import {
 const PARTYLETTERS = ['A', 'B', 'C', 'X', 'H', 'I', 'O', 'P', 'Q', 'T', 'R']
 
 const PartyLetter: FC<FieldBaseProps> = ({ application }) => {
-  const { formatMessage } = useLocale()
   return (
     <Box marginBottom={8}>
       <FieldDescription

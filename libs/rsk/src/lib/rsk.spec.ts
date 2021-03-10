@@ -29,7 +29,7 @@ const createRSKCompaniesResponse = (
             {
               ErProkuruhafi: '1',
               ErStjorn: '1',
-              Kennitala: '1111111111',
+              Kennitala: '0000000000',
               Nafn: 'Test Testson',
               Rekstarform: 'Kassi',
               StadaAdila: 'Standandi',
@@ -37,7 +37,7 @@ const createRSKCompaniesResponse = (
             {
               ErProkuruhafi: '0',
               ErStjorn: '1',
-              Kennitala: '1111111111',
+              Kennitala: '0000000000',
               Nafn: 'Test Testson',
               Rekstarform: 'Kassi',
               StadaAdila: 'Standandi',

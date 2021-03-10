@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Button } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import RecommendationTable from './RecommendationTable'
 
@@ -60,7 +59,6 @@ const copyToClipboard = (str: string) => {
 }
 
 const Recommendations: FC<FieldBaseProps> = ({ application }) => {
-  const { formatMessage } = useLocale()
   return (
     <Box marginBottom={8}>
       <FieldDescription description={'Hér er hlekkur til að afrita'} />

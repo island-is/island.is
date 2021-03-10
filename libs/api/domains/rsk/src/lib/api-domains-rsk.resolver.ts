@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import {
@@ -7,7 +7,7 @@ import {
   CurrentUser,
   User,
 } from '@island.is/auth-nest-tools'
-import { RSKService } from 'libs/rsk/src'
+import { RSKService } from '@island.is/rsk'
 import { CurrentUserCompanies } from './models/currentUserCompanies.model'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)

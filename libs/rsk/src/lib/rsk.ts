@@ -31,7 +31,6 @@ export class RSKService extends RESTDataSource {
     private readonly options: RSKServiceOptions,
   ) {
     super()
-    const config: any = {}
     this.baseURL = `${this.options.url}/companyregistry/members/`
     this.initialize({} as DataSourceConfig<any>)
   }
