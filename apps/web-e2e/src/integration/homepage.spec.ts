@@ -1,5 +1,7 @@
 import { cms } from '@island.is/api/mocks'
 
+const click = ($el: any) => $el.click()
+
 describe('homepage', () => {
   beforeEach(() => cy.visit('/'))
 
@@ -37,7 +39,11 @@ describe('homepage', () => {
   })
 
   it('should display the main menu overlay', () => {
-    cy.get(`[data-cy="main-menu-button"]:visible`).click()
-    cy.get(`[data-dialog-ref="Menu"]`).should('exist').should('be.visible')
+    cy.get(`[data-cy="main-menu-button"]:visible`)
+      .pipe(click)
+      .should('have.attr', 'aria-expanded', 'true')
+      .then(() => {
+        cy.get(`[data-dialog-ref="Menu"]`).should('exist').should('be.visible')
+      })
   })
 })

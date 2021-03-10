@@ -283,6 +283,8 @@ const Category: Screen<CategoryProps> = ({
       : a.importance === b.importance && a.title.localeCompare(b.title, 'is'),
   )
 
+  let renderLinkIndex = 0
+
   return (
     <>
       <Head>
@@ -302,7 +304,7 @@ const Category: Screen<CategoryProps> = ({
                   <Link
                     href={linkResolver(typename as LinkType, slug).href}
                     onClick={() => setHashArray([])}
-                    data-cy={`categories-navigation-link`}
+                    data-cy={`categories-navigation-link-${renderLinkIndex++}`}
                     passHref
                   >
                     {link}
@@ -413,7 +415,7 @@ const Category: Screen<CategoryProps> = ({
                 key={index}
                 id={groupSlug}
                 ref={(el) => (itemsRef.current[index] = el)}
-                data-cy={`accordion-card`}
+                data-cy={`accordion-card-${index}`}
               >
                 <AccordionCard
                   id={`accordion-item-${groupSlug}`}
