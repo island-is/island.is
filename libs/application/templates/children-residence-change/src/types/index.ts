@@ -1,7 +1,8 @@
-import { Application } from '@island.is/application/core'
+import { NationalRegistryUser } from '@island.is/api/schema'
+import { Application, FieldBaseProps } from '@island.is/application/core'
 import { answersSchema } from '../lib/dataSchema'
 
-type Override<T1, T2> = Omit<T1, keyof T2> & T2
+export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 export interface PersonResidenceChange {
   id: string
@@ -20,6 +21,9 @@ export interface UserInfo {
 }
 
 export interface ExternalData {
+  nationalRegistry: {
+    data: NationalRegistryUser
+  }
   parentNationalRegistry: {
     data: PersonResidenceChange
   }
@@ -36,8 +40,12 @@ export interface Answers extends answersSchema {
   mockData: ExternalData
 }
 
-type CRCApplicationWithAnswers = {
-  answers: Answers
-}
+export type CRCApplication = Override<
+  Application,
+  { answers: Answers; externalData: ExternalData }
+>
 
-export type CRCApplication = Override<Application, CRCApplicationWithAnswers>
+export type CRCFieldBaseProps = Override<
+  FieldBaseProps,
+  { application: CRCApplication }
+>

@@ -1,20 +1,18 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { contactInfo } from '../../lib/messages'
 import { extractUserInfoFromApplication } from '../../lib/utils'
+import { CRCFieldBaseProps } from '../../types'
 
 const emailId = 'email'
 const phoneNumberId = 'phoneNumber'
 
 export const contactInfoIds = [emailId, phoneNumberId]
 
-const ContactInfo = ({ errors, application }: FieldBaseProps) => {
-  const getValue = (id: string) => {
-    return getValueViaPath(application.answers, id) as string
-  }
+const ContactInfo = ({ errors, application }: CRCFieldBaseProps) => {
+  const { answers } = application
   const { formatMessage } = useIntl()
   const { setValue, register } = useFormContext()
   const userInfo = extractUserInfoFromApplication(application)
@@ -30,7 +28,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
       <Box marginTop={5}>
         <Controller
           name={emailId}
-          defaultValue={getValue(emailId) || userInfo.email}
+          defaultValue={answers.email || userInfo.email}
           render={({ value, onChange }) => {
             return (
               <Input
@@ -56,7 +54,7 @@ const ContactInfo = ({ errors, application }: FieldBaseProps) => {
       <Box marginTop={2}>
         <Controller
           name={phoneNumberId}
-          defaultValue={getValue(phoneNumberId) || userInfo.mobilePhoneNumber}
+          defaultValue={answers.phoneNumber || userInfo.mobilePhoneNumber}
           render={({ value, onChange }) => {
             return (
               <Input

@@ -11,11 +11,9 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
-  FormValue,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import { contactInfoIds } from '../fields/ContactInfo'
-import { Answers } from '@island.is/application/templates/children-residence-change'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({

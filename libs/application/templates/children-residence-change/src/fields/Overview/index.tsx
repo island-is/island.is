@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import { useMutation, useLazyQuery } from '@apollo/client'
-import { FieldBaseProps, PdfTypes } from '@island.is/application/core'
+import { PdfTypes } from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import {
   CREATE_PDF_PRESIGNED_URL,
@@ -11,8 +11,6 @@ import {
 } from '@island.is/application/graphql'
 import {
   extractParentFromApplication,
-  extractChildrenFromApplication,
-  extractAnswersFromApplication,
   constructParentAddressString,
   extractApplicantFromApplication,
 } from '../../lib/utils'
@@ -26,11 +24,12 @@ import {
   FileSignatureStatus,
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
-import { CRCApplication } from '../../types'
-interface Props extends FieldBaseProps {
-  application: CRCApplication
-}
-const Overview = ({ application, setBeforeSubmitCallback }: Props) => {
+import { CRCFieldBaseProps } from '../../types'
+
+const Overview = ({
+  application,
+  setBeforeSubmitCallback,
+}: CRCFieldBaseProps) => {
   const { answers } = application
   const [fileSignatureState, dispatchFileSignature] = useReducer(
     fileSignatureReducer,
@@ -39,7 +38,6 @@ const Overview = ({ application, setBeforeSubmitCallback }: Props) => {
   const applicant = extractApplicantFromApplication(application)
   const parent = extractParentFromApplication(application)
   const parentAddress = constructParentAddressString(parent)
-  // const answers = extractAnswersFromApplication(application)
   const children = answers.selectChild
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
@@ -187,19 +185,17 @@ const Overview = ({ application, setBeforeSubmitCallback }: Props) => {
         {/* TODO: Make this the contact information for parent B also when we add that to the flow */}
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
-          {answers.contactInformation.email}
+          {answers.email}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">
-          {answers.contactInformation.phoneNumber}
-        </Text>
+        <Text fontWeight="medium">{answers.phoneNumber}</Text>
       </Box>
-      {answers.reason && (
+      {answers.residenceChangeReason && (
         <Box marginTop={4}>
           <Text variant="h4" marginBottom={1}>
             {formatMessage(m.reason.input.label)}
           </Text>
-          <Text>{answers.reason}</Text>
+          <Text>{answers.residenceChangeReason}</Text>
         </Box>
       )}
       <Box marginTop={4}>
@@ -225,8 +221,8 @@ const Overview = ({ application, setBeforeSubmitCallback }: Props) => {
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
         <Text>
-          {answers.selectedDuration.length > 1
-            ? answers.selectedDuration[1]
+          {answers.selectDuration && answers.selectDuration.length > 1
+            ? answers.selectDuration[1]
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>
