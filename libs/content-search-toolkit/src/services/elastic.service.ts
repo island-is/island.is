@@ -75,7 +75,6 @@ export class ElasticService {
         })
         requests.push({
           doc: document,
-          // eslint-disable-next-line @typescript-eslint/camelcase
           doc_as_upsert: true,
         })
         return requests
@@ -238,7 +237,6 @@ export class ElasticService {
             },
           },
         },
-        // eslint-disable-next-line @typescript-eslint/camelcase
         retry_on_conflict: 1,
       })
       .catch((error) => {

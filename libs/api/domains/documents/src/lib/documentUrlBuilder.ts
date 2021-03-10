@@ -6,8 +6,6 @@ import { FileType } from './types/fileType.enum'
 
 @Injectable()
 export class DocumentBuilder {
-  constructor() {}
-
   // Handling edge case for documents that cant be presented due to requiring authentication through rsk.is
   private static readonly customDocuments: DocumentTypeFilter[] = [
     {

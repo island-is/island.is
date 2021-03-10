@@ -206,7 +206,6 @@ export const getAllPopularityScores = async (index: string) => {
 
     data = await client.scroll<SearchResponse<MappedData>, unknown>({
       scroll: '1m',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       scroll_id: data.body._scroll_id,
     })
   }
