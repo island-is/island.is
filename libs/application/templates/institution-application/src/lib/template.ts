@@ -120,7 +120,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               read: 'all',
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
+                import('../forms/approved').then((val) =>
                   Promise.resolve(val.approved),
                 ),
             },
