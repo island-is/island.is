@@ -98,10 +98,6 @@ export class UserController {
     return user
   }
 
-  /*
-   * This endpoint is not guarded as it needs to respond to unauthenticated requests
-   * from the authentication service.
-   */
   @UseGuards(new TokenGuaard(environment.auth.secretToken))
   @Get('user')
   @ApiOkResponse({

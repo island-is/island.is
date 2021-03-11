@@ -130,6 +130,7 @@ function remainingProsecutorCaseData() {
 
 function remainingJudgeCaseData() {
   return {
+    setCourtCaseNumberManually: true,
     courtCaseNumber: 'Court Case Number',
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
@@ -146,6 +147,7 @@ function remainingJudgeCaseData() {
     custodyEndDate: '2020-09-28T12:00:00.000Z',
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
+    additionToConclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -294,6 +296,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
   expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
+  expect(caseOne.setCourtCaseNumberManually || null).toBe(
+    caseTwo.setCourtCaseNumberManually || null,
+  )
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
@@ -322,11 +327,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.otherRestrictions || null).toBe(
     caseTwo.otherRestrictions || null,
   )
-
   expect(caseOne.additionToConclusion || null).toBe(
     caseTwo.additionToConclusion || null,
   )
-
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )
