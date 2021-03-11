@@ -43,7 +43,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     const allowedNationalIds = [
       application.applicant,
-      ...userCompanies.map((company) => company.Kennitala),
+      ...userCompanies.map((company) => company.kennitala),
     ]
 
     if (allowedNationalIds.includes(newNationalId)) {

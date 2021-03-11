@@ -121,12 +121,28 @@ describe('getCompaniesByNationalId', () => {
   })
 
   it('should return success', async () => {
+    const successResults = [
+      {
+        erProkuruhafi: '1',
+        erStjorn: '1',
+        kennitala: '0000000000',
+        nafn: 'Test Testson',
+        rekstarform: 'Kassi',
+        stadaAdila: 'Standandi',
+      },
+      {
+        erProkuruhafi: '0',
+        erStjorn: '1',
+        kennitala: '0000000000',
+        nafn: 'Test Testson',
+        rekstarform: 'Kassi',
+        stadaAdila: 'Standandi',
+      },
+    ]
     const results = await rskService.getCompaniesByNationalId(
       expectedResult.SUCCESS,
     )
-    const successResults = createRSKCompaniesResponse(expectedResult.SUCCESS)
-      .body?.MemberCompanies
-    expect(results).toEqual(successResults)
+    expect(results).toStrictEqual(successResults)
   })
 
   it('should return empty array when use has no company', async () => {

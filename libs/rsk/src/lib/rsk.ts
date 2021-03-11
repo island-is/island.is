@@ -13,16 +13,25 @@ export interface RSKServiceOptions {
 }
 
 export interface RSKCompaniesResponse {
-  MemberCompanies?: CompanyRegistryMember[]
+  MemberCompanies?: CompanyRegistryMemberResponse[]
 }
 
-export interface CompanyRegistryMember {
+interface CompanyRegistryMemberResponse {
   Kennitala: string
   Nafn: string
   Rekstarform: string
   StadaAdila: string
   ErStjorn: '0' | '1'
   ErProkuruhafi: '0' | '1'
+}
+
+export interface CompanyRegistryMember {
+  kennitala: string
+  nafn: string
+  rekstarform: string
+  stadaAdila: string
+  erStjorn: '0' | '1'
+  erProkuruhafi: '0' | '1'
 }
 
 export class RSKService extends RESTDataSource {
@@ -54,6 +63,13 @@ export class RSKService extends RESTDataSource {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
     )
-    return response?.MemberCompanies ?? []
+    return (response?.MemberCompanies ?? []).map((company) => ({
+      kennitala: company.Kennitala,
+      nafn: company.Nafn,
+      stadaAdila: company.StadaAdila,
+      rekstarform: company.Rekstarform,
+      erProkuruhafi: company.ErProkuruhafi,
+      erStjorn: company.ErStjorn,
+    }))
   }
 }

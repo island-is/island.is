@@ -7,7 +7,7 @@ import { CurrentUserCompanies } from '@island.is/api/schema'
 
 export type UserCompany = Pick<
   CurrentUserCompanies,
-  'Kennitala' | 'Nafn' | 'ErProkuruhafi'
+  'kennitala' | 'nafn' | 'erProkuruhafi'
 >
 type GetUserCompaniesResponse = {
   rskGetCurrentUserCompanies: UserCompany[]
@@ -36,8 +36,8 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
         const userCompanies = response.data?.rskGetCurrentUserCompanies ?? []
         userCompanies.forEach((company) => {
           // only add companies that this user does not have procurement for
-          if (company.ErProkuruhafi === '1') {
-            uniqueAllowedCompanies.set(company.Kennitala, company)
+          if (company.erProkuruhafi === '1') {
+            uniqueAllowedCompanies.set(company.kennitala, company)
           }
         })
 

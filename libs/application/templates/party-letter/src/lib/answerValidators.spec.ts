@@ -13,9 +13,9 @@ describe('answerValidators', () => {
       userCompanies: {
         data: [
           {
-            ErProkuruhafi: '1',
-            Kennitala: '0000000000',
-            Nafn: 'Prófum íslenska hluti ohf',
+            erProkuruhafi: '1',
+            kennitala: '0000000000',
+            nafn: 'Prófum íslenska hluti ohf',
           },
         ] as UserCompany[],
         date: new Date(),
