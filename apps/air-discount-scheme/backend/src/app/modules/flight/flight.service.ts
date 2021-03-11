@@ -117,7 +117,6 @@ export class FlightService {
     return this.flightLegModel.findAll({
       where: {
         ...(body.airline ? { airline: body.airline } : {}),
-        ...(body.cooperation ? { cooperation: body.cooperation } : {}),
         ...(body.state && body.state.length > 0
           ? { financialState: body.state }
           : {}),

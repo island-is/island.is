@@ -6,7 +6,9 @@ Generates discount codes that can be used for booking domestic flights online.
 
 There are certain precondition to be eligible for a discount. They are:
 
-- The person's legal domicile needs to be in a predefined set of towns outside the capital (We fetch postal codes from Þjóðskrá to validate if user is eligible).
+- The person's legal domicile needs to be in a predefined set of towns outside
+  the capital (We fetch postal codes from Þjóðskrá to validate if user is
+  eligible).
 
 ## URLs
 
@@ -16,10 +18,13 @@ There are certain precondition to be eligible for a discount. They are:
 
 ## API
 
-The API is used by airlines to verify the discount code validity and get
-basic booking info about the user.
+The API is used by airlines to verify the discount code validity and get basic
+booking info about the user.
 
-The airlines that have access to this api are `Air Iceland Connect` and `Ernir`. Though some flights created by `Air Iceland Connect` maybe booked for `Norlandair` as it uses the same booking site as `Air Iceland Connect`.
+The airlines that have access to this api are `Icelandair`, `Ernir` and
+`Norlandair`. Historically some flights were booked for `Norlandair` through
+`Icelandair`, those flights are marked with the `Icelandair` airline but have a
+cooperation field with `Norlandair`.
 
 [Swagger API](https://loftbru.dev01.devland.is/api/swagger)
 
@@ -40,7 +45,8 @@ yarn start air-discount-scheme-backend
 
 ## Web
 
-The user frontend has information about the initiative, legal terms and a way for users to get their discount codes.
+The user frontend has information about the initiative, legal terms and a way
+for users to get their discount codes.
 
 [Dev](https://loftbru.dev01.devland.is)
 
@@ -50,7 +56,9 @@ yarn start air-discount-scheme-web
 
 ## Integrations
 
-- [Þjóðskrá](https://skra.is): To be able to verify the persons legal domicile, give the airlines basic information about the person and fetch a persons relations to show the discount codes for related children.
+- [Þjóðskrá](https://skra.is): To be able to verify the persons legal domicile,
+  give the airlines basic information about the person and fetch a persons
+  relations to show the discount codes for related children.
 
 ## Development
 
@@ -87,12 +95,14 @@ yarn start air-discount-scheme-backend
 ```
 
 Navigate to [localhost:4200](http://localhost:4200) for the website or
-[localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the airline api.
+[localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the
+airline api.
 
 ### Admin
 
-To access the Admin UI, you'll need to add your Icelandic National ID to the comma separated
-environment variable `DEVELOPERS` (.env.secret) and restart the `api`.
+To access the Admin UI, you'll need to add your Icelandic National ID to the
+comma separated environment variable `DEVELOPERS` (.env.secret) and restart the
+`api`.
 
 ```bash
 export DEVELOPERS=1234567890
@@ -100,7 +110,8 @@ export DEVELOPERS=1234567890
 
 ## Shortcuts
 
-Because of the short timeline this assignment had, there were few shortcuts taken that can be improved upon:
+Because of the short timeline this assignment had, there were few shortcuts
+taken that can be improved upon:
 
 - The authentication is pretty primitive, the IDP is still in development at
   the time of this writing so we needed to use static api keys.
