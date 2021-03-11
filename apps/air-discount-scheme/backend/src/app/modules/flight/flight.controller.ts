@@ -11,6 +11,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  HttpStatus,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -35,6 +36,9 @@ import {
   GetUserFlightsParams,
   DeleteFlightParams,
   DeleteFlightLegParams,
+  CheckFlightParams,
+  CheckFlightBody,
+  CheckFlightViewModel,
 } from './dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
@@ -53,13 +57,15 @@ export class PublicFlightController {
   ) {}
 
   @Get('discounts/:discountCode/checkFlightStatus')
-  @ApiResponse({ type: CheckStatusModel })
+  @ApiResponse({ status: 200, description: 'Input flight is eligible for discount as a connection flight'})
+  @ApiResponse({ status: 400, description: 'User does not have any flights that may correspond to connection flight'})
+  @ApiResponse({ type: CheckFlightViewModel })
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
     @Body() flight: CheckFlightBody,
     @Req() request: HttpRequest,
-  ): Promise<CheckStatusModel> {
-    return false
+  ): Promise<CheckFlightViewModel>{
+    return new CheckFlightViewModel('200')
   }
 
   @Post('discounts/:discountCode/flights')

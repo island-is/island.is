@@ -20,6 +20,13 @@ export class CreateFlightParams {
   readonly discountCode!: string
 }
 
+export class CheckFlightParams {
+  @IsString()
+  @Length(8, 8)
+  @ApiProperty()
+  readonly discountCode!: string
+}
+
 export class GetUserFlightsParams {
   @IsString()
   @Length(10, 10)

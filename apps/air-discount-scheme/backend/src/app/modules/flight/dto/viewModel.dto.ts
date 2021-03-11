@@ -30,7 +30,18 @@ export class FlightLegViewModel {
   @ApiProperty()
   readonly date: Date
 }
+export class CheckFlightViewModel {
+  constructor(status: string) {
+    if(status === '200') {
+      this.message = "OK"
+    } else {
+      this.message = "User does not have any flights that may correspond to connection flight"
+    }
+  }
 
+  @ApiProperty()
+  readonly message: string
+}
 export class FlightViewModel {
   constructor(flight: Flight) {
     this.id = flight.id
