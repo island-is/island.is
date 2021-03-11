@@ -27,6 +27,6 @@ export function useNamespaceStrict<M extends Messages>(namespace: M = {} as M) {
 // (The "clever" signature above is entirely opt-in)
 export function useNamespace(namespace = {}) {
   return (key: string, fallback?: any) => {
-    return namespace[key] ?? fallback ?? key
+    return namespace[key as keyof typeof namespace] ?? fallback ?? key
   }
 }
