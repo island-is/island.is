@@ -20,6 +20,9 @@ import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { OrganizationPageSyncService } from './importers/organizationPage.service'
+import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
+import { FrontpageSyncService } from './importers/frontpage.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -51,6 +54,9 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly contentfulService: ContentfulService,
     private readonly menuSyncService: MenuSyncService,
     private readonly groupedMenuSyncService: GroupedMenuSyncService,
+    private readonly organizationPageSyncService: OrganizationPageSyncService,
+    private readonly organizationSubpageSyncService: OrganizationSubpageSyncService,
+    private readonly frontpageSyncService: FrontpageSyncService,
     private readonly elasticService: ElasticService,
   ) {
     this.contentSyncProviders = [
@@ -62,6 +68,9 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.adgerdirPageSyncService,
       this.menuSyncService,
       this.groupedMenuSyncService,
+      this.organizationPageSyncService,
+      this.organizationSubpageSyncService,
+      this.frontpageSyncService,
     ]
   }
 

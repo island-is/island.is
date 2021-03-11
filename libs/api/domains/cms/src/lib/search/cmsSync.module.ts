@@ -10,6 +10,9 @@ import { AboutPageSyncService } from './importers/aboutPage.service'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
+import { OrganizationPageSyncService } from './importers/organizationPage.service'
+import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
+import { FrontpageSyncService } from './importers/frontpage.service'
 
 @Module({
   providers: [
@@ -24,6 +27,9 @@ import { GroupedMenuSyncService } from './importers/groupedMenu.service'
     AdgerdirPageSyncService,
     MenuSyncService,
     GroupedMenuSyncService,
+    OrganizationPageSyncService,
+    OrganizationSubpageSyncService,
+    FrontpageSyncService,
   ],
   exports: [CmsSyncService],
 })
