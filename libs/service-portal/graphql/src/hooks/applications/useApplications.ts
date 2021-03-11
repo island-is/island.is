@@ -2,10 +2,8 @@ import { useQuery } from '@apollo/client'
 
 import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
-export const useApplicationsInProgress = () => {
-  const { data, loading, error } = useQuery(APPLICATION_APPLICATIONS, {
-    variables: { input: { completed: false } },
-  })
+export const useApplications = () => {
+  const { data, loading, error } = useQuery(APPLICATION_APPLICATIONS)
 
   return {
     data: data?.applicationApplications ?? [],

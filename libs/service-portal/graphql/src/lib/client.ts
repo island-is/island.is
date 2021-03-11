@@ -38,15 +38,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })
 
-const authLink = setContext((_, { headers }) => {
-  console.log('-token', token)
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  }
-})
+const authLink = setContext((_, { headers }) => ({
+  headers: {
+    ...headers,
+    authorization: token ? `Bearer ${token}` : '',
+  },
+}))
 
 export const client = new ApolloClient({
   link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),

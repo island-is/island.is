@@ -36,8 +36,8 @@ export class ApplicationResolver {
 
   @Query(() => [Application], { nullable: true })
   async applicationApplications(
-    @Args('input') input: ApplicationApplicationsInput,
     @CurrentUser() user: User,
+    @Args('input', { nullable: true }) input?: ApplicationApplicationsInput,
   ): Promise<Application[] | null> {
     return this.applicationService.findAll(
       user.nationalId,

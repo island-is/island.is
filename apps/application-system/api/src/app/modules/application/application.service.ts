@@ -4,7 +4,6 @@ import { Op } from 'sequelize'
 import {
   ExternalData,
   FormValue,
-  ApplicationTypes,
   ApplicationStatus,
 } from '@island.is/application/core'
 
@@ -25,13 +24,16 @@ export class ApplicationService {
 
   async findAllByNationalIdAndFilters(
     nationalId: string,
-    typeId?: ApplicationTypes,
-    status?: ApplicationStatus,
+    typeId?: string,
+    status?: string,
   ): Promise<Application[]> {
+    const typeIds = typeId?.split(',')
+    const statuses = status?.split(',')
+
     return this.applicationModel.findAll({
       where: {
-        ...(typeId ? { typeId } : {}),
-        ...(status ? { status } : {}),
+        ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
+        ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.or]: [
           { applicant: nationalId },
           { assignees: { [Op.contains]: [nationalId] } },

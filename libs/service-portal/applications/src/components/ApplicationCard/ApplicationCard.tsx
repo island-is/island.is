@@ -6,6 +6,7 @@ import {
   Tag,
   Columns,
   Column,
+  Link,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
@@ -43,7 +44,7 @@ const ApplicationCard: FC<Props> = ({
       borderRadius="large"
       style={{ opacity: isComplete ? 0.5 : 1 }}
     >
-      <a href={url} target="_blank" rel="noopener noreferrer">
+      <Link href={url}>
         <Stack space={1}>
           <Box
             display="flex"
@@ -99,7 +100,7 @@ const ApplicationCard: FC<Props> = ({
             </Column>
           </Columns>
         </Stack>
-      </a>
+      </Link>
     </Box>
   )
 }

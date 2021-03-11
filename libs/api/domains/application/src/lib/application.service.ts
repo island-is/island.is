@@ -5,11 +5,7 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import {
-  ApplicationResponseDtoStatusEnum,
-  ApplicationResponseDtoTypeIdEnum,
-  ApplicationsApi,
-} from '../../gen/fetch'
+import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
@@ -48,14 +44,14 @@ export class ApplicationService {
   async findAll(
     nationalId: string,
     authorization: string,
-    input: ApplicationApplicationsInput,
+    input?: ApplicationApplicationsInput,
   ) {
     return await this.applicationApi
       .applicationControllerFindAll({
         nationalId,
         authorization,
-        typeId: input?.typeId,
-        status: input?.status,
+        typeId: input?.typeId?.join(','),
+        status: input?.status?.join(','),
       })
       .catch(handleError)
   }

@@ -119,21 +119,23 @@ export class ApplicationController {
   @ApiQuery({
     name: 'typeId',
     required: false,
-    enum: ApplicationTypes,
-    description: 'To filter applications by type.',
+    type: 'string',
+    description:
+      'To filter applications by type. Comma-separated for multiple values.',
   })
   @ApiQuery({
     name: 'status',
     required: false,
-    enum: ApplicationStatus,
-    description: 'To filter applications by status.',
+    type: 'string',
+    description:
+      'To filter applications by status. Comma-separated for multiple values.',
   })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   async findAll(
     @NationalId() nationalId: string,
-    @Query('typeId') typeId?: ApplicationTypes,
-    @Query('status') status?: ApplicationStatus,
+    @Query('typeId') typeId?: string,
+    @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
     return await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
@@ -389,7 +391,6 @@ export class ApplicationController {
     const helper = new ApplicationTemplateHelper(application, template)
     const [hasChanged, newState, newApplication] = helper.changeState(event)
     const status = helper.getApplicationStatus()
-    console.log('-status', status)
 
     if (!hasChanged) {
       return [false]

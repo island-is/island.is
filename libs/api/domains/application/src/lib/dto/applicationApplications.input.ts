@@ -1,28 +1,16 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { IsEnum, IsOptional } from 'class-validator'
-
-import {
-  ApplicationControllerFindAllTypeIdEnum,
-  ApplicationControllerFindAllStatusEnum,
-} from '../../../gen/fetch'
-
-registerEnumType(ApplicationControllerFindAllTypeIdEnum, {
-  name: 'ApplicationControllerFindAllTypeIdEnum',
-})
-
-registerEnumType(ApplicationControllerFindAllStatusEnum, {
-  name: 'ApplicationControllerFindAllStatusEnum',
-})
+import { Field, InputType, PartialType } from '@nestjs/graphql'
+import { IsOptional } from 'class-validator'
 
 @InputType()
-export class ApplicationApplicationsInput {
-  @Field(() => ApplicationControllerFindAllTypeIdEnum, { nullable: true })
-  @IsEnum(ApplicationControllerFindAllTypeIdEnum)
+class FiltersInput {
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  typeId?: ApplicationControllerFindAllTypeIdEnum
+  typeId?: string[]
 
-  @Field(() => ApplicationControllerFindAllStatusEnum, { nullable: true })
-  @IsEnum(ApplicationControllerFindAllStatusEnum)
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  status?: ApplicationControllerFindAllStatusEnum
+  status?: string[]
 }
+
+@InputType()
+export class ApplicationApplicationsInput extends PartialType(FiltersInput) {}

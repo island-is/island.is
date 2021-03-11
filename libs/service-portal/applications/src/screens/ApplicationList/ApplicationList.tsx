@@ -14,14 +14,10 @@ import {
   Link,
   Divider,
 } from '@island.is/island-ui/core'
-import {
-  useApplicationsCompleted,
-  useApplicationsInProgress,
-} from '@island.is/service-portal/graphql'
+import { useApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
-import isEmpty from 'lodash/isEmpty'
 
 import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
 import { m } from '../../lib/messages'
@@ -43,22 +39,8 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
   const { formatMessage, lang } = useLocale()
-  const {
-    data: applicationsInProgress,
-    loading: loadingApplicationsInProgress,
-    error: errorApplicationsInProgress,
-  } = useApplicationsInProgress()
-  const {
-    applicationApplicationsCompleted,
-    data: applicationsCompleted,
-  } = useApplicationsCompleted()
+  const { data: applications, loading, error } = useApplications()
   const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
-
-  useEffect(() => {
-    if (!loadingApplicationsInProgress && isEmpty(applicationsInProgress)) {
-      applicationApplicationsCompleted()
-    }
-  }, [applicationsInProgress, loadingApplicationsInProgress])
 
   return (
     <>
@@ -114,9 +96,9 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         </GridRow>
       </Box>
 
-      {loadingApplicationsInProgress && <ActionCardLoader repeat={3} />}
+      {loading && <ActionCardLoader repeat={3} />}
 
-      {errorApplicationsInProgress && (
+      {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
           <Text variant="h3" as="h3">
             {formatMessage(m.error)}
@@ -126,7 +108,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       {/* TODO add translations */}
       <Stack space={2}>
-        {applicationsInProgress.map((application: Application) => (
+        {applications.map((application: Application) => (
           <ApplicationCard
             key={application.id}
             name={application.name || application.typeId}
@@ -139,34 +121,6 @@ const ApplicationList: ServicePortalModuleComponent = () => {
           />
         ))}
       </Stack>
-
-      <Box marginTop={3} marginBottom={3}>
-        {isEmpty(applicationsCompleted) && (
-          <Box display="flex" justifyContent="center">
-            <Button onClick={() => applicationApplicationsCompleted()} nowrap>
-              {formatMessage(m.completedButton)}
-            </Button>
-          </Box>
-        )}
-
-        {/* TODO add translations */}
-        {!isEmpty(applicationsCompleted) && (
-          <Stack space={2}>
-            {applicationsCompleted.map((application: Application) => (
-              <ApplicationCard
-                key={application.id}
-                name={application.name || application.typeId}
-                date={format(new Date(application.modified), dateFormat)}
-                isApplicant={application.isApplicant}
-                isAssignee={application.isAssignee}
-                isComplete={application.progress === 1}
-                url={`${baseUrlForm}/umsokn/${application.id}`}
-                progress={application.progress ? application.progress * 100 : 0}
-              />
-            ))}
-          </Stack>
-        )}
-      </Box>
     </>
   )
 }
