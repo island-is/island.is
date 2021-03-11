@@ -20,6 +20,13 @@ export const externalData = {
       defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki.',
       description: 'External information retrieval subtitle',
     },
+    description: {
+      id:
+        'crc.application:section.backgroundInformation.externalData.description',
+      defaultMessage:
+        'Sýslumanni er nauðsynlegt að fá staðfestar upplýsingar um hvernig forsjá barna er háttað til að geta staðfest samning um breytt lögheimili barns. Eftirfarandi gagna verður því aflað með vísan til 2. tl. 9. gr. laga um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
+      description: 'External information retrieval description',
+    },
     checkboxLabel: {
       id:
         'crc.application:section.backgroundInformation.externalData.checkboxLabel',
