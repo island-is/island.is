@@ -30,11 +30,13 @@ export class ChildrenResidenceChangeService {
 
   // TODO: Send email to parents
   async submitApplication({ application }: props) {
+    const { answers, externalData } = application
+    const { parentNationalRegistry } = externalData
+    const nationalRegistry = (externalData.nationalRegistry
+      .data as unknown) as User
     const s3FileName = `children-residence-change/${application.id}.pdf`
     const file = await this.awsService.getFile(this.presignedBucket, s3FileName)
     const fileContent = file.Body?.toString('base64')
-    const nationalRegistry = (application.externalData.nationalRegistry
-      .data as unknown) as User
 
     // TODO: Remove ternary for usemocks once we move mock data to externalData
     const selectedChildren =
@@ -58,8 +60,8 @@ export class ChildrenResidenceChangeService {
     const parentA: Person = {
       name: nationalRegistry.fullName,
       ssn: nationalRegistry.nationalId,
-      phoneNumber: application.answers.parentA.phoneNumber,
-      email: application.answers.parentA.email,
+      phoneNumber: answers.parentA.phoneNumber,
+      email: answers.parentA.email,
       homeAddress: nationalRegistry.address.streetAddress,
       postalCode: nationalRegistry.address.postalCode,
       city: nationalRegistry.address.city,
@@ -68,14 +70,13 @@ export class ChildrenResidenceChangeService {
     }
 
     const parentB: Person = {
-      name: application.externalData.parentNationalRegistry.data.name,
-      ssn: application.externalData.parentNationalRegistry.data.ssn,
-      phoneNumber: application.answers.parentB.phoneNumber,
-      email: application.answers.parentB.email,
-      homeAddress: application.externalData.parentNationalRegistry.data.address,
-      postalCode:
-        application.externalData.parentNationalRegistry.data.postalCode,
-      city: application.externalData.parentNationalRegistry.data.city,
+      name: parentNationalRegistry.data.name,
+      ssn: parentNationalRegistry.data.ssn,
+      phoneNumber: answers.parentB.phoneNumber,
+      email: answers.parentB.email,
+      homeAddress: parentNationalRegistry.data.address,
+      postalCode: parentNationalRegistry.data.postalCode,
+      city: parentNationalRegistry.data.city,
       signed: true,
       type: PersonType.CounterParty,
     }
