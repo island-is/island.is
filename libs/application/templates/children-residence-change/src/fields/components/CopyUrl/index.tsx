@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useIntl } from 'react-intl'
-import { Text, Box, Button, Input } from '@island.is/island-ui/core'
+import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
 
 interface Props {
   title: string
   inputLabel: string
   buttonLabel: string
+  successMessage: string
 }
 
-const DescriptionText = ({ title, inputLabel, buttonLabel }: Props) => {
-  const { formatMessage } = useIntl()
+const DescriptionText = ({
+  title,
+  inputLabel,
+  buttonLabel,
+  successMessage,
+}: Props) => {
   const [currentUrl, setCurrentUrl] = useState<string | undefined>(undefined)
 
   const copyToClipboard = (val: string) => {
@@ -25,6 +29,7 @@ const DescriptionText = ({ title, inputLabel, buttonLabel }: Props) => {
     document.execCommand('copy')
     document.body.removeChild(selBox)
     buttonRef.current?.focus()
+    toast.success(successMessage)
   }
 
   useEffect(() => {
@@ -36,7 +41,7 @@ const DescriptionText = ({ title, inputLabel, buttonLabel }: Props) => {
       <Text variant="h4" marginBottom={2}>
         {title}
       </Text>
-      <Box display="flex">
+      <Box display="flex" flexDirection={['column', 'row', 'row', 'row']}>
         <Box flexGrow={1}>
           <Input
             label={inputLabel}
@@ -47,7 +52,12 @@ const DescriptionText = ({ title, inputLabel, buttonLabel }: Props) => {
             backgroundColor="blue"
           />
         </Box>
-        <Box display="flex" marginLeft={2}>
+        <Box
+          display="flex"
+          flexShrink={0}
+          marginLeft={[0, 1, 1, 1]}
+          marginTop={[1, 0, 0, 0]}
+        >
           <Button
             ref={buttonRef}
             disabled={!currentUrl}
@@ -56,7 +66,7 @@ const DescriptionText = ({ title, inputLabel, buttonLabel }: Props) => {
             icon="copy"
             onClick={() => currentUrl && copyToClipboard(currentUrl)}
             preTextIconType="filled"
-            size="default"
+            size="small"
             variant="ghost"
             iconType="outline"
           >

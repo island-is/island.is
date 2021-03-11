@@ -30,6 +30,11 @@ export const copyUrl = defineMessages({
     defaultMessage: 'Afrita hlekk',
     description: 'Copy url button text',
   },
+  successMessage: {
+    id: 'crc.application:copyUrl.successMessage',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Copy url success text',
+  },
 })
 
 // All sections in the application
