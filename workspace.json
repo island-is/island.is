@@ -1088,7 +1088,10 @@
           "options": {
             "jestConfig": "libs/api/domains/rsk/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/api/domains/rsk"
+          ]
         }
       }
     },
@@ -1942,7 +1945,10 @@
           "options": {
             "jestConfig": "libs/application/templates/party-letter/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/application/templates/party-letter"
+          ]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4275,7 +4281,10 @@
           "options": {
             "jestConfig": "libs/rsk/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/rsk"
+          ]
         }
       }
     },
