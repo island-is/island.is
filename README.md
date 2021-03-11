@@ -26,7 +26,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Prerequisites
 
-- You have Node installed `>= 12.20.0` and Yarn at `>= 1.20.0`.
+- You have Node installed `^14.16.0` and Yarn at `^1.22.0`.
 - You have [java](https://www.java.com/en/download/manual.jsp) installed.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - Run `yarn` to install the dependencies.

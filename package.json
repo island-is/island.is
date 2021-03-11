@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
-    "node": ">=12",
-    "yarn": ">=1.20"
+    "node": "^14.16",
+    "yarn": "^1.22"
   },
   "scripts": {
     "nx": "nx",
