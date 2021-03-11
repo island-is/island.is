@@ -170,7 +170,10 @@ export class FlightService {
       include: [
         {
           model: this.flightLegModel,
-          where: { financialState: availableFinancialStates },
+          where: {
+            financialState: availableFinancialStates,
+            isConnectingFlight: false,
+          },
         },
       ],
     })
@@ -293,6 +296,7 @@ export class FlightService {
     flight: CreateFlightBody,
     user: NationalRegistryUser,
     airline: ValueOf<typeof Airlines>,
+    isConnectingFlight: boolean,
   ): Promise<Flight> {
     const nationalId = user.nationalId
     return this.flightModel.create(
@@ -301,6 +305,7 @@ export class FlightService {
         flightLegs: flight.flightLegs.map((flightLeg) => ({
           ...flightLeg,
           airline,
+          isConnectingFlight,
         })),
         nationalId,
         userInfo: {

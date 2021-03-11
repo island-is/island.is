@@ -44,6 +44,7 @@ import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import { HttpRequest } from '../../app.types'
+import { Not } from 'sequelize-typescript'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -57,15 +58,50 @@ export class PublicFlightController {
   ) {}
 
   @Get('discounts/:discountCode/checkFlightStatus')
-  @ApiResponse({ status: 200, description: 'Input flight is eligible for discount as a connection flight'})
-  @ApiResponse({ status: 400, description: 'User does not have any flights that may correspond to connection flight'})
+  @ApiResponse({
+    status: 200,
+    description: 'Input flight is eligible for discount as a connection flight',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'User does not have any flights that may correspond to connection flight',
+  })
   @ApiResponse({ type: CheckFlightViewModel })
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
     @Body() flight: CheckFlightBody,
     @Req() request: HttpRequest,
-  ): Promise<CheckFlightViewModel>{
-    return new CheckFlightViewModel('200')
+  ): Promise<CheckFlightViewModel> {
+    const discount = await this.discountService.getDiscountByDiscountCode(
+      params.discountCode,
+    )
+    if (!discount) {
+      throw new BadRequestException('Discount code is invalid')
+    }
+
+    const user = await this.nationalRegistryService.getUser(discount.nationalId)
+    if (!user) {
+      throw new NotFoundException(`User not found`)
+    }
+
+    const incomingFlight = {
+      ...flight,
+      date: new Date(Date.parse(flight.date.toString())),
+    }
+
+    const flightOk = await this.flightService.isFlightLegConnectingFlight(
+      discount.nationalId,
+      incomingFlight as FlightLeg,
+    )
+
+    if (flightOk) {
+      return new CheckFlightViewModel('200')
+    }
+
+    throw new BadRequestException(
+      `User does not have any flights that may correspond to a connection flight`,
+    )
   }
 
   @Post('discounts/:discountCode/flights')
@@ -112,10 +148,12 @@ export class PublicFlightController {
       throw new ForbiddenException('Flight leg quota is exceeded')
     }
 
+    let connectingFlight = false
+
     if (flight.flightLegs.length === 1) {
       const incomingLeg = {
         ...flight.flightLegs[0],
-        date: new Date(Date.parse(flight.flightLegs[0].date.toString()))
+        date: new Date(Date.parse(flight.flightLegs[0].date.toString())),
       }
 
       if (
@@ -130,6 +168,8 @@ export class PublicFlightController {
           throw new ForbiddenException(
             'User does not meet the requirements for a connecting flight for this flight',
           )
+        } else {
+          connectingFlight = true
         }
       }
     }
@@ -138,6 +178,7 @@ export class PublicFlightController {
       flight,
       user,
       request.airline,
+      connectingFlight,
     )
     await this.discountService.useDiscount(
       params.discountCode,

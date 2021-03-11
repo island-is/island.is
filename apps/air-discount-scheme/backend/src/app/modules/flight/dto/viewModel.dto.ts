@@ -32,15 +32,19 @@ export class FlightLegViewModel {
 }
 export class CheckFlightViewModel {
   constructor(status: string) {
-    if(status === '200') {
-      this.message = "OK"
+    if (status === '200') {
+      this.message = 'OK'
+      this.statusCode = status
     } else {
-      this.message = "User does not have any flights that may correspond to connection flight"
+      // Should not end here, CheckFlight should throw an exception instead
+      this.message = 'Something went wrong'
+      this.statusCode = '500'
     }
   }
 
   @ApiProperty()
   readonly message: string
+  readonly statusCode: string
 }
 export class FlightViewModel {
   constructor(flight: Flight) {
