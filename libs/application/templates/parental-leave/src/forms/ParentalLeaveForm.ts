@@ -33,22 +33,11 @@ import { NO, YES } from '../constants'
 import Logo from '../assets/Logo'
 import { defaultMonths } from '../config'
 
-interface SelectItem {
-  id: string
-  name: string
-}
-
-type UnionQuery = {
-  getUnions: Array<SelectItem>
-}
-
-type PensionFundsQuery = {
-  getPensionFunds: Array<SelectItem>
-}
-
-type PrivatePensionFundsQuery = {
-  getPrivatePensionFunds: Array<SelectItem>
-}
+import {
+  GetPensionFundsQuery,
+  GetPrivatePensionFundsQuery,
+  GetUnionsQuery,
+} from '../types/schema'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -223,12 +212,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   loadOptions: async ({ apolloClient }) => {
                     const {
                       data,
-                    } = await apolloClient.query<PensionFundsQuery>({
+                    } = await apolloClient.query<GetPensionFundsQuery>({
                       query: GetPensionFunds,
                     })
 
                     return (
-                      data?.getPensionFunds.map(({ id, name }) => ({
+                      data?.getPensionFunds?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
@@ -241,12 +230,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   loadOptions: async ({ apolloClient }) => {
-                    const { data } = await apolloClient.query<UnionQuery>({
+                    const { data } = await apolloClient.query<GetUnionsQuery>({
                       query: GetUnions,
                     })
 
                     return (
-                      data?.getUnions.map(({ id, name }) => ({
+                      data?.getUnions?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
@@ -282,12 +271,12 @@ export const ParentalLeaveForm: Form = buildForm({
                   loadOptions: async ({ apolloClient }) => {
                     const {
                       data,
-                    } = await apolloClient.query<PrivatePensionFundsQuery>({
+                    } = await apolloClient.query<GetPrivatePensionFundsQuery>({
                       query: GetPrivatePensionFunds,
                     })
 
                     return (
-                      data?.getPrivatePensionFunds.map(({ id, name }) => ({
+                      data?.getPrivatePensionFunds?.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
