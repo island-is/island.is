@@ -1,6 +1,6 @@
 module.exports = {
-  name: 'service-portal-education-license',
-  preset: '../../../jest.config.js',
+  displayName: 'service-portal-education-license',
+  preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',

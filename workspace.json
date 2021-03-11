@@ -4648,7 +4648,8 @@
           "options": {
             "jestConfig": "libs/service-portal/education-career/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": ["coverage/libs/service-portal/education-career"]
         }
       }
     },
@@ -4677,7 +4678,8 @@
           "options": {
             "jestConfig": "libs/service-portal/education-degree/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": ["coverage/libs/service-portal/education-degree"]
         }
       }
     },
@@ -4706,7 +4708,8 @@
           "options": {
             "jestConfig": "libs/service-portal/education-license/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": ["coverage/libs/service-portal/education-license"]
         }
       }
     },
@@ -4735,7 +4738,10 @@
           "options": {
             "jestConfig": "libs/service-portal/education-student-assessment/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/service-portal/education-student-assessment"
+          ]
         }
       }
     },
