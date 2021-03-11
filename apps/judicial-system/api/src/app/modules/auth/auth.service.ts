@@ -10,7 +10,7 @@ import { environment } from '../../../environments'
 export class AuthService {
   async findUser(nationalId: string): Promise<User | undefined> {
     const res = await fetch(
-      `${environment.backendUrl}/api/user/?nationalId=${nationalId}`,
+      `${environment.backend.url}/api/user/?nationalId=${nationalId}`,
       {
         headers: { authorization: `Bearer ${environment.auth.secretToken}` },
       },
