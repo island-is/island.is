@@ -35,9 +35,7 @@ export const ComplaineeRepeater: FC<RepeaterProps> = ({
       <FieldDescription
         description={formatMessage(complaint.general.complaineePageDescription)}
       />
-      {complainee && (
-        <ComplaineeTable {...complainee} />
-      )}
+      {complainee && <ComplaineeTable {...complainee} />}
       {additionalComplainees?.map((complainee, index) => (
         <ComplaineeTable
           {...complainee}
