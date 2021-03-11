@@ -1,5 +1,5 @@
 import { application } from './factories'
-import { NationalRegistryFamilyMember } from '../../types'
+import { CurrentUserCompanies, NationalRegistryFamilyMember } from '../../types'
 import { createStore, faker } from '@island.is/shared/mocking'
 
 export const store = createStore(() => {
@@ -25,13 +25,13 @@ export const store = createStore(() => {
     },
   ]
 
-  const userCompanies = [
+  const userCompanies: CurrentUserCompanies[] = [
     {
-      ErProkuruhafi: '1',
-      ErStjorn: '0',
-      Kennitala: '0000000000',
-      Nafn: 'Tester Testson',
-      StadaAdila: 'Standandi',
+      erProkuruhafi: '1',
+      erStjorn: '0',
+      kennitala: '0000000000',
+      nafn: 'Tester Testson',
+      stadaAdila: 'Standandi',
     },
   ]
   return { applications, familyMembers, userCompanies }
