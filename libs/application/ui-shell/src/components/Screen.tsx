@@ -178,6 +178,10 @@ const Screen: FC<ScreenProps> = ({
           },
         },
       })
+
+      if (response?.data) {
+        addExternalData(response.data?.submitApplication.externalData)
+      }
     } else {
       response = await updateApplication({
         variables: {

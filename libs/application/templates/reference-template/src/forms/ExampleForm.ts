@@ -14,6 +14,7 @@ import {
   FormValue,
   buildFileUploadField,
 } from '@island.is/application/core'
+import { API_MODULE } from '../shared'
 import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({
@@ -150,7 +151,26 @@ export const ExampleForm: Form = buildForm({
         buildDescriptionField({
           id: 'final',
           title: 'Takk',
-          description: 'Umsókn þín er komin í vinnslu',
+          description: (application) => {
+            console.log('In description field')
+            console.log(application)
+            const sendApplicationActionResult =
+              application.externalData[API_MODULE.createApplication]
+
+            let id = 'unknown'
+            if (sendApplicationActionResult) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // @ts-ignore
+              id = sendApplicationActionResult.data.id
+            }
+
+            return {
+              ...m.outroMessage,
+              values: {
+                id,
+              },
+            }
+          },
         }),
       ],
     }),

@@ -2,7 +2,7 @@ import { interpret, Event, EventObject, MachineOptions } from 'xstate'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { ApplicationStateMetaOnEntry } from '@island.is/application/core'
+import { ApplicationTemplateAPIAction } from '@island.is/application/core'
 
 import { Application, ExternalData, FormValue } from '../types/Application'
 import {
@@ -55,9 +55,18 @@ export class ApplicationTemplateHelper<
     )
   }
 
+  getStateBeforeLeave(
+    stateKey: string = this.application.state,
+  ): ApplicationTemplateAPIAction | null {
+    return (
+      this.template.stateMachineConfig.states[stateKey]?.meta?.beforeLeave ??
+      null
+    )
+  }
+
   getStateOnEntry(
     stateKey: string = this.application.state,
-  ): ApplicationStateMetaOnEntry<TEvents> | null {
+  ): ApplicationTemplateAPIAction | null {
     return (
       this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
     )

@@ -34,6 +34,8 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
+  RecordObject,
+  ApplicationTemplateAPIAction,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -70,12 +72,26 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
+import { response } from 'express'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
 interface DecodedAssignmentToken {
   applicationId: string
   state: string
+}
+
+interface StateChangeResult {
+  error?: string
+  hasError: boolean
+  hasChanged: boolean
+  application: BaseApplication
+}
+
+interface ModuleActionResult {
+  error?: string
+  response?: unknown
+  success: boolean
 }
 
 @ApiTags('applications')
@@ -240,14 +256,23 @@ export class ApplicationController {
       assignees,
     }
 
-    const [hasChanged, updatedApplication] = await this.changeState(
+    const {
+      hasChanged,
+      hasError,
+      error,
+      application: updatedApplication,
+    } = await this.changeState(
       mergedApplication,
       template,
       DefaultEvents.ASSIGN,
       authorization,
     )
 
-    if (hasChanged && updatedApplication) {
+    if (hasError) {
+      throw new BadRequestException(error)
+    }
+
+    if (hasChanged) {
       return updatedApplication
     }
 
@@ -397,20 +422,73 @@ export class ApplicationController {
       answers: mergedAnswers,
     }
 
-    const [hasChanged, updatedApplication] = await this.changeState(
+    const {
+      hasChanged,
+      hasError,
+      error,
+      application: updatedApplication,
+    } = await this.changeState(
       mergedApplication,
       template,
       updateApplicationStateDto.event,
       authorization,
     )
 
-    // TODO: should not have to specificially check for updatedApplication
-    // because of return type on this.changeState
-    if (hasChanged === true && updatedApplication) {
+    if (hasError) {
+      throw new BadRequestException(error)
+    }
+
+    if (hasChanged) {
       return updatedApplication
     }
 
     return existingApplication
+  }
+
+  async performActionOnApplication(
+    application: BaseApplication,
+    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    authorization: string,
+    action: ApplicationTemplateAPIAction,
+  ): Promise<ModuleActionResult> {
+    const { apiModuleAction } = action
+
+    const actionResult = await this.templateAPIService.performAction({
+      templateId: template.type,
+      type: apiModuleAction,
+      props: {
+        application,
+        authorization,
+      },
+    })
+
+    if (!actionResult.success) {
+      return actionResult
+    }
+
+    const newExternalDataEntry: ExternalData = {
+      [apiModuleAction]: {
+        status: 'success',
+        date: new Date(),
+        data: actionResult.response as ExternalData['data'],
+      },
+    }
+
+    console.log('new external data entry')
+    console.log(JSON.stringify(newExternalDataEntry))
+
+    await this.applicationService.updateExternalData(
+      application.id,
+      application.externalData,
+      newExternalDataEntry,
+    )
+
+    application.externalData = {
+      ...application.externalData,
+      ...newExternalDataEntry,
+    }
+
+    return actionResult
   }
 
   async changeState(
@@ -418,65 +496,107 @@ export class ApplicationController {
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
     authorization: string,
-  ): Promise<[false] | [true, BaseApplication]> {
+  ): Promise<StateChangeResult> {
     const helper = new ApplicationTemplateHelper(application, template)
 
-    const [hasChanged, newState, newApplication] = helper.changeState(event)
+    const beforeLeaveAction = helper.getStateBeforeLeave(application.state)
 
-    if (!hasChanged) {
-      return [false]
-    }
+    if (beforeLeaveAction) {
+      const { success, error } = await this.performActionOnApplication(
+        application,
+        template,
+        authorization,
+        beforeLeaveAction,
+      )
 
-    const update = await this.applicationService.updateApplicationState(
-      application.id,
-      newState,
-      newApplication.answers,
-      newApplication.assignees,
-    )
-
-    const updatedApplication = update.updatedApplication as BaseApplication
-    const newStateOnEntry = helper.getStateOnEntry(newState)
-
-    if (newStateOnEntry !== null) {
-      const { apiModuleAction, onSuccessEvent, onErrorEvent } = newStateOnEntry
-
-      const [success] = await this.templateAPIService.performAction({
-        templateId: template.type,
-        type: apiModuleAction,
-        props: {
-          application: updatedApplication,
-          authorization,
-        },
-      })
-
-      let nextEvent: string | null = null
-
-      if (success && onSuccessEvent) {
-        nextEvent = onSuccessEvent
-      } else if (!success && onErrorEvent) {
-        nextEvent = onErrorEvent
-      }
-
-      if (nextEvent !== null) {
-        // We now have to make a nested changeState call that might
-        // further update the already updated application
-        const [
-          hasChangedAgain,
-          furtherUpdatedApplication,
-        ] = await this.changeState(
-          updatedApplication,
-          template,
-          nextEvent,
-          authorization,
-        )
-
-        if (hasChangedAgain && furtherUpdatedApplication) {
-          return [true, furtherUpdatedApplication]
+      if (!success) {
+        return {
+          hasChanged: false,
+          application,
+          error,
+          hasError: !!error,
         }
       }
     }
 
-    return [true, updatedApplication]
+    const [hasChanged, newState, newApplication] = helper.changeState(event)
+
+    if (!hasChanged) {
+      return {
+        hasChanged: false,
+        hasError: false,
+        application,
+      }
+    }
+
+    let updatedApplication: BaseApplication
+
+    try {
+      console.log('about to save')
+      const update = await this.applicationService.updateApplicationState(
+        application.id,
+        newState,
+        newApplication.answers,
+        newApplication.assignees,
+      )
+
+      updatedApplication = update.updatedApplication as BaseApplication
+    } catch (e) {
+      console.error('Could not update application', e)
+
+      return {
+        hasChanged: false,
+        hasError: true,
+        application,
+        error: 'Could not update application',
+      }
+    }
+
+    const newStateOnEntry = helper.getStateOnEntry(newState)
+
+    if (newStateOnEntry !== null) {
+      const { success, error } = await this.performActionOnApplication(
+        updatedApplication,
+        template,
+        authorization,
+        newStateOnEntry,
+      )
+
+      if (!success) {
+        return {
+          hasChanged: true,
+          application: updatedApplication,
+          hasError: true,
+          error,
+        }
+      }
+
+      try {
+        const update = await this.applicationService.updateApplicationState(
+          application.id,
+          newState,
+          newApplication.answers,
+          newApplication.assignees,
+        )
+
+        updatedApplication = update.updatedApplication as BaseApplication
+      } catch (e) {
+        console.error('Could not update application', e)
+
+        return {
+          hasChanged: false,
+          hasError: true,
+          application,
+          error: 'Could not update application',
+        }
+      }
+    }
+
+    return {
+      hasChanged: true,
+      application: updatedApplication,
+      hasError: false,
+    }
   }
 
   @Put('applications/:id/attachments')
