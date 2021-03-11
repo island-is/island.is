@@ -27,11 +27,6 @@ export const ComplaineeRepeater: FC<RepeaterProps> = ({
     | Complainee[]
     | undefined
 
-  const handleEditComplaineeClick = () => {
-    // TODO: Goto screen when available
-    console.log('Goto screen not available in repeaters yet')
-  }
-
   const handleRemoveComplaineeClick = (index: number) =>
     removeRepeaterItem(index)
 
@@ -41,12 +36,11 @@ export const ComplaineeRepeater: FC<RepeaterProps> = ({
         description={formatMessage(complaint.general.complaineePageDescription)}
       />
       {complainee && (
-        <ComplaineeTable {...complainee} onEdit={handleEditComplaineeClick} />
+        <ComplaineeTable {...complainee} />
       )}
       {additionalComplainees?.map((complainee, index) => (
         <ComplaineeTable
           {...complainee}
-          onEdit={handleEditComplaineeClick}
           onRemove={handleRemoveComplaineeClick.bind(null, index)}
         />
       ))}

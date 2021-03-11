@@ -85,4 +85,10 @@ export const DataProtectionComplaintSchema = z.object({
       countryOfOperation: z.string().optional(),
     }),
   ),
+  subjectOfComplaint: z.object({
+    authorities: z.array(z.string()),
+    useOfPersonalInformation: z.array(z.string()),
+    other: z.array(z.string()),
+    somethingElse: z.string().optional(),
+  }),
 })

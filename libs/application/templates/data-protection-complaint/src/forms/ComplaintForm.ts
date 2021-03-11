@@ -12,6 +12,7 @@ import {
   buildSubSection,
   buildFileUploadField,
   buildRepeater,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, YES, NO } from '../shared'
 import {
@@ -442,6 +443,101 @@ export const ComplaintForm: Form = buildForm({
           title: complaint.general.complaineePageTitle,
           component: 'ComplaineeRepeater',
           children: [buildComplaineeMultiField('additionalComplainees')],
+        }),
+        buildSubSection({
+          id: 'subjectOfComplaint',
+          title: section.subjectOfComplaint,
+          children: [
+            buildMultiField({
+              title: complaint.general.subjectOfComplaintPageTitle,
+              description: complaint.general.subjectOfComplaintPageDescription,
+              space: 3,
+              children: [
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.authorities',
+                  title: complaint.labels.subjectPersonalInformation,
+                  options: [
+                    {
+                      label: complaint.labels.subjectAuthorities,
+                      value: 'withAuthorities',
+                    },
+                    {
+                      label: complaint.labels.subjectLackOfEducation,
+                      value: 'lackOfEducation',
+                    },
+                    {
+                      label: complaint.labels.subjectSocialMedia,
+                      value: 'socialMedia',
+                    },
+                    {
+                      label: complaint.labels.subjectRequestForAccess,
+                      value: 'requestForAccess',
+                    },
+                    {
+                      label: complaint.labels.subjectRightOfObjection,
+                      value: 'rightOfObjection',
+                    },
+                  ],
+                  large: true,
+                }),
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.useOfPersonalInformation',
+                  title: complaint.labels.subjectUseOfPersonalInformation,
+                  options: [
+                    {
+                      label: complaint.labels.subjectEmail,
+                      value: 'email',
+                    },
+                    {
+                      label: complaint.labels.subjectNationalId,
+                      value: 'nationalId',
+                    },
+                    {
+                      label: complaint.labels.subjectEmailInWorkplace,
+                      value: 'emailInWorkplace',
+                    },
+                    {
+                      label: complaint.labels.subjectUnauthorizedPublication,
+                      value: 'unauthorizedPublication',
+                    },
+                  ],
+                  large: true,
+                }),
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.other',
+                  title: complaint.labels.subjectOther,
+                  options: [
+                    {
+                      label: complaint.labels.subjectVanskilaskra,
+                      value: 'vanskilaskra',
+                    },
+                    {
+                      label: complaint.labels.subjectVideoRecording,
+                      value: 'videoRecordings',
+                    },
+                    {
+                      label: complaint.labels.subjectOtherOther,
+                      value: 'other',
+                    },
+                  ],
+                  large: true,
+                }),
+                buildTextField({
+                  id: 'subjectOfComplaint.somethingElse',
+                  title: complaint.labels.subjectSomethingElse,
+                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
+                  backgroundColor: 'blue',
+                  condition: (formValue) => {
+                    console.log(formValue)
+                    const other =
+                      ((formValue.subjectOfComplaint as FormValue)
+                        ?.other as string[]) || []
+                    return other.includes('other')
+                  },
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),
