@@ -75,9 +75,8 @@ describe('Link resolver', () => {
   })
 
   it('should handle content type as undefined', () => {
-    // TODO: Use @ts-expect-error once the test runner is switched to strict mode
-    // @ts-ignore  (testing wrong input)
-    const undefinedInput: LinkType = undefined
+    // @ts-expect-error  (testing wrong input)
+    const undefinedInput: LinkType = undefined as unknown // unknown because strict:false
     const nextLinks = linkResolver(undefinedInput, [], 'is')
     expect(nextLinks).toEqual({
       href: '/404',
@@ -149,9 +148,8 @@ describe('Type resolver', () => {
   })
 
   it('Should handle undefined', () => {
-    // TODO: Use @ts-expect-error once the test runner is switched to strict mode
-    // @ts-ignore  (testing wrong input)
-    const undefinedInput: string = undefined
+    // @ts-expect-error  (testing wrong input)
+    const undefinedInput: string = undefined as unkown // unknown because strict:false
     const types = typeResolver(undefinedInput)
     expect(types).toBeNull()
   })
