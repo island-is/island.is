@@ -381,6 +381,18 @@
     "service-portal-education": {
       "tags": []
     },
+    "service-portal-education-career": {
+      "tags": []
+    },
+    "service-portal-education-degree": {
+      "tags": []
+    },
+    "service-portal-education-license": {
+      "tags": []
+    },
+    "service-portal-education-student-assessment": {
+      "tags": []
+    },
     "service-portal-eligibility": {
       "tags": []
     },
