@@ -19,21 +19,25 @@ const EducationLicenseQuery = gql`
 const LicenseCards = () => {
   const { data } = useQuery<Query>(EducationLicenseQuery)
   const { educationLicense = [] } = data || {}
-  return educationLicense.map((license, index) => (
-    <Box marginBottom={3} key={index}>
-      <EducationCard
-        eyebrow={license.school}
-        imgPlaceholder={'MRN'}
-        title={`Leyfisbréf - ${license.programme}`}
-        description={license.date}
-        CTA={
-          <Button variant="text" icon="download" iconType="outline" nowrap>
-            Sækja skjal
-          </Button>
-        }
-      />
-    </Box>
-  ))
+  return (
+    <>
+      {educationLicense.map((license, index) => (
+        <Box marginBottom={3} key={index}>
+          <EducationCard
+            eyebrow={license.school}
+            imgPlaceholder={'MRN'}
+            title={`Leyfisbréf - ${license.programme}`}
+            description={license.date}
+            CTA={
+              <Button variant="text" icon="download" iconType="outline" nowrap>
+                Sækja skjal
+              </Button>
+            }
+          />
+        </Box>
+      ))}
+    </>
+  )
 }
 
 export default LicenseCards
