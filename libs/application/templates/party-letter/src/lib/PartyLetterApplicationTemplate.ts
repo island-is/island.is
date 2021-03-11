@@ -21,7 +21,7 @@ enum Roles {
   SIGNATUREE = 'signaturee',
 }
 const dataSchema = z.object({
-  selectKennitala: z.string().refine((x) => (x ? isValid(x) : false)),
+  selectKennitala: z.string().refine((x) => isValid(x)),
   partyLetter: z.string().length(1),
   partyName: z.string(),
   signatures: z.array(z.string()),

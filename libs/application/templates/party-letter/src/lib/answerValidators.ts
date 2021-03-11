@@ -33,7 +33,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
     /**
      * Party letter can only be assigned to a single national id
      * The national id can be a company or a person
-     * Here we make sure applicant manages the national id he is trying to assigning a party letter to
+     * Here we make sure applicant manages the national id he is trying to assigning the party letter to
      */
     const newNationalId = newAnswer as string
     const buildError = buildValidationError(PARTY_NATIONAL_ID)

@@ -20,9 +20,9 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
     const query = `
       query GetUserCompanies {
         rskGetCurrentUserCompanies {
-          Kennitala
-          Nafn
-          ErProkuruhafi
+          kennitala
+          nafn
+          erProkuruhafi
         }
       }
     `

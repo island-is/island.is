@@ -1,6 +1,6 @@
 # Rsk
 
-This library was generated with [Nx](https://nx.dev).
+This library serves as a client for endpoints accessible to us from RSK
 
 ## Running unit tests
 

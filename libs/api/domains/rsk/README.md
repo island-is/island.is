@@ -1,6 +1,6 @@
 # API Domains Rsk
 
-This library was generated with [Nx](https://nx.dev).
+This domain implements RSK endpoints defined in the RSK client library.
 
 ## Running unit tests
 
