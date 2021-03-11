@@ -21,28 +21,8 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   }
   const dobDate = new Date(dob)
 
-  // TODO this will also come from somewhere in the external data
-  const otherParentPeriods: Period[] = [
-    {
-      startDate: dob,
-      endDate: '2021-05-17T00:00:00.000Z',
-      ratio: 50,
-    },
-    {
-      startDate: '2021-03-13T00:00:00.000Z',
-      endDate: '2021-10-03T00:00:00.000Z',
-      ratio: 50,
-    },
-  ]
-
-  // TODO: Can we get the states from the enum in ParentalLeaveTemplate.ts?
   const editable =
     application.state === 'draft' || application.state === 'editOrAddPeriods'
-
-  // const periodsToShow =
-  //   application.state === 'editOrAddPeriods'
-  //     ? (application.answers.tempPeriods as Period[])
-  //     : (application.answers.periods as Period[])
 
   return (
     <Box>
@@ -60,10 +40,12 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
           titleSmall={formatMessage(
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
-          periods={formatPeriods(
-            application.answers.periods as Period[],
-            editable ? otherParentPeriods : [],
-          )}
+          periods={formatPeriods(application.answers.periods as Period[])}
+          // TODO: Once we have the data, add the otherParentPeriods here.
+          // periods={formatPeriods(
+          //   application.answers.periods as Period[],
+          //   editable ? otherParentPeriods : [],
+          // )}
           onDeletePeriod={removeRepeaterItem}
           editable={editable}
         />

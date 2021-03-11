@@ -1,15 +1,26 @@
-import { Application, FormValue } from '@island.is/application/core'
 import { NationalRegistryUser } from '@island.is/api/schema'
-import { PersonResidenceChange, UserInfo } from '../dataProviders/APIDataTypes'
+import { PersonResidenceChange, UserInfo, CRCApplication } from '../types'
 
-export const extractApplicantFromApplication = (application: Application) => {
+export const extractApplicantFromApplication = (
+  application: CRCApplication,
+) => {
   return (application.externalData.nationalRegistry?.data as {
-    parent?: object
+    parent?: unknown
   }) as NationalRegistryUser
 }
 
-const dataToUse = ({ answers, externalData }: Application, key: string) => {
-  const mockData = ((answers.mockData as FormValue)?.[key] as FormValue)?.data
+// TODO: remove all these helpers when we implement the new way of mocking data
+type ValidKeys =
+  | 'nationalRegistry'
+  | 'childrenNationalRegistry'
+  | 'parentNationalRegistry'
+  | 'userProfile'
+
+const dataToUse = (
+  { answers, externalData }: CRCApplication,
+  key: ValidKeys,
+) => {
+  const mockData = answers.mockData?.[key]?.data
   const data = externalData[key]?.data
   if (answers.useMocks === 'no') {
     return data
@@ -17,43 +28,22 @@ const dataToUse = ({ answers, externalData }: Application, key: string) => {
   return mockData || data
 }
 
-export const extractParentFromApplication = (application: Application) => {
-  const data = dataToUse(application, 'parentNationalRegistry')
-  return (data as {
-    parent?: object
-  }) as PersonResidenceChange
+export const extractParentFromApplication = (application: CRCApplication) => {
+  return dataToUse(
+    application,
+    'parentNationalRegistry',
+  ) as PersonResidenceChange
 }
 
-export const extractUserInfoFromApplication = (application: Application) => {
-  const data = dataToUse(application, 'userProfile')
-  return (data as {
-    userInfo?: object
-  }) as UserInfo
+export const extractUserInfoFromApplication = (application: CRCApplication) => {
+  return dataToUse(application, 'userProfile') as UserInfo
 }
 
-export const extractChildrenFromApplication = (application: Application) => {
+export const extractChildrenFromApplication = (application: CRCApplication) => {
   const data = dataToUse(application, 'childrenNationalRegistry')
-  return (data as {
-    registeredChildren?: object
-  }) as PersonResidenceChange[]
+  return (data as unknown) as PersonResidenceChange[]
 }
-
-export const extractAnswersFromApplication = (application: Application) => {
-  return {
-    selectedChildren: application.answers.selectChild as string[],
-    selectedDuration: application.answers.selectDuration as string[],
-    reason: application.answers.residenceChangeReason as string,
-    interview: application.answers.interview as 'yes' | 'no',
-    parentA: {
-      email: (application.answers.parentA as FormValue).email,
-      phoneNumber: (application.answers.parentA as FormValue).phoneNumber,
-    },
-    parentB: {
-      email: (application.answers.parentB as FormValue).email,
-      phoneNumber: (application.answers.parentB as FormValue).phoneNumber,
-    },
-  }
-}
+// END TODO
 
 export const constructParentAddressString = (parent: PersonResidenceChange) => {
   if (!parent) {

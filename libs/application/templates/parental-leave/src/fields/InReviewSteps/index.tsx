@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { useMutation } from '@apollo/client'
+
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 
@@ -9,7 +9,7 @@ import {
   MessageFormatter,
 } from '@island.is/application/core'
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
-import ReviewSection, { reviewSectionState } from './ReviewSection'
+import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
@@ -17,6 +17,7 @@ import { YES } from '../../constants'
 
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import { useMutation } from '@apollo/client'
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
   toast.error(
@@ -31,29 +32,29 @@ function handleError(error: string, formatMessage: MessageFormatter): void {
   )
 }
 
-type stateMapEntry = { [key: string]: reviewSectionState }
-type statesMap = {
-  otherParent: stateMapEntry
-  employer: stateMapEntry
-  vinnumalastofnun: stateMapEntry
+type StateMapEntry = { [key: string]: ReviewSectionState }
+type StatesMap = {
+  otherParent: StateMapEntry
+  employer: StateMapEntry
+  vinnumalastofnun: StateMapEntry
 }
-const statesMap: statesMap = {
+const statesMap: StatesMap = {
   otherParent: {
-    otherParentApproval: reviewSectionState.inProgress,
-    otherParentRequiresAction: reviewSectionState.requiresAction,
-    employerApproval: reviewSectionState.complete,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    otherParentApproval: ReviewSectionState.inProgress,
+    otherParentRequiresAction: ReviewSectionState.requiresAction,
+    employerApproval: ReviewSectionState.complete,
+    vinnumalastofnunApproval: ReviewSectionState.complete,
   },
   employer: {
-    employerWaitingToAssign: reviewSectionState.inProgress,
-    employerApproval: reviewSectionState.inProgress,
-    employerRequiresAction: reviewSectionState.requiresAction,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    employerWaitingToAssign: ReviewSectionState.inProgress,
+    employerApproval: ReviewSectionState.inProgress,
+    employerRequiresAction: ReviewSectionState.requiresAction,
+    vinnumalastofnunApproval: ReviewSectionState.complete,
   },
   vinnumalastofnun: {
-    vinnumalastofnunApproval: reviewSectionState.inProgress,
-    vinnumalastofnunRequiresAction: reviewSectionState.requiresAction,
-    approved: reviewSectionState.complete,
+    vinnumalastofnunApproval: ReviewSectionState.inProgress,
+    vinnumalastofnunRequiresAction: ReviewSectionState.requiresAction,
+    approved: ReviewSectionState.complete,
   },
 }
 
