@@ -86,7 +86,10 @@ export class FlightService {
       include: [
         {
           model: this.flightLegModel,
-          where: { financialState: availableFinancialStates },
+          where: {
+            financialState: availableFinancialStates,
+            isConnectingFlight: false,
+          },
         },
       ],
     })

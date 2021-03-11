@@ -24,5 +24,6 @@ export default {
     username: process.env.COURT_USERNAME || '',
     password: process.env.COURT_PASSWORD || '',
   },
+  hiddenFeatures: '',
   backendUrl: 'http://localhost:3344',
 }
