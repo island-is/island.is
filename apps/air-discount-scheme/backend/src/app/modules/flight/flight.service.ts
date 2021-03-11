@@ -41,14 +41,14 @@ export const REYKJAVIK_FLIGHT_CODES = ['RVK', 'REK']
 
 @Injectable()
 export class FlightService {
-  constructor (
+  constructor(
     @InjectModel(Flight)
     private flightModel: typeof Flight,
     @InjectModel(FlightLeg)
     private flightLegModel: typeof FlightLeg,
   ) {}
 
-  isADSPostalCode (postalcode: number): boolean {
+  isADSPostalCode(postalcode: number): boolean {
     if (
       postalcode >= ADS_POSTAL_CODES['Reykhólahreppur'] &&
       postalcode <= ADS_POSTAL_CODES['Þingeyri']
@@ -65,7 +65,7 @@ export class FlightService {
     return false
   }
 
-  hasConnectingFlightPotentialFromFlightLegs (
+  hasConnectingFlightPotentialFromFlightLegs(
     firstFlight: FlightLeg,
     secondFlight: FlightLeg,
   ): boolean {
@@ -104,7 +104,7 @@ export class FlightService {
 
   // Assume: connecting flight means,
   //         `leg` is not connected to Reykjavík
-  async isFlightLegConnectingFlight (
+  async isFlightLegConnectingFlight(
     nationalId: string,
     incomingLeg: FlightLeg,
   ): Promise<boolean> {
@@ -146,7 +146,7 @@ export class FlightService {
     return false
   }
 
-  async countThisYearsConnectedFlightsByNationalId (
+  async countThisYearsConnectedFlightsByNationalId(
     nationalId: string,
   ): Promise<number> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
@@ -203,7 +203,7 @@ export class FlightService {
     return noConnectableFlightLegs - noConnectedFlightLegs
   }
 
-  async countThisYearsFlightLegsByNationalId (
+  async countThisYearsFlightLegsByNationalId(
     nationalId: string,
   ): Promise<FlightLegSummary> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
@@ -241,7 +241,7 @@ export class FlightService {
     }
   }
 
-  findAll (): Promise<Flight[]> {
+  findAll(): Promise<Flight[]> {
     return this.flightModel.findAll({
       include: [
         {
@@ -252,7 +252,7 @@ export class FlightService {
     })
   }
 
-  findAllLegsByFilter (body: GetFlightLegsBody | any): Promise<FlightLeg[]> {
+  findAllLegsByFilter(body: GetFlightLegsBody | any): Promise<FlightLeg[]> {
     const awaitingCredit =
       financialStateMachine.states[States.awaitingCredit].key
     return this.flightLegModel.findAll({
@@ -319,12 +319,12 @@ export class FlightService {
     })
   }
 
-  findThisYearsFlightsByNationalId (nationalId: string): Promise<Flight[]> {
+  findThisYearsFlightsByNationalId(nationalId: string): Promise<Flight[]> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
     return this.findFlightsByYearAndNationalId(nationalId, currentYear)
   }
 
-  findFlightsByYearAndNationalId (
+  findFlightsByYearAndNationalId(
     nationalId: string,
     year: string,
   ): Promise<Flight[]> {
@@ -349,7 +349,7 @@ export class FlightService {
     })
   }
 
-  create (
+  create(
     flight: CreateFlightBody,
     user: NationalRegistryUser,
     airline: ValueOf<typeof Airlines>,
@@ -375,7 +375,7 @@ export class FlightService {
     )
   }
 
-  findOne (
+  findOne(
     flightId: string,
     airline: ValueOf<typeof Airlines>,
   ): Promise<Flight | null> {
@@ -395,7 +395,7 @@ export class FlightService {
     })
   }
 
-  private updateFinancialState (
+  private updateFinancialState(
     flightLeg: FlightLeg,
     action: ValueOf<typeof Actions>,
     changeByAirline: boolean,
@@ -411,7 +411,7 @@ export class FlightService {
     })
   }
 
-  finalizeCreditsAndDebits (flightLegs: FlightLeg[]): Promise<FlightLeg[]> {
+  finalizeCreditsAndDebits(flightLegs: FlightLeg[]): Promise<FlightLeg[]> {
     return Promise.all(
       flightLegs.map((flightLeg) => {
         const finalizingStates = [States.awaitingDebit, States.awaitingCredit]
@@ -423,7 +423,7 @@ export class FlightService {
     )
   }
 
-  delete (flight: Flight): Promise<FlightLeg[]> {
+  delete(flight: Flight): Promise<FlightLeg[]> {
     return Promise.all(
       flight.flightLegs.map((flightLeg: FlightLeg) =>
         this.deleteFlightLeg(flightLeg),
@@ -431,7 +431,7 @@ export class FlightService {
     )
   }
 
-  deleteFlightLeg (flightLeg: FlightLeg): Promise<FlightLeg> {
+  deleteFlightLeg(flightLeg: FlightLeg): Promise<FlightLeg> {
     return this.updateFinancialState(flightLeg, Actions.revoke, true)
   }
 }

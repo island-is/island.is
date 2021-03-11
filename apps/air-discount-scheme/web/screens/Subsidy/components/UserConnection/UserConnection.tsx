@@ -43,52 +43,54 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
   const { connectionDiscountCode, user } = discount
   const { remaining, copyCode, kidsRights, usedFund } = JSON.parse(misc)
 
-  return(
+  return (
     <>
-    {connectionDiscountCode && connectionDiscountCode.map((connectionCode, index) => {
-      return (
-        <Box
-          {...boxStatus[status]}
-          padding={2}
-          borderWidth="standard"
-          borderStyle="solid"
-          borderRadius="standard"
-          display={['block', 'flex']}
-          justifyContent="spaceBetween"
-          alignItems={['flexStart', 'center']}
-          flexDirection={['column', 'row']}
-        >
-          <Box marginBottom={[3, 0]}>
-            <Typography variant="h3">
-              {user.name} {user?.nationalId !== authUser?.nationalId && kidsRights}
-            </Typography>
-          </Box>
-          {status === 'fundUsed' ? (
-            <Typography variant="h5">{usedFund}</Typography>
-          ) : (
+      {connectionDiscountCode &&
+        connectionDiscountCode.map((connectionCode, index) => {
+          return (
             <Box
-              display="flex"
-              alignItems="center"
-              justifyContent={['spaceBetween', 'flexStart']}
+              {...boxStatus[status]}
+              padding={2}
+              borderWidth="standard"
+              borderStyle="solid"
+              borderRadius="standard"
+              display={['block', 'flex']}
+              justifyContent="spaceBetween"
+              alignItems={['flexStart', 'center']}
+              flexDirection={['column', 'row']}
             >
-              <Box marginRight={[2, 4]}>
-                <Typography variant="h3" color="roseTinted400">
-                  {connectionCode}
+              <Box marginBottom={[3, 0]}>
+                <Typography variant="h3">
+                  {user.name}{' '}
+                  {user?.nationalId !== authUser?.nationalId && kidsRights}
                 </Typography>
               </Box>
-              <Button
-                noWrap
-                onClick={() => {
-                  copyToClipboard(connectionCode)
-                }}
-              >
-                {copyCode}
-              </Button>
+              {status === 'fundUsed' ? (
+                <Typography variant="h5">{usedFund}</Typography>
+              ) : (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent={['spaceBetween', 'flexStart']}
+                >
+                  <Box marginRight={[2, 4]}>
+                    <Typography variant="h3" color="roseTinted400">
+                      {connectionCode}
+                    </Typography>
+                  </Box>
+                  <Button
+                    noWrap
+                    onClick={() => {
+                      copyToClipboard(connectionCode)
+                    }}
+                  >
+                    {copyCode}
+                  </Button>
+                </Box>
+              )}
             </Box>
-          )}
-        </Box>
-      )
-    })}
+          )
+        })}
     </>
   )
 }

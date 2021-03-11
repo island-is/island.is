@@ -46,12 +46,18 @@ function Benefits({ misc }: PropTypes) {
   })
 
   const { discounts = [] } = data || {}
-  const { myRights, codeDescription, attention, codeDisclaimer, connectionFlightHeader } = JSON.parse(
-    misc,
-  )
+  const {
+    myRights,
+    codeDescription,
+    attention,
+    codeDisclaimer,
+    connectionFlightHeader,
+  } = JSON.parse(misc)
   const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
   const hasBenefits = benefits.length > 0
-  const connections = discounts.filter(({connectionDiscountCode}) => connectionDiscountCode.length > 0)
+  const connections = discounts.filter(
+    ({ connectionDiscountCode }) => connectionDiscountCode.length > 0,
+  )
   const hasConnections = connections.length > 0
   return (
     <Box marginBottom={6}>
