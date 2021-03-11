@@ -12,6 +12,9 @@ export default {
     'vidspyrnaPage',
     'menu',
     'groupedMenu',
+    'organizationPage',
+    'organizationSubpage',
+    'frontpage',
   ],
   nestedContentTypes: [
     'processEntry',
