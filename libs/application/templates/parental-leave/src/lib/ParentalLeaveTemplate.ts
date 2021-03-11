@@ -119,6 +119,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   name: 'Submit',
                   type: 'primary',
                 },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Abort',
+                  type: 'abort',
+                },
               ],
               write: 'all',
               read: 'all',
@@ -126,7 +131,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.EMPLOYER_WAITING_TO_ASSIGN,
+              cond: hasEmployer,
+            },
+            { target: States.VINNUMALASTOFNUN_APPROVAL },
+          ],
+          [DefaultEvents.REJECT]: [
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN,
               cond: hasEmployer,
@@ -367,8 +379,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
 
-        console.log('!!!!!!!!!!copyPeriodsToTemp')
-
         const currentApplicationAnswers = context.application
           .answers as SchemaFormValues
 
@@ -387,37 +397,41 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         return context
       }),
       mergePeriodAnswers: assign((context, event) => {
-        // Only continue if going submiting (skip init event)
-        if (event.type !== DefaultEvents.SUBMIT) {
+        console.log('######mergePeriodAnswers#######', event.type)
+
+        // Only continue if submiting or aborting (skip init event)
+        if (
+          event.type !== DefaultEvents.SUBMIT &&
+          event.type !== DefaultEvents.REJECT
+        ) {
           return context
         }
 
-        if (context.application.answers['periods']) {
-          const newPeriods = Object.assign(
-            context.application.answers['tempPeriods'] as Object,
-          )
+        console.log('22222######mergePeriodAnswers#######', event.type)
 
-          delete context.application.answers['tempPeriods']
-          delete context.application.answers['periods']
+        // If they are aborting, bring back the old periods from temp,
+        // otherwise we already saved the periods, so just need
+        // to clear temp
+        const periodsToSave =
+          event.type === DefaultEvents.REJECT
+            ? Object.assign(
+                context.application.answers['tempPeriods'] as Object,
+              )
+            : context.application.answers['periods']
 
-          console.log(
-            'mergePeriodAnswers',
-            context.application.answers['tempPeriods'],
-            newPeriods,
-          )
+        // Don't need these anymore so let's remove them.
+        delete context.application.answers['tempPeriods']
 
-          return {
-            ...context,
-            application: {
-              ...context.application,
-              answers: {
-                ...context.application.answers,
-                periods: newPeriods,
-              },
+        return {
+          ...context,
+          application: {
+            ...context.application,
+            answers: {
+              ...context.application.answers,
+              periods: periodsToSave,
             },
-          }
+          },
         }
-        return context
       }),
 
       assignToOtherParent: assign((context) => {

@@ -39,10 +39,10 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
   const editable =
     application.state === 'draft' || application.state === 'editOrAddPeriods'
 
-  const periodsToShow =
-    application.state === 'editOrAddPeriods'
-      ? (application.answers.tempPeriods as Period[])
-      : (application.answers.periods as Period[])
+  // const periodsToShow =
+  //   application.state === 'editOrAddPeriods'
+  //     ? (application.answers.tempPeriods as Period[])
+  //     : (application.answers.periods as Period[])
 
   return (
     <Box>
@@ -61,7 +61,7 @@ const PeriodsRepeater: FC<RepeaterProps> = ({
             parentalLeaveFormMessages.shared.dateOfBirthTitle,
           )}
           periods={formatPeriods(
-            periodsToShow,
+            application.answers.periods as Period[],
             editable ? otherParentPeriods : [],
           )}
           onDeletePeriod={removeRepeaterItem}

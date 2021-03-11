@@ -19,14 +19,14 @@ export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
   title: 'Edit or add periods',
   logo: Logo,
-  mode: FormModes.APPLYING,
+  // mode: FormModes.EDITING,
   children: [
     buildSection({
       id: 'editOrAddPeropds',
       title: '',
       children: [
         buildRepeater({
-          id: 'tempPeriods',
+          id: 'periods',
           title: parentalLeaveFormMessages.leavePlan.title,
           component: 'PeriodsRepeater',
           children: [
@@ -96,6 +96,7 @@ export const EditOrAddPeriods: Form = buildForm({
               placement: 'footer',
               title: parentalLeaveFormMessages.confirmation.title,
               actions: [
+                { name: 'Cancel', type: 'abort', event: 'REJECT' },
                 {
                   event: 'SUBMIT',
                   name: parentalLeaveFormMessages.confirmation.title,

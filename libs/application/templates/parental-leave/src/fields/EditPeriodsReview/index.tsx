@@ -118,64 +118,28 @@ const Review: FC<ReviewScreenProps> = ({
   return (
     <div>
       <Box marginTop={[2, 2, 4]} marginBottom={[0, 0, 6]}>
-        <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
-          <Button
-            colorScheme="default"
-            iconType="filled"
-            icon={allItemsExpanded ? 'remove' : 'add'}
-            onClick={() => {
-              toggleAllItemsExpanded(!allItemsExpanded)
-            }}
-            preTextIconType="filled"
-            size="default"
-            type="button"
-            variant="utility"
-          >
-            {allItemsExpanded
-              ? `${formatMessage(
-                  parentalLeaveFormMessages.confirmation.collapseAll,
-                )}`
-              : `${formatMessage(
-                  parentalLeaveFormMessages.confirmation.epxandAll,
-                )}`}
-          </Button>
-        </Box>
-
-        <Accordion singleExpand={false}>
-          <AccordionItem
-            id="id_4"
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.periodsSection,
+        <Box paddingY={4}>
+          <Timeline
+            initDate={dobDate}
+            title={formatMessage(
+              parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
             )}
-            startExpanded={allItemsExpanded}
-          >
-            <Box paddingY={4}>
-              <Timeline
-                initDate={dobDate}
-                title={formatMessage(
-                  parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
-                )}
-                titleSmall={formatMessage(
-                  parentalLeaveFormMessages.shared.dateOfBirthTitle,
-                )}
-                periods={formatPeriods(
-                  application.answers.tempPeriods as Period[],
-                  otherParentPeriods,
-                )}
-              />
-              {editable && (
-                <Box paddingTop={3}>
-                  <Button
-                    size="small"
-                    onClick={() => goToScreen?.('tempPeriods')}
-                  >
-                    {formatMessage(parentalLeaveFormMessages.leavePlan.change)}
-                  </Button>
-                </Box>
-              )}
+            titleSmall={formatMessage(
+              parentalLeaveFormMessages.shared.dateOfBirthTitle,
+            )}
+            periods={formatPeriods(
+              application.answers.periods as Period[],
+              otherParentPeriods,
+            )}
+          />
+          {/* {editable && (
+            <Box paddingTop={3}>
+              <Button size="small" onClick={() => goToScreen?.('tempPeriods')}>
+                {formatMessage(parentalLeaveFormMessages.leavePlan.change)}
+              </Button>
             </Box>
-          </AccordionItem>
-        </Accordion>
+          )} */}
+        </Box>
       </Box>
     </div>
   )
