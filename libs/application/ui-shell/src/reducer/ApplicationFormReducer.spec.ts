@@ -311,6 +311,63 @@ describe('ApplicationFormReducer', () => {
       )
       expect(anotherState.activeScreen).toBe(2)
     })
+    it('should go to a repeater flow screen when directed to', () => {
+      const state = {
+        ...initializeReducer({
+          ...initialState,
+          application: {
+            ...initialState.application,
+            answers: {
+              person: [
+                { name: 'a', age: 22 },
+                { name: 'b', age: 33 },
+              ],
+            },
+          },
+        }),
+        activeScreen: 0,
+      }
+      expect(state.screens[state.activeScreen].id).toBe('person')
+
+      const updatedState = ApplicationReducer(state, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'person[1].age',
+      })
+      expect(updatedState.screens[updatedState.activeScreen].id).toBe(
+        'person[1].age',
+      )
+
+      const nextState = ApplicationReducer(updatedState, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'person[0].name',
+      })
+      expect(nextState.screens[nextState.activeScreen].id).toBe(
+        'person[0].name',
+      )
+    })
+    it('should not go to an invalid repeater flow screen', () => {
+      const state = {
+        ...initializeReducer({
+          ...initialState,
+          application: {
+            ...initialState.application,
+            answers: {
+              person: [
+                { name: 'a', age: 22 },
+                { name: 'b', age: 33 },
+              ],
+            },
+          },
+        }),
+        activeScreen: 0,
+      }
+      expect(state.screens[state.activeScreen].id).toBe('person')
+      const updatedState = ApplicationReducer(state, {
+        type: ActionTypes.GO_TO_SCREEN,
+        payload: 'person[10].age',
+      })
+      expect(updatedState.screens[updatedState.activeScreen].id).toBe('person')
+    })
   })
   describe('answer', () => {
     const type = ActionTypes.ANSWER

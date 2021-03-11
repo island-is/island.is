@@ -125,5 +125,6 @@ export type RepeaterProps = {
   expandRepeater: () => void
   error?: string
   repeater: Repeater
+  goToScreen: (id: string) => void
   removeRepeaterItem: (index: number) => void
 }

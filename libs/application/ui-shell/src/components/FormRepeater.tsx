@@ -14,11 +14,13 @@ const FormRepeater: FC<{
   application: Application
   repeater: RepeaterScreen
   errors: RecordObject
+  goToScreen: (id: string) => void
   expandRepeater: () => void
   onRemoveRepeaterItem: (newRepeaterItems: RepeaterItems) => Promise<unknown>
 }> = ({
   application,
   errors,
+  goToScreen,
   expandRepeater,
   onRemoveRepeaterItem,
   repeater,
@@ -53,6 +55,7 @@ const FormRepeater: FC<{
     error,
     repeater,
     application,
+    goToScreen,
     removeRepeaterItem,
   }
   const Component = allFields[repeater.component] as
