@@ -50,7 +50,6 @@ export class HealthInsuranceAPI {
   // Apply Health Insurance
   public async applyInsurance(
     appNumber: number,
-    bucketName: string,
     attachmentNames: string[],
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
@@ -118,7 +117,6 @@ export class HealthInsuranceAPI {
           heiti: filename,
           innihald: await this.bucketService.getFileContentAsBase64(
             attachmentNames[i],
-            bucketName,
           ),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)

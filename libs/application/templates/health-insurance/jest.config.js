@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'application-templates-health-insurance',
-  preset: '../../../../jest.config.js',
+  preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
@@ -10,4 +9,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '../../../../coverage/libs/application/templates/health-insurance',
+  displayName: 'application-templates-health-insurance',
 }

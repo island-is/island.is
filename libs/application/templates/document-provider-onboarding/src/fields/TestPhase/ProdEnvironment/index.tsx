@@ -38,7 +38,7 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   >(null)
   const { answers: formValue } = application
   const [currentAnswer, setCurrentAnswer] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     (formValue.prodProviderId as string) || '',
   )
