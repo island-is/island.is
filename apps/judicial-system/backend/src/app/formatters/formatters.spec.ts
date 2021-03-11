@@ -1087,6 +1087,57 @@ describe('formatPrisonRulingEmailNotification', () => {
       '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
     )
   })
+
+  test('should format prison ruling notification when an addition to the conclusion has been made', () => {
+    // Arrange
+    const accusedNationalId = '2411018760'
+    const accusedName = 'Biggi Börgler'
+    const accusedGender = CaseGender.MALE
+    const court = 'Héraðsdómur Vesturlands'
+    const prosecutorName = 'Siggi Sakó'
+    const courtEndTime = new Date('2020-12-20T13:32')
+    const defenderName = null
+    const defenderEmail = 'shield@defend.is'
+    const decision = CaseDecision.ACCEPTING
+    const custodyEndDate = new Date('2021-04-06T12:30')
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.ISOLATION,
+      CaseCustodyRestrictions.MEDIA,
+    ]
+    const accusedAppealDecision = CaseAppealDecision.APPEAL
+    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
+    const judgeName = 'Dalli Dómari'
+    const judgeTitle = 'aðal dómarinn'
+    const isExtension = false
+    const additionToConclusion = 'Lorem ipsum'
+
+    // Act
+    const res = formatPrisonRulingEmailNotification(
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      court,
+      prosecutorName,
+      courtEndTime,
+      defenderName,
+      defenderEmail,
+      decision,
+      custodyEndDate,
+      custodyRestrictions,
+      accusedAppealDecision,
+      prosecutorAppealDecision,
+      judgeName,
+      judgeTitle,
+      isExtension,
+      undefined,
+      additionToConclusion,
+    )
+
+    // Assert
+    expect(res).toBe(
+      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br />Lorem ipsum<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
+    )
+  })
 })
 
 describe('formatCourtRevokedSmsNotification', () => {
