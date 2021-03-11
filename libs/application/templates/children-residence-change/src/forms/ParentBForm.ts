@@ -4,7 +4,6 @@ import {
   Form,
   FormModes,
   buildCustomField,
-  Application,
   buildMultiField,
   buildTextField,
 } from '@island.is/application/core'

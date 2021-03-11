@@ -15,8 +15,6 @@ const parentBDefaults = {
   city: 'Reykjavík',
 }
 
-type ValidAnswers = 'yes' | 'no'
-
 const MockData = ({ application }: FieldBaseProps) => {
   const getValue = (id: string) => {
     return getValueViaPath(application.answers, id) as string
