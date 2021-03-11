@@ -185,14 +185,17 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, transitionCaseMutation])
 
   useEffect(() => {
-    const tryToShowFeature = async () => {
+    const tryToShowFeature = async (theCase: Case) => {
       setShowCreateCustodyCourtCase(
-        await getFeature('CREATE_CUSTODY_COURT_CASE'),
+        theCase.type === CaseType.CUSTODY &&
+          (await getFeature('CREATE_CUSTODY_COURT_CASE')),
       )
     }
 
-    tryToShowFeature()
-  }, [setShowCreateCustodyCourtCase])
+    if (workingCase) {
+      tryToShowFeature(workingCase)
+    }
+  }, [workingCase, setShowCreateCustodyCourtCase])
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
