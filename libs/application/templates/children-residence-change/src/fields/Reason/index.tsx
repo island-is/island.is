@@ -1,22 +1,19 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Input } from '@island.is/island-ui/core'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { reason } from '../../lib/messages'
+import { CRCFieldBaseProps } from '../../types'
 
-const Reason = ({ error, application, field }: FieldBaseProps) => {
+const Reason = ({ application, field }: CRCFieldBaseProps) => {
   const { id } = field
-  const getValue = (id: string) => {
-    return getValueViaPath(application.answers, id) as string
-  }
   const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
 
   return (
     <Controller
       name="reason"
-      defaultValue={getValue('reason')}
+      defaultValue={application.answers.residenceChangeReason}
       render={({ value, onChange }) => {
         return (
           <Box marginTop={4}>
