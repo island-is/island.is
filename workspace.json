@@ -1775,6 +1775,13 @@
             ]
           }
         },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/party-letter/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
