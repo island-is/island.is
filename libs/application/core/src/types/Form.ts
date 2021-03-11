@@ -98,6 +98,7 @@ export interface ExternalDataProvider extends FormItem {
   dataProviders: DataProviderItem[]
   checkboxLabel?: StaticText
   subTitle?: StaticText
+  description?: StaticText
 }
 
 export interface DataProviderItem {
