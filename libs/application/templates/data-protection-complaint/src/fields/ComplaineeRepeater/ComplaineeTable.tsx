@@ -5,16 +5,18 @@ import { complaint, sharedFields } from '../../lib/messages'
 import { YES, NO } from '../../shared'
 
 interface Props {
+  id: string
   name: string
   address: string
   nationalId: string
   operatesWithinEurope: typeof YES | typeof NO
   countryOfOperation: string | undefined
-  onEdit: () => void
+  onEdit: (id: string) => void
   onRemove?: () => void
 }
 
 export const ComplaineeTable: FC<Props> = ({
+  id,
   name,
   address,
   nationalId,
@@ -69,7 +71,7 @@ export const ComplaineeTable: FC<Props> = ({
             size="small"
             icon="pencil"
             iconType="outline"
-            onClick={onEdit}
+            onClick={onEdit.bind(null, id)}
           >
             {formatMessage(sharedFields.edit)}
           </Button>

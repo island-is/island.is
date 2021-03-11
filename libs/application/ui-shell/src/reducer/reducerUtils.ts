@@ -172,9 +172,11 @@ function convertRepeaterToScreens(
           ...c,
           id: `${id}[${i}].${c.id}`,
         }))
-      } else {
-        fieldId = `${id}[${i}].${field.id}`
       }
+
+      // We should always set a unique ID to each repeater field
+      fieldId = `${id}[${i}].${field.id}`
+
       newScreens.push(
         ...convertLeafToScreens(
           {

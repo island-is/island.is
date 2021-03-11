@@ -19,6 +19,7 @@ export const ComplaineeRepeater: FC<RepeaterProps> = ({
   application,
   expandRepeater,
   removeRepeaterItem,
+  goToScreen,
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
@@ -27,9 +28,8 @@ export const ComplaineeRepeater: FC<RepeaterProps> = ({
     | Complainee[]
     | undefined
 
-  const handleEditComplaineeClick = () => {
-    // TODO: Goto screen when available
-    console.log('Goto screen not available in repeaters yet')
+  const handleEditComplaineeClick = (id: string) => {
+    goToScreen(id)
   }
 
   const handleRemoveComplaineeClick = (index: number) =>
@@ -41,15 +41,22 @@ export const ComplaineeRepeater: FC<RepeaterProps> = ({
         description={formatMessage(complaint.general.complaineePageDescription)}
       />
       {complainee && (
-        <ComplaineeTable {...complainee} onEdit={handleEditComplaineeClick} />
-      )}
-      {additionalComplainees?.map((complainee, index) => (
         <ComplaineeTable
+          id="complaineeMultiField"
           {...complainee}
           onEdit={handleEditComplaineeClick}
-          onRemove={handleRemoveComplaineeClick.bind(null, index)}
         />
-      ))}
+      )}
+      {additionalComplainees?.map((complainee, index) => {
+        return (
+          <ComplaineeTable
+            id={`additionalComplainees[${index}].additionalComplaineesMultiField`}
+            {...complainee}
+            onEdit={handleEditComplaineeClick}
+            onRemove={handleRemoveComplaineeClick.bind(null, index)}
+          />
+        )
+      })}
       <FieldDescription
         description={formatMessage(complaint.labels.complaineeAddPerson)}
       />
