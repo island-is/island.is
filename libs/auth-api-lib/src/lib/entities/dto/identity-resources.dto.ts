@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsNotEmpty, IsDate } from 'class-validator'
+import { IsString, IsBoolean, IsNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class IdentityResourcesDTO {
@@ -49,4 +49,39 @@ export class IdentityResourcesDTO {
     example: false,
   })
   readonly emphasize!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly grantToLegalGuardians!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly grantToProcuringHolders!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly allowExplicitDelegationGrant!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly automaticDelegationGrant!: boolean
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @ApiProperty({
+    example: false,
+  })
+  readonly alsoForDelegatedUser!: boolean
 }
