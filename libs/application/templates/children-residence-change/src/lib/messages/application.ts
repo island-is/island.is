@@ -14,6 +14,24 @@ export const application = defineMessages({
   },
 })
 
+export const copyUrl = defineMessages({
+  title: {
+    id: 'crc.application:copyUrl.title',
+    defaultMessage: 'Deila hlekk',
+    description: 'Copy url title',
+  },
+  inputLabel: {
+    id: 'crc.application:copyUrl.inputLabel',
+    defaultMessage: 'Hlekkur á umsóknina',
+    description: 'Copy url input label',
+  },
+  buttonLabel: {
+    id: 'crc.application:copyUrl.buttonLabel',
+    defaultMessage: 'Afrita hlekk',
+    description: 'Copy url button text',
+  },
+})
+
 // All sections in the application
 export const section = defineMessages({
   backgroundInformation: {
