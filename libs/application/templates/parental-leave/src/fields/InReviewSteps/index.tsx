@@ -1,74 +1,42 @@
 import React, { FC, useState } from 'react'
-import { useMutation } from '@apollo/client'
+
 import { useLocale } from '@island.is/localization'
 
-import {
-  FieldBaseProps,
-  getValueViaPath,
-  MessageFormatter,
-} from '@island.is/application/core'
-import {
-  Box,
-  Button,
-  DialogPrompt,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
-import ReviewSection, { reviewSectionState } from './ReviewSection'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES } from '../../constants'
 
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-
-function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(
-      {
-        id: 'application.system:submit.error',
-        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
-        description: 'Error message on submit',
-      },
-      { error },
-    ),
-  )
+type StateMapEntry = { [key: string]: ReviewSectionState }
+type StatesMap = {
+  otherParent: StateMapEntry
+  employer: StateMapEntry
+  vinnumalastofnun: StateMapEntry
 }
-
-type stateMapEntry = { [key: string]: reviewSectionState }
-type statesMap = {
-  otherParent: stateMapEntry
-  employer: stateMapEntry
-  vinnumalastofnun: stateMapEntry
-}
-const statesMap: statesMap = {
+const statesMap: StatesMap = {
   otherParent: {
-    otherParentApproval: reviewSectionState.inProgress,
-    otherParentRequiresAction: reviewSectionState.requiresAction,
-    employerApproval: reviewSectionState.complete,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    otherParentApproval: ReviewSectionState.inProgress,
+    otherParentRequiresAction: ReviewSectionState.requiresAction,
+    employerApproval: ReviewSectionState.complete,
+    vinnumalastofnunApproval: ReviewSectionState.complete,
   },
   employer: {
-    employerWaitingToAssign: reviewSectionState.inProgress,
-    employerApproval: reviewSectionState.inProgress,
-    employerRequiresAction: reviewSectionState.requiresAction,
-    vinnumalastofnunApproval: reviewSectionState.complete,
+    employerWaitingToAssign: ReviewSectionState.inProgress,
+    employerApproval: ReviewSectionState.inProgress,
+    employerRequiresAction: ReviewSectionState.requiresAction,
+    vinnumalastofnunApproval: ReviewSectionState.complete,
   },
   vinnumalastofnun: {
-    vinnumalastofnunApproval: reviewSectionState.inProgress,
-    vinnumalastofnunRequiresAction: reviewSectionState.requiresAction,
-    approved: reviewSectionState.complete,
+    vinnumalastofnunApproval: ReviewSectionState.inProgress,
+    vinnumalastofnunRequiresAction: ReviewSectionState.requiresAction,
+    approved: ReviewSectionState.complete,
   },
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
-  const [submitApplication, { loading: loadingSubmit }] = useMutation(
-    SUBMIT_APPLICATION,
-    {
-      onError: (e) => handleError(e.message, formatMessage),
-    },
-  )
-
+const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const [screenState, setScreenState] = useState<'steps' | 'viewApplication'>(
     'steps',
@@ -140,61 +108,11 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
                   parentalLeaveFormMessages.reviewScreen.buttonsViewProgress,
                 )}
             </Button>
-          </Box>
-          <Box display="inlineBlock">
-            <DialogPrompt
-              baseId="editApplicationDialog"
-              title={formatMessage(
-                parentalLeaveFormMessages.reviewScreen
-                  .editApplicationModalTitle,
-              )}
-              description={formatMessage(
-                parentalLeaveFormMessages.reviewScreen.editApplicationModalDesc,
-              )}
-              ariaLabel={formatMessage(
-                parentalLeaveFormMessages.reviewScreen.editApplicationModalAria,
-              )}
-              disclosureElement={
-                <Button
-                  colorScheme="default"
-                  iconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                  icon="pencil"
-                  loading={loadingSubmit}
-                  disabled={loadingSubmit}
-                >
-                  {formatMessage(
-                    parentalLeaveFormMessages.reviewScreen.buttonsEdit,
-                  )}
-                </Button>
-              }
-              onConfirm={async () => {
-                const res = await submitApplication({
-                  variables: {
-                    input: {
-                      id: application.id,
-                      event: 'EDIT',
-                      answers: application.answers,
-                    },
-                  },
-                })
-
-                if (res?.data) {
-                  // Takes them back to the editable Review screen
-                  refetch?.()
-                }
-              }}
-              buttonTextConfirm={formatMessage(
-                parentalLeaveFormMessages.reviewScreen
-                  .editApplicationModalConfirmButton,
-              )}
-              buttonTextCancel={formatMessage(
-                parentalLeaveFormMessages.reviewScreen
-                  .editApplicationModalCancelButton,
-              )}
-            />
+            {/* TODO: 
+              Edit button goes here when the edit flow is ready to merge. 
+              The functionlity and code is in rfc.index.tsx. We will bring
+              it over when ready, and then delete that file.
+            */}
           </Box>
         </Box>
       </Box>
