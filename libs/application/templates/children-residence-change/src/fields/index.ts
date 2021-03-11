@@ -1,6 +1,5 @@
 export { default as ChangeInformation } from './ChangeInformation'
 export { default as Confirmation } from './Confirmation'
-export { default as ContactInfo } from './ContactInfo'
 export { default as Duration } from './Duration'
 export { default as Interview } from './Interview'
 export { default as MockData } from './MockData'

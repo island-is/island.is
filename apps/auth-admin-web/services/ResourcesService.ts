@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ApiResourceScopeDTO } from '../entities/dtos/api-resource-allowed-scope.dto'
 import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto'
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto'

@@ -11,17 +11,90 @@ import {
   FormValue,
   buildSubSection,
   buildSubmitField,
+  buildFileUploadField,
+  buildRepeater,
 } from '@island.is/application/core'
-import { YES } from '../shared'
-import { section, delimitation, errorCards, info } from '../lib/messages'
+import { FILE_SIZE_LIMIT, YES, NO } from '../shared'
+import {
+  section,
+  delimitation,
+  errorCards,
+  info,
+  application,
+  sharedFields,
+  complaint,
+} from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
 
-const yesOption = { value: 'yes', label: 'Já' }
-const noOption = { value: 'no', label: 'Nei' }
+const yesOption = { value: YES, label: sharedFields.yes }
+const noOption = { value: NO, label: sharedFields.no }
+
+const buildComplaineeMultiField = (id: string) =>
+  buildMultiField({
+    id: `${id}MultiField`,
+    title: complaint.general.complaineePageTitle,
+    description: complaint.general.complaineePageDescription,
+    space: 1,
+    children: [
+      buildCustomField({
+        id: `${id}NameLabel`,
+        title: complaint.general.complaineePageTitle,
+        component: 'FieldLabel',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}name`,
+        title: complaint.labels.complaineeName,
+        backgroundColor: 'blue',
+      }),
+      buildCustomField({
+        id: `${id}InfoLabel`,
+        title: complaint.labels.complaineeInfoLabel,
+        component: 'FieldLabel',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}address`,
+        title: complaint.labels.complaineeAddress,
+        backgroundColor: 'blue',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}nationalId`,
+        title: complaint.labels.complaineeNationalId,
+        format: '######-####',
+        backgroundColor: 'blue',
+      }),
+      buildRadioField({
+        id: `${id === 'complainee' ? `${id}.` : ''}operatesWithinEurope`,
+        title: complaint.labels.complaineeOperatesWithinEurope,
+        options: [yesOption, noOption],
+        largeButtons: true,
+        width: 'half',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}countryOfOperation`,
+        title: complaint.labels.complaineeCountryOfOperation,
+        backgroundColor: 'blue',
+        condition: (formValue) => {
+          const operatesWithinEurope = (formValue.complainee as FormValue)
+            ?.operatesWithinEurope
+          return operatesWithinEurope === 'yes'
+        },
+      }),
+      buildCustomField({
+        id: `${id}operatesWithinEuropeMessage`,
+        title: complaint.labels.complaineeOperatesWithinEuropeMessage,
+        component: 'FieldAlertMessage',
+        condition: (formValue) => {
+          const operatesWithinEurope = (formValue.complainee as FormValue)
+            ?.operatesWithinEurope
+          return operatesWithinEurope === 'yes'
+        },
+      }),
+    ],
+  })
 
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
-  title: 'Atvinnuleysisbætur',
+  title: application.name,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
@@ -44,14 +117,22 @@ export const ComplaintForm: Form = buildForm({
                   largeButtons: true,
                   width: 'half',
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'inCourtProceedingsAlert',
-                  title: errorCards.inCourtProceedingsTitle,
-                  description: errorCards.inCourtProceedingsDescription,
-                  condition: (formValue) =>
-                    formValue.inCourtProceedings === YES,
-                }),
+                buildCustomField(
+                  {
+                    component: 'FieldAlertMessage',
+                    id: 'inCourtProceedingsAlert',
+                    title: errorCards.inCourtProceedingsTitle,
+                    description: errorCards.inCourtProceedingsDescription,
+                    // TODO: The application system is not passing props down to custom components
+                    // Use defaultValue as a workaround until that gets fixed
+                    defaultValue: 'https://example.com/',
+                    condition: (formValue) =>
+                      formValue.inCourtProceedings === YES,
+                  },
+                  {
+                    url: 'https://example.com/',
+                  },
+                ),
               ],
             }),
           ],
@@ -162,7 +243,7 @@ export const ComplaintForm: Form = buildForm({
                       value: OnBehalf.MYSELF_AND_OR_OTHERS,
                       label: info.labels.myselfAndOrOthers,
                     },
-                    { value: OnBehalf.COMPANY, label: info.labels.company },
+                    { value: OnBehalf.OTHERS, label: info.labels.others },
                     {
                       value: OnBehalf.ORGANIZATION_OR_INSTITUTION,
                       label: info.labels.organizationInstitution,
@@ -172,13 +253,9 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                 }),
                 buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'info.onBehalfOfACompanyAlertMessage',
-                  title: errorCards.onBehalfOfACompanyTitle,
-                  description: errorCards.onBehalfOfACompanyDescription,
-                  condition: (formValue) =>
-                    (formValue.info as FormValue)?.onBehalf ===
-                    OnBehalf.COMPANY,
+                  id: 'onBehalfDescription',
+                  title: '',
+                  component: 'CompanyDisclaimer',
                 }),
               ],
             }),
@@ -188,10 +265,11 @@ export const ComplaintForm: Form = buildForm({
           id: 'applicant',
           title: section.applicant.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue)?.onBehalf ?? ''
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
               onBehalf === OnBehalf.MYSELF ||
-              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS ||
+              onBehalf === OnBehalf.OTHERS
             )
           },
           children: [
@@ -208,6 +286,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'applicant.nationalId',
                   title: info.labels.nationalId,
+                  format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
                 }),
@@ -239,6 +318,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'applicant.phoneNumber',
                   title: info.labels.tel,
+                  format: '###-####',
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
@@ -268,6 +348,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'organizationOrInstitution.nationalId',
                   title: info.labels.nationalId,
+                  format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
                 }),
@@ -299,6 +380,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'organizationOrInstitution.phoneNumber',
                   title: info.labels.tel,
+                  format: '###-####',
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
@@ -311,23 +393,56 @@ export const ComplaintForm: Form = buildForm({
           id: 'commissions',
           title: section.commissions.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue)?.onBehalf ?? ''
-            return onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
+            return (
+              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS ||
+              onBehalf === OnBehalf.OTHERS
+            )
           },
           children: [
             buildMultiField({
-              title: 'Umboð',
-              description: 'Lýsing',
+              id: 'comissionsSection',
+              title: info.general.commissionsPageTitle,
+              // TODO: We probably need a custom component for the description
+              // so we can include the document link
+              description: info.general.commissionsPageDescription,
               children: [
-                buildTextField({
-                  id: 'commissions.name',
-                  title: info.labels.name,
-                  backgroundColor: 'blue',
-                  width: 'half',
+                buildFileUploadField({
+                  id: 'commissions.documents',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: info.labels.commissionsDocumentsHeader,
+                  uploadDescription:
+                    info.labels.commissionsDocumentsDescription,
+                  uploadButtonLabel:
+                    info.labels.commissionsDocumentsButtonLabel,
+                }),
+                buildCustomField({
+                  id: 'commissions.persons',
+                  title: info.labels.commissionsPerson,
+                  component: 'CommissionFieldRepeater',
                 }),
               ],
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'complaint',
+      title: section.complaint.defaultMessage,
+      children: [
+        buildSubSection({
+          id: 'complainee',
+          title: section.complainee.defaultMessage,
+          children: [buildComplaineeMultiField('complainee')],
+        }),
+        buildRepeater({
+          id: 'additionalComplainees',
+          title: complaint.general.complaineePageTitle,
+          component: 'ComplaineeRepeater',
+          children: [buildComplaineeMultiField('additionalComplainees')],
         }),
       ],
     }),

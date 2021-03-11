@@ -124,12 +124,14 @@ export function buildDescriptionField(data: {
   id: string
   title: FormText
   description: FormText
+  tooltip?: FormText
 }): DescriptionField {
-  const { condition, id, title, description } = data
+  const { condition, id, title, description, tooltip } = data
   return {
     children: undefined,
     condition,
     description,
+    tooltip,
     id,
     title,
     type: FieldTypes.DESCRIPTION,
@@ -393,10 +395,11 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
+  condition?: Condition
   title?: FormText
   color?: Colors
 }): DividerField {
-  const { title, color } = data
+  const { title, color, condition } = data
   return {
     id: '',
     children: undefined,
@@ -404,6 +407,7 @@ export function buildDividerField(data: {
     component: FieldComponents.DIVIDER,
     title: title ?? '',
     color,
+    condition,
   }
 }
 
