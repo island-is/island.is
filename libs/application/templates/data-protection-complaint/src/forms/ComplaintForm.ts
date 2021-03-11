@@ -23,8 +23,10 @@ import {
   application,
   sharedFields,
   complaint,
+  overview,
 } from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
+import { ComplaintOverview } from '../fields/ComplaintOverview'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -528,7 +530,6 @@ export const ComplaintForm: Form = buildForm({
                   placeholder: complaint.labels.subjectSomethingElsePlaceholder,
                   backgroundColor: 'blue',
                   condition: (formValue) => {
-                    console.log(formValue)
                     const other =
                       ((formValue.subjectOfComplaint as FormValue)
                         ?.other as string[]) || []
@@ -539,17 +540,49 @@ export const ComplaintForm: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'complaint',
+          title: section.complaint,
+          children: [
+            buildMultiField({
+              id: 'complaintDescription',
+              title: complaint.general.complaintPageTitle,
+              description: complaint.general.complaintPageDescription,
+              space: 3,
+              children: [
+                buildTextField({
+                  id: 'complaint.description',
+                  title: complaint.labels.complaintDescription,
+                  placeholder: complaint.labels.complaintDescriptionPlaceholder,
+                  description: complaint.labels.complaintDescriptionLabel,
+                  variant: 'textarea',
+                  backgroundColor: 'blue',
+                }),
+                buildFileUploadField({
+                  id: 'complaint.documents',
+                  title: complaint.labels.complaintDocumentsTitle,
+                  introduction: complaint.labels.complaintDocumentsIntroduction,
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: complaint.labels.complaintDocumentsHeader,
+                  uploadDescription:
+                    complaint.labels.complaintDocumentsDescription,
+                  uploadButtonLabel:
+                    complaint.labels.complaintDocumentsButtonLabel,
+                }),
+              ],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
-      id: 'confirmation',
-      title: 'Staðfesting',
+      id: 'overview',
+      title: section.overview,
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Vel gert!',
-          description:
-            'Þú ert komin/n út á enda, ef þú ýtir á næsta skref þá læsist umsóknin',
+        buildCustomField({
+          id: 'overview.complaintOverview',
+          title: overview.general.pageTitle,
+          component: 'ComplaintOverview',
         }),
       ],
     }),

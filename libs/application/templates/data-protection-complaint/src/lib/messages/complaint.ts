@@ -28,6 +28,16 @@ export const complaint = {
       defaultMessage: `Vantar texta`,
       description: 'Subject of complaint page description',
     },
+    complaintPageTitle: {
+      id: 'dpac.application:section.complaint.complaintPageTitle',
+      defaultMessage: 'Kvörtun',
+      description: 'complaint page title',
+    },
+    complaintPageDescription: {
+      id: 'dpac.application:section.complaint.complaintPageDescription',
+      defaultMessage: `Vantar texta`,
+      description: 'complaint page description',
+    },
   }),
   labels: defineMessages({
     complaineeName: {
@@ -175,6 +185,53 @@ export const complaint = {
         'dpac.application:section.complaint.labels.subjectSomethingElsePlaceholder',
       defaultMessage: 'Útskýrðu í stuttu máli',
       description: 'Explain shortly',
+    },
+    complaintDescription: {
+      id: 'dpac.application:section.complaint.labels.complaintDescription',
+      defaultMessage: 'Kvörtun',
+      description: 'Complaint Description',
+    },
+    complaintDescriptionPlaceholder: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDescriptionPlaceholder',
+      defaultMessage:
+        '500 orð hámark. Ef þörf er á frekari skýringum er hægt að koma þeim á framfæri í fylgiskjali.',
+      description: 'Complaint Description Placeholder',
+    },
+    complaintDescriptionLabel: {
+      id: 'dpac.application:section.complaint.labels.complaintDescriptionLabel',
+      defaultMessage: 'Yfir hverju er kvartað í meginatriðum?',
+      description: 'Complaint Description Label',
+    },
+    complaintDocumentsTitle: {
+      id: 'dpac.application:section.complaint.labels.complaintDocumentsTitle',
+      defaultMessage: 'Fylgiskjöl',
+      description: '',
+    },
+    complaintDocumentsIntroduction: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDocumentsIntroduction',
+      defaultMessage:
+        'Vinsamlegast settu hér inn skjöl og önnur gögn sem eiga að fylgja kvörtun',
+      description: 'Complaint Documents Intro',
+    },
+    complaintDocumentsHeader: {
+      id: 'dpac.application:section.complaint.labels.complaintDocumentsHeader',
+      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      description: 'Complaint Documents Header',
+    },
+    complaintDocumentsDescription: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDocumentsDescription',
+      defaultMessage:
+        'Tekið er við skjölum með endingu: .pdf, .docx, .rtf, jpg, png, mov, mp4',
+      description: 'Complaint Documents Description',
+    },
+    complaintDocumentsButtonLabel: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDocumentsButtonLabel',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
+      description: 'Complaint Documents Button Label',
     },
   }),
 }

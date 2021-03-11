@@ -86,9 +86,14 @@ export const DataProtectionComplaintSchema = z.object({
     }),
   ),
   subjectOfComplaint: z.object({
-    authorities: z.array(z.string()),
-    useOfPersonalInformation: z.array(z.string()),
-    other: z.array(z.string()),
+    authorities: z.array(z.string()).optional(),
+    useOfPersonalInformation: z.array(z.string()).optional(),
+    other: z.array(z.string()).optional(),
     somethingElse: z.string().optional(),
+  }),
+  complaint: z.object({
+    description: z.string().nonempty(),
+    // TODO: This should be required
+    documents: z.array(FileSchema),
   }),
 })
