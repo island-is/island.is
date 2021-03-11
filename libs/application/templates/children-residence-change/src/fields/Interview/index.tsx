@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
-import { interview } from '../../lib/messages'
+import { interview, copyUrl } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import { DescriptionText } from '../components'
+import { DescriptionText, CopyUrl } from '../components'
 
 type ValidAnswers = 'yes' | 'no'
 
@@ -17,6 +17,11 @@ const Interview = ({ field, application, error }: CRCFieldBaseProps) => {
   )
   return (
     <>
+      <CopyUrl
+        title={formatMessage(copyUrl.title)}
+        inputLabel={formatMessage(copyUrl.inputLabel)}
+        buttonLabel={formatMessage(copyUrl.buttonLabel)}
+      />
       <Box marginTop={3}>
         <DescriptionText text={interview.general.description} />
       </Box>
