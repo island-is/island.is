@@ -1,42 +1,117 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text, BulletList, Bullet } from '@island.is/island-ui/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
-  FieldDescription,
-  RadioController,
-} from '@island.is/shared/form-fields'
+  Box,
+  Text,
+  GridRow,
+  GridColumn,
+  Inline,
+  Stack,
+} from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { useFormContext } from 'react-hook-form'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
-const PARTYLETTERS = ['A', 'B', 'C', 'X', 'H', 'I', 'O', 'P', 'Q', 'T', 'R']
+const ACTIVE_PARTIES = [
+  { partyLetter: 'A-listi', partyName: 'Björt framtíð' },
+  { partyLetter: 'B-listi', partyName: 'Framsóknarflokkur' },
+  { partyLetter: 'C-listi', partyName: 'Viðreisn' },
+  { partyLetter: 'D-listi', partyName: 'Sjálfstæðisflokkur' },
+  { partyLetter: 'F-listi', partyName: 'Flokkur fólksins' },
+  { partyLetter: 'M-listi', partyName: 'Miðflokkurinn' },
+  { partyLetter: 'P-listi', partyName: 'Píratar' },
+  { partyLetter: 'R-listi', partyName: 'Alþýðufylkingin' },
+  {
+    partyLetter: 'S-listi',
+    partyName: 'Samfylkingin – jafnaðarmannaflokkur Íslands',
+  },
+  {
+    partyLetter: 'T-listi',
+    partyName: 'Dögun – stjórnmálasamtök um réttlæti, sanngirni og lýðræði',
+  },
+  { partyLetter: 'V-listi', partyName: 'Vinstrihreyfingin – grænt framboð' },
+]
+
+const PARTYLETTER_ID = 'partyLetterInput'
+const PARTYNAME_ID = 'patyNameInput'
+
+export const partyLetterIds = [PARTYLETTER_ID, PARTYNAME_ID]
 
 const PartyLetter: FC<FieldBaseProps> = ({ application }) => {
+  const { setValue } = useFormContext()
+  const { formatMessage } = useLocale()
+
+  const first = ACTIVE_PARTIES.slice(0, Math.ceil(ACTIVE_PARTIES.length / 2))
+  const second = ACTIVE_PARTIES.slice(Math.ceil(ACTIVE_PARTIES.length / 2) + 1)
+
   return (
-    <Box marginBottom={8}>
-      <FieldDescription
-        description={
-          'Hér fyrir neðan getur þú valið listabókstaf sem þú óskar eftir'
-        }
-      />
-
-      <Box marginTop={5} marginBottom={9}>
-        <RadioController
-          id={'additionalInfo.hasAdditionalInfo'}
-          name={'additionalInfo.hasAdditionalInfo'}
-          split={'1/5'}
-          options={PARTYLETTERS.map((letter) => ({
-            value: letter,
-            label: letter,
-          }))}
-        />
+    <Box marginTop={4}>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <InputController
+            id={PARTYLETTER_ID}
+            label={formatMessage(m.selectPartyLetter.partyLetterLabel)}
+            placeholder={formatMessage(
+              m.selectPartyLetter.partyLetterPlaceholder,
+            )}
+            name={PARTYLETTER_ID}
+            defaultValue={
+              getValueViaPath(application.answers, PARTYLETTER_ID) as string
+            }
+            onChange={(e) => setValue(PARTYLETTER_ID, e.target.value)}
+          ></InputController>
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <InputController
+            id={PARTYNAME_ID}
+            label={formatMessage(m.selectPartyLetter.partyNameLabel)}
+            placeholder={formatMessage(
+              m.selectPartyLetter.partyNamePlaceholder,
+            )}
+            name={PARTYNAME_ID}
+            defaultValue={
+              getValueViaPath(application.answers, PARTYNAME_ID) as string
+            }
+            onChange={(e) => setValue(PARTYNAME_ID, e.target.value)}
+          ></InputController>
+        </GridColumn>
+      </GridRow>
+      <Box marginTop={5} marginBottom={3}>
+        <Text variant="h5">
+          {formatMessage(m.selectPartyLetter.partyLetterSubtitle)}
+        </Text>
       </Box>
-      <Box marginBottom={1}>
-        <Text variant="h4">Kröfur fyrir listabókstaf</Text>
-      </Box>
-
-      <BulletList>
-        <Bullet>300 manns þarf á lista fyrir samþykki á listabókstaf</Bullet>
-        <Bullet>Ekki má nota séríslenska stafi sem listabókstaf.</Bullet>
-        <Bullet>Bókstafur telst valinn þegar 300 meðmælum er safnað</Bullet>
-      </BulletList>
+      <GridRow>
+        <GridColumn span={['12/12', '6/12']}>
+          <Stack space={2}>
+            {first.map((x) => {
+              return (
+                <Inline space={1}>
+                  <Text variant="small" fontWeight="semiBold">
+                    {x.partyLetter}:
+                  </Text>
+                  <Text variant="small">{x.partyName}</Text>
+                </Inline>
+              )
+            })}
+          </Stack>
+        </GridColumn>
+        <GridColumn span={['12/12', '6/12']}>
+          <Stack space={1}>
+            {second.map((x) => {
+              return (
+                <Inline space={1}>
+                  <Text variant="small" fontWeight="semiBold">
+                    {x.partyLetter}:
+                  </Text>
+                  <Text variant="small">{x.partyName}</Text>
+                </Inline>
+              )
+            })}
+          </Stack>
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }
