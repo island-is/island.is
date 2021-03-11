@@ -2,6 +2,7 @@ export interface Fund {
   credit: number
   used: number
   total: number
+  availableConnectionFlights: number
 }
 
 export interface BaseUser {

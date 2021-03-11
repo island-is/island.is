@@ -1,4 +1,12 @@
-import { Controller, Param, Post, Get, NotFoundException } from '@nestjs/common'
+import {
+  Controller,
+  Param,
+  Post,
+  Get,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common'
 import { ApiExcludeEndpoint } from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
@@ -8,17 +16,20 @@ import {
 } from './dto'
 import { DiscountService } from './discount.service'
 import { NationalRegistryService } from '../nationalRegistry'
+import { FlightService } from '../flight'
 
 @Controller('api/private')
 export class PrivateDiscountController {
-  constructor(
+  constructor (
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
+    @Inject(forwardRef(() => FlightService))
+    private readonly flightService: FlightService,
   ) {}
 
   @Get('users/:nationalId/discounts/current')
   @ApiExcludeEndpoint()
-  getCurrentDiscountByNationalId(
+  getCurrentDiscountByNationalId (
     @Param() params: GetCurrentDiscountByNationalIdParams,
   ): Promise<Discount | null> {
     return this.discountService.getDiscountByNationalId(params.nationalId)
@@ -26,14 +37,20 @@ export class PrivateDiscountController {
 
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()
-  async createDiscountCode(
+  async createDiscountCode (
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
     const user = await this.nationalRegistryService.getUser(params.nationalId)
     if (!user) {
       throw new NotFoundException(`User<${params.nationalId}> not found`)
     }
+    const connectedFlightCounts = await this.flightService.countThisYearsConnectedFlightsByNationalId(
+      params.nationalId,
+    )
 
-    return this.discountService.createDiscountCode(params.nationalId)
+    return this.discountService.createDiscountCode(
+      params.nationalId,
+      connectedFlightCounts,
+    )
   }
 }

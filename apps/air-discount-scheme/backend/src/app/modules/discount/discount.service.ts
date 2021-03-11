@@ -5,6 +5,7 @@ import { Discount } from './discount.model'
 
 interface CachedDiscount {
   discountCode: string
+  connectionDiscountCode: string[]
   nationalId: string
 }
 
@@ -17,20 +18,22 @@ const CACHE_KEYS = {
   discount: (id: string) => `discount_id_${id}`,
   discountCode: (discountCode: string) =>
     `discount_code_lookup_${discountCode}`,
+  connectionDiscountCode: (connectionDiscountCode: string[]) =>
+    `connection_discount_code_lookup_${connectionDiscountCode}`,
   flight: (flightId: string) => `discount_flight_lookup_${flightId}`,
 }
 
 @Injectable()
 export class DiscountService {
-  constructor(
+  constructor (
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
-  private getRandomRange(min: number, max: number): number {
+  private getRandomRange (min: number, max: number): number {
     return Math.random() * (max + 1 - min) + min
   }
 
-  private generateDiscountCode(): string {
+  private generateDiscountCode (): string {
     return [...Array(DISCOUNT_CODE_LENGTH)]
       .map(() => {
         // We are excluding 0 and O because users mix them up
@@ -46,7 +49,7 @@ export class DiscountService {
       .join('')
   }
 
-  private async setCache<T>(
+  private async setCache<T> (
     key: string,
     value: T,
     ttl: number = ONE_DAY,
@@ -54,7 +57,7 @@ export class DiscountService {
     return this.cacheManager.set(key, value, { ttl })
   }
 
-  private async getCache<T>(cacheKey: string): Promise<T | null> {
+  private async getCache<T> (cacheKey: string): Promise<T | null> {
     const cacheId = await this.cacheManager.get(cacheKey)
     if (!cacheId) {
       return null
@@ -63,16 +66,37 @@ export class DiscountService {
     return this.cacheManager.get(cacheId)
   }
 
-  async createDiscountCode(nationalId: string): Promise<Discount> {
+  async createDiscountCode (
+    nationalId: string,
+    connectedFlightCounts: number,
+  ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
+    let connectionDiscountCode: string[] = []
+
+    for (let i = 0; i < connectedFlightCounts; i++) {
+      connectionDiscountCode.push(this.generateDiscountCode())
+    }
     const cacheId = CACHE_KEYS.discount(uuid())
-    await this.setCache<CachedDiscount>(cacheId, { nationalId, discountCode })
+    await this.setCache<CachedDiscount>(cacheId, {
+      nationalId,
+      discountCode,
+      connectionDiscountCode,
+    })
     await this.setCache<string>(CACHE_KEYS.discountCode(discountCode), cacheId)
+    await this.setCache<string>(
+      CACHE_KEYS.connectionDiscountCode(connectionDiscountCode),
+      cacheId,
+    )
     await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
-    return new Discount(discountCode, nationalId, ONE_DAY)
+    return new Discount(
+      discountCode,
+      connectionDiscountCode,
+      nationalId,
+      ONE_DAY,
+    )
   }
 
-  async getDiscountByNationalId(nationalId: string): Promise<Discount | null> {
+  async getDiscountByNationalId (nationalId: string): Promise<Discount | null> {
     const cacheKey = CACHE_KEYS.user(nationalId)
     const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
     if (!cacheValue) {
@@ -80,10 +104,15 @@ export class DiscountService {
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
-    return new Discount(cacheValue.discountCode, nationalId, ttl)
+    return new Discount(
+      cacheValue.discountCode,
+      cacheValue.connectionDiscountCode,
+      nationalId,
+      ttl,
+    )
   }
 
-  async getDiscountByDiscountCode(
+  async getDiscountByDiscountCode (
     discountCode: string,
   ): Promise<Discount | null> {
     const cacheKey = CACHE_KEYS.discountCode(discountCode)
@@ -93,28 +122,51 @@ export class DiscountService {
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
-    return new Discount(discountCode, cacheValue.nationalId, ttl)
+    return new Discount(
+      discountCode,
+      cacheValue.connectionDiscountCode,
+      cacheValue.nationalId,
+      ttl,
+    )
   }
 
-  async useDiscount(
+  async useDiscount (
     discountCode: string,
     nationalId: string,
     flightId: string,
+    isConnectionDiscount: boolean,
   ): Promise<void> {
+    const userCacheKey = CACHE_KEYS.user(nationalId)
+    const cacheValue = await this.getCache<CachedDiscount>(userCacheKey)
     const discountCodeCacheKey = CACHE_KEYS.discountCode(discountCode)
+    let connectionDiscountCodeCacheKey: string[] = []
+    if (cacheValue?.connectionDiscountCode) {
+      connectionDiscountCodeCacheKey = cacheValue.connectionDiscountCode
+      connectionDiscountCodeCacheKey.splice(
+        connectionDiscountCodeCacheKey.indexOf(discountCode),
+        1,
+      )
+    }
     const cacheId = await this.cacheManager.get(discountCodeCacheKey)
-    await this.cacheManager.del(discountCodeCacheKey)
-    await this.cacheManager.del(CACHE_KEYS.user(nationalId))
-
     const ttl = await this.cacheManager.ttl(cacheId)
+    if (isConnectionDiscount) {
+      await this.setCache<string>(
+        CACHE_KEYS.connectionDiscountCode(connectionDiscountCodeCacheKey),
+        cacheId,
+        ttl,
+      )
+    } else {
+      await this.cacheManager.del(discountCodeCacheKey)
+      await this.cacheManager.del(CACHE_KEYS.user(nationalId))
+    }
+
     await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
   }
-
   // When an airline booking has a payment failure, they have already registered
   // the flight with us and used the discount. To avoid making the user get a
   // new discount, we reactivate the discount here only if the flight is
   // cancelled before the ttl on the discount code expires.
-  async reactivateDiscount(flightId: string): Promise<void> {
+  async reactivateDiscount (flightId: string): Promise<void> {
     const usedDiscountCacheKey = CACHE_KEYS.flight(flightId)
     const cacheId = await this.cacheManager.get(usedDiscountCacheKey)
     if (!cacheId) {

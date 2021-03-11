@@ -18,10 +18,13 @@ class Fund implements TFund {
 
   @ApiProperty()
   total!: number
+
+  @ApiProperty()
+  availableConnectionFlights!: number
 }
 
 class BaseUser implements TBaseUser {
-  constructor(user: NationalRegistryUser, fund: Fund) {
+  constructor (user: NationalRegistryUser, fund: Fund) {
     this.firstName = user.firstName
     this.middleName = user.middleName
     this.lastName = user.lastName
@@ -50,18 +53,18 @@ class BaseUser implements TBaseUser {
 }
 
 export class AirlineUser extends BaseUser implements BaseUser {
-  constructor(user: NationalRegistryUser, fund: Fund) {
+  constructor (user: NationalRegistryUser, fund: Fund) {
     super(user, fund)
     this.nationalId = AirlineUser.maskNationalId(this.nationalId)
   }
 
-  private static maskNationalId(nationalId: string): string {
+  private static maskNationalId (nationalId: string): string {
     return `${nationalId.slice(0, 6)}xxx${nationalId.slice(-1)}`
   }
 }
 
 export class User extends BaseUser implements TUser {
-  constructor(user: NationalRegistryUser, fund: Fund) {
+  constructor (user: NationalRegistryUser, fund: Fund) {
     super(user, fund)
     this.address = user.address
     this.postalcode = user.postalcode

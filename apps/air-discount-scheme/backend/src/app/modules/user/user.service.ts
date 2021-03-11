@@ -10,21 +10,24 @@ import {
 
 @Injectable()
 export class UserService {
-  constructor(
+  constructor (
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  async getRelations(nationalId: string): Promise<string[]> {
+  async getRelations (nationalId: string): Promise<string[]> {
     return this.nationalRegistryService.getRelatedChildren(nationalId)
   }
 
-  private async getFund(user: NationalRegistryUser): Promise<Fund> {
+  private async getFund (user: NationalRegistryUser): Promise<Fund> {
     const {
       used,
       unused,
       total,
     } = await this.flightService.countThisYearsFlightLegsByNationalId(
+      user.nationalId,
+    )
+    const availableConnectionFlights = await this.flightService.countThisYearsConnectedFlightsByNationalId(
       user.nationalId,
     )
 
@@ -36,10 +39,11 @@ export class UserService {
       credit: meetsADSRequirements ? unused : 0,
       used: used,
       total,
+      availableConnectionFlights,
     }
   }
 
-  private async getUserByNationalId<T>(
+  private async getUserByNationalId<T> (
     nationalId: string,
     model: new (user: NationalRegistryUser, fund: Fund) => T,
   ): Promise<T | null> {
@@ -52,13 +56,13 @@ export class UserService {
     return new model(user, fund)
   }
 
-  async getAirlineUserInfoByNationalId(
+  async getAirlineUserInfoByNationalId (
     nationalId: string,
   ): Promise<AirlineUser | null> {
     return this.getUserByNationalId<AirlineUser>(nationalId, AirlineUser)
   }
 
-  async getUserInfoByNationalId(nationalId: string): Promise<User | null> {
+  async getUserInfoByNationalId (nationalId: string): Promise<User | null> {
     return this.getUserByNationalId<User>(nationalId, User)
   }
 }

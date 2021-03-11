@@ -21,6 +21,7 @@ interface PropTypes {
 const DiscountsQuery = gql`
   query DiscountsQuery {
     discounts {
+      connectionDiscountCode
       discountCode
       expiresIn
       nationalId
