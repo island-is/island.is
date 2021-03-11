@@ -12,7 +12,7 @@ The web consolidates content from multiple sources and displays it in a user fri
 
 ## Getting started:
 
-### Configure which API to fetch data from
+First off: Configure which API to fetch data from.
 
 ### Mock API (no server)
 
