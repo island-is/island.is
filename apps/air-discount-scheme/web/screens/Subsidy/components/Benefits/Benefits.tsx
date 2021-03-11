@@ -9,7 +9,7 @@ import {
   IconDeprecated as Icon,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { UserCredit, NoBenefits } from '../'
+import { UserCredit, UserConnection, NoBenefits } from '../'
 import { Status } from '../UserCredit/UserCredit'
 
 const TEN_SECONDS = 10000 // milli-seconds
@@ -46,11 +46,13 @@ function Benefits({ misc }: PropTypes) {
   })
 
   const { discounts = [] } = data || {}
-  const { myRights, codeDescription, attention, codeDisclaimer } = JSON.parse(
+  const { myRights, codeDescription, attention, codeDisclaimer, connectionFlightHeader } = JSON.parse(
     misc,
   )
   const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
   const hasBenefits = benefits.length > 0
+  const connections = discounts.filter(({connectionDiscountCode}) => connectionDiscountCode.length > 0)
+  const hasConnections = connections.length > 0
   return (
     <Box marginBottom={6}>
       {hasBenefits && !loading && called && (
@@ -87,6 +89,34 @@ function Benefits({ misc }: PropTypes) {
               const status: Status = fundUsed ? 'fundUsed' : 'default'
               return (
                 <UserCredit
+                  key={index}
+                  misc={misc}
+                  discount={discount}
+                  status={status}
+                />
+              )
+            })}
+            <Box textAlign="right">
+              <Typography variant="pSmall">{codeDescription}</Typography>
+            </Box>
+          </>
+        ) : (loading && !called) || loading ? (
+          <SkeletonLoader height={98} repeat={2} space={3} />
+        ) : (
+          <NoBenefits misc={misc} />
+        )}
+      </Stack>
+
+      <Stack space={3}>
+        <Typography variant="h3">{connectionFlightHeader}</Typography>
+        {hasConnections ? (
+          <>
+            {connections.map((discount, index) => {
+              const { user } = discount
+              const fundUsed = user.fund.used === user.fund.total
+              const status: Status = fundUsed ? 'fundUsed' : 'default'
+              return (
+                <UserConnection
                   key={index}
                   misc={misc}
                   discount={discount}
