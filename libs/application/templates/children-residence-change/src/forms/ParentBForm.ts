@@ -4,6 +4,8 @@ import {
   Form,
   FormModes,
   buildCustomField,
+  buildMultiField,
+  buildTextField,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
@@ -14,6 +16,32 @@ export const ParentBForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.REVIEW,
   children: [
+    buildSection({
+      id: 'contact',
+      title: m.contactInfo.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'contactInfo',
+          title: m.contactInfo.general.pageTitle,
+          description: m.contactInfo.general.description,
+          children: [
+            buildTextField({
+              id: 'parentB.email',
+              title: m.contactInfo.inputs.emailLabel,
+              variant: 'email',
+              backgroundColor: 'blue',
+            }),
+            buildTextField({
+              id: 'parentB.phoneNumber',
+              title: m.contactInfo.inputs.phoneNumberLabel,
+              variant: 'tel',
+              format: '###-####',
+              backgroundColor: 'blue',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'approveTermsParentB',
       title: m.section.effect,

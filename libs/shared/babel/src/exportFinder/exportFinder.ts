@@ -102,7 +102,10 @@ function getExportDeclarations(
         return
       }
       // Is this used?
-      if (specifier.type === 'ExportDefaultSpecifier') {
+      if (
+        specifier.type === 'ExportDefaultSpecifier' ||
+        specifier.exported.type === 'StringLiteral'
+      ) {
         return
       }
       if (importPath && specifier.exported.name !== specifier.local.name) {

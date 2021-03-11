@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'api-domains-driving-license',
-  preset: '../../../../jest.config.js',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -11,4 +10,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../../coverage/libs/api/domains/driving-license',
+  displayName: 'api-domains-driving-license',
 }
