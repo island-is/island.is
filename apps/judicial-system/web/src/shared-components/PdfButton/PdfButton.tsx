@@ -8,7 +8,7 @@ interface Props {
   caseId: string
   title: string
   pdfType: 'ruling' | 'request'
-  disabled: boolean
+  disabled?: boolean
 }
 
 const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
