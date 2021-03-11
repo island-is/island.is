@@ -12,9 +12,12 @@ interface Props {
 }
 
 const IdentityResourceCreateForm: React.FC<Props> = (props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    IdentityResourceDTO
-  >()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<IdentityResourceDTO>()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -216,6 +219,113 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                   />
                   <HelpBox helpText="Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)" />
                 </div>
+
+                <section className="api-scope__section">
+                  <h3>Delegation</h3>
+
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="grantToLegalGuardians"
+                      className="api-scope-form__label"
+                    >
+                      Grant To Legal Guardians
+                    </label>
+                    <input
+                      ref={register}
+                      id="grantToLegalGuardians"
+                      name="grantToLegalGuardians"
+                      type="checkbox"
+                      defaultChecked={
+                        props.identityResource.grantToLegalGuardians
+                      }
+                      className="api-scope-form__checkbox"
+                      title="Should legal guardians automatically get this scope for their wards"
+                    />
+                    <HelpBox helpText="Should legal guardians automatically get this scope for their wards" />
+                  </div>
+
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="grantToProcuringHolders"
+                      className="api-scope-form__label"
+                    >
+                      Grant To Procuring Holders
+                    </label>
+                    <input
+                      ref={register}
+                      id="grantToProcuringHolders"
+                      name="grantToProcuringHolders"
+                      type="checkbox"
+                      defaultChecked={
+                        props.identityResource.grantToProcuringHolders
+                      }
+                      className="api-scope-form__checkbox"
+                      title="Should procuring holders automatically get this scope for their organisations"
+                    />
+                    <HelpBox helpText="Should procuring holders automatically get this scope for their organisations" />
+                  </div>
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="allowExplicitDelegationGrant"
+                      className="api-scope-form__label"
+                    >
+                      Allow Explicit Delegation Grant
+                    </label>
+                    <input
+                      ref={register}
+                      id="allowExplicitDelegationGrant"
+                      name="allowExplicitDelegationGrant"
+                      type="checkbox"
+                      defaultChecked={
+                        props.identityResource.allowExplicitDelegationGrant
+                      }
+                      className="api-scope-form__checkbox"
+                      title="Should identities be able to delegate this scope to other users. Some scopes should not support delegation"
+                    />
+                    <HelpBox helpText="Should identities be able to delegate this scope to other users. Some scopes should not support delegation" />
+                  </div>
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="automaticDelegationGrant"
+                      className="api-scope-form__label"
+                    >
+                      Automatic Delegation Grant
+                    </label>
+                    <input
+                      ref={register}
+                      id="automaticDelegationGrant"
+                      name="automaticDelegationGrant"
+                      type="checkbox"
+                      defaultChecked={
+                        props.identityResource.automaticDelegationGrant
+                      }
+                      className="api-scope-form__checkbox"
+                      title="Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile"
+                    />
+                    <HelpBox helpText="Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile" />
+                  </div>
+
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="alsoForDelegatedUser"
+                      className="api-scope-form__label"
+                    >
+                      Also For Delegated User
+                    </label>
+                    <input
+                      ref={register}
+                      id="alsoForDelegatedUser"
+                      name="alsoForDelegatedUser"
+                      type="checkbox"
+                      defaultChecked={
+                        props.identityResource.alsoForDelegatedUser
+                      }
+                      className="api-scope-form__checkbox"
+                      title="Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity"
+                    />
+                    <HelpBox helpText="Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity" />
+                  </div>
+                </section>
 
                 <div className="identity-resource-form__buttons__container">
                   <div className="identity-resource-form__button__container">

@@ -10,7 +10,6 @@ export const autocompleteTermQuery = ({
       completion: {
         field: 'termPool',
         size,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         skip_duplicates: true,
       },
     },

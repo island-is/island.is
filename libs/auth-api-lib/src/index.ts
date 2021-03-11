@@ -46,6 +46,7 @@ export * from './lib/entities/dto/api-resource-allowed-scope.dto'
 export * from './lib/entities/dto/admin-access.dto'
 export * from './lib/entities/dto/admin-access-update.dto'
 export * from './lib/entities/dto/idp-provider.dto'
+export * from './lib/entities/dto/grant-type.dto'
 
 // Services
 export * from './lib/services/clients.service'
