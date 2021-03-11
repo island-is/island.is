@@ -146,6 +146,7 @@ function remainingJudgeCaseData() {
     custodyEndDate: '2020-09-28T12:00:00.000Z',
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
+    isolationTo: '2020-09-28T12:00:00.000Z',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -322,7 +323,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.otherRestrictions || null).toBe(
     caseTwo.otherRestrictions || null,
   )
-
+  expect(caseOne.isolationTo || null).toBe(caseTwo.isolationTo || null)
   expect(caseOne.additionToConclusion || null).toBe(
     caseTwo.additionToConclusion || null,
   )
