@@ -752,6 +752,12 @@ export interface IFrontpageFields {
 
   /** Life Events */
   lifeEvents?: ILifeEventPage[] | undefined
+
+  /** Namespace */
+  namespace: IUiConfiguration
+
+  /** Page Identifier */
+  pageIdentifier: string
 }
 
 /** This is the frontpage for Island.is.
