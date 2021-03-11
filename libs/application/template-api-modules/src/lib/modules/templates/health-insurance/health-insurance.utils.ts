@@ -1,6 +1,5 @@
 import get from 'lodash/get'
 import { logger } from '@island.is/logging'
-import AmazonS3URI from 'amazon-s3-uri'
 
 import { Application } from '@island.is/application/core'
 import {
@@ -87,19 +86,8 @@ export const transformApplicationToHealthInsuranceDTO = (
     )}`
   }
 
-  let bucketName = ''
-  const attachmentNames = []
-  if (arrFiles.length > 0) {
-    try {
-      const arrUrl: string[] = Object.values(application.attachments) ?? []
-      const { region, bucket, key } = AmazonS3URI(arrUrl[0])
-      bucketName = bucket
-      attachmentNames.push(key)
-    } catch (err) {
-      logger.error(`Failed to obtain bucket's name`)
-      throw new Error(`Failed to obtain bucket's name`)
-    }
-  }
+  const attachmentNames = Object.values(application.attachments) ?? []
+
   const vistaskjal: VistaSkjalInput = {
     applicationNumber: application.id,
     applicationDate: application.modified,
@@ -150,7 +138,6 @@ export const transformApplicationToHealthInsuranceDTO = (
 
   return {
     vistaskjal: vistaskjal,
-    bucketName: bucketName,
     attachmentNames,
   }
 }
