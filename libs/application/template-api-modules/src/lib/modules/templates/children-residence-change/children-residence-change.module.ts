@@ -5,7 +5,6 @@ import {
   PRESIGNED_BUCKET,
 } from './children-residence-change.service'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
-import { AwsService } from '@island.is/application/file-service'
 
 export class ChildrenResidenceChangeModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -18,7 +17,6 @@ export class ChildrenResidenceChangeModule {
           useFactory: () => config.presignBucket,
         },
         ChildrenResidenceChangeService,
-        AwsService,
       ],
       exports: [ChildrenResidenceChangeService],
     }
