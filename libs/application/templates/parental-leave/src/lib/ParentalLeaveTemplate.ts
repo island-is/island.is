@@ -373,14 +373,18 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /*
+      When the user enters the edit state we will copy the current
+      periods to temp so that if they cancel out, we will bring
+      back the original periods answer.
+      */
       copyPeriodsToTemp: assign((context, event) => {
         // Only continue if going to edit (skip init event)
         if (event.type !== DefaultEvents.EDIT) {
           return context
         }
 
-        const currentApplicationAnswers = context.application
-          .answers as SchemaFormValues
+        const currentApplicationAnswers = context.application.answers
 
         if (currentApplicationAnswers['periods'] !== undefined) {
           return {
@@ -389,13 +393,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ...context.application,
               answers: {
                 ...context.application.answers,
-                tempPeriods: context.application.answers['periods'],
+                tempPeriods: currentApplicationAnswers['periods'],
               },
             },
           }
         }
         return context
       }),
+      /*
+      When the user submits or cancels an edit we no longer need to 
+      store temp periods, so we will clear them out from the answers.
+      */
       mergePeriodAnswers: assign((context, event) => {
         console.log('######mergePeriodAnswers#######', event.type)
 
