@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { AwsService } from '@island.is/application/file-service'
 import {
   SyslumennService,
   Person,
@@ -10,8 +9,9 @@ import {
 import {
   CRCApplication,
   Override,
-} from 'libs/application/templates/children-residence-change/src/types'
+} from '@island.is/application/templates/children-residence-change'
 import { User } from '@island.is/api/domains/national-registry'
+import * as AWS from 'aws-sdk'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -22,11 +22,14 @@ type props = Override<
 
 @Injectable()
 export class ChildrenResidenceChangeService {
+  s3: AWS.S3
+
   constructor(
-    private readonly awsService: AwsService,
     private readonly syslumennService: SyslumennService,
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
-  ) {}
+  ) {
+    this.s3 = new AWS.S3()
+  }
 
   // TODO: Send email to parents
   async submitApplication({ application }: props) {
@@ -35,7 +38,9 @@ export class ChildrenResidenceChangeService {
     const nationalRegistry = (externalData.nationalRegistry
       .data as unknown) as User
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.awsService.getFile(this.presignedBucket, s3FileName)
+    const file = await this.s3
+      .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
+      .promise()
     const fileContent = file.Body?.toString('base64')
 
     // TODO: Remove ternary for usemocks once we move mock data to externalData
