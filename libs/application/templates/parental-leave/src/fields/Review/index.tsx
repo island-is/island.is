@@ -101,9 +101,9 @@ const Review: FC<ReviewScreenProps> = ({
       value: id,
     })) ?? []
 
-  const { data: privatePensionFundData } = useQuery<
-    GetPrivatePensionFundsQuery
-  >(GetPrivatePensionFunds)
+  const {
+    data: privatePensionFundData,
+  } = useQuery<GetPrivatePensionFundsQuery>(GetPrivatePensionFunds)
   const privatePensionFundOptions =
     privatePensionFundData?.getPrivatePensionFunds?.map(({ id, name }) => ({
       label: name,
