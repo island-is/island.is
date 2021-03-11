@@ -58,9 +58,11 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
     setCardHeight('auto')
     setStagePadding({
       paddingLeft: 0,
-      paddingRight: width >= theme.breakpoints.md ? 124 : 20,
+      paddingRight: width <= theme.breakpoints.md ? 80 : 0,
     })
-  }, [ref])
+  }, [ref, width])
+
+  const spacing = width <= theme.breakpoints.md ? 16 : 24
 
   useIsomorphicLayoutEffect(() => {
     setTimeout(() => {
@@ -112,11 +114,14 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
         startIndex={slideState.item}
         slideToIndex={slideState.item}
         responsive={{
-          0: {
+          [theme.breakpoints.sm]: {
             items: 1,
           },
-          768: {
+          [theme.breakpoints.md]: {
             items: 2,
+          },
+          [theme.breakpoints.lg]: {
+            items: 3,
           },
         }}
         dotsDisabled={theme.breakpoints.md <= width}
@@ -126,7 +131,10 @@ export const CardsSlider: FC<CardsSliderProps> = ({ title, cards }) => {
           <div
             key={index}
             onDragStart={handleOnDragStart}
-            style={{ minHeight: cardHeight }}
+            style={{
+              minHeight: cardHeight,
+              paddingLeft: spacing,
+            }}
             className={styles.item}
           >
             <Card

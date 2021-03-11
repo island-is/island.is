@@ -3,13 +3,14 @@ import streamBuffers from 'stream-buffers'
 import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
+import { User } from '@island.is/api/domains/national-registry'
 
 export async function generateResidenceChangePdf(
   childrenAppliedFor: Array<PersonResidenceChange>,
-  parentA: PersonResidenceChange,
+  parentA: User,
   parentB: PersonResidenceChange,
   expiry: Array<string>,
-  reason: string,
+  reason?: string,
 ): Promise<Buffer> {
   const doc = new PDFDocument({
     size: PdfConstants.PAGE_SIZE,
@@ -21,10 +22,6 @@ export async function generateResidenceChangePdf(
     },
   })
 
-  const parentHomeAddress = (parent: PersonResidenceChange) => {
-    return `${parent.address}, ${parent.postalCode} ${parent.city}`
-  }
-
   const addToDoc = (
     font: string,
     fontSize: number,
@@ -32,29 +29,6 @@ export async function generateResidenceChangePdf(
     text: string,
   ) => {
     doc.font(font).fontSize(fontSize).lineGap(lineGap).text(text)
-  }
-
-  const addParentToDoc = (header: string, parent: PersonResidenceChange) => {
-    addToDoc(
-      PdfConstants.BOLD_FONT,
-      PdfConstants.SUB_HEADER_FONT_SIZE,
-      PdfConstants.NORMAL_LINE_GAP,
-      header,
-    )
-
-    addToDoc(
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.VALUE_FONT_SIZE,
-      PdfConstants.NO_LINE_GAP,
-      `Nafn og kennitala: ${parent.name}, ${parent.ssn}`,
-    )
-
-    addToDoc(
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.VALUE_FONT_SIZE,
-      PdfConstants.LARGE_LINE_GAP,
-      `Heimilisfang: ${parentHomeAddress(parent)}`,
-    )
   }
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
@@ -105,8 +79,47 @@ export async function generateResidenceChangePdf(
     ),
   )
 
-  addParentToDoc('Foreldri A', parentA)
-  addParentToDoc('Foreldri B', parentB)
+  addToDoc(
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
+    'Foreldri A',
+  )
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    `Nafn og kennitala: ${parentA.fullName}, ${parentA.nationalId}`,
+  )
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.LARGE_LINE_GAP,
+    `Heimilisfang: ${parentA.address?.streetAddress}, ${parentA.address?.postalCode} ${parentA.address?.city}`,
+  )
+
+  addToDoc(
+    PdfConstants.BOLD_FONT,
+    PdfConstants.SUB_HEADER_FONT_SIZE,
+    PdfConstants.NORMAL_LINE_GAP,
+    'Foreldri B',
+  )
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    `Nafn og kennitala: ${parentB.name}, ${parentB.ssn}`,
+  )
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.LARGE_LINE_GAP,
+    `Heimilisfang: ${parentB.address}, ${parentB.postalCode} ${parentB.city}`,
+  )
 
   addToDoc(
     PdfConstants.BOLD_FONT,
@@ -119,7 +132,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${parentA.name}, Foreldri A`,
+    `Fyrra lögheimili: ${parentA.fullName}, Foreldri A`,
   )
 
   addToDoc(
@@ -249,7 +262,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Undirritaður/uð, ${parentA.name}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
+    `Undirritaður/uð, ${parentA.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
   )
 
   doc.end()

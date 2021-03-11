@@ -102,12 +102,11 @@ follow these steps:
 
 4. Generate the GraphQL schemas using the following commands in the island.is project root:
 
+   1. `yarn nx run api:contentful-types` Generates Contentful types in the API.
 
-    1. `yarn nx run api:contentful-types` Generates Contentful types in the API.
+   2. `yarn nx run api:schemas/codegen --skip-nx-cache` Generates types in API based on models.
 
-    2. `yarn nx run api:schemas/codegen --skip-nx-cache` Generates types in API based on models.
-
-    3. `yarn nx run web:schemas/codegen --skip-nx-cache` Generates types in the web project based on queries
+   3. `yarn nx run web:schemas/codegen --skip-nx-cache` Generates types in the web project based on queries
 
 5. Sometimes the schemas don't update properly and your types will be missing. To fix this you should try running `yarn postinstall`.
 

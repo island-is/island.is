@@ -11,9 +11,10 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildRadioField,
+  buildTextField,
+  Application,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
-import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -66,6 +67,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               title: m.externalData.general.pageTitle,
               id: 'approveExternalData',
               subTitle: m.externalData.general.subTitle,
+              description: m.externalData.general.description,
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
@@ -84,7 +86,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   id: 'parentNationalRegistry',
                   type: 'ParentNationalRegistryProvider',
                   title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
@@ -111,11 +113,33 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'contact',
           title: m.contactInfo.general.sectionTitle,
           children: [
-            buildCustomField({
+            buildMultiField({
               id: 'contactInfo',
               title: m.contactInfo.general.pageTitle,
-              childInputIds: contactInfoIds,
-              component: 'ContactInfo',
+              description: m.contactInfo.general.description,
+              children: [
+                buildTextField({
+                  id: 'parentA.email',
+                  title: m.contactInfo.inputs.emailLabel,
+                  variant: 'email',
+                  backgroundColor: 'blue',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      email?: string
+                    })?.email,
+                }),
+                buildTextField({
+                  id: 'parentA.phoneNumber',
+                  title: m.contactInfo.inputs.phoneNumberLabel,
+                  variant: 'tel',
+                  format: '###-####',
+                  backgroundColor: 'blue',
+                  defaultValue: (application: Application) =>
+                    (application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    })?.mobilePhoneNumber,
+                }),
+              ],
             }),
           ],
         }),

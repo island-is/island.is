@@ -11,7 +11,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { useDefaultValue } from '../useDefaultValue'
+import { getDefaultValue } from '../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: SelectField
@@ -42,7 +42,7 @@ const SelectFormField: FC<Props> = ({ application, error, field }) => {
 
       <Box paddingTop={2}>
         <SelectController
-          defaultValue={useDefaultValue(field, application)}
+          defaultValue={getDefaultValue(field, application)}
           label={formatText(title, application, formatMessage)}
           name={id}
           disabled={disabled}
