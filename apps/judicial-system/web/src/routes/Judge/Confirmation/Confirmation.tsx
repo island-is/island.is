@@ -617,9 +617,9 @@ export const Confirmation: React.FC = () => {
             previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={!isValidCourtEndTime?.isValid}
+            nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdating}
             onNextButtonClick={handleNextButtonClick}
-            nextIsLoading={isRequestingSignature}
+            nextIsLoading={isRequestingSignature || isUpdating}
             hideNextButton={workingCase.judge?.id !== user?.id}
             infoBoxText={
               workingCase.judge?.id !== user?.id
