@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 
@@ -11,12 +10,16 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import StepFour from './StepFour'
 
 describe('Create detention request, step four', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
+
     render(
       <MockedProvider
         mocks={[
@@ -31,15 +34,9 @@ describe('Create detention request, step four', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_FOUR_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_FOUR_ROUTE}/:id`}>
-              <StepFour />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepFour />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -69,6 +66,10 @@ describe('Create detention request, step four', () => {
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -76,13 +77,9 @@ describe('Create detention request, step four', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[`${Constants.STEP_FOUR_ROUTE}/test_id`]}>
-          <UserProvider>
-            <Route path={`${Constants.STEP_FOUR_ROUTE}/:id`}>
-              <StepFour />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepFour />
+        </UserProvider>
       </MockedProvider>,
     )
 

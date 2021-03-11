@@ -46,9 +46,10 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
       value: x.environment,
     }
   })
-  const [selectedEnviromentOption, setSelectedEnviromentOption] = useState<
-    Option
-  >(enviromentOptions[0])
+  const [
+    selectedEnviromentOption,
+    setSelectedEnviromentOption,
+  ] = useState<Option>(enviromentOptions[0])
 
   const [versionOptions, setVersionOptions] = useState<Option[]>(
     service.environments[0].details.map((x) => {
@@ -136,6 +137,7 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
             defaultValue={selectedEnviromentOption}
             options={enviromentOptions}
             onChange={onSelectEnviroment}
+            disabled
           />
         </GridColumn>
         <GridColumn span={['6/12', '6/12', '6/12', '6/12', '3/12']}>

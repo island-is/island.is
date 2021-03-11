@@ -39,7 +39,7 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
   )
 
   const [endpointExists, setendpointExists] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     formValue.endPointObject?.endPointExists || '',
   )
@@ -88,20 +88,22 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-      setendPointVariables([
-        {
-          id: '1',
-          name: 'Audience',
-          value: result.data.updateTestEndpoint.audience,
-        },
-        {
-          id: '2',
-          name: 'Scope',
-          value: result.data.updateTestEndpoint.scope,
-        },
-      ])
-      setendpointExists('true')
-      clearErrors()
+      if (result) {
+        setendPointVariables([
+          {
+            id: '1',
+            name: 'Audience',
+            value: result.data.updateTestEndpoint.audience,
+          },
+          {
+            id: '2',
+            name: 'Scope',
+            value: result.data.updateTestEndpoint.scope,
+          },
+        ])
+        setendpointExists('true')
+        clearErrors()
+      }
     }
   }
 
@@ -139,7 +141,11 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
                   formatMessage,
                 )}
                 hasError={errors.endPointObject?.endPoint !== undefined}
-                errorMessage={testEndPointError ? testEndPointError : ''}
+                errorMessage={formatText(
+                  m.testEndpointInputErrorMessage,
+                  application,
+                  formatMessage,
+                )}
               />
             )}
           />

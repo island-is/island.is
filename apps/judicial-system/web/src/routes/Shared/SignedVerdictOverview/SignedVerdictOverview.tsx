@@ -13,8 +13,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { CaseQuery } from '@island.is/judicial-system-web/src/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   FormFooter,
   PdfButton,
@@ -25,10 +24,10 @@ import {
   CourtRecordAccordionItem,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { useHistory } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { ExtendCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
@@ -37,8 +36,8 @@ interface CaseData {
 export const SignedVerdictOverview: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const history = useHistory()
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { user } = useContext(UserContext)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -62,7 +61,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   const handleNextButtonClick = async () => {
     if (workingCase?.childCase) {
-      history.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
+      router.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
     } else {
       const { data } = await extendCaseMutation({
         variables: {
@@ -73,7 +72,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       if (data) {
-        history.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
+        router.push(`${Constants.STEP_ONE_ROUTE}/${data.extendCase.id}`)
       }
     }
   }
@@ -198,7 +197,7 @@ export const SignedVerdictOverview: React.FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() => history.push(Constants.REQUEST_LIST_ROUTE)}
+                onClick={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               >
                 Til baka
               </Button>

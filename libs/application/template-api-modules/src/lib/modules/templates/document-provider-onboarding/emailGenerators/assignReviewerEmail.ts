@@ -21,12 +21,14 @@ export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (
   const body =
     locale === 'is'
       ? dedent(`
-      Góðan dag.
+      Góðan dag
+
       ${applicantName} (kt. ${applicantNationalId}) hefur óskað eftir að gerast skjalaveita í pósthólfinu.
-      Umsóknin var framkvæmd af einstaklingi með kt: ${application.applicant}.
+      Umsóknin var framkvæmd af einstaklingi með kt. ${application.applicant}.
       Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${assignLink}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
-      Með kveðju.
-      Starfsfólk island.is
+
+      Með kveðju,
+      starfsfólk island.is
     `)
       : dedent(`Hello.
 

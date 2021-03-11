@@ -103,6 +103,8 @@ const autoSchemaFile = environment.production
       baseUrl: environment.healthInsurance.baseUrl,
       username: environment.healthInsurance.username,
       password: environment.healthInsurance.password,
+      clientID: environment.healthInsurance.clientID,
+      xroadID: environment.healthInsurance.xroadID,
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:

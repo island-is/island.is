@@ -44,19 +44,34 @@ describe('FileService', () => {
     email: 'email2@email2.is',
   }
 
-  const createApplication = (answers?: object) =>
+  const child = {
+    id: 'id',
+    name: 'child',
+    ssn: '123456-7890',
+    postalCode: '101',
+    address: 'Borgartún',
+    city: 'Reykjavík',
+    phoneNumber: '222-3333',
+    email: 'email3@email3.is',
+  }
+
+  const createApplication = (answers?: object, typeId?: string) =>
     (({
       id: applicationId,
       state: 'draft',
       applicant: parentA.ssn,
       assignees: [],
-      typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      typeId: typeId ?? ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
       modified: new Date(),
       created: new Date(),
       attachments: {},
       answers: answers ?? {
-        email: parentA.email,
-        phoneNumber: parentA.phoneNumber,
+        useMocks: 'no',
+        selectChild: [child.name],
+        parentA: {
+          phoneNumber: parentA.phoneNumber,
+          email: parentA.email,
+        },
         parentB: {
           email: parentB.email,
           phoneNumber: parentB.phoneNumber,
@@ -71,6 +86,11 @@ describe('FileService', () => {
         },
         nationalRegistry: {
           data: { ...parentA },
+          status: 'success',
+          date: new Date(),
+        },
+        childrenNationalRegistry: {
+          data: [child],
           status: 'success',
           date: new Date(),
         },
@@ -178,9 +198,11 @@ describe('FileService', () => {
   })
 
   it('should throw error for request file signature since phone number is missing', async () => {
+    const application = createApplication({ useMocks: 'no', parentA: {} })
+
     const act = async () =>
       await service.requestFileSignature(
-        createApplication({}),
+        application,
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
@@ -195,13 +217,15 @@ describe('FileService', () => {
   })
 
   it('should throw error for request file signature since file content is missing', async () => {
+    const application = createApplication()
+
     jest
       .spyOn(awsService, 'getFile')
       .mockImplementation(() => Promise.resolve({ Body: '' }))
 
     const act = async () =>
       await service.requestFileSignature(
-        createApplication(),
+        application,
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
@@ -215,62 +239,100 @@ describe('FileService', () => {
     expect(signingService.requestSignature).not.toHaveBeenCalled()
   })
 
-  it('should throw error since application type is not supported', async () => {
-    const act = () => service.validateApplicationType(ApplicationTypes.EXAMPLE)
+  it('should throw error for createPdf since application type is not supported', async () => {
+    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
 
-    expect(act).toThrowError(BadRequestException)
+    const act = async () =>
+      await service.createPdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
+
+    expect(act).rejects.toEqual(BadRequestException)
   })
 
-  it('should have an application type that is valid', async () => {
-    const act = () =>
-      service.validateApplicationType(
-        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
+  it('should have an application type that is valid for createPdf', async () => {
+    const application = createApplication()
+
+    const act = async () =>
+      await service.createPdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
     expect(act).not.toThrow()
   })
+  it('should return presigned url', async () => {
+    const application = createApplication()
+    const fileName = `children-residence-change/${application.id}.pdf`
 
-  it('should throw error since application is not ready for file signature', async () => {
-    const act = () =>
-      service.validateFileSignature(
-        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-        {},
-      )
+    const result = service.getPresignedUrl(
+      application,
+      PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+    )
 
-    expect(act).toThrowError(BadRequestException)
+    expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
+    expect(result).toEqual('url')
   })
 
-  it('should be valid for file signature', async () => {
-    const act = () =>
-      service.validateFileSignature(
-        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-        { [PdfTypes.CHILDREN_RESIDENCE_CHANGE]: 'url' },
-      )
+  it('should throw error for uploadSignedFile since application type is not supported', async () => {
+    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
 
-    expect(act).not.toThrow()
-  })
-
-  it('should throw error since application is not ready for file upload', async () => {
-    const act = () =>
-      service.validateFileUpload(
-        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+    const act = async () =>
+      await service.uploadSignedFile(
+        application,
         'token',
-        {},
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
+
+    expect(act).rejects.toEqual(BadRequestException)
+  })
+
+  it('should have an application type that is valid for uploadSignedFile', async () => {
+    const application = createApplication()
+
+    const act = async () =>
+      await service.uploadSignedFile(
+        application,
+        'token',
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    expect(act).not.toThrow()
+  })
+
+  it('should throw error for requestFileSignature since application type is not supported', async () => {
+    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
+
+    const act = async () =>
+      await service.requestFileSignature(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    expect(act).rejects.toEqual(BadRequestException)
+  })
+
+  it('should have an application type that is valid for requestFileSignature', async () => {
+    const application = createApplication()
+
+    const act = async () =>
+      await service.requestFileSignature(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    expect(act).not.toThrow()
+  })
+
+  it('should throw error for getPresignedUrl since application type is not supported', async () => {
+    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
+
+    const act = () =>
+      service.getPresignedUrl(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
     expect(act).toThrowError(BadRequestException)
   })
 
-  it('should be valid for file upload', async () => {
-    const token = 'token'
+  it('should have an application type that is valid for getPresignedUrl', async () => {
+    const application = createApplication()
+
     const act = () =>
-      service.validateFileUpload(
-        ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
-        token,
-        { fileSignature: { data: { documentToken: token } } },
-      )
+      service.getPresignedUrl(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
     expect(act).not.toThrow()
   })

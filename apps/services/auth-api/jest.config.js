@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'services-auth-api',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   coverageDirectory: '../../../coverage/apps/reference-backend',
   setupFiles: ['./test/environment.jest.ts'],
   setupFilesAfterEnv: ['./test/setup.ts'],
@@ -10,4 +9,5 @@ module.exports = {
       tsConfig: '<rootDir>/tsconfig.spec.json',
     },
   },
+  displayName: 'services-auth-api',
 }

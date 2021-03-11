@@ -1,6 +1,7 @@
 import { Query, Resolver } from '@nestjs/graphql'
 import { User } from './models'
 import { Authorize, AuthService, CurrentUser, AuthUser } from '../auth'
+import { Role } from '../auth/auth.types'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 
@@ -14,30 +15,38 @@ export class UserResolver {
   @Authorize({ throwOnUnAuthorized: false })
   @Query(() => User, { nullable: true })
   skilavottordUser(@CurrentUser() user: AuthUser): User {
-    this.logger.info('--- skilavottordUser starting ---')
+    this.logger.info(`--- skilavottordUser starting ---`)
     if (!user) {
-      this.logger.info('  - User does not exist')
+      this.logger.info(`  - User does not exist`)
       return null
     }
-    this.logger.info('  - User exists')
+    this.logger.info(`  - User exists`)
     const currUser = new User()
+
     currUser.nationalId = user.nationalId
     currUser.name = user.name
     currUser.mobile = user.mobile
-    const roleUser: AuthUser = {
+
+    const authService = new AuthService()
+
+    const RoleUser: AuthUser = {
       nationalId: user.nationalId,
       mobile: user.mobile,
       name: user.name,
     }
-    const userRole = this.authService.getUserRole(roleUser)
-    if (!userRole) {
-      currUser.role = 'citizen'
-    } else {
-      currUser.partnerId = userRole.partnerId
-      currUser.role = userRole.role
-    }
-    this.logger.info('--- skilavottordUser:' + JSON.stringify(currUser))
-    this.logger.info('--- skilavottordUser ending ---')
+
+    let RoleForUser: Role = 'citizen' // citizen is the deault role
+    RoleForUser = authService.getRole(RoleUser)
+
+    //TODO: test
+    currUser.partnerId = authService.getPartnerId(currUser.nationalId)
+    currUser.role = RoleForUser
+
+    /* this.logger.info(
+      `  - skilavottordUser returning  ${currUser.name} - ${currUser.nationalId} - ${currUser.mobile} - ${currUser.role} - ${currUser.partnerId}`,
+    )*/
+    this.logger.info(`--- skilavottordUser ending ---`)
+
     return currUser
   }
 }

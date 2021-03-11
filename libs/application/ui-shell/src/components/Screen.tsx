@@ -19,6 +19,7 @@ import {
   MessageFormatter,
   mergeAnswers,
   coreMessages,
+  BeforeSubmitCallback,
 } from '@island.is/application/core'
 import {
   Box,
@@ -37,7 +38,7 @@ import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
-import { FormScreen, ResolverContext, BeforeSubmitCallback } from '../types'
+import { FormScreen, ResolverContext } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
@@ -262,6 +263,7 @@ const Screen: FC<ScreenProps> = ({
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
                 answerQuestions={answerQuestions}
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 errors={dataSchemaOrApiErrors}
                 multiField={screen}
                 application={application}
@@ -281,6 +283,7 @@ const Screen: FC<ScreenProps> = ({
             ) : (
               <FormField
                 autoFocus
+                setBeforeSubmitCallback={setBeforeSubmitCallback}
                 errors={dataSchemaOrApiErrors}
                 field={screen}
                 application={application}

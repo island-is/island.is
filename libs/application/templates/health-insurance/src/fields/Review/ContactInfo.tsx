@@ -83,7 +83,7 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
+              <GridColumn span={['12/12', '6/12']}>
                 <Input
                   id={'applicant.city'}
                   name={'applicant.city'}

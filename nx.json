@@ -1,5 +1,4 @@
 {
-  "npmScope": "island.is",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -9,6 +8,10 @@
     "nx.json": "*",
     "tsconfig.base.json": "*"
   },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -144,6 +147,9 @@
       "tags": []
     },
     "application-templates-children-residence-change": {
+      "tags": []
+    },
+    "application-templates-data-protection-complaint": {
       "tags": []
     },
     "application-templates-document-provider-onboarding": {
@@ -467,8 +473,5 @@
       "tags": [],
       "implicitDependencies": ["web"]
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   }
 }

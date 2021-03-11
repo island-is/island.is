@@ -43,7 +43,7 @@ export const HealthInsuranceForm: Form = buildForm({
         buildExternalDataProvider({
           title: m.externalDataTitle,
           id: 'approveExternalData',
-          subTitle: ' ',
+          subTitle: m.externalDataSubtitle,
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
@@ -256,11 +256,11 @@ export const HealthInsuranceForm: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
+            buildDescriptionField({
               id: 'confirmationOfStudiesDescription',
-              title: m.confirmationOfStudies,
-              description: m.confirmationOfStudiesTooltip,
-              component: 'TextWithTooltip',
+              title: '',
+              description: m.confirmationOfStudies,
+              tooltip: m.confirmationOfStudiesTooltip,
               condition: (answers) =>
                 (answers.status as { type: string })?.type ===
                 StatusTypes.STUDENT,
@@ -319,8 +319,10 @@ export const HealthInsuranceForm: Form = buildForm({
             buildAsyncSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
+              description: m.formerInsuranceDetails,
               placeholder: m.formerInsuranceCountryPlaceholder,
               loadingError: m.formerInsuranceCountryError,
+              backgroundColor: 'blue',
               loadOptions: async () => {
                 const countries = await fetch(
                   'https://restcountries.eu/rest/v2/all',
@@ -382,11 +384,15 @@ export const HealthInsuranceForm: Form = buildForm({
                 return requireConfirmationOfResidency(formerCountry)
               },
             }),
-            buildCustomField({
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
+            }),
+            buildDescriptionField({
               id: 'formerInsurance.entitlementDescription',
-              title: m.formerInsuranceEntitlement,
-              description: m.formerInsuranceEntitlementTooltip,
-              component: 'TextWithTooltip',
+              title: '',
+              description: m.formerInsuranceEntitlement,
+              tooltip: m.formerInsuranceEntitlementTooltip,
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
@@ -423,19 +429,13 @@ export const HealthInsuranceForm: Form = buildForm({
               variant: 'textarea',
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
-                const entitlement = (answers as {
-                  formerInsurance: { entitlement: string }
-                })?.formerInsurance?.entitlement
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
                   applicant: { citizenship: string }
                 })?.applicant?.citizenship
-                return (
-                  entitlement === YES &&
-                  !requireWaitingPeriod(formerCountry, citizenship)
-                )
+                return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
           ],
@@ -474,7 +474,7 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               condition: {
                 questionId: 'hasAdditionalInfo',
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),
@@ -486,6 +486,15 @@ export const HealthInsuranceForm: Form = buildForm({
               uploadHeader: m.fileUploadHeader,
               uploadDescription: m.fileUploadDescription,
               uploadButtonLabel: m.fileUploadButton,
+              condition: {
+                questionId: 'hasAdditionalInfo',
+                comparator: Comparators.EQUALS,
+                value: YES,
+              },
+            }),
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
               condition: {
                 questionId: 'hasAdditionalInfo',
                 comparator: Comparators.EQUALS,

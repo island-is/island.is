@@ -12,11 +12,13 @@ import { CreateContactInput } from '../../shared/useCreateTechnicalContact'
 interface Props {
   administrativeContact?: Contact | null
   organisationId: string
+  organisationNationalId: string
 }
 
 export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
   administrativeContact,
   organisationId,
+  organisationNationalId,
 }) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
@@ -28,7 +30,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
   const {
     createAdministrativeContact,
     loading: loadingCreate,
-  } = useCreateAdministrativeContact(organisationId)
+  } = useCreateAdministrativeContact(organisationId, organisationNationalId)
 
   const onSubmit = (data: { administrativeContact: Contact }) => {
     if (data?.administrativeContact && administrativeContact) {

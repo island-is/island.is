@@ -51,15 +51,18 @@ const SingleDocumentProvider: ServicePortalModuleComponent = ({ userInfo }) => {
           />
           <DocumentProviderTechnicalContactForm
             organisationId={organisation?.id}
+            organisationNationalId={organisation?.nationalId}
             technicalContact={technicalContact}
           />
           <DocumentProviderAdministrativeContactForm
             organisationId={organisation?.id}
+            organisationNationalId={organisation?.nationalId}
             administrativeContact={administrativeContact}
           />
           <DocumentProviderHelpDeskForm
             organisationId={organisation?.id}
             helpDesk={helpdesk}
+            organisationNationalId={organisation?.nationalId}
           />
         </IsFetchingProviderOrganisationContext.Provider>
       </Box>

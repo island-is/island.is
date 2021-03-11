@@ -22,7 +22,6 @@ import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useHistory, useParams } from 'react-router-dom'
 import {
   Case,
   CaseState,
@@ -36,7 +35,7 @@ import {
   CaseQuery,
   SendNotificationMutation,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import parseISO from 'date-fns/parseISO'
 import {
   JudgeSubsections,
@@ -53,6 +52,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
+import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 
 interface CaseData {
@@ -74,8 +74,8 @@ export const HearingArrangements: React.FC = () => {
 
   const courtTimeRef = useRef<HTMLInputElement>(null)
 
-  const { id } = useParams<{ id: string }>()
-  const history = useHistory()
+  const router = useRouter()
+  const id = router.query.id
 
   const { isValidDate: isValidCourtDate } = useDateTime({
     date: workingCase?.courtDate,
@@ -466,12 +466,12 @@ export const HearingArrangements: React.FC = () => {
             onNextButtonClick={async () => {
               const notificationSent = await sendNotification(workingCase.id)
 
-              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               if (notificationSent && !window.Cypress) {
                 setModalVisible(true)
               } else {
-                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
               }
             }}
           />
@@ -481,7 +481,7 @@ export const HearingArrangements: React.FC = () => {
               title="Tilkynning um fyrirtökutíma hefur verið send"
               text="Tilkynning um fyrirtökutíma hefur verið send á ákæranda, fangelsi og verjanda hafi verjandi verið skráður."
               handlePrimaryButtonClick={() => {
-                history.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
               }}
               primaryButtonText="Loka glugga"
             />

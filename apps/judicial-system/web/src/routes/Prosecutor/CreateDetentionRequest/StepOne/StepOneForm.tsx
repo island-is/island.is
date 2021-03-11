@@ -1,17 +1,28 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 
-import { Text, Input, Box, RadioButton } from '@island.is/island-ui/core'
+import {
+  Text,
+  Input,
+  Box,
+  RadioButton,
+  Checkbox,
+} from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormFooter,
 } from '@island.is/judicial-system-web/src/shared-components'
 
-import { Case, CaseGender, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseGender,
+  CaseType,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  FormValidation,
+  FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import * as styles from './StepOne.treat'
@@ -33,19 +44,22 @@ export const StepOneForm: React.FC<Props> = (props) => {
 
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
 
-  const [accusedNameErrorMessage, setAccusedNameErrorMessage] = useState<
-    string
-  >()
+  const [
+    accusedNameErrorMessage,
+    setAccusedNameErrorMessage,
+  ] = useState<string>()
 
-  const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] = useState<
-    string
-  >()
+  const [
+    accusedAddressErrorMessage,
+    setAccusedAddressErrorMessage,
+  ] = useState<string>()
 
-  const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState<
-    string
-  >()
+  const [
+    defenderEmailErrorMessage,
+    setDefenderEmailErrorMessage,
+  ] = useState<string>()
 
-  const validations: FormValidation = {
+  const validations: FormSettings = {
     policeCaseNumber: {
       validations: ['empty', 'police-casenumber-format'],
       errorMessage: policeCaseNumberErrorMessage,
@@ -71,6 +85,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
       errorMessage: defenderEmailErrorMessage,
       setErrorMessage: setDefenderEmailErrorMessage,
     },
+    sendRequestToDefender: {},
   }
 
   const {
@@ -228,28 +243,47 @@ export const StepOneForm: React.FC<Props> = (props) => {
             Verjandi sakbornings
           </Text>
         </Box>
-        <Box marginBottom={2}>
-          <Input
-            data-testid="defenderName"
-            name="defenderName"
-            label="Nafn verjanda"
-            placeholder="Fullt nafn"
-            defaultValue={workingCase.defenderName}
-            onChange={(event) => setField(event.target)}
-            onBlur={(event) => validateAndSendToServer(event.target)}
+        <BlueBox>
+          <Box marginBottom={2}>
+            <Input
+              data-testid="defenderName"
+              name="defenderName"
+              label="Nafn verjanda"
+              placeholder="Fullt nafn"
+              defaultValue={workingCase.defenderName}
+              onChange={(event) => setField(event.target)}
+              onBlur={(event) => validateAndSendToServer(event.target)}
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <Input
+              data-testid="defenderEmail"
+              name="defenderEmail"
+              label="Netfang verjanda"
+              placeholder="Netfang"
+              defaultValue={workingCase.defenderEmail}
+              errorMessage={defenderEmailErrorMessage}
+              hasError={defenderEmailErrorMessage !== undefined}
+              onChange={(event) => setField(event.target)}
+              onBlur={(event) => validateAndSendToServer(event.target)}
+            />
+          </Box>
+          <Checkbox
+            name={'sendRequestToDefender'}
+            label={
+              'Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma'
+            }
+            checked={workingCase.sendRequestToDefender}
+            tooltip={`Ef hakað er hér þá fær verjandi ${
+              workingCase.type === CaseType.CUSTODY
+                ? 'gæsluvarðhaldskröfuna'
+                : 'farbannskröfuna'
+            } senda þegar fyrirtökutíma hefur verið úthlutað`}
+            onChange={(event) => setAndSendToServer(event.target)}
+            large
+            filled
           />
-        </Box>
-        <Input
-          data-testid="defenderEmail"
-          name="defenderEmail"
-          label="Netfang verjanda"
-          placeholder="Netfang"
-          defaultValue={workingCase.defenderEmail}
-          errorMessage={defenderEmailErrorMessage}
-          hasError={defenderEmailErrorMessage !== undefined}
-          onChange={(event) => setField(event.target)}
-          onBlur={(event) => validateAndSendToServer(event.target)}
-        />
+        </BlueBox>
       </Box>
       <FormFooter
         previousUrl={Constants.REQUEST_LIST_ROUTE}

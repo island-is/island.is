@@ -2,7 +2,10 @@ import get from 'lodash/get'
 import { logger } from '@island.is/logging'
 
 import { Application } from '@island.is/application/core'
-import { VistaSkjalInput } from '@island.is/api/domains/health-insurance'
+import {
+  ApplyHealthInsuranceInputs,
+  VistaSkjalInput,
+} from '@island.is/health-insurance'
 
 const extractAnswer = <T>(object: unknown, key: string): T | null => {
   const value = get(object, key, null) as T | null | undefined
@@ -22,7 +25,7 @@ const extractAnswerFromJson = (object: unknown, key: string) => {
 
 export const transformApplicationToHealthInsuranceDTO = (
   application: Application,
-): VistaSkjalInput => {
+): ApplyHealthInsuranceInputs => {
   logger.info(`Start transform Application to Health Insurance DTO`)
   /*
    * Convert userStatus:
@@ -83,7 +86,9 @@ export const transformApplicationToHealthInsuranceDTO = (
     )}`
   }
 
-  return {
+  const attachmentNames = Object.values(application.attachments) ?? []
+
+  const vistaskjal: VistaSkjalInput = {
     applicationNumber: application.id,
     applicationDate: application.modified,
     nationalId: application.applicant,
@@ -119,10 +124,20 @@ export const transformApplicationToHealthInsuranceDTO = (
     previousIssuingInstitution:
       extractAnswer(application.answers, 'formerInsurance.institution') ?? '',
     isHealthInsuredInPreviousCountry:
+      extractAnswer(application.answers, 'formerInsurance.registration') ==
+      'yes'
+        ? 1
+        : 0,
+    hasHealthInsuranceRightInPreviousCountry:
       extractAnswer(application.answers, 'formerInsurance.entitlement') == 'yes'
         ? 1
         : 0,
     additionalInformation: addInfo,
     attachmentsFileNames: arrFiles,
+  }
+
+  return {
+    vistaskjal: vistaskjal,
+    attachmentNames,
   }
 }

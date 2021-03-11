@@ -8,6 +8,7 @@ import {
 } from './soap'
 import { VistaSkjalInput } from './types'
 import { VistaSkjalModel } from './graphql/models'
+import { BucketService } from './bucket/bucket.service'
 
 describe('healthInsurance', () => {
   it('should work', () => {
@@ -22,6 +23,8 @@ describe('healthInsuranceTest', () => {
     password: '',
     username: '',
     wsdlUrl: '',
+    clientID: '',
+    xroadID: '',
   }
 
   beforeEach(async () => {
@@ -36,7 +39,7 @@ describe('healthInsuranceTest', () => {
           provide: HEALTH_INSURANCE_CONFIG,
           useValue: config,
         },
-        // BucketService,
+        BucketService,
       ],
     }).compile()
     hapi = moduleRef.get<HealthInsuranceAPI>(HealthInsuranceAPI)
@@ -62,6 +65,7 @@ describe('healthInsuranceTest', () => {
       previousCountryCode: 'VN',
       previousIssuingInstitution: 'The gioi',
       isHealthInsuredInPreviousCountry: 0,
+      hasHealthInsuranceRightInPreviousCountry: 0,
     }
     const appNumber = 570
     it('apply Health Insurance application tjekk', async () => {
@@ -81,7 +85,7 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
+      expect(await hapi.applyInsurance(appNumber, [], inputs)).toStrictEqual(
         vistaskjal,
       )
     })
@@ -103,7 +107,7 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
+      expect(await hapi.applyInsurance(appNumber, [], inputs)).toStrictEqual(
         vistaskjal,
       )
     })
@@ -114,7 +118,7 @@ describe('healthInsuranceTest', () => {
       })
 
       expect(async () => {
-        await hapi.applyInsurance(570, inputs)
+        await hapi.applyInsurance(570, [], inputs)
       }).rejects.toThrowError('Some unexpected error')
     })
 
@@ -142,7 +146,7 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
+      expect(await hapi.applyInsurance(appNumber, [], inputs)).toStrictEqual(
         vistaskjal,
       )
     })
@@ -163,7 +167,7 @@ describe('healthInsuranceTest', () => {
       jest
         .spyOn(hapi, 'xroadCall')
         .mockImplementation(() => Promise.resolve(res))
-      expect(await hapi.applyInsurance(appNumber, inputs)).toStrictEqual(
+      expect(await hapi.applyInsurance(appNumber, [], inputs)).toStrictEqual(
         vistaskjal,
       )
     })

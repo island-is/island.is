@@ -15,6 +15,7 @@ import {
 import { SoapClient } from './soapClient'
 import { VistaSkjalModel } from '../graphql/models'
 import { VistaSkjalInput } from '../types'
+import { BucketService } from '../bucket/bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 
@@ -23,6 +24,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -30,6 +33,8 @@ export class HealthInsuranceAPI {
   constructor(
     @Inject(HEALTH_INSURANCE_CONFIG)
     private clientConfig: HealthInsuranceConfig,
+    @Inject(BucketService)
+    private bucketService: BucketService,
   ) {}
 
   public async getProfun(): Promise<string> {
@@ -42,9 +47,10 @@ export class HealthInsuranceAPI {
     return res.ProfunType.radnumer_si ?? null
   }
 
-  // Apply Insurance without attachment
+  // Apply Health Insurance
   public async applyInsurance(
     appNumber: number,
+    attachmentNames: string[],
     inputObj: VistaSkjalInput,
   ): Promise<VistaSkjalModel> {
     logger.info(`--- Starting applyInsurance api call ---`)
@@ -83,6 +89,8 @@ export class HealthInsuranceAPI {
         fyrrautgafulandkodi: inputObj.previousCountryCode,
         fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+        tryggingaretturfyrralandi:
+          inputObj.hasHealthInsuranceRightInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
     }
@@ -91,6 +99,14 @@ export class HealthInsuranceAPI {
     // Attachment's name need to be exactly same as the file name, including file type (ex: skra.txt)
     const arrAttachments = inputObj.attachmentsFileNames
     if (arrAttachments && arrAttachments.length > 0) {
+      if (arrAttachments.length !== attachmentNames.length) {
+        logger.error(
+          `Failed to extract filenames or bucket's attachment filenames`,
+        )
+        throw new Error(
+          `Failed to extract filenames or bucket's attachment filenames`,
+        )
+      }
       logger.info(`Start getting attachments`)
       const fylgiskjol: Fylgiskjol = {
         fylgiskjal: [],
@@ -99,7 +115,9 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
-          innihald: '', // TODO: await this.bucketService.getFileContentAsBase64(filename),
+          innihald: await this.bucketService.getFileContentAsBase64(
+            attachmentNames[i],
+          ),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)
       }
@@ -176,6 +194,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {

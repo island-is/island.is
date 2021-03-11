@@ -1,6 +1,5 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { FieldBaseProps } from '@island.is/application/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
@@ -8,9 +7,10 @@ import {
   extractParentFromApplication,
   extractChildrenFromApplication,
 } from '../../lib/utils'
+import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
 
-const SelectChildren = ({ field, application, error }: FieldBaseProps) => {
+const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
   const otherParent = extractParentFromApplication(application)
