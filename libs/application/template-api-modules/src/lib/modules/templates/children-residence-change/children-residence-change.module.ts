@@ -13,11 +13,11 @@ export class ChildrenResidenceChangeModule {
       module: ChildrenResidenceChangeModule,
       imports: [SyslumennModule.register(config.syslumenn)],
       providers: [
-        ChildrenResidenceChangeService,
         {
           provide: PRESIGNED_BUCKET,
-          useValue: config.presignBucket,
+          useFactory: () => config.presignBucket,
         },
+        ChildrenResidenceChangeService,
         AwsService,
       ],
       exports: [ChildrenResidenceChangeService],
