@@ -18,6 +18,8 @@ import { AboutPage } from './models/aboutPage.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
+import { GetOrganizationSubpageInput } from '@island.is/api/schema'
+import { OrganizationSubpage } from './models/organizationSubpage.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -177,6 +179,27 @@ export class CmsElasticsearchService {
       query,
     )
     const response = newsResponse.hits.hits?.[0]?._source?.response
+    return response ? JSON.parse(response) : null
+  }
+
+  async getOrganizationSubpage(
+    index: string,
+    { slug, organizationSlug }: GetOrganizationSubpageInput,
+  ): Promise<OrganizationSubpage | null> {
+    // return a single news item by slug
+    const query = {
+      types: ['webOrganizationSubpage'],
+      tags: [
+        { type: 'slug', key: slug },
+        { type: 'organization', key: organizationSlug },
+      ],
+    }
+    const menuResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    const response = menuResponse.hits.hits?.[0]?._source?.response
     return response ? JSON.parse(response) : null
   }
 

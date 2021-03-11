@@ -9,5 +9,5 @@ export class GetFrontpageInput {
 
   @Field(() => String)
   @IsString()
-  lang = 'is-IS'
+  lang: ElasticsearchIndexLocale
 }
