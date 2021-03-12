@@ -5,7 +5,7 @@ export const extractApplicantFromApplication = (
   application: CRCApplication,
 ) => {
   return (application.externalData.nationalRegistry?.data as {
-    parent?: object
+    parent?: unknown
   }) as NationalRegistryUser
 }
 
@@ -41,7 +41,7 @@ export const extractUserInfoFromApplication = (application: CRCApplication) => {
 
 export const extractChildrenFromApplication = (application: CRCApplication) => {
   const data = dataToUse(application, 'childrenNationalRegistry')
-  return (data as object) as PersonResidenceChange[]
+  return (data as unknown) as PersonResidenceChange[]
 }
 // END TODO
 
