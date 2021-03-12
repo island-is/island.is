@@ -38,8 +38,7 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
@@ -50,8 +49,7 @@ export class UserController {
     return this.userService.create(userToCreate)
   }
 
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
   @Put('user/:id')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })

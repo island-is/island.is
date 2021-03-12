@@ -36,8 +36,10 @@ import {
   RolesGuard,
   RolesRule,
   RulesType,
+  TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
+import { environment } from '../../../environments'
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -182,8 +184,7 @@ const registrarTransitionRule = {
   dtoFieldValues: [CaseTransition.RECEIVE],
 } as RolesRule
 
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {

@@ -30,13 +30,11 @@ export class SharedAuthModule {
       ],
       providers: [
         {
-          provide: JwtStrategy,
-          useValue: new JwtStrategy(options.jwtSecret),
+          provide: 'JWT_SECRET',
+          useFactory: () => options.jwtSecret,
         },
-        {
-          provide: SharedAuthService,
-          useValue: new SharedAuthService(options.jwtSecret),
-        },
+        JwtStrategy,
+        SharedAuthService,
       ],
       exports: [SharedAuthService],
     }
