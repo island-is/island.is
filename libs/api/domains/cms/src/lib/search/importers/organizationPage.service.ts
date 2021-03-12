@@ -12,7 +12,8 @@ export class OrganizationPageSyncService
   processSyncData(entries: processSyncDataInput<IOrganizationPage>) {
     return entries.filter(
       (entry: Entry<any>): entry is IOrganizationPage =>
-        entry.sys.contentType.sys.id === 'organizationPage',
+        entry.sys.contentType.sys.id === 'organizationPage' &&
+        !!entry.fields.title,
     )
   }
 
