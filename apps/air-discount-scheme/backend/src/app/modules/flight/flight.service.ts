@@ -207,7 +207,7 @@ export class FlightService {
     nationalId: string,
   ): Promise<string[]> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
-    let unConnectedFlights: string[] = []
+    const unConnectedFlights: string[] = []
 
     const flights = await this.flightModel.findAll({
       where: Sequelize.and(

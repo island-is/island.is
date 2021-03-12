@@ -73,10 +73,10 @@ export class DiscountService {
     flightIds: string[],
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
-    let connectionDiscountCodes: { code: string; flightId: string }[] = []
+    const connectionDiscountCodes: { code: string; flightId: string }[] = []
 
     for (let i = 0; i < connectedFlightCounts; i++) {
-      let flightId = flightIds.pop()
+      const flightId = flightIds.pop()
       if (flightId) {
         connectionDiscountCodes.push({
           code: this.generateDiscountCode(),
