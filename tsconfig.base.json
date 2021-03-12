@@ -181,6 +181,7 @@
       "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
       "@island.is/infra-next-server": ["libs/infra-next-server/src/index.ts"],
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
+      "@island.is/island-ui-native": ["libs/island-ui-native/src/index.ts"],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
       ],

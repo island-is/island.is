@@ -3984,6 +3984,81 @@
         }
       }
     },
+    "mobile-app": {
+      "root": "apps/mobile-app",
+      "sourceRoot": "apps/mobile-app/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "start": {
+          "builder": "@nrwl/react-native:start",
+          "options": {
+            "port": 8081
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "nx start mobile-app"
+          }
+        },
+        "run-ios": {
+          "builder": "@nrwl/react-native:run-ios",
+          "options": {}
+        },
+        "bundle-ios": {
+          "builder": "@nrwl/react-native:bundle",
+          "outputs": ["apps/mobile-app/build"],
+          "options": {
+            "entryFile": "apps/mobile-app/src/main.tsx",
+            "platform": "ios",
+            "bundleOutput": "dist/apps/mobile-app/ios/main.bundle"
+          }
+        },
+        "run-android": {
+          "builder": "@nrwl/react-native:run-android",
+          "options": {}
+        },
+        "build-android": {
+          "builder": "@nrwl/react-native:build-android",
+          "outputs": [
+            "apps/mobile-app/android/app/build/outputs/bundle",
+            "apps/mobile-app/android/app/build/outputs/apk"
+          ],
+          "options": {}
+        },
+        "bundle-android": {
+          "builder": "@nrwl/react-native:bundle",
+          "options": {
+            "entryFile": "apps/mobile-app/src/main.tsx",
+            "platform": "android",
+            "bundleOutput": "dist/apps/mobile-app/android/main.bundle"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/mobile-app/tsconfig.app.json",
+              "apps/mobile-app/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/mobile-app/**/*"]
+          }
+        },
+        "sync-deps": {
+          "builder": "@nrwl/react-native:sync-deps",
+          "options": {}
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/mobile-app/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nova-sms": {
       "root": "libs/nova-sms",
       "sourceRoot": "libs/nova-sms/src",
@@ -6152,6 +6227,27 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
+          }
+        }
+      }
+    },
+    "island-ui-native": {
+      "root": "libs/island-ui-native",
+      "sourceRoot": "libs/island-ui-native/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/island-ui-native/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/island-ui-native"],
+          "options": {
+            "jestConfig": "libs/island-ui-native/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

@@ -250,7 +250,8 @@
     "xstate": "4.13.0",
     "yargs": "15.4.1",
     "yup": "0.29.0",
-    "zod": "1.10.2"
+    "zod": "1.10.2",
+    "react-native": "0.63.4"
   },
   "devDependencies": {
     "@babel/core": "7.13.8",
@@ -279,6 +280,7 @@
     "@nrwl/next": "11.4.0",
     "@nrwl/node": "11.4.0",
     "@nrwl/react": "11.4.0",
+    "@nrwl/react-native": "11.4.1",
     "@nrwl/storybook": "11.4.0",
     "@nrwl/tao": "11.4.0",
     "@nrwl/web": "11.4.0",
@@ -363,10 +365,21 @@
     "sequelize-cli": "5.5.1",
     "storybook-addon-designs": "5.4.2",
     "ts-dedent": "2.0.0",
-    "ts-jest": "26.4.0",
-    "ts-node": "9.1.1",
-    "typescript": "4.0.7",
-    "webpack-bundle-analyzer": "3.9.0"
+    "ts-jest": "26.1.4",
+    "ts-node": "9.0.0",
+    "typescript": "3.9.7",
+    "webpack-bundle-analyzer": "3.9.0",
+    "@types/react-native": "0.63.18",
+    "@react-native-community/cli": "4.14.0",
+    "@react-native-community/cli-platform-android": "4.13.0",
+    "@react-native-community/cli-platform-ios": "4.13.0",
+    "metro-react-native-babel-preset": "0.63.0",
+    "@testing-library/react-native": "7.1.0",
+    "@testing-library/jest-native": "3.4.3",
+    "jest-react-native": "18.0.0",
+    "metro": "0.59.0",
+    "metro-resolver": "0.59.0",
+    "react-test-renderer": "17.0.1"
   },
   "resolutions": {
     "@graphql-tools/git-loader": "6.2.6",

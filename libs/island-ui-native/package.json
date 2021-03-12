@@ -1,0 +1,7 @@
+{
+  "name": "@island.is/island-ui-native",
+  "main": "src/index.ts",
+  "sideEffects": [
+    "src/index.ts"
+  ]
+}
