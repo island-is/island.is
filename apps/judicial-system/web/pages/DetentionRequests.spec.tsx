@@ -12,7 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { DetentionRequests } from './DetentionRequests'
+import { DetentionRequests } from './krofur'
 
 const mockCasesQuery = [
   {

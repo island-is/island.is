@@ -10,7 +10,7 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import StepFour from './StepFour'
+import StepFour from './[id]'
 
 describe('Create detention request, step four', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

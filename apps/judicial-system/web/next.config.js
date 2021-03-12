@@ -33,5 +33,6 @@ module.exports = withTreat(
     devIndicators: {
       autoPrerender: false,
     },
+    pageExtensions: ['tsx'],
   }),
 )

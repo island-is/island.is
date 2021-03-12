@@ -8,7 +8,7 @@ import {
   mockJudgeQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import Overview from './Overview'
+import Overview from './[id]'
 
 describe('/domari-krafa with an ID', () => {
   fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)

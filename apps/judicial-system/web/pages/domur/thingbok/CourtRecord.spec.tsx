@@ -14,7 +14,7 @@ import {
 import formatISO from 'date-fns/formatISO'
 import { parseTime } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import CourtRecord from './CourtRecord'
+import CourtRecord from './[id]'
 
 describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

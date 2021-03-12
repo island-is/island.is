@@ -14,7 +14,7 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import { RulingStepTwo } from './RulingStepTwo'
+import { RulingStepTwo } from './[id]'
 
 describe('/domari-krafa/urskurdarord', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {

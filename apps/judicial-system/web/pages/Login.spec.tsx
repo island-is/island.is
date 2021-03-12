@@ -7,7 +7,7 @@ import { MockedProvider } from '@apollo/client/testing'
 import { mockJudgeQuery } from '@island.is/judicial-system-web/src/utils/mocks'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import Login from './Login'
+import Login from './Index'
 
 describe('Login route', () => {
   fetchMock.mock('/api/auth/logout', 200)

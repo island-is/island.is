@@ -10,7 +10,7 @@ import {
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 
-import { SignedVerdictOverview } from './SignedVerdictOverview'
+import { SignedVerdictOverview } from './[id]'
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {

@@ -12,7 +12,7 @@ import {
 import { MockedProvider } from '@apollo/client/testing'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import userEvent from '@testing-library/user-event'
-import { Confirmation } from './Confirmation'
+import { Confirmation } from './[id]'
 
 describe('Confirmation route', () => {
   test(`should not allow users to continue unless every required field has been filled out`, async () => {
