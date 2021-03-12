@@ -27,6 +27,7 @@ module.exports = {
     '<rootDir>/apps/skilavottord/web',
     '<rootDir>/apps/skilavottord/ws',
     '<rootDir>/apps/web',
+    '<rootDir>/apps/native/island-ui',
     '<rootDir>/libs/air-discount-scheme/consts',
     '<rootDir>/libs/air-discount-scheme/types',
     '<rootDir>/libs/api-catalogue/consts',
@@ -130,6 +131,5 @@ module.exports = {
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
     '<rootDir>/libs/vmst-client',
-    '<rootDir>/libs/island-ui-native',
   ],
 }

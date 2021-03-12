@@ -285,9 +285,6 @@
     "island-ui-fonts": {
       "tags": []
     },
-    "island-ui-native": {
-      "tags": []
-    },
     "island-ui-storybook": {
       "tags": [],
       "implicitDependencies": ["island-ui-core"]
@@ -341,7 +338,10 @@
     "message-queue": {
       "tags": []
     },
-    "mobile-app": {
+    "native-app": {
+      "tags": []
+    },
+    "native-island-ui": {
       "tags": []
     },
     "nova-sms": {
