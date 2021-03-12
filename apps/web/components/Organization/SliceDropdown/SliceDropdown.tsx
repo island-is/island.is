@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
-import { OrganizationSlice } from '@island.is/web/components'
 import {
   GridColumn,
   GridContainer,
@@ -10,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
   slices: Slice[]
@@ -76,13 +76,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-      {!!selectedSlice && (
-        <OrganizationSlice
-          key={selectedSlice.id}
-          slice={selectedSlice}
-          namespace={null}
-        />
-      )}
+      {!!selectedSlice && richText([selectedSlice] as SliceType[])}
     </>
   )
 }

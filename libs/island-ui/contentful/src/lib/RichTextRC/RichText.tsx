@@ -21,6 +21,11 @@ import { defaultRenderNode } from './defaultRenderNode'
 import { defaultRenderMark } from './defaultRenderMark'
 import { defaultRenderComponent } from './defaultRenderComponents'
 import { Box } from '@island.is/island-ui/core'
+import { OneColumnTextProps } from '../OneColumnText/OneColumnText'
+import { TwoColumnTextProps } from '../TwoColumnText/TwoColumnText'
+import { AccordionSliceProps } from '../AccordionSlice/AccordionSlice'
+import { FeaturedArticlesProps } from '../FeaturedArticles/FeaturedArticles'
+import { DistrictsProps } from '../Districts/Districts'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
@@ -62,6 +67,26 @@ type SectionWithImageSlice = {
   __typename: 'SectionWithImage'
   id: string
 } & SectionWithImageProps
+type OneColumnTextSlice = {
+  __typename: 'OneColumnText'
+  id: string
+} & OneColumnTextProps
+type TwoColumnTextSlice = {
+  __typename: 'TwoColumnText'
+  id: string
+} & TwoColumnTextProps
+type AccordionSlice = {
+  __typename: 'AccordionSlice'
+  id: string
+} & AccordionSliceProps
+type FeaturedArticlesSlice = {
+  __typename: 'FeaturedArticles'
+  id: string
+} & FeaturedArticlesProps
+type DistrictsSlice = {
+  __typename: 'Districts'
+  id: string
+} & DistrictsProps
 
 export type SliceType =
   | HtmlSlice
@@ -77,6 +102,11 @@ export type SliceType =
   | LocationSlice
   | TellUsAStorySlice
   | SectionWithImageSlice
+  | OneColumnTextSlice
+  | TwoColumnTextSlice
+  | AccordionSlice
+  | FeaturedArticlesSlice
+  | DistrictsSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
       // to here to make them re-usable by other page types

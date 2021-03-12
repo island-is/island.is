@@ -27,20 +27,11 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import { OrganizationWrapper, SliceDropdown } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
-import { Namespace } from '@island.is/api/schema'
-import dynamic from 'next/dynamic'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-
-const OrganizationSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.OrganizationSlice),
-)
-const SliceDropdown = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.SliceDropdown),
-)
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -135,8 +126,12 @@ const SubPage: Screen<SubPageProps> = ({
                 offset={[null, null, '1/12']}
               >
                 <Stack space={2}>
-                  {subpage.links.map((link) => (
-                    <Link href={link.url} underline="small">
+                  {subpage.links.map((link, index) => (
+                    <Link
+                      href={link.url}
+                      underline="small"
+                      key={`link-${index}`}
+                    >
                       <Text fontWeight="light" color="blue400">
                         {link.text}
                       </Text>
@@ -152,7 +147,6 @@ const SubPage: Screen<SubPageProps> = ({
         subpage.slices,
         subpage.sliceCustomRenderer,
         subpage.sliceExtraText,
-        namespace,
       )}
     </OrganizationWrapper>
   )
@@ -162,15 +156,12 @@ const renderSlices = (
   slices: Slice[],
   renderType: string,
   extraText: string,
-  namespace: Namespace,
 ) => {
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
-      return slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
-      ))
+      return richText(slices as SliceType[])
   }
 }
 

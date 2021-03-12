@@ -11,6 +11,11 @@ import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
+import { OneColumnText } from '../OneColumnText/OneColumnText'
+import { TwoColumnText } from '../TwoColumnText/TwoColumnText'
+import { AccordionSlice } from '../AccordionSlice/AccordionSlice'
+import { FeaturedArticles } from '../FeaturedArticles/FeaturedArticles'
+import { Districts } from '../Districts/Districts'
 
 const renderConnectedComponent = (slice) => {
   const data = slice.json
@@ -70,4 +75,9 @@ export const defaultRenderComponent = {
       state="edit"
     />
   ),
+  OneColumnText: (slice) => <OneColumnText {...slice} />,
+  TwoColumnText: (slice) => <TwoColumnText {...slice} />,
+  AccordionSlice: (slice) => <AccordionSlice {...slice} />,
+  FeaturedArticles: (slice) => <FeaturedArticles {...slice} />,
+  Districts: (slice) => <Districts {...slice} />,
 }

@@ -27,7 +27,6 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   LatestNewsSection,
-  OrganizationSlice,
   OrganizationWrapper,
   Section,
 } from '@island.is/web/components'
@@ -38,6 +37,7 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -91,9 +91,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      mainContent={organizationPage.slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
-      ))}
+      mainContent={richText(organizationPage.slices as SliceType[])}
       sidebarContent={
         <Box marginTop={4} border="standard" borderRadius="large" padding={4}>
           <GridContainer>
