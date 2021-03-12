@@ -98,9 +98,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -128,9 +126,7 @@
             "jestConfig": "apps/air-discount-scheme/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/air-discount-scheme/api"
-          ]
+          "outputs": ["coverage/apps/air-discount-scheme/api"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -187,9 +183,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -217,9 +211,7 @@
             "jestConfig": "apps/air-discount-scheme/backend/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/air-discount-scheme/backend"
-          ]
+          "outputs": ["coverage/apps/air-discount-scheme/backend"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -285,9 +277,7 @@
             "jestConfig": "libs/air-discount-scheme/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/air-discount-scheme/consts"
-          ]
+          "outputs": ["coverage/libs/air-discount-scheme/consts"]
         }
       }
     },
@@ -317,9 +307,7 @@
             "jestConfig": "libs/air-discount-scheme/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/air-discount-scheme/types"
-          ]
+          "outputs": ["coverage/libs/air-discount-scheme/types"]
         }
       }
     },
@@ -360,9 +348,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:build",
@@ -371,9 +357,7 @@
             "main": "apps/air-discount-scheme/web/server.ts",
             "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": [
-              "apps/air-discount-scheme/web/next-modules"
-            ]
+            "assets": ["apps/air-discount-scheme/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -382,9 +366,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -418,9 +400,7 @@
             "jestConfig": "apps/air-discount-scheme/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/air-discount-scheme/web"
-          ]
+          "outputs": ["coverage/apps/air-discount-scheme/web"]
         },
         "translations": {
           "builder": "@nrwl/workspace:run-commands",
@@ -461,9 +441,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/air-discount-scheme/web-e2e/tsconfig.e2e.json"
-            ],
+            "tsConfig": ["apps/air-discount-scheme/web-e2e/tsconfig.e2e.json"],
             "exclude": [
               "**/node_modules/**",
               "!apps/air-discount-scheme/web-e2e/**/*"
@@ -501,9 +479,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -519,10 +495,7 @@
               "apps/api/tsconfig.app.json",
               "apps/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/api/**/*"]
           }
         },
         "test": {
@@ -531,9 +504,7 @@
             "jestConfig": "apps/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/api"
-          ]
+          "outputs": ["coverage/apps/api"]
         },
         "get-secrets": {
           "builder": "@nrwl/workspace:run-commands",
@@ -585,10 +556,7 @@
               "libs/api-catalogue/consts/tsconfig.lib.json",
               "libs/api-catalogue/consts/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api-catalogue/consts/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/consts/**"]
           }
         },
         "test": {
@@ -597,9 +565,7 @@
             "jestConfig": "libs/api-catalogue/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/consts"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/consts"]
         }
       }
     },
@@ -618,10 +584,7 @@
               "libs/api-catalogue/elastic/tsconfig.lib.json",
               "libs/api-catalogue/elastic/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api-catalogue/elastic/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/elastic/**"]
           }
         },
         "test": {
@@ -630,9 +593,7 @@
             "jestConfig": "libs/api-catalogue/elastic/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/elastic"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/elastic"]
         }
       }
     },
@@ -651,10 +612,7 @@
               "libs/api-catalogue/services/tsconfig.lib.json",
               "libs/api-catalogue/services/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api-catalogue/services/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/services/**"]
           }
         },
         "test": {
@@ -663,9 +621,7 @@
             "jestConfig": "libs/api-catalogue/services/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/services"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/services"]
         },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -694,10 +650,7 @@
               "libs/api-catalogue/types/tsconfig.lib.json",
               "libs/api-catalogue/types/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api-catalogue/types/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api-catalogue/types/**"]
           }
         },
         "test": {
@@ -706,9 +659,7 @@
             "jestConfig": "libs/api-catalogue/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api-catalogue/types"
-          ]
+          "outputs": ["coverage/libs/api-catalogue/types"]
         }
       }
     },
@@ -739,9 +690,7 @@
             "jestConfig": "libs/api/domains/api-catalogue/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/api-catalogue"
-          ]
+          "outputs": ["coverage/libs/api/domains/api-catalogue"]
         }
       }
     },
@@ -771,9 +720,7 @@
             "jestConfig": "libs/api/domains/application/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/application"
-          ]
+          "outputs": ["coverage/libs/api/domains/application"]
         },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -798,10 +745,7 @@
               "libs/api/domains/cms/tsconfig.lib.json",
               "libs/api/domains/cms/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/cms/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api/domains/cms/**/*"]
           }
         },
         "test": {
@@ -810,9 +754,7 @@
             "jestConfig": "libs/api/domains/cms/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/cms"
-          ]
+          "outputs": ["coverage/libs/api/domains/cms"]
         }
       }
     },
@@ -842,9 +784,7 @@
             "jestConfig": "libs/api/domains/communications/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/communications"
-          ]
+          "outputs": ["coverage/libs/api/domains/communications"]
         }
       }
     },
@@ -874,9 +814,7 @@
             "jestConfig": "libs/api/domains/content-search/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/content-search"
-          ]
+          "outputs": ["coverage/libs/api/domains/content-search"]
         }
       }
     },
@@ -906,9 +844,7 @@
             "jestConfig": "libs/api/domains/directorate-of-labour/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/directorate-of-labour"
-          ]
+          "outputs": ["coverage/libs/api/domains/directorate-of-labour"]
         }
       }
     },
@@ -938,9 +874,7 @@
             "jestConfig": "libs/api/domains/document-provider/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/document-provider"
-          ]
+          "outputs": ["coverage/libs/api/domains/document-provider"]
         },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -978,9 +912,7 @@
             "jestConfig": "libs/api/domains/documents/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/documents"
-          ]
+          "outputs": ["coverage/libs/api/domains/documents"]
         }
       }
     },
@@ -1010,9 +942,7 @@
             "jestConfig": "libs/api/domains/driving-license/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/driving-license"
-          ]
+          "outputs": ["coverage/libs/api/domains/driving-license"]
         }
       }
     },
@@ -1042,9 +972,7 @@
             "jestConfig": "libs/api/domains/education/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/education"
-          ]
+          "outputs": ["coverage/libs/api/domains/education"]
         }
       }
     },
@@ -1074,9 +1002,7 @@
             "jestConfig": "libs/api/domains/file-upload/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/file-upload"
-          ]
+          "outputs": ["coverage/libs/api/domains/file-upload"]
         }
       }
     },
@@ -1106,9 +1032,7 @@
             "jestConfig": "libs/api/domains/health-insurance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/health-insurance"
-          ]
+          "outputs": ["coverage/libs/api/domains/health-insurance"]
         }
       }
     },
@@ -1138,9 +1062,7 @@
             "jestConfig": "libs/api/domains/national-registry/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/national-registry"
-          ]
+          "outputs": ["coverage/libs/api/domains/national-registry"]
         }
       }
     },
@@ -1158,10 +1080,7 @@
               "libs/api/domains/rsk/tsconfig.lib.json",
               "libs/api/domains/rsk/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/rsk/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api/domains/rsk/**/*"]
           }
         },
         "test": {
@@ -1170,9 +1089,7 @@
             "jestConfig": "libs/api/domains/rsk/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/rsk"
-          ]
+          "outputs": ["coverage/libs/api/domains/rsk"]
         }
       }
     },
@@ -1202,9 +1119,7 @@
             "jestConfig": "libs/api/domains/syslumenn/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/syslumenn"
-          ]
+          "outputs": ["coverage/libs/api/domains/syslumenn"]
         }
       }
     },
@@ -1234,9 +1149,7 @@
             "jestConfig": "libs/api/domains/translations/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/translations"
-          ]
+          "outputs": ["coverage/libs/api/domains/translations"]
         }
       }
     },
@@ -1266,9 +1179,7 @@
             "jestConfig": "libs/api/domains/user-profile/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/domains/user-profile"
-          ]
+          "outputs": ["coverage/libs/api/domains/user-profile"]
         },
         "schemas/openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1293,10 +1204,7 @@
               "libs/api/mocks/tsconfig.lib.json",
               "libs/api/mocks/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/mocks/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api/mocks/**/*"]
           }
         },
         "test": {
@@ -1305,9 +1213,7 @@
             "jestConfig": "libs/api/mocks/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/api/mocks"
-          ]
+          "outputs": ["coverage/libs/api/mocks"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1330,13 +1236,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "libs/api/schema/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/schema/**/*"
-            ]
+            "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/api/schema/**/*"]
           }
         }
       }
@@ -1355,10 +1256,7 @@
               "libs/application/core/tsconfig.lib.json",
               "libs/application/core/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/core/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/application/core/**/*"]
           }
         },
         "test": {
@@ -1367,9 +1265,7 @@
             "jestConfig": "libs/application/core/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/core"
-          ]
+          "outputs": ["coverage/libs/application/core"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1405,9 +1301,7 @@
             "jestConfig": "libs/application/data-providers/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/data-providers"
-          ]
+          "outputs": ["coverage/libs/application/data-providers"]
         }
       }
     },
@@ -1425,10 +1319,7 @@
               "libs/application/graphql/tsconfig.lib.json",
               "libs/application/graphql/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/graphql/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/application/graphql/**/*"]
           }
         },
         "test": {
@@ -1437,9 +1328,7 @@
             "jestConfig": "libs/application/graphql/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/graphql"
-          ]
+          "outputs": ["coverage/libs/application/graphql"]
         }
       }
     },
@@ -1494,9 +1383,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -1524,9 +1411,7 @@
             "jestConfig": "apps/application-system/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/application-system/api"
-          ]
+          "outputs": ["coverage/apps/application-system/api"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1578,9 +1463,7 @@
               "apps/application-system/form/src/mockServiceWorker.js",
               "apps/application-system/form/src/assets"
             ],
-            "styles": [
-              "apps/application-system/form/src/styles.css"
-            ],
+            "styles": ["apps/application-system/form/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/application-system/form/webpack.config.js",
             "maxWorkers": 2
@@ -1609,9 +1492,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -1644,9 +1525,7 @@
             "jestConfig": "apps/application-system/form/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/application-system/form"
-          ]
+          "outputs": ["coverage/apps/application-system/form"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1686,9 +1565,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/application-system/form-e2e/tsconfig.e2e.json"
-            ],
+            "tsConfig": ["apps/application-system/form-e2e/tsconfig.e2e.json"],
             "exclude": [
               "**/node_modules/**",
               "!apps/application-system/form-e2e/**/*"
@@ -1723,9 +1600,7 @@
             "jestConfig": "libs/application/template-api-modules/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/template-api-modules"
-          ]
+          "outputs": ["coverage/libs/application/template-api-modules"]
         }
       }
     },
@@ -1755,9 +1630,7 @@
             "jestConfig": "libs/application/template-loader/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/template-loader"
-          ]
+          "outputs": ["coverage/libs/application/template-loader"]
         }
       }
     },
@@ -1891,9 +1764,7 @@
             "jestConfig": "libs/application/templates/driving-lessons/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/driving-lessons"
-          ]
+          "outputs": ["coverage/libs/application/templates/driving-lessons"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1929,9 +1800,7 @@
             "jestConfig": "libs/application/templates/driving-license/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/driving-license"
-          ]
+          "outputs": ["coverage/libs/application/templates/driving-license"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -1967,9 +1836,7 @@
             "jestConfig": "libs/application/templates/health-insurance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/health-insurance"
-          ]
+          "outputs": ["coverage/libs/application/templates/health-insurance"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2005,9 +1872,7 @@
             "jestConfig": "libs/application/templates/meta-application/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/meta-application"
-          ]
+          "outputs": ["coverage/libs/application/templates/meta-application"]
         }
       }
     },
@@ -2037,9 +1902,7 @@
             "jestConfig": "libs/application/templates/parental-leave/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/parental-leave"
-          ]
+          "outputs": ["coverage/libs/application/templates/parental-leave"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2081,9 +1944,7 @@
             "jestConfig": "libs/application/templates/party-letter/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/party-letter"
-          ]
+          "outputs": ["coverage/libs/application/templates/party-letter"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2119,9 +1980,7 @@
             "jestConfig": "libs/application/templates/passport/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/passport"
-          ]
+          "outputs": ["coverage/libs/application/templates/passport"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2157,9 +2016,7 @@
             "jestConfig": "libs/application/templates/reference-template/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/templates/reference-template"
-          ]
+          "outputs": ["coverage/libs/application/templates/reference-template"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2195,9 +2052,7 @@
             "jestConfig": "libs/application/ui-fields/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/ui-fields"
-          ]
+          "outputs": ["coverage/libs/application/ui-fields"]
         }
       }
     },
@@ -2215,10 +2070,7 @@
               "libs/application/ui-shell/tsconfig.lib.json",
               "libs/application/ui-shell/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/ui-shell/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/application/ui-shell/**/*"]
           }
         },
         "test": {
@@ -2227,9 +2079,7 @@
             "jestConfig": "libs/application/ui-shell/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/application/ui-shell"
-          ]
+          "outputs": ["coverage/libs/application/ui-shell"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2269,9 +2119,7 @@
           "configurations": {
             "production": {}
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:build",
@@ -2280,9 +2128,7 @@
             "main": "apps/auth-admin-web/server.ts",
             "tsConfig": "apps/auth-admin-web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": [
-              "apps/auth-admin-web/next-modules"
-            ]
+            "assets": ["apps/auth-admin-web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -2291,9 +2137,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -2315,9 +2159,7 @@
               "apps/auth-admin-web/tsconfig.app.json",
               "apps/auth-admin-web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "test": {
@@ -2326,9 +2168,7 @@
             "jestConfig": "apps/auth-admin-web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/auth-admin-web"
-          ]
+          "outputs": ["coverage/apps/auth-admin-web"]
         },
         "docker-next": {}
       }
@@ -2362,12 +2202,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/auth-admin-web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["apps/auth-admin-web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -2387,10 +2223,7 @@
               "libs/auth-api-lib/tsconfig.lib.json",
               "libs/auth-api-lib/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/auth-api-lib/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/auth-api-lib/**/*"]
           }
         },
         "test": {
@@ -2399,9 +2232,7 @@
             "jestConfig": "libs/auth-api-lib/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/auth-api-lib"
-          ]
+          "outputs": ["coverage/libs/auth-api-lib"]
         }
       }
     },
@@ -2419,10 +2250,7 @@
               "libs/auth-nest-tools/tsconfig.lib.json",
               "libs/auth-nest-tools/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/auth-nest-tools/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/auth-nest-tools/**/*"]
           }
         },
         "test": {
@@ -2431,9 +2259,7 @@
             "jestConfig": "libs/auth-nest-tools/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/auth-nest-tools"
-          ]
+          "outputs": ["coverage/libs/auth-nest-tools"]
         }
       }
     },
@@ -2451,10 +2277,7 @@
               "libs/cache/tsconfig.lib.json",
               "libs/cache/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/cache/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/cache/**/*"]
           }
         },
         "test": {
@@ -2463,9 +2286,7 @@
             "jestConfig": "libs/cache/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/cache"
-          ]
+          "outputs": ["coverage/libs/cache"]
         }
       }
     },
@@ -2495,9 +2316,7 @@
             "jestConfig": "libs/content-search-index-manager/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-index-manager"
-          ]
+          "outputs": ["coverage/libs/content-search-index-manager"]
         }
       }
     },
@@ -2527,9 +2346,7 @@
             "jestConfig": "libs/content-search-indexer/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-indexer"
-          ]
+          "outputs": ["coverage/libs/content-search-indexer"]
         }
       }
     },
@@ -2559,9 +2376,7 @@
             "jestConfig": "libs/content-search-indexer/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-indexer/types"
-          ]
+          "outputs": ["coverage/libs/content-search-indexer/types"]
         }
       }
     },
@@ -2591,9 +2406,7 @@
             "jestConfig": "libs/content-search-metrics/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-metrics"
-          ]
+          "outputs": ["coverage/libs/content-search-metrics"]
         }
       }
     },
@@ -2623,9 +2436,7 @@
             "jestConfig": "libs/content-search-toolkit/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/content-search-toolkit"
-          ]
+          "outputs": ["coverage/libs/content-search-toolkit"]
         }
       }
     },
@@ -2643,10 +2454,7 @@
               "libs/contentful-importer/tsconfig.lib.json",
               "libs/contentful-importer/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/contentful-importer/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/contentful-importer/**/*"]
           }
         },
         "test": {
@@ -2655,9 +2463,7 @@
             "jestConfig": "libs/contentful-importer/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/contentful-importer"
-          ]
+          "outputs": ["coverage/libs/contentful-importer"]
         }
       }
     },
@@ -2673,9 +2479,7 @@
             "jestConfig": "libs/contentful-translation-extension/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/contentful-translation-extension"
-          ]
+          "outputs": ["coverage/libs/contentful-translation-extension"]
         },
         "serve": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2710,10 +2514,7 @@
               "libs/dokobit-signing/tsconfig.lib.json",
               "libs/dokobit-signing/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/dokobit-signing/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/dokobit-signing/**/*"]
           }
         },
         "test": {
@@ -2722,9 +2523,7 @@
             "jestConfig": "libs/dokobit-signing/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/dokobit-signing"
-          ]
+          "outputs": ["coverage/libs/dokobit-signing"]
         }
       }
     },
@@ -2742,10 +2541,7 @@
               "libs/email-service/tsconfig.lib.json",
               "libs/email-service/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/email-service/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/email-service/**/*"]
           }
         },
         "test": {
@@ -2754,9 +2550,7 @@
             "jestConfig": "libs/email-service/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/email-service"
-          ]
+          "outputs": ["coverage/libs/email-service"]
         }
       }
     },
@@ -2774,10 +2568,7 @@
               "libs/feature-flags/tsconfig.lib.json",
               "libs/feature-flags/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/feature-flags/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/feature-flags/**/*"]
           }
         },
         "test": {
@@ -2786,9 +2577,7 @@
             "jestConfig": "libs/feature-flags/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/feature-flags"
-          ]
+          "outputs": ["coverage/libs/feature-flags"]
         }
       }
     },
@@ -2806,10 +2595,7 @@
               "libs/file-storage/tsconfig.lib.json",
               "libs/file-storage/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/file-storage/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/file-storage/**/*"]
           }
         },
         "test": {
@@ -2818,9 +2604,7 @@
             "jestConfig": "libs/file-storage/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/file-storage"
-          ]
+          "outputs": ["coverage/libs/file-storage"]
         }
       }
     },
@@ -2853,9 +2637,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -2871,10 +2653,7 @@
               "apps/gjafakort/api/tsconfig.app.json",
               "apps/gjafakort/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/api/**/*"]
           }
         },
         "test": {
@@ -2883,9 +2662,7 @@
             "jestConfig": "apps/gjafakort/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/gjafakort/api"
-          ]
+          "outputs": ["coverage/apps/gjafakort/api"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -2936,9 +2713,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -2980,9 +2755,7 @@
             "jestConfig": "apps/gjafakort/application/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/gjafakort/application"
-          ]
+          "outputs": ["coverage/apps/gjafakort/application"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -3008,10 +2781,7 @@
               "libs/gjafakort/consts/tsconfig.lib.json",
               "libs/gjafakort/consts/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/gjafakort/consts/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/gjafakort/consts/**/*"]
           }
         },
         "test": {
@@ -3020,9 +2790,7 @@
             "jestConfig": "libs/gjafakort/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/gjafakort/consts"
-          ]
+          "outputs": ["coverage/libs/gjafakort/consts"]
         }
       }
     },
@@ -3054,9 +2822,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -3084,9 +2850,7 @@
             "jestConfig": "apps/gjafakort/queue-listener/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/gjafakort/queue-listener"
-          ]
+          "outputs": ["coverage/apps/gjafakort/queue-listener"]
         },
         "docker-express": {}
       }
@@ -3105,10 +2869,7 @@
               "libs/gjafakort/types/tsconfig.lib.json",
               "libs/gjafakort/types/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/gjafakort/types/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/gjafakort/types/**/*"]
           }
         },
         "test": {
@@ -3117,9 +2878,7 @@
             "jestConfig": "libs/gjafakort/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/gjafakort/types"
-          ]
+          "outputs": ["coverage/libs/gjafakort/types"]
         }
       }
     },
@@ -3160,9 +2919,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:build",
@@ -3171,9 +2928,7 @@
             "main": "apps/gjafakort/web/server.ts",
             "tsConfig": "apps/gjafakort/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": [
-              "apps/gjafakort/web/next-modules"
-            ]
+            "assets": ["apps/gjafakort/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -3182,9 +2937,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "translations": {
           "builder": "@nrwl/workspace:run-commands",
@@ -3213,10 +2966,7 @@
               "apps/gjafakort/web/tsconfig.json",
               "apps/gjafakort/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/web/**/*"]
           }
         },
         "test": {
@@ -3225,9 +2975,7 @@
             "jestConfig": "apps/gjafakort/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/gjafakort/web"
-          ]
+          "outputs": ["coverage/apps/gjafakort/web"]
         },
         "docker-next": {}
       }
@@ -3261,13 +3009,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/web-e2e/**/*"
-            ]
+            "tsConfig": ["apps/gjafakort/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/web-e2e/**/*"]
           }
         }
       }
@@ -3286,10 +3029,7 @@
               "libs/health-insurance/tsconfig.lib.json",
               "libs/health-insurance/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/health-insurance/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/health-insurance/**/*"]
           }
         },
         "test": {
@@ -3298,9 +3038,7 @@
             "jestConfig": "libs/health-insurance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/health-insurance"
-          ]
+          "outputs": ["coverage/libs/health-insurance"]
         }
       }
     },
@@ -3318,10 +3056,7 @@
               "libs/infra-express-server/tsconfig.lib.json",
               "libs/infra-express-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-express-server/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-express-server/**/*"]
           }
         },
         "test": {
@@ -3330,9 +3065,7 @@
             "jestConfig": "libs/infra-express-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-express-server"
-          ]
+          "outputs": ["coverage/libs/infra-express-server"]
         }
       }
     },
@@ -3350,10 +3083,7 @@
               "libs/infra-metrics/tsconfig.lib.json",
               "libs/infra-metrics/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-metrics/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-metrics/**/*"]
           }
         },
         "test": {
@@ -3362,9 +3092,7 @@
             "jestConfig": "libs/infra-metrics/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-metrics"
-          ]
+          "outputs": ["coverage/libs/infra-metrics"]
         }
       }
     },
@@ -3382,10 +3110,7 @@
               "libs/infra-monitoring/tsconfig.lib.json",
               "libs/infra-monitoring/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-monitoring/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-monitoring/**/*"]
           }
         },
         "test": {
@@ -3394,9 +3119,7 @@
             "jestConfig": "libs/infra-monitoring/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-monitoring"
-          ]
+          "outputs": ["coverage/libs/infra-monitoring"]
         }
       }
     },
@@ -3414,10 +3137,7 @@
               "libs/infra-nest-server/tsconfig.lib.json",
               "libs/infra-nest-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-nest-server/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-nest-server/**/*"]
           }
         },
         "test": {
@@ -3426,9 +3146,7 @@
             "jestConfig": "libs/infra-nest-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-nest-server"
-          ]
+          "outputs": ["coverage/libs/infra-nest-server"]
         }
       }
     },
@@ -3446,10 +3164,7 @@
               "libs/infra-next-server/tsconfig.lib.json",
               "libs/infra-next-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-next-server/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-next-server/**/*"]
           }
         },
         "test": {
@@ -3458,9 +3173,7 @@
             "jestConfig": "libs/infra-next-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-next-server"
-          ]
+          "outputs": ["coverage/libs/infra-next-server"]
         }
       }
     },
@@ -3478,10 +3191,7 @@
               "libs/infra-tracing/tsconfig.lib.json",
               "libs/infra-tracing/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-tracing/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-tracing/**/*"]
           }
         },
         "test": {
@@ -3490,9 +3200,7 @@
             "jestConfig": "libs/infra-tracing/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/infra-tracing"
-          ]
+          "outputs": ["coverage/libs/infra-tracing"]
         }
       }
     },
@@ -3510,10 +3218,7 @@
               "libs/island-ui/contentful/tsconfig.lib.json",
               "libs/island-ui/contentful/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/contentful/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/contentful/**/*"]
           }
         },
         "test": {
@@ -3522,9 +3227,7 @@
             "jestConfig": "libs/island-ui/contentful/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/contentful"
-          ]
+          "outputs": ["coverage/libs/island-ui/contentful"]
         }
       }
     },
@@ -3542,10 +3245,7 @@
               "libs/island-ui/core/tsconfig.lib.json",
               "libs/island-ui/core/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/core/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/core/**/*"]
           }
         },
         "test": {
@@ -3554,9 +3254,7 @@
             "jestConfig": "libs/island-ui/core/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/core"
-          ]
+          "outputs": ["coverage/libs/island-ui/core"]
         }
       }
     },
@@ -3575,13 +3273,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "libs/island-ui/storybook/tsconfig.lib.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/storybook/**/*"
-            ]
+            "tsConfig": ["libs/island-ui/storybook/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/storybook/**/*"]
           }
         },
         "serve": {
@@ -3618,9 +3311,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "docker-static": {}
       }
@@ -3639,10 +3330,7 @@
               "libs/island-ui/theme/tsconfig.lib.json",
               "libs/island-ui/theme/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/theme/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/theme/**/*"]
           }
         },
         "test": {
@@ -3651,9 +3339,7 @@
             "jestConfig": "libs/island-ui/theme/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/theme"
-          ]
+          "outputs": ["coverage/libs/island-ui/theme"]
         }
       }
     },
@@ -3671,10 +3357,7 @@
               "libs/island-ui/utils/tsconfig.lib.json",
               "libs/island-ui/utils/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/utils/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/utils/**/*"]
           }
         },
         "test": {
@@ -3683,9 +3366,7 @@
             "jestConfig": "libs/island-ui/utils/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/island-ui/utils"
-          ]
+          "outputs": ["coverage/libs/island-ui/utils"]
         }
       }
     },
@@ -3718,9 +3399,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -3736,10 +3415,7 @@
               "apps/judicial-system/api/tsconfig.app.json",
               "apps/judicial-system/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/judicial-system/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/api/**/*"]
           }
         },
         "test": {
@@ -3748,9 +3424,7 @@
             "jestConfig": "apps/judicial-system/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/judicial-system/api"
-          ]
+          "outputs": ["coverage/apps/judicial-system/api"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -3793,9 +3467,7 @@
             "jestConfig": "libs/judicial-system/audit-trail/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/audit-trail"
-          ]
+          "outputs": ["coverage/libs/judicial-system/audit-trail"]
         }
       }
     },
@@ -3813,10 +3485,7 @@
               "libs/judicial-system/auth/tsconfig.lib.json",
               "libs/judicial-system/auth/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/judicial-system/auth/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/judicial-system/auth/**/*"]
           }
         },
         "test": {
@@ -3825,9 +3494,7 @@
             "jestConfig": "libs/judicial-system/auth/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/auth"
-          ]
+          "outputs": ["coverage/libs/judicial-system/auth"]
         }
       }
     },
@@ -3881,9 +3548,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -3911,9 +3576,7 @@
             "jestConfig": "apps/judicial-system/backend/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/judicial-system/backend"
-          ]
+          "outputs": ["coverage/apps/judicial-system/backend"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -3979,9 +3642,7 @@
             "jestConfig": "libs/judicial-system/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/consts"
-          ]
+          "outputs": ["coverage/libs/judicial-system/consts"]
         }
       }
     },
@@ -4011,9 +3672,7 @@
             "jestConfig": "libs/judicial-system/court-client/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/court-client"
-          ]
+          "outputs": ["coverage/libs/judicial-system/court-client"]
         },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4049,9 +3708,7 @@
             "jestConfig": "libs/judicial-system/formatters/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/formatters"
-          ]
+          "outputs": ["coverage/libs/judicial-system/formatters"]
         }
       }
     },
@@ -4081,9 +3738,7 @@
             "jestConfig": "libs/judicial-system/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/judicial-system/types"
-          ]
+          "outputs": ["coverage/libs/judicial-system/types"]
         }
       }
     },
@@ -4124,9 +3779,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:build",
@@ -4135,9 +3788,7 @@
             "main": "apps/judicial-system/web/server.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": [
-              "apps/judicial-system/web/next-modules"
-            ]
+            "assets": ["apps/judicial-system/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -4146,9 +3797,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -4170,10 +3819,7 @@
               "apps/judicial-system/web/tsconfig.json",
               "apps/judicial-system/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/judicial-system/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/web/**/*"]
           }
         },
         "test": {
@@ -4182,9 +3828,7 @@
             "jestConfig": "apps/judicial-system/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/judicial-system/web"
-          ]
+          "outputs": ["coverage/apps/judicial-system/web"]
         },
         "docker-next": {}
       }
@@ -4218,9 +3862,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/judicial-system/web-e2e/tsconfig.e2e.json"
-            ],
+            "tsConfig": ["apps/judicial-system/web-e2e/tsconfig.e2e.json"],
             "exclude": [
               "**/node_modules/**",
               "!apps/judicial-system/web-e2e/**/*"
@@ -4310,10 +3952,7 @@
               "libs/localization/tsconfig.lib.json",
               "libs/localization/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/localization/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/localization/**/*"]
           }
         },
         "test": {
@@ -4322,9 +3961,7 @@
             "jestConfig": "libs/localization/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/localization"
-          ]
+          "outputs": ["coverage/libs/localization"]
         }
       }
     },
@@ -4342,10 +3979,7 @@
               "libs/logging/tsconfig.lib.json",
               "libs/logging/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/logging/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/logging/**/*"]
           }
         },
         "test": {
@@ -4354,9 +3988,7 @@
             "jestConfig": "libs/logging/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/logging"
-          ]
+          "outputs": ["coverage/libs/logging"]
         }
       }
     },
@@ -4374,10 +4006,7 @@
               "libs/message-queue/tsconfig.lib.json",
               "libs/message-queue/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/message-queue/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/message-queue/**/*"]
           }
         },
         "test": {
@@ -4386,9 +4015,7 @@
             "jestConfig": "libs/message-queue/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/message-queue"
-          ]
+          "outputs": ["coverage/libs/message-queue"]
         }
       }
     },
@@ -4406,10 +4033,7 @@
               "libs/nova-sms/tsconfig.lib.json",
               "libs/nova-sms/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/nova-sms/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/nova-sms/**/*"]
           }
         },
         "test": {
@@ -4418,9 +4042,7 @@
             "jestConfig": "libs/nova-sms/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/nova-sms"
-          ]
+          "outputs": ["coverage/libs/nova-sms"]
         }
       }
     },
@@ -4438,10 +4060,7 @@
               "libs/plausible/tsconfig.lib.json",
               "libs/plausible/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/plausible/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/plausible/**/*"]
           }
         },
         "test": {
@@ -4450,9 +4069,7 @@
             "jestConfig": "libs/plausible/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/plausible"
-          ]
+          "outputs": ["coverage/libs/plausible"]
         }
       }
     },
@@ -4469,9 +4086,7 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "assets": [
-              "apps/reference-backend/src/assets"
-            ],
+            "assets": ["apps/reference-backend/src/assets"],
             "maxWorkers": 2
           },
           "configurations": {
@@ -4487,9 +4102,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -4505,10 +4118,7 @@
               "apps/reference-backend/tsconfig.app.json",
               "apps/reference-backend/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/reference-backend/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/reference-backend/**/*"]
           }
         },
         "test": {
@@ -4517,9 +4127,7 @@
             "jestConfig": "apps/reference-backend/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/reference-backend"
-          ]
+          "outputs": ["coverage/apps/reference-backend"]
         },
         "docker-express": {},
         "dev-services": {
@@ -4589,9 +4197,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:build",
@@ -4608,9 +4214,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -4632,10 +4236,7 @@
               "apps/reference-next-app/tsconfig.json",
               "apps/reference-next-app/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/reference-next-app/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/reference-next-app/**/*"]
           }
         },
         "test": {
@@ -4644,9 +4245,7 @@
             "jestConfig": "apps/reference-next-app/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/reference-next-app"
-          ]
+          "outputs": ["coverage/apps/reference-next-app"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4670,10 +4269,7 @@
               "libs/clients/rsk/tsconfig.lib.json",
               "libs/clients/rsk/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/clients/rsk/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/clients/rsk/**/*"]
           }
         },
         "test": {
@@ -4682,9 +4278,7 @@
             "jestConfig": "libs/clients/rsk/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/clients/rsk"
-          ]
+          "outputs": ["coverage/libs/clients/rsk"]
         }
       }
     },
@@ -4737,9 +4331,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/web:dev-server",
@@ -4760,10 +4352,7 @@
               "apps/service-portal/tsconfig.app.json",
               "apps/service-portal/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/service-portal/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/service-portal/**/*"]
           }
         },
         "test": {
@@ -4772,9 +4361,7 @@
             "jestConfig": "apps/service-portal/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/service-portal"
-          ]
+          "outputs": ["coverage/apps/service-portal"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4811,9 +4398,7 @@
             "jestConfig": "libs/service-portal/applications/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/applications"
-          ]
+          "outputs": ["coverage/libs/service-portal/applications"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4854,9 +4439,7 @@
             "jestConfig": "libs/service-portal/assets/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/assets"
-          ]
+          "outputs": ["coverage/libs/service-portal/assets"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4892,9 +4475,7 @@
             "jestConfig": "libs/service-portal/constants/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/constants"
-          ]
+          "outputs": ["coverage/libs/service-portal/constants"]
         }
       }
     },
@@ -4912,10 +4493,7 @@
               "libs/service-portal/core/tsconfig.lib.json",
               "libs/service-portal/core/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/service-portal/core/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/service-portal/core/**/*"]
           }
         },
         "test": {
@@ -4924,9 +4502,7 @@
             "jestConfig": "libs/service-portal/core/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/core"
-          ]
+          "outputs": ["coverage/libs/service-portal/core"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4962,9 +4538,7 @@
             "jestConfig": "libs/service-portal/document-provider/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/document-provider"
-          ]
+          "outputs": ["coverage/libs/service-portal/document-provider"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5000,9 +4574,7 @@
             "jestConfig": "libs/service-portal/documents/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/documents"
-          ]
+          "outputs": ["coverage/libs/service-portal/documents"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5038,9 +4610,7 @@
             "jestConfig": "libs/service-portal/driving-license/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/driving-license"
-          ]
+          "outputs": ["coverage/libs/service-portal/driving-license"]
         }
       }
     },
@@ -5073,13 +4643,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/service-portal-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/service-portal-e2e/**/*"
-            ]
+            "tsConfig": ["apps/service-portal-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/service-portal-e2e/**/*"]
           }
         }
       }
@@ -5110,9 +4675,7 @@
             "jestConfig": "libs/service-portal/education/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/education"
-          ]
+          "outputs": ["coverage/libs/service-portal/education"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5148,9 +4711,7 @@
             "jestConfig": "libs/service-portal/eligibility/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/eligibility"
-          ]
+          "outputs": ["coverage/libs/service-portal/eligibility"]
         }
       }
     },
@@ -5180,9 +4741,7 @@
             "jestConfig": "libs/service-portal/family/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/family"
-          ]
+          "outputs": ["coverage/libs/service-portal/family"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5218,9 +4777,7 @@
             "jestConfig": "libs/service-portal/finance/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/finance"
-          ]
+          "outputs": ["coverage/libs/service-portal/finance"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5256,9 +4813,7 @@
             "jestConfig": "libs/service-portal/graphql/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/graphql"
-          ]
+          "outputs": ["coverage/libs/service-portal/graphql"]
         }
       }
     },
@@ -5288,9 +4843,7 @@
             "jestConfig": "libs/service-portal/health/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/health"
-          ]
+          "outputs": ["coverage/libs/service-portal/health"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5326,9 +4879,7 @@
             "jestConfig": "libs/service-portal/settings/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/service-portal/settings"
-          ]
+          "outputs": ["coverage/libs/service-portal/settings"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5351,9 +4902,7 @@
             "outputPath": "dist/apps/services/auth-admin-api",
             "main": "apps/services/auth-admin-api/src/main.ts",
             "tsConfig": "apps/services/auth-admin-api/tsconfig.app.json",
-            "assets": [
-              "apps/services/auth-admin-api/src/assets"
-            ],
+            "assets": ["apps/services/auth-admin-api/src/assets"],
             "maxWorkers": 2
           },
           "configurations": {
@@ -5369,9 +4918,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -5400,9 +4947,7 @@
             "jestConfig": "apps/services/auth-admin-api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/auth-admin-api"
-          ]
+          "outputs": ["coverage/apps/services/auth-admin-api"]
         },
         "docker-express": {}
       }
@@ -5458,9 +5003,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -5477,10 +5020,7 @@
               "apps/services/auth-api/tsconfig.app.json",
               "apps/services/auth-api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/services/auth-api/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/services/auth-api/**"]
           }
         },
         "test": {
@@ -5489,9 +5029,7 @@
             "jestConfig": "apps/services/auth-api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/auth-api"
-          ]
+          "outputs": ["coverage/apps/services/auth-api"]
         },
         "docker-express": {},
         "dev-services": {
@@ -5525,9 +5063,7 @@
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "sequelize-cli db:seed:all"
-            ],
+            "commands": ["sequelize-cli db:seed:all"],
             "cwd": "libs/auth-api-lib"
           }
         }
@@ -5579,9 +5115,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -5597,10 +5131,7 @@
               "apps/services/documents/tsconfig.app.json",
               "apps/services/documents/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/services/documents/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/services/documents/**/*"]
           }
         },
         "test": {
@@ -5609,9 +5140,7 @@
             "jestConfig": "apps/services/documents/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/documents"
-          ]
+          "outputs": ["coverage/apps/services/documents"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5680,9 +5209,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -5728,9 +5255,7 @@
             "jestConfig": "apps/services/search-indexer/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/search-indexer"
-          ]
+          "outputs": ["coverage/apps/services/search-indexer"]
         },
         "docker-express": {}
       }
@@ -5781,9 +5306,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -5811,9 +5334,7 @@
             "jestConfig": "apps/services/user-profile/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/user-profile"
-          ]
+          "outputs": ["coverage/apps/services/user-profile"]
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -5859,9 +5380,7 @@
             "outputPath": "dist/apps/services/xroad-collector",
             "main": "apps/services/xroad-collector/src/main.ts",
             "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
-            "assets": [
-              "apps/services/xroad-collector/src/assets"
-            ],
+            "assets": ["apps/services/xroad-collector/src/assets"],
             "maxWorkers": 2
           },
           "configurations": {
@@ -5877,9 +5396,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -5908,9 +5425,7 @@
             "jestConfig": "apps/services/xroad-collector/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/services/xroad-collector"
-          ]
+          "outputs": ["coverage/apps/services/xroad-collector"]
         },
         "docker-express": {}
       }
@@ -5929,10 +5444,7 @@
               "libs/shared/babel/tsconfig.lib.json",
               "libs/shared/babel/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/babel/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/babel/**/*"]
           }
         },
         "test": {
@@ -5941,9 +5453,7 @@
             "jestConfig": "libs/shared/babel/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/babel"
-          ]
+          "outputs": ["coverage/libs/shared/babel"]
         }
       }
     },
@@ -5961,10 +5471,7 @@
               "libs/shared/connected/tsconfig.lib.json",
               "libs/shared/connected/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/connected/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/connected/**/*"]
           }
         },
         "test": {
@@ -5973,9 +5480,7 @@
             "jestConfig": "libs/shared/connected/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/connected"
-          ]
+          "outputs": ["coverage/libs/shared/connected"]
         }
       }
     },
@@ -5993,10 +5498,7 @@
               "libs/shared/form-fields/tsconfig.lib.json",
               "libs/shared/form-fields/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/form-fields/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/form-fields/**/*"]
           }
         },
         "test": {
@@ -6005,9 +5507,7 @@
             "jestConfig": "libs/shared/form-fields/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/form-fields"
-          ]
+          "outputs": ["coverage/libs/shared/form-fields"]
         }
       }
     },
@@ -6025,10 +5525,7 @@
               "libs/shared/mocking/tsconfig.lib.json",
               "libs/shared/mocking/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/mocking/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/mocking/**/*"]
           }
         },
         "test": {
@@ -6037,9 +5534,7 @@
             "jestConfig": "libs/shared/mocking/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/mocking"
-          ]
+          "outputs": ["coverage/libs/shared/mocking"]
         }
       }
     },
@@ -6057,10 +5552,7 @@
               "libs/shared/table/tsconfig.lib.json",
               "libs/shared/table/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/table/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/table/**/*"]
           }
         },
         "test": {
@@ -6069,9 +5561,7 @@
             "jestConfig": "libs/shared/table/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/table"
-          ]
+          "outputs": ["coverage/libs/shared/table"]
         }
       }
     },
@@ -6089,10 +5579,7 @@
               "libs/shared/types/tsconfig.lib.json",
               "libs/shared/types/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/shared/types/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/shared/types/**/*"]
           }
         },
         "test": {
@@ -6101,9 +5588,7 @@
             "jestConfig": "libs/shared/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/shared/types"
-          ]
+          "outputs": ["coverage/libs/shared/types"]
         }
       }
     },
@@ -6121,10 +5606,7 @@
               "libs/skilavottord/consts/tsconfig.lib.json",
               "libs/skilavottord/consts/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/skilavottord/consts/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/consts/**/*"]
           }
         },
         "test": {
@@ -6133,9 +5615,7 @@
             "jestConfig": "libs/skilavottord/consts/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/skilavottord/consts"
-          ]
+          "outputs": ["coverage/libs/skilavottord/consts"]
         }
       }
     },
@@ -6153,10 +5633,7 @@
               "libs/skilavottord/types/tsconfig.lib.json",
               "libs/skilavottord/types/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/skilavottord/types/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/skilavottord/types/**/*"]
           }
         },
         "test": {
@@ -6165,9 +5642,7 @@
             "jestConfig": "libs/skilavottord/types/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/skilavottord/types"
-          ]
+          "outputs": ["coverage/libs/skilavottord/types"]
         }
       }
     },
@@ -6208,9 +5683,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:build",
@@ -6219,9 +5692,7 @@
             "main": "apps/skilavottord/web/server.ts",
             "tsConfig": "apps/skilavottord/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": [
-              "apps/skilavottord/web/next-modules"
-            ]
+            "assets": ["apps/skilavottord/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -6230,9 +5701,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -6254,10 +5723,7 @@
               "apps/skilavottord/web/tsconfig.json",
               "apps/skilavottord/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/skilavottord/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web/**/*"]
           }
         },
         "test": {
@@ -6266,9 +5732,7 @@
             "jestConfig": "apps/skilavottord/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/skilavottord/web"
-          ]
+          "outputs": ["coverage/apps/skilavottord/web"]
         },
         "docker-next": {}
       }
@@ -6302,13 +5766,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/skilavottord/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/skilavottord/web-e2e/**/*"
-            ]
+            "tsConfig": ["apps/skilavottord/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/web-e2e/**/*"]
           }
         }
       }
@@ -6364,9 +5823,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -6382,10 +5839,7 @@
               "apps/skilavottord/ws/tsconfig.app.json",
               "apps/skilavottord/ws/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/skilavottord/ws/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/ws/**/*"]
           }
         },
         "test": {
@@ -6394,9 +5848,7 @@
             "jestConfig": "apps/skilavottord/ws/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/skilavottord/ws"
-          ]
+          "outputs": ["coverage/apps/skilavottord/ws"]
         },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
@@ -6442,10 +5894,7 @@
               "libs/utils/api/tsconfig.lib.json",
               "libs/utils/api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/utils/api/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/utils/api/**/*"]
           }
         },
         "test": {
@@ -6454,9 +5903,7 @@
             "jestConfig": "libs/utils/api/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/utils/api"
-          ]
+          "outputs": ["coverage/libs/utils/api"]
         }
       }
     },
@@ -6474,10 +5921,7 @@
               "libs/utils/environment/tsconfig.lib.json",
               "libs/utils/environment/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/utils/environment/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/utils/environment/**/*"]
           }
         },
         "test": {
@@ -6486,9 +5930,7 @@
             "jestConfig": "libs/utils/environment/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/utils/environment"
-          ]
+          "outputs": ["coverage/libs/utils/environment"]
         }
       }
     },
@@ -6506,10 +5948,7 @@
               "libs/vmst-client/tsconfig.lib.json",
               "libs/vmst-client/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/vmst-client/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/vmst-client/**/*"]
           }
         },
         "test": {
@@ -6518,9 +5957,7 @@
             "jestConfig": "libs/vmst-client/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/vmst-client"
-          ]
+          "outputs": ["coverage/libs/vmst-client"]
         },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
@@ -6540,10 +5977,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "dist/apps/web",
-            "commands": [
-              "yarn nx build-next web",
-              "yarn nx build-server web"
-            ]
+            "commands": ["yarn nx build-next web", "yarn nx build-server web"]
           },
           "configurations": {
             "production": {
@@ -6567,9 +6001,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "build-server": {
           "builder": "@nrwl/node:build",
@@ -6578,9 +6010,7 @@
             "main": "apps/web/server.ts",
             "tsConfig": "apps/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": [
-              "apps/web/next-modules"
-            ]
+            "assets": ["apps/web/next-modules"]
           },
           "configurations": {
             "production": {
@@ -6589,9 +6019,7 @@
               "inspect": false
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -6613,10 +6041,7 @@
               "apps/web/tsconfig.json",
               "apps/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/web/**/*"]
           }
         },
         "test": {
@@ -6625,9 +6050,7 @@
             "jestConfig": "apps/web/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/web"
-          ]
+          "outputs": ["coverage/apps/web"]
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
@@ -6667,13 +6090,8 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web-e2e/**/*"
-            ]
+            "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
           }
         }
       }

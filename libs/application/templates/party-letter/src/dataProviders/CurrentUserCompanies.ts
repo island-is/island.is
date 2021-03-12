@@ -16,7 +16,7 @@ type GetUserCompaniesResponse = {
 export class CurrentUserCompaniesProvider extends BasicDataProvider {
   type = 'PenaltyPointsProvider'
 
-  async provide (): Promise<UserCompany[]> {
+  async provide(): Promise<UserCompany[]> {
     const query = `
       query GetUserCompanies {
         rskGetCurrentUserCompanies {
@@ -31,7 +31,7 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
     return this.useGraphqlGateway<GetUserCompaniesResponse>(query).then(
       async (res) => {
         const response = await res.json()
-        console.log('test', response)
+
         const uniqueAllowedCompanies = new Map<string, UserCompany>()
         const userCompanies = response.data?.rskGetCurrentUserCompanies ?? []
         userCompanies.forEach((company) => {
@@ -46,7 +46,7 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
     )
   }
 
-  onProvideError (result: string): FailedDataProviderResult {
+  onProvideError(result: string): FailedDataProviderResult {
     return {
       date: new Date(),
       reason:
@@ -56,7 +56,7 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
     }
   }
 
-  onProvideSuccess (result: object): SuccessfulDataProviderResult {
+  onProvideSuccess(result: object): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }
