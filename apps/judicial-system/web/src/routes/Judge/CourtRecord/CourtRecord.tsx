@@ -169,6 +169,13 @@ export const CourtRecord: React.FC = () => {
             theCase.parentCase?.decision,
           ),
         }
+
+        if (theCase.policeDemands) {
+          updateCase(
+            theCase.id,
+            parseString('policeDemands', theCase.policeDemands),
+          )
+        }
       }
 
       setWorkingCase(theCase)
