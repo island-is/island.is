@@ -18,6 +18,7 @@ const user: User = {
     credit: 2,
     used: 2,
     total: 2,
+    availableConnectionFlights: 0
   },
 }
 
@@ -33,7 +34,8 @@ describe('UserService', () => {
         {
           provide: FlightService,
           useClass: jest.fn(() => ({
-            countThisYearsFlightLegsByNationalId: () => ({}),
+            countThisYearsFlightLegsByNationalId: () => 0,
+            countThisYearsConnectedFlightsByNationalId: () => 0,
             isADSPostalCode: () => ({}),
           })),
         },

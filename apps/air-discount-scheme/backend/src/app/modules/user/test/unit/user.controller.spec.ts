@@ -15,6 +15,7 @@ const airlineUser: AirlineUser = {
     credit: 0,
     used: 0,
     total: 4,
+    availableConnectionFlights: 0
   },
 }
 
@@ -54,7 +55,7 @@ describe('PublicUserController', () => {
     it('should return a user', async () => {
       const nationalId = '1326487905'
       const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, nationalId, 0)
+      const discount = new Discount(discountCode, [], nationalId, 0)
 
       const getDiscountByDiscountCodeSpy = jest
         .spyOn(discountService, 'getDiscountByDiscountCode')
@@ -75,7 +76,7 @@ describe('PublicUserController', () => {
     it('should return not found error when user does not exist', async () => {
       const nationalId = '1326487905'
       const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, nationalId, 0)
+      const discount = new Discount(discountCode, [], nationalId, 0)
 
       jest
         .spyOn(discountService, 'getDiscountByDiscountCode')

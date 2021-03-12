@@ -85,7 +85,7 @@ describe('PublicFlightController', () => {
 
   describe('create', () => {
     const discountCode = 'ABCDEFG'
-    const discount = new Discount(discountCode, nationalId, 0)
+    const discount = new Discount(discountCode, [], nationalId, 0)
     const flightDto: CreateFlightBody = {
       bookingDate: new Date('2020-10-05T14:48:00.000Z'),
       flightLegs: [
@@ -145,6 +145,7 @@ describe('PublicFlightController', () => {
         discountCode,
         nationalId,
         flight.id,
+        false
       )
       expect(result).toEqual(flight)
     })
