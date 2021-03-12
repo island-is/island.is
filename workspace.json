@@ -3200,8 +3200,27 @@
       "root": "libs/island-ui/core",
       "sourceRoot": "libs/island-ui/core/src",
       "projectType": "library",
-      "schematics": {},
       "architect": {
+        "build": {
+          "builder": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/island-ui/core",
+            "tsConfig": "libs/island-ui/core/tsconfig.lib.json",
+            "project": "libs/island-ui/core/package.json",
+            "entryFile": "libs/island-ui/core/src/index.ts",
+            "external": ["react", "react-dom", "treat"],
+            "babelConfig": "@nrwl/react/plugins/bundle-babel",
+            "rollupConfig": "libs/island-ui/core/rollup.config.js",
+            "assets": [
+              {
+                "glob": "README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
@@ -3227,6 +3246,79 @@
       "root": "libs/island-ui/fonts",
       "projectType": "library",
       "architect": {}
+    },
+    "island-ui-npm-test": {
+      "root": "libs/island-ui/npm-test",
+      "sourceRoot": "libs/island-ui/npm-test/src",
+      "projectType": "library",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/island-ui/npm-test",
+            "tsConfig": "libs/island-ui/npm-test/tsconfig.lib.json",
+            "project": "libs/island-ui/npm-test/package.json",
+            "entryFile": "libs/island-ui/npm-test/src/index.ts",
+            "external": ["react", "react-dom"],
+            "babelConfig": "@nrwl/react/plugins/bundle-babel",
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/island-ui/npm-test/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/island-ui/npm-test"],
+          "options": {
+            "jestConfig": "libs/island-ui/npm-test/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "island-ui-npm-test-2": {
+      "root": "libs/island-ui/npm-test-2",
+      "sourceRoot": "libs/island-ui/npm-test-2/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/island-ui/npm-test-2/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/island-ui/npm-test-2"],
+          "options": {
+            "jestConfig": "libs/island-ui/npm-test-2/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/island-ui/npm-test-2",
+            "tsConfig": "libs/island-ui/npm-test-2/tsconfig.lib.json",
+            "packageJson": "libs/island-ui/npm-test-2/package.json",
+            "main": "libs/island-ui/npm-test-2/src/index.ts",
+            "assets": ["libs/island-ui/npm-test-2/*.md"]
+          }
+        }
+      }
     },
     "island-ui-storybook": {
       "root": "libs/island-ui/storybook",
@@ -3287,6 +3379,17 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
+        "build": {
+          "builder": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/island-ui/theme",
+            "tsConfig": "libs/island-ui/theme/tsconfig.lib.json",
+            "packageJson": "libs/island-ui/theme/package.json",
+            "main": "libs/island-ui/theme/src/index.ts",
+            "assets": ["libs/island-ui/theme/*.md"]
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {

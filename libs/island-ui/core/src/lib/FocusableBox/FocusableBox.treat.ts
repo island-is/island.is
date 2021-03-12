@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 
 export const focusable = style({
   position: 'relative',

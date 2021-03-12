@@ -1,5 +1,6 @@
-import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from 'treat'
+
+import { theme, themeUtils } from '../../utils/theme'
 
 export const container = style({
   width: '100%',

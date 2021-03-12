@@ -1,6 +1,11 @@
 import isEqual from 'lodash/isEqual'
-import { Style } from 'treat'
+import { CSSProperties, Style } from 'treat'
 import omit from 'lodash/omit'
+
+// TS4023
+export interface SelectorMap {
+  [selector: string]: CSSProperties
+}
 
 import * as color from './colors'
 
@@ -141,7 +146,7 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
     xl: makeMediaQuery('xl'),
   }
 
-  const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle): Style => {
+  const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle) => {
     const xsStyles = omit(xs, '@media')
     const smStyles = !sm || isEqual(sm, xsStyles) ? null : sm
     const mdStyles = !md || isEqual(md, xsStyles || smStyles) ? null : md

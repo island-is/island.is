@@ -5,7 +5,9 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "downlevelIteration": true,
+    "noImplicitAny": false
   },
   "files": [],
   "include": [],

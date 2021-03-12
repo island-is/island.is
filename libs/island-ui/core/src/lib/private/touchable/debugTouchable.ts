@@ -1,6 +1,8 @@
 import { Style } from 'treat'
 
-type SelectorMap = Style['selectors']
+import { SelectorMap } from '../../../utils/theme'
+
+// type SelectorMap = Style['selectors']
 
 export const debugTouchable = ({ after = false } = {}): SelectorMap =>
   process.env.NODE_ENV === 'production'

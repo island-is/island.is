@@ -1,5 +1,5 @@
 import { style, styleMap, globalStyle } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 import * as mixins from '../Input/Input.mixins'
 
 export const root = style({

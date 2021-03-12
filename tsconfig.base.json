@@ -19,6 +19,7 @@
     "strict": true,
     "paths": {
       "*": ["libs/shared/types/src/lib/*", "*"],
+      "@island.is/*": ["dist/libs/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],

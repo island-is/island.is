@@ -34,3 +34,7 @@ libs/utils/README.md
 
 # Shared
 libs/shared/webpack
+
+# NPM @island.is
+# libs/island-ui/core/**/*.stories.mdx
+# libs/island-ui/core/**/*.stories.tsx

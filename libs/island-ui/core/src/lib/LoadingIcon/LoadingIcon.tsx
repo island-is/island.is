@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react'
-import { Colors, theme } from '@island.is/island-ui/theme'
 import anime, { AnimeInstance } from 'animejs'
+
+import { theme, Colors } from '../../utils/theme'
 
 interface LoadingIconProps {
   animate?: boolean

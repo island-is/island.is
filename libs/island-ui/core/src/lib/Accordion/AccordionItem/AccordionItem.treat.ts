@@ -1,5 +1,6 @@
 import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+
+import { theme } from '../../../utils/theme'
 
 export const button = style({})
 
@@ -60,14 +61,14 @@ export const card = style({
     transition: 'border-color 150ms ease, opacity 150ms ease',
   },
   selectors: {
-    [`&:focus::before`]: {
+    '&:focus::before': {
       borderWidth: 3,
       borderStyle: 'solid',
       borderColor: theme.color.mint400,
       opacity: 1,
       outline: 0,
     },
-    [`&:focus:hover`]: {
+    '&:focus:hover': {
       borderColor: theme.color.white,
     },
   },

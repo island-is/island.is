@@ -1,0 +1,10 @@
+lib/**/*.stories.mdx
+lib/**/*.stories.tsx
+.babelrc
+.eslintrc
+babel-jest.config.json
+jest.config.js
+rollup.config.js
+tsconfig.json
+tsconfig.lib.json
+tsconfig.spec.json

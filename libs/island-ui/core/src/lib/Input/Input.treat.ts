@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
+import { Theme, theme, themeUtils } from '../../utils/theme'
 import * as mixins from './Input.mixins'
 import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'

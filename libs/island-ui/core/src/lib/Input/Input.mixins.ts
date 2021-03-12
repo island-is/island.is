@@ -1,4 +1,4 @@
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 
 const inputPadding = `0 ${theme.spacing[2]}px`
 const mobileInputPadding = `0 ${theme.spacing[1]}px`

@@ -6,7 +6,8 @@ import {
   registerLocale,
   ReactDatePickerProps,
 } from 'react-datepicker'
-import getYear from 'date-fns/getYear'
+// import getYear from 'date-fns/getYear'
+import { getYear } from 'date-fns'
 import pl from 'date-fns/locale/pl'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'

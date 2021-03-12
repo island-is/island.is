@@ -98,3 +98,12 @@ export type {
   DatePickerBackgroundColor,
   DatePickerProps,
 } from './lib/DatePicker/types'
+
+// TEMP
+export * from './utils/colors'
+export * from './utils/deorphanize'
+export * from './utils/escapeGrid'
+export * from './utils/hexToRgba'
+export * from './utils/responsiveRangeProps'
+export * from './utils/responsiveStyleMap'
+export * from './utils/theme'

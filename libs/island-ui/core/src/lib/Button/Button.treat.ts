@@ -1,5 +1,5 @@
 import { style, Style, styleMap } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 
 // this is used to generate uniqe classname for button so we can target empty styles for icon
 export const isEmpty = style({})
@@ -426,6 +426,7 @@ const utilityIconColor = (
   color: string,
   hovercolor: string,
 ) => ({
+  color,
   [`${variants.utility}${colors.utility[scheme]}:not(:focus) &`]: {
     color: color,
   },
@@ -530,14 +531,14 @@ export const loadingDot = style({
     '&:nth-child(3)': {
       animationDelay: '0.8s',
     },
-    [`${loadingCircle} &:nth-child(2), ${loadingCircle} &:nth-child(3)`]: {
-      display: 'none',
-    },
-    [`${loadingCircle} &`]: {
-      width: 16,
-      height: 16,
-      marginRight: 0,
-    },
+    // [`${loadingCircle} &:nth-child(2), ${loadingCircle} &:nth-child(3)`]: {
+    //   display: 'none',
+    // },
+    // [`${loadingCircle} &`]: {
+    //   width: 16,
+    //   height: 16,
+    //   marginRight: 0,
+    // },
   },
   animation:
     '@keyframes 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite',

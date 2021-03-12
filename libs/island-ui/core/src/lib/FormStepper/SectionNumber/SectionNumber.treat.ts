@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../../utils/theme'
 
 export const number = style({
   width: 32,

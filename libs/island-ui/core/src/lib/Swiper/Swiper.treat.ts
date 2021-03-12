@@ -1,6 +1,6 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
-import { escapeGrid } from '@island.is/island-ui/utils'
+import { theme } from '../../utils/theme'
+import { escapeGrid } from '../../utils/escapeGrid'
 
 export const root = style({
   ...escapeGrid(),

@@ -279,10 +279,15 @@
       "tags": []
     },
     "island-ui-core": {
-      "tags": [],
-      "implicitDependencies": ["island-ui-theme"]
+      "tags": []
     },
     "island-ui-fonts": {
+      "tags": []
+    },
+    "island-ui-npm-test": {
+      "tags": []
+    },
+    "island-ui-npm-test-2": {
       "tags": []
     },
     "island-ui-storybook": {

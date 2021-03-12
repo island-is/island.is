@@ -1,12 +1,12 @@
-import React, { FC, useState, useEffect, Fragment, ReactNode } from 'react'
+import React, { FC, useState, useEffect, ReactNode } from 'react'
 import cn from 'classnames'
 import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
-import { theme, Colors } from '@island.is/island-ui/theme'
+
+import { theme, Colors } from '../../utils/theme'
 import { Text } from '../Text/Text'
 import { Box, BoxProps } from '../Box/Box'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Button } from '../Button/Button'
-
 import * as styles from './Navigation.treat'
 import { Icon } from '../IconRC/Icon'
 

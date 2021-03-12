@@ -1,14 +1,14 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
+import { ValueType } from 'react-select'
+import { useWindowSize } from 'react-use'
+
 import { Box } from '../Box/Box'
 import { Select, Option } from '../Select/Select'
-
+import { Colors, theme } from '../../utils/theme'
 import * as styles from './Tabs.treat'
-import { ValueType } from 'react-select'
-import { Colors, theme } from '@island.is/island-ui/theme'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
-import { useWindowSize } from 'react-use'
 
 type TabType = {
   label: string

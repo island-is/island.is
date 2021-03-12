@@ -1,5 +1,5 @@
 import { styleMap, style, globalStyle } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 
 const speed = '150ms'
 

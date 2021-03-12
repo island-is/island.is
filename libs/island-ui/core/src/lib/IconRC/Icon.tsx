@@ -1,9 +1,10 @@
 import React, { Suspense, useMemo } from 'react'
 import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 import iconMap, { Icon as IconType, Type } from './iconMap'
 import { Box } from '../Box/Box'
 import * as styles from './Icon.treat'
+import IconSvg from './icons/Accessibility'
 
 const colors = theme.color
 
@@ -61,10 +62,12 @@ export const Icon = ({
   titleId,
   skipPlaceholderSize,
 }: IconProps) => {
-  const path = iconMap[type][icon]
-  const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
-    path,
-  ])
+  // TODO
+  // const path = iconMap[type][icon]
+  // const IconSvg = useMemo(() => React.lazy(() => import('./icons/' + path)), [
+  //   path,
+  // ])
+
   if (typeof window === 'undefined') {
     return (
       <Placeholder
@@ -74,20 +77,26 @@ export const Icon = ({
       />
     )
   }
+
   const optionalProps: SvgProps = {}
+
   if (className) {
     optionalProps.className = className
   }
+
   if (title) {
     optionalProps.title = title
   }
+
   if (titleId) {
     optionalProps.titleId = titleId
   }
+
   if (size) {
     optionalProps.width = sizes[size]
     optionalProps.height = sizes[size]
   }
+
   return (
     <Suspense
       fallback={
