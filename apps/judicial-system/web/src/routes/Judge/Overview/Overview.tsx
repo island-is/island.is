@@ -310,15 +310,15 @@ export const JudgeOverview: React.FC = () => {
                       }}
                       required
                     />
-                    {(!showCreateCustodyCourtCase ||
-                      workingCase.setCourtCaseNumberManually) && (
-                      <Box marginTop={1}>
-                        <Text variant="eyebrow" color="blue400">
-                          Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
-                          málsnúmer sem slegið er inn
-                        </Text>
-                      </Box>
-                    )}
+                    {showCreateCustodyCourtCase &&
+                      workingCase.setCourtCaseNumberManually && (
+                        <Box marginTop={1}>
+                          <Text variant="eyebrow" color="blue400">
+                            Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
+                            málsnúmer sem slegið er inn
+                          </Text>
+                        </Box>
+                      )}
                   </div>
                 </Box>
                 {courtCaseNumberErrorMessage &&
@@ -372,12 +372,11 @@ export const JudgeOverview: React.FC = () => {
                         workingCase.parentCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `${capitalize(
+                    : workingCase.arrestDate
+                    ? `${capitalize(
                         formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                      )} kl. ${formatDate(
-                        workingCase.arrestDate,
-                        TIME_FORMAT,
-                      )}`,
+                      )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                    : 'Var ekki skráður',
                 },
               ]}
               accusedName={workingCase.accusedName}
