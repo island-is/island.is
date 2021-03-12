@@ -7,7 +7,7 @@ import {
   ValueLine,
 } from './Shared'
 import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
-import { useLocale } from 'libs/localization/src'
+import { useLocale } from '@island.is/localization'
 
 export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,

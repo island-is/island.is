@@ -17,7 +17,7 @@ import {
   Complaint,
   OrganizationOrInstitution,
 } from './Sections'
-import { CheckboxController } from 'libs/shared/form-fields/src'
+import { CheckboxController } from '@island.is/shared/form-fields'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({
   application,
