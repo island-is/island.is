@@ -105,6 +105,7 @@ export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
   readonly description: FormText
+  tooltip?: FormText
 }
 
 export interface RadioField extends BaseField {
@@ -131,6 +132,7 @@ export interface AsyncSelectField extends BaseField {
   loadOptions: (c: Context) => Promise<Option[]>
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   loadingError?: FormText
+  backgroundColor?: InputBackgroundColor
 }
 
 export interface TextField extends BaseField {

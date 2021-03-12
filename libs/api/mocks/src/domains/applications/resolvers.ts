@@ -13,7 +13,7 @@ export const resolvers: Resolvers = {
     applicationApplications: (parent, args) => {
       return store.applications.filter(
         (a) =>
-          (args.input.typeId ?? []).some((t) => t === a.typeId) &&
+          (args.input?.typeId ?? []).some((t) => t === a.typeId) &&
           a.applicant === '0000000000',
       )
     },

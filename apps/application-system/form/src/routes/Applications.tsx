@@ -22,7 +22,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
-import { useLocale } from '@island.is/localization'
+import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 
 import useAuth from '../hooks/useAuth'
 
@@ -32,6 +32,8 @@ export const Applications: FC = () => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
+
+  useApplicationNamespaces(type)
 
   const { data, loading, error: applicationsError } = useQuery(
     APPLICATION_APPLICATIONS,

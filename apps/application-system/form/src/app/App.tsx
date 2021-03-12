@@ -1,7 +1,6 @@
 import React from 'react'
 import { ApolloProvider } from '@apollo/client'
-import { BrowserRouter } from 'react-router-dom'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Box, GridContainer } from '@island.is/island-ui/core'
 import { initializeClient } from '@island.is/application/graphql'
 import { defaultLanguage, LocaleProvider } from '@island.is/localization'
@@ -40,13 +39,16 @@ export const App = () => {
                     path="/tengjast-umsokn"
                     component={AssignApplication}
                   />
+
                   <Route
                     strict
                     exact
                     path="/umsoknir/:type"
                     component={Applications}
                   />
+
                   <Route path="/umsokn/:id" component={Application} />
+
                   <Route path="*">
                     <NotFound />
                   </Route>

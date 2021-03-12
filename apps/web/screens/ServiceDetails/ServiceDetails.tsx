@@ -53,21 +53,16 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   openApiContent,
   service = null,
 }) => {
-  useScript(
-    'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js',
-    true,
-    'redoc',
-  )
-
   const n = useNamespace(strings)
   const nfc = useNamespace(filterContent)
   const noa = useNamespace(openApiContent)
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
   const { linkResolver } = useLinkResolver()
-  const [selectedServiceDetail, setselectedServiceDetail] = useState<
-    ServiceDetail
-  >(service.environments[0].details[0])
+  const [
+    selectedServiceDetail,
+    setselectedServiceDetail,
+  ] = useState<ServiceDetail>(service.environments[0].details[0])
   //TODO look into how to initialize
 
   const xroadIdentifierToOpenApiInput = (xroadIdentifier: XroadIdentifier) => {
@@ -75,9 +70,12 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     return identifier
   }
 
-  const [selectedGetOpenApiInput, setSelectedGetOpenApiInput] = useState<
-    GetOpenApiInput
-  >(xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier))
+  const [
+    selectedGetOpenApiInput,
+    setSelectedGetOpenApiInput,
+  ] = useState<GetOpenApiInput>(
+    xroadIdentifierToOpenApiInput(selectedServiceDetail.xroadIdentifier),
+  )
 
   const setApiContent = (serviceDetail: ServiceDetail) => {
     setselectedServiceDetail(serviceDetail)
@@ -113,10 +111,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
     {
       href: n('linkDesignSystem'),
       title: n('linkDesignSystemText'),
-    },
-    {
-      href: n('linkContentPolicy'),
-      title: n('linkContentPolicyText'),
     },
   ]
   const { activeLocale } = useI18n()

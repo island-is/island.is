@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsEnum, IsUUID } from 'class-validator'
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsUUID,
+  IsBoolean,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -34,7 +40,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: CaseGender })
   readonly accusedGender?: CaseGender
 
   @IsOptional()
@@ -46,6 +52,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly defenderEmail?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly sendRequestToDefender?: boolean
 
   @IsOptional()
   @IsString()
@@ -113,6 +124,11 @@ export class UpdateCaseDto {
   readonly prosecutorId?: string
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly setCourtCaseNumberManually?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtCaseNumber?: string
@@ -151,6 +167,11 @@ export class UpdateCaseDto {
   @IsString({ each: true })
   @ApiPropertyOptional({ isArray: true })
   readonly courtDocuments?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly additionToConclusion?: string
 
   @IsOptional()
   @IsEnum(AccusedPleaDecision)

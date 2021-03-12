@@ -1,7 +1,5 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route } from 'react-router-dom'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import userEvent from '@testing-library/user-event'
 import {
   mockCaseQueries,
@@ -21,6 +19,11 @@ import CourtRecord from './CourtRecord'
 describe('/domari-krafa/thingbok', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
+
     render(
       <MockedProvider
         mocks={[
@@ -36,6 +39,10 @@ describe('/domari-krafa/thingbok', () => {
             {
               courtAttendees:
                 'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
+            } as UpdateCase,
+            {
+              policeDemands:
+                'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {
               policeDemands:
@@ -56,15 +63,9 @@ describe('/domari-krafa/thingbok', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.COURT_RECORD_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.COURT_RECORD_ROUTE}/:id`}>
-              <CourtRecord />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <CourtRecord />
+        </UserProvider>
       </MockedProvider>,
     )
 

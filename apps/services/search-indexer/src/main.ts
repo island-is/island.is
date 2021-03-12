@@ -1,6 +1,5 @@
-import '@island.is/infra-tracing'
-import { AppModule } from './app/app.module'
 import { bootstrap } from '@island.is/infra-nest-server'
+import { AppModule } from './app/app.module'
 
 bootstrap({
   appModule: AppModule,

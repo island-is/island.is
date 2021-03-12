@@ -99,6 +99,7 @@
   - [X-Road Collector](apps/services/xroad-collector/README.md)
 - [Car Recycling - Skilavottorð](apps/skilavottord/README.md)
 - [Web](apps/web/README.md)
+  - [Subpages](apps/web/docs/subpages.md)
 
 ## Libs
 
@@ -119,8 +120,10 @@
   - [Template API Modules](libs/application/template-api-modules/README.md)
   - [Template Loader](libs/application/template-loader/README.md)
     - [Children Residence Change Template](libs/application/templates/children-residence-change/README.md)
+    - [Application Templates Data Protection Complaint](libs/application/templates/data-protection-complaint/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
+    - [Health Insurance](libs/application/templates/health-insurance/README.md)
     - [Party Letter](libs/application/templates/party-letter/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
@@ -145,6 +148,10 @@
   - [Service Portal Core](libs/service-portal/core/README.md)
   - [Document Provider](libs/service-portal/document-provider/README.md)
   - [Service Portal Driving License](libs/service-portal/driving-license/README.md)
+  - [Service Portal Education Career](libs/service-portal/education-career/README.md)
+  - [Service Portal Education Degree](libs/service-portal/education-degree/README.md)
+  - [Service Portal Education License](libs/service-portal/education-license/README.md)
+  - [Service Portal Education Student Assessment](libs/service-portal/education-student-assessment/README.md)
   - [Service Portal Eligibility](libs/service-portal/eligibility/README.md)
 - [Shared](libs/shared/README.md)
   - [Shared Form Fields](libs/shared/form-fields/README.md)

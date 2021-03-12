@@ -101,6 +101,7 @@ const remainingCreateCaseData = {
   accusedGender: CaseGender.OTHER,
   defenderName: 'Defender Name',
   defenderEmail: 'Defender Email',
+  sendRequestToDefender: true,
   court: 'Court',
 }
 
@@ -266,6 +267,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.accusedGender || null).toBe(caseTwo.accusedGender || null)
   expect(caseOne.defenderName || null).toBe(caseTwo.defenderName || null)
   expect(caseOne.defenderEmail || null).toBe(caseTwo.defenderEmail || null)
+  expect(caseOne.sendRequestToDefender || null).toBe(
+    caseTwo.sendRequestToDefender || null,
+  )
   expect(caseOne.court || null).toBe(caseTwo.court || null)
   expect(caseOne.arrestDate || null).toBe(caseTwo.arrestDate || null)
   expect(caseOne.requestedCourtDate || null).toBe(
@@ -318,6 +322,11 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.otherRestrictions || null).toBe(
     caseTwo.otherRestrictions || null,
   )
+
+  expect(caseOne.additionToConclusion || null).toBe(
+    caseTwo.additionToConclusion || null,
+  )
+
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )
@@ -369,7 +378,7 @@ describe('User', () => {
     let dbUser: CUser
 
     await User.findOne({
-      where: { national_id: judgeNationalId }, // eslint-disable-line @typescript-eslint/camelcase
+      where: { national_id: judgeNationalId },
       include: [{ model: Institution, as: 'institution' }],
     })
       .then((value) => {
@@ -402,7 +411,7 @@ describe('User', () => {
 
     await User.destroy({
       where: {
-        national_id: data.nationalId, // eslint-disable-line @typescript-eslint/camelcase
+        national_id: data.nationalId,
       },
     })
       .then(() => {
@@ -449,7 +458,7 @@ describe('User', () => {
 
     await User.destroy({
       where: {
-        national_id: nationalId, // eslint-disable-line @typescript-eslint/camelcase
+        national_id: nationalId,
       },
     })
       .then(() => {

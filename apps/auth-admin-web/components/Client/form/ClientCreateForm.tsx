@@ -27,7 +27,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
   const [clientTypeInfo, setClientTypeInfo] = useState<JSX.Element>(<div></div>)
-  const client = props.client
+  const [client, setClient] = useState<ClientDTO>(props.client)
   const [requireConsent, setRequireConsent] = useState(false)
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
@@ -78,6 +78,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
     }
+    setClient({ ...props.client })
   }, [props.client])
 
   const create = async (data: ClientDTO): Promise<Client | null> => {
@@ -360,9 +361,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <div className="client__container__field">
                       <label className="client__label">Base Url:</label>
                       <input
+                        readOnly={isEditing}
                         name="baseUrl"
                         type="text"
-                        ref={register({ required: true })}
+                        ref={register({ required: !isEditing })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
                         placeholder="https://localhost:4200"
@@ -483,6 +485,86 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       show === true ? 'show' : 'hidden'
                     }`}
                   >
+                    <section className="client_section">
+                      <h3>Delegation section</h3>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="supportsDelegation"
+                        >
+                          Supports Delegation
+                        </label>
+                        <input
+                          id="supportsDelegation"
+                          type="checkbox"
+                          name="client.supportsDelegation"
+                          defaultChecked={client.supportsDelegation}
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the client supports delegation"
+                        />
+                        <HelpBox helpText="Specifies if the client supports delegation" />
+                      </div>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="supportsLegalGuardians"
+                        >
+                          Supports Legal Guardians Delegation
+                        </label>
+                        <input
+                          id="supportsLegalGuardians"
+                          type="checkbox"
+                          name="client.supportsLegalGuardians"
+                          defaultChecked={client.supportsLegalGuardians}
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the client supports legal guardian delegation"
+                        />
+                        <HelpBox helpText="Specifies if the client supports legal guardian delegation" />
+                      </div>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="supportsProcuringHolders"
+                        >
+                          Supports Procuring Holders Delegation
+                        </label>
+                        <input
+                          id="supportsProcuringHolders"
+                          type="checkbox"
+                          name="client.supportsProcuringHolders"
+                          defaultChecked={client.supportsProcuringHolders}
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the client supports Procuring Holders delegation"
+                        />
+                        <HelpBox helpText="Specifies if the client supports Procuring Holders delegation" />
+                      </div>
+
+                      <div className="client__container__checkbox__field">
+                        <label
+                          className="client__label"
+                          htmlFor="promptDelegations"
+                        >
+                          Prompt delegations
+                        </label>
+                        <input
+                          id="promptDelegations"
+                          type="checkbox"
+                          name="client.promptDelegations"
+                          defaultChecked={client.promptDelegations}
+                          className="client__input"
+                          ref={register}
+                          title="Specifies if the user is prompt with delegation window"
+                        />
+                        <HelpBox helpText="Specifies if the user is prompt with delegation window" />
+                      </div>
+                    </section>
+
                     <div className="client__container__field">
                       <label className="client__label">
                         Front channel logout uri

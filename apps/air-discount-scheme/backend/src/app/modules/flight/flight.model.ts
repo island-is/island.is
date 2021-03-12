@@ -101,6 +101,14 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
   destination!: string
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  isConnectingFlight!: boolean
+
+  @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })

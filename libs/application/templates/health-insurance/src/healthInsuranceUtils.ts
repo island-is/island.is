@@ -1,8 +1,17 @@
 import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
-import { EFTA, EU } from './constants'
-import { NordicCountries } from './types'
+import { EFTA, EU, NordicCountries } from './constants'
+
+export const sortApplicationsByDateAscending = (
+  applications: Applications[],
+) => {
+  const sortedApplications = applications
+    .slice()
+    .sort((a, b) => (new Date(a.created) > new Date(b.created) ? 1 : -1))
+
+  return sortedApplications
+}
 
 export const hasHealthInsurance = (externalData: ExternalData) => {
   const isInsured = externalData?.healthInsurance?.data
@@ -16,6 +25,14 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
     const pendingApplications = applications?.filter(
       (application) => application.state === 'draft',
     )
+    const sortedApplications = sortApplicationsByDateAscending(applications)
+    const firstCreatedId = sortedApplications[0].id
+    const currentPathname = window.location.pathname
+
+    if (currentPathname.includes(firstCreatedId)) {
+      return false
+    }
+
     return pendingApplications?.length > 1
   }
   // If we can not find any pending applications becausee of failure to fetch info, we will return false to allow the user to continue to create a new application

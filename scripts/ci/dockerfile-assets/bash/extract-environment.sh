@@ -6,7 +6,7 @@
 
 set -e
 
-work_dir="/usr/share/nginx/html"
+work_dir="${1:-/usr/share/nginx/html}"
 file="$work_dir/index.html"
 
 placeholder="<!-- environment placeholder -->"

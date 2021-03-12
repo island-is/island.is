@@ -1,13 +1,17 @@
-import { Controller, Get } from '@nestjs/common'
+import { Body, Controller, Post } from '@nestjs/common'
+import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import { AppService } from './app.service'
+import { CreateCaseDto } from './app.dto'
+import { Case } from './app.model'
 
-@Controller()
+@Controller('api/v1')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getData() {
-    return this.appService.getData()
+  @Post('case')
+  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
+  create(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
+    return this.appService.create(caseToCreate)
   }
 }

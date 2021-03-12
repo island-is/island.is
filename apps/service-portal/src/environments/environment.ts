@@ -10,17 +10,5 @@ export default {
     dsn:
       'https://3c45a55273774b91a897b85e0a1243d1@o406638.ingest.sentry.io/5501494',
   },
-  featureFlags: {
-    applications: true,
-    documents: true,
-    settings: true,
-    finance: true,
-    family: true,
-    health: false,
-    education: true,
-    delegation: false,
-    assets: false,
-    drivingLicense: false,
-    documentProvider: true,
-  },
+  featureFlagSdkKey: 'YcfYCOwBTUeI04mWOWpPdA/KgCHhUk0_k2BdiKMaNh3qA',
 }

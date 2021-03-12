@@ -28,7 +28,6 @@ import {
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
-  ApiOAuth2,
   ApiOkResponse,
   ApiQuery,
   ApiTags,
@@ -37,7 +36,6 @@ import {
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-// @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('resources')
 @Controller('backend')
@@ -318,15 +316,6 @@ export class ResourcesController {
     return await this.resourcesService.deleteApiResource(name)
   }
 
-  @Get('user-claims/:name')
-  async getResourceUserClaims(@Param('name') name: string): Promise<any> {
-    if (!name) {
-      throw new BadRequestException('Name must be provided')
-    }
-
-    return await this.resourcesService.getResourceUserClaims(name)
-  }
-
   @Post('identity-resource-user-claims/:identityResourceName/:claimName')
   async addResourceUserClaim(
     @Param('identityResourceName') identityResourceName: string,
@@ -428,7 +417,6 @@ export class ResourcesController {
   async addApiResourceSecret(
     @Body() apiSecret: ApiResourceSecretDTO,
   ): Promise<ApiResourceSecret> {
-    console.log(apiSecret)
     if (!apiSecret) {
       throw new BadRequestException('The apiSecret object must be provided')
     }

@@ -5,6 +5,11 @@ import { BoxProps } from '@island.is/island-ui/core'
 import { Field, RecordObject } from '@island.is/application/core'
 import { Application } from './Application'
 
+export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+export type SetBeforeSubmitCallback = (
+  callback: BeforeSubmitCallback | null,
+) => void
+
 // TODO: refactor { values?: object } into { values?: RecordObject }
 export type StaticTextObject = MessageDescriptor & { values?: object }
 export type StaticText = StaticTextObject | string
@@ -93,6 +98,7 @@ export interface ExternalDataProvider extends FormItem {
   dataProviders: DataProviderItem[]
   checkboxLabel?: StaticText
   subTitle?: StaticText
+  description?: StaticText
 }
 
 export interface DataProviderItem {
@@ -112,6 +118,7 @@ export interface FieldBaseProps {
   showFieldName?: boolean
   goToScreen?: (id: string) => void
   refetch?: () => void
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
 }
 
 export type RepeaterProps = {

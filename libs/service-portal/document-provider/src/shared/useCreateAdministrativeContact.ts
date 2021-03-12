@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { gql, useMutation } from '@apollo/client'
 import { m } from '../lib/messages'
 import { CreateContactInput } from './useCreateTechnicalContact'
+import { getOrganisationQuery } from '../shared/useGetOrganisation'
 
 const CREATE_ADMINISTRATIVE_CONTACT_MUTATION = gql`
   mutation createAdministrativeContactMutation(
@@ -21,7 +22,10 @@ const CREATE_ADMINISTRATIVE_CONTACT_MUTATION = gql`
   }
 `
 
-export function useCreateAdministrativeContact(organisationId: string) {
+export function useCreateAdministrativeContact(
+  organisationId: string,
+  organisationNationalId: string,
+) {
   const [
     createAdministrativeContactMutation,
     { called, loading, error },
@@ -46,6 +50,14 @@ export function useCreateAdministrativeContact(organisationId: string) {
         organisationId,
         input,
       },
+      refetchQueries: [
+        {
+          query: getOrganisationQuery,
+          variables: {
+            input: organisationNationalId,
+          },
+        },
+      ],
     })
   }
 

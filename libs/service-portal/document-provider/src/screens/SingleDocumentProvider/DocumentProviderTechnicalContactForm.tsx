@@ -17,11 +17,13 @@ import {
 interface Props {
   technicalContact?: Contact | null
   organisationId: string
+  organisationNationalId: string
 }
 
 export const DocumentProviderTechnicalContactForm: FC<Props> = ({
   technicalContact,
   organisationId,
+  organisationNationalId,
 }) => {
   const { formatMessage } = useLocale()
   const { handleSubmit, control, errors } = useForm()
@@ -33,7 +35,7 @@ export const DocumentProviderTechnicalContactForm: FC<Props> = ({
   const {
     createTechnicalContact,
     loading: loadingCreate,
-  } = useCreateTechnicalContact(organisationId)
+  } = useCreateTechnicalContact(organisationId, organisationNationalId)
 
   const onSubmit = (data: { technicalContact: Contact }) => {
     if (data?.technicalContact && technicalContact) {

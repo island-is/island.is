@@ -9,7 +9,6 @@ import {
 import * as z from 'zod'
 import { NO, YES } from '../constants'
 import { API_MODULE } from '../shared'
-import { StatusTypes } from '../types'
 import { answerValidators } from './answerValidators'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
@@ -41,7 +40,6 @@ const HealthInsuranceSchema = z.object({
   }),
   children: z.string().nonempty(),
   hasAdditionalInfo: z.enum([YES, NO]),
-  additionalFiles: z.array(FileSchema),
   additionalRemarks: z.string().optional(),
   confirmCorrectInfo: z.boolean().refine((v) => v),
 })

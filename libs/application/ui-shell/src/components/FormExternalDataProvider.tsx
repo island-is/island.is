@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { ExternalDataProviderScreen, SetBeforeSubmitCallback } from '../types'
+import { ExternalDataProviderScreen } from '../types'
 import {
   Box,
   Checkbox,
@@ -15,6 +15,7 @@ import {
   getValueViaPath,
   coreMessages,
   RecordObject,
+  SetBeforeSubmitCallback,
 } from '@island.is/application/core'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
@@ -35,7 +36,11 @@ const ProviderItem: FC<{
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
-      {subTitle && <Text>{formatMessage(subTitle)}</Text>}
+      {subTitle && (
+        <Text>
+          <Markdown>{formatMessage(subTitle)}</Markdown>
+        </Text>
+      )}
       {provider.type && dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}
@@ -82,7 +87,13 @@ const FormExternalDataProvider: FC<{
     },
   })
 
-  const { id, dataProviders, subTitle, checkboxLabel } = externalDataProvider
+  const {
+    id,
+    dataProviders,
+    subTitle,
+    description,
+    checkboxLabel,
+  } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
 
   // If id is undefined then the error won't be attached to the field with id
@@ -125,21 +136,23 @@ const FormExternalDataProvider: FC<{
 
   return (
     <Box>
-      <Box
-        marginTop={2}
-        marginBottom={5}
-        display="flex"
-        alignItems="center"
-        justifyContent="flexStart"
-      >
-        <Box marginRight={1}>
-          <Icon icon="download" size="medium" color="blue400" type="outline" />
+      <Box marginTop={2} marginBottom={5}>
+        <Box display="flex" alignItems="center" justifyContent="flexStart">
+          <Box marginRight={1}>
+            <Icon
+              icon="download"
+              size="medium"
+              color="blue400"
+              type="outline"
+            />
+          </Box>
+          <Text variant="h4">
+            {subTitle
+              ? formatMessage(subTitle)
+              : formatMessage(coreMessages.externalDataTitle)}
+          </Text>
         </Box>
-        <Text variant="h4">
-          {subTitle
-            ? formatMessage(subTitle)
-            : formatMessage(coreMessages.externalDataTitle)}
-        </Text>
+        {description && <Text marginTop={4}>{formatMessage(description)}</Text>}
       </Box>
       <Box marginBottom={5}>
         {dataProviders.map((provider) => (

@@ -1,15 +1,13 @@
-const { exec } = require('child_process')
+const { spawn } = require('child_process')
 
 if (process.env.CI) {
   console.log('Skipping postinstall since CI env variable is set')
 } else {
-  const cmd = exec('yarn schemas')
-
-  cmd.stderr.on('error', (err) => {
-    console.error(err)
+  const cmd = spawn('yarn schemas', {
+    shell: true,
+    stdio: 'inherit',
   })
-
-  cmd.stdout.on('data', (data) => {
-    console.log(data)
+  cmd.on('exit', (code) => {
+    process.exit(code)
   })
 }

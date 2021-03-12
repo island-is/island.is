@@ -50,6 +50,10 @@ export class Client {
   requireClientSecret!: boolean
   archived!: Date
   contactEmail!: string
+  supportsDelegation!: boolean
+  supportsLegalGuardians!: boolean
+  supportsProcuringHolders!: boolean
+  promptDelegations!: boolean
   readonly created!: Date
   readonly modified?: Date
   allowedScopes?: ClientAllowedScope[]

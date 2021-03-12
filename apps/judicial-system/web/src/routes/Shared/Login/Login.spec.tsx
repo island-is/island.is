@@ -1,6 +1,6 @@
+/* tslint:disable */
 import React from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { BrowserRouter, MemoryRouter, Route } from 'react-router-dom'
 import fetchMock from 'fetch-mock'
 import { MockedProvider } from '@apollo/client/testing'
 
@@ -14,13 +14,13 @@ describe('Login route', () => {
 
   test('should render successfully', () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: {},
+    }))
 
     // Act
-    const { baseElement } = render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>,
-    )
+    const { baseElement } = render(<Login />)
 
     // Assert
     expect(baseElement).toBeTruthy()
@@ -28,13 +28,13 @@ describe('Login route', () => {
 
   test('should have a title set', () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: {},
+    }))
 
     // Act
-    render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>,
-    )
+    render(<Login />)
 
     // Assert
     expect(document.title).toEqual('Réttarvörslugátt')
@@ -42,18 +42,18 @@ describe('Login route', () => {
 
   test('should logout a logged in user', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: {},
+    }))
     const spy = jest.spyOn(api, 'logOut')
 
     // Act
     render(
       <MockedProvider mocks={mockJudgeQuery} addTypename={false}>
-        <MemoryRouter initialEntries={['/']}>
-          <Route path="/">
-            <UserProvider>
-              <Login />
-            </UserProvider>
-          </Route>
-        </MemoryRouter>
+        <UserProvider>
+          <Login />
+        </UserProvider>
       </MockedProvider>,
     )
 

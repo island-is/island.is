@@ -124,12 +124,14 @@ export function buildDescriptionField(data: {
   id: string
   title: FormText
   description: FormText
+  tooltip?: FormText
 }): DescriptionField {
-  const { condition, id, title, description } = data
+  const { condition, id, title, description, tooltip } = data
   return {
     children: undefined,
     condition,
     description,
+    tooltip,
     id,
     title,
     type: FieldTypes.DESCRIPTION,
@@ -234,6 +236,7 @@ export function buildAsyncSelectField(data: {
   width?: FieldWidth
   onSelect?: (s: SelectOption, cb: (t: unknown) => void) => void
   defaultValue?: MaybeWithApplication<unknown>
+  backgroundColor?: InputBackgroundColor
 }): AsyncSelectField {
   const {
     condition,
@@ -247,6 +250,7 @@ export function buildAsyncSelectField(data: {
     disabled = false,
     width = 'full',
     onSelect,
+    backgroundColor,
   } = data
   return {
     children: undefined,
@@ -263,6 +267,7 @@ export function buildAsyncSelectField(data: {
     type: FieldTypes.ASYNC_SELECT,
     component: FieldComponents.ASYNC_SELECT,
     onSelect,
+    backgroundColor,
   }
 }
 
@@ -390,10 +395,11 @@ export function buildFileUploadField(data: {
 }
 
 export function buildDividerField(data: {
+  condition?: Condition
   title?: FormText
   color?: Colors
 }): DividerField {
-  const { title, color } = data
+  const { title, color, condition } = data
   return {
     id: '',
     children: undefined,
@@ -401,6 +407,7 @@ export function buildDividerField(data: {
     component: FieldComponents.DIVIDER,
     title: title ?? '',
     color,
+    condition,
   }
 }
 

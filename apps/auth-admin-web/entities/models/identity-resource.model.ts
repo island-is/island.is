@@ -10,6 +10,11 @@ export class IdentityResource {
   public userClaims?: IdentityResourceUserClaim[]
   required!: boolean
   emphasize!: boolean
+  grantToLegalGuardians!: boolean
+  grantToProcuringHolders!: boolean
+  allowExplicitDelegationGrant!: boolean
+  automaticDelegationGrant!: boolean
+  alsoForDelegatedUser!: boolean
   readonly created!: Date
   readonly modified?: Date
 }
