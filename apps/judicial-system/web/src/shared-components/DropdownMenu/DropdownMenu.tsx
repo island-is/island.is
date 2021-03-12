@@ -37,7 +37,6 @@ export const DropdownMenu = ({
 }: DropdownMenuProps) => {
   const menu = useMenuState({
     placement: 'bottom-start',
-    // eslint-disable-next-line @typescript-eslint/camelcase
     unstable_offset: [0, 8],
   })
   const menuBoxStyle = useBoxStyles({

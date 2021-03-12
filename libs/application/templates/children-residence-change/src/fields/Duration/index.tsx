@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { duration } from '../../lib/messages'
+import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   DatePickerController,
@@ -10,12 +10,11 @@ import {
 } from '@island.is/shared/form-fields'
 
 export type ValidAnswers = 'permanent' | 'temporary' | undefined
-const Duration = ({ field, application, error }: FieldBaseProps) => {
-  const currentAnswer = getValueViaPath(
-    application.answers,
-    field.id,
-    undefined,
-  ) as ValidAnswers
+const Duration = ({ field, application, error }: CRCFieldBaseProps) => {
+  // TODO: Fix when we fix the schema validation for this field
+  const currentAnswer = application.answers.selectDuration
+    ? (application.answers.selectDuration[0] as ValidAnswers)
+    : undefined
   const { formatMessage } = useIntl()
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(

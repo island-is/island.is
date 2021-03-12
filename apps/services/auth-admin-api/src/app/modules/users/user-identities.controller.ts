@@ -13,16 +13,10 @@ import {
   Patch,
   UseGuards,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiOAuth2,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-// @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('user-identities')
 @Controller('backend/user-identities')

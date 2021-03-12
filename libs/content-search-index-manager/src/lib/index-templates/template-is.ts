@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 export const template = {
   order: 0,
   index_patterns: ['island-is-*'],

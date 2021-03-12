@@ -1,5 +1,4 @@
 {
-  "npmScope": "island.is",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -9,6 +8,10 @@
     "nx.json": "*",
     "tsconfig.base.json": "*"
   },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -378,6 +381,18 @@
     "service-portal-education": {
       "tags": []
     },
+    "service-portal-education-career": {
+      "tags": []
+    },
+    "service-portal-education-degree": {
+      "tags": []
+    },
+    "service-portal-education-license": {
+      "tags": []
+    },
+    "service-portal-education-student-assessment": {
+      "tags": []
+    },
     "service-portal-eligibility": {
       "tags": []
     },
@@ -464,8 +479,5 @@
       "tags": [],
       "implicitDependencies": ["web"]
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   }
 }

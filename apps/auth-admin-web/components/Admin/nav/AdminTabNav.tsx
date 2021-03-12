@@ -35,6 +35,16 @@ const AdminTabNav: React.FC<Props> = ({
               Identity Providers
             </button>
           </li>
+          <li className={activetab === AdminTab.GrantTypes ? 'active' : ''}>
+            <button
+              type="button"
+              onClick={() => handleTabChange(AdminTab.GrantTypes)}
+              className={activetab === AdminTab.GrantTypes ? 'active' : ''}
+              title="Grant Types"
+            >
+              Grant Types
+            </button>
+          </li>
           <li
             className={activetab === AdminTab.IPNumbersControl ? 'active' : ''}
           >
