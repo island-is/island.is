@@ -46,7 +46,7 @@ import { TemplateAPIService } from '@island.is/application/template-api-modules'
 
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
-import { FileService } from '@island.is/application/file-service'
+import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
@@ -56,7 +56,6 @@ import { CreatePdfDto } from './dto/createPdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
-import { PresignedUrlDto } from './dto/presignedUrl.dto'
 import {
   buildDataProviders,
   buildExternalData,
