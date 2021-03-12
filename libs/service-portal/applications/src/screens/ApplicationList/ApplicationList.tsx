@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import format from 'date-fns/format'
 import {
   ActionCardLoader,
@@ -10,16 +10,14 @@ import {
   Stack,
   GridRow,
   GridColumn,
-  Button,
-  Link,
-  Divider,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
+import { useHistory } from 'react-router-dom'
 
-import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
 import { m } from '../../lib/messages'
 
 const isDev = window.location.origin === 'https://beta.dev01.devland.is'
@@ -40,6 +38,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   const { formatMessage, lang } = useLocale()
   const { data: applications, loading, error } = useApplications()
+  const history = useHistory()
   const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
 
   return (
@@ -55,42 +54,6 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               <Text as="p" variant="intro">
                 {formatMessage(m.introCopy)}
               </Text>
-
-              <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="spaceBetween"
-                background="blue100"
-                padding={4}
-                marginTop={1}
-                borderRadius="large"
-                width="full"
-              >
-                <Box marginRight={2}>
-                  <Text variant="h3" color="blue600">
-                    {formatMessage(m.introBlock)}
-                  </Text>
-                </Box>
-
-                <Link href="https://island.is/flokkur/fjolskylda-og-velferd">
-                  <Button icon="open" iconType="outline" nowrap>
-                    {formatMessage(m.introButton)}
-                  </Button>
-                </Link>
-              </Box>
-
-              <Box marginTop={4}>
-                <Divider />
-              </Box>
-
-              <GridRow>
-                <GridColumn span="8/12">
-                  <Text as="p" marginTop={3}>
-                    {formatMessage(m.listCopy)}
-                  </Text>
-                </GridColumn>
-              </GridRow>
             </Stack>
           </GridColumn>
         </GridRow>
@@ -106,20 +69,45 @@ const ApplicationList: ServicePortalModuleComponent = () => {
         </Box>
       )}
 
-      {/* TODO add translations */}
       <Stack space={2}>
-        {applications.map((application: Application) => (
-          <ApplicationCard
-            key={application.id}
-            name={application.name || application.typeId}
-            date={format(new Date(application.modified), dateFormat)}
-            isApplicant={application.isApplicant}
-            isAssignee={application.isAssignee}
-            isComplete={application.progress === 1}
-            url={`${baseUrlForm}/umsokn/${application.id}`}
-            progress={application.progress ? application.progress * 100 : 0}
-          />
-        ))}
+        {applications.map((application: Application) => {
+          const isComplete = application.progress === 1
+
+          return (
+            <ActionCard
+              key={application.id}
+              date={format(new Date(application.modified), dateFormat)}
+              heading={application.name || application.typeId}
+              tag={{
+                label: isComplete
+                  ? formatMessage(m.cardStatusDone)
+                  : formatMessage(m.cardStatusInProgress),
+                variant: isComplete ? 'mint' : 'blue',
+                outlined: false,
+              }}
+              cta={{
+                label: isComplete
+                  ? formatMessage(m.cardButtonComplete)
+                  : formatMessage(m.cardButtonInProgress),
+                variant: 'ghost',
+                size: 'small',
+                icon: undefined,
+                onClick: () =>
+                  history.replace(`${baseUrlForm}/umsokn/${application.id}`),
+              }}
+              text={
+                isComplete
+                  ? formatMessage(m.cardStatusCopyDone)
+                  : formatMessage(m.cardStatusCopyDone)
+              }
+              progressMeter={{
+                active: !isComplete,
+                progress: application.progress ? application.progress : 0,
+                variant: isComplete ? 'mint' : 'blue',
+              }}
+            />
+          )
+        })}
       </Stack>
     </>
   )

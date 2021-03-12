@@ -82,3 +82,50 @@ export const RoseColoredProgressMeter = () => (
     }}
   />
 )
+
+export const ApplicationCardInProgressVariant = () => (
+  <ActionCard
+    date="16/03/2021"
+    heading="Parental Leave"
+    tag={{
+      label: 'In Progress',
+      variant: 'blue',
+      outlined: false,
+    }}
+    text="Your application is in progress. Waiting for VMST approval."
+    cta={{
+      label: 'Open application',
+      variant: 'ghost',
+      size: 'small',
+      icon: undefined,
+    }}
+    progressMeter={{
+      active: true,
+      progress: 0.7,
+    }}
+  />
+)
+
+export const ApplicationCardCompletedVariant = () => (
+  <ActionCard
+    date="16/03/2021"
+    heading="Parental Leave"
+    tag={{
+      label: 'Completed',
+      variant: 'mint',
+      outlined: false,
+    }}
+    text="Your application is in progress. Waiting for VMST approval."
+    cta={{
+      label: 'Open application',
+      variant: 'ghost',
+      size: 'small',
+      icon: undefined,
+    }}
+    progressMeter={{
+      active: true,
+      progress: 1,
+      variant: 'mint',
+    }}
+  />
+)

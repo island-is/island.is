@@ -12,27 +12,6 @@ export const m = defineMessages({
       'Smelltu á hnappinn hér að neðan til að sjá allar umsóknir sem eru í boði fyrir Ísland.is gáttina.',
     description: 'Intro copy to introduce to all applications available',
   },
-  introBlock: {
-    id: 'sp.applications:intro.block',
-    defaultMessage: 'Allt um umsóknir',
-    description: 'Short copy for the applications block',
-  },
-  introButton: {
-    id: 'sp.applications:intro.button',
-    defaultMessage: 'Sjá allar umsóknir',
-    description: 'Button copy for the application redirect',
-  },
-  completedButton: {
-    id: 'sp.applications:completed.button',
-    defaultMessage: 'Sjá lokið umsóknir',
-    description: 'Button to load completed applications',
-  },
-  listCopy: {
-    id: 'sp.applications:list.copy',
-    defaultMessage:
-      'Hér eru allar umsóknir sem þú hefur sótt um á Ísland.is eru birtar hér, bæði sem einstaklingur og fyrir hönd annarra.',
-    description: 'Used on the overview page for the applications',
-  },
   error: {
     id: 'sp.applications:error',
     defaultMessage: 'Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis',
@@ -40,12 +19,12 @@ export const m = defineMessages({
   },
   cardStatusDone: {
     id: 'sp.applications:card.status.done',
-    defaultMessage: 'Lokið',
+    defaultMessage: 'Afgreidd',
     description: 'Done status for an application card',
   },
   cardStatusInProgress: {
     id: 'sp.applications:card.status.inProgress',
-    defaultMessage: 'Í ferli',
+    defaultMessage: 'Í bið',
     description: 'In progress status for an application card',
   },
   cardStatusCopyDone: {
@@ -59,14 +38,14 @@ export const m = defineMessages({
     description:
       'Copy description of the in progress status on the application card',
   },
-  cardTagApplicant: {
-    id: 'sp.applications:card.tag.applicant',
-    defaultMessage: 'Umsækjendi',
-    description: 'Is the user the applicant of the application',
+  cardButtonInProgress: {
+    id: 'sp.applications:card.button.inProgress',
+    defaultMessage: 'Opna umsókn',
+    description: 'Button label when application is in progress',
   },
-  cardTagAssignee: {
-    id: 'sp.applications:card.tag.assignee',
-    defaultMessage: 'Viðtakandi',
-    description: 'Is the user an assignee of the application',
+  cardButtonComplete: {
+    id: 'sp.applications:card.button.complete',
+    defaultMessage: 'Skoða yfirlit',
+    description: 'Button label when application is complete',
   },
 })
