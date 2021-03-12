@@ -289,7 +289,10 @@ export const Confirmation: React.FC = () => {
     time: getTimeFromDate(workingCase?.courtEndTime),
   })
 
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const [updateCaseMutation, { loading: isUpdating }] = useMutation(
+    UpdateCaseMutation,
+  )
+
   const updateCase = useCallback(
     async (id: string, updateCase: UpdateCase) => {
       const { data } = await updateCaseMutation({
@@ -606,6 +609,7 @@ export const Confirmation: React.FC = () => {
             <PdfButton
               caseId={workingCase.id}
               title="Opna PDF þingbók og úrskurð"
+              disabled={isUpdating}
               pdfType="ruling"
             />
           </Box>
@@ -613,9 +617,9 @@ export const Confirmation: React.FC = () => {
             previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={!isValidCourtEndTime?.isValid}
+            nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdating}
             onNextButtonClick={handleNextButtonClick}
-            nextIsLoading={isRequestingSignature}
+            nextIsLoading={isRequestingSignature || isUpdating}
             hideNextButton={workingCase.judge?.id !== user?.id}
             infoBoxText={
               workingCase.judge?.id !== user?.id
