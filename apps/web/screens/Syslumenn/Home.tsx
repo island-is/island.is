@@ -25,7 +25,6 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   LatestNewsSection,
-  OrganizationSlice,
   OrganizationWrapper,
   Section,
 } from '@island.is/web/components'
@@ -36,6 +35,7 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { GlobalContext } from '../../context/GlobalContext/GlobalContext'
 import { SYSLUMENN_NEWS_TAG_ID } from '@island.is/web/constants'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -101,13 +101,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
             span={['12/12', '12/12', '12/12', '12/12', '10/12']}
             offset={['0', '0', '0', '0', '1/12']}
           >
-            {organizationPage.slices.map((slice) => (
-              <OrganizationSlice
-                key={slice.id}
-                slice={slice}
-                namespace={namespace}
-              />
-            ))}
+            {richText(organizationPage.slices as SliceType[])}
           </GridColumn>
         </GridRow>
       </GridContainer>
