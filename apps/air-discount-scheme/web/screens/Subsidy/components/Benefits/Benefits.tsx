@@ -24,6 +24,7 @@ const DiscountsQuery = gql`
       connectionDiscountCodes {
         code
         flightId
+        validUntil
       }
       discountCode
       expiresIn
@@ -116,10 +117,10 @@ function Benefits({ misc }: PropTypes) {
         )}
       </Stack>
 
-      <Stack space={3}>
-        <Typography variant="h3">{connectionFlightHeader}</Typography>
-        {hasConnections ? (
-          <>
+      {hasConnections ? (
+        <>
+          <Stack space={3}>
+            <Typography variant="h3">{connectionFlightHeader}</Typography>
             {connections.map((discount, index) => {
               const { user } = discount
               const fundUsed = user.fund.used === user.fund.total
@@ -136,13 +137,15 @@ function Benefits({ misc }: PropTypes) {
             <Box textAlign="right">
               <Typography variant="pSmall">{codeDescription}</Typography>
             </Box>
-          </>
-        ) : (loading && !called) || loading ? (
+          </Stack>
+        </>
+      ) : (loading && !called) || loading ? (
+        <Stack space={3}>
           <SkeletonLoader height={98} repeat={2} space={3} />
-        ) : (
-          <NoBenefits misc={misc} />
-        )}
-      </Stack>
+        </Stack>
+      ) : (
+        <></>
+      )}
     </Box>
   )
 }

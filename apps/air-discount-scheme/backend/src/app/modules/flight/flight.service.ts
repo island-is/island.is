@@ -36,7 +36,7 @@ const availableFinancialStates = [
   financialStateMachine.states[States.sentDebit].key,
 ]
 
-const CONNECTING_FLIGHT_GRACE_PERIOD_IN_HOURS = 12
+export const CONNECTING_FLIGHT_GRACE_PERIOD = 48 * (1000 * 60 * 60)
 export const REYKJAVIK_FLIGHT_CODES = ['RVK', 'REK']
 
 @Injectable()
@@ -80,9 +80,7 @@ export class FlightService {
       return false
     }
 
-    let deltaHours =
-      (secondFlight.date.getTime() - firstFlight.date.getTime()) /
-      (1000 * 60 * 60)
+    let delta = secondFlight.date.getTime() - firstFlight.date.getTime()
 
     // The order must be flipped if we subtract the first intended chronological leg
     // from the second intended chronological leg
@@ -90,13 +88,10 @@ export class FlightService {
       REYKJAVIK_FLIGHT_CODES.includes(secondFlight.origin) ||
       REYKJAVIK_FLIGHT_CODES.includes(firstFlight.destination)
     ) {
-      deltaHours = -deltaHours
+      delta = -delta
     }
 
-    if (
-      deltaHours >= 0 &&
-      deltaHours <= CONNECTING_FLIGHT_GRACE_PERIOD_IN_HOURS
-    ) {
+    if (delta >= 0 && delta <= CONNECTING_FLIGHT_GRACE_PERIOD) {
       return true
     }
     return false
@@ -203,13 +198,12 @@ export class FlightService {
     return noConnectableFlightLegs - noConnectedFlightLegs
   }
 
-  async findThisYearsUnconnectedFlightIdsByNationalId(
+  async findThisYearsConnectableFlightsByNationalId(
     nationalId: string,
-  ): Promise<string[]> {
+  ): Promise<Flight[]> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
-    const unConnectedFlights: string[] = []
 
-    const flights = await this.flightModel.findAll({
+    let flights = await this.flightModel.findAll({
       where: Sequelize.and(
         Sequelize.where(
           Sequelize.fn(
@@ -220,22 +214,31 @@ export class FlightService {
           currentYear,
         ),
         { nationalId },
+        { connectable: true },
       ),
       include: [
         {
           model: this.flightLegModel,
           where: {
             financialState: availableFinancialStates,
-            isConnectingFlight: false,
           },
         },
       ],
     })
 
-    for (const flight of flights) {
-      unConnectedFlights.push(flight.id)
-    }
-    return unConnectedFlights
+    // Filter out non-Reykjavík flights
+    flights = flights.filter((flight) => {
+      return (
+        flight.flightLegs.length === 1 &&
+        !flight.flightLegs[0].isConnectingFlight &&
+        (REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].origin) ||
+          REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].destination))
+      )
+    })
+
+    console.log('CONNECTABLE_FLIGHT_COUNT', flights.length)
+
+    return flights
   }
 
   async countThisYearsFlightLegsByNationalId(

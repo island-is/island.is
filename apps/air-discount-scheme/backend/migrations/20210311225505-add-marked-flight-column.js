@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-        ALTER TABLE flight ADD COLUMN is_connected BOOLEAN NOT NULL DEFAULT FALSE;
+        ALTER TABLE flight ADD COLUMN connectable BOOLEAN NOT NULL DEFAULT TRUE;
 
       COMMIT;
     `)
@@ -13,7 +13,7 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.query(`
-      ALTER TABLE flight DROP COLUMN is_connected;
+      ALTER TABLE flight DROP COLUMN connectable;
     `)
   },
 }

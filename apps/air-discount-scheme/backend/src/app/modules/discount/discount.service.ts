@@ -2,10 +2,19 @@ import { uuid } from 'uuidv4'
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
 import { Discount } from './discount.model'
+import { Flight } from '../flight'
+import {
+  CONNECTING_FLIGHT_GRACE_PERIOD,
+  REYKJAVIK_FLIGHT_CODES,
+} from '../flight/flight.service'
 
 interface CachedDiscount {
   discountCode: string
-  connectionDiscountCodes: { code: string; flightId: string }[]
+  connectionDiscountCodes: {
+    code: string
+    flightId: string
+    validUntil: string
+  }[]
   nationalId: string
 }
 
@@ -19,7 +28,11 @@ const CACHE_KEYS = {
   discountCode: (discountCode: string) =>
     `discount_code_lookup_${discountCode}`,
   connectionDiscountCodes: (
-    connectionDiscountCodes: { code: string; flightId: string }[],
+    connectionDiscountCodes: {
+      code: string
+      flightId: string
+      validUntil: string
+    }[],
   ) => `connection_discount_code_lookup_${connectionDiscountCodes}`,
   flight: (flightId: string) => `discount_flight_lookup_${flightId}`,
 }
@@ -70,17 +83,39 @@ export class DiscountService {
   async createDiscountCode(
     nationalId: string,
     connectedFlightCounts: number,
-    flightIds: string[],
+    flights: Flight[],
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
-    const connectionDiscountCodes: { code: string; flightId: string }[] = []
+    const connectionDiscountCodes: {
+      code: string
+      flightId: string
+      validUntil: string
+    }[] = []
 
     for (let i = 0; i < connectedFlightCounts; i++) {
-      const flightId = flightIds.pop()
-      if (flightId) {
+      const flight = flights.pop()
+      if (flight) {
+        let validUntil = new Date(
+          Date.parse(flight.flightLegs[0].date.toString()),
+        )
+        console.log('validUntil,101', validUntil)
+
+        if (REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].origin)) {
+          validUntil = new Date(
+            validUntil.getTime() + CONNECTING_FLIGHT_GRACE_PERIOD,
+          )
+        } else if (
+          REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].destination)
+        ) {
+          validUntil = new Date(
+            validUntil.getTime() - CONNECTING_FLIGHT_GRACE_PERIOD,
+          )
+        }
+
         connectionDiscountCodes.push({
           code: this.generateDiscountCode(),
-          flightId: flightId,
+          flightId: flight.id,
+          validUntil: validUntil.toTimeString(),
         })
       }
     }
@@ -150,6 +185,7 @@ export class DiscountService {
     let connectionDiscountCodeCacheKey: {
       code: string
       flightId: string
+      validUntil: string
     }[] = []
     if (cacheValue?.connectionDiscountCodes) {
       let markedDiscountCode = null
@@ -171,7 +207,9 @@ export class DiscountService {
     const ttl = await this.cacheManager.ttl(cacheId)
     if (isConnectionDiscount) {
       await this.setCache<string>(
-        CACHE_KEYS.connectionDiscountCodes(connectionDiscountCodeCacheKey),
+        CACHE_KEYS.connectionDiscountCodes(
+          connectionDiscountCodeCacheKey ?? [],
+        ),
         cacheId,
         ttl,
       )

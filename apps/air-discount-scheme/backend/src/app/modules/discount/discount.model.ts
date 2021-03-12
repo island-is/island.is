@@ -5,7 +5,11 @@ import { Discount as TDiscount } from '@island.is/air-discount-scheme/types'
 export class Discount implements TDiscount {
   constructor(
     discountCode: string,
-    connectionDiscountCodes: { code: string; flightId: string }[],
+    connectionDiscountCodes: {
+      code: string
+      flightId: string
+      validUntil: string
+    }[],
     nationalId: string,
     ttl: number,
   ) {
@@ -19,7 +23,11 @@ export class Discount implements TDiscount {
   discountCode: string
 
   @ApiProperty()
-  connectionDiscountCodes: { code: string; flightId: string }[]
+  connectionDiscountCodes: {
+    code: string
+    flightId: string
+    validUntil: string
+  }[]
 
   @ApiProperty()
   nationalId: string

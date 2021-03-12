@@ -47,6 +47,9 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
     <>
       {connectionDiscountCodes &&
         connectionDiscountCodes.map((connectionCode, index) => {
+          if (!connectionCode.validUntil) {
+            return
+          }
           return (
             <Box
               {...boxStatus[status]}
@@ -76,6 +79,12 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
                   <Box marginRight={[2, 4]}>
                     <Typography variant="h3" color="roseTinted400">
                       {connectionCode.code}
+                    </Typography>
+                    <Typography variant="p">
+                      Flight:{connectionCode.flightId}
+                    </Typography>
+                    <Typography variant="p">
+                      Valid until:{connectionCode.validUntil}
                     </Typography>
                   </Box>
                   <Button
