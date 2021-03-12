@@ -7,7 +7,7 @@ import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
-import ValidationUtils from 'apps/auth-admin-web/utils/validation.utils'
+import ValidationUtils from './../../../utils/validation.utils'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void

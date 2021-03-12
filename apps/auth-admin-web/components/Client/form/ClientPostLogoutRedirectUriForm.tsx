@@ -6,6 +6,7 @@ import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   clientId: string
@@ -17,12 +18,9 @@ interface Props {
 }
 
 const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientPostLogoutRedirectUriDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientPostLogoutRedirectUriDTO
+  >()
   const { isSubmitting } = formState
   const [defaultUrl, setDefaultUrl] = useState(
     !props.uris || props.uris.length === 0 ? props.defaultUrl : '',
@@ -108,7 +106,10 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     <input
                       type="text"
                       name="redirectUri"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: true,
+                        validate: ValidationUtils.validateUrl,
+                      })}
                       defaultValue={defaultUrl}
                       className="client-post-logout__input"
                       placeholder="https://localhost:4200"
@@ -119,7 +120,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="redirectUri"
-                      message="Path is required"
+                      message="Path is required and needs to be in the right format"
                     />
                     <input
                       type="submit"

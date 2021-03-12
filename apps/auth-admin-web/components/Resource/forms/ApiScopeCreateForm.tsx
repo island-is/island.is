@@ -4,6 +4,7 @@ import HelpBox from '../../common/HelpBox'
 import { ErrorMessage } from '@hookform/error-message'
 import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -71,7 +72,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateScope,
+                    })}
                     id="name"
                     name="name"
                     type="text"
@@ -103,7 +107,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     Display Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="displayName"
                     name="displayName"
                     type="text"
@@ -126,7 +133,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     Description
                   </label>
                   <input
-                    ref={register({ required: false })}
+                    ref={register({
+                      required: false,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="description"
                     name="description"
                     type="text"

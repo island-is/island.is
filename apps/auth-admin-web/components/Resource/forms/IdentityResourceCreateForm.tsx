@@ -4,6 +4,7 @@ import HelpBox from '../../common/HelpBox'
 import { ErrorMessage } from '@hookform/error-message'
 import { ResourcesService } from '../../../services/ResourcesService'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -12,12 +13,9 @@ interface Props {
 }
 
 const IdentityResourceCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<IdentityResourceDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<
+    IdentityResourceDTO
+  >()
   const { isSubmitting } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -81,7 +79,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateIdentifier,
+                    })}
                     id="name"
                     name="name"
                     type="text"
@@ -102,7 +103,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="name"
-                    message="Name is required"
+                    message="Name is required and needs to be in the right format"
                   />
                 </div>
                 <div className="identity-resource-form__container__field">
@@ -113,7 +114,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     Display Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="displayName"
                     name="displayName"
                     type="text"
@@ -125,7 +129,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="displayName"
-                    message="Display name is required"
+                    message="Display name is required and needs to be in the right format"
                   />
                 </div>
                 <div className="identity-resource-form__container__field">
@@ -136,7 +140,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     Description
                   </label>
                   <input
-                    ref={register({ required: false })}
+                    ref={register({
+                      required: false,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="description"
                     name="description"
                     type="text"
@@ -144,6 +151,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     className="identity-resource-form__input"
                   />
                   <HelpBox helpText="The description value will be used e.g. on the consent screen." />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="description"
+                    message="Description needs to be in the right format"
+                  />
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">

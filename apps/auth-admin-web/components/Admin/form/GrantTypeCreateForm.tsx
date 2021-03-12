@@ -5,6 +5,7 @@ import HelpBox from '../../common/HelpBox'
 import { GrantTypeDTO } from './../../../entities/dtos/grant-type.dto'
 import { GrantType } from './../../../entities/models/grant-type.model'
 import { GrantTypeService } from './../../../services/GrantTypeService'
+import ValidationUtils from './../../../utils/validation.utils'
 interface Props {
   grantType: GrantTypeDTO
   handleSaveButtonClicked?: (response: GrantType) => void
@@ -77,6 +78,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     name="grantType.name"
                     ref={register({
                       required: true,
+                      validate: ValidationUtils.validateIdentifier,
                     })}
                     defaultValue={grantType.name}
                     className="grant-type-create-form__input"
@@ -105,6 +107,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     ref={register({
                       required: true,
+                      validate: ValidationUtils.validateDescription,
                     })}
                     name="grantType.description"
                     defaultValue={grantType.description ?? ''}
@@ -116,7 +119,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="grantType.description"
-                    message="Description is required"
+                    message="Description is required and needs to be in the right format"
                   />
                   <HelpBox helpText="Short description about this Grant Type" />
                 </div>

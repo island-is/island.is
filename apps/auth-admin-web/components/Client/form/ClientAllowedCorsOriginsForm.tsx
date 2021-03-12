@@ -6,6 +6,7 @@ import { ClientAllowedCorsOriginDTO } from '../../../entities/dtos/client-allowe
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   clientId: string
@@ -21,12 +22,9 @@ interface FormOutput {
 }
 
 const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientAllowedCorsOriginDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientAllowedCorsOriginDTO
+  >()
   const { isSubmitting } = formState
   const [defaultOrigin, setDefaultOrigin] = useState(
     !props.origins || props.origins.length === 0 ? props.defaultOrigin : '',
@@ -106,7 +104,10 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                     <input
                       type="text"
                       name="origin"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: true,
+                        validate: ValidationUtils.validateCorsOrigin,
+                      })}
                       defaultValue={defaultOrigin}
                       className="client-allowed-cors-origin__input"
                       placeholder="https://localhost:4200"
@@ -117,7 +118,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="origin"
-                      message="Cors origin is required"
+                      message="Cors origin is required and needs to be in the right format"
                     />
                     <input
                       type="submit"
