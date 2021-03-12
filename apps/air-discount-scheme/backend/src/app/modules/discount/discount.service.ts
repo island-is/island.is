@@ -5,7 +5,7 @@ import { Discount } from './discount.model'
 
 interface CachedDiscount {
   discountCode: string
-  connectionDiscountCodes: {code: string, flightId: string}[]
+  connectionDiscountCodes: { code: string; flightId: string }[]
   nationalId: string
 }
 
@@ -18,8 +18,9 @@ const CACHE_KEYS = {
   discount: (id: string) => `discount_id_${id}`,
   discountCode: (discountCode: string) =>
     `discount_code_lookup_${discountCode}`,
-  connectionDiscountCodes: (connectionDiscountCodes: {code: string, flightId: string}[]) =>
-    `connection_discount_code_lookup_${connectionDiscountCodes}`,
+  connectionDiscountCodes: (
+    connectionDiscountCodes: { code: string; flightId: string }[],
+  ) => `connection_discount_code_lookup_${connectionDiscountCodes}`,
   flight: (flightId: string) => `discount_flight_lookup_${flightId}`,
 }
 
@@ -69,15 +70,18 @@ export class DiscountService {
   async createDiscountCode(
     nationalId: string,
     connectedFlightCounts: number,
-    flightIds: string[]
+    flightIds: string[],
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
-    let connectionDiscountCodes: {code: string, flightId: string}[] = []
+    let connectionDiscountCodes: { code: string; flightId: string }[] = []
 
     for (let i = 0; i < connectedFlightCounts; i++) {
       let flightId = flightIds.pop()
-      if(flightId) {
-        connectionDiscountCodes.push({code: this.generateDiscountCode(), flightId: flightId})
+      if (flightId) {
+        connectionDiscountCodes.push({
+          code: this.generateDiscountCode(),
+          flightId: flightId,
+        })
       }
     }
     const cacheId = CACHE_KEYS.discount(uuid())
@@ -143,17 +147,20 @@ export class DiscountService {
     const userCacheKey = CACHE_KEYS.user(nationalId)
     const cacheValue = await this.getCache<CachedDiscount>(userCacheKey)
     const discountCodeCacheKey = CACHE_KEYS.discountCode(discountCode)
-    let connectionDiscountCodeCacheKey: {code: string, flightId: string}[] = []
+    let connectionDiscountCodeCacheKey: {
+      code: string
+      flightId: string
+    }[] = []
     if (cacheValue?.connectionDiscountCodes) {
       let markedDiscountCode = null
-      for(const connectionDiscountCode of cacheValue.connectionDiscountCodes) {
-        if(connectionDiscountCode.code === discountCode) {
+      for (const connectionDiscountCode of cacheValue.connectionDiscountCodes) {
+        if (connectionDiscountCode.code === discountCode) {
           markedDiscountCode = connectionDiscountCode
         }
       }
       connectionDiscountCodeCacheKey = cacheValue.connectionDiscountCodes
 
-      if(markedDiscountCode) {
+      if (markedDiscountCode) {
         connectionDiscountCodeCacheKey.splice(
           connectionDiscountCodeCacheKey.indexOf(markedDiscountCode),
           1,

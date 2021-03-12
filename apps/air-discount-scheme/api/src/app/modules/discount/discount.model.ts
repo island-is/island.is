@@ -13,7 +13,7 @@ export class Discount {
   discountCode: string
 
   @Field((type) => [ConnectionDiscountCode])
-  connectionDiscountCodes: {code: string, flightId:string}[]
+  connectionDiscountCodes: { code: string; flightId: string }[]
 
   @Field()
   expiresIn: number

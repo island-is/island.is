@@ -232,7 +232,7 @@ export class FlightService {
       ],
     })
 
-    for(const flight of flights) {
+    for (const flight of flights) {
       unConnectedFlights.push(flight.id)
     }
     return unConnectedFlights
