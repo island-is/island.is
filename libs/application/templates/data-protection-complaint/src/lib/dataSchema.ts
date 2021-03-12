@@ -97,3 +97,7 @@ export const DataProtectionComplaintSchema = z.object({
     documents: z.array(FileSchema),
   }),
 })
+
+export type DataProtectionComplaint = z.TypeOf<
+  typeof DataProtectionComplaintSchema
+>

@@ -26,7 +26,6 @@ import {
   overview,
 } from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
-import { ComplaintOverview } from '../fields/ComplaintOverview'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
