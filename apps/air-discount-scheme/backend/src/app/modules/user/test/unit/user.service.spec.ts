@@ -18,7 +18,7 @@ const user: User = {
     credit: 2,
     used: 2,
     total: 2,
-    availableConnectionFlights: 0
+    availableConnectionFlights: 0,
   },
 }
 

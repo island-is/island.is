@@ -86,7 +86,7 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
                     <Typography variant="p">
                       Valid until:{connectionCode.validUntil}
                     </Typography>
-                 </Box>
+                  </Box>
                   <Button
                     noWrap
                     onClick={() => {
@@ -95,7 +95,7 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
                   >
                     {copyCode}
                   </Button>
-               </Box>
+                </Box>
               )}
             </Box>
           )

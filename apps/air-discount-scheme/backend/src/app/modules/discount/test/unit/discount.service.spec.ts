@@ -127,7 +127,12 @@ describe('DiscountService', () => {
       const cacheManagerDelSpy = jest.spyOn(cacheManager, 'del')
       const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
 
-      await discountService.useDiscount(discountCode, nationalId, flightId, false)
+      await discountService.useDiscount(
+        discountCode,
+        nationalId,
+        flightId,
+        false,
+      )
 
       expect(cacheManagerDelSpy).toHaveBeenCalledTimes(2)
       expect(cacheManagerSetSpy).toHaveBeenCalledTimes(1)

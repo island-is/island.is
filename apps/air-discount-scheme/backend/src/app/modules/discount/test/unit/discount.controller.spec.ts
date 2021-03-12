@@ -35,9 +35,9 @@ describe('DiscountController', () => {
           provide: FlightService,
           useClass: jest.fn(() => ({
             countThisYearsConnectedFlightsByNationalId: () => 0,
-            findThisYearsConnectableFlightsByNationalId: () => 0
-          }))
-        }
+            findThisYearsConnectableFlightsByNationalId: () => 0,
+          })),
+        },
       ],
     }).compile()
 

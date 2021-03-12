@@ -145,7 +145,7 @@ describe('PublicFlightController', () => {
         discountCode,
         nationalId,
         flight.id,
-        false
+        false,
       )
       expect(result).toEqual(flight)
     })
