@@ -7,6 +7,7 @@ import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
+import ValidationUtils from 'apps/auth-admin-web/utils/validation.utils'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -276,7 +277,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         required: true,
                         maxLength: 10,
                         minLength: 10,
-                        pattern: /\d+/,
+                        validate: ValidationUtils.validateNationalId,
                       })}
                       defaultValue={client.nationalId}
                       className="client__input"
@@ -298,7 +299,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       type="text"
                       ref={register({
                         required: true,
-                        pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                        validate: ValidationUtils.validateEmail,
                       })}
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
@@ -319,7 +320,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       type="text"
                       name="client.clientId"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: true,
+                        validate: ValidationUtils.validateIdentifier,
+                      })}
                       defaultValue={client.clientId}
                       className="client__input"
                       placeholder="example-client"
@@ -334,12 +338,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     >
                       {available ? 'Available' : 'Unavailable'}
                     </div>
-                    <HelpBox helpText="The unique identifier for this application" />
+                    <HelpBox helpText="The unique identifier for this application. No spaces or special characters." />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message="Client Id is required"
+                      message="Client Id is required and needs to be in the right format (no spaces or special characters)"
                     />
                   </div>
 
@@ -347,7 +351,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <label className="client__label">Description</label>
                     <input
                       type="text"
-                      ref={register}
+                      ref={register({
+                        validate: ValidationUtils.validateDescription,
+                      })}
                       name="client.description"
                       defaultValue={client.description ?? ''}
                       className="client__input"
@@ -355,6 +361,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       placeholder="Example description"
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.description"
+                      message="Description can not include special characters"
+                    />
                   </div>
 
                   <div>
@@ -364,7 +376,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         readOnly={isEditing}
                         name="baseUrl"
                         type="text"
-                        ref={register({ required: !isEditing })}
+                        ref={register({
+                          required: !isEditing,
+                          validate: ValidationUtils.validateUrl,
+                        })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
                         placeholder="https://localhost:4200"
@@ -378,7 +393,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message="Base Url is required"
+                        message="Base Url is required and needs to be in the right format"
                       />
                       <div
                         className={`client__container__field__details
