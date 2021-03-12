@@ -212,7 +212,7 @@
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
-      "@island.is/rsk": ["libs/rsk/src/index.ts"],
+      "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],
