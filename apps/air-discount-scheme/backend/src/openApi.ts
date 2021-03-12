@@ -14,8 +14,10 @@ export const openApi = new DocumentBuilder()
   current one.
 
   DEV:     https://loftbru.dev01.devland.is/min-rettindi
+
   STAGING: https://loftbru.staging01.devland.is/min-rettindi
-  PROD:    https://loftbru.devland.is/min-rettindi
+
+  PROD:    https://loftbru.island.is/min-rettindi
 
   The flow is like this:
 
