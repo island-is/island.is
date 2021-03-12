@@ -1,6 +1,6 @@
 export interface Discount {
   discountCode: string
-  connectionDiscountCode: string[]
+  connectionDiscountCodes: {code: string, flightId: string}[]
   nationalId: string
   expiresIn: number
 }

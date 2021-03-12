@@ -21,7 +21,10 @@ interface PropTypes {
 const DiscountsQuery = gql`
   query DiscountsQuery {
     discounts {
-      connectionDiscountCode
+      connectionDiscountCodes {
+        code
+        flightId
+      }
       discountCode
       expiresIn
       nationalId
@@ -56,7 +59,7 @@ function Benefits({ misc }: PropTypes) {
   const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
   const hasBenefits = benefits.length > 0
   const connections = discounts.filter(
-    ({ connectionDiscountCode }) => connectionDiscountCode.length > 0,
+    ({ connectionDiscountCodes }) => connectionDiscountCodes.length > 0,
   )
   const hasConnections = connections.length > 0
   return (

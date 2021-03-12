@@ -40,13 +40,13 @@ interface PropTypes {
 
 function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
   const { user: authUser } = useContext(UserContext)
-  const { connectionDiscountCode, user } = discount
+  const { connectionDiscountCodes, user } = discount
   const { remaining, copyCode, kidsRights, usedFund } = JSON.parse(misc)
 
   return (
     <>
-      {connectionDiscountCode &&
-        connectionDiscountCode.map((connectionCode, index) => {
+      {connectionDiscountCodes &&
+        connectionDiscountCodes.map((connectionCode, index) => {
           return (
             <Box
               {...boxStatus[status]}
@@ -75,13 +75,13 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
                 >
                   <Box marginRight={[2, 4]}>
                     <Typography variant="h3" color="roseTinted400">
-                      {connectionCode}
+                      {connectionCode.code}
                     </Typography>
                   </Box>
                   <Button
                     noWrap
                     onClick={() => {
-                      copyToClipboard(connectionCode)
+                      copyToClipboard(connectionCode.code)
                     }}
                   >
                     {copyCode}

@@ -2,6 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { FieldsOnCorrectTypeRule } from 'graphql'
 
 import { User } from '../user'
+import { ConnectionDiscountCode } from './connectionDiscountCode.model'
 
 @ObjectType()
 export class Discount {
@@ -11,8 +12,8 @@ export class Discount {
   @Field()
   discountCode: string
 
-  @Field((type) => [String])
-  connectionDiscountCode: string[]
+  @Field((type) => [ConnectionDiscountCode])
+  connectionDiscountCodes: {code: string, flightId:string}[]
 
   @Field()
   expiresIn: number

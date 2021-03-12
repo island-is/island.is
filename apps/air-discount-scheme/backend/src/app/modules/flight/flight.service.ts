@@ -203,6 +203,41 @@ export class FlightService {
     return noConnectableFlightLegs - noConnectedFlightLegs
   }
 
+  async findThisYearsUnconnectedFlightIdsByNationalId(
+    nationalId: string,
+  ): Promise<string[]> {
+    const currentYear = new Date(Date.now()).getFullYear().toString()
+    let unConnectedFlights: string[] = []
+
+    const flights = await this.flightModel.findAll({
+      where: Sequelize.and(
+        Sequelize.where(
+          Sequelize.fn(
+            'date_part',
+            'year',
+            Sequelize.fn('date', Sequelize.col('booking_date')),
+          ),
+          currentYear,
+        ),
+        { nationalId },
+      ),
+      include: [
+        {
+          model: this.flightLegModel,
+          where: {
+            financialState: availableFinancialStates,
+            isConnectingFlight: false,
+          },
+        },
+      ],
+    })
+
+    for(const flight of flights) {
+      unConnectedFlights.push(flight.id)
+    }
+    return unConnectedFlights
+  }
+
   async countThisYearsFlightLegsByNationalId(
     nationalId: string,
   ): Promise<FlightLegSummary> {

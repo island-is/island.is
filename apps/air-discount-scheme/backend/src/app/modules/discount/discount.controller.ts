@@ -48,9 +48,14 @@ export class PrivateDiscountController {
       params.nationalId,
     )
 
+    const unConnectedFlightIds = await this.flightService.findThisYearsUnconnectedFlightIdsByNationalId(
+      params.nationalId
+    )
+
     return this.discountService.createDiscountCode(
       params.nationalId,
       connectedFlightCounts,
+      unConnectedFlightIds
     )
   }
 }

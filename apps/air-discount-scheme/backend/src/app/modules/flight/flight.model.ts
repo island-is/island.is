@@ -197,4 +197,7 @@ export class Flight extends Model<Flight> implements TFlight {
   @UpdatedAt
   @ApiProperty()
   readonly modified!: Date
+
+  @ApiProperty()
+  isConnected!: boolean
 }
