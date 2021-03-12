@@ -18,7 +18,7 @@ import { AboutPage } from './models/aboutPage.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
-import { GetOrganizationSubpageInput } from '@island.is/api/schema'
+import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
 
 @Injectable()
