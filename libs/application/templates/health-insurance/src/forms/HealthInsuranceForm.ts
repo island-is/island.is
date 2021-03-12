@@ -492,6 +492,15 @@ export const HealthInsuranceForm: Form = buildForm({
                 value: YES,
               },
             }),
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
+              condition: {
+                questionId: 'hasAdditionalInfo',
+                comparator: Comparators.EQUALS,
+                value: YES,
+              },
+            }),
             buildCustomField({
               id: 'confirmCorrectInfo',
               title: '',
