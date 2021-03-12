@@ -1,66 +1,39 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  complaint,
   delimitation,
   info,
   overview,
   section,
-  sharedFields,
-} from '../lib/messages'
-import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
-import { NO, YES } from '../shared'
-import { MessageDescriptor } from '@formatjs/intl'
-
-const onBehalfValueLabelMapper = {
-  [OnBehalf.MYSELF]: info.labels.myself,
-  [OnBehalf.MYSELF_AND_OR_OTHERS]: info.labels.myselfAndOrOthers,
-  [OnBehalf.OTHERS]: info.labels.others,
-  [OnBehalf.ORGANIZATION_OR_INSTITUTION]: info.labels.organizationInstitution,
-}
-
-const yesNoValueLabelMapper = {
-  [YES]: sharedFields.yes,
-  [NO]: sharedFields.no,
-}
-
-const SectionHeading: FC<{ title: string | MessageDescriptor }> = ({
-  title,
-}) => {
-  const { formatMessage } = useLocale()
-
-  return (
-    <Text variant="h4" marginBottom={3}>
-      {formatMessage(title)}
-    </Text>
-  )
-}
-
-const ValueLine: FC<{
-  label: string | MessageDescriptor
-  value: string | MessageDescriptor
-}> = ({ label, value }) => {
-  const { formatMessage } = useLocale()
-
-  return (
-    <>
-      <Text variant="h5">{formatMessage(label)}</Text>
-      <Text>{formatMessage(value)}</Text>
-      <Box paddingY={3}>
-        <Divider />
-      </Box>
-    </>
-  )
-}
+} from '../../lib/messages'
+import { DataProtectionComplaint } from '../../lib/dataSchema'
+import {
+  SectionHeading,
+  ValueLine,
+  yesNoValueLabelMapper,
+  onBehalfValueLabelMapper,
+  subjectOfComplaintValueLabelMapper,
+} from './Shared'
+import {
+  Applicant,
+  Commissions,
+  Complainees,
+  Complaint,
+  OrganizationOrInstitution,
+} from './Sections'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as DataProtectionComplaint
 
+  console.log(answers)
+
   return (
     <Box>
-      <Text marginTop={2} marginBottom={[4, 6]}>
+      <Text marginTop={2} marginBottom={2}>
         {formatMessage(overview.general.pageDescription)}
       </Text>
       <SectionHeading title={section.info} />
@@ -84,6 +57,13 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
         label={delimitation.labels.concernsLibel}
         value={yesNoValueLabelMapper[answers.concernsLibel]}
       />
+      {answers.applicant && <Applicant answers={answers} />}
+      {answers.organizationOrInstitution && (
+        <OrganizationOrInstitution answers={answers} />
+      )}
+      {answers.commissions && <Commissions answers={answers} />}
+      <Complainees answers={answers} />
+      <Complaint answers={answers} />
     </Box>
   )
 }

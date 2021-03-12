@@ -82,6 +82,7 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
                     application,
                     formatMessage,
                   )}
+                  format="######-####"
                   error={
                     errors && (errors[`${id}[${index}].nationalId`] as string)
                   }
