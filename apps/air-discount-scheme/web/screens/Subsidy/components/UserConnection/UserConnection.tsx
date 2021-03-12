@@ -67,6 +67,9 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
                   {user.name}{' '}
                   {user?.nationalId !== authUser?.nationalId && kidsRights}
                 </Typography>
+                <Typography variant="p">
+                  Flight:{connectionCode.flightId}
+                </Typography>
               </Box>
               {status === 'fundUsed' ? (
                 <Typography variant="h5">{usedFund}</Typography>
@@ -81,12 +84,9 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
                       {connectionCode.code}
                     </Typography>
                     <Typography variant="p">
-                      Flight:{connectionCode.flightId}
-                    </Typography>
-                    <Typography variant="p">
                       Valid until:{connectionCode.validUntil}
                     </Typography>
-                  </Box>
+                 </Box>
                   <Button
                     noWrap
                     onClick={() => {
@@ -95,7 +95,7 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
                   >
                     {copyCode}
                   </Button>
-                </Box>
+               </Box>
               )}
             </Box>
           )
