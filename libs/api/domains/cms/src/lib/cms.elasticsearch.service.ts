@@ -177,11 +177,11 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getOrganizationSubpage(
+  async getSingleOrganizationSubpage(
     index: string,
     { slug, organizationSlug }: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
-    // return a single news item by slug
+    // return an organization page by organization slug and subpage slug
     const query = {
       types: ['webOrganizationSubpage'],
       tags: [
@@ -189,12 +189,12 @@ export class CmsElasticsearchService {
         { type: 'organization', key: organizationSlug },
       ],
     }
-    const menuResponse = await this.elasticService.getDocumentsByMetaData(
+    const subpageResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,
     )
 
-    const response = menuResponse.hits.hits?.[0]?._source?.response
+    const response = subpageResponse.hits.hits?.[0]?._source?.response
     return response ? JSON.parse(response) : null
   }
 

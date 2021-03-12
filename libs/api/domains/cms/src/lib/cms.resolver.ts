@@ -197,7 +197,7 @@ export class CmsResolver {
   getOrganizationSubpage(
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
-    return this.cmsElasticsearchService.getOrganizationSubpage(
+    return this.cmsElasticsearchService.getSingleOrganizationSubpage(
       getElasticsearchIndex(input.lang),
       { ...input },
     )
