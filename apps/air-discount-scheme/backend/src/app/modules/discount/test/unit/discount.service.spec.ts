@@ -32,13 +32,13 @@ describe('DiscountService', () => {
       const nationalId = '1234567890'
       const cacheManagerSpy = jest.spyOn(cacheManager, 'set')
 
-      const result = await discountService.createDiscountCode(nationalId)
+      const result = await discountService.createDiscountCode(nationalId, 0, [])
 
       const uuid = cacheManagerSpy.mock.calls[0][0]
       expect(cacheManagerSpy.mock.calls[1][1]).toBe(uuid)
       expect(cacheManagerSpy.mock.calls[2][1]).toBe(uuid)
 
-      expect(cacheManagerSpy).toHaveBeenCalledTimes(3)
+      expect(cacheManagerSpy).toHaveBeenCalledTimes(4)
       expect(result.discountCode).toHaveLength(DISCOUNT_CODE_LENGTH)
     })
   })
@@ -60,6 +60,7 @@ describe('DiscountService', () => {
       expect(cacheManagerGetSpy).toHaveBeenCalled()
       expect(cacheManagerTtlSpy).toHaveBeenCalled()
       expect(result).toEqual({
+        connectionDiscountCodes: [],
         discountCode,
         nationalId,
         expiresIn: ttl,
@@ -98,6 +99,7 @@ describe('DiscountService', () => {
       expect(cacheManagerGetSpy).toHaveBeenCalled()
       expect(cacheManagerTtlSpy).toHaveBeenCalled()
       expect(result).toEqual({
+        connectionDiscountCodes: [],
         discountCode,
         nationalId,
         expiresIn: ttl,
@@ -125,7 +127,7 @@ describe('DiscountService', () => {
       const cacheManagerDelSpy = jest.spyOn(cacheManager, 'del')
       const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
 
-      await discountService.useDiscount(discountCode, nationalId, flightId)
+      await discountService.useDiscount(discountCode, nationalId, flightId, false)
 
       expect(cacheManagerDelSpy).toHaveBeenCalledTimes(2)
       expect(cacheManagerSetSpy).toHaveBeenCalledTimes(1)
