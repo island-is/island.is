@@ -579,9 +579,20 @@ export const ComplaintForm: Form = buildForm({
       title: section.overview,
       children: [
         buildCustomField({
-          id: 'overview.complaintOverview',
+          id: 'overview.termsAgreement',
           title: overview.general.pageTitle,
           component: 'ComplaintOverview',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: 'Búið',
+      children: [
+        buildDescriptionField({
+          id: 'field',
+          title: 'Vel gert!',
+          description: 'Þú ert komin/n út á enda',
         }),
       ],
     }),

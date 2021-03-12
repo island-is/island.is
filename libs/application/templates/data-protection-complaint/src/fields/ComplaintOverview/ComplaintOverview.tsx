@@ -2,20 +2,13 @@ import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  complaint,
-  delimitation,
-  info,
-  overview,
-  section,
-} from '../../lib/messages'
+import { delimitation, info, overview, section } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
 import {
   SectionHeading,
   ValueLine,
   yesNoValueLabelMapper,
   onBehalfValueLabelMapper,
-  subjectOfComplaintValueLabelMapper,
 } from './Shared'
 import {
   Applicant,
@@ -24,12 +17,15 @@ import {
   Complaint,
   OrganizationOrInstitution,
 } from './Sections'
+import { CheckboxController } from 'libs/shared/form-fields/src'
 
-export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
+export const ComplaintOverview: FC<FieldBaseProps> = ({
+  application,
+  errors,
+  field,
+}) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as DataProtectionComplaint
-
-  console.log(answers)
 
   return (
     <Box>
@@ -64,6 +60,18 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       {answers.commissions && <Commissions answers={answers} />}
       <Complainees answers={answers} />
       <Complaint answers={answers} />
+      <CheckboxController
+        id={field.id}
+        name={field.id}
+        large
+        error={errors && (errors['overview.termsAgreement'] as string)}
+        options={[
+          {
+            value: 'agreed',
+            label: formatMessage(overview.labels.termsAgreement),
+          },
+        ]}
+      />
     </Box>
   )
 }
