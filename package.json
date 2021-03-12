@@ -2,6 +2,10 @@
   "name": "island.is",
   "version": "0.0.1",
   "license": "MIT",
+  "engines": {
+    "node": "^14.16",
+    "yarn": "^1.22"
+  },
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
