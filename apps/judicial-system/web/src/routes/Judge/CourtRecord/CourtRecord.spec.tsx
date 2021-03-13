@@ -42,6 +42,10 @@ describe('/domari-krafa/thingbok', () => {
             } as UpdateCase,
             {
               policeDemands:
+                'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
+            } as UpdateCase,
+            {
+              policeDemands:
                 'Þess er krafist að Jon Harring, kt. 111111-1110, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {

@@ -148,7 +148,7 @@ export const slices = gql`
       id
       question
       answer {
-        ...HtmlFields
+        ...BaseSlices
       }
     }
   }
@@ -413,7 +413,7 @@ export const slices = gql`
     }
   }
 
-  fragment AllSlices on Slice {
+  fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
     ...StoryFields
@@ -422,7 +422,6 @@ export const slices = gql`
     ...HeadingFields
     ...LogoListFields
     ...BulletListFields
-    ...FaqListFields
     ...StatisticsFields
     ...ProcessEntryFields
     ...HtmlFields
@@ -442,5 +441,10 @@ export const slices = gql`
     ...OfficesSlice
     ...OneColumnTextFields
     ...AccordionSliceFields
+  }
+
+  fragment AllSlices on Slice {
+    ...BaseSlices
+    ...FaqListFields
   }
 `

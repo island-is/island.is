@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import fetchMock from 'fetch-mock'
 
 import {
   mockCaseQueries,
@@ -10,6 +11,8 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 import Overview from './Overview'
 
 describe('/domari-krafa with an ID', () => {
+  fetchMock.mock('/api/feature/CREATE_CUSTODY_COURT_CASE', true)
+
   test('should display the string "Ekki er farið fram á takmarkanir á gæslu" in custody restrictions if there are no custody restrictions', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')

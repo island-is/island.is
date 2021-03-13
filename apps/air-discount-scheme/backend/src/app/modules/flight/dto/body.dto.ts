@@ -65,10 +65,6 @@ export class GetFlightLegsBody implements FlightLegsInput {
   airline?: string
 
   @IsOptional()
-  @IsEnum(Object.keys(Airlines))
-  cooperation?: string
-
-  @IsOptional()
   @IsObject()
   flightLeg?: Travel
 

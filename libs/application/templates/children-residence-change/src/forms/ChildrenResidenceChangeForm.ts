@@ -67,6 +67,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               title: m.externalData.general.pageTitle,
               id: 'approveExternalData',
               subTitle: m.externalData.general.subTitle,
+              description: m.externalData.general.description,
               checkboxLabel: m.externalData.general.checkboxLabel,
               dataProviders: [
                 buildDataProviderItem({
@@ -85,7 +86,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   id: 'parentNationalRegistry',
                   type: 'ParentNationalRegistryProvider',
                   title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
