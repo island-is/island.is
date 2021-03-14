@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { Op } from 'sequelize'
+import { Op, where } from 'sequelize'
 import * as kennitala from 'kennitala'
 
 import {
@@ -100,41 +100,33 @@ export class FlightService {
   // Assume: connecting flight means,
   //         `leg` is not connected to Reykjavík
   async isFlightLegConnectingFlight(
-    nationalId: string,
+    existingFlightId: string,
     incomingLeg: FlightLeg,
   ): Promise<boolean> {
-    // Get all flights for the surrounding years
-    const currentYear = new Date(Date.now()).getFullYear()
-    const lastYear = currentYear - 1
-    const nextYear = currentYear + 1
+    // Get the corresponding flight for the connection discount code
+    const existingFlight = await this.flightModel.findOne({
+      where: {
+        id: existingFlightId,
+      },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: { financialState: availableFinancialStates },
+        },
+      ],
+    })
 
-    const flights = [
-      ...(await this.findFlightsByYearAndNationalId(
-        nationalId,
-        currentYear.toString(),
-      )),
-      ...(await this.findFlightsByYearAndNationalId(
-        nationalId,
-        nextYear.toString(),
-      )),
-      ...(await this.findFlightsByYearAndNationalId(
-        nationalId,
-        lastYear.toString(),
-      )),
-    ]
+    if (!existingFlight) {
+      return false
+    }
 
     // If a user flightLeg exists such that the incoming flightLeg makes a valid connection
     // pair, return true
-    for (const flight of flights) {
-      for (const flightLeg of flight.flightLegs) {
-        if (
-          this.hasConnectingFlightPotentialFromFlightLegs(
-            flightLeg,
-            incomingLeg,
-          )
-        ) {
-          return true
-        }
+    for (const flightLeg of existingFlight.flightLegs) {
+      if (
+        this.hasConnectingFlightPotentialFromFlightLegs(flightLeg, incomingLeg)
+      ) {
+        return true
       }
     }
 
@@ -235,8 +227,6 @@ export class FlightService {
           REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].destination))
       )
     })
-
-    console.log('CONNECTABLE_FLIGHT_COUNT', flights.length)
 
     return flights
   }
@@ -391,8 +381,21 @@ export class FlightService {
     user: NationalRegistryUser,
     airline: ValueOf<typeof Airlines>,
     isConnectingFlight: boolean,
+    connectingId?: string,
   ): Promise<Flight> {
     const nationalId = user.nationalId
+
+    if (isConnectingFlight && connectingId) {
+      this.flightModel.update(
+        {
+          connectable: false,
+        },
+        {
+          where: { id: connectingId },
+        },
+      )
+    }
+
     return this.flightModel.create(
       {
         ...flight,
@@ -407,6 +410,7 @@ export class FlightService {
           gender: user.gender,
           postalCode: user.postalcode,
         },
+        connectable: !isConnectingFlight,
       },
       { include: [this.flightLegModel] },
     )

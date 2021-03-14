@@ -44,9 +44,6 @@ export class PrivateDiscountController {
     if (!user) {
       throw new NotFoundException(`User<${params.nationalId}> not found`)
     }
-    const connectedFlightCounts = await this.flightService.countThisYearsConnectedFlightsByNationalId(
-      params.nationalId,
-    )
 
     const unConnectedFlights = await this.flightService.findThisYearsConnectableFlightsByNationalId(
       params.nationalId,
@@ -54,7 +51,6 @@ export class PrivateDiscountController {
 
     return this.discountService.createDiscountCode(
       params.nationalId,
-      connectedFlightCounts,
       unConnectedFlights,
     )
   }

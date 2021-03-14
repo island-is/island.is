@@ -32,13 +32,13 @@ describe('DiscountService', () => {
       const nationalId = '1234567890'
       const cacheManagerSpy = jest.spyOn(cacheManager, 'set')
 
-      const result = await discountService.createDiscountCode(nationalId, 0, [])
+      const result = await discountService.createDiscountCode(nationalId, [])
 
       const uuid = cacheManagerSpy.mock.calls[0][0]
       expect(cacheManagerSpy.mock.calls[1][1]).toBe(uuid)
       expect(cacheManagerSpy.mock.calls[2][1]).toBe(uuid)
 
-      expect(cacheManagerSpy).toHaveBeenCalledTimes(4)
+      expect(cacheManagerSpy).toHaveBeenCalledTimes(3)
       expect(result.discountCode).toHaveLength(DISCOUNT_CODE_LENGTH)
     })
   })
@@ -134,8 +134,8 @@ describe('DiscountService', () => {
         false,
       )
 
-      expect(cacheManagerDelSpy).toHaveBeenCalledTimes(2)
-      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(1)
+      expect(cacheManagerDelSpy).toHaveBeenCalledTimes(1)
+      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(2)
     })
   })
 

@@ -16,6 +16,7 @@ export class Discount {
   connectionDiscountCodes: {
     code: string
     flightId: string
+    flightDesc: string
     validUntil: string
   }[]
 

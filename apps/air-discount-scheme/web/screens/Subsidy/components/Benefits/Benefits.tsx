@@ -29,6 +29,7 @@ const DiscountsQuery = gql`
       connectionDiscountCodes {
         code
         flightId
+        flightDesc
         validUntil
       }
       discountCode
@@ -157,7 +158,7 @@ function Benefits({ misc }: PropTypes) {
                                 ? kidsRights
                                 : ''
                             }`}
-                            subTitle={`${path}: ${connectionFlight.flightId}`}
+                            subTitle={`${path}: ${connectionFlight.flightDesc}`}
                             codeSubText={
                               <>
                                 {validUntil}:{' '}

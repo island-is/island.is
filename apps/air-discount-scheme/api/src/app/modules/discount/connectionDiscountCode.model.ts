@@ -9,5 +9,8 @@ export class ConnectionDiscountCode {
   flightId: string
 
   @Field()
+  flightDesc: string
+
+  @Field()
   validUntil: string
 }

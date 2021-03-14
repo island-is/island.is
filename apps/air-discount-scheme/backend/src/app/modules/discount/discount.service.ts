@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER, CacheKey } from '@nestjs/common'
 
 import { Discount } from './discount.model'
 import { Flight } from '../flight'
@@ -7,14 +7,11 @@ import {
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
+import { ConnectionDiscountCodes } from '@island.is/air-discount-scheme/types'
 
 interface CachedDiscount {
   discountCode: string
-  connectionDiscountCodes: {
-    code: string
-    flightId: string
-    validUntil: string
-  }[]
+  connectionDiscountCodes: ConnectionDiscountCodes
   nationalId: string
 }
 
@@ -27,13 +24,7 @@ const CACHE_KEYS = {
   discount: (id: string) => `discount_id_${id}`,
   discountCode: (discountCode: string) =>
     `discount_code_lookup_${discountCode}`,
-  connectionDiscountCodes: (
-    connectionDiscountCodes: {
-      code: string
-      flightId: string
-      validUntil: string
-    }[],
-  ) => `connection_discount_code_lookup_${connectionDiscountCodes}`,
+  connectionDiscountCode: (code: string) => `connection_discount_${code}`,
   flight: (flightId: string) => `discount_flight_lookup_${flightId}`,
 }
 
@@ -82,23 +73,30 @@ export class DiscountService {
 
   async createDiscountCode(
     nationalId: string,
-    connectedFlightCounts: number,
-    flights: Flight[],
+    connectableFlights: Flight[],
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
-    const connectionDiscountCodes: {
-      code: string
-      flightId: string
-      validUntil: string
-    }[] = []
+    const cacheId = CACHE_KEYS.discount(uuid())
 
-    for (let i = 0; i < connectedFlightCounts; i++) {
-      const flight = flights.pop()
-      if (flight) {
+    let connectionDiscountCodes: ConnectionDiscountCodes = []
+
+    const previousCacheId = CACHE_KEYS.user(nationalId)
+    const previousCache = await this.getCache<CachedDiscount>(previousCacheId)
+    let previousFlightIds: string[] = []
+
+    if (previousCache?.connectionDiscountCodes) {
+      connectionDiscountCodes = previousCache.connectionDiscountCodes
+      previousFlightIds = connectionDiscountCodes.map((cdc) => cdc.flightId)
+    }
+
+    const connectableFlightCounts = connectableFlights.length
+    // Create a discount code per every new flightId
+    for (let i = 0; i < connectableFlightCounts; i++) {
+      const flight = connectableFlights.pop()
+      if (flight && !previousFlightIds.includes(flight.id)) {
         let validUntil = new Date(
           Date.parse(flight.flightLegs[0].date.toString()),
         )
-        console.log('validUntil,101', validUntil)
 
         if (REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].origin)) {
           validUntil = new Date(
@@ -112,27 +110,32 @@ export class DiscountService {
           )
         }
 
-        const flightIdentifier = `${flight.flightLegs[0].origin}-${flight.flightLegs[0].destination}`
+        const flightId = flight.id
+        const flightDesc = `${flight.flightLegs[0].origin}-${flight.flightLegs[0].destination}`
+        const connectionDiscountCode = this.generateDiscountCode()
+
+        // Point every connection discount code to the cache id for lookup later
+        await this.setCache<string>(
+          CACHE_KEYS.connectionDiscountCode(connectionDiscountCode),
+          cacheId,
+        )
 
         connectionDiscountCodes.push({
-          code: this.generateDiscountCode(),
-          flightId: flightIdentifier,
+          code: connectionDiscountCode,
+          flightId,
+          flightDesc,
           validUntil: validUntil.toISOString().split('.')[0].replace('T', ' '),
         })
       }
     }
-    const cacheId = CACHE_KEYS.discount(uuid())
     await this.setCache<CachedDiscount>(cacheId, {
       nationalId,
       discountCode,
       connectionDiscountCodes,
     })
     await this.setCache<string>(CACHE_KEYS.discountCode(discountCode), cacheId)
-    await this.setCache<string>(
-      CACHE_KEYS.connectionDiscountCodes(connectionDiscountCodes),
-      cacheId,
-    )
     await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
+
     return new Discount(
       discountCode,
       connectionDiscountCodes,
@@ -160,10 +163,16 @@ export class DiscountService {
   async getDiscountByDiscountCode(
     discountCode: string,
   ): Promise<Discount | null> {
-    const cacheKey = CACHE_KEYS.discountCode(discountCode)
-    const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
+    let cacheKey = CACHE_KEYS.discountCode(discountCode)
+    let cacheValue = await this.getCache<CachedDiscount>(cacheKey)
+
     if (!cacheValue) {
-      return null
+      // Try searching for a connectingDiscountCode
+      cacheKey = CACHE_KEYS.connectionDiscountCode(discountCode)
+      cacheValue = await this.getCache<CachedDiscount>(cacheKey)
+      if (!cacheValue) {
+        return null
+      }
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
@@ -181,47 +190,44 @@ export class DiscountService {
     flightId: string,
     isConnectionDiscount: boolean,
   ): Promise<void> {
-    const userCacheKey = CACHE_KEYS.user(nationalId)
-    const cacheValue = await this.getCache<CachedDiscount>(userCacheKey)
-    const discountCodeCacheKey = CACHE_KEYS.discountCode(discountCode)
-    let connectionDiscountCodeCacheKey: {
-      code: string
-      flightId: string
-      validUntil: string
-    }[] = []
-    if (cacheValue?.connectionDiscountCodes) {
-      let markedDiscountCode = null
-      for (const connectionDiscountCode of cacheValue.connectionDiscountCodes) {
-        if (connectionDiscountCode.code === discountCode) {
-          markedDiscountCode = connectionDiscountCode
-        }
-      }
-      connectionDiscountCodeCacheKey = cacheValue.connectionDiscountCodes
+    const cacheKey = CACHE_KEYS.user(nationalId)
+    const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
 
-      if (markedDiscountCode) {
-        connectionDiscountCodeCacheKey.splice(
-          connectionDiscountCodeCacheKey.indexOf(markedDiscountCode),
-          1,
-        )
-      }
-    }
-    const cacheId = await this.cacheManager.get(discountCodeCacheKey)
-    const ttl = await this.cacheManager.ttl(cacheId)
     if (isConnectionDiscount) {
-      await this.setCache<string>(
-        CACHE_KEYS.connectionDiscountCodes(
-          connectionDiscountCodeCacheKey ?? [],
-        ),
-        cacheId,
-        ttl,
-      )
-    } else {
-      await this.cacheManager.del(discountCodeCacheKey)
-      await this.cacheManager.del(CACHE_KEYS.user(nationalId))
-    }
+      if (cacheValue?.connectionDiscountCodes) {
+        let markedDiscountCode = null
+        for (const connectionDiscountCode of cacheValue.connectionDiscountCodes) {
+          if (connectionDiscountCode.code === discountCode) {
+            markedDiscountCode = connectionDiscountCode
+          }
+        }
 
-    await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
+        // Remove connection discount code from cache if found
+        if (markedDiscountCode) {
+          cacheValue.connectionDiscountCodes.splice(
+            cacheValue.connectionDiscountCodes.indexOf(markedDiscountCode),
+            1,
+          )
+          await this.cacheManager.del(
+            CACHE_KEYS.connectionDiscountCode(markedDiscountCode.code),
+          )
+        }
+        await this.setCache<CachedDiscount>(cacheKey, cacheValue)
+      }
+    } else {
+      const discountCacheKey = CACHE_KEYS.discountCode(discountCode)
+      const cacheId = await this.cacheManager.get(discountCacheKey)
+      await this.cacheManager.del(discountCacheKey)
+      if (cacheValue) {
+        cacheValue.discountCode = ''
+        await this.setCache<CachedDiscount>(cacheKey, cacheValue)
+      }
+
+      const ttl = await this.cacheManager.ttl(cacheId)
+      await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
+    }
   }
+
   // When an airline booking has a payment failure, they have already registered
   // the flight with us and used the discount. To avoid making the user get a
   // new discount, we reactivate the discount here only if the flight is

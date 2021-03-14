@@ -95,7 +95,7 @@ describe('DiscountController', () => {
       })
 
       expect(getUserSpy).toHaveBeenCalledWith(nationalId)
-      expect(createDiscountCodeSpy).toHaveBeenCalledWith(nationalId, 0, 0)
+      expect(createDiscountCodeSpy).toHaveBeenCalledWith(nationalId, 0)
       expect(result).toEqual(discount)
     })
 

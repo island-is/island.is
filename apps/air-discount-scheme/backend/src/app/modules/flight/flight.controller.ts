@@ -46,7 +46,6 @@ import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import { HttpRequest } from '../../app.types'
-import { Not } from 'sequelize-typescript'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -117,6 +116,7 @@ export class PublicFlightController {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
+
     if (!discount) {
       throw new BadRequestException('Discount code is invalid')
     }
@@ -152,6 +152,7 @@ export class PublicFlightController {
     }
 
     let connectingFlight = false
+    let connectingId = undefined
 
     if (flight.flightLegs.length === 1) {
       const incomingLeg = {
@@ -163,8 +164,22 @@ export class PublicFlightController {
         !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) &&
         !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.origin)
       ) {
+        const connectionDiscountCode = discount.connectionDiscountCodes.filter(
+          (cdc) => {
+            return cdc.code === params.discountCode
+          },
+        )
+
+        if (connectionDiscountCode.length !== 1) {
+          throw new ForbiddenException(
+            'The provided discount code is not intended for connecting flights',
+          )
+        }
+
+        connectingId = connectionDiscountCode[0].flightId
+
         const isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
-          discount.nationalId,
+          connectingId,
           incomingLeg as FlightLeg, // must have date, destination and origin
         )
         if (!isConnectingFlight) {
@@ -182,6 +197,7 @@ export class PublicFlightController {
       user,
       request.airline,
       connectingFlight,
+      connectingId,
     )
     await this.discountService.useDiscount(
       params.discountCode,
