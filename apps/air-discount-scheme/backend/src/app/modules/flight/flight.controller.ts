@@ -69,6 +69,11 @@ export class PublicFlightController {
     description:
       'User does not have any flights that may correspond to connection flight',
   })
+  @ApiResponse({
+    status: 403,
+    description:
+      'The provided discount code is not intended for connecting flights',
+  })
   @ApiResponse({ type: CheckFlightViewModel })
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
@@ -92,8 +97,22 @@ export class PublicFlightController {
       date: new Date(Date.parse(flight.date.toString())),
     }
 
+    const connectionDiscountCode = discount.connectionDiscountCodes.filter(
+      (cdc) => {
+        return cdc.code === params.discountCode
+      },
+    )
+
+    if (connectionDiscountCode.length !== 1) {
+      throw new ForbiddenException(
+        'The provided discount code is not intended for connecting flights',
+      )
+    }
+
+    const connectingId = connectionDiscountCode[0].flightId
+
     const flightOk = await this.flightService.isFlightLegConnectingFlight(
-      discount.nationalId,
+      connectingId,
       incomingFlight as FlightLeg,
     )
 
@@ -184,7 +203,7 @@ export class PublicFlightController {
         )
         if (!isConnectingFlight) {
           throw new ForbiddenException(
-            'User does not meet the requirements for a connecting flight for this flight',
+            'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Connecting flight must go from/to Akureyri',
           )
         } else {
           connectingFlight = true

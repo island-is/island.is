@@ -124,10 +124,19 @@ export class DiscountService {
           code: connectionDiscountCode,
           flightId,
           flightDesc,
-          validUntil: validUntil.toISOString().split('.')[0].replace('T', ' '),
+          validUntil: validUntil.toISOString(),
         })
       }
     }
+
+    // Filter out connectionCodes that are expired in their validity
+    const now = new Date()
+    connectionDiscountCodes = connectionDiscountCodes.filter((cdc) => {
+      const validUntil = new Date(Date.parse(cdc.validUntil))
+
+      return now < validUntil
+    })
+
     await this.setCache<CachedDiscount>(cacheId, {
       nationalId,
       discountCode,
@@ -171,6 +180,22 @@ export class DiscountService {
       cacheKey = CACHE_KEYS.connectionDiscountCode(discountCode)
       cacheValue = await this.getCache<CachedDiscount>(cacheKey)
       if (!cacheValue) {
+        return null
+      }
+
+      // Return nothing if the connection discount code is expired
+      const now = new Date()
+      cacheValue.connectionDiscountCodes = cacheValue.connectionDiscountCodes.filter(
+        (cdc) => {
+          if (cdc.code === discountCode) {
+            const validUntil = new Date(Date.parse(cdc.validUntil))
+            return now < validUntil
+          } else {
+            return false
+          }
+        },
+      )
+      if (cacheValue.connectionDiscountCodes.length === 0) {
         return null
       }
     }
