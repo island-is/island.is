@@ -91,7 +91,7 @@ const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="grantType.name"
-                    message="Name is required"
+                    message="Name is required and needs to be in the right format"
                   />
                 </div>
 

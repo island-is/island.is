@@ -223,7 +223,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="description"
-                      message="Description is required"
+                      message="Description is required and needs to be in the right format"
                     />
                   </div>
                 </div>

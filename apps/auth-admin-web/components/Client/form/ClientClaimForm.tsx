@@ -7,6 +7,7 @@ import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   clientId: string
@@ -17,12 +18,9 @@ interface Props {
 }
 
 const ClientClaimForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-  } = useForm<ClientClaimDTO>()
+  const { register, handleSubmit, errors, formState } = useForm<
+    ClientClaimDTO
+  >()
   const { isSubmitting } = formState
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(
@@ -99,7 +97,10 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                   <input
                     type="text"
                     name="type"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateIdentifier,
+                    })}
                     defaultValue={''}
                     className="client-claim__input"
                     placeholder="exampleClaim"
@@ -110,7 +111,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="type"
-                    message="Claim type is required"
+                    message="Claim type is required and needs to be in the right format"
                   />
                   <input
                     type="submit"
@@ -124,7 +125,10 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                   <input
                     type="text"
                     name="value"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     defaultValue={''}
                     className="client-claim__input"
                     placeholder="exampleClaim"
@@ -135,7 +139,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="value"
-                    message="Value is required"
+                    message="Value is required and can not contain special characters"
                   />
                 </div>
               </div>

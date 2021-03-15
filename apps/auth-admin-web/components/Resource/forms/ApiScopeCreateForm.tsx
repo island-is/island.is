@@ -96,7 +96,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="name"
-                    message="Name is required"
+                    message="Name is required and needs to be in the right format"
                   />
                 </div>
                 <div className="api-scope-form__container__field">
@@ -122,7 +122,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="displayName"
-                    message="Display name is required"
+                    message="Display name is required and can not contain special characters"
                   />
                 </div>
                 <div className="api-scope-form__container__field">
@@ -144,6 +144,12 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     className="api-scope-form__input"
                   />
                   <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="description"
+                    message="Description can not contain special characters"
+                  />
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">

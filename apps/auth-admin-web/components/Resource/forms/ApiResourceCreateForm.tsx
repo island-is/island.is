@@ -193,6 +193,12 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__input"
                   />
                   <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="description"
+                    message="Description can not contain special characters"
+                  />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">
