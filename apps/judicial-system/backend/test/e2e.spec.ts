@@ -227,6 +227,7 @@ function caseToCCase(dbCase: Case) {
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
     judge: theCase.judge && userToCUser(theCase.judge),
     registrar: theCase.registrar && userToCUser(theCase.registrar),
+    isolationTo: theCase.isolationTo && theCase.isolationTo.toISOString(),
   } as unknown) as CCase
 }
 
