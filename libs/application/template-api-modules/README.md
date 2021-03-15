@@ -182,6 +182,7 @@ enum TEMPLATE_API_ACTIONS {
             // Defaults to true
             shouldPersistToExternalData: false,
             // (Optional) Id that will store the result inside application.externalData
+            // Defaults to value of apiModuleAction
             externalDataId: 'string',
             // (Optional) Should the state transition be blocked if this action errors out?
             // Will revert changes to answers/assignees/state
