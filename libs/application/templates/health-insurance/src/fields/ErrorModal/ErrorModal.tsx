@@ -36,7 +36,7 @@ const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
       initialVisibility={true}
       className={`${styles.dialog} ${styles.background} ${styles.center}`}
       modalLabel="Error prompt"
-      // hideOnClickOutside={false}
+      hideOnClickOutside={false}
     >
       {({ closeModal }: { closeModal: () => void }) => (
         <Box
