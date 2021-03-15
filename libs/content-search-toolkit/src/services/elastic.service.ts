@@ -71,9 +71,12 @@ export class ElasticService {
     if (documents.add.length) {
       documents.add.forEach(({ _id, ...document }) => {
         requests.push({
-          index: { _index: index, _id },
+          update: { _index: index, _id },
         })
-        requests.push(document)
+        requests.push({
+          doc: document,
+          doc_as_upsert: true,
+        })
         return requests
       })
     }
@@ -93,6 +96,10 @@ export class ElasticService {
       return false
     }
 
+    await this.bulkRequest(index, requests)
+  }
+
+  async bulkRequest(index: string, requests) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const chunkSize = 100 // this has to be an even number
@@ -116,7 +123,7 @@ export class ElasticService {
 
       return true
     } catch (error) {
-      logger.error('Elasticsearch request failed on bulk index', error)
+      logger.error('Elasticsearch request failed on bulk import', error)
       throw error
     }
   }
@@ -195,6 +202,50 @@ export class ElasticService {
     return data.body
   }
 
+  async getSingleDocumentByMetaData(
+    index: string,
+    query: DocumentByMetaDataInput,
+  ) {
+    const results = await this.getDocumentsByMetaData(index, query)
+    if (results.hits?.hits.length) {
+      this.updateDocumentPopularityScore(index, results.hits?.hits[0]._id)
+    }
+    return results
+  }
+
+  // we use this equation to update the popularity score
+  // https://stackoverflow.com/questions/11128086/simple-popularity-algorithm
+  async updateDocumentPopularityScore(index, id) {
+    const client = await this.getClient()
+    client
+      .update({
+        index,
+        id,
+        body: {
+          script: {
+            lang: 'painless',
+            source: `if (ctx._source.containsKey('popularityScore')) {
+              ctx._source.popularityScore = params.a * params.t +
+                (1 - params.a) * ctx._source.popularityScore
+            } else {
+              ctx._source.popularityScore = 0
+            }
+            `,
+            params: {
+              a: environment.popularityFactor,
+              t: Number(new Date()) / 1000,
+            },
+          },
+        },
+        retry_on_conflict: 1,
+      })
+      .catch((error) => {
+        // failing to update the popularity score is not the end of the world so
+        // we don't throw the error. we will see in the logs how common this is
+        logger.error('Could not update popularityScore', error)
+      })
+  }
+
   async getTagAggregation(index: string, query: TagAggregationInput) {
     const requestBody = tagAggregationQuery(query)
     const data = await this.findByQuery<
@@ -260,7 +311,6 @@ export class ElasticService {
       body: {
         query: {
           bool: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
             must: ids.map((id) => ({ match: { _id: id } })),
           },
         },

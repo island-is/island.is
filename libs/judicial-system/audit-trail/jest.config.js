@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'judicial-system-audit-trail',
-  preset: '../../../jest.config.js',
+  preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -12,4 +11,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../coverage/libs/judicial-system/audit-trail',
+  displayName: 'judicial-system-audit-trail',
 }

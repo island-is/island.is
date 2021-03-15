@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { useParams } from 'react-router-dom'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import {
@@ -15,7 +14,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
@@ -33,12 +32,9 @@ interface Props {
 }
 
 export const StepOne: React.FC<Props> = ({ type }: Props) => {
-  const history = useHistory()
-
+  const router = useRouter()
+  const id = router.query.id
   const [workingCase, setWorkingCase] = useState<Case>()
-
-  const { id } = useParams<{ id: string }>()
-
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -61,6 +57,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
             accusedGender: theCase.accusedGender,
             defenderName: theCase.defenderName,
             defenderEmail: theCase.defenderEmail,
+            sendRequestToDefender: theCase.sendRequestToDefender,
             court: 'Héraðsdómur Reykjavíkur',
           },
         },
@@ -98,7 +95,7 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
   const handleNextButtonClick = async (theCase: Case) => {
     const caseId = theCase.id === '' ? await createCase(theCase) : theCase.id
 
-    history.push(`${Constants.STEP_TWO_ROUTE}/${caseId}`)
+    router.push(`${Constants.STEP_TWO_ROUTE}/${caseId}`)
   }
 
   useEffect(() => {
@@ -115,13 +112,14 @@ export const StepOne: React.FC<Props> = ({ type }: Props) => {
         created: '',
         modified: '',
         type: type,
-        state: CaseState.DRAFT,
+        state: CaseState.NEW,
         policeCaseNumber: '',
         accusedNationalId: '',
         accusedName: '',
         accusedAddress: '',
         defenderName: '',
         defenderEmail: '',
+        sendRequestToDefender: false,
         accusedGender: undefined,
       })
     }

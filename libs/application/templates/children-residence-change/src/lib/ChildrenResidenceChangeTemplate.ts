@@ -10,6 +10,7 @@ import {
 import { extractParentFromApplication } from './utils'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
+import { CRCApplication } from '../types'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
@@ -93,7 +94,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToOtherParent: assign((context) => {
-        const otherParent = extractParentFromApplication(context.application)
+        // TODO: fix this..
+        const otherParent = extractParentFromApplication(
+          (context.application as unknown) as CRCApplication,
+        )
 
         return {
           ...context,
@@ -108,8 +112,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 
   mapUserToRole(
     id: string,
+    // TODO: Somehow use CRCApplication here
     application: Application,
   ): ApplicationRole | undefined {
+    if (
+      application.assignees.includes(id) &&
+      application.answers.useMocks === 'yes' &&
+      application.state === ApplicationStates.IN_REVIEW
+    ) {
+      return Roles.ParentB
+    }
     if (id === application.applicant) {
       return Roles.ParentA
     }

@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 
@@ -14,12 +13,15 @@ import {
   mockUpdateCaseMutation,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import StepThree from './StepThree'
 
 describe('Create detention request, step three', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_2' },
+    }))
     const todaysDate = new Date()
     const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
     const formattedTodaysMonth = (todaysDate.getMonth() + 1)
@@ -49,15 +51,9 @@ describe('Create detention request, step three', () => {
         ]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_THREE_ROUTE}/test_id_2`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
-              <StepThree />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepThree />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -98,6 +94,10 @@ describe('Create detention request, step three', () => {
 
   test('should display the correct requestedCustodyEndTime from api', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -105,13 +105,9 @@ describe('Create detention request, step three', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter initialEntries={[`${Constants.STEP_TWO_ROUTE}/test_id`]}>
-          <UserProvider>
-            <Route path={`${Constants.STEP_TWO_ROUTE}/:id`}>
-              <StepThree />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepThree />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -125,6 +121,10 @@ describe('Create detention request, step three', () => {
 
   test('should not have a disabled continue button if step is valid when a valid request is opened', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id' },
+    }))
 
     // Act
     render(
@@ -132,15 +132,9 @@ describe('Create detention request, step three', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_THREE_ROUTE}/test_id`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
-              <StepThree />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepThree />
+        </UserProvider>
       </MockedProvider>,
     )
 
@@ -154,6 +148,10 @@ describe('Create detention request, step three', () => {
 
   test('should display the custody end date of the parent case when the case is an extension', async () => {
     // Arrange
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      query: { id: 'test_id_8' },
+    }))
 
     // Act
     render(
@@ -161,15 +159,9 @@ describe('Create detention request, step three', () => {
         mocks={[...mockCaseQueries, ...mockProsecutorQuery]}
         addTypename={false}
       >
-        <MemoryRouter
-          initialEntries={[`${Constants.STEP_THREE_ROUTE}/test_id_8`]}
-        >
-          <UserProvider>
-            <Route path={`${Constants.STEP_THREE_ROUTE}/:id`}>
-              <StepThree />
-            </Route>
-          </UserProvider>
-        </MemoryRouter>
+        <UserProvider>
+          <StepThree />
+        </UserProvider>
       </MockedProvider>,
     )
 

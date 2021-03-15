@@ -38,7 +38,7 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
   )
   const [variables, setendPointVariables] = useState<Variable[]>([])
   const [prodEndPointExists, setprodEndPointExists] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     formValue.productionEndPointObject?.prodEndPointExists || '',
   )
@@ -84,17 +84,18 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
           },
         },
       })
-      //TODO: Needs new call to API
-      setendPointVariables([
-        {
-          id: '1',
-          name: 'Audience',
-          value: result.data.updateEndpoint.audience,
-        },
-        { id: '2', name: 'Scope', value: result.data.updateEndpoint.scope },
-      ])
-      setprodEndPointExists('true')
-      clearErrors()
+      if (result) {
+        setendPointVariables([
+          {
+            id: '1',
+            name: 'Audience',
+            value: result.data.updateEndpoint.audience,
+          },
+          { id: '2', name: 'Scope', value: result.data.updateEndpoint.scope },
+        ])
+        setprodEndPointExists('true')
+        clearErrors()
+      }
     }
   }
 
@@ -133,7 +134,11 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
                 hasError={
                   errors.productionEndPointObject?.prodEndPoint !== undefined
                 }
-                errorMessage={prodEndPointError ? prodEndPointError : ''}
+                errorMessage={formatText(
+                  m.prodEndpointInputErrorMessage,
+                  application,
+                  formatMessage,
+                )}
               />
             )}
           />

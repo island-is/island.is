@@ -13,7 +13,7 @@ export interface FaqListProps {
   questions: {
     id: string
     question: string
-    answer?: { __typename: 'Html'; id: string; document: Document }
+    answer?: SliceType[]
   }[]
 }
 
@@ -25,10 +25,9 @@ export const FaqList: FC<FaqListProps> = ({ title, questions }) => {
       </Text>
       <Accordion>
         {questions.map(({ id, question, answer }) => {
-          if (!answer?.document) return null
           return (
             <AccordionItem key={id} id={`faq_${id}`} label={question}>
-              {richText([answer] as SliceType[], undefined)}
+              {richText(answer as SliceType[], undefined)}
             </AccordionItem>
           )
         })}

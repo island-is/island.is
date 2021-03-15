@@ -21,10 +21,14 @@ export class HealthInsuranceService {
       logger.info(
         `Start send Health Insurance application for ${application.id}`,
       )
-      const vistaSkjal = transformApplicationToHealthInsuranceDTO(application)
+      const applyInputs = transformApplicationToHealthInsuranceDTO(application)
       logger.info(`Finished transform Application to Health Insurance DTO`)
 
-      const res = await this.healthInsuranceAPI.applyInsurance(570, vistaSkjal)
+      const res = await this.healthInsuranceAPI.applyInsurance(
+        570,
+        applyInputs.attachmentNames,
+        applyInputs.vistaskjal,
+      )
 
       logger.info(`Finished send Health Insurance application`)
     } catch (error) {

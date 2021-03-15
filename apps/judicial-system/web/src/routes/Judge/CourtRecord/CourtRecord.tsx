@@ -26,7 +26,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { useParams } from 'react-router-dom'
 import {
   AccusedPleaDecision,
   Case,
@@ -38,7 +37,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -50,6 +49,7 @@ import {
   validateAndSetTime,
   setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useRouter } from 'next/router'
 import useDateTime from '../../../utils/hooks/useDateTime'
 import { validate } from '../../../utils/validate'
 import * as styles from './CourtRecord.treat'
@@ -74,7 +74,8 @@ export const CourtRecord: React.FC = () => {
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
   ] = useState('')
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -167,6 +168,13 @@ export const CourtRecord: React.FC = () => {
             theCase.parentCase !== undefined,
             theCase.parentCase?.decision,
           ),
+        }
+
+        if (theCase.policeDemands) {
+          updateCase(
+            theCase.id,
+            parseString('policeDemands', theCase.policeDemands),
+          )
         }
       }
 

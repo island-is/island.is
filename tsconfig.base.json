@@ -108,6 +108,9 @@
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/children-residence-change/src/index.ts"
       ],
+      "@island.is/application/templates/data-protection-complaint": [
+        "libs/application/templates/data-protection-complaint/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
@@ -231,6 +234,18 @@
       ],
       "@island.is/service-portal/education": [
         "libs/service-portal/education/src/index.ts"
+      ],
+      "@island.is/service-portal/education-career": [
+        "libs/service-portal/education-career/src/index.ts"
+      ],
+      "@island.is/service-portal/education-degree": [
+        "libs/service-portal/education-degree/src/index.ts"
+      ],
+      "@island.is/service-portal/education-license": [
+        "libs/service-portal/education-license/src/index.ts"
+      ],
+      "@island.is/service-portal/education-student-assessment": [
+        "libs/service-portal/education-student-assessment/src/index.ts"
       ],
       "@island.is/service-portal/eligibility": [
         "libs/service-portal/eligibility/src/index.ts"

@@ -1,3 +1,4 @@
+import '@island.is/infra-tracing'
 import next from 'next'
 import { logger } from '@island.is/logging'
 import { startMetricServer } from '@island.is/infra-metrics'

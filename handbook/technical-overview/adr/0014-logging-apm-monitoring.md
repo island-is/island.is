@@ -29,7 +29,7 @@ We need a central observability platform where we ingest all our logs, metrics a
 Special note about pricing comparison: This is a very high-level price comparison, which does not take into account the ever-growing consumption we will see but should give a rough idea of the balance of cost.
 
 | Self-Hosted                         |                    |               |                           |                                   |                                        |
-| ----------------------------------- | ------------------ | ------------- | ------------------------- | --------------------------------- | -------------------------------------- |
+| ----------------------------------- | ------------------ | ------------- | ------------------------- | --------------------------------- | -------------------------------------- | --- |
 | Factors                             | Fixed price, hours | Monthly hours | Monthly price without VAT | First year total cost without VAT | First two years total cost without VAT |
 | Development                         | 160                | 0             | 0                         | ISK3,200,000.00                   | ISK3,200,000.00                        |
 | Infrastructure                      | 0                  | 0             | \$700.00                  | ISK1,100,400.00                   | ISK2,200,800.00                        |
@@ -38,7 +38,7 @@ Special note about pricing comparison: This is a very high-level price compariso
 | Total                               |                    |               |                           | **ISK5,780,400.00**               | **ISK8,200,800.00**                    |
 |                                     |                    |               |                           |                                   |                                        |
 | **SaaS**                            |                    |               |                           |                                   |                                        |
-| DataDog                             | 0                  | 0             | \$1,750.00                | **ISK2,751,000.00**               | **ISK5,502,000.00**                    |  |
+| DataDog                             | 0                  | 0             | \$1,750.00                | **ISK2,751,000.00**               | **ISK5,502,000.00**                    |     |
 |                                     |                    |               |                           |                                   |                                        |
 |                                     |                    |               |                           |                                   |                                        |
 |                                     |                    |               |                           |                                   |                                        |
