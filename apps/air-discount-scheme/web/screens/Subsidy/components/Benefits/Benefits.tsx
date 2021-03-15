@@ -28,7 +28,6 @@ const DiscountsQuery = gql`
     discounts {
       connectionDiscountCodes {
         code
-        flightId
         flightDesc
         validUntil
       }
