@@ -36,8 +36,9 @@ const availableFinancialStates = [
   financialStateMachine.states[States.sentDebit].key,
 ]
 
-export const CONNECTING_FLIGHT_GRACE_PERIOD = 48 * (1000 * 60 * 60)
+export const CONNECTING_FLIGHT_GRACE_PERIOD = 48 * (1000 * 60 * 60) // 48 hours in milliseconds
 export const REYKJAVIK_FLIGHT_CODES = ['RVK', 'REK']
+export const AKUREYRI_FLIGHT_CODES = ['AK']
 
 @Injectable()
 export class FlightService {
@@ -80,6 +81,22 @@ export class FlightService {
       return false
     }
 
+    // Both flights need to touch Akureyri in some way, that is to say,
+    // Akureyri has to be a common point, ex: Reykjavik-Akureyri > Akureyri-Grimsey
+    // Logic: If not (Akureyri in destination or origin of strictly both flights) return false
+    if (
+      !(
+        AKUREYRI_FLIGHT_CODES.includes(firstFlight.destination) ||
+        AKUREYRI_FLIGHT_CODES.includes(firstFlight.origin)
+      ) &&
+      !(
+        AKUREYRI_FLIGHT_CODES.includes(secondFlight.destination) ||
+        AKUREYRI_FLIGHT_CODES.includes(secondFlight.origin)
+      )
+    ) {
+      return false
+    }
+
     let delta = secondFlight.date.getTime() - firstFlight.date.getTime()
 
     // The order must be flipped if we subtract the first intended chronological leg
@@ -97,8 +114,6 @@ export class FlightService {
     return false
   }
 
-  // Assume: connecting flight means,
-  //         `leg` is not connected to Reykjavík
   async isFlightLegConnectingFlight(
     existingFlightId: string,
     incomingLeg: FlightLeg,
