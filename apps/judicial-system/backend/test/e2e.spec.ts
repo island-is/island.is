@@ -24,6 +24,7 @@ import { SharedAuthService } from '@island.is/judicial-system/auth'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
+import { environment } from '../src/environments'
 import {
   Notification,
   SendNotificationResponse,
@@ -65,27 +66,29 @@ beforeAll(async () => {
   const sharedAuthService = await app.resolve(SharedAuthService)
 
   prosecutor = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${prosecutorNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${prosecutorNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
   judge = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${judgeNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${judgeNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
   registrar = (
-    await request(app.getHttpServer()).get(`/api/user/${registrarNationalId}`)
+    await request(app.getHttpServer())
+      .get(`/api/user/${registrarNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
 
   admin = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${adminNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${adminNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
 })
