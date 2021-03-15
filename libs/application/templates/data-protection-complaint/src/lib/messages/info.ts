@@ -106,6 +106,11 @@ export const info = {
       defaultMessage: 'Nafn félagssamtaka',
       description: 'Organization or institution name',
     },
+    commissionDocuments: {
+      id: 'dpac.application:section.info.commissionDocuments',
+      defaultMessage: 'Umboðsskjöl',
+      description: 'Commission Documents',
+    },
     commissionsDocumentsHeader: {
       id: 'dpac.application:section.info.commissionsDocumentsHeader',
       defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',

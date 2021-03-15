@@ -14,7 +14,7 @@ import {
   buildRepeater,
   buildCheckboxField,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, YES, NO } from '../shared'
+import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
 import {
   section,
   delimitation,
@@ -460,23 +460,23 @@ export const ComplaintForm: Form = buildForm({
                   options: [
                     {
                       label: complaint.labels.subjectAuthorities,
-                      value: 'withAuthorities',
+                      value: SubjectOfComplaint.WITH_AUTHORITIES,
                     },
                     {
                       label: complaint.labels.subjectLackOfEducation,
-                      value: 'lackOfEducation',
+                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
                     },
                     {
                       label: complaint.labels.subjectSocialMedia,
-                      value: 'socialMedia',
+                      value: SubjectOfComplaint.SOCIAL_MEDIA,
                     },
                     {
                       label: complaint.labels.subjectRequestForAccess,
-                      value: 'requestForAccess',
+                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
                     },
                     {
                       label: complaint.labels.subjectRightOfObjection,
-                      value: 'rightOfObjection',
+                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
                     },
                   ],
                   large: true,
@@ -487,19 +487,19 @@ export const ComplaintForm: Form = buildForm({
                   options: [
                     {
                       label: complaint.labels.subjectEmail,
-                      value: 'email',
+                      value: SubjectOfComplaint.EMAIL,
                     },
                     {
                       label: complaint.labels.subjectNationalId,
-                      value: 'nationalId',
+                      value: SubjectOfComplaint.NATIONAL_ID,
                     },
                     {
                       label: complaint.labels.subjectEmailInWorkplace,
-                      value: 'emailInWorkplace',
+                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
                     },
                     {
                       label: complaint.labels.subjectUnauthorizedPublication,
-                      value: 'unauthorizedPublication',
+                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
                     },
                   ],
                   large: true,
@@ -510,15 +510,15 @@ export const ComplaintForm: Form = buildForm({
                   options: [
                     {
                       label: complaint.labels.subjectVanskilaskra,
-                      value: 'vanskilaskra',
+                      value: SubjectOfComplaint.VANSKILASKRA,
                     },
                     {
                       label: complaint.labels.subjectVideoRecording,
-                      value: 'videoRecordings',
+                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
                     },
                     {
                       label: complaint.labels.subjectOtherOther,
-                      value: 'other',
+                      value: SubjectOfComplaint.OTHER,
                     },
                   ],
                   large: true,
@@ -579,9 +579,20 @@ export const ComplaintForm: Form = buildForm({
       title: section.overview,
       children: [
         buildCustomField({
-          id: 'overview.complaintOverview',
+          id: 'overview.termsAgreement',
           title: overview.general.pageTitle,
           component: 'ComplaintOverview',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: 'Búið',
+      children: [
+        buildDescriptionField({
+          id: 'field',
+          title: 'Vel gert!',
+          description: 'Þú ert komin/n út á enda',
         }),
       ],
     }),
