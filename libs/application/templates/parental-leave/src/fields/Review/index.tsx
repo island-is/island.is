@@ -30,12 +30,24 @@ import {
   getExpectedDateOfBirth,
   getOtherParentOptions,
 } from '../../parentalLeaveUtils'
-import { Period } from '../../types'
+
 import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 import YourRightsBoxChart from '../Rights/YourRightsBoxChart'
 import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES, NO } from '../../constants'
+import {
+  GetPensionFunds,
+  GetPrivatePensionFunds,
+  GetUnions,
+} from '../../graphql/queries'
+import {
+  GetPensionFundsQuery,
+  GetPrivatePensionFundsQuery,
+  GetUnionsQuery,
+} from '../../types/schema'
+
+import { Period } from '../../types'
 
 type ValidOtherParentAnswer = 'no' | 'manual' | undefined
 
@@ -65,9 +77,10 @@ const Review: FC<ReviewScreenProps> = ({
     ) as ValidOtherParentAnswer,
   )
 
-  const [statefulPrivatePension, setStatefulPrivatePension] = useState<
-    ValidAnswers
-  >(
+  const [
+    statefulPrivatePension,
+    setStatefulPrivatePension,
+  ] = useState<ValidAnswers>(
     getValueViaPath(
       application.answers,
       'usePrivatePensionFund',
@@ -78,6 +91,31 @@ const Review: FC<ReviewScreenProps> = ({
     () => buildFieldOptions(getOtherParentOptions(application), application),
     [application],
   )
+
+  const { data: pensionFundData } = useQuery<GetPensionFundsQuery>(
+    GetPensionFunds,
+  )
+  const pensionFundOptions =
+    pensionFundData?.getPensionFunds?.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    })) ?? []
+
+  const {
+    data: privatePensionFundData,
+  } = useQuery<GetPrivatePensionFundsQuery>(GetPrivatePensionFunds)
+  const privatePensionFundOptions =
+    privatePensionFundData?.getPrivatePensionFunds?.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    })) ?? []
+
+  const { data: unionData } = useQuery<GetUnionsQuery>(GetUnions)
+  const unionOptions =
+    unionData?.getUnions?.map(({ id, name }) => ({
+      label: name,
+      value: id,
+    })) ?? []
 
   const dob = getExpectedDateOfBirth(application)
   const { data, error, loading } = useQuery(getEstimatedPayments, {
@@ -100,20 +138,6 @@ const Review: FC<ReviewScreenProps> = ({
     return null
   }
   const dobDate = new Date(dob)
-
-  // TODO: This will also come from somewhere in the external data
-  const otherParentPeriods: Period[] = [
-    {
-      startDate: dob,
-      endDate: '2021-05-17T00:00:00.000Z',
-      ratio: 50,
-    },
-    {
-      startDate: '2021-03-13T00:00:00.000Z',
-      endDate: '2021-10-03T00:00:00.000Z',
-      ratio: 50,
-    },
-  ]
 
   return (
     <div>
@@ -286,7 +310,7 @@ const Review: FC<ReviewScreenProps> = ({
                       name="payments.pensionFund"
                       disabled={false}
                       id="payments.pensionFund"
-                      options={[{ label: 'TODO', value: 'todo' }]}
+                      options={pensionFundOptions}
                     />
                   ) : (
                     <Text>
@@ -308,7 +332,7 @@ const Review: FC<ReviewScreenProps> = ({
                       name="payments.union"
                       disabled={false}
                       id="payments.union"
-                      options={[{ label: 'TODO', value: 'todo' }]}
+                      options={unionOptions}
                     />
                   ) : (
                     <Text>
@@ -384,7 +408,7 @@ const Review: FC<ReviewScreenProps> = ({
                           name="payments.pensionFund"
                           disabled={false}
                           id="payments.pensionFund"
-                          options={[{ label: 'TODO', value: 'todo' }]}
+                          options={privatePensionFundOptions}
                         />
                       ) : (
                         <Text>
@@ -406,7 +430,7 @@ const Review: FC<ReviewScreenProps> = ({
                           name="payments.union"
                           disabled={false}
                           id="payments.union"
-                          options={[{ label: 'TODO', value: 'todo' }]}
+                          options={unionOptions}
                         />
                       ) : (
                         <Text>
@@ -478,10 +502,12 @@ const Review: FC<ReviewScreenProps> = ({
                 titleSmall={formatMessage(
                   parentalLeaveFormMessages.shared.dateOfBirthTitle,
                 )}
-                periods={formatPeriods(
-                  application.answers.periods as Period[],
-                  otherParentPeriods,
-                )}
+                // TODO: Once we have the data, add the otherParentPeriods here.
+                //  periods={formatPeriods(
+                //   application.answers.periods as Period[],
+                //   otherParentPeriods,
+                // )}
+                periods={formatPeriods(application.answers.periods as Period[])}
               />
               {editable && (
                 <Box paddingTop={3}>

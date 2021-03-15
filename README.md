@@ -26,7 +26,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Prerequisites
 
-- You have Node installed `>= 12.0.0` and Yarn at `>= 1.20.0`.
+- You have Node installed `^14.16.0` and Yarn at `^1.22.0`.
 - You have [java](https://www.java.com/en/download/manual.jsp) installed.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - Run `yarn` to install the dependencies.
@@ -131,3 +131,24 @@ yarn get-secrets <project> [options]
 ```bash
 yarn get-secrets gjafakort --reset
 ```
+
+### Environment variables with static websites
+
+To be able to access environment variables in purely static projects, you need
+to do the following:
+
+1. In the index.html file, add `<!-- environment placeholder -->`.
+2. Use the `getStaticEnv` function from the `@island.is/utils/environment`
+   library to fetch your environment variables.
+3. Prefix your environment variables with `SI_PUBLIC_`, for example
+   `SI_PUBLIC_MY_VARIABLE`.
+
+NOTE: This is only to get environment variables when running in kubernetes, not
+for when running locally. So you should only use `getStaticEnv` in your
+`environment.prod.ts` file.
+
+What happens behind the scenes is that static projects have a bash script that
+runs when the docker container starts up. This script searches for references
+of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It
+then puts all the matches inside the index.html which is then served to the
+client.

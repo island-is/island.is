@@ -38,4 +38,8 @@ export default {
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
   },
+  signingOptions: {
+    url: 'https://developers.dokobit.com',
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+  },
 } as Environment

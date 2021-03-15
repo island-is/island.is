@@ -1,12 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { FieldBaseProps } from '@island.is/application/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 import { terms } from '../../lib/messages'
+import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
 
-const Terms = ({ field, error }: FieldBaseProps) => {
+const Terms = ({ field, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
   return (
@@ -28,11 +28,11 @@ const Terms = ({ field, error }: FieldBaseProps) => {
           },
           {
             value: 'childSupport',
-            label: 'Ég skil að réttur til meðlagsgreiðslna flyst með barninu',
+            label: formatMessage(terms.childBenefitCheckbox.label),
           },
           {
             value: 'childBenefit',
-            label: 'Ég skil að réttur til barnabótagreiðslna flyst með barninu',
+            label: formatMessage(terms.familySupportCheckbox.label),
           },
         ]}
       />

@@ -8,6 +8,7 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import InfoModal from '../../common/InfoModal'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   clientId: string
@@ -19,9 +20,12 @@ interface Props {
 }
 
 const ClientSecretForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientSecretDTO
-  >()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientSecretDTO>()
   const { isSubmitting } = formState
   const defaultSecretLength = 25
   const [defaultSecret, setDefaultSecret] = useState<string>('')
@@ -208,7 +212,10 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       id="description"
                       type="text"
                       name="description"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: true,
+                        validate: ValidationUtils.validateDescription,
+                      })}
                       defaultValue={''}
                       className="client-secret__input"
                       placeholder="Secret description"
@@ -219,7 +226,7 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="description"
-                      message="Description is required"
+                      message="Description is required and needs to be in the right format"
                     />
                   </div>
                 </div>

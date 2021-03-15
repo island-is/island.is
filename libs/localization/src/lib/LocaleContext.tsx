@@ -21,11 +21,11 @@ export interface MessagesDict {
 
 interface LocaleContextType {
   lang: Locale
-  loadMessages: (namespaces: string | string[]) => void
-  changeLanguage: (lang: Locale) => void
   loadingMessages: boolean
   loadedNamespaces: string[]
   messages: MessagesDict
+  loadMessages(namespaces: string | string[]): void
+  changeLanguage(lang: Locale): void
 }
 
 interface LocaleProviderProps {
@@ -40,11 +40,11 @@ type Query = {
 
 export const LocaleContext = createContext<LocaleContextType>({
   lang: 'is',
-  loadMessages: () => undefined,
-  changeLanguage: () => undefined,
   loadingMessages: true,
   loadedNamespaces: [],
   messages: {},
+  loadMessages: () => undefined,
+  changeLanguage: () => undefined,
 })
 
 const GET_TRANSLATIONS = gql`
@@ -102,6 +102,7 @@ export const LocaleProvider = ({
     setLoadingMessages(true)
     await polyfill(lang)
     setActiveLocale(lang)
+
     const { data } = await apolloClient.query<Query>({
       query: GET_TRANSLATIONS,
       variables: {

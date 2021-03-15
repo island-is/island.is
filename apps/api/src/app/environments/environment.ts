@@ -11,7 +11,7 @@ export default {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   education: {
-    secret: process.env.EDUCATION_SECRET,
+    xroadLicenseServiceId: 'r1/IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
     emailOptions: {
       sendFromEmail: 'development@island.is',
       useTestAccount: true,
@@ -33,6 +33,8 @@ export default {
     baseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     username: process.env.HEALTH_INSURANCE_XROAD_USERNAME ?? '',
     password: process.env.HEALTH_INSURANCE_XROAD_PASSWORD ?? '',
+    clientID: process.env.XROAD_CLIENT_ID ?? '',
+    xroadID: process.env.XROAD_HEALTH_INSURANCE_ID ?? '',
   },
   userProfile: {
     userProfileServiceBasePath: 'http://localhost:3366',

@@ -31,7 +31,7 @@ export const ExampleForm: Form = buildForm({
           title: m.introField,
           description: (application) => ({
             ...m.introIntroduction,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             values: { name: application.answers.name },
           }),

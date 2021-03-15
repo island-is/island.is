@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
+
+import { useRouter } from 'next/router'
 import * as styles from './FormFooter.treat'
 interface Props {
   previousUrl?: string
@@ -15,7 +16,7 @@ interface Props {
 }
 
 const FormFooter: React.FC<Props> = (props: Props) => {
-  const history = useHistory()
+  const router = useRouter()
 
   return (
     <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
@@ -23,7 +24,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         variant="ghost"
         disabled={props.previousIsDisabled}
         onClick={() => {
-          history.push(props.previousUrl || '')
+          router.push(props.previousUrl || '')
         }}
       >
         Til baka
@@ -38,7 +39,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
             if (props.onNextButtonClick) {
               props.onNextButtonClick()
             } else if (props.nextUrl) {
-              history.push(props.nextUrl)
+              router.push(props.nextUrl)
             }
           }}
         >

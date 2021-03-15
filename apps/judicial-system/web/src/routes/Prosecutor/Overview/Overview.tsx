@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
 
 import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
@@ -35,21 +34,23 @@ import {
   CaseQuery,
   SendNotificationMutation,
   TransitionCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { constructProsecutorDemands } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { useRouter } from 'next/router'
 import * as styles from './Overview.treat'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
 
-  const { id } = useParams<{ id: string }>()
-  const history = useHistory()
+  const router = useRouter()
+  const id = router.query.id
+
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery(CaseQuery, {
     variables: { input: { id: id } },
@@ -205,12 +206,11 @@ export const Overview: React.FC = () => {
                         workingCase.parentCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `${capitalize(
+                    : workingCase.arrestDate
+                    ? `${capitalize(
                         formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                      )} kl. ${formatDate(
-                        workingCase.arrestDate,
-                        TIME_FORMAT,
-                      )}`,
+                      )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                    : 'Var ekki skráður',
                 },
               ]}
               accusedName={workingCase.accusedName}
@@ -328,9 +328,6 @@ export const Overview: React.FC = () => {
             </Accordion>
           </Box>
           <Box className={styles.prosecutorContainer}>
-            <Box marginBottom={1}>
-              <Text>F.h.l</Text>
-            </Box>
             <Text variant="h3">
               {workingCase.prosecutor
                 ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`
@@ -351,7 +348,7 @@ export const Overview: React.FC = () => {
                 ? Constants.REQUEST_LIST_ROUTE
                 : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
             }
-            nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
+            nextButtonText="Senda kröfu á héraðsdóm"
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
               const notificationSent = await handleNextButtonClick()
@@ -370,14 +367,15 @@ export const Overview: React.FC = () => {
                 workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhald'
                   : 'farbann'
-              }  hefur verið staðfest`}
+              }  hefur verið send til dómstóls`}
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
-              handleClose={() => history.push(Constants.REQUEST_LIST_ROUTE)}
+              handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
-                history.push(Constants.FEEDBACK_FORM_ROUTE)
+                window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+                router.push(Constants.REQUEST_LIST_ROUTE)
               }}
               handleSecondaryButtonClick={() => {
-                history.push(Constants.REQUEST_LIST_ROUTE)
+                router.push(Constants.REQUEST_LIST_ROUTE)
               }}
               primaryButtonText="Gefa endurgjöf á gáttina"
               secondaryButtonText="Loka glugga"

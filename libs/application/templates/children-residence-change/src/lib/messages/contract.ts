@@ -23,9 +23,9 @@ export const contract = {
     },
     message: {
       id: 'crc.application:section.contract.overview.alert.message',
-      defaultMessage: 'Upphafsdagur samnings',
-      description:
-        'Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur afgreitt hana.',
+      defaultMessage:
+        'Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.',
+      description: 'Text for alert message',
     },
   }),
   labels: defineMessages({
@@ -35,11 +35,10 @@ export const contract = {
         '{count, plural, =0 {Nafn barns} one {Nafn barns} other {Nöfn barna}}',
       description: 'Label for a child names',
     },
-    otherParentContactInformation: {
-      id:
-        'crc.application:section.contract.overview.labels.otherParentContactInformation',
-      defaultMessage: 'Tengiliðaupplýsingar hins foreldrisins',
-      description: 'Label for other parent contact information',
+    contactInformation: {
+      id: 'crc.application:section.contract.overview.labels.contactInformation',
+      defaultMessage: 'Tengiliðaupplýsingar',
+      description: 'Label for parent contact information',
     },
     currentResidence: {
       id: 'crc.application:section.contract.overview.labels.currentResidence',

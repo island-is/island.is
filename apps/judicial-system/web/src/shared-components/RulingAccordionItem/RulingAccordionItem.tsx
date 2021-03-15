@@ -38,7 +38,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </Box>
         <Box marginBottom={7}>
           <Text variant="eyebrow" color="blue400">
-            Niðurstaða úrskurðar
+            Niðurstaða
           </Text>
           <Text>
             <span className={style.breakSpaces}>{workingCase.ruling}</span>
@@ -51,7 +51,14 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
             Úrskurðarorð
           </Text>
         </Box>
-        <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
+        <Box marginBottom={3}>
+          {getConclusion(workingCase)}
+          {workingCase.additionToConclusion && (
+            <Box marginTop={1}>
+              <Text>{workingCase.additionToConclusion}</Text>
+            </Box>
+          )}
+        </Box>
         <Box marginBottom={1}>
           <Text variant="h3">
             {workingCase?.judge
@@ -59,7 +66,6 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
               : `${user?.name} ${user?.title}`}
           </Text>
         </Box>
-        <Text>Úrskurðarorðið er lesið í heyranda hljóði fyrir viðstadda.</Text>
       </Box>
       <Box component="section" marginBottom={3}>
         <Box marginBottom={1}>

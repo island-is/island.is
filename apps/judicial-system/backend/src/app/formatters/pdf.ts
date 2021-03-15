@@ -205,7 +205,7 @@ export async function generateRequestPdf(existingCase: Case): Promise<string> {
     .text(' ')
     .font('Helvetica-Bold')
     .text(
-      `F.h.l. ${existingCase.prosecutor?.name || ''} ${
+      `${existingCase.prosecutor?.name || ''} ${
         existingCase.prosecutor?.title || ''
       }`,
     )
@@ -348,7 +348,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
           : existingCase.accusedPleaDecision === AccusedPleaDecision.REJECT
           ? `Kærði hafnar kröfunni. `
           : ''
-      } ${existingCase.accusedPleaAnnouncement}`,
+      }${existingCase.accusedPleaAnnouncement || ''}`,
       {
         lineGap: 6,
         paragraphGap: 0,
@@ -464,6 +464,14 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
         paragraphGap: 0,
       },
     )
+  if (existingCase.additionToConclusion) {
+    doc.text(' ').text(existingCase.additionToConclusion, {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+  }
+
+  doc
     .text(' ')
     .font('Helvetica-Bold')
     .text(

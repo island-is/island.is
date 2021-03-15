@@ -20,7 +20,7 @@ callbacks.signIn = async function signIn(user, account, profile) {
     user.nationalId = profile.nationalId
     user.accessToken = account.accessToken
     user.refreshToken = account.refreshToken
-    user.idToken = profile.idToken
+    user.idToken = account.idToken
     return true
   }
 

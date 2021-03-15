@@ -59,7 +59,7 @@ const autoSchemaFile = environment.production
     EducationModule.register({
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
-      secret: environment.education.secret,
+      xroadLicenseServiceId: environment.education.xroadLicenseServiceId,
       emailOptions: environment.education.emailOptions,
     }),
     ApplicationModule.register({
@@ -102,6 +102,8 @@ const autoSchemaFile = environment.production
       baseUrl: environment.healthInsurance.baseUrl,
       username: environment.healthInsurance.username,
       password: environment.healthInsurance.password,
+      clientID: environment.healthInsurance.clientID,
+      xroadID: environment.healthInsurance.xroadID,
     }),
     UserProfileModule.register({
       userProfileServiceBasePath:

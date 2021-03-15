@@ -7,6 +7,7 @@ import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
+import ValidationUtils from './../../../utils/validation.utils'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: Client) => void
@@ -231,7 +232,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         required: true,
                         maxLength: 10,
                         minLength: 10,
-                        pattern: /\d+/,
+                        validate: ValidationUtils.validateNationalId,
                       })}
                       defaultValue={client.nationalId}
                       className="client-basic__input"
@@ -253,7 +254,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       type="text"
                       ref={register({
                         required: true,
-                        pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                        validate: ValidationUtils.validateEmail,
                       })}
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
@@ -274,7 +275,10 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       type="text"
                       name="client.clientId"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: true,
+                        validate: ValidationUtils.validateIdentifier,
+                      })}
                       defaultValue={client.clientId}
                       className="client-basic__input"
                       placeholder="example-client"
@@ -294,7 +298,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message="Client Id is required"
+                      message="Client Id is required and needs to be in the right format"
                     />
                   </div>
                   <div className="field-with-details">
@@ -303,7 +307,10 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       <input
                         name="baseUrl"
                         type="text"
-                        ref={register({ required: true })}
+                        ref={register({
+                          required: true,
+                          validate: ValidationUtils.validateUrl,
+                        })}
                         defaultValue={client.clientUri ?? ''}
                         className="client-basic__input"
                         placeholder="https://localhost:4200"
@@ -317,7 +324,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message="Base Url is required"
+                        message="Base Url is required and needs to be in the right format"
                       />
                       <div
                         className={`client-basic__container__field__details${

@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   Accordion,
   Box,
@@ -5,8 +6,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import React, { useEffect, useState, useRef, useCallback } from 'react'
 import {
   FormFooter,
   PageLayout,
@@ -22,18 +21,17 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { useParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import {
   JudgeSubsections,
   Sections,
@@ -51,6 +49,7 @@ import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
+import { useRouter } from 'next/router'
 
 interface CaseData {
   case?: Case
@@ -66,7 +65,8 @@ export const RulingStepOne: React.FC = () => {
   const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
     '',
   )
-  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -247,13 +247,13 @@ export const RulingStepOne: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Niðurstaða úrskurðar
+                Niðurstaða
               </Text>
             </Box>
             <Input
               data-testid="ruling"
               name="ruling"
-              label="Niðurstaða úrskurðar"
+              label="Efni úrskurðar"
               placeholder="Hver er niðurstaðan að mati dómara?"
               defaultValue={workingCase.ruling}
               rows={16}

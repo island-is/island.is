@@ -43,15 +43,6 @@ export class DirectorateOfLabourRepository {
   }
 
   private async getAllPensionFunds(): Promise<PensionFund[]> {
-    if (isRunningInDevelopment) {
-      return [
-        {
-          id: 'id',
-          name: 'Frjalsi',
-        },
-      ]
-    }
-
     const { pensionFunds } = await this.pensionApi.pensionGetPensionFunds()
 
     if (pensionFunds) {
@@ -62,6 +53,15 @@ export class DirectorateOfLabourRepository {
   }
 
   async getPensionFunds(): Promise<PensionFund[]> {
+    if (isRunningInDevelopment) {
+      return [
+        {
+          id: 'id',
+          name: 'Frjalsi',
+        },
+      ]
+    }
+
     const pensionFunds = await this.getAllPensionFunds()
 
     return pensionFunds.filter((pensionFund) =>
@@ -70,6 +70,15 @@ export class DirectorateOfLabourRepository {
   }
 
   async getPrivatePensionFunds(): Promise<PensionFund[]> {
+    if (isRunningInDevelopment) {
+      return [
+        {
+          id: 'id',
+          name: 'Frjalsi',
+        },
+      ]
+    }
+
     const pensionFunds = await this.getAllPensionFunds()
 
     return pensionFunds.filter((pensionFund) =>

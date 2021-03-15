@@ -89,6 +89,14 @@ export type ModalBaseProps = {
    * Clicking outside the Dialog closes it unless hideOnClickOutside is set to false.
    */
   hideOnClickOutside?: boolean
+  /**
+   * When there is no focusable element in the dialog the tabIndex should be set to 0.
+   */
+  tabIndex?: number
+  /**
+   * When enabled, the dialog can be closed by pressing Escape. Enabled by default.
+   */
+  hideOnEsc?: boolean
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -105,6 +113,8 @@ export const ModalBase: FC<ModalBaseProps> = ({
   removeOnClose,
   isVisible,
   hideOnClickOutside,
+  tabIndex,
+  hideOnEsc,
 }) => {
   const modal = useDialogState({
     animated: true,
@@ -153,6 +163,8 @@ export const ModalBase: FC<ModalBaseProps> = ({
             className={cn(styles.modal, className)}
             aria-label={modalLabel}
             hideOnClickOutside={hideOnClickOutside}
+            tabIndex={tabIndex}
+            hideOnEsc={hideOnEsc}
           >
             {typeof children === 'function'
               ? children({ closeModal })

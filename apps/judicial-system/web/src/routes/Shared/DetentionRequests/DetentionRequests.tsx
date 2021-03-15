@@ -33,11 +33,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { useHistory } from 'react-router-dom'
+import { useRouter } from 'next/router'
 import {
   SendNotificationMutation,
   TransitionCaseMutation,
-} from '@island.is/judicial-system-web/src/graphql'
+} from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as styles from './DetentionRequests.treat'
 
@@ -56,7 +56,7 @@ export const DetentionRequests: React.FC = () => {
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   const { user } = useContext(UserContext)
-  const history = useHistory()
+  const router = useRouter()
 
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
@@ -114,7 +114,6 @@ export const DetentionRequests: React.FC = () => {
       const casesWithoutDeleted = resCases.filter((c: Case) => {
         return c.state !== CaseState.DELETED
       })
-
       if (isProsecutor) {
         setCases(casesWithoutDeleted)
       } else if (isJudge || isRegistrar) {
@@ -139,7 +138,10 @@ export const DetentionRequests: React.FC = () => {
       case CaseState.DRAFT:
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
-        return { color: 'purple', text: 'Krafa send' }
+        return {
+          color: 'purple',
+          text: `${isJudge ? 'Ný krafa' : 'Krafa send'}`,
+        }
       case CaseState.RECEIVED:
         return { color: 'darkerMint', text: 'Krafa móttekin' }
       case CaseState.ACCEPTED:
@@ -163,13 +165,13 @@ export const DetentionRequests: React.FC = () => {
 
   const handleClick = (c: Case): void => {
     if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
-      history.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
+      router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
     } else if (isJudge || isRegistrar) {
-      history.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
+      router.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
-      history.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
+      router.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
     } else {
-      history.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
+      router.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
     }
   }
 
@@ -434,7 +436,7 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">
                       {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                        ? `${formatDate(c.custodyEndDate, 'P')}`
+                        ? `${formatDate(c.custodyEndDate, 'd.M.y')}`
                         : null}
                     </Text>
                   </td>

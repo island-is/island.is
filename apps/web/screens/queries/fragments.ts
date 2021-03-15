@@ -148,7 +148,7 @@ export const slices = gql`
       id
       question
       answer {
-        ...HtmlFields
+        ...BaseSlices
       }
     }
   }
@@ -401,7 +401,19 @@ export const slices = gql`
     }
   }
 
-  fragment AllSlices on Slice {
+  fragment AccordionSliceFields on AccordionSlice {
+    __typename
+    id
+    title
+    accordionItems {
+      title
+      content {
+        ...HtmlFields
+      }
+    }
+  }
+
+  fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
     ...StoryFields
@@ -410,7 +422,6 @@ export const slices = gql`
     ...HeadingFields
     ...LogoListFields
     ...BulletListFields
-    ...FaqListFields
     ...StatisticsFields
     ...ProcessEntryFields
     ...HtmlFields
@@ -429,5 +440,11 @@ export const slices = gql`
     ...TwoColumnTextFields
     ...OfficesSlice
     ...OneColumnTextFields
+    ...AccordionSliceFields
+  }
+
+  fragment AllSlices on Slice {
+    ...BaseSlices
+    ...FaqListFields
   }
 `

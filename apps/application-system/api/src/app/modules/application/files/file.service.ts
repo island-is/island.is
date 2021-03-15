@@ -1,136 +1,186 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
-import * as AWS from 'aws-sdk'
 import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
-import { FormValue } from '@island.is/application/core'
 import {
-  ParentResidenceChange,
-  PersonResidenceChange,
-} from '@island.is/application/templates/children-residence-change'
-import { User } from '@island.is/api/domains/national-registry'
+  SigningService,
+  SigningServiceResponse,
+} from '@island.is/dokobit-signing'
+import { BucketTypePrefix, DokobitFileName } from './utils/constants'
+import { AwsService } from './aws.service'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from '../application.configuration'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { User } from '@island.is/api/domains/national-registry'
 
 @Injectable()
 export class FileService {
-  s3: AWS.S3
-  private one_minute = 60
-
   constructor(
     @Inject(APPLICATION_CONFIG)
     private readonly config: ApplicationConfig,
-  ) {
-    this.s3 = new AWS.S3()
-  }
+    private readonly signingService: SigningService,
+    private readonly awsService: AwsService,
+  ) {}
 
   async createPdf(
     application: Application,
-    type: PdfTypes,
+    pdfType: PdfTypes,
   ): Promise<string | undefined> {
-    const answers = application.answers as FormValue
-    const externalData = application.externalData as FormValue
+    this.validateApplicationType(application.typeId)
 
-    switch (type) {
+    switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const {
-          parentA,
-          parentB,
-          childrenAppliedFor,
-          expiry,
-        } = this.variablesForResidenceChange(answers, externalData)
-        return await this.createResidenceChangePdf(
-          parentA,
-          parentB,
-          childrenAppliedFor,
-          expiry,
-          application.id,
+        return await this.createChildrenResidencePdf(
+          application as CRCApplication,
         )
       }
     }
   }
 
-  variablesForResidenceChange(answers: FormValue, externalData: FormValue) {
-    const parentBNationalRegistry = externalData.parentNationalRegistry as FormValue
-    const nationalRegistry = externalData.nationalRegistry as FormValue
-    const nationalRegistryData = (nationalRegistry.data as unknown) as User
-    const childrenAppliedFor = (answers.selectChild as unknown) as Array<
-      PersonResidenceChange
-    >
-    const parentB = (parentBNationalRegistry.data as unknown) as ParentResidenceChange
+  async uploadSignedFile(
+    application: Application,
+    documentToken: string,
+    pdfType: PdfTypes,
+  ) {
+    this.validateApplicationType(application.typeId)
 
-    parentB.email = answers.parentBEmail as string
-    parentB.phoneNumber = answers.parentBPhoneNumber as string
+    const bucket = this.getBucketName()
 
-    const parentA: ParentResidenceChange = {
-      id: nationalRegistryData.nationalId,
-      name: nationalRegistryData.fullName,
-      ssn: nationalRegistryData.nationalId,
-      phoneNumber: answers.phoneNumber as string,
-      email: answers.email as string,
-      address: nationalRegistryData.address?.streetAddress as string,
-      postalCode: nationalRegistryData.address?.postalCode as string,
-      city: nationalRegistryData.address?.city as string,
-    }
-
-    const expiry = answers.expiry as string
-
-    return { parentA, parentB, childrenAppliedFor, expiry }
+    await this.signingService
+      .getSignedDocument(DokobitFileName[pdfType], documentToken)
+      .then((file) => {
+        const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
+        this.awsService.uploadFile(
+          Buffer.from(file, 'binary'),
+          bucket,
+          s3FileName,
+        )
+      })
   }
 
-  private async createResidenceChangePdf(
-    parentA: ParentResidenceChange,
-    parentB: ParentResidenceChange,
-    childrenAppliedFor: Array<PersonResidenceChange>,
-    expiry: string,
-    applicationId: string,
-  ): Promise<string> {
+  async requestFileSignature(
+    application: Application,
+    pdfType: PdfTypes,
+  ): Promise<SigningServiceResponse> {
+    this.validateApplicationType(application.typeId)
+    const { answers, externalData, id, state } = application as CRCApplication
+    const { nationalRegistry, parentNationalRegistry } = externalData
+    const isParentA = state === 'draft'
+
+    const parentBName =
+      answers.useMocks === 'yes'
+        ? answers.mockData.parentNationalRegistry.data.name
+        : parentNationalRegistry.data.name
+
+    switch (pdfType) {
+      case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
+        const name = isParentA ? nationalRegistry.data.fullName : parentBName
+        const phoneNumber = isParentA
+          ? answers.parentA.phoneNumber
+          : answers.parentB.phoneNumber
+
+        return await this.handleChildrenResidenceChangeSignature(
+          pdfType,
+          id,
+          name,
+          phoneNumber,
+        )
+      }
+    }
+  }
+
+  getPresignedUrl(application: Application, pdfType: PdfTypes) {
+    this.validateApplicationType(application.typeId)
+
+    const bucket = this.getBucketName()
+
+    const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
+
+    return this.awsService.getPresignedUrl(bucket, fileName)
+  }
+
+  private async createChildrenResidencePdf(application: CRCApplication) {
+    const bucket = this.getBucketName()
+
+    // TODO: Remove ternary for usemocks once we move mock data to externalData
+    const selectedChildren =
+      application.answers.useMocks === 'no'
+        ? application.externalData.childrenNationalRegistry.data.filter((c) =>
+            application.answers.selectChild.includes(c.name),
+          )
+        : application.answers.mockData.childrenNationalRegistry.data.filter(
+            (c) => application.answers.selectChild.includes(c.name),
+          )
+
     const pdfBuffer = await generateResidenceChangePdf(
-      childrenAppliedFor,
-      parentA,
-      parentB,
-      expiry,
+      selectedChildren,
+      (application.externalData.nationalRegistry.data as unknown) as User,
+      application.answers.useMocks === 'no'
+        ? application.externalData.parentNationalRegistry.data
+        : application.answers.mockData.parentNationalRegistry.data,
+      application.answers.selectDuration,
+      application.answers.residenceChangeReason,
     )
 
-    const fileName = `children-residence-change/${parentA.ssn}/${applicationId}.pdf`
-    const bucket = this.config.presignBucket || ''
+    const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
+      application.id
+    }.pdf`
 
-    return await this.getPresignedUrl(pdfBuffer, bucket, fileName)
+    await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
+
+    return this.awsService.getPresignedUrl(bucket, fileName)
   }
 
-  private async getPresignedUrl(
-    buffer: Buffer,
-    bucket: string,
-    fileName: string,
-  ): Promise<string> {
-    const uploadParams = {
-      Bucket: bucket,
-      Key: fileName,
-      ContentEncoding: 'base64',
-      ContentDisposition: 'inline',
-      ContentType: 'application/pdf',
-      Body: buffer,
+  private async handleChildrenResidenceChangeSignature(
+    pdfType: PdfTypes,
+    applicationId: string,
+    applicantName: string,
+    phoneNumber?: string,
+  ): Promise<SigningServiceResponse> {
+    const bucket = this.getBucketName()
+
+    const s3FileName = `${BucketTypePrefix[pdfType]}/${applicationId}.pdf`
+    const s3File = await this.awsService.getFile(bucket, s3FileName)
+    const fileContent = s3File.Body?.toString('binary')
+
+    if (!fileContent || !phoneNumber) {
+      throw new NotFoundException(`Variables for document signing not found`)
     }
 
-    await this.s3
-      .upload(uploadParams)
-      .promise()
-      .catch(() => {
-        return null
-      })
+    return await this.signingService.requestSignature(
+      phoneNumber,
+      'Lögheimilisbreyting barns',
+      applicantName,
+      'Ísland',
+      DokobitFileName[pdfType],
+      fileContent,
+    )
+  }
 
-    const presignedUrlParams = {
-      Bucket: bucket,
-      Key: fileName,
-      Expires: this.one_minute * 120, // TODO: Select length for presigned url's in island.is
+  private validateApplicationType(applicationType: string) {
+    if (
+      Object.values(PdfTypes).includes(applicationType as PdfTypes) === false
+    ) {
+      throw new BadRequestException(
+        'Application type is not supported in file service.',
+      )
+    }
+  }
+
+  private getBucketName() {
+    const bucket = this.config.presignBucket
+
+    if (!bucket) {
+      throw new Error('Bucket name not found.')
     }
 
-    return await new Promise((resolve, reject) => {
-      this.s3.getSignedUrl('getObject', presignedUrlParams, (err, url) => {
-        err ? reject(err) : resolve(url)
-      })
-    })
+    return bucket
   }
 }

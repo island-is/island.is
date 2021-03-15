@@ -17,10 +17,11 @@ import {
   Application,
   FormValue,
   ExternalData,
+  buildAsyncSelectField,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { YES, NO, FILE_SIZE_LIMIT } from '../constants'
-import { StatusTypes } from '../types'
+import { YES, NO, FILE_SIZE_LIMIT, StatusTypes } from '../constants'
+import { CountryDataResult } from '../types'
 import { Address } from '@island.is/api/schema'
 import Logo from '../assets/Logo'
 import {
@@ -68,6 +69,12 @@ export const HealthInsuranceForm: Form = buildForm({
               type: undefined,
               title: m.socialInsuranceAdministrationTitle,
               subTitle: m.socialInsuranceAdministrationSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'moreInfo',
+              type: undefined,
+              title: '',
+              subTitle: m.dataProvidersMoreInfo,
             }),
             buildDataProviderItem({
               id: 'userProfile',
@@ -249,11 +256,11 @@ export const HealthInsuranceForm: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
+            buildDescriptionField({
               id: 'confirmationOfStudiesDescription',
-              title: m.confirmationOfStudies,
-              description: m.confirmationOfStudiesTooltip,
-              component: 'TextWithTooltip',
+              title: '',
+              description: m.confirmationOfStudies,
+              tooltip: m.confirmationOfStudiesTooltip,
               condition: (answers) =>
                 (answers.status as { type: string })?.type ===
                 StatusTypes.STUDENT,
@@ -309,10 +316,29 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
             }),
-            buildCustomField({
+            buildAsyncSelectField({
               id: 'formerInsurance.country',
               title: m.formerInsuranceCountry,
-              component: 'CountrySelectField',
+              description: m.formerInsuranceDetails,
+              placeholder: m.formerInsuranceCountryPlaceholder,
+              loadingError: m.formerInsuranceCountryError,
+              backgroundColor: 'blue',
+              loadOptions: async () => {
+                const countries = await fetch(
+                  'https://restcountries.eu/rest/v2/all',
+                )
+                const data = (await countries.json()) as CountryDataResult[]
+                return data.map(
+                  ({ name, alpha2Code: countryCode, regionalBlocs }) => {
+                    const regions = regionalBlocs.map((blocs) => blocs.acronym)
+                    const option = { name, countryCode, regions }
+                    return {
+                      label: name,
+                      value: JSON.stringify(option),
+                    }
+                  },
+                )
+              },
             }),
             buildTextField({
               id: 'formerInsurance.personalId',
@@ -358,11 +384,15 @@ export const HealthInsuranceForm: Form = buildForm({
                 return requireConfirmationOfResidency(formerCountry)
               },
             }),
-            buildCustomField({
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
+            }),
+            buildDescriptionField({
               id: 'formerInsurance.entitlementDescription',
-              title: m.formerInsuranceEntitlement,
-              description: m.formerInsuranceEntitlementTooltip,
-              component: 'TextWithTooltip',
+              title: '',
+              description: m.formerInsuranceEntitlement,
+              tooltip: m.formerInsuranceEntitlementTooltip,
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
@@ -399,19 +429,13 @@ export const HealthInsuranceForm: Form = buildForm({
               variant: 'textarea',
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
-                const entitlement = (answers as {
-                  formerInsurance: { entitlement: string }
-                })?.formerInsurance?.entitlement
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
                 })?.formerInsurance?.country
                 const citizenship = (answers as {
                   applicant: { citizenship: string }
                 })?.applicant?.citizenship
-                return (
-                  entitlement === YES &&
-                  !requireWaitingPeriod(formerCountry, citizenship)
-                )
+                return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
           ],
@@ -450,7 +474,7 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               condition: {
                 questionId: 'hasAdditionalInfo',
-                comparator: Comparators.GTE,
+                comparator: Comparators.EQUALS,
                 value: YES,
               },
             }),
@@ -462,6 +486,15 @@ export const HealthInsuranceForm: Form = buildForm({
               uploadHeader: m.fileUploadHeader,
               uploadDescription: m.fileUploadDescription,
               uploadButtonLabel: m.fileUploadButton,
+              condition: {
+                questionId: 'hasAdditionalInfo',
+                comparator: Comparators.EQUALS,
+                value: YES,
+              },
+            }),
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
               condition: {
                 questionId: 'hasAdditionalInfo',
                 comparator: Comparators.EQUALS,

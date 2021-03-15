@@ -1,5 +1,4 @@
 {
-  "npmScope": "island.is",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -9,6 +8,10 @@
     "nx.json": "*",
     "tsconfig.base.json": "*"
   },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -143,6 +146,9 @@
     "application-templates-children-residence-change": {
       "tags": []
     },
+    "application-templates-data-protection-complaint": {
+      "tags": []
+    },
     "application-templates-document-provider-onboarding": {
       "tags": []
     },
@@ -159,6 +165,9 @@
       "tags": []
     },
     "application-templates-parental-leave": {
+      "tags": []
+    },
+    "application-templates-party-letter": {
       "tags": []
     },
     "application-templates-passport": {
@@ -245,6 +254,9 @@
       "tags": [],
       "implicitDependencies": ["gjafakort-web"]
     },
+    "health-insurance": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },
@@ -314,6 +326,9 @@
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
     },
+    "judicial-system-xrd-api": {
+      "tags": []
+    },
     "localization": {
       "tags": []
     },
@@ -364,6 +379,18 @@
       "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
+      "tags": []
+    },
+    "service-portal-education-career": {
+      "tags": []
+    },
+    "service-portal-education-degree": {
+      "tags": []
+    },
+    "service-portal-education-license": {
+      "tags": []
+    },
+    "service-portal-education-student-assessment": {
       "tags": []
     },
     "service-portal-eligibility": {
@@ -439,6 +466,9 @@
     "utils-api": {
       "tags": []
     },
+    "utils-environment": {
+      "tags": []
+    },
     "vmst-client": {
       "tags": []
     },
@@ -449,8 +479,5 @@
       "tags": [],
       "implicitDependencies": ["web"]
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   }
 }

@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql'
+import { Resolver, Query } from '@nestjs/graphql'
 
 import {
   IdsAuthGuard,
@@ -8,11 +8,11 @@ import {
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
 
-import { VistaSkjalModel } from './models'
+// import { VistaSkjalModel } from './models'
 import { HealthInsuranceService } from '../healthInsurance.service'
-import { VistaSkjalInput } from '../types'
+// import { VistaSkjalInput } from '@island.is/health-insurance'
 
-@UseGuards(IdsAuthGuard, ScopesGuard) // TODO: enable when go to dev/prod
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver(() => String)
 export class HealthInsuranceResolver {
   constructor(
@@ -46,14 +46,15 @@ export class HealthInsuranceResolver {
     // return this.healthInsuranceService.getPendingApplication('0101006070') // TODO cleanup
   }
 
-  @Mutation(() => VistaSkjalModel, {
-    name: 'healthInsuranceApplyInsurance',
-  })
-  async healthInsuranceApplyInsurance(
-    @Args({ name: 'inputs', type: () => VistaSkjalInput })
-    inputs: VistaSkjalInput,
-    @CurrentUser() user: AuthUser,
-  ): Promise<VistaSkjalModel> {
-    return this.healthInsuranceService.applyInsurance(inputs, user.nationalId)
-  }
+  // TODO remove so this function will not be public exposed
+  // @Mutation(() => VistaSkjalModel, {
+  //   name: 'healthInsuranceApplyInsurance',
+  // })
+  // async healthInsuranceApplyInsurance(
+  //   @Args({ name: 'inputs', type: () => VistaSkjalInput })
+  //   inputs: VistaSkjalInput,
+  //   @CurrentUser() user: AuthUser,
+  // ): Promise<VistaSkjalModel> {
+  //   return this.healthInsuranceService.applyInsurance(inputs, user.nationalId)
+  // }
 }

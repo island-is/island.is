@@ -1,8 +1,17 @@
 import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
-import { EFTA, EU } from './constants'
-import { NordicCountries } from './types'
+import { EFTA, EU, NordicCountries } from './constants'
+
+export const sortApplicationsByDateAscending = (
+  applications: Applications[],
+) => {
+  const sortedApplications = applications
+    .slice()
+    .sort((a, b) => (new Date(a.created) > new Date(b.created) ? 1 : -1))
+
+  return sortedApplications
+}
 
 export const hasHealthInsurance = (externalData: ExternalData) => {
   const isInsured = externalData?.healthInsurance?.data
@@ -16,6 +25,14 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
     const pendingApplications = applications?.filter(
       (application) => application.state === 'draft',
     )
+    const sortedApplications = sortApplicationsByDateAscending(applications)
+    const firstCreatedId = sortedApplications[0].id
+    const currentPathname = window.location.pathname
+
+    if (currentPathname.includes(firstCreatedId)) {
+      return false
+    }
+
     return pendingApplications?.length > 1
   }
   // If we can not find any pending applications becausee of failure to fetch info, we will return false to allow the user to continue to create a new application
@@ -46,21 +63,21 @@ export const shouldShowModal = (externalData: ExternalData) => {
   )
 }
 
-export const isEUCountry = (formerCountry: string) => {
-  const regions = getCountryRegions(formerCountry)
-  return regions.includes(EU) || regions.includes(EFTA)
+export const isEUCountry = (countryData: string) => {
+  const regions = extractKeyFromStringObject(countryData, 'regions')
+  return regions?.includes(EU) || regions?.includes(EFTA)
 }
 
 export const requireConfirmationOfResidency = (formerCountry: string) => {
-  const countryName = getCountryName(formerCountry)
+  const countryName = extractKeyFromStringObject(formerCountry, 'name')
   return (
     countryName === NordicCountries.FAROE_ISLANDS ||
     countryName === NordicCountries.GREENLAND
   )
 }
 
-export const isNordicCountry = (formerCountry: string) => {
-  const countryName = getCountryName(formerCountry)
+export const isNordicCountry = (countryData: string) => {
+  const countryName = extractKeyFromStringObject(countryData, 'name')
   return Object.values(NordicCountries).includes(countryName)
 }
 
@@ -81,22 +98,15 @@ export const requireWaitingPeriod = (
   return false
 }
 
-const getCountryName = (countryField: string) => {
+export const extractKeyFromStringObject = (
+  objectString: string,
+  key: string,
+) => {
   try {
-    const countryData = JSON.parse(countryField)
-    const { name } = countryData
-    return name
+    const object = JSON.parse(objectString)
+    const value = object[key]
+    return value
   } catch (error) {
-    return ''
-  }
-}
-
-const getCountryRegions = (countryField: string) => {
-  try {
-    const countryData = JSON.parse(countryField)
-    const { regions } = countryData
-    return regions
-  } catch (error) {
-    return []
+    return null
   }
 }

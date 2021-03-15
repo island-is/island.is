@@ -15,9 +15,8 @@ import {
   Fylgiskjal,
   Fylgiskjol,
 } from './dto'
-import { SoapClient } from './soapClient'
+import { SoapClient, VistaSkjalInput } from '@island.is/health-insurance'
 import { VistaSkjalModel } from '../graphql/models'
-import { VistaSkjalInput } from '../types'
 import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
@@ -27,6 +26,8 @@ export interface HealthInsuranceConfig {
   baseUrl: string
   username: string
   password: string
+  clientID: string
+  xroadID: string
 }
 
 @Injectable()
@@ -161,8 +162,10 @@ export class HealthInsuranceAPI {
         bornmedumsaekjanda: inputObj.isChildrenFollowed,
         fyrrautgafuland: inputObj.previousCountry,
         fyrrautgafulandkodi: inputObj.previousCountryCode,
-        fyrriutgafustofnunlands: inputObj.previousIssuingInstitution,
+        fyrriutgafustofnunlands: inputObj.previousIssuingInstitution ?? '',
         tryggdurfyrralandi: inputObj.isHealthInsuredInPreviousCountry,
+        tryggingaretturfyrralandi:
+          inputObj.hasHealthInsuranceRightInPreviousCountry,
         vidbotarupplysingar: inputObj.additionalInformation ?? '',
       },
     }
@@ -179,6 +182,8 @@ export class HealthInsuranceAPI {
         const filename = arrAttachments[i]
         const fylgiskjal: Fylgiskjal = {
           heiti: filename,
+          // here is application-system id + filename
+          // TODO: need to fix
           innihald: await this.bucketService.getFileContentAsBase64(filename),
         }
         fylgiskjol.fylgiskjal.push(fylgiskjal)
@@ -217,14 +222,8 @@ export class HealthInsuranceAPI {
     */
     logger.info(`Calling vistaskjal through xroad`)
     const res: GetVistaSkjalDtoType = await this.xroadCall('vistaskjal', args)
-
     const vistaSkjal = new VistaSkjalModel()
     if (!res.VistaSkjalType?.tokst) {
-      logger.info(
-        `Failed to upload document to sjukra because: ${
-          res.VistaSkjalType.villulysing ?? 'unknown error'
-        }`,
-      )
       vistaSkjal.isSucceeded = false
       vistaSkjal.comment = res.VistaSkjalType?.villulysing ?? 'Unknown error'
 
@@ -236,6 +235,11 @@ export class HealthInsuranceAPI {
           vistaSkjal.comment = res.VistaSkjalType.villulisti[0].villulysinginnri
         }
       }
+      logger.info(
+        `Failed to upload document to sjukra because: ${
+          vistaSkjal.comment ?? 'unknown error'
+        }`,
+      )
 
       return vistaSkjal
     }
@@ -256,6 +260,8 @@ export class HealthInsuranceAPI {
       this.clientConfig.baseUrl,
       this.clientConfig.username,
       this.clientConfig.password,
+      this.clientConfig.clientID,
+      this.clientConfig.xroadID,
       functionName,
     )
     if (!client) {

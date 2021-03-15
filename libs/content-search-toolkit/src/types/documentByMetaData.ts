@@ -1,10 +1,4 @@
-import { elasticTagField, sortDirection } from './shared'
-
-type sortableFields = {
-  dateUpdated?: sortDirection
-  dateCreated?: sortDirection
-  'title.sort'?: sortDirection
-}
+import { elasticTagField, sortRule } from './shared'
 
 interface MetaPropsBase {
   types?: string[]
@@ -13,7 +7,7 @@ interface MetaPropsBase {
     from?: string
     to?: string
   }
-  sort?: sortableFields
+  sort?: sortRule[]
   page?: number
   size?: number
 }
