@@ -7,8 +7,7 @@ module.exports = {
         'case',
         'isolation_to',
         {
-          type: 'TIMESTAMP WITH TIME ZONE',
-          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+          type: Sequelize.DATE,
           allowNull: true,
         },
         { transaction: t },
