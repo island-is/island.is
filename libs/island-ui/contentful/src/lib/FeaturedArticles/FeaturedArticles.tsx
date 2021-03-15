@@ -8,7 +8,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { Article } from '@island.is/api/schema'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -27,7 +26,6 @@ export const FeaturedArticles: React.FC<FeaturedArticlesProps> = ({
   articles,
   link,
 }) => {
-  const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   return (
@@ -42,11 +40,10 @@ export const FeaturedArticles: React.FC<FeaturedArticlesProps> = ({
       </Text>
       <Stack space={2}>
         {articles.map(({ title, slug, processEntry }) => {
-          const url = linkResolver('Article' as LinkType, [slug])
           return (
             <FocusableBox
               key={slug}
-              href={url.href}
+              href="#"
               target={isMobile ? '' : '_blank'}
               borderRadius="large"
             >

@@ -29,7 +29,7 @@ export const OneColumnText: React.FC<OneColumnTextProps> = ({
       </Text>
       {richText(content)}
       {link && (
-        <Link href="#">
+        <Link href={link.url}>
           <Button
             icon="arrowForward"
             iconType="filled"

@@ -34,13 +34,9 @@ export const Districts: React.FC<DistrictsProps> = ({
       paddingTop={[8, 6, 10]}
       paddingBottom={[4, 5, 10]}
     >
-      <GridRow>
-        <GridColumn span="12/12">
-          <Text variant="h3" as="h2">
-            {title}
-          </Text>
-        </GridColumn>
-      </GridRow>
+      <Text variant="h3" as="h2">
+        {title}
+      </Text>
       <GridRow>
         <GridColumn span={['10/10', '10/10', '5/10']}>
           {description && (
