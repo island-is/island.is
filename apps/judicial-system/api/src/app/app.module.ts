@@ -35,6 +35,7 @@ const autoSchemaFile = environment.production
     }),
     SharedAuthModule.register({
       jwtSecret: environment.auth.jwtSecret,
+      secretToken: environment.auth.secretToken,
     }),
     AuditTrailModule,
     AuthModule,

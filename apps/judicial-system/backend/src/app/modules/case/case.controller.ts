@@ -39,7 +39,6 @@ import {
   TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
-import { environment } from '../../../environments'
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
@@ -223,7 +222,7 @@ export class CaseController {
     }
   }
 
-  @UseGuards(new TokenGuaard(environment.auth.secretToken))
+  @UseGuards(TokenGuaard)
   @Post('internal/case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   internalCreate(@Body() caseToCreate: CreateCaseDto): Promise<Case> {

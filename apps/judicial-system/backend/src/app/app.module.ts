@@ -19,6 +19,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     }),
     SharedAuthModule.register({
       jwtSecret: environment.auth.jwtSecret,
+      secretToken: environment.auth.secretToken,
     }),
     UserModule,
     CaseModule,

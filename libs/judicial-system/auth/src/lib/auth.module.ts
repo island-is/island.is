@@ -4,11 +4,13 @@ import { JwtModule } from '@nestjs/jwt'
 
 import { EXPIRES_IN_SECONDS } from '@island.is/judicial-system/consts'
 
+import { SECRET_TOKEN } from './guards'
 import { JwtStrategy } from './jwt.strategy'
 import { SharedAuthService } from './auth.service'
 
 export interface SharedAuthModuleOptions {
   jwtSecret: string
+  secretToken: string
 }
 
 @Global()
@@ -30,13 +32,17 @@ export class SharedAuthModule {
       ],
       providers: [
         {
+          provide: SECRET_TOKEN,
+          useFactory: () => options.secretToken,
+        },
+        {
           provide: 'JWT_SECRET',
           useFactory: () => options.jwtSecret,
         },
         JwtStrategy,
         SharedAuthService,
       ],
-      exports: [SharedAuthService],
+      exports: [SECRET_TOKEN, SharedAuthService],
     }
   }
 }

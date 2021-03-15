@@ -22,7 +22,6 @@ import {
   TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
-import { environment } from '../../../environments'
 import { CreateUserDto, UpdateUserDto } from './dto'
 import { User } from './user.model'
 import { UserService } from './user.service'
@@ -96,7 +95,7 @@ export class UserController {
     return user
   }
 
-  @UseGuards(new TokenGuaard(environment.auth.secretToken))
+  @UseGuards(TokenGuaard)
   @Get('user')
   @ApiOkResponse({
     type: User,
