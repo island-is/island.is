@@ -2,6 +2,7 @@ import * as z from 'zod'
 import { YES, NO } from '../shared'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
+import { DefaultEvents } from 'libs/application/core/src'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -97,7 +98,7 @@ export const DataProtectionComplaintSchema = z.object({
     documents: z.array(FileSchema),
   }),
   overview: z.object({
-    termsAgreement: z.array(z.string()).refine((x) => x?.includes('agreed')),
+    termsAgreement: z.string().refine((x) => x === DefaultEvents.SUBMIT),
   }),
 })
 

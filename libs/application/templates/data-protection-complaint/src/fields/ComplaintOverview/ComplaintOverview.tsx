@@ -17,13 +17,8 @@ import {
   Complaint,
   OrganizationOrInstitution,
 } from './Sections'
-import { CheckboxController } from '@island.is/shared/form-fields'
 
-export const ComplaintOverview: FC<FieldBaseProps> = ({
-  application,
-  errors,
-  field,
-}) => {
+export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as DataProtectionComplaint
 
@@ -60,18 +55,6 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({
       {answers.commissions && <Commissions answers={answers} />}
       <Complainees answers={answers} />
       <Complaint answers={answers} />
-      <CheckboxController
-        id={field.id}
-        name={field.id}
-        large
-        error={errors && (errors['overview.termsAgreement'] as string)}
-        options={[
-          {
-            value: 'agreed',
-            label: formatMessage(overview.labels.termsAgreement),
-          },
-        ]}
-      />
     </Box>
   )
 }
