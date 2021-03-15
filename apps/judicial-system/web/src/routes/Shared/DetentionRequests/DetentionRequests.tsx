@@ -433,7 +433,7 @@ export const DetentionRequests: React.FC = () => {
                   <td className={styles.td}>
                     <Text as="span">
                       {c.custodyEndDate && c.state === CaseState.ACCEPTED
-                        ? `${formatDate(c.custodyEndDate, 'P')}`
+                        ? `${formatDate(c.custodyEndDate, 'd.M.y')}`
                         : null}
                     </Text>
                   </td>
