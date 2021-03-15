@@ -55,12 +55,17 @@ export class ApplicationTemplateHelper<
     )
   }
 
-  private getDefaultValuesForTemplateAPIAction(
-    action: ApplicationTemplateAPIAction,
-  ): Pick<ApplicationTemplateAPIAction, 'throwOnError' | 'externalDataId'> {
+  private getTemplateAPIAction(
+    action: ApplicationTemplateAPIAction | null,
+  ): ApplicationTemplateAPIAction | null {
+    if (action === null) {
+      return null
+    }
+
     return {
       throwOnError: true,
       externalDataId: action.apiModuleAction,
+      ...action,
     }
   }
 
@@ -71,14 +76,7 @@ export class ApplicationTemplateHelper<
       this.template.stateMachineConfig.states[stateKey]?.meta?.beforeLeave ??
       null
 
-    if (action === null) {
-      return null
-    }
-
-    return {
-      ...this.getDefaultValuesForTemplateAPIAction(action),
-      ...action,
-    }
+    return this.getTemplateAPIAction(action)
   }
 
   getStateOnEntry(
@@ -87,14 +85,7 @@ export class ApplicationTemplateHelper<
     const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
 
-    if (action === null) {
-      return null
-    }
-
-    return {
-      ...this.getDefaultValuesForTemplateAPIAction(action),
-      ...action,
-    }
+    return this.getTemplateAPIAction(action)
   }
 
   getApplicationStateInformation(
