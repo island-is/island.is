@@ -130,6 +130,7 @@
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
+- [Clients](libs/clients/README.md)
   - [Rsk](libs/clients/rsk/README.md)
 - [Content Search Index Manager](libs/content-search-index-manager/README.md)
 - [Content Search Indexer](libs/content-search-indexer/README.md)
