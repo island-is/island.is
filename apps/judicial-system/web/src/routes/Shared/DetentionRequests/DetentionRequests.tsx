@@ -138,7 +138,10 @@ export const DetentionRequests: React.FC = () => {
       case CaseState.DRAFT:
         return { color: 'red', text: 'Drög' }
       case CaseState.SUBMITTED:
-        return { color: 'purple', text: 'Krafa send' }
+        return {
+          color: 'purple',
+          text: `${isJudge ? 'Ný krafa' : 'Krafa send'}`,
+        }
       case CaseState.RECEIVED:
         return { color: 'darkerMint', text: 'Krafa móttekin' }
       case CaseState.ACCEPTED:
