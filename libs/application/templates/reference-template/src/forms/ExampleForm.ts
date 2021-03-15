@@ -152,8 +152,6 @@ export const ExampleForm: Form = buildForm({
           id: 'final',
           title: 'Takk',
           description: (application) => {
-            console.log('In description field')
-            console.log(application)
             const sendApplicationActionResult =
               application.externalData[API_MODULE.createApplication]
 
