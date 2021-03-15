@@ -392,6 +392,7 @@ describe('User', () => {
 
         return request(app.getHttpServer())
           .get(`/api/user/?nationalId=${judgeNationalId}`)
+          .set('authorization', `Bearer ${environment.auth.secretToken}`)
           .send()
           .expect(200)
       })
