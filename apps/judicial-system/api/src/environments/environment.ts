@@ -26,5 +26,7 @@ export default {
   backend: {
     url: 'http://localhost:3344',
   },
-  hiddenFeatures: '',
+  features: {
+    hidden: '',
+  },
 }

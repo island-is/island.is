@@ -19,14 +19,18 @@ export class AppService {
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
     this.logger.info('Creating a new case')
 
-    const res = await fetch(`${environment.backend.url}/api/case/`, {
+    const res = await fetch(`${environment.backend.url}/api/internal/case/`, {
       method: 'POST',
-      headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${environment.auth.secretToken}`,
+      },
       body: JSON.stringify(caseToCreate),
     })
 
     if (!res.ok) {
       console.log('Could not create a new case', res)
+
       throw new BadGatewayException('Could not create a new case')
     }
 
