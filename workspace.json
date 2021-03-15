@@ -1919,6 +1919,34 @@
         }
       }
     },
+    "application-templates-party-application": {
+      "root": "libs/application/templates/party-application",
+      "sourceRoot": "libs/application/templates/party-application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/party-application/tsconfig.lib.json",
+              "libs/application/templates/party-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/party-application/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/party-application/src/lib/messages.ts'"
+          }
+        }
+      }
+    },
     "application-templates-passport": {
       "root": "libs/application/templates/passport",
       "sourceRoot": "libs/application/templates/passport/src",

@@ -1,0 +1,29 @@
+import React, { FC } from 'react'
+import { Box, Text, Icon } from '@island.is/island-ui/core'
+
+export interface Props {
+  title: string
+  subtitle: string
+}
+
+const Success: FC<Props> = ({ title, subtitle }) => {
+  return (
+    <Box
+      padding={2}
+      background="mint100"
+      borderColor="mint200"
+      border="standard"
+      borderRadius="standard"
+    >
+      <Box display="flex" alignItems="center">
+        <Box marginRight={2}>
+          <Icon icon="checkmarkCircle" color="mint400" size="large" />
+        </Box>
+        <Text variant="h4">{title}</Text>
+      </Box>
+      <Text paddingTop={1}>{subtitle}</Text>
+    </Box>
+  )
+}
+
+export default Success

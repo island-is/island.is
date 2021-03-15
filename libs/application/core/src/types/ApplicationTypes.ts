@@ -10,6 +10,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   PARTY_LETTER = 'PartyLetter',
+  PARTY_APPLICATION = 'PartyApplication',
 }
 
 export const ApplicationTranslations = {
@@ -24,4 +25,5 @@ export const ApplicationTranslations = {
   ChildrenResidenceChange: 'crc.application',
   DataProtectionAuthorityComplaint: 'dpac.application',
   PartyLetter: 'ple.application',
+  PartyApplication: 'pa.application',
 }

@@ -63,6 +63,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/meta-application',
     '<rootDir>/libs/application/templates/parental-leave',
     '<rootDir>/libs/application/templates/party-letter',
+    '<rootDir>/libs/application/templates/party-application',
     '<rootDir>/libs/application/templates/passport',
     '<rootDir>/libs/application/templates/reference-template',
     '<rootDir>/libs/application/ui-fields',

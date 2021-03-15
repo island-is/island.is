@@ -124,6 +124,7 @@
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
     - [Health Insurance](libs/application/templates/health-insurance/README.md)
     - [Party Letter](libs/application/templates/party-letter/README.md)
+    - [Party Application](libs/application/templates/party-application/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
