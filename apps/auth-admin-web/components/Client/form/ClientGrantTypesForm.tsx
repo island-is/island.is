@@ -5,6 +5,7 @@ import { ClientGrantTypeDTO } from '../../../entities/dtos/client-grant-type.dto
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import { GrantTypeService } from '../../../services/GrantTypeService'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   clientId: string
