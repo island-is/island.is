@@ -51,17 +51,12 @@ export class ApplicationSerializer
       application.typeId as ApplicationTypes,
     )
     const helper = new ApplicationTemplateHelper(application, template)
-    const isApplicant = nationalId === application.applicant
 
     const dto = plainToClass(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(
         template.mapUserToRole(nationalId, application) ?? '',
       ),
-      isApplicant,
-      isAssignee:
-        !isApplicant &&
-        application.assignees.some((assignee) => assignee === nationalId),
       name: template.name,
       progress: helper.getApplicationProgress(),
     })

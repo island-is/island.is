@@ -37,18 +37,8 @@ export class ApplicationResponseDto {
 
   @ApiProperty()
   @Expose()
-  @IsBoolean()
-  isApplicant?: boolean
-
-  @ApiProperty()
-  @Expose()
   @IsArray()
   assignees!: string[]
-
-  @ApiProperty()
-  @Expose()
-  @IsBoolean()
-  isAssignee?: boolean
 
   @ApiProperty()
   @Expose()

@@ -21,9 +21,7 @@ export interface Application {
   id: string
   state: string
   applicant: string
-  isApplicant?: boolean
   assignees: string[]
-  isAssignee?: boolean
   typeId: ApplicationTypes
   modified: Date
   created: Date

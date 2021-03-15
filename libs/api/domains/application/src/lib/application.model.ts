@@ -28,14 +28,8 @@ export class Application {
   @Field(() => String)
   applicant!: string
 
-  @Field(() => Boolean)
-  isApplicant?: boolean
-
   @Field(() => [String])
   assignees!: string[]
-
-  @Field(() => Boolean)
-  isAssignee?: boolean
 
   @Field(() => String)
   state!: string
