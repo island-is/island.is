@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IQuestionAndAnswer } from '../generated/contentfulTypes'
-import { Html, mapHtml } from './html.model'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class QuestionAndAnswer {
@@ -10,8 +10,8 @@ export class QuestionAndAnswer {
   @Field()
   question!: string
 
-  @Field(() => Html, { nullable: true })
-  answer?: Html | null
+  @Field(() => [SliceUnion])
+  answer: Array<typeof SliceUnion> = []
 }
 
 export const mapQuestionAndAnswer = ({
@@ -20,5 +20,5 @@ export const mapQuestionAndAnswer = ({
 }: IQuestionAndAnswer): QuestionAndAnswer => ({
   id: sys.id,
   question: fields.question ?? '',
-  answer: fields.answer ? mapHtml(fields.answer, sys.id + ':answer') : null,
+  answer: fields.answer ? mapDocument(fields.answer, sys.id + ':answer') : [],
 })

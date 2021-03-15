@@ -4,6 +4,7 @@ import HelpBox from '../../common/HelpBox'
 import { ErrorMessage } from '@hookform/error-message'
 import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -71,7 +72,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateScope,
+                    })}
                     id="name"
                     name="name"
                     type="text"
@@ -92,7 +96,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="name"
-                    message="Name is required"
+                    message="Name is required and needs to be in the right format"
                   />
                 </div>
                 <div className="api-scope-form__container__field">
@@ -103,7 +107,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     Display Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="displayName"
                     name="displayName"
                     type="text"
@@ -115,7 +122,7 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="displayName"
-                    message="Display name is required"
+                    message="Display name is required and can not contain special characters"
                   />
                 </div>
                 <div className="api-scope-form__container__field">
@@ -126,7 +133,10 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     Description
                   </label>
                   <input
-                    ref={register({ required: false })}
+                    ref={register({
+                      required: false,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="description"
                     name="description"
                     type="text"
@@ -134,6 +144,12 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     className="api-scope-form__input"
                   />
                   <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="description"
+                    message="Description can not contain special characters"
+                  />
                 </div>
 
                 <div className="api-scope-form__container__checkbox__field">
@@ -198,6 +214,105 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                   />
                   <HelpBox helpText="Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)" />
                 </div>
+
+                <section className="api-scope__section">
+                  <h3>Delegation</h3>
+
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="grantToLegalGuardians"
+                      className="api-scope-form__label"
+                    >
+                      Grant To Legal Guardians
+                    </label>
+                    <input
+                      ref={register}
+                      id="grantToLegalGuardians"
+                      name="grantToLegalGuardians"
+                      type="checkbox"
+                      defaultChecked={props.apiScope.grantToLegalGuardians}
+                      className="api-scope-form__checkbox"
+                      title="Should legal guardians automatically get this scope for their wards"
+                    />
+                    <HelpBox helpText="Should legal guardians automatically get this scope for their wards" />
+                  </div>
+
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="grantToProcuringHolders"
+                      className="api-scope-form__label"
+                    >
+                      Grant To Procuring Holders
+                    </label>
+                    <input
+                      ref={register}
+                      id="grantToProcuringHolders"
+                      name="grantToProcuringHolders"
+                      type="checkbox"
+                      defaultChecked={props.apiScope.grantToProcuringHolders}
+                      className="api-scope-form__checkbox"
+                      title="Should procuring holders automatically get this scope for their organisations"
+                    />
+                    <HelpBox helpText="Should procuring holders automatically get this scope for their organisations" />
+                  </div>
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="allowExplicitDelegationGrant"
+                      className="api-scope-form__label"
+                    >
+                      Allow Explicit Delegation Grant
+                    </label>
+                    <input
+                      ref={register}
+                      id="allowExplicitDelegationGrant"
+                      name="allowExplicitDelegationGrant"
+                      type="checkbox"
+                      defaultChecked={
+                        props.apiScope.allowExplicitDelegationGrant
+                      }
+                      className="api-scope-form__checkbox"
+                      title="Should identities be able to delegate this scope to other users. Some scopes should not support delegation"
+                    />
+                    <HelpBox helpText="Should identities be able to delegate this scope to other users. Some scopes should not support delegation" />
+                  </div>
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="automaticDelegationGrant"
+                      className="api-scope-form__label"
+                    >
+                      Automatic Delegation Grant
+                    </label>
+                    <input
+                      ref={register}
+                      id="automaticDelegationGrant"
+                      name="automaticDelegationGrant"
+                      type="checkbox"
+                      defaultChecked={props.apiScope.automaticDelegationGrant}
+                      className="api-scope-form__checkbox"
+                      title="Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile"
+                    />
+                    <HelpBox helpText="Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile" />
+                  </div>
+
+                  <div className="api-scope-form__container__checkbox__field">
+                    <label
+                      htmlFor="alsoForDelegatedUser"
+                      className="api-scope-form__label"
+                    >
+                      Also For Delegated User
+                    </label>
+                    <input
+                      ref={register}
+                      id="alsoForDelegatedUser"
+                      name="alsoForDelegatedUser"
+                      type="checkbox"
+                      defaultChecked={props.apiScope.alsoForDelegatedUser}
+                      className="api-scope-form__checkbox"
+                      title="Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity"
+                    />
+                    <HelpBox helpText="Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity" />
+                  </div>
+                </section>
 
                 <div className="api-scope-form__buttons__container">
                   <div className="api-scope-form__button__container">

@@ -5,6 +5,7 @@ import AdminTabNav from './../../components/Admin/nav/AdminTabNav'
 import { AdminTab } from './../../entities/common/AdminTab'
 import AdminUsersList from './../../components/Admin/lists/AdminUsersList'
 import IdpProvidersList from './../../components/Admin/lists/IdpProviderList'
+import GrantTypesList from './../../components/Admin/lists/GrantTypesList'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -43,6 +44,15 @@ const Index: React.FC = () => {
         <ContentWrapper>
           <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
             <div className="temp-page">Not yet implemented</div>
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.GrantTypes: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <GrantTypesList />
           </AdminTabNav>
         </ContentWrapper>
       )

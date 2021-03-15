@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import CSVStringify from 'csv-stringify'
 
 export const downloadCSV = async (

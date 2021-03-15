@@ -275,9 +275,10 @@ export const Confirmation: React.FC = () => {
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
   ] = useState<string>('')
-  const [requestSignatureResponse, setRequestSignatureResponse] = useState<
-    RequestSignatureResponse
-  >()
+  const [
+    requestSignatureResponse,
+    setRequestSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
 
   const { user } = useContext(UserContext)
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -288,7 +289,10 @@ export const Confirmation: React.FC = () => {
     time: getTimeFromDate(workingCase?.courtEndTime),
   })
 
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
+  const [updateCaseMutation, { loading: isUpdating }] = useMutation(
+    UpdateCaseMutation,
+  )
+
   const updateCase = useCallback(
     async (id: string, updateCase: UpdateCase) => {
       const { data } = await updateCaseMutation({
@@ -403,20 +407,29 @@ export const Confirmation: React.FC = () => {
             </Box>
             <Box marginBottom={7}>
               <Text variant="eyebrow" color="blue400">
-                Niðurstaða úrskurðar
+                Niðurstaða
               </Text>
               <Text>
                 <span className={style.breakSpaces}>{workingCase.ruling}</span>
               </Text>
             </Box>
           </Box>
-          <Box component="section" marginBottom={10}>
+          <Box component="section" marginBottom={7}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Úrskurðarorð
               </Text>
             </Box>
-            <Box marginBottom={3}>{getConclusion(workingCase)}</Box>
+            <Box marginBottom={3}>
+              {getConclusion(workingCase, true)}
+              {workingCase.additionToConclusion && (
+                <Box marginTop={1}>
+                  <Text variant="intro">
+                    {workingCase.additionToConclusion}
+                  </Text>
+                </Box>
+              )}
+            </Box>
           </Box>
           <Box component="section" marginBottom={7}>
             <Box marginBottom={1}>
@@ -596,6 +609,7 @@ export const Confirmation: React.FC = () => {
             <PdfButton
               caseId={workingCase.id}
               title="Opna PDF þingbók og úrskurð"
+              disabled={isUpdating}
               pdfType="ruling"
             />
           </Box>
@@ -603,9 +617,9 @@ export const Confirmation: React.FC = () => {
             previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
             nextUrl={Constants.REQUEST_LIST_ROUTE}
             nextButtonText="Staðfesta og hefja undirritun"
-            nextIsDisabled={!isValidCourtEndTime?.isValid}
+            nextIsDisabled={!isValidCourtEndTime?.isValid || isUpdating}
             onNextButtonClick={handleNextButtonClick}
-            nextIsLoading={isRequestingSignature}
+            nextIsLoading={isRequestingSignature || isUpdating}
             hideNextButton={workingCase.judge?.id !== user?.id}
             infoBoxText={
               workingCase.judge?.id !== user?.id

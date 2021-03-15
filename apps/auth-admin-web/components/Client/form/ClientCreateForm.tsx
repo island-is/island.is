@@ -7,6 +7,7 @@ import { ClientService } from '../../../services/ClientService'
 import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
+import ValidationUtils from './../../../utils/validation.utils'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -27,7 +28,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [clientTypeSelected, setClientTypeSelected] = useState<boolean>(false)
   const [clientTypeInfo, setClientTypeInfo] = useState<JSX.Element>(<div></div>)
-  const client = props.client
+  const [client, setClient] = useState<ClientDTO>(props.client)
   const [requireConsent, setRequireConsent] = useState(false)
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
@@ -78,6 +79,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
     }
+    setClient({ ...props.client })
   }, [props.client])
 
   const create = async (data: ClientDTO): Promise<Client | null> => {
@@ -275,7 +277,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         required: true,
                         maxLength: 10,
                         minLength: 10,
-                        pattern: /\d+/,
+                        validate: ValidationUtils.validateNationalId,
                       })}
                       defaultValue={client.nationalId}
                       className="client__input"
@@ -297,7 +299,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       type="text"
                       ref={register({
                         required: true,
-                        pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                        validate: ValidationUtils.validateEmail,
                       })}
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
@@ -318,7 +320,10 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <input
                       type="text"
                       name="client.clientId"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: true,
+                        validate: ValidationUtils.validateIdentifier,
+                      })}
                       defaultValue={client.clientId}
                       className="client__input"
                       placeholder="example-client"
@@ -333,12 +338,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     >
                       {available ? 'Available' : 'Unavailable'}
                     </div>
-                    <HelpBox helpText="The unique identifier for this application" />
+                    <HelpBox helpText="The unique identifier for this application. No spaces or special characters." />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message="Client Id is required"
+                      message="Client Id is required and needs to be in the right format (no spaces or special characters)"
                     />
                   </div>
 
@@ -346,7 +351,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     <label className="client__label">Description</label>
                     <input
                       type="text"
-                      ref={register}
+                      ref={register({
+                        validate: ValidationUtils.validateDescription,
+                      })}
                       name="client.description"
                       defaultValue={client.description ?? ''}
                       className="client__input"
@@ -354,15 +361,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       placeholder="Example description"
                     />
                     <HelpBox helpText="Application description for use within the IDS management" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.description"
+                      message="Description can not include special characters"
+                    />
                   </div>
 
                   <div>
                     <div className="client__container__field">
                       <label className="client__label">Base Url:</label>
                       <input
+                        readOnly={isEditing}
                         name="baseUrl"
                         type="text"
-                        ref={register({ required: true })}
+                        ref={register({
+                          required: !isEditing,
+                          validate: ValidationUtils.validateUrl,
+                        })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
                         placeholder="https://localhost:4200"
@@ -376,7 +393,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message="Base Url is required"
+                        message="Base Url is required and needs to be in the right format"
                       />
                       <div
                         className={`client__container__field__details
@@ -497,7 +514,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           id="supportsDelegation"
                           type="checkbox"
                           name="client.supportsDelegation"
-                          defaultChecked={client.supportsDelegation ?? false}
+                          defaultChecked={client.supportsDelegation}
                           className="client__input"
                           ref={register}
                           title="Specifies if the client supports delegation"
@@ -516,9 +533,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           id="supportsLegalGuardians"
                           type="checkbox"
                           name="client.supportsLegalGuardians"
-                          defaultChecked={
-                            client.supportsLegalGuardians ?? false
-                          }
+                          defaultChecked={client.supportsLegalGuardians}
                           className="client__input"
                           ref={register}
                           title="Specifies if the client supports legal guardian delegation"
@@ -537,9 +552,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           id="supportsProcuringHolders"
                           type="checkbox"
                           name="client.supportsProcuringHolders"
-                          defaultChecked={
-                            client.supportsProcuringHolders ?? false
-                          }
+                          defaultChecked={client.supportsProcuringHolders}
                           className="client__input"
                           ref={register}
                           title="Specifies if the client supports Procuring Holders delegation"
@@ -558,7 +571,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                           id="promptDelegations"
                           type="checkbox"
                           name="client.promptDelegations"
-                          defaultChecked={client.promptDelegations ?? false}
+                          defaultChecked={client.promptDelegations}
                           className="client__input"
                           ref={register}
                           title="Specifies if the user is prompt with delegation window"

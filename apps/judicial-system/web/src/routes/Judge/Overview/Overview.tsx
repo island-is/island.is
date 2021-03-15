@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Box, Text, Input } from '@island.is/island-ui/core'
+import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
   capitalize,
@@ -13,9 +13,10 @@ import {
 import {
   FormFooter,
   PageLayout,
-  CaseNumbers,
   InfoCard,
   PdfButton,
+  BlueBox,
+  Modal,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -40,13 +41,22 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
+import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
+import { getFeature } from '@island.is/judicial-system-web/src/services/api'
 import * as styles from './Overview.treat'
 
 interface CaseData {
   case?: Case
+}
+
+interface CreateCustodyCourtCaseMutationResponse {
+  createCustodyCourtCase: {
+    courtCaseNumber: string
+  }
 }
 
 export const JudgeOverview: React.FC = () => {
@@ -57,7 +67,67 @@ export const JudgeOverview: React.FC = () => {
     setCourtCaseNumberErrorMessage,
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [modalVisible, setModalVisible] = useState<boolean>()
+  const [
+    showCreateCustodyCourtCase,
+    setShowCreateCustodyCourtCase,
+  ] = useState<boolean>(false)
 
+  const [
+    createCustodyCourtCaseMutation,
+    { loading: creatingCustodyCourtCase },
+  ] = useMutation<CreateCustodyCourtCaseMutationResponse>(
+    CreateCustodyCourtCaseMutation,
+  )
+
+  const createCase = async (): Promise<void> => {
+    if (creatingCustodyCourtCase === false) {
+      try {
+        const { data, errors } = await createCustodyCourtCaseMutation({
+          variables: {
+            input: {
+              caseId: workingCase?.id,
+              policeCaseNumber: workingCase?.policeCaseNumber,
+            },
+          },
+        })
+
+        if (data && workingCase && !errors) {
+          setAndSendToServer(
+            'courtCaseNumber',
+            data.createCustodyCourtCase.courtCaseNumber,
+            workingCase,
+            setWorkingCase,
+            updateCase,
+          )
+
+          setCourtCaseNumberErrorMessage('')
+
+          return
+        }
+      } catch (error) {
+        // Catch all so we can set an eror message
+      }
+
+      setCourtCaseNumberErrorMessage(
+        'Ekki tókst að stofna mál, vinsamlegast reyndu aftur eða sláðu inn málsnr. í reitinn',
+      )
+    }
+  }
+
+  const handleSetCaseNrManuallyClick = () => {
+    if (workingCase) {
+      setAndSendToServer(
+        'setCourtCaseNumberManually',
+        true,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+      setModalVisible(true)
+      setCourtCaseNumberErrorMessage('')
+    }
+  }
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
@@ -115,6 +185,19 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, transitionCaseMutation])
 
   useEffect(() => {
+    const tryToShowFeature = async (theCase: Case) => {
+      setShowCreateCustodyCourtCase(
+        theCase.type === CaseType.CUSTODY &&
+          (await getFeature('CREATE_CUSTODY_COURT_CASE')),
+      )
+    }
+
+    if (workingCase) {
+      tryToShowFeature(workingCase)
+    }
+  }, [workingCase, setShowCreateCustodyCourtCase])
+
+  useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
@@ -146,46 +229,113 @@ export const JudgeOverview: React.FC = () => {
               }`}
             </Text>
           </Box>
-          <Box component="section" marginBottom={7}>
+          <Box component="section" marginBottom={6}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
                 Málsnúmer héraðsdóms
               </Text>
             </Box>
-            <Box marginBottom={1}>
-              <Input
-                data-testid="courtCaseNumber"
-                name="courtCaseNumber"
-                label="Slá inn málsnúmer"
-                placeholder="R-X/ÁÁÁÁ"
-                defaultValue={workingCase.courtCaseNumber}
-                errorMessage={courtCaseNumberErrorMessage}
-                hasError={courtCaseNumberErrorMessage !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'courtCaseNumber',
-                    event,
-                    ['empty'],
-                    workingCase,
-                    setWorkingCase,
-                    courtCaseNumberErrorMessage,
-                    setCourtCaseNumberErrorMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'courtCaseNumber',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
-                    updateCase,
-                    setCourtCaseNumberErrorMessage,
-                  )
-                }
-                required
-              />
-            </Box>
-            <CaseNumbers workingCase={workingCase} />
+            <BlueBox>
+              <div className={styles.createCourtCaseContainer}>
+                <Box display="flex">
+                  {showCreateCustodyCourtCase &&
+                    !workingCase.setCourtCaseNumberManually && (
+                      <div className={styles.createCourtCaseButton}>
+                        <Button
+                          size="small"
+                          onClick={createCase}
+                          loading={creatingCustodyCourtCase}
+                          disabled={!!workingCase.courtCaseNumber}
+                          fluid
+                        >
+                          Stofna mál
+                        </Button>
+                      </div>
+                    )}
+                  <div className={styles.createCourtCaseInput}>
+                    <Input
+                      data-testid="courtCaseNumber"
+                      name="courtCaseNumber"
+                      label="Mál nr."
+                      placeholder={
+                        !showCreateCustodyCourtCase ||
+                        workingCase.setCourtCaseNumberManually
+                          ? 'R-X/ÁÁÁÁ'
+                          : 'Málsnúmer birtist hér með því að smella á stofna mál'
+                      }
+                      size="sm"
+                      backgroundColor={
+                        !showCreateCustodyCourtCase ||
+                        workingCase.setCourtCaseNumberManually
+                          ? 'white'
+                          : 'blue'
+                      }
+                      value={workingCase.courtCaseNumber || ''}
+                      icon={
+                        workingCase.courtCaseNumber &&
+                        showCreateCustodyCourtCase &&
+                        !workingCase.setCourtCaseNumberManually
+                          ? 'checkmark'
+                          : undefined
+                      }
+                      disabled={
+                        showCreateCustodyCourtCase &&
+                        !workingCase.setCourtCaseNumberManually
+                      }
+                      errorMessage={courtCaseNumberErrorMessage}
+                      hasError={
+                        !creatingCustodyCourtCase &&
+                        courtCaseNumberErrorMessage !== ''
+                      }
+                      onChange={(event) =>
+                        removeTabsValidateAndSet(
+                          'courtCaseNumber',
+                          event,
+                          ['empty'],
+                          workingCase,
+                          setWorkingCase,
+                          courtCaseNumberErrorMessage,
+                          setCourtCaseNumberErrorMessage,
+                        )
+                      }
+                      onBlur={(event) => {
+                        validateAndSendToServer(
+                          'courtCaseNumber',
+                          event.target.value,
+                          ['empty'],
+                          workingCase,
+                          updateCase,
+                          setCourtCaseNumberErrorMessage,
+                        )
+                      }}
+                      required
+                    />
+                    {showCreateCustodyCourtCase &&
+                      workingCase.setCourtCaseNumberManually && (
+                        <Box marginTop={1}>
+                          <Text variant="eyebrow" color="blue400">
+                            Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
+                            málsnúmer sem slegið er inn
+                          </Text>
+                        </Box>
+                      )}
+                  </div>
+                </Box>
+                {courtCaseNumberErrorMessage &&
+                  showCreateCustodyCourtCase &&
+                  !workingCase.setCourtCaseNumberManually && (
+                    <div className={styles.enterCaseNrManuallyButton}>
+                      <Button
+                        variant="text"
+                        type="button"
+                        onClick={handleSetCaseNrManuallyClick}
+                      >
+                        Slá inn málsnúmer
+                      </Button>
+                    </div>
+                  )}
+              </div>
+            </BlueBox>
           </Box>
           <Box component="section" marginBottom={5}>
             <InfoCard
@@ -222,12 +372,11 @@ export const JudgeOverview: React.FC = () => {
                         workingCase.parentCase.custodyEndDate,
                         TIME_FORMAT,
                       )}`
-                    : `${capitalize(
+                    : workingCase.arrestDate
+                    ? `${capitalize(
                         formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                      )} kl. ${formatDate(
-                        workingCase.arrestDate,
-                        TIME_FORMAT,
-                      )}`,
+                      )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                    : 'Var ekki skráður',
                 },
               ]}
               accusedName={workingCase.accusedName}
@@ -372,6 +521,16 @@ export const JudgeOverview: React.FC = () => {
               },
             ])}
           />
+          {modalVisible && (
+            <Modal
+              title="Slá inn málsnúmer"
+              text="Athugið að gögn verða sjálfkrafa vistuð og uppfærð á það málsnúmer sem slegið er inn."
+              handlePrimaryButtonClick={() => {
+                setModalVisible(false)
+              }}
+              primaryButtonText="Loka glugga"
+            />
+          )}
         </>
       ) : null}
     </PageLayout>

@@ -20,6 +20,7 @@ export class Client implements FeatureFlagClient {
         ccConfig,
       )
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       this.configcat = require('configcat-js').createClient(
         resolvedSdkKey,
         ccConfig,
@@ -31,7 +32,7 @@ export class Client implements FeatureFlagClient {
     return await this.configcat.getValueAsync(
       key,
       defaultValue,
-      user ? { identifier: user.uuid, custom: user.attributes } : undefined,
+      user ? { identifier: user.id, custom: user.attributes } : undefined,
     )
   }
 }

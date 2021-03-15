@@ -7,6 +7,7 @@ import NotFound from '../../common/NotFound'
 import { UserService } from '../../../services/UserService'
 import UserIdentity from './../../../entities/models/user-identity.model'
 import { Claim } from './../../../entities/models/claim.model'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface ClaimShow {
   subjectId: string
@@ -37,7 +38,7 @@ const UsersList: React.FC = () => {
   const getUser = async (data: FormOutput) => {
     setShowNotFound(false)
     const response = await UserService.findUser(data.id)
-    if (response) {
+    if (response && response.length > 0) {
       setUsers(response)
     } else {
       setShowNotFound(true)
@@ -96,7 +97,10 @@ const UsersList: React.FC = () => {
                     name="id"
                     defaultValue={''}
                     className="users__search__input"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateIdentifier,
+                    })}
                     placeholder="0123456789"
                   />
                   <HelpBox helpText="You can search for user identities by national Id or User Identity subject Id. National ID must be typed in as a number with 10 number characters otherwise you will be looking up by Subject Id" />
@@ -104,7 +108,7 @@ const UsersList: React.FC = () => {
                     as="span"
                     errors={errors}
                     name="id"
-                    message="SubjectId or nationalId is required. NationalId must 10 numeric characters"
+                    message="SubjectId or nationalId is required and should be in the right format. NationalId must 10 numeric characters"
                   />
                   <input
                     type="submit"
