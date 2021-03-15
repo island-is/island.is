@@ -20,7 +20,7 @@ import { TellUsAStoryFormProps } from '../TellUsAStoryForm/TellUsAStoryForm'
 import { defaultRenderNode } from './defaultRenderNode'
 import { defaultRenderMark } from './defaultRenderMark'
 import { defaultRenderComponent } from './defaultRenderComponents'
-import { Box } from '@island.is/island-ui/core'
+import { Box, UseBoxStylesProps } from '@island.is/island-ui/core'
 import { OneColumnTextProps } from '../OneColumnText/OneColumnText'
 import { TwoColumnTextProps } from '../TwoColumnText/TwoColumnText'
 import { AccordionSliceProps } from '../AccordionSlice/AccordionSlice'
@@ -134,14 +134,30 @@ type RichText = (
             SliceType,
           ) => ReactNode
         }
+        componentMargins: {
+          [slice in keyof typeof defaultRenderComponent | 'DEFAULT']?: {
+            marginTop: UseBoxStylesProps['marginTop']
+            marginBottom: UseBoxStylesProps['marginBottom']
+          }
+        }
       }
-    | { renderNode?: {}; renderMark?: {}; renderComponent?: {} },
+    | {
+        renderNode?: {}
+        renderMark?: {}
+        renderComponent?: {}
+        componentMargins?: {}
+      },
   locale?: Locale,
 ) => React.ReactNode
 
 export const richText: RichText = (
   documents,
-  opt = { renderNode: {}, renderMark: {}, renderComponent: {} },
+  opt = {
+    renderNode: {},
+    renderMark: {},
+    renderComponent: {},
+    componentMargins: {},
+  },
   locale = 'is',
 ) => {
   const options = {
@@ -166,12 +182,20 @@ export const richText: RichText = (
         </Fragment>
       )
     }
+
+    const componentMargins = {
+      DEFAULT: {
+        marginBottom: [5, 5, 5, 6],
+        marginTop: [5, 5, 5, 6],
+      },
+      ...opt.componentMargins,
+    }
+
     return (
       <Box
         key={slice.id}
         id={slice.id}
-        marginBottom={[5, 5, 5, 6]}
-        marginTop={[5, 5, 5, 6]}
+        {...(componentMargins[slice.__typename] ?? componentMargins.DEFAULT)}
       >
         {renderComponent[slice.__typename]?.(slice, locale)}
       </Box>
