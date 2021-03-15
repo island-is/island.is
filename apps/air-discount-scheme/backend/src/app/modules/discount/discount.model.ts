@@ -22,13 +22,7 @@ export class Discount implements TDiscount {
   discountCode: string
 
   @ApiProperty()
-  connectionDiscountCodes: {
-    code: string
-    flightId: string
-    flightDesc: string
-    validUntil: string
-  }[]
-
+  connectionDiscountCodes: ConnectionDiscountCodes
   @ApiProperty()
   nationalId: string
 

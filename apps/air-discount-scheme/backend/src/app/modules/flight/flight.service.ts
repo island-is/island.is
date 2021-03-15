@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { Op, where } from 'sequelize'
+import { Op } from 'sequelize'
 import * as kennitala from 'kennitala'
 
 import {

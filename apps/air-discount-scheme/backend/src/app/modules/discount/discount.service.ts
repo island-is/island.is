@@ -1,5 +1,5 @@
 import { uuid } from 'uuidv4'
-import { Inject, Injectable, CACHE_MANAGER, CacheKey } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
 import { Discount } from './discount.model'
 import { Flight } from '../flight'
