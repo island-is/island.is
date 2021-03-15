@@ -5,10 +5,9 @@ import {
   GridRow,
   GridColumn,
   Checkbox,
+  ResponsiveProp,
+  GridColumns,
 } from '@island.is/island-ui/core'
-import { ResponsiveProp } from 'libs/island-ui/core/src/utils/responsiveProp'
-import { GridColumns } from 'libs/island-ui/core/src/lib/Grid/GridColumn/GridColumn.treat'
-
 interface CheckboxInfo {
   title: string
   id: string
