@@ -27,7 +27,7 @@ import {
   complaint,
   overview,
 } from '../lib/messages'
-import { OnBehalf } from '../lib/dataSchema'
+import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import { externalData } from '../lib/messages/externalData'
 
 const yesOption = { value: YES, label: sharedFields.yes }
@@ -313,6 +313,9 @@ export const ComplaintForm: Form = buildForm({
                   id: 'applicant.name',
                   title: info.labels.name,
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.fullName,
                 }),
                 buildTextField({
                   id: 'applicant.nationalId',
@@ -320,24 +323,40 @@ export const ComplaintForm: Form = buildForm({
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data
+                      ?.nationalId,
                 }),
                 buildTextField({
                   id: 'applicant.address',
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .streetAddress,
                 }),
                 buildTextField({
                   id: 'applicant.postalCode',
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .postalCode,
                 }),
                 buildTextField({
                   id: 'applicant.city',
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .city,
                 }),
                 buildTextField({
                   id: 'applicant.email',
@@ -345,6 +364,8 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'email',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data?.email,
                 }),
                 buildTextField({
                   id: 'applicant.phoneNumber',
@@ -353,6 +374,9 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data
+                      ?.mobilePhoneNumber,
                 }),
               ],
             }),
