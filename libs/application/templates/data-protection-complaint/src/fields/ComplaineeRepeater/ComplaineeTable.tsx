@@ -9,7 +9,7 @@ interface Props {
   address: string
   nationalId: string
   operatesWithinEurope: typeof YES | typeof NO
-  countryOfOperation: string | undefined
+  countryOfOperation?: string
   onEdit?: () => void
   onRemove?: () => void
 }
