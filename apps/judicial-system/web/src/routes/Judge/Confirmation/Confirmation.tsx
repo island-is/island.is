@@ -407,7 +407,7 @@ export const Confirmation: React.FC = () => {
             </Box>
             <Box marginBottom={7}>
               <Text variant="eyebrow" color="blue400">
-                Niðurstaða úrskurðar
+                Niðurstaða
               </Text>
               <Text>
                 <span className={style.breakSpaces}>{workingCase.ruling}</span>

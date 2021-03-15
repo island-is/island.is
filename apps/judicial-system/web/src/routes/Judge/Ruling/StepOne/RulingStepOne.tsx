@@ -247,13 +247,13 @@ export const RulingStepOne: React.FC = () => {
           <Box component="section" marginBottom={8}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Niðurstaða úrskurðar
+                Niðurstaða
               </Text>
             </Box>
             <Input
               data-testid="ruling"
               name="ruling"
-              label="Niðurstaða úrskurðar"
+              label="Efni úrskurðar"
               placeholder="Hver er niðurstaðan að mati dómara?"
               defaultValue={workingCase.ruling}
               rows={16}

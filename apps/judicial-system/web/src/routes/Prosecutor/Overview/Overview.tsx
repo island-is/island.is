@@ -348,7 +348,7 @@ export const Overview: React.FC = () => {
                 ? Constants.REQUEST_LIST_ROUTE
                 : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
             }
-            nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
+            nextButtonText="Senda kröfu á héraðsdóm"
             nextIsLoading={isSendingNotification}
             onNextButtonClick={async () => {
               const notificationSent = await handleNextButtonClick()
@@ -367,7 +367,7 @@ export const Overview: React.FC = () => {
                 workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhald'
                   : 'farbann'
-              }  hefur verið staðfest`}
+              }  hefur verið send til dómstóls`}
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {
