@@ -29,4 +29,5 @@ export default {
   backend: {
     url: process.env.BACKEND_URL,
   },
+  hiddenFeatures: process.env.HIDDEN_FEATURES,
 }

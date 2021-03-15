@@ -55,7 +55,7 @@ const RulingAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           {getConclusion(workingCase)}
           {workingCase.additionToConclusion && (
             <Box marginTop={1}>
-              <Text variant="intro">{workingCase.additionToConclusion}</Text>
+              <Text>{workingCase.additionToConclusion}</Text>
             </Box>
           )}
         </Box>
