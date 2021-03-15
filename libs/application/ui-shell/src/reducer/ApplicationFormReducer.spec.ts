@@ -10,6 +10,7 @@ import {
   FormValue,
   FormModes,
   FormItemTypes,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
@@ -102,6 +103,7 @@ const application: Application = {
   state: 'draft',
   modified: new Date(),
   created: new Date(),
+  status: ApplicationStatus.IN_PROGRESS,
 }
 
 describe('ApplicationFormReducer', () => {
