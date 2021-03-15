@@ -175,7 +175,6 @@ const renderSlices = (
 }
 
 SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
-  console.log(query)
   const [
     {
       data: { getOrganizationPage },
