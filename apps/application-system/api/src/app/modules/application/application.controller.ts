@@ -478,17 +478,19 @@ export class ApplicationController {
         },
       }
 
-      await this.applicationService.updateExternalData(
-        application.id,
-        application.externalData,
+      const {
+        updatedApplication: withExternalData,
+      } = await this.applicationService.updateExternalData(
+        updatedApplication.id,
+        updatedApplication.externalData,
         newExternalDataEntry,
       )
 
       updatedApplication = {
-        ...application,
+        ...updatedApplication,
         externalData: {
-          ...application.externalData,
-          ...newExternalDataEntry,
+          ...updatedApplication.externalData,
+          ...withExternalData.externalData,
         },
       }
     }
@@ -525,7 +527,7 @@ export class ApplicationController {
         error,
         updatedApplication: withUpdatedExternalData,
       } = await this.performActionOnApplication(
-        application,
+        updatedApplication,
         template,
         authorization,
         onExitStateAction,
@@ -549,13 +551,18 @@ export class ApplicationController {
     ] = new ApplicationTemplateHelper(updatedApplication, template).changeState(
       event,
     )
-    updatedApplication = withUpdatedState
+    updatedApplication = {
+      ...updatedApplication,
+      answers: withUpdatedState.answers,
+      assignees: withUpdatedState.assignees,
+      state: withUpdatedState.state,
+    }
 
     if (!hasChanged) {
       return {
         hasChanged: false,
         hasError: false,
-        application,
+        application: updatedApplication,
       }
     }
 
@@ -565,12 +572,17 @@ export class ApplicationController {
     ).getOnEntryStateAPIAction(newState)
 
     if (onEnterStateAction !== null) {
-      const { hasError, error } = await this.performActionOnApplication(
+      const {
+        hasError,
+        error,
+        updatedApplication: withUpdatedExternalData,
+      } = await this.performActionOnApplication(
         updatedApplication,
         template,
         authorization,
         onEnterStateAction,
       )
+      updatedApplication = withUpdatedExternalData
 
       if (hasError) {
         return {

@@ -317,6 +317,7 @@ describe('ApplicationTemplate', () => {
       const expectedAction: ApplicationTemplateAPIAction = {
         apiModuleAction: 'testAction',
         externalDataId: 'testAction',
+        shouldPersistToExternalData: true,
         throwOnError: true,
       }
 
@@ -348,12 +349,14 @@ describe('ApplicationTemplate', () => {
       const expectedAction: ApplicationTemplateAPIAction = {
         apiModuleAction: 'testAction',
         externalDataId: 'customExternalDataId',
+        shouldPersistToExternalData: false,
         throwOnError: false,
       }
 
       const testActionConfig: ApplicationTemplateAPIAction = {
         apiModuleAction: 'testAction',
         externalDataId: 'customExternalDataId',
+        shouldPersistToExternalData: false,
         throwOnError: false,
       }
 

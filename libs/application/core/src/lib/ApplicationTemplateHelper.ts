@@ -63,8 +63,9 @@ export class ApplicationTemplateHelper<
     }
 
     return {
-      throwOnError: true,
       externalDataId: action.apiModuleAction,
+      shouldPersistToExternalData: true,
+      throwOnError: true,
       ...action,
     }
   }
