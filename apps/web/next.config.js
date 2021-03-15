@@ -94,6 +94,10 @@ module.exports = withTreat(
       env: {
         API_MOCKS: process.env.API_MOCKS || '',
       },
+
+      async rewrites() {
+        return [{ source: '/next-api/:path*', destination: '/api/:path*' }]
+      },
     }),
   ),
 )

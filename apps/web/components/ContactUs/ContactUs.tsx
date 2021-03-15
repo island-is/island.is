@@ -29,12 +29,14 @@ interface ContactUsProps
 
 const createZendeskTicket = async (subject: string, body: string) => {
   const response = await axios.post(
-    'https://stjanilofts.zendesk.com/api/v2/tickets.json',
-    JSON.stringify({
-      ticket: { subject: subject, comment: { body: body } },
-    }),
+    '/next-api/zendesk/ticket',
+    {
+      subject,
+      body,
+    },
     { headers: { 'Content-Type': 'application/json' } },
   )
+
   console.log('response', response)
 }
 
