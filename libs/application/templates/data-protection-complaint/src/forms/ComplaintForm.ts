@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildSection,
   Form,
   FormModes,
@@ -607,7 +606,7 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirmation',
-      title: overview.general.confirmationPageTitle,
+      title: section.received,
       children: [
         buildCustomField({
           id: 'confirmationCustomField',
