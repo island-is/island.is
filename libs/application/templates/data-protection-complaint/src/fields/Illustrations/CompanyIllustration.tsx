@@ -3,13 +3,7 @@ import React, { FC } from 'react'
 // TODO: Use illustration for library when available
 export const CompanyIllustration: FC = () => {
   return (
-    <svg
-      width="798"
-      height="333"
-      viewBox="0 0 798 333"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 798 333" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M555.331 104.492C555.948 104.492 556.449 103.991 556.449 103.374C556.449 102.756 555.948 102.256 555.331 102.256C554.713 102.256 554.213 102.756 554.213 103.374C554.213 103.991 554.713 104.492 555.331 104.492Z"
         fill="#CCDFFF"
