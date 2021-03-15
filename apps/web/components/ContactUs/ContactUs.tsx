@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import axios from 'axios'
 import {
   ContactUs as ContactUsForm,
   ContactUsProps as ContactUsFormProps,
@@ -26,6 +27,17 @@ const getState = (
 interface ContactUsProps
   extends Omit<ContactUsFormProps, 'state' | 'onSubmit'> {}
 
+const createZendeskTicket = async (subject: string, body: string) => {
+  const response = await axios.post(
+    'https://stjanilofts.zendesk.com/api/v2/tickets.json',
+    JSON.stringify({
+      ticket: { subject: subject, comment: { body: body } },
+    }),
+    { headers: { 'Content-Type': 'application/json' } },
+  )
+  console.log('response', response)
+}
+
 export const ContactUs: FC<ContactUsProps> = (props) => {
   const [submit, { data, loading, error }] = useMutation<
     ContactUsMutation,
@@ -36,7 +48,11 @@ export const ContactUs: FC<ContactUsProps> = (props) => {
       {...props}
       state={getState(data, loading, error)}
       onSubmit={async (formState) => {
-        await submit({ variables: { input: formState } })
+        console.log('formState', formState)
+        await createZendeskTicket(
+          formState.subject ?? '',
+          formState.message ?? '',
+        )
       }}
     />
   )
