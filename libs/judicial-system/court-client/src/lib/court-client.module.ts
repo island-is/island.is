@@ -45,7 +45,7 @@ export class CourtClientModule {
               cert: options.clientCert,
               key: options.clientKey,
               ca: options.clientCa,
-              rejectUnauthorized: false,
+              rejectUnauthorized: false, // Must be false because we are using self signed certificates
             }),
           ),
         },
