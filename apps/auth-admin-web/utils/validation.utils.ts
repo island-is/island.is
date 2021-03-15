@@ -1,19 +1,20 @@
+/* eslint-disable no-useless-escape */
 class ValidationUtils {
-  public static emailPattern: RegExp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+  public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
 
-  public static identifierPattern: RegExp = /^[a-zA-Z0-9_.-]*$/
+  public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
 
   /** Pattern for illegal characters in description */
-  public static descriptionPattern: RegExp = /[<>%\$]/
+  public static descriptionPattern = /[<>%\$]/
 
-  public static corsOriginPattern: RegExp = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
+  public static corsOriginPattern = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
 
-  public static urlPattern: RegExp = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
+  public static urlPattern = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?$/
 
-  public static nationalIdPattern: RegExp = /^[0-9]*$/
+  public static nationalIdPattern = /^[0-9]*$/
 
   /** Pattern for illegal characters in scope name */
-  public static scopePattern: RegExp = /[<>%\$]/
+  public static scopePattern = /[<>%\$]/
 
   public static validateEmail(input: string): boolean {
     const regex = new RegExp(ValidationUtils.emailPattern)
