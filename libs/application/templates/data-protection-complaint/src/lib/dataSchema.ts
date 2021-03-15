@@ -17,6 +17,7 @@ const FileSchema = z.object({
 })
 
 export const DataProtectionComplaintSchema = z.object({
+  approveExternalData: z.boolean().refine((p) => p),
   inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
     message: error.inCourtProceedings.defaultMessage,
   }),

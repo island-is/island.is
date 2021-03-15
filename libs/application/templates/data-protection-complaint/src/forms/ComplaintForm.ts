@@ -13,6 +13,8 @@ import {
   buildFileUploadField,
   buildRepeater,
   buildCheckboxField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
 import {
@@ -26,6 +28,7 @@ import {
   overview,
 } from '../lib/messages'
 import { OnBehalf } from '../lib/dataSchema'
+import { externalData } from '../lib/messages/externalData'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -98,6 +101,33 @@ export const ComplaintForm: Form = buildForm({
   title: application.name,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'externalData',
+      title: section.externalData,
+      children: [
+        buildExternalDataProvider({
+          title: externalData.general.pageTitle,
+          id: 'approveExternalData',
+          subTitle: externalData.general.subTitle,
+          description: externalData.general.description,
+          checkboxLabel: externalData.general.checkboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: externalData.labels.nationalRegistryTitle,
+              subTitle: externalData.labels.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: externalData.labels.userProfileTitle,
+              subTitle: externalData.labels.userProfileSubTitle,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'delimitation',
       title: section.delimitation.defaultMessage,
