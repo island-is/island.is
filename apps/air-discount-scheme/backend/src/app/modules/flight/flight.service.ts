@@ -88,7 +88,7 @@ export class FlightService {
       !(
         AKUREYRI_FLIGHT_CODES.includes(firstFlight.destination) ||
         AKUREYRI_FLIGHT_CODES.includes(firstFlight.origin)
-      ) &&
+      ) ||
       !(
         AKUREYRI_FLIGHT_CODES.includes(secondFlight.destination) ||
         AKUREYRI_FLIGHT_CODES.includes(secondFlight.origin)
