@@ -64,7 +64,7 @@ export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
   progress?: number
   roles?: RoleInState<T>[]
-  beforeLeave?: ApplicationTemplateAPIAction
+  onExit?: ApplicationTemplateAPIAction
   onEntry?: ApplicationTemplateAPIAction
 }
 

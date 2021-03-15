@@ -513,13 +513,13 @@ export class ApplicationController {
     event: string,
     authorization: string,
   ): Promise<StateChangeResult> {
-    const beforeLeaveAction = new ApplicationTemplateHelper(
+    const onExitStateAction = new ApplicationTemplateHelper(
       application,
       template,
-    ).getStateBeforeLeave(application.state)
+    ).getOnExitStateAPIAction(application.state)
     let updatedApplication: BaseApplication = application
 
-    if (beforeLeaveAction) {
+    if (onExitStateAction) {
       const {
         hasError,
         error,
@@ -528,7 +528,7 @@ export class ApplicationController {
         application,
         template,
         authorization,
-        beforeLeaveAction,
+        onExitStateAction,
       )
       updatedApplication = withUpdatedExternalData
 
@@ -559,17 +559,17 @@ export class ApplicationController {
       }
     }
 
-    const newStateOnEntry = new ApplicationTemplateHelper(
+    const onEnterStateAction = new ApplicationTemplateHelper(
       updatedApplication,
       template,
-    ).getStateOnEntry(newState)
+    ).getOnEntryStateAPIAction(newState)
 
-    if (newStateOnEntry !== null) {
+    if (onEnterStateAction !== null) {
       const { hasError, error } = await this.performActionOnApplication(
         updatedApplication,
         template,
         authorization,
-        newStateOnEntry,
+        onEnterStateAction,
       )
 
       if (hasError) {

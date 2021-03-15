@@ -69,17 +69,16 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getStateBeforeLeave(
+  getOnExitStateAPIAction(
     stateKey: string = this.application.state,
   ): ApplicationTemplateAPIAction | null {
     const action =
-      this.template.stateMachineConfig.states[stateKey]?.meta?.beforeLeave ??
-      null
+      this.template.stateMachineConfig.states[stateKey]?.meta?.onExit ?? null
 
     return this.getTemplateAPIAction(action)
   }
 
-  getStateOnEntry(
+  getOnEntryStateAPIAction(
     stateKey: string = this.application.state,
   ): ApplicationTemplateAPIAction | null {
     const action =

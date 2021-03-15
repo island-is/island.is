@@ -61,9 +61,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: 'Umsókn um ökunám',
-          beforeLeave: {
-            apiModuleAction: API_MODULE.createApplication,
-          },
           progress: 0.25,
           roles: [
             {
@@ -92,7 +89,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           onEntry: {
             apiModuleAction: API_MODULE.createApplication,
           },
-          beforeLeave: {
+          onExit: {
             apiModuleAction: API_MODULE.completeApplication,
           },
           roles: [
