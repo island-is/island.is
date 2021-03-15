@@ -9,7 +9,6 @@ export class BucketService {
   private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
-  /* */
   async getFileContentAsBase64(filename: string): Promise<string> {
     this.logger.info('getFileContent base64...')
     try {

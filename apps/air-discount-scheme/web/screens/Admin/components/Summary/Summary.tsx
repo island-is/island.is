@@ -19,21 +19,8 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
     arr.reduce((acc, item) => acc + item[key], 0)
 
   const airlines = Object.values(Airlines).filter(
-    (airline) =>
-      airline !== Airlines.norlandair &&
-      (!filteredAirline ||
-        airline ===
-          (filteredAirline === Airlines.norlandair
-            ? Airlines.icelandair
-            : filteredAirline)),
+    (airline) => !filteredAirline || airline === filteredAirline,
   )
-
-  const getAirline = (airline) => {
-    if (airline === Airlines.icelandair) {
-      return 'Icelandair + Norlandair'
-    }
-    return airline
-  }
 
   return (
     <Box marginBottom={6}>
@@ -46,11 +33,7 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
         </Typography>
         <Stack space={6}>
           {airlines.map((airline) => {
-            const legs = getFilteredFlightLegs(
-              airline,
-              filteredAirline,
-              flightLegs,
-            )
+            const legs = getFilteredFlightLegs(airline, flightLegs)
             const awaitingCredit = legs.filter(
               (leg) => leg.financialState === States.awaitingCredit,
             )
@@ -98,9 +81,7 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
             return (
               <Stack space={2} key={airline}>
                 <Typography variant="h3">
-                  <span className={styles.capitalize}>
-                    {getAirline(airline)}
-                  </span>
+                  <span className={styles.capitalize}>{airline}</span>
                 </Typography>
                 <Stack space={1}>
                   <Box background="blue100" borderRadius="standard" padding={2}>
