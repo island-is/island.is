@@ -51,6 +51,13 @@ export interface ApplicationTemplateAPIAction {
   // these actions are exported are found in:
   // /libs/application/template-api-modules
   apiModuleAction: string
+  // If response/error should be written to application.externalData, defaults to true
+  shouldPersistToExternalData?: boolean
+  // Id inside application.externalData, value of apiModuleAction is used by default
+  externalDataId?: string
+  // Should the state transition be blocked if this action errors out
+  // defaults to true
+  throwOnError?: boolean
 }
 
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {

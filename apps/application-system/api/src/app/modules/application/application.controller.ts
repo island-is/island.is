@@ -34,7 +34,6 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
-  RecordObject,
   ApplicationTemplateAPIAction,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
@@ -72,7 +71,6 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
-import { response } from 'express'
 
 // @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
@@ -89,9 +87,9 @@ interface StateChangeResult {
 }
 
 interface ModuleActionResult {
+  updatedApplication: BaseApplication
+  hasError: boolean
   error?: string
-  response?: unknown
-  success: boolean
 }
 
 @ApiTags('applications')
@@ -451,7 +449,12 @@ export class ApplicationController {
     authorization: string,
     action: ApplicationTemplateAPIAction,
   ): Promise<ModuleActionResult> {
-    const { apiModuleAction } = action
+    const {
+      apiModuleAction,
+      shouldPersistToExternalData,
+      externalDataId,
+      throwOnError,
+    } = action
 
     const actionResult = await this.templateAPIService.performAction({
       templateId: template.type,
@@ -462,33 +465,46 @@ export class ApplicationController {
       },
     })
 
-    if (!actionResult.success) {
-      return actionResult
+    let updatedApplication: BaseApplication = application
+
+    if (shouldPersistToExternalData) {
+      const newExternalDataEntry: ExternalData = {
+        [externalDataId || apiModuleAction]: {
+          status: actionResult.success ? 'success' : 'failure',
+          date: new Date(),
+          data: actionResult.success
+            ? (actionResult.response as ExternalData['data'])
+            : actionResult.error,
+        },
+      }
+
+      await this.applicationService.updateExternalData(
+        application.id,
+        application.externalData,
+        newExternalDataEntry,
+      )
+
+      updatedApplication = {
+        ...application,
+        externalData: {
+          ...application.externalData,
+          ...newExternalDataEntry,
+        },
+      }
     }
 
-    const newExternalDataEntry: ExternalData = {
-      [apiModuleAction]: {
-        status: 'success',
-        date: new Date(),
-        data: actionResult.response as ExternalData['data'],
-      },
+    if (!actionResult.success && throwOnError) {
+      return {
+        updatedApplication,
+        hasError: true,
+        error: actionResult.error,
+      }
     }
 
-    console.log('new external data entry')
-    console.log(JSON.stringify(newExternalDataEntry))
-
-    await this.applicationService.updateExternalData(
-      application.id,
-      application.externalData,
-      newExternalDataEntry,
-    )
-
-    application.externalData = {
-      ...application.externalData,
-      ...newExternalDataEntry,
+    return {
+      updatedApplication,
+      hasError: false,
     }
-
-    return actionResult
   }
 
   async changeState(
@@ -497,29 +513,43 @@ export class ApplicationController {
     event: string,
     authorization: string,
   ): Promise<StateChangeResult> {
-    const helper = new ApplicationTemplateHelper(application, template)
-
-    const beforeLeaveAction = helper.getStateBeforeLeave(application.state)
+    const beforeLeaveAction = new ApplicationTemplateHelper(
+      application,
+      template,
+    ).getStateBeforeLeave(application.state)
+    let updatedApplication: BaseApplication = application
 
     if (beforeLeaveAction) {
-      const { success, error } = await this.performActionOnApplication(
+      const {
+        hasError,
+        error,
+        updatedApplication: withUpdatedExternalData,
+      } = await this.performActionOnApplication(
         application,
         template,
         authorization,
         beforeLeaveAction,
       )
+      updatedApplication = withUpdatedExternalData
 
-      if (!success) {
+      if (hasError) {
         return {
           hasChanged: false,
-          application,
+          application: updatedApplication,
           error,
-          hasError: !!error,
+          hasError: true,
         }
       }
     }
 
-    const [hasChanged, newState, newApplication] = helper.changeState(event)
+    const [
+      hasChanged,
+      newState,
+      withUpdatedState,
+    ] = new ApplicationTemplateHelper(updatedApplication, template).changeState(
+      event,
+    )
+    updatedApplication = withUpdatedState
 
     if (!hasChanged) {
       return {
@@ -529,66 +559,44 @@ export class ApplicationController {
       }
     }
 
-    let updatedApplication: BaseApplication
-
-    try {
-      console.log('about to save')
-      const update = await this.applicationService.updateApplicationState(
-        application.id,
-        newState,
-        newApplication.answers,
-        newApplication.assignees,
-      )
-
-      updatedApplication = update.updatedApplication as BaseApplication
-    } catch (e) {
-      console.error('Could not update application', e)
-
-      return {
-        hasChanged: false,
-        hasError: true,
-        application,
-        error: 'Could not update application',
-      }
-    }
-
-    const newStateOnEntry = helper.getStateOnEntry(newState)
+    const newStateOnEntry = new ApplicationTemplateHelper(
+      updatedApplication,
+      template,
+    ).getStateOnEntry(newState)
 
     if (newStateOnEntry !== null) {
-      const { success, error } = await this.performActionOnApplication(
+      const { hasError, error } = await this.performActionOnApplication(
         updatedApplication,
         template,
         authorization,
         newStateOnEntry,
       )
 
-      if (!success) {
+      if (hasError) {
         return {
-          hasChanged: true,
-          application: updatedApplication,
           hasError: true,
+          hasChanged: false,
           error,
+          application,
         }
       }
+    }
 
-      try {
-        const update = await this.applicationService.updateApplicationState(
-          application.id,
-          newState,
-          newApplication.answers,
-          newApplication.assignees,
-        )
+    try {
+      const update = await this.applicationService.updateApplicationState(
+        application.id,
+        newState,
+        updatedApplication.answers,
+        updatedApplication.assignees,
+      )
 
-        updatedApplication = update.updatedApplication as BaseApplication
-      } catch (e) {
-        console.error('Could not update application', e)
-
-        return {
-          hasChanged: false,
-          hasError: true,
-          application,
-          error: 'Could not update application',
-        }
+      updatedApplication = update.updatedApplication as BaseApplication
+    } catch (e) {
+      return {
+        hasChanged: false,
+        hasError: true,
+        application,
+        error: 'Could not update application',
       }
     }
 

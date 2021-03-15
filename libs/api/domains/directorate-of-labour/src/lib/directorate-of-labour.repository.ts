@@ -10,7 +10,7 @@ import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'
 
-const isRunningInDevelopment = process.env.NODE_ENV === 'development'
+const isRunningInDevelopment = process.env.NODE_ENV === 'asdf'
 
 enum PensionFundType {
   required = 'L',

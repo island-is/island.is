@@ -89,6 +89,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'In Review',
           progress: 0.75,
+          onEntry: {
+            apiModuleAction: API_MODULE.createApplication,
+          },
+          beforeLeave: {
+            apiModuleAction: API_MODULE.completeApplication,
+          },
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -121,9 +127,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       approved: {
         meta: {
           name: 'Approved',
-          onEntry: {
-            apiModuleAction: API_MODULE.completeApplication,
-          },
           progress: 1,
           roles: [
             {
