@@ -178,10 +178,15 @@ enum TEMPLATE_API_ACTIONS {
           // ...
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-            // (optional) This event will be sent to state machine if action is successful
-            onSuccessEvent: 'SUCCESS_EVENT',
-            // (optional) This event will be sent to state machine if action fails
-            onErrorEvent: 'ERROR_EVENT',
+            // (Optional) Should the response/error be persisted to application.externalData
+            // Defaults to true
+            shouldPersistToExternalData: false,
+            // (Optional) Id that will store the result inside application.externalData
+            externalDataId: 'string',
+            // (Optional) Should the state transition be blocked if this action errors out?
+            // Will revert changes to answers/assignees/state
+            // Defaults to true
+            throwOnError: false,
           },
         },
       },
