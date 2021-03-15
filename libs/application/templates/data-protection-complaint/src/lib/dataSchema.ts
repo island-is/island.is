@@ -96,6 +96,9 @@ export const DataProtectionComplaintSchema = z.object({
     // TODO: This should be required
     documents: z.array(FileSchema),
   }),
+  overview: z.object({
+    termsAgreement: z.array(z.string()).refine((x) => x?.includes('agreed')),
+  }),
 })
 
 export type DataProtectionComplaint = z.TypeOf<
