@@ -11,7 +11,7 @@ export default {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   education: {
-    secret: process.env.EDUCATION_SECRET,
+    xroadLicenseServiceId: process.env.MMS_XROAD_LICENSE_SERVICE_ID,
     emailOptions: {
       sendFromEmail: process.env.SEND_FROM_EMAIL,
       useTestAccount: false,
