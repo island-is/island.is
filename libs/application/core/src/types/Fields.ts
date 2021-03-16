@@ -146,6 +146,7 @@ export interface TextField extends BaseField {
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
   suffix?: string
+  rows?: number
 }
 
 export interface FileUploadField extends BaseField {
