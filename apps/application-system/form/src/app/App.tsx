@@ -3,7 +3,7 @@ import { ApolloProvider } from '@apollo/client'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { Box, GridContainer } from '@island.is/island-ui/core'
 import { initializeClient } from '@island.is/application/graphql'
-import { defaultLanguage, LocaleProvider } from '@island.is/localization'
+import { LocaleProvider } from '@island.is/localization'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Signin } from '../routes/SignIn'
@@ -14,6 +14,7 @@ import Header from '../components/Header'
 import Authenticator from '../components/Authenticator'
 import { environment } from '../environments'
 import { NotFound } from '@island.is/application/ui-shell'
+import { defaultLanguage } from '@island.is/shared/constants'
 
 export const App = () => {
   return (
