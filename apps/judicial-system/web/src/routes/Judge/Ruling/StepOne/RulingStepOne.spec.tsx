@@ -63,7 +63,7 @@ describe('/domari-krafa/urskurdur', () => {
     )
 
     userEvent.type(
-      await screen.findByLabelText('Niðurstaða úrskurðar *'),
+      await screen.findByLabelText('Efni úrskurðar *'),
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
     )
 
