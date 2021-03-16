@@ -208,6 +208,12 @@ export class PublicFlightController {
         } else {
           connectingFlight = true
         }
+      } else {
+        if (discount.discountCode !== params.discountCode) {
+          throw new ForbiddenException(
+            'Provided discount code is only intended for connecting flights',
+          )
+        }
       }
     }
 

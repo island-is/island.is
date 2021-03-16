@@ -87,7 +87,7 @@ describe('DiscountService', () => {
       const ttl = 86400
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => Promise.resolve({ nationalId }))
+        .mockImplementation(() => Promise.resolve({ nationalId, discountCode }))
       const cacheManagerTtlSpy = jest
         .spyOn(cacheManager, 'ttl')
         .mockImplementation(() => Promise.resolve(ttl))
@@ -135,7 +135,7 @@ describe('DiscountService', () => {
       )
 
       expect(cacheManagerDelSpy).toHaveBeenCalledTimes(1)
-      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(2)
+      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -148,7 +148,7 @@ describe('DiscountService', () => {
       await discountService.reactivateDiscount(flightId)
 
       expect(cacheManagerDelSpy).toHaveBeenCalledTimes(1)
-      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(1)
+      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(3)
     })
   })
 })
