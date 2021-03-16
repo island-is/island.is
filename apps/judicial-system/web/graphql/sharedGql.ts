@@ -58,6 +58,7 @@ export const CaseQuery = gql`
       isCustodyEndDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationTo
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision

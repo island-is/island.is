@@ -76,7 +76,11 @@ export function formatConclusion(
   isolation: boolean,
   isExtension: boolean,
   previousDecision: CaseDecision,
+  isolationTo?: Date,
 ): string {
+  const isolationIsBeforeCustodyEndDate =
+    isolationTo && custodyEndDate > isolationTo
+
   return decision === CaseDecision.REJECTING
     ? `Kröfu um að ${formatAccusedByGender(
         accusedGender,
@@ -109,7 +113,13 @@ export function formatConclusion(
         decision === CaseDecision.ACCEPTING && isolation
           ? ` ${capitalize(
               formatAccusedByGender(accusedGender),
-            )} skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.`
+            )} skal sæta einangrun ${
+              isolationIsBeforeCustodyEndDate
+                ? `ekki lengur en til ${`${formatDate(isolationTo, 'PPPPp')
+                    ?.replace('dagur,', 'dagsins')
+                    ?.replace(' kl.', ', kl.')}`}.`
+                : 'á meðan á gæsluvarðhaldinu stendur.'
+            }`
           : ''
       }`
 }
@@ -280,6 +290,7 @@ export function formatPrisonRulingEmailNotification(
   isExtension: boolean,
   previousDecision: CaseDecision,
   additionToConclusion?: string,
+  isolationTo?: Date,
 ): string {
   return `<strong>Úrskurður um gæsluvarðhald</strong><br /><br />${court}, ${formatDate(
     courtEndTime,
@@ -305,6 +316,7 @@ export function formatPrisonRulingEmailNotification(
     custodyRestrictions.includes(CaseCustodyRestrictions.ISOLATION),
     isExtension,
     previousDecision,
+    isolationTo,
   )}${
     additionToConclusion ? `<br /><br />${additionToConclusion}` : ''
   }<br /><br /><strong>Ákvörðun um kæru</strong><br />${formatAppeal(
