@@ -49,7 +49,7 @@ export class Translation extends Model<Translation> {
     allowNull: false,
   })
   @ApiProperty()
-  field!: string
+  property!: string
 
   @Column({
     type: DataType.STRING,

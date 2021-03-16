@@ -92,14 +92,14 @@ export class TranslationService {
     language: string,
     className: string,
     key: string,
-    field: string,
+    property: string,
   ): Promise<Translation | null> {
     return this.translationModel.findOne({
       where: {
         language: language,
         className: className,
         key: key,
-        field: field,
+        property: property,
       },
     })
   }
@@ -115,7 +115,7 @@ export class TranslationService {
           language: translate.language,
           className: translate.className,
           key: translate.key,
-          field: translate.field,
+          property: translate.property,
         },
       },
     )
@@ -124,7 +124,7 @@ export class TranslationService {
       translate.language,
       translate.className,
       translate.key,
-      translate.field,
+      translate.property,
     )
   }
 
@@ -141,7 +141,7 @@ export class TranslationService {
         language: translate.language,
         className: translate.className,
         key: translate.key,
-        field: translate.field,
+        property: translate.property,
       },
     })
   }

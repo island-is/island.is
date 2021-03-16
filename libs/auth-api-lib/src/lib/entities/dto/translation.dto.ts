@@ -24,7 +24,7 @@ export class TranslationDTO {
   @ApiProperty({
     example: 'displayName',
   })
-  field!: string
+  property!: string
 
   @IsString()
   @IsOptional()
