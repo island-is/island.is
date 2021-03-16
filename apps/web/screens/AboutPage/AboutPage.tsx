@@ -36,7 +36,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
-import { Locale } from '../../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
