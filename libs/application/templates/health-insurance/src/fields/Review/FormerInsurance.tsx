@@ -229,6 +229,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               backgroundColor="blue"
               textarea={true}
               defaultValue={defaultValues?.entitlementReason}
+              rows={4}
             />
           </Box>
         )}

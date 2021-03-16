@@ -18,11 +18,15 @@ interface ApplicationApiAction {
   props: TemplateApiModuleActionProps
 }
 
-interface PerformActionEvent {
-  response: Error | string
-}
-
-type PerformActionResult = [boolean, PerformActionEvent?]
+type PerformActionResult =
+  | {
+      success: true
+      response: unknown
+    }
+  | {
+      success: false
+      error: string
+    }
 
 @Injectable()
 export class TemplateAPIService {
@@ -53,13 +57,22 @@ export class TemplateAPIService {
         // @ts-ignore
         const response = await service[action.type](action.props)
 
-        return [true, { response }]
+        return {
+          success: true,
+          response,
+        }
       } catch (e) {
-        return [false, { response: e }]
+        return {
+          success: false,
+          error: e.message,
+        }
       }
     }
 
-    return [false, { response: new Error('invalid action') }]
+    return {
+      success: false,
+      error: 'action.invalid',
+    }
   }
 
   async performAction(
@@ -90,6 +103,9 @@ export class TemplateAPIService {
         )
     }
 
-    return [false]
+    return {
+      success: false,
+      error: 'invalid template',
+    }
   }
 }
