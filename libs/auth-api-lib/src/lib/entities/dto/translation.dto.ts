@@ -6,13 +6,13 @@ export class TranslationDTO {
   @ApiProperty({
     example: 'en',
   })
-  language!: boolean
+  language!: string
 
   @IsString()
   @ApiProperty({
     example: 'client',
   })
-  className!: boolean
+  className!: string
 
   @IsString()
   @ApiProperty({

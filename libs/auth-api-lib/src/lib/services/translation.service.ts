@@ -5,6 +5,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { Translation } from '../entities/models/translation.model'
 import { Language } from '../entities/models/language.model'
 import { TranslationDTO } from '../entities/dto/translation.dto'
+import { LanguageDTO } from '../entities/dto/language.dto'
 
 @Injectable()
 export class TranslationService {
@@ -55,6 +56,36 @@ export class TranslationService {
     } catch {
       this.logger.warn('Error when executing transaction, rollbacked.')
     }
+  }
+
+  async findLanguage(isoKey: string): Promise<Language | null> {
+    return this.langugeModel.findByPk(isoKey)
+  }
+
+  async createLanguage(language: LanguageDTO): Promise<Language | undefined> {
+    try {
+      return this.sequelize.transaction((t) => {
+        return this.langugeModel.create(language)
+      })
+    } catch {
+      this.logger.warn('Error when executing transaction, rollbacked.')
+    }
+  }
+
+  async updateLanguage(language: LanguageDTO): Promise<Language | null> {
+    this.logger.debug(`Updating language: ${language.isoKey}`)
+
+    await this.langugeModel.update(language, {
+      where: { isoKey: language.isoKey },
+    })
+
+    return this.findLanguage(language.isoKey)
+  }
+
+  async deleteLanguage(isoKey: string): Promise<number | null> {
+    this.logger.debug(`Deleting language: ${isoKey}`)
+
+    return this.langugeModel.destroy({ where: { isoKey: isoKey } })
   }
 
   async findTranslation(
