@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Inject } from '@nestjs/common'
-import * as S3 from 'aws-sdk/clients/s3'
+import { S3 } from 'aws-sdk'
 import { Response } from 'node-fetch'
 import stream from 'stream'
 
@@ -24,7 +24,7 @@ export class S3Service {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
-    this.s3 = new S3()
+    this.s3 = new S3({ apiVersion: '2006-03-01' })
   }
 
   private uploadFromStream(
