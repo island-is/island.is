@@ -34,7 +34,7 @@ export const SecondaryCTA = () => (
   <ActionCard
     heading="Hello"
     text="This is the text"
-    cta={{ label: 'Click me', variant: 'secondary' }}
+    cta={{ label: 'Click me', variant: 'text' }}
   />
 )
 
@@ -46,7 +46,7 @@ export const WithTag = () => (
       variant: 'blue',
     }}
     text="Tags go better with secondary CTA"
-    cta={{ label: 'Click me', variant: 'secondary' }}
+    cta={{ label: 'Click me', variant: 'text' }}
   />
 )
 
@@ -58,7 +58,7 @@ export const WithProgressMeter = () => (
       variant: 'blue',
     }}
     text="Toyota CHR"
-    cta={{ label: 'Continue process', variant: 'secondary' }}
+    cta={{ label: 'Continue process', variant: 'text' }}
     progressMeter={{
       active: true,
       progress: 0.7,
@@ -74,7 +74,7 @@ export const RoseColoredProgressMeter = () => (
       variant: 'rose',
     }}
     text="Toyota CHR"
-    cta={{ label: 'Continue process', variant: 'secondary' }}
+    cta={{ label: 'Continue process', variant: 'text' }}
     progressMeter={{
       active: true,
       progress: 0.7,

@@ -112,7 +112,7 @@ export const Applications: FC = () => {
                   text={format(new Date(application.modified), 'do MMMM yyyy')}
                   cta={{
                     label: formatMessage(coreMessages.buttonNext),
-                    variant: 'secondary',
+                    variant: 'text',
                     onClick: () => history.push(`../umsokn/${application.id}`),
                   }}
                   progressMeter={{

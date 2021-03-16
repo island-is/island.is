@@ -22,10 +22,7 @@ type ActionCardProps = {
   }
   cta: {
     label: string
-    /**
-     * 'primary' renders a button, 'secondary' renders a text button, 'ghost' renders an outlined button
-     */
-    variant?: 'primary' | 'secondary' | 'ghost'
+    variant?: ButtonTypes['variant']
     size?: ButtonSizes
     icon?: 'arrowForward'
     onClick?: () => void
@@ -75,16 +72,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   unavailable: _unavailable,
   progressMeter: _progressMeter,
 }) => {
-  const cta = {
-    ...defaultCta,
-    ..._cta,
-    variant:
-      _cta.variant === 'secondary'
-        ? ('text' as const)
-        : _cta.variant === 'ghost'
-        ? ('ghost' as const)
-        : ('primary' as const),
-  }
+  const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
