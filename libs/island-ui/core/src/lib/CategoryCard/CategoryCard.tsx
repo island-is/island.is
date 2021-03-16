@@ -9,6 +9,7 @@ type Tag = {
   label: string
   href?: string
   onClick?: () => void
+  disabled?: true
 }
 
 type CategoryCardProps = {
@@ -73,6 +74,7 @@ export const CategoryCard = ({
             {tags.map((tag) => (
               <Tag
                 key={tag.label}
+                disabled={tag.disabled}
                 outlined={!tag.href}
                 variant={tagVariant}
                 href={tag.href}
