@@ -13,3 +13,6 @@ export type Screen<Props = {}> = NextComponentType<
   Props,
   Props
 >
+
+/** Type for React Components to signal they don't receive children  */
+export type NoChildren = { children?: undefined }

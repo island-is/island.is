@@ -5,13 +5,17 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { NoChildren } from '@island.is/web/types'
 
 interface SubpageMainProps {
   main: ReactNode
   image?: ReactNode
 }
 
-export const SubpageMainContent: FC<SubpageMainProps> = ({ main, image }) => {
+export const SubpageMainContent: FC<SubpageMainProps & NoChildren> = ({
+  main,
+  image,
+}) => {
   return (
     <GridContainer>
       <GridRow>
