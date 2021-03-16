@@ -19,12 +19,14 @@ export interface FeaturedArticlesProps {
     url: string
     text: string
   }
+  applicationLabel: string
 }
 
 export const FeaturedArticles: React.FC<FeaturedArticlesProps> = ({
   title,
   articles,
   link,
+  applicationLabel,
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -48,7 +50,13 @@ export const FeaturedArticles: React.FC<FeaturedArticlesProps> = ({
               borderRadius="large"
             >
               {({ isFocused }) => (
-                <LinkCard isFocused={isFocused} tag="Umsókn">
+                <LinkCard
+                  isFocused={isFocused}
+                  tag={
+                    !!processEntry &&
+                    (applicationLabel !== '' ? applicationLabel : 'Umsókn')
+                  }
+                >
                   {title}
                 </LinkCard>
               )}

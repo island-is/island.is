@@ -23,6 +23,9 @@ export class FeaturedArticles {
 
   @Field(() => Link, { nullable: true })
   link?: Link | null
+
+  @Field()
+  applicationLabel!: string
 }
 
 export const mapFeaturedArticles = ({
@@ -35,4 +38,5 @@ export const mapFeaturedArticles = ({
   image: fields.image ? mapImage(fields.image) : null,
   articles: (fields.articles ?? []).map(mapArticle),
   link: fields.link ? mapLink(fields.link) : null,
+  applicationLabel: fields.applicationLabel ?? '',
 })
