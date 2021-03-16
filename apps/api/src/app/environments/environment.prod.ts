@@ -12,7 +12,7 @@ export default {
   },
   education: {
     xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
-    uploadBucket: process.env.FILE_DOWNLOAD_UPLOAD_BUCKET,
+    fileDownloadBucket: process.env.FILE_DOWNLOAD_BUCKET,
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,

@@ -60,7 +60,7 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
       xroadLicenseServiceId: environment.education.xroadLicenseServiceId,
-      uploadBucket: environment.education.uploadBucket,
+      fileDownloadBucket: environment.education.fileDownloadBucket,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,

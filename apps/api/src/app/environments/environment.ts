@@ -12,7 +12,7 @@ export default {
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
-    uploadBucket: 'island-is-dev-download-cache-api',
+    fileDownloadBucket: 'island-is-dev-download-cache-api',
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
