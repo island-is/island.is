@@ -100,6 +100,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
 
+      hist: {
+        type: 'history',
+        history: 'shallow',
+      },
+
       [States.EDIT_OR_ADD_PERIODS]: {
         entry: 'copyPeriodsToTemp',
         exit: 'mergePeriodAnswers',
@@ -120,7 +125,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
                 {
-                  event: DefaultEvents.REJECT,
+                  event: DefaultEvents.ABORT,
                   name: 'Abort',
                   type: 'abort',
                 },
@@ -138,13 +143,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             { target: States.VINNUMALASTOFNUN_APPROVAL },
           ],
-          [DefaultEvents.REJECT]: [
-            {
-              target: States.EMPLOYER_WAITING_TO_ASSIGN,
-              cond: hasEmployer,
-            },
-            { target: States.VINNUMALASTOFNUN_APPROVAL },
-          ],
+          [DefaultEvents.ABORT]: 'hist',
+          // [DefaultEvents.ABORT]: [
+          //   {
+          //     target: States.EMPLOYER_WAITING_TO_ASSIGN,
+          //     cond: hasEmployer,
+          //   },
+          //   { target: States.VINNUMALASTOFNUN_APPROVAL },
+          // ],
         },
       },
 

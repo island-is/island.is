@@ -96,7 +96,7 @@ export const EditOrAddPeriods: Form = buildForm({
               placement: 'footer',
               title: parentalLeaveFormMessages.confirmation.title,
               actions: [
-                { name: 'Cancel', type: 'abort', event: 'REJECT' },
+                { name: 'Cancel', type: 'abort', event: 'ABORT' },
                 {
                   event: 'SUBMIT',
                   name: parentalLeaveFormMessages.confirmation.title,
