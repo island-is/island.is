@@ -74,7 +74,7 @@ export const ToastContainer: React.FC<ToastProps> = ({
         pauseOnHover
         transition={Slide}
       />
-      {useKeyframeStyles && <style>{toastKeyframes}</style>}
+      {useKeyframeStyles && <style jsx>{toastKeyframes}</style>}
     </div>
   )
 }
