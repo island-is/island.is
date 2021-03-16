@@ -32,6 +32,7 @@ import { GET_AUCTIONS_QUERY } from '@island.is/web/screens/queries/Auction'
 import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
+import { dateFormat } from '@island.is/shared/constants'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -281,7 +282,9 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
                 marginLeft="auto"
               >
                 <Tag disabled>{auction.organization.title}</Tag>
-                <Text variant="small">{format(auctionDate, 'dd.MM.yyyy')}</Text>
+                <Text variant="small">
+                  {format(auctionDate, dateFormat.is)}
+                </Text>
               </Box>
             </FocusableBox>
           )
