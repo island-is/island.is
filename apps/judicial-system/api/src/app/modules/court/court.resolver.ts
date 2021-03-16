@@ -34,7 +34,7 @@ export class CourtResolver {
   ): Promise<Case> {
     const { caseId, policeCaseNumber } = input
 
-    this.logger.info(`Creating custody court case for case ${caseId}`)
+    this.logger.debug(`Creating custody court case for case ${caseId}`)
 
     return this.auditService.audit(
       user.id,
