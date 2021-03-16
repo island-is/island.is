@@ -79,7 +79,9 @@ export class CommunicationsService {
         message: error.response.data.description,
       })
 
-      throw new Error('Failed to search for user')
+      throw new Error(
+        `Failed to search for user: ${error.response.data.description}`,
+      )
     }
 
     let user =
@@ -88,16 +90,20 @@ export class CommunicationsService {
 
     // If we did not find an existing user we will create a new one
     if (!user) {
+      let identities = []
+
+      if (input.phone) {
+        identities.push({
+          type: 'phone_number',
+          value: input.phone,
+        })
+      }
+
       const newUser = JSON.stringify({
         user: {
           name: input.name,
           email: input.email,
-          identities: [
-            {
-              type: 'phone',
-              value: input.phone,
-            },
-          ],
+          identities,
         },
       })
 
@@ -110,25 +116,24 @@ export class CommunicationsService {
           params,
         )
       } catch (error) {
-        console.log('createUserResponse ERROR!!!!:', error.response.data)
-
         this.logger.error('Failed to create Zendesk user', {
-          message: 'test',
+          message: error.response.data.description,
         })
 
-        throw new Error('Failed to create Zendesk user')
+        throw new Error(
+          `Failed to create Zendesk user: ${error.response.data.description}`,
+        )
       }
 
       user = createUserResponse.data.user
     }
-
-    console.log('user', user)
 
     const newTicket = JSON.stringify({
       ticket: {
         requester_id: user.id,
         subject: input.subject ?? '',
         comment: { body: input.message ?? '' },
+        tags: ['web'],
       },
     })
 
@@ -141,13 +146,13 @@ export class CommunicationsService {
         params,
       )
     } catch (error) {
-      console.log('createTicketResponse ERROR!!!!:', error.response.data)
-
       this.logger.error('Failed to submit Zendesk ticket', {
-        message: error.response.message.error,
+        message: error.response.data.description,
       })
 
-      throw new Error('Failed to send message')
+      throw new Error(
+        `Failed to submit Zendesk ticket: ${error.response.data.description}`,
+      )
     }
 
     return true

@@ -12,6 +12,5 @@ export const environment = {
     email: process.env.ZENDESK_CONTACT_FORM_EMAIL,
     token: process.env.ZENDESK_CONTACT_FORM_TOKEN,
     subdomain: process.env.ZENDESK_CONTACT_FORM_SUBDOMAIN,
-    requesterId: process.env.ZENDESK_CONTACT_FORM_REQUESTER_ID,
   },
 }
