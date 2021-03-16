@@ -11,7 +11,7 @@ export default {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   education: {
-    xroadLicenseServiceId: 'r1/IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
+    xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
     uploadBucket: 'island-is-dev-download-cache-api',
   },
   fileStorage: {
