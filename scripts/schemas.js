@@ -66,5 +66,4 @@ const main = async () => {
   }
 }
 
-// this is a main function
 main()

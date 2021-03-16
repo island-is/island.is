@@ -152,6 +152,9 @@ export class Case implements TCase {
   @Field({ nullable: true })
   isCustodyEndDateInThePast?: boolean
 
+  @Field({ nullable: true })
+  readonly isolationTo?: string
+
   @Field(() => [String], { nullable: true })
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
 

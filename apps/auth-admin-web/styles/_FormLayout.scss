@@ -85,13 +85,22 @@
       font-size: 0.9rem;
     }
 
-    span // validation
-    {
+    // validation
+    span {
       position: absolute;
       left: 60%;
       color: $color-error;
       text-shadow: 0 0 $color-shadow;
+      margin-left: -60px;
+      padding-right: 120px;
     }
+
+    @media only screen and (max-width: 1066px) {
+      span {
+        margin-left: -30px;
+      }
+    }
+    // end validation
 
     &__available {
       position: absolute;

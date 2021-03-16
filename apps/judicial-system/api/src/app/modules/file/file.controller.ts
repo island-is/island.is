@@ -40,7 +40,7 @@ export class FileController {
     headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
-      `${environment.backendUrl}/api/case/${id}/ruling`,
+      `${environment.backend.url}/api/case/${id}/ruling`,
       { headers },
     )
 
@@ -70,7 +70,7 @@ export class FileController {
     headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
-      `${environment.backendUrl}/api/case/${id}/request`,
+      `${environment.backend.url}/api/case/${id}/request`,
       { headers },
     )
 
