@@ -14,6 +14,7 @@ export interface IDataUpload {
     skeytaHeiti: string
     adilar: ChildrenTransferPerson[]
     attachments: File[]
+    gagnaMengi: object
   }
 }
 
@@ -45,6 +46,7 @@ export function constructUploadDataObject(
   id: string,
   persons: Person[],
   attachment: Attachment,
+  extraData: object,
 ): IDataUpload {
   return {
     audkenni: id,
@@ -68,6 +70,7 @@ export function constructUploadDataObject(
       attachments: [
         { nafnSkraar: attachment.name, innihaldSkraar: attachment.content },
       ],
+      gagnaMengi: extraData,
     },
   }
 }

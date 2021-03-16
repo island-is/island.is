@@ -16,7 +16,12 @@ export class SyslumennService {
   async uploadData(
     persons: Person[],
     attachement: Attachment,
+    extraData: object,
   ): Promise<string> {
-    return await this.syslumennClient.uploadData(persons, attachement)
+    return await this.syslumennClient.uploadData(
+      persons,
+      attachement,
+      extraData,
+    )
   }
 }

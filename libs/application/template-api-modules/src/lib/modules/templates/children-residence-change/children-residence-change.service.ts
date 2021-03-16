@@ -100,9 +100,19 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
+    const extraData = {
+      interviewRequested: answers.interview,
+      reasonForChildrenResidenceChange: answers.residenceChangeReason,
+      transferExpirationDate:
+        answers.selectDuration[0] === 'permanent'
+          ? answers.selectDuration[0]
+          : answers.selectDuration[1],
+    }
+
     const response = await this.syslumennService.uploadData(
       participants,
       attachment,
+      extraData,
     )
 
     return response

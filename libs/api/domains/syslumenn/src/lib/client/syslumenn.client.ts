@@ -54,7 +54,11 @@ export class SyslumennClient {
     return response.data
   }
 
-  async uploadData(persons: Person[], attachment: Attachment): Promise<string> {
+  async uploadData(
+    persons: Person[],
+    attachment: Attachment,
+    extraData: object,
+  ): Promise<string> {
     await this.login()
 
     const url = `${this.clientConfig.url}/api/v1/SyslMottakaGogn`
@@ -65,7 +69,7 @@ export class SyslumennClient {
     }
 
     const request = JSON.stringify(
-      constructUploadDataObject(this.id, persons, attachment),
+      constructUploadDataObject(this.id, persons, attachment, extraData),
     )
 
     const response: {
