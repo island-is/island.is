@@ -4,13 +4,13 @@ import { JwtInjectBearerAuthGuard } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../environments'
 
-const hiddenFeatures = environment.hiddenFeatures?.split(',')
+const hiddenFeatures = environment.features?.hidden?.split(',')
 
 @UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api/feature')
 export class FeatureController {
   @Get(':name')
   async getFeature(@Param('name') name: string) {
-    return !hiddenFeatures.includes(name)
+    return !hiddenFeatures?.includes(name)
   }
 }
