@@ -6,6 +6,8 @@ import {
   buildCustomField,
   buildMultiField,
   buildTextField,
+  buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
@@ -57,10 +59,27 @@ export const ParentBForm: Form = buildForm({
       id: 'residenceChangeOverview',
       title: m.section.overview,
       children: [
-        buildCustomField({
-          id: 'residenceChangeReview',
+        buildMultiField({
+          id: 'residenceChangeOverview',
           title: m.contract.general.pageTitle,
-          component: 'Overview',
+          children: [
+            buildCustomField({
+              id: 'residenceChangeReview',
+              title: m.contract.general.pageTitle,
+              component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'assign',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.application.signature,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
