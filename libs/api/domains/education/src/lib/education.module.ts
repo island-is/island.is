@@ -2,7 +2,7 @@ import { Module, DynamicModule } from '@nestjs/common'
 
 import { MainResolver } from './graphql'
 import { EducationService } from './education.service'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
+import { EmailModule } from '@island.is/email-service'
 import { MMSApi } from './client'
 
 export interface Config {
@@ -23,6 +23,7 @@ export class EducationModule {
   static register(config: Config): DynamicModule {
     return {
       module: EducationModule,
+      imports: [EmailModule.register(config.emailOptions)],
       providers: [
         MainResolver,
         EducationService,
@@ -39,11 +40,6 @@ export class EducationModule {
               config.xroadLicenseServiceId,
             ),
         },
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: config.emailOptions,
-        },
-        EmailService,
       ],
       exports: [],
     }

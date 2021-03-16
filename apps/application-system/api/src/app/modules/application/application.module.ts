@@ -11,7 +11,7 @@ import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
-import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
+import { SigningModule } from '@island.is/dokobit-signing'
 import { AwsService } from './files/aws.service'
 import {
   APPLICATION_CONFIG,
@@ -48,17 +48,13 @@ if (process.env.INIT_SCHEMA === 'true') {
     SequelizeModule.forFeature([Application]),
     FileStorageModule.register(environment.fileStorage),
     BullModule,
+    SigningModule.register(environment.signingOptions),
   ],
   controllers: [ApplicationController],
   providers: [
     ApplicationService,
     FileService,
     UploadProcessor,
-    {
-      provide: SIGNING_OPTIONS,
-      useValue: environment.signingOptions,
-    },
-    SigningService,
     {
       provide: APPLICATION_CONFIG,
       useValue: environment.application as ApplicationConfig,

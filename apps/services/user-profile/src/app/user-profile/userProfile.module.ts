@@ -7,7 +7,7 @@ import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { DataSourceConfig } from 'apollo-datasource'
 import environment from '../../environments/environment'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
+import { EmailModule } from '@island.is/email-service'
 import { SmsVerification } from './smsVerification.model'
 import { EmailVerification } from './emailVerification.model'
 import { VerificationService } from './verification.service'
@@ -21,20 +21,16 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
       SmsVerification,
       UserProfile,
     ]),
+    EmailModule.register(environment.emailOptions),
   ],
   controllers: [UserProfileController, UserProfileInfraController],
   providers: [
     UserProfileService,
     VerificationService,
-    EmailService,
     SequelizeConfigService,
     {
       provide: SMS_OPTIONS,
       useValue: environment.smsOptions,
-    },
-    {
-      provide: EMAIL_OPTIONS,
-      useValue: environment.emailOptions,
     },
     {
       provide: SmsService,

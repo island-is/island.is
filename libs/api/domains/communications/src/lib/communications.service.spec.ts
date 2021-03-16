@@ -1,4 +1,4 @@
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
+import { EmailModule, EmailService } from '@island.is/email-service'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { CommunicationsService } from './communications.service'
@@ -29,17 +29,13 @@ describe('communicationsService', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
+      imports: [EmailModule.register({ useTestAccount: true })],
       providers: [
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: { useTestAccount: true },
-        },
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
         },
         CommunicationsService,
-        EmailService,
       ],
     }).compile()
 

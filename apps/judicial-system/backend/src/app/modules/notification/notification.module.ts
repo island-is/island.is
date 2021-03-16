@@ -5,7 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
+import { EmailModule } from '@island.is/email-service'
 
 import { environment } from '../../../environments'
 import { UserModule } from '../user'
@@ -15,7 +15,12 @@ import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
 
 @Module({
-  imports: [UserModule, CaseModule, SequelizeModule.forFeature([Notification])],
+  imports: [
+    EmailModule.register(environment.emailOptions),
+    UserModule,
+    CaseModule,
+    SequelizeModule.forFeature([Notification]),
+  ],
   controllers: [NotificationController],
   providers: [
     NotificationService,
@@ -32,11 +37,6 @@ import { NotificationController } from './notification.controller'
       },
       inject: [SMS_OPTIONS, LOGGER_PROVIDER],
     },
-    {
-      provide: EMAIL_OPTIONS,
-      useValue: environment.emailOptions,
-    },
-    EmailService,
   ],
 })
 export class NotificationModule {}
