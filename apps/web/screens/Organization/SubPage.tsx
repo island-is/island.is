@@ -111,12 +111,12 @@ const SubPage: Screen<SubPageProps> = ({
       fullWidthContent={true}
     >
       <GridContainer>
-        <Box paddingTop={[4, 4, 0]} paddingBottom={[4, 4, 6]}>
+        <Box paddingBottom={4}>
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', subpage.links.length ? '7/12' : '12/12']}
             >
-              <Box marginBottom={6}>
+              <Box marginBottom={2}>
                 <Text variant="h1" as="h2">
                   {subpage.title}
                 </Text>
@@ -188,7 +188,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -197,8 +197,8 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'syslumenn',
-          slug: query.slug as string,
+          organizationSlug: query.slug as string,
+          slug: query.subSlug as string,
           lang: locale as ContentLanguage,
         },
       },

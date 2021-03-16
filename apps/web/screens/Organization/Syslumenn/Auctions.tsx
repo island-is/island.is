@@ -21,8 +21,8 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
-import { Screen } from '../../types'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
@@ -191,8 +191,8 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            paddingTop={[4, 4, 0]}
-            paddingBottom={[4, 4, 6]}
+            paddingTop={[0, 0, 0]}
+            paddingBottom={[2, 2, 6]}
             span={['12/12', '12/12', '12/12', '12/12', '6/12']}
           >
             <Select
@@ -211,7 +211,7 @@ const Auctions: Screen<AuctionsProps> = ({ organizationPage, namespace }) => {
             />
           </GridColumn>
           <GridColumn
-            paddingTop={[4, 4, 0]}
+            paddingTop={[2, 2, 0]}
             paddingBottom={[4, 4, 6]}
             span={['12/12', '12/12', '12/12', '12/12', '6/12']}
           >
