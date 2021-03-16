@@ -687,6 +687,9 @@ export interface IFeaturedArticlesFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Application Label */
+  applicationLabel: string
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {

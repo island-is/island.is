@@ -349,6 +349,7 @@ export const slices = gql`
       text
       url
     }
+    applicationLabel
   }
 
   fragment TwoColumnTextFields on TwoColumnText {
