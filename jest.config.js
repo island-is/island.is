@@ -121,6 +121,7 @@ module.exports = {
     '<rootDir>/libs/service-portal/settings',
     '<rootDir>/libs/shared/babel',
     '<rootDir>/libs/shared/connected',
+    '<rootDir>/libs/shared/constants',
     '<rootDir>/libs/shared/form-fields',
     '<rootDir>/libs/shared/mocking',
     '<rootDir>/libs/shared/table',

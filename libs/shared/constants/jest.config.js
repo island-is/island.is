@@ -1,6 +1,6 @@
 module.exports = {
-  name: 'shared-constants',
-  preset: '../../../jest.config.js',
+  displayName: 'shared-constants',
+  preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',

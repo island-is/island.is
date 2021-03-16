@@ -5548,21 +5548,16 @@
       "root": "libs/shared/constants",
       "sourceRoot": "libs/shared/constants/src",
       "projectType": "library",
-      "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/shared/constants/tsconfig.lib.json",
-              "libs/shared/constants/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/shared/constants/**/*"]
+            "lintFilePatterns": ["libs/shared/constants/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/constants"],
           "options": {
             "jestConfig": "libs/shared/constants/jest.config.js",
             "passWithNoTests": true
