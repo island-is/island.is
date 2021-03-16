@@ -12,10 +12,6 @@ export default {
   },
   education: {
     xroadLicenseServiceId: 'r1/IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
-    emailOptions: {
-      sendFromEmail: 'development@island.is',
-      useTestAccount: true,
-    },
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
