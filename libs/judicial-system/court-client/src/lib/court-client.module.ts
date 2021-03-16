@@ -29,23 +29,23 @@ export interface CourtClientModuleOptions {
 }
 
 export class CourtClientModule {
-  static register(config: CourtClientModuleOptions): DynamicModule {
+  static register(options: CourtClientModuleOptions): DynamicModule {
     const headers = {
-      'X-Road-Client': config.xRoadClient,
+      'X-Road-Client': options.xRoadClient,
     }
 
     const providerConfiguration = new Configuration({
       fetchApi: fetch,
-      basePath: config.xRoadPath,
+      basePath: options.xRoadPath,
       headers,
       middleware: [
         {
           pre: injectAgentMiddleware(
             new https.Agent({
-              cert: config.clientCert,
-              key: config.clientKey,
-              ca: config.clientCa,
-              rejectUnauthorized: false,
+              cert: options.clientCert,
+              key: options.clientKey,
+              ca: options.clientCa,
+              rejectUnauthorized: false, // Must be false because we are using self signed certificates
             }),
           ),
         },

@@ -22,7 +22,7 @@ import { environment } from '../environments'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backendUrl}/api`
+  baseURL = `${environment.backend.url}/api`
 
   willSendRequest(req: RequestOptions) {
     req.headers.set('authorization', this.context.req.headers.authorization)
