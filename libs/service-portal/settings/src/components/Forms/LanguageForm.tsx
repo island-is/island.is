@@ -1,5 +1,6 @@
 import { Box, Select } from '@island.is/island-ui/core'
-import { Locale, useLocale } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 import React, { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 

@@ -164,6 +164,7 @@ export interface Case {
   isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
+  isolationTo?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -243,6 +244,7 @@ export interface UpdateCase {
   custodyEndDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
+  isolationTo?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision

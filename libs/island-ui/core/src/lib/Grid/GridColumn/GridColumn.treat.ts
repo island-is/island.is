@@ -81,6 +81,7 @@ const ColumnRange = [
   '2/2',
   '1/2',
   '1/1',
+  '0',
 ] as const
 const orderRange = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const
 export type Order = typeof orderRange[number]
@@ -94,6 +95,9 @@ const order = orderRange.reduce((acc: Record<string, number>, o) => {
 }, {})
 const columns = ColumnRange.reduce((acc, column) => {
   const range = column.split('/')
+  if (column === '0') {
+    acc[column] = '0'
+  }
   if (range.length !== 2 || isNaN(parseInt(range[0]) / parseInt(range[1]))) {
     return acc
   }
