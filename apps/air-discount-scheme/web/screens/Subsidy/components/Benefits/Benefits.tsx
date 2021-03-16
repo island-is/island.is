@@ -14,6 +14,7 @@ import {
   Text,
   ToastContainer,
   toast,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { NoBenefits, CodeCard } from '../'
 
@@ -68,6 +69,7 @@ function Benefits({ misc }: PropTypes) {
     path,
     validUntil,
     copySuccess,
+    connectionFlightInfo,
   } = JSON.parse(misc)
   const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
   const hasBenefits = benefits.length > 0
@@ -144,7 +146,10 @@ function Benefits({ misc }: PropTypes) {
             {hasConnections && (
               <Box marginTop={[6, 6, 12]}>
                 <Stack space={3}>
-                  <Typography variant="h3">{connectionFlightHeader}</Typography>
+                  <Typography variant="h3">
+                    {connectionFlightHeader}{' '}
+                    <Tooltip text={connectionFlightInfo} />
+                  </Typography>
                   {connections.map((discount) => {
                     const { connectionDiscountCodes, user } = discount
                     return connectionDiscountCodes.map(
