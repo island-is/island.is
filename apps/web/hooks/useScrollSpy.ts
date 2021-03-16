@@ -25,6 +25,8 @@ const guessVisibleSection = (
   }, ids[0])
 }
 
+const maybeWindow = process.browser ? window : undefined
+
 export const scrollTo = (
   id: string,
   {
@@ -33,7 +35,11 @@ export const scrollTo = (
   }: { marginTop?: number; smooth?: boolean } = {},
 ) => {
   polyfill()
-  const rect = document.getElementById(id).getBoundingClientRect()
+  const elm = document.getElementById(id)
+  if (!elm) {
+    return
+  }
+  const rect = elm.getBoundingClientRect()
   window.scrollTo({
     top: Math.floor(rect.top) + window.scrollY - marginTop,
     behavior: smooth ? 'smooth' : 'auto',
@@ -47,7 +53,7 @@ const useScrollSpy = (
     smooth = false,
   }: { marginTop?: number; smooth?: boolean } = {},
 ): [string | undefined, (id: string) => void] => {
-  const [current, setCurrent] = useState(ids[0])
+  const [current, setCurrent] = useState(ids[0] || '')
 
   // flag to ignore scroll event when user navigates manually
   const [ignore, setIgnore] = useState(false)
@@ -57,23 +63,20 @@ const useScrollSpy = (
     debounce(() => setIgnore(false), 50),
     [setIgnore],
   )
-  useEvent('scroll', checkScrollStop, process.browser && window)
+  useEvent('scroll', checkScrollStop, maybeWindow)
 
   // function to manually navigate
-  const navigate = useCallback(
-    (id: string) => {
-      setCurrent(id)
-      setIgnore(true)
-      scrollTo(id, { marginTop: marginTop, smooth: smooth })
-    },
-    [setCurrent, setIgnore],
-  )
+  const navigate = useCallback((id: string) => {
+    setCurrent(id)
+    setIgnore(true)
+    scrollTo(id, { marginTop: marginTop, smooth: smooth })
+  }, [])
 
   // throttled function to update the active section id
   const updateCurrent = useCallback(
     throttle(() => {
       if (!ignore) {
-        setCurrent(guessVisibleSection(ids, marginTop))
+        setCurrent(guessVisibleSection(ids, marginTop) || '')
       }
     }, 100),
     [ids, ignore, setCurrent],
@@ -83,8 +86,8 @@ const useScrollSpy = (
   useEffect(updateCurrent, [ids])
 
   // and call the update function on scroll and resize
-  useEvent('scroll', updateCurrent, process.browser && window)
-  useEvent('resize', updateCurrent, process.browser && window)
+  useEvent('scroll', updateCurrent, maybeWindow)
+  useEvent('resize', updateCurrent, maybeWindow)
 
   return [current, navigate]
 }
