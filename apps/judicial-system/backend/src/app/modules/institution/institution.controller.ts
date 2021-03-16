@@ -23,8 +23,7 @@ export class InstitutionController {
     private readonly institutionService: InstitutionService,
   ) {}
 
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
   @Get('institutions')
   @ApiOkResponse({
