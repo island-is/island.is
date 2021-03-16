@@ -14,6 +14,7 @@ export class Discount {
 
   @Field((type) => [ConnectionDiscountCode])
   connectionDiscountCodes: ConnectionDiscountCodes
+
   @Field()
   expiresIn: number
 
