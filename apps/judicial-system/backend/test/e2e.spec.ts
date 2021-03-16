@@ -24,6 +24,7 @@ import { SharedAuthService } from '@island.is/judicial-system/auth'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
+import { environment } from '../src/environments'
 import {
   Notification,
   SendNotificationResponse,
@@ -65,27 +66,29 @@ beforeAll(async () => {
   const sharedAuthService = await app.resolve(SharedAuthService)
 
   prosecutor = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${prosecutorNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${prosecutorNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
   judge = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${judgeNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${judgeNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
   registrar = (
-    await request(app.getHttpServer()).get(`/api/user/${registrarNationalId}`)
+    await request(app.getHttpServer())
+      .get(`/api/user/${registrarNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
 
   admin = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${adminNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${adminNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
 })
@@ -130,6 +133,7 @@ function remainingProsecutorCaseData() {
 
 function remainingJudgeCaseData() {
   return {
+    setCourtCaseNumberManually: true,
     courtCaseNumber: 'Court Case Number',
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
@@ -147,6 +151,7 @@ function remainingJudgeCaseData() {
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
     isolationTo: '2020-09-28T12:00:00.000Z',
+    additionToConclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -296,6 +301,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
   expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
+  expect(caseOne.setCourtCaseNumberManually || null).toBe(
+    caseTwo.setCourtCaseNumberManually || null,
+  )
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
@@ -328,7 +336,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.additionToConclusion || null).toBe(
     caseTwo.additionToConclusion || null,
   )
-
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )
@@ -388,6 +395,7 @@ describe('User', () => {
 
         return request(app.getHttpServer())
           .get(`/api/user/?nationalId=${judgeNationalId}`)
+          .set('authorization', `Bearer ${environment.auth.secretToken}`)
           .send()
           .expect(200)
       })
