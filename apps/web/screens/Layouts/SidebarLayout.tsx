@@ -14,6 +14,15 @@ interface SidebarLayoutProps {
   sidebarContent: ReactNode
   isSticky?: boolean
   hiddenOnTablet?: boolean
+  /** By default the main-content area has 1-column padding on both to its
+   * left and right.
+   *
+   * Passing `true` removes the padding, allowing the main-content to bleed
+   * all the way up do the `sidebarContent`.
+   *
+   * Passing `"right"` only removes the right-hand padding – leaving the
+   * default left-hand padding in place.
+   */
   fullWidthContent?: boolean | 'right'
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
