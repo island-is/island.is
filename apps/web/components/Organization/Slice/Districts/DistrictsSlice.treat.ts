@@ -10,6 +10,11 @@ export const districtsList = style({
     sm: {
       columnCount: 2,
     },
-    lg: { columnCount: 3 },
+    md: {
+      columnCount: 1,
+    },
+    lg: {
+      columnCount: 2,
+    },
   }),
 })

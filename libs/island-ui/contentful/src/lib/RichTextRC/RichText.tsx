@@ -4,6 +4,8 @@ import {
   documentToReactComponents,
   Options,
 } from '@contentful/rich-text-react-renderer'
+import { Locale } from '@island.is/shared/types'
+
 import { ImageProps } from '../Image/Image'
 import { FaqListProps } from '../FaqList/FaqList'
 import { StatisticsProps } from '../Statistics/Statistics'
@@ -104,7 +106,7 @@ type RichText = (
         }
       }
     | { renderNode?: {}; renderMark?: {}; renderComponent?: {} },
-  locale?: 'is' | 'en',
+  locale?: Locale,
 ) => React.ReactNode
 
 export const richText: RichText = (

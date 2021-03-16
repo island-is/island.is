@@ -60,8 +60,7 @@ const registrarNotificationRule = {
   dtoFieldValues: [NotificationType.COURT_DATE],
 } as RolesRule
 
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:id')
 @ApiTags('cases')
 export class NotificationController {
