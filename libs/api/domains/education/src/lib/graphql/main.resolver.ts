@@ -3,7 +3,6 @@ import { UseGuards, Inject } from '@nestjs/common'
 import { uuid } from 'uuidv4'
 import { ApolloError } from 'apollo-server-express'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   IdsAuthGuard,
   ScopesGuard,
@@ -24,8 +23,6 @@ export class MainResolver {
   constructor(
     private readonly educationService: EducationService,
     private readonly s3Service: S3Service,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
     @Inject('CONFIG')
     private readonly config: Config,
   ) {}
