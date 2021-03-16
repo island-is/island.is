@@ -25,6 +25,12 @@ export default {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
+    syslumenn: {
+      url: 'https://api.syslumenn.is/api',
+      username: process.env.SYSLUMENN_USERNAME,
+      password: process.env.SYSLUMENN_PASSWORD,
+    },
+    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
