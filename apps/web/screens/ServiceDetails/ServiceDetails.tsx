@@ -131,7 +131,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   href: linkResolver('developerspage').href,
                 }}
               />
-              {service.owner && (
+              {/* {service.owner && (
                 <InstitutionPanel
                   institutionTitle={nfc('institution')}
                   institution={service.owner}
@@ -142,7 +142,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   }}
                   //logo = {}
                 ></InstitutionPanel>
-              )}
+              )} */}
             </Stack>
           }
         >
