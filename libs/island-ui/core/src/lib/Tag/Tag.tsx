@@ -23,7 +23,8 @@ export interface TagProps {
   active?: boolean
   disabled?: boolean
   outlined?: boolean
-  attention?: boolean // Renders a red dot driving attention to the tag.
+  /** Renders a red dot driving attention to the tag. */
+  attention?: boolean
   children: string | ReactNode
   truncate?: boolean
 }
