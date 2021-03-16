@@ -3,6 +3,7 @@ import cn from 'classnames'
 import { Image as ApiImage } from '@island.is/web/graphql/schema'
 
 import * as styles from './Image.treat'
+import { NoChildren } from '../../types'
 
 export type CustomImage = {
   type: 'custom'
@@ -49,7 +50,7 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export const Image: FC<AnyImageType> = (image) => {
+export const Image: FC<AnyImageType & NoChildren> = (image) => {
   const { src, thumbnail, alt, originalWidth, originalHeight } = normalizeImage(
     image,
   )
