@@ -25,6 +25,7 @@ export class SyslumennModule {
           useValue: config,
         },
       ],
+      exports: [SyslumennService],
     }
   }
 }
