@@ -4240,7 +4240,7 @@
               "apps/service-portal/src/mockServiceWorker.js",
               "apps/service-portal/src/assets"
             ],
-            "styles": [],
+            "styles": ["apps/service-portal/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/service-portal/webpack.config.js",
             "maxWorkers": 2
