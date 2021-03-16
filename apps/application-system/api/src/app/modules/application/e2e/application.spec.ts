@@ -75,7 +75,7 @@ describe('Application system API', () => {
   })
 
   // This template does not have readyForProduction: false
-  it('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
+  it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
