@@ -12,13 +12,6 @@ export default {
   },
   education: {
     xroadLicenseServiceId: process.env.MMS_XROAD_LICENSE_SERVICE_ID,
-    emailOptions: {
-      sendFromEmail: process.env.SEND_FROM_EMAIL,
-      useTestAccount: false,
-      options: {
-        region: process.env.EMAIL_REGION,
-      },
-    },
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
