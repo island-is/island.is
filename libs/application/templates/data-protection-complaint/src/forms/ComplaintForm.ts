@@ -35,7 +35,6 @@ const buildComplaineeMultiField = (id: string) =>
     id: `${id}MultiField`,
     title: complaint.general.complaineePageTitle,
     description: complaint.general.complaineePageDescription,
-    space: 1,
     children: [
       buildCustomField({
         id: `${id}NameLabel`,
@@ -62,6 +61,11 @@ const buildComplaineeMultiField = (id: string) =>
         title: complaint.labels.complaineeNationalId,
         format: '######-####',
         backgroundColor: 'blue',
+      }),
+      buildCustomField({
+        id: `${id}operatesWithinEuropeSpacer`,
+        title: '',
+        component: 'FieldLabel',
       }),
       buildRadioField({
         id: `${id === 'complainee' ? `${id}.` : ''}operatesWithinEurope`,
