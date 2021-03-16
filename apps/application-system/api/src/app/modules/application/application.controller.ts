@@ -93,7 +93,7 @@ interface StateChangeResult {
   application: BaseApplication
 }
 
-interface ModuleActionResult {
+interface TemplateAPIModuleActionResult {
   updatedApplication: BaseApplication
   hasError: boolean
   error?: string
@@ -455,7 +455,7 @@ export class ApplicationController {
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     authorization: string,
     action: ApplicationTemplateAPIAction,
-  ): Promise<ModuleActionResult> {
+  ): Promise<TemplateAPIModuleActionResult> {
     const {
       apiModuleAction,
       shouldPersistToExternalData,
