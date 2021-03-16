@@ -44,6 +44,8 @@ export class CheckFlightViewModel {
 
   @ApiProperty()
   readonly message: string
+
+  @ApiProperty()
   readonly statusCode: string
 }
 export class FlightViewModel {

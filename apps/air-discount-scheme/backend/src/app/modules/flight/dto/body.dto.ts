@@ -58,21 +58,6 @@ export class CreateFlightBody {
   @ApiProperty({ type: [CreateFlightLegBody] })
   readonly flightLegs!: CreateFlightLegBody[]
 }
-
-export class CheckFlightBody {
-  @IsString()
-  @ApiProperty()
-  readonly origin!: string
-
-  @IsString()
-  @ApiProperty()
-  readonly destination!: string
-
-  @IsISO8601()
-  @ApiProperty()
-  readonly date!: Date
-}
-
 export class GetFlightLegsBody implements FlightLegsInput {
   @IsOptional()
   @IsEnum(Object.keys(Airlines))
