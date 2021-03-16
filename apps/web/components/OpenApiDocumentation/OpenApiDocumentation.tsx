@@ -17,6 +17,7 @@ export const OpenApiDocumentation: FC<OpenApiDocumentationProps> = ({
         options={{
           noAutoAuth: true,
           showExtensions: true,
+          hideHostname: true,
         }}
       />
     </Box>
