@@ -24,7 +24,7 @@ export class S3Service {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
-    this.s3 = new S3()
+    this.s3 = new S3({ apiVersion: '2006-03-01' })
   }
 
   private uploadFromStream(
