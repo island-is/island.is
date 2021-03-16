@@ -43,18 +43,22 @@ describe('Link resolver', () => {
   })
 
   it('should handle content type with uppercase', () => {
-    const nextLinks = linkResolver('lifeEventPage' as LinkType, ['cat'], 'is')
+    // @ts-expect-error  (testing wrong input)
+    const randomCasedInput: LinkType = 'lifeEventPage'
+    const nextLinks = linkResolver(randomCasedInput, ['cat'], 'is')
     expect(nextLinks).toEqual({
       href: '/lifsvidburdir/cat',
     })
   })
 
   it('should handle wrong content type ', () => {
+    // @ts-expect-error  (testing wrong input)
+    const unknownInput: LinkType = 'dogPark'
     const nextLinks = [
-      linkResolver('dogPark' as LinkType, [''], 'is'),
-      linkResolver('dogPark' as LinkType, ['cat'], 'is'),
+      linkResolver(unknownInput, [''], 'is'),
+      linkResolver(unknownInput, ['cat'], 'is'),
     ]
-    nextLinks.map((link) => {
+    nextLinks.forEach((link) => {
       expect(link).toEqual({
         href: '/404',
       })
@@ -62,32 +66,33 @@ describe('Link resolver', () => {
   })
 
   it('should handle content type as empty string', () => {
-    const nextLinks = linkResolver('' as LinkType, [], 'is')
+    // @ts-expect-error  (testing wrong input)
+    const emptyInput: LinkType = ''
+    const nextLinks = linkResolver(emptyInput, [], 'is')
     expect(nextLinks).toEqual({
       href: '/404',
     })
   })
 
   it('should handle content type as undefined', () => {
-    const nextLinks = linkResolver(undefined as LinkType, [], 'is')
+    // TODO: Use @ts-expect-error once the test runner is switched to strict mode
+    // @ts-ignore  (testing wrong input)
+    const undefinedInput: LinkType = undefined
+    const nextLinks = linkResolver(undefinedInput, [], 'is')
     expect(nextLinks).toEqual({
       href: '/404',
     })
   })
 
   it('should return external urls as next links objects', () => {
-    const nextLinks = linkResolver(
-      'linkurl' as LinkType,
-      ['https://example.com'],
-      'is',
-    )
+    const nextLinks = linkResolver('linkurl', ['https://example.com'], 'is')
     expect(nextLinks).toEqual({
       href: 'https://example.com',
     })
   })
 
   it('should have no path repetition', () => {
-    const types = Object.values(routesTemplate).reduce(
+    const types = Object.values(routesTemplate).reduce<Array<string>>(
       (types, templateObject) => {
         if (templateObject.en) {
           types.push(templateObject.en)
@@ -144,7 +149,10 @@ describe('Type resolver', () => {
   })
 
   it('Should handle undefined', () => {
-    const types = typeResolver(undefined)
+    // TODO: Use @ts-expect-error once the test runner is switched to strict mode
+    // @ts-ignore  (testing wrong input)
+    const undefinedInput: string = undefined
+    const types = typeResolver(undefinedInput)
     expect(types).toBeNull()
   })
 
