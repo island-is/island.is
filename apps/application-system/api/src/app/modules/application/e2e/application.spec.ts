@@ -540,7 +540,7 @@ describe('Application system API', () => {
     })
   })
 
-  it('GET applications/:id/presignedUrl should return a presigned url', async () => {
+  it('GET /applications/:id/presignedUrl should return a presigned url', async () => {
     const expectedPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
@@ -558,6 +558,7 @@ describe('Application system API', () => {
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const res = await server
@@ -571,7 +572,7 @@ describe('Application system API', () => {
     expect(res.body).toEqual({ url: expectedPresignedUrl })
   })
 
-  it('PUT applications/:id/uploadSignedFile should return that document has been signed', async () => {
+  it('PUT /applications/:id/uploadSignedFile should return that document has been signed', async () => {
     const type = 'ChildrenResidenceChange'
     const fileService: FileService = app.get<FileService>(FileService)
     jest
@@ -587,6 +588,7 @@ describe('Application system API', () => {
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const res = await server
