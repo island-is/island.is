@@ -170,12 +170,12 @@ export class CaseService {
     })
   }
 
-  create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
+  create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.caseModel.create({
       ...caseToCreate,
-      prosecutorId: user.id,
+      prosecutorId: user?.id,
     })
   }
 

@@ -5,6 +5,7 @@ import HelpBox from '../../common/HelpBox'
 import { AdminAccessDTO } from './../../../entities/dtos/admin-acess.dto'
 import { AdminAccess } from './../../../entities/models/admin-access.model'
 import { AdminAccessService } from './../../../services/AdminAccessService'
+import ValidationUtils from './../../../utils/validation.utils'
 interface Props {
   adminAccess: AdminAccessDTO
   handleSaveButtonClicked?: (admin: AdminAccess) => void
@@ -79,7 +80,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                       required: true,
                       maxLength: 10,
                       minLength: 10,
-                      pattern: /\d+/,
+                      validate: ValidationUtils.validateNationalId,
                     })}
                     defaultValue={admin.nationalId}
                     className="admin-user-create-form__input"
@@ -105,7 +106,7 @@ const AdminUserCreateForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     ref={register({
                       required: true,
-                      pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                      validate: ValidationUtils.validateEmail,
                     })}
                     name="admin.email"
                     defaultValue={admin.email ?? ''}
