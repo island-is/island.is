@@ -24,7 +24,7 @@ import {
   Stack,
   Link,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/web/i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import {
   GetSearchResultsQuery,
   QuerySearchResultsArgs,

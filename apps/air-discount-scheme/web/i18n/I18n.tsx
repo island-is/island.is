@@ -1,14 +1,14 @@
 import React, { createContext, useState, useRef, useEffect } from 'react'
 import Router from 'next/router'
 import rosetta from 'rosetta'
+import { Locale } from '@island.is/shared/types'
+import { defaultLanguage } from '@island.is/shared/constants'
 
 import { getRoute } from './routes'
-import { Locale, Routes } from '../types'
+import { Routes } from '../types'
 import { LOCALE_KEY } from '../consts'
 
 const i18n = rosetta()
-
-export const defaultLanguage: Locale = 'is'
 
 interface I18nContextType {
   activeLocale: Locale

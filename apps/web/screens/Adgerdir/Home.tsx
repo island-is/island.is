@@ -51,7 +51,7 @@ import {
   QueryGetArticleCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_GROUPED_MENU_QUERY } from '../queries/Menu'
-import { Locale } from '../../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
