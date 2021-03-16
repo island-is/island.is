@@ -11,7 +11,7 @@ export default {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   education: {
-    xroadLicenseServiceId: process.env.MMS_XROAD_LICENSE_SERVICE_ID,
+    xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
     uploadBucket: process.env.FILE_DOWNLOAD_UPLOAD_BUCKET,
   },
   fileStorage: {
