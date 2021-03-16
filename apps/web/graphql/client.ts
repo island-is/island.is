@@ -2,8 +2,10 @@ import { ApolloClient } from '@apollo/client/core'
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client/cache'
 import getConfig from 'next/config'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
+import { Locale } from '@island.is/shared/types'
+import { defaultLanguage } from '@island.is/shared/constants'
+
 import possibleTypes from './fragmentTypes.json'
-import { defaultLanguage, Locale } from '../i18n/I18n'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
