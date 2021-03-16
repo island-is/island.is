@@ -16,6 +16,7 @@ import {
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
+  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   UpdateCase,
@@ -62,9 +63,20 @@ export const RulingStepOne: React.FC = () => {
   const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
     '',
   )
+  const [
+    isolationToTimeErrorMessage,
+    setIsolationToTimeErrorMessage,
+  ] = useState('')
   const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
     '',
   )
+  const [
+    isolationToDateErrorMessage,
+    setIsolationToDateErrorMessage,
+  ] = useState('')
+
+  const [isolationToTime, setIsolationToTime] = useState<string>()
+
   const router = useRouter()
   const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
@@ -126,6 +138,18 @@ export const RulingStepOne: React.FC = () => {
         updateCase(
           theCase.id,
           parseString('custodyEndDate', theCase.requestedCustodyEndDate || ''),
+        )
+      }
+
+      if (!theCase.isolationTo) {
+        theCase = {
+          ...theCase,
+          isolationTo: theCase.custodyEndDate,
+        }
+
+        updateCase(
+          theCase.id,
+          parseString('isolationTo', theCase.custodyEndDate || ''),
         )
       }
 
@@ -324,6 +348,11 @@ export const RulingStepOne: React.FC = () => {
                     setCustodyEndDateErrorMessage,
                   )
                 }
+                minDate={
+                  workingCase.isolationTo
+                    ? parseISO(workingCase.isolationTo?.toString())
+                    : undefined
+                }
                 dateIsRequired
                 timeName="custodyEndTime"
                 timeRef={custodyEndTimeRef}
@@ -373,21 +402,109 @@ export const RulingStepOne: React.FC = () => {
                     Takmarkanir á gæslu
                   </Text>
                 </Box>
-                <Box marginBottom={1}>
-                  <CheckboxList
-                    checkboxes={isolation}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
+                <BlueBox>
+                  <Box marginBottom={3}>
+                    <CheckboxList
+                      checkboxes={isolation}
+                      selected={workingCase.custodyRestrictions}
+                      onChange={(id) =>
+                        setCheckboxAndSendToServer(
+                          'custodyRestrictions',
+                          id,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                      fullWidth
+                    />
+                  </Box>
+                  <DateTime
+                    datepickerId="isolationTo"
+                    datepickerLabel="Einangrun til"
+                    // If isolationTo has been set then use that otherwise, try to use custodyEndDate.
+                    selectedDate={
+                      workingCase.isolationTo
+                        ? parseISO(workingCase.isolationTo?.toString())
+                        : workingCase.custodyEndDate
+                        ? parseISO(workingCase.custodyEndDate?.toString())
+                        : null
+                    }
+                    // Isolation to should never last longer then the custody.
+                    maxDate={
+                      workingCase.custodyEndDate
+                        ? parseISO(workingCase.custodyEndDate?.toString())
+                        : undefined
+                    }
+                    // Isolation can never be set in the past.
+                    minDate={new Date()}
+                    datepickerErrorMessage={isolationToDateErrorMessage}
+                    handleCloseCalander={(date) =>
+                      setAndSendDateToServer(
+                        'isolationTo',
+                        workingCase.isolationTo,
+                        date,
                         workingCase,
+                        true,
                         setWorkingCase,
                         updateCase,
+                        setIsolationToDateErrorMessage,
                       )
                     }
+                    disabledDate={
+                      !workingCase.custodyRestrictions?.includes(
+                        CaseCustodyRestrictions.ISOLATION,
+                      )
+                    }
+                    disabledTime={
+                      !workingCase.isolationTo ||
+                      !workingCase.custodyRestrictions?.includes(
+                        CaseCustodyRestrictions.ISOLATION,
+                      )
+                    }
+                    timeOnChange={(evt) =>
+                      validateAndSetTime(
+                        'isolationTo',
+                        workingCase.isolationTo,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        setWorkingCase,
+                        isolationToTimeErrorMessage,
+                        setIsolationToTimeErrorMessage,
+                        setIsolationToTime,
+                      )
+                    }
+                    timeOnBlur={(evt) =>
+                      validateAndSendTimeToServer(
+                        'isolationTo',
+                        workingCase.isolationTo,
+                        evt.target.value,
+                        ['empty', 'time-format'],
+                        workingCase,
+                        updateCase,
+                        setIsolationToTimeErrorMessage,
+                      )
+                    }
+                    timeName="isolationToTime"
+                    timeDefaultValue={
+                      workingCase.isolationTo?.includes('T')
+                        ? formatDate(workingCase.isolationTo, TIME_FORMAT)
+                        : workingCase.custodyEndDate?.includes('T')
+                        ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                        : undefined
+                    }
+                    timeErrorMessage={isolationToTimeErrorMessage}
+                    blueBox={false}
+                    backgroundColor={
+                      workingCase.custodyRestrictions?.includes(
+                        CaseCustodyRestrictions.ISOLATION,
+                      )
+                        ? 'white'
+                        : 'blue'
+                    }
                   />
-                </Box>
+                </BlueBox>
               </Box>
             )}
           <FormFooter
