@@ -29,6 +29,7 @@ interface Props {
   disabledTime?: boolean
 
   blueBox?: boolean
+  backgroundColor?: 'blue' | 'white'
 }
 
 const DateTime: React.FC<Props> = (props) => {
@@ -54,6 +55,7 @@ const DateTime: React.FC<Props> = (props) => {
     timeRef,
     disabledTime,
     blueBox = true,
+    backgroundColor,
   } = props
 
   const renderDateTime = () => {
@@ -73,6 +75,7 @@ const DateTime: React.FC<Props> = (props) => {
           disabled={disabledDate}
           handleCloseCalendar={handleCloseCalander}
           required={dateIsRequired}
+          backgroundColor={backgroundColor}
         />
         <TimeInputField
           disabled={disabledTime}
@@ -91,6 +94,7 @@ const DateTime: React.FC<Props> = (props) => {
             iconType="outline"
             ref={timeRef}
             required={timeIsRequired}
+            backgroundColor={backgroundColor}
           />
         </TimeInputField>
       </div>

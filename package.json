@@ -263,10 +263,10 @@
     "@graphql-codegen/fragment-matcher": "1.17.8",
     "@graphql-codegen/schema-ast": "1.17.8",
     "@graphql-codegen/typescript": "1.17.8",
-    "@graphql-codegen/typescript-operations": "1.17.8",
+    "@graphql-codegen/typescript-operations": "1.17.15",
     "@graphql-codegen/typescript-react-apollo": "1.17.7",
     "@graphql-codegen/typescript-resolvers": "1.17.9",
-    "@jeremybarbet/contentful-extension-scripts": "0.22.6",
+    "@jeremybarbet/contentful-extension-scripts": "0.22.7",
     "@nestjs/schematics": "7.1.2",
     "@nestjs/testing": "7.4.4",
     "@nrwl/cli": "11.4.0",
@@ -381,6 +381,7 @@
     "xml-crypto": "2.0.0",
     "prismjs": "1.23.0",
     "urijs": "1.19.6",
-    "elliptic": "6.5.4"
+    "elliptic": "6.5.4",
+    "serialize-to-js": "3.1.1"
   }
 }

@@ -8,7 +8,7 @@ import { MMSApi } from './client'
 export interface Config {
   xroadBaseUrl: string
   xroadClientId: string
-  secret: string
+  xroadLicenseServiceId: string
   emailOptions: {
     sendFromEmail: string
     useTestAccount: boolean
@@ -36,7 +36,7 @@ export class EducationModule {
             new MMSApi(
               config.xroadBaseUrl,
               config.xroadClientId,
-              config.secret,
+              config.xroadLicenseServiceId,
             ),
         },
         {
