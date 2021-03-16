@@ -12,8 +12,7 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
   const applicationLink = `${clientLocationOrigin}/umsokn/${application.id}`
 
   const subject = 'Afrit af samning'
-  const body = `Góðan dag.
-
+  const body = `
         Í viðhengi er afrit af undirrituðum samning um breytt lögheimili barns
 
         Breyting á lögheimili og þar með á greiðslu meðlags og barnabóta tekur gildi eftir að sýslumaður hefur staðfest samninginn.
