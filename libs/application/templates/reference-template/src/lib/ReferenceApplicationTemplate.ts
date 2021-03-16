@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import * as z from 'zod'
 
-import { API_MODULE } from '../shared'
+import { ApiActions } from '../shared'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 
@@ -87,10 +87,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'In Review',
           progress: 0.75,
           onEntry: {
-            apiModuleAction: API_MODULE.createApplication,
+            apiModuleAction: ApiActions.createApplication,
           },
           onExit: {
-            apiModuleAction: API_MODULE.completeApplication,
+            apiModuleAction: ApiActions.completeApplication,
           },
           roles: [
             {

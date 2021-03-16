@@ -14,7 +14,7 @@ import {
   FormValue,
   buildFileUploadField,
 } from '@island.is/application/core'
-import { API_MODULE } from '../shared'
+import { ApiActions } from '../shared'
 import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({
@@ -153,11 +153,11 @@ export const ExampleForm: Form = buildForm({
           title: 'Takk',
           description: (application) => {
             const sendApplicationActionResult =
-              application.externalData[API_MODULE.createApplication]
+              application.externalData[ApiActions.createApplication]
 
             let id = 'unknown'
             if (sendApplicationActionResult) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               id = sendApplicationActionResult.data.id
             }
