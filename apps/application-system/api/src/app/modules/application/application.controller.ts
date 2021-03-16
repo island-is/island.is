@@ -577,7 +577,7 @@ export class ApplicationController {
       template,
     ).getOnEntryStateAPIAction(newState)
 
-    if (onEnterStateAction !== null) {
+    if (onEnterStateAction) {
       const {
         hasError,
         error,
