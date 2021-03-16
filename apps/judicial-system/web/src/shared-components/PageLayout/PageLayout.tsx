@@ -89,6 +89,10 @@ const PageLayout: React.FC<PageProps> = ({
         },
         {
           type: 'SUB_SECTION',
+          name: 'Rannsóknargögn',
+        },
+        {
+          type: 'SUB_SECTION',
           name: 'Yfirlit kröfu',
         },
       ],
@@ -119,6 +123,10 @@ const PageLayout: React.FC<PageProps> = ({
         {
           type: 'SUB_SECTION',
           name: 'Greinargerð',
+        },
+        {
+          type: 'SUB_SECTION',
+          name: 'Rannsóknargögn',
         },
         {
           type: 'SUB_SECTION',

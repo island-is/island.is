@@ -169,7 +169,7 @@ export const DetentionRequests: React.FC = () => {
     } else if (isJudge || isRegistrar) {
       router.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
     } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
-      router.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
+      router.push(`${Constants.STEP_SIX_ROUTE}/${c.id}`)
     } else {
       router.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
     }
