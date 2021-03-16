@@ -1,13 +1,12 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
-import { ApplicationStatus } from '@island.is/application/core'
+import { ApplicationStatus, ApplicationTypes } from '@island.is/application/core'
 
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import * as tokenUtils from '../utils/tokenUtils'
 import { FileService } from '../files/file.service'
-import { ApplicationTypes } from 'libs/application/core/src'
 
 let app: INestApplication
 
