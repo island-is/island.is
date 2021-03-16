@@ -78,7 +78,7 @@ export const RadioButton = ({
           <div className={styles.checkMark} />
         </div>
         <span className={styles.labelText}>
-          {label}
+          <Text>{label}</Text>
           {subLabel && large && (
             <Text
               as="span"

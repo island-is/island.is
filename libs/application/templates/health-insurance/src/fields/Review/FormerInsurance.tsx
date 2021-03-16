@@ -18,7 +18,10 @@ import {
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
 import { m } from '../../forms/messages'
-import { ReviewFieldProps } from '../../types'
+import {
+  FormerInsurance as FormerInsuranceType,
+  ReviewFieldProps,
+} from '../../types'
 import {
   requireConfirmationOfResidency,
   extractKeyFromStringObject,
@@ -40,10 +43,10 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
     ) as string,
   )
 
-  const country = getValueViaPath(
+  const defaultValues = getValueViaPath(
     application.answers,
-    'formerInsurance.country',
-  ) as string
+    'formerInsurance',
+  ) as FormerInsuranceType
 
   return (
     <Box>
@@ -98,7 +101,10 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                 ref={register}
                 disabled={!isEditable}
                 backgroundColor="white"
-                value={extractKeyFromStringObject(country, 'name')}
+                value={extractKeyFromStringObject(
+                  defaultValues.country,
+                  'name',
+                )}
               />
             </GridColumn>
           </GridRow>
@@ -115,6 +121,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                 ref={register}
                 disabled={!isEditable}
                 backgroundColor="blue"
+                defaultValue={defaultValues.personalId}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
@@ -130,11 +137,12 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
                   ref={register}
                   disabled={!isEditable}
                   backgroundColor="blue"
+                  defaultValue={defaultValues?.institution}
                 />
               </Box>
             </GridColumn>
           </GridRow>
-          {requireConfirmationOfResidency(country) && (
+          {requireConfirmationOfResidency(defaultValues.country) && (
             <>
               <FieldDescription
                 description={formatText(
@@ -220,6 +228,7 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
               disabled={!isEditable}
               backgroundColor="blue"
               textarea={true}
+              defaultValue={defaultValues?.entitlementReason}
             />
           </Box>
         )}

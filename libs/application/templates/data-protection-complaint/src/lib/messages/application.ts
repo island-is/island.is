@@ -71,6 +71,11 @@ export const section = defineMessages({
     defaultMessage: 'Sá sem er kvartað yfir',
     description: 'The one who is being complained about',
   },
+  subjectOfComplaint: {
+    id: 'dpac.application:section.subjectOfComplaint',
+    defaultMessage: 'Efni kvörtunar',
+    description: 'The subject of the complaint',
+  },
   overview: {
     id: 'dpac.application:section.overview',
     defaultMessage: 'Yfirlit og samþykki',

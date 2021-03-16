@@ -187,10 +187,10 @@ const Overview = ({
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
-          {answers[contactInfoKey].email}
+          {answers[contactInfoKey]?.email}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers[contactInfoKey].phoneNumber}</Text>
+        <Text fontWeight="medium">{answers[contactInfoKey]?.phoneNumber}</Text>
       </Box>
       {answers.residenceChangeReason && (
         <Box marginTop={4}>

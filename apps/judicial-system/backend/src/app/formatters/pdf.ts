@@ -458,6 +458,7 @@ export async function generateRulingPdf(existingCase: Case): Promise<string> {
           ),
         existingCase.parentCase !== null,
         existingCase.parentCase?.decision,
+        existingCase.isolationTo,
       ),
       {
         lineGap: 6,

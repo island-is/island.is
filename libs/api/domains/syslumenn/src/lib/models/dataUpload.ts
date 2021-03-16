@@ -3,8 +3,8 @@ export type DataUpload = {
   data: {
     id: string
     name: string
-    person: [Person]
-    attachments: [Attachment]
+    person: Person[]
+    attachments: Attachment[]
   }
 }
 

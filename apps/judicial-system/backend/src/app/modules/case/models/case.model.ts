@@ -347,6 +347,13 @@ export class Case extends Model<Case> {
   otherRestrictions: string
 
   @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isolationTo: Date
+
+  @Column({
     type: DataType.ENUM,
     allowNull: true,
     values: Object.values(CaseAppealDecision),

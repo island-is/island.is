@@ -14,7 +14,7 @@ const Header: React.FC = () => {
         router.push('/')
       }
     }
-  }, [session, loading, router])
+  }, [session, loading])
 
   return (
     <header className="header">
