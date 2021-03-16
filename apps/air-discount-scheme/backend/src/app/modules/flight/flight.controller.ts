@@ -39,7 +39,6 @@ import {
   DeleteFlightParams,
   DeleteFlightLegParams,
   CheckFlightParams,
-  CheckFlightBody,
   CheckFlightViewModel,
 } from './dto'
 import { DiscountService } from '../discount'
@@ -59,7 +58,7 @@ export class PublicFlightController {
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  @Get('discounts/:discountCode/checkFlightStatus')
+  @Get('discounts/:discountCode/:origin/:destination/:date/checkFlightStatus')
   @ApiResponse({
     status: 200,
     description: 'Input flight is eligible for discount as a connection flight',
@@ -77,12 +76,18 @@ export class PublicFlightController {
   @ApiResponse({ type: CheckFlightViewModel })
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
-    @Body() flight: CheckFlightBody,
     @Req() request: HttpRequest,
   ): Promise<CheckFlightViewModel> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
+
+    const incomingFlight = {
+      origin: params.origin,
+      destination: params.destination,
+      date: new Date(Date.parse(params.date.toString())),
+    }
+
     if (!discount) {
       throw new BadRequestException('Discount code is invalid')
     }
@@ -90,11 +95,6 @@ export class PublicFlightController {
     const user = await this.nationalRegistryService.getUser(discount.nationalId)
     if (!user) {
       throw new NotFoundException(`User not found`)
-    }
-
-    const incomingFlight = {
-      ...flight,
-      date: new Date(Date.parse(flight.date.toString())),
     }
 
     const connectionDiscountCode = discount.connectionDiscountCodes.filter(
