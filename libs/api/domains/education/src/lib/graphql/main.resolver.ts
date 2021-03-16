@@ -48,7 +48,7 @@ export class MainResolver {
 
     const url = await this.s3Service.uploadFileFromStream(responseStream, {
       fileName: uuid(),
-      bucket: this.config.uploadBucket,
+      bucket: this.config.fileDownloadBucket,
     })
     if (url === null) {
       throw new ApolloError('Could not create a download link')

@@ -9,7 +9,7 @@ export interface Config {
   xroadBaseUrl: string
   xroadClientId: string
   xroadLicenseServiceId: string
-  uploadBucket: string
+  fileDownloadBucket: string
 }
 
 @Module({})
