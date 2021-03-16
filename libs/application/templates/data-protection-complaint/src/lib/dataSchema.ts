@@ -13,7 +13,7 @@ export enum OnBehalf {
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
-  url: z.string(),
+  url: z.string().optional(),
 })
 
 export const DataProtectionComplaintSchema = z.object({
@@ -87,8 +87,7 @@ export const DataProtectionComplaintSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
-    // TODO: This should be required
-    documents: z.array(FileSchema),
+    documents: z.array(FileSchema).nonempty(),
     persons: z
       .array(
         z.object({
@@ -124,8 +123,7 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   complaint: z.object({
     description: z.string().nonempty(),
-    // TODO: This should be required
-    documents: z.array(FileSchema),
+    documents: z.array(FileSchema).nonempty(),
   }),
   overview: z.object({
     termsAgreement: z.array(z.string()).refine((x) => x?.includes('agreed')),
