@@ -5,17 +5,6 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  lint-pr-title:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: aslafy-z/conventional-pr-title-action@master
-        with:
-          success-state: Title follows the specification.
-          failure-state: Title does not follow the specification.
-          context-name: conventional-pr-title
-          preset: conventional-changelog-angular@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   prepare:
     runs-on: ubuntu-20.04
     timeout-minutes: 20
@@ -327,7 +316,6 @@ jobs:
       - formatting
       - e2e
       - build
-      - lint-pr-title
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -341,7 +329,5 @@ jobs:
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
       - name: Check build success
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
-      - name: Check PR title success
-        run: '[[ ${{ needs.lint-pr-title.result }} != "failure" ]] || exit 1'
       - name: Announce success
         run: echo "Build is successful"
