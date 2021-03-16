@@ -50,6 +50,7 @@ export class CourtService {
       return await request()
     } catch (error) {
       this.logger.error('Error while creating court case', error)
+
       if (isRetry) {
         throw error
       }
