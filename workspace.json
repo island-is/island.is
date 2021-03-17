@@ -2413,33 +2413,6 @@
         }
       }
     },
-    "contentful-importer": {
-      "root": "libs/contentful-importer",
-      "sourceRoot": "libs/contentful-importer/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/contentful-importer/tsconfig.lib.json",
-              "libs/contentful-importer/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/contentful-importer/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/contentful-importer/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/contentful-importer"]
-        }
-      }
-    },
     "contentful-translation-extension": {
       "root": "libs/contentful-translation-extension",
       "sourceRoot": "libs/contentful-translation-extension/src",
