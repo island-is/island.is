@@ -38,9 +38,7 @@ interface Recipient {
 @Injectable()
 export class NotificationService {
   constructor(
-    @Inject(SmsService)
     private readonly smsService: SmsService,
-    @Inject(EmailService)
     private readonly emailService: EmailService,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
