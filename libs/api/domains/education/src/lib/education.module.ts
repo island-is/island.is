@@ -2,7 +2,6 @@ import { Module, DynamicModule } from '@nestjs/common'
 
 import { MainResolver } from './graphql'
 import { EducationService } from './education.service'
-import { EmailModule } from '@island.is/email-service'
 import { S3Service } from './s3.service'
 import { MMSApi } from './client'
 
@@ -18,7 +17,6 @@ export class EducationModule {
   static register(config: Config): DynamicModule {
     return {
       module: EducationModule,
-      imports: [EmailModule.register(config.emailOptions)],
       providers: [
         MainResolver,
         S3Service,
