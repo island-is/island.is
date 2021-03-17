@@ -12,7 +12,6 @@ import { Institution } from './institution.model'
 @Resolver(() => Institution)
 export class InstitutionResolver {
   constructor(
-    @Inject(AuditService)
     private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,

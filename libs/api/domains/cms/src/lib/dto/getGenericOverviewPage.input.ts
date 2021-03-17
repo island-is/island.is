@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetGenericOverviewPageInput {
   @Field()
   @IsString()
-  pageIdentifier: string
+  pageIdentifier!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang = 'is-IS'
 }

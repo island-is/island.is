@@ -9,10 +9,10 @@ import { ApplicationsApi } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { CreatePdfInput } from './dto/createPdf.input'
 import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
 import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
+import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 
 const handleError = async (error: any) => {
@@ -42,47 +42,25 @@ export class ApplicationService {
       .catch(handleError)
   }
 
+  async findAll(
+    nationalId: string,
+    authorization: string,
+    input?: ApplicationApplicationsInput,
+  ) {
+    return await this.applicationApi
+      .applicationControllerFindAll({
+        nationalId,
+        authorization,
+        typeId: input?.typeId?.join(','),
+        status: input?.status?.join(','),
+      })
+      .catch(handleError)
+  }
+
   async create(input: CreateApplicationInput, authorization: string) {
     return this.applicationApi
       .applicationControllerCreate({
         createApplicationDto: input,
-        authorization,
-      })
-      .catch(handleError)
-  }
-
-  async findAllByType(
-    typeId: ApplicationResponseDtoTypeIdEnum,
-    authorization: string,
-  ) {
-    return await this.applicationApi
-      .applicationControllerFindAll({ typeId, authorization })
-      .catch(handleError)
-  }
-
-  async findAllByApplicant(
-    nationalRegistryId: string,
-    authorization: string,
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ) {
-    return await this.applicationApi
-      .applicationControllerFindApplicantApplications({
-        nationalRegistryId,
-        typeId,
-        authorization,
-      })
-      .catch(handleError)
-  }
-
-  async findAllByAssignee(
-    nationalRegistryId: string,
-    authorization: string,
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ) {
-    return await this.applicationApi
-      .applicationControllerFindAssigneeApplications({
-        nationalRegistryId,
-        typeId,
         authorization,
       })
       .catch(handleError)
