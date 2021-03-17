@@ -166,6 +166,7 @@
   - [API Utils](libs/utils/api/README.md)
   - [Utils Environment](libs/utils/environment/README.md)
 - [VMST Client](libs/vmst-client/README.md)
+- [Zendesk Service](libs/zendesk-service/README.md)
 
 ## Misc
 

@@ -1,4 +1,4 @@
-# zendesk-service
+# Zendesk Service
 
 This library was generated with [Nx](https://nx.dev).
 
