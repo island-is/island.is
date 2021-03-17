@@ -32,10 +32,7 @@ const adminRule = UserRole.ADMIN as RolesRule
 @Controller('api')
 @ApiTags('users')
 export class UserController {
-  constructor(
-    @Inject(UserService)
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
