@@ -371,7 +371,7 @@ export const m = defineMessages({
   },
   successfulSubmissionTitle: {
     id: 'hi.application:successfulSubmission.title',
-    defaultMessage: 'Við höfum móttekið umsókn þína!',
+    defaultMessage: 'Við höfum sent umsóknina þína!',
     description: 'Your application is sent!',
   },
   successfulSubmissionMissingInfoTitle: {

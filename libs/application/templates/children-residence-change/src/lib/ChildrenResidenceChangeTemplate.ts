@@ -17,6 +17,7 @@ type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 export enum ApplicationStates {
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
+  SUBMITTED = 'submitted',
 }
 
 enum Roles {
@@ -40,7 +41,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: applicationName,
-          progress: 0.33,
+          progress: 0.25,
           roles: [
             {
               id: Roles.ParentA,
@@ -69,7 +70,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         entry: 'assignToOtherParent',
         meta: {
           name: applicationName,
-          progress: 0.66,
+          progress: 0.5,
           roles: [
             {
               id: Roles.ParentB,
@@ -77,10 +78,40 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 import('../forms/ParentBForm').then((module) =>
                   Promise.resolve(module.ParentBForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
             {
               id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationConfirmation').then((module) =>
+                  Promise.resolve(module.ApplicationConfirmation),
+                ),
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: ApplicationStates.SUBMITTED,
+          },
+        },
+      },
+      [ApplicationStates.SUBMITTED]: {
+        meta: {
+          name: applicationName,
+          progress: 0.75,
+          onEntry: {
+            apiModuleAction: 'submitApplication',
+          },
+          roles: [
+            {
+              id: Roles.ParentA || Roles.ParentB,
               formLoader: () =>
                 import('../forms/ApplicationConfirmation').then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),

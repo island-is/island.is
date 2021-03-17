@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import Markdown from 'markdown-to-jsx'
 import {
@@ -19,16 +18,18 @@ import {
 import * as styles from './ErrorModal.treat'
 import { m } from '../../forms/messages'
 import useModalContent from '../../hooks/useModalContent'
+import { getBaseUrl } from '../../healthInsuranceUtils'
 
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
 
   const { formatMessage, lang } = useLocale()
   const content = useModalContent(externalData)
+  const baseUrl = getBaseUrl()
   const backUrl =
     lang === 'is'
-      ? 'https://www.island.is/umsokn-um-sjukratryggingu'
-      : 'https://www.island.is/en/apply-for-health-insurance'
+      ? `${baseUrl}/umsokn-um-sjukratryggingu`
+      : `${baseUrl}/en/apply-for-health-insurance`
 
   return (
     <ModalBase

@@ -9,6 +9,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
+  "paths": {
+    "@island.is/application/file-service": [
+      "apps/application-system/api/src/app/modules/application/files/index.ts"
+    ]
+  },
   "include": [],
   "files": [],
   "references": [

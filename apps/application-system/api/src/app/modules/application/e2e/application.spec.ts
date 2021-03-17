@@ -549,4 +549,71 @@ describe('Application system API', () => {
     // Assert
     expect(res.body).toEqual({ documentSigned: true })
   })
+
+  it('should update external data with template api module action response', async () => {
+    const answers = {
+      person: {
+        name: 'Tester',
+        nationalId: '1234567890',
+        age: '30',
+        email: 'tester@island.is',
+        phoneNumber: '8234567',
+      },
+      dreamJob: 'Yes',
+      attachments: [],
+      careerHistory: 'yes',
+      careerHistoryCompanies: ['aranja'],
+    }
+
+    const draftStateResponse = await server
+      .post('/applications')
+      .send({
+        applicant: nationalId,
+        state: 'draft',
+        attachments: {},
+        typeId: 'ExampleForm',
+        assignees: ['123456-1234'],
+        answers,
+      })
+      .expect(201)
+
+    expect(draftStateResponse.body.state).toBe('draft')
+    expect(draftStateResponse.body.externalData).toEqual({})
+
+    const inReviewStateResponse = await server
+      .put(`/applications/${draftStateResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(inReviewStateResponse.body.state).toBe('inReview')
+
+    const inReviewExternalDataKeys = Object.keys(
+      inReviewStateResponse.body.externalData,
+    )
+    expect(inReviewExternalDataKeys).toContain('createApplication')
+    expect(
+      inReviewStateResponse.body.externalData.createApplication.data,
+    ).toEqual({ id: 1337 })
+
+    const approvedStateResponse = await server
+      .put(`/applications/${draftStateResponse.body.id}/submit`)
+      .send({
+        event: 'APPROVE',
+        answers: {
+          ...answers,
+          approvedByReviewer: 'APPROVE',
+        },
+      })
+      .expect(200)
+
+    expect(approvedStateResponse.body.state).toBe('approved')
+
+    const approvedExternalDataKeys = Object.keys(
+      approvedStateResponse.body.externalData,
+    )
+    expect(approvedExternalDataKeys).toContain('completeApplication')
+    expect(
+      approvedStateResponse.body.externalData.completeApplication.data,
+    ).toEqual({ id: 1337 })
+  })
 })

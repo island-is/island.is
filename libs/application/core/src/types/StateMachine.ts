@@ -46,24 +46,26 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   type: 'primary' | 'subtle' | 'reject' | string
 }
 
-export interface ApplicationStateMetaOnEntry<
-  T extends EventObject = AnyEventObject
-> {
+export interface ApplicationTemplateAPIAction {
   // Name of the action that will be run on the API
   // these actions are exported are found in:
   // /libs/application/template-api-modules
   apiModuleAction: string
-  onSuccessEvent?: T[keyof T]
-  onErrorEvent?: T[keyof T]
+  // If response/error should be written to application.externalData, defaults to true
+  shouldPersistToExternalData?: boolean
+  // Id inside application.externalData, value of apiModuleAction is used by default
+  externalDataId?: string
+  // Should the state transition be blocked if this action errors out
+  // defaults to true
+  throwOnError?: boolean
 }
 
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
   progress?: number
   roles?: RoleInState<T>[]
-  // TODO: rename to something closer related to what
-  // it is doing? (running some template API action)
-  onEntry?: ApplicationStateMetaOnEntry<T>
+  onExit?: ApplicationTemplateAPIAction
+  onEntry?: ApplicationTemplateAPIAction
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>
