@@ -9,13 +9,13 @@ export class NumberBulletGroup {
   }
 
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => Int)
-  defaultVisible: number
+  defaultVisible!: number
 
   @Field(() => [NumberBullet])
-  bullets: NumberBullet[]
+  bullets!: NumberBullet[]
 }
 
 export const mapNumberBulletGroup = ({

@@ -6,13 +6,13 @@ import { TimelineEvent, mapTimelineEvent } from './timelineEvent.model'
 @ObjectType()
 export class TimelineSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [TimelineEvent])
-  events: TimelineEvent[]
+  events!: TimelineEvent[]
 }
 
 export const mapTimelineSlice = ({

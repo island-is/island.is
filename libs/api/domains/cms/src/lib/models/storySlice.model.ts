@@ -6,13 +6,13 @@ import { Story, mapStory } from './story.model'
 @ObjectType()
 export class StorySlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  readMoreText: string
+  readMoreText?: string
 
   @Field(() => [Story])
-  stories: Story[]
+  stories!: Story[]
 }
 
 export const mapStorySlice = ({

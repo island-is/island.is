@@ -9,16 +9,16 @@ export class IconBullet {
   }
 
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  body: string
+  body!: string
 
   @Field(() => Image)
-  icon: Image
+  icon!: Image
 
   @Field({ nullable: true })
   url?: string

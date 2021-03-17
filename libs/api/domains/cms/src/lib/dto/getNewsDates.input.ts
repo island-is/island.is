@@ -7,7 +7,7 @@ export class GetNewsDatesInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  lang?: ElasticsearchIndexLocale = 'is'
+  lang: ElasticsearchIndexLocale = 'is'
 
   @Field({ nullable: true })
   @IsEnum(['asc', 'desc'])
