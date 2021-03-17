@@ -186,9 +186,9 @@ export class CmsResolver {
   getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsContentfulService.getOrganizationPage(
-      input.slug,
-      input?.lang ?? 'is-IS',
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webOrganizationPage', slug: input.slug },
     )
   }
 
@@ -197,10 +197,9 @@ export class CmsResolver {
   getOrganizationSubpage(
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
-    return this.cmsContentfulService.getOrganizationSubpage(
-      input.organizationSlug,
-      input.slug,
-      input?.lang ?? 'is-IS',
+    return this.cmsElasticsearchService.getSingleOrganizationSubpage(
+      getElasticsearchIndex(input.lang),
+      { ...input },
     )
   }
 
@@ -328,7 +327,10 @@ export class CmsResolver {
   @Directive(cacheControlDirective())
   @Query(() => Frontpage)
   getFrontpage(@Args('input') input: GetFrontpageInput): Promise<Frontpage> {
-    return this.cmsContentfulService.getFrontpage(input)
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webFrontpage', slug: input.pageIdentifier },
+    )
   }
 
   @Directive(cacheControlDirective())
