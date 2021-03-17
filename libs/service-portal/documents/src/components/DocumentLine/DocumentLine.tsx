@@ -3,7 +3,6 @@ import { Modal } from '@island.is/service-portal/core'
 import { Document, DocumentDetails } from '@island.is/api/schema'
 import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
-import * as styles from './DocumentLine.treat'
 import {
   toast,
   Text,
@@ -20,6 +19,9 @@ import { useLocation } from 'react-router-dom'
 import { documentsOpenDocument } from '@island.is/plausible'
 import * as Sentry from '@sentry/react'
 import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
+
+import * as styles from './DocumentLine.treat'
 
 const isIosDevice = () => {
   return (
@@ -204,11 +206,11 @@ const DocumentLine: FC<Props> = ({ document }) => {
             >
               <Hidden above="xs">
                 <Text variant="small" color="dark300">
-                  {format(new Date(document.date), 'dd.MM.yyyy')}
+                  {format(new Date(document.date), dateFormat.is)}
                 </Text>
               </Hidden>
               <Hidden below="sm">
-                <Text>{format(new Date(document.date), 'dd.MM.yyyy')}</Text>
+                <Text>{format(new Date(document.date), dateFormat.is)}</Text>
               </Hidden>
             </Box>
           </GridColumn>

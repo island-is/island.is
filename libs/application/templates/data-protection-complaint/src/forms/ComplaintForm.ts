@@ -15,7 +15,7 @@ import {
   buildRepeater,
   buildCheckboxField,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
+import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint, OnBehalf } from '../shared'
 import {
   section,
   delimitation,
@@ -26,7 +26,6 @@ import {
   complaint,
   overview,
 } from '../lib/messages'
-import { OnBehalf } from '../lib/dataSchema'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }

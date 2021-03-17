@@ -4,12 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { delimitation, info, overview, section } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
-import {
-  SectionHeading,
-  ValueLine,
-  yesNoValueLabelMapper,
-  onBehalfValueLabelMapper,
-} from './Shared'
+import { SectionHeading, ValueLine } from './Shared'
 import {
   Applicant,
   Commissions,
@@ -18,6 +13,7 @@ import {
   OrganizationOrInstitution,
 } from './Sections'
 import { CheckboxController } from '@island.is/shared/form-fields'
+import { onBehalfValueLabelMapper, yesNoValueLabelMapper } from '../../shared'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({
   application,

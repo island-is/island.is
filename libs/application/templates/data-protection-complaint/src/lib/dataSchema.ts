@@ -1,14 +1,7 @@
 import * as z from 'zod'
-import { YES, NO } from '../shared'
+import { YES, NO, OnBehalf } from '../shared'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
-
-export enum OnBehalf {
-  MYSELF = 'myself',
-  MYSELF_AND_OR_OTHERS = 'myselfAndOrOthers',
-  OTHERS = 'others',
-  ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
-}
 
 const FileSchema = z.object({
   name: z.string(),

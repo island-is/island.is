@@ -1,4 +1,3 @@
-import orderBy from 'lodash/orderBy'
 import { Resolvers } from '../../types'
 import { store } from './store'
 import { application, externalData } from './factories'

@@ -5,7 +5,7 @@ import {
   UpdateUserProfileInput,
 } from '@island.is/api/schema'
 import { UPDATE_USER_PROFILE } from '../../lib/mutations/updateUserProfile'
-import { Locale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 import { useUserProfile } from './useUserProfile'
 import { USER_PROFILE } from '../../lib/queries/getUserProfile'
 

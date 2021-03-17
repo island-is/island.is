@@ -48,7 +48,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
-import { Locale } from '../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import {
   LinkType,
   useLinkResolver,
