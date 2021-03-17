@@ -2,7 +2,12 @@ import * as z from 'zod'
 import set from 'lodash/set'
 import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
-import { Application, ExternalData, FormValue } from '../types/Application'
+import {
+  Application,
+  ApplicationStatus,
+  ExternalData,
+  FormValue,
+} from '../types/Application'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import {
   ApplicationContext,
@@ -30,6 +35,7 @@ const createMockApplication = (
   attachments: {},
   answers: data.answers || {},
   externalData: data.externalData || {},
+  status: ApplicationStatus.IN_PROGRESS,
 })
 
 type TestEvents = { type: 'APPROVE' } | { type: 'REJECT' } | { type: 'SUBMIT' }

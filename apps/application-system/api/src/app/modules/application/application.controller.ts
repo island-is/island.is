@@ -7,26 +7,23 @@ import {
   Post,
   Put,
   Delete,
-  Query,
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
+  Query,
 } from '@nestjs/common'
-
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
-import { WhereOptions } from 'sequelize/types'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
-  ApiQuery,
   ApiHeader,
+  ApiQuery,
 } from '@nestjs/swagger'
-import { Op } from 'sequelize'
 import {
   Application as BaseApplication,
   callDataProviders,
@@ -78,8 +75,6 @@ import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
-
 interface DecodedAssignmentToken {
   applicationId: string
   state: string
@@ -97,6 +92,8 @@ interface TemplateAPIModuleActionResult {
   hasError: boolean
   error?: string
 }
+
+// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
 @ApiTags('applications')
 @ApiHeader({
@@ -118,7 +115,7 @@ export class ApplicationController {
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<ApplicationResponseDto> {
-    const application = await this.applicationService.findById(id)
+    const application = await this.applicationService.findOneById(id)
 
     if (!application) {
       throw new NotFoundException(
@@ -129,70 +126,40 @@ export class ApplicationController {
     return application
   }
 
-  // TODO REMOVE
-  @Get()
+  @Get('users/:nationalId/applications')
+  @ApiParam({
+    name: 'nationalId',
+    type: String,
+    required: true,
+    description: `To get the applications for a specific user's national id.`,
+    allowEmptyValue: false,
+  })
+  @ApiQuery({
+    name: 'typeId',
+    required: false,
+    type: 'string',
+    description:
+      'To filter applications by type. Comma-separated for multiple values.',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: 'string',
+    description:
+      'To filter applications by status. Comma-separated for multiple values.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   async findAll(
-    @Query('typeId') typeId: string,
-  ): Promise<ApplicationResponseDto[]> {
-    if (typeId) {
-      return this.applicationService.findAllByType(typeId as ApplicationTypes)
-    } else {
-      return this.applicationService.findAll()
-    }
-  }
-
-  @Get('applicants/:nationalRegistryId/applications')
-  @ApiQuery({
-    name: 'typeId',
-    required: false,
-    type: String,
-  })
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findApplicantApplications(
-    @Param('nationalRegistryId') nationalRegistryId: string,
+    @NationalId() nationalId: string,
     @Query('typeId') typeId?: string,
+    @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
-    const whereOptions: WhereOptions = {
-      applicant: nationalRegistryId,
-    }
-
-    if (typeId) {
-      whereOptions.typeId = typeId
-    }
-
-    return this.applicationService.findAll({
-      where: whereOptions,
-    })
-  }
-
-  @Get('assignees/:nationalRegistryId/applications')
-  @ApiQuery({
-    name: 'typeId',
-    required: false,
-    type: String,
-  })
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findAssigneeApplications(
-    @Param('nationalRegistryId') nationalRegistryId: string,
-    @Query('typeId') typeId?: string,
-  ): Promise<Application[]> {
-    const whereOptions: WhereOptions = {
-      assignees: {
-        [Op.contains]: [nationalRegistryId],
-      },
-    }
-
-    if (typeId) {
-      whereOptions.typeId = typeId
-    }
-
-    return this.applicationService.findAll({
-      where: whereOptions,
-    })
+    return await this.applicationService.findAllByNationalIdAndFilters(
+      nationalId,
+      typeId,
+      status,
+    )
   }
 
   @Post('applications')
@@ -227,7 +194,7 @@ export class ApplicationController {
       throw new BadRequestException('Invalid token')
     }
 
-    const existingApplication = await this.applicationService.findById(
+    const existingApplication = await this.applicationService.findOneById(
       decodedToken.applicationId,
     )
 
@@ -521,10 +488,9 @@ export class ApplicationController {
     event: string,
     authorization: string,
   ): Promise<StateChangeResult> {
-    const onExitStateAction = new ApplicationTemplateHelper(
-      application,
-      template,
-    ).getOnExitStateAPIAction(application.state)
+    const helper = new ApplicationTemplateHelper(application, template)
+    const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
+    const status = helper.getApplicationStatus()
     let updatedApplication: BaseApplication = application
 
     if (onExitStateAction) {
@@ -606,6 +572,7 @@ export class ApplicationController {
         newState,
         updatedApplication.answers,
         updatedApplication.assignees,
+        status,
       )
 
       updatedApplication = update.updatedApplication as BaseApplication

@@ -37,11 +37,11 @@ export const variants = styleMap({
     backgroundColor: theme.color.red100,
   },
   mint: {
-    color: theme.color.dark400,
+    color: theme.color.mint600,
     backgroundColor: theme.color.mint100,
   },
   darkerMint: {
-    color: theme.color.dark400,
+    color: theme.color.mint600,
     backgroundColor: theme.color.mint200,
   },
   rose: {

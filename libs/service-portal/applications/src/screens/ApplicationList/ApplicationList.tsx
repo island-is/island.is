@@ -4,73 +4,110 @@ import {
   ActionCardLoader,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
-import { Text, Box, Stack } from '@island.is/island-ui/core'
-import { useApplicantApplications } from '@island.is/service-portal/graphql'
-import { useAssigneeApplications } from '@island.is/service-portal/graphql'
+import {
+  Text,
+  Box,
+  Stack,
+  GridRow,
+  GridColumn,
+  ActionCard,
+} from '@island.is/island-ui/core'
+import { useApplications } from '@island.is/service-portal/graphql'
 import { Application } from '@island.is/application/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import * as Sentry from '@sentry/react'
+import { useHistory } from 'react-router-dom'
 
-const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { data: applications, loading, error } = useApplicantApplications()
+import { m } from '../../lib/messages'
 
-  const {
-    data: assigneeApplications,
-    loading: assigneeApplicationsLoading,
-    error: assigneeApplicationsError,
-  } = useAssigneeApplications()
+const isDev = window.location.origin === 'https://beta.dev01.devland.is'
+const isStaging = window.location.origin === 'https://beta.staging01.devland.is'
+const isProduction = window.location.origin === 'https://island.is'
+
+const baseUrlForm = isDev
+  ? 'https://umsoknir.dev01.devland.is'
+  : isStaging
+  ? 'https://umsoknir.staging01.devland.is'
+  : isProduction
+  ? 'https://umsoknir.island.is'
+  : 'http://localhost:4242'
+
+const ApplicationList: ServicePortalModuleComponent = () => {
+  useNamespaces('sp.applications')
+  Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
+
+  const { formatMessage, lang } = useLocale()
+  const { data: applications, loading, error } = useApplications()
+  const history = useHistory()
+  const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
 
   return (
     <>
       <Box marginBottom={5}>
-        <Text variant="h1" as="h1">
-          Umsóknir
-        </Text>
+        <GridRow>
+          <GridColumn>
+            <Stack space={2}>
+              <Text variant="h1" as="h1">
+                {formatMessage(m.heading)}
+              </Text>
+
+              <Text as="p" variant="intro">
+                {formatMessage(m.introCopy)}
+              </Text>
+            </Stack>
+          </GridColumn>
+        </GridRow>
       </Box>
+
       {loading && <ActionCardLoader repeat={3} />}
+
       {error && (
         <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
           <Text variant="h3" as="h3">
-            Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
+            {formatMessage(m.error)}
           </Text>
         </Box>
       )}
-      <Stack space={2}>
-        {applications?.map((application: Application) => (
-          <ApplicationCard
-            key={application.id}
-            name={application.name || application.typeId}
-            date={format(new Date(application.modified), 'MMMM')}
-            isComplete={application.progress === 1}
-            url={`http://localhost:4200/applications${application.id}`} // TODO update to correct path
-            progress={application.progress ? application.progress * 100 : 0}
-          />
-        ))}
-      </Stack>
 
-      <Box marginTop={5} marginBottom={5}>
-        <Text variant="h1" as="h1">
-          Umsóknir til samþykktar
-        </Text>
-      </Box>
-      {assigneeApplicationsLoading && <ActionCardLoader repeat={3} />}
-      {assigneeApplicationsError && (
-        <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h3" as="h3">
-            Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
-          </Text>
-        </Box>
-      )}
       <Stack space={2}>
-        {assigneeApplications?.map((application: Application) => (
-          <ApplicationCard
-            key={application.id}
-            name={application.name || application.typeId}
-            date={format(new Date(application.modified), 'MMMM')}
-            isComplete={application.progress === 1}
-            url={`http://localhost:4200/applications${application.id}`} // TODO update to correct path
-            progress={application.progress ? application.progress * 100 : 0}
-          />
-        ))}
+        {applications.map((application: Application) => {
+          const isComplete = application.progress === 1
+
+          return (
+            <ActionCard
+              key={application.id}
+              date={format(new Date(application.modified), dateFormat)}
+              heading={application.name || application.typeId}
+              tag={{
+                label: isComplete
+                  ? formatMessage(m.cardStatusDone)
+                  : formatMessage(m.cardStatusInProgress),
+                variant: isComplete ? 'mint' : 'blue',
+                outlined: false,
+              }}
+              cta={{
+                label: isComplete
+                  ? formatMessage(m.cardButtonComplete)
+                  : formatMessage(m.cardButtonInProgress),
+                variant: 'ghost',
+                size: 'small',
+                icon: undefined,
+                onClick: () =>
+                  history.replace(`${baseUrlForm}/umsokn/${application.id}`),
+              }}
+              text={
+                isComplete
+                  ? formatMessage(m.cardStatusCopyDone)
+                  : formatMessage(m.cardStatusCopyDone)
+              }
+              progressMeter={{
+                active: !isComplete,
+                progress: application.progress ? application.progress : 0,
+                variant: isComplete ? 'mint' : 'blue',
+              }}
+            />
+          )
+        })}
       </Stack>
     </>
   )
