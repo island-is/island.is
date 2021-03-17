@@ -368,7 +368,7 @@ export class CmsResolver {
     @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
-      getElasticsearchIndex(lang ?? 'is'),
+      getElasticsearchIndex(lang),
       { type: 'webNews', slug },
     )
   }
@@ -377,7 +377,7 @@ export class CmsResolver {
   @Query(() => [String])
   getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
     return this.cmsElasticsearchService.getNewsDates(
-      getElasticsearchIndex(input.lang ?? 'is'),
+      getElasticsearchIndex(input.lang),
       input,
     )
   }
@@ -386,7 +386,7 @@ export class CmsResolver {
   @Query(() => NewsList)
   getNews(@Args('input') input: GetNewsInput): Promise<NewsList> {
     return this.cmsElasticsearchService.getNews(
-      getElasticsearchIndex(input.lang ?? 'is'),
+      getElasticsearchIndex(input.lang),
       input,
     )
   }
@@ -427,7 +427,7 @@ export class LatestNewsSliceResolver {
   @ResolveField(() => [News])
   async news(@Parent() { news: input }: LatestNewsSlice): Promise<News[]> {
     const newsList = await this.cmsElasticsearchService.getNews(
-      getElasticsearchIndex(input.lang ?? 'is'),
+      getElasticsearchIndex(input.lang),
       input,
     )
     return newsList.items
