@@ -94,11 +94,6 @@ export class PublicFlightController {
       throw new BadRequestException('Discount code is invalid')
     }
 
-    const user = await this.nationalRegistryService.getUser(discount.nationalId)
-    if (!user) {
-      throw new NotFoundException(`User not found`)
-    }
-
     const connectionDiscountCode = discount.connectionDiscountCodes.filter(
       (cdc) => {
         return cdc.code === params.discountCode
