@@ -122,7 +122,7 @@ export function getSubSectionsInSection(
   externalData: ExternalData,
 ): SubSection[] {
   const subSections: SubSection[] = []
-  section.children.forEach((child) => {
+  section?.children.forEach((child) => {
     const shouldShowSection = shouldShowFormItem(child, answers, externalData)
     if (child.type === FormItemTypes.SUB_SECTION && shouldShowSection) {
       subSections.push(child as SubSection)
