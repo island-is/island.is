@@ -1,3 +1,5 @@
+import { TagVariant } from 'libs/island-ui/core/src'
+import { Case, CaseState } from 'libs/judicial-system/types/src/lib/types'
 import { Validation } from './utils/validate'
 
 export enum AppealDecisionRole {
@@ -42,3 +44,25 @@ export enum LoginErrorCodes {
   UNAUTHENTICATED = 'innskraning-utrunnin',
   LOGIN_FAILED = 'innskraning-ogild',
 }
+
+export interface DetentionRequestTableProps {
+  requestSort: (key: keyof Case) => void
+  getClassNamesFor: (name: keyof Case) => directionType | undefined
+  cases: Case[]
+  handleClick: (c: Case) => void
+  mapCaseStateToTagVariant: (
+    state: CaseState,
+    isCustodyEndDateInThePast?: boolean | undefined,
+  ) => {
+    color: TagVariant
+    text: string
+  }
+  setRequestToRemoveIndex?: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >
+  requestToRemoveIndex?: number
+  isProsecutor?: boolean
+  deleteCase?: (caseToDelete: Case) => Promise<void>
+}
+
+export type directionType = 'ascending' | 'descending'

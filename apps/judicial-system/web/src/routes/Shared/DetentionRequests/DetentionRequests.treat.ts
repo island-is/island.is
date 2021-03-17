@@ -5,7 +5,7 @@ export const detentionRequestsContainer = style({
   display: 'grid',
   gridColumnGap: 24,
   gridTemplateColumns: 'repeat(12, 1fr)',
-  gridTemplateRows: 'repeat(3, auto)',
+  gridTemplateRows: 'repeat(4, auto)',
   maxWidth: '1440px',
   margin: `${theme.spacing[12]}px auto`,
   padding: `0 ${theme.spacing[6]}px`,
@@ -18,8 +18,19 @@ export const logoContainer = style({
   marginBottom: theme.spacing[9],
 })
 
-export const detentionRequestsTable = style({
+export const activeRequestsTable = style({
   gridRow: '3',
+  gridColumn: '1 / -1',
+  borderSpacing: 0,
+  borderCollapse: 'collapse',
+  overflow: 'hidden',
+
+  // Needed for Safari.
+  width: '100%',
+})
+
+export const pastRequestsTable = style({
+  gridRow: '4',
   gridColumn: '1 / -1',
   borderSpacing: 0,
   borderCollapse: 'collapse',
