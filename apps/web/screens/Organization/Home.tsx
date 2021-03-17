@@ -2,9 +2,11 @@
 import React, { useContext } from 'react'
 import {
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -89,28 +91,55 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      mainContent={
-        <Box paddingTop={2}>
-          <Text variant="intro">{organizationPage.description}</Text>
+      mainContent={organizationPage.slices.map((slice) => (
+        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+      ))}
+      sidebarContent={
+        <Box marginTop={4} border="standard" borderRadius="large" padding={4}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={['3/12', '3/12', '12/12']}>
+                <Box
+                  display="flex"
+                  justifyContent={'center'}
+                  alignItems={'center'}
+                  paddingBottom={3}
+                >
+                  <img
+                    src={
+                      'https://images.ctfassets.net/8k0h54kbe6bj/2c9RXjtApgqkUWeKh0s1xP/820afa7b351e638473bff013277929ea/Vector.svg'
+                    }
+                  ></img>
+                </Box>
+              </GridColumn>
+              <GridColumn
+                offset={['1/12', '1/12', '0']}
+                span={['8/12', '8/12', '12/12']}
+              >
+                <Text variant="small">
+                  Vegna smithættu af völdum COVID 19 hvetja sýslumenn alla
+                  viðskiptavini sína til að forðast að koma í afgreiðslur
+                  embættanna sé þess nokkur kostur.
+                </Text>
+                <Box display="flex" justifyContent="flexEnd" paddingTop={2}>
+                  <Link href={'#'}>
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      type="button"
+                      variant="text"
+                      size="small"
+                    >
+                      {n('seeAllServices', 'Sjá allt efni')}
+                    </Button>
+                  </Link>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Box>
       }
     >
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '12/12', '10/12']}
-            offset={['0', '0', '0', '0', '1/12']}
-          >
-            {organizationPage.slices.map((slice) => (
-              <OrganizationSlice
-                key={slice.id}
-                slice={slice}
-                namespace={namespace}
-              />
-            ))}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
       <Section
         paddingTop={[8, 8, 6]}
         paddingBottom={[8, 8, 6]}
@@ -123,14 +152,14 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
           items={news}
           linkType="organizationnews"
           overview="organizationnewsoverview"
-          parameters={['syslumenn']}
+          parameters={[organizationPage.slug]}
         />
       </Section>
     </OrganizationWrapper>
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale }) => {
+Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: {
@@ -156,7 +185,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: query.slug as string,
           lang: locale as ContentLanguage,
         },
       },

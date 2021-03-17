@@ -16,6 +16,7 @@ import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import { BASE_PATH } from '@island.is/skilavottord/consts'
+import { dateFormat } from '@island.is/shared/constants'
 
 const skilavottordVehicleOwnerMutation = gql`
   mutation skilavottordVehicleOwnerMutation(
@@ -115,7 +116,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
         setVehicle({
           variables: {
             ...car,
-            newRegDate: formatDate(car.firstRegDate, 'dd.MM.yyyy'),
+            newRegDate: formatDate(car.firstRegDate, dateFormat.is),
             nationalId: user?.nationalId,
           },
         })
@@ -178,7 +179,7 @@ const Confirm = ({ apolloState }: WithApolloProps) => {
               <CarDetailsBox
                 vehicleId={car.permno}
                 vehicleType={car.type}
-                modelYear={formatYear(car.firstRegDate, 'dd.MM.yyyy')}
+                modelYear={formatYear(car.firstRegDate, dateFormat.is)}
               />
               <Box padding={4} background="blue100" borderRadius="large">
                 <Checkbox

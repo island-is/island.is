@@ -1,6 +1,6 @@
 import { shouldPolyfill as shouldPolyfillNumberFormat } from '@formatjs/intl-numberformat/should-polyfill'
 import areIntlLocalesSupported from 'intl-locales-supported'
-import { Locale } from './LocaleContext'
+import { Locale } from '@island.is/shared/types'
 
 interface PolyfilledIntl {
   NumberFormat: {

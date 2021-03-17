@@ -1,4 +1,5 @@
 import * as z from 'zod'
+import set from 'lodash/set'
 import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 import {
@@ -12,6 +13,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationTemplateAPIAction,
 } from '../types/StateMachine'
 import { buildForm } from '@island.is/application/core'
 
@@ -38,11 +40,11 @@ const createMockApplication = (
 
 type TestEvents = { type: 'APPROVE' } | { type: 'REJECT' } | { type: 'SUBMIT' }
 
-const testApplicationTemplate: ApplicationTemplate<
+const createTestApplicationTemplate = (): ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<TestEvents>,
   TestEvents
-> = {
+> => ({
   mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
@@ -131,7 +133,9 @@ const testApplicationTemplate: ApplicationTemplate<
       },
     },
   },
-}
+})
+
+const testApplicationTemplate = createTestApplicationTemplate()
 
 describe('ApplicationTemplate', () => {
   const application = createMockApplication()
@@ -302,6 +306,84 @@ describe('ApplicationTemplate', () => {
       expect(templateHelper.getApplicationProgress('inReview')).toBe(0.66)
       expect(templateHelper.getApplicationProgress('approved')).toBe(1)
       expect(templateHelper.getApplicationProgress('rejected')).toBe(0)
+    })
+  })
+
+  describe('getting template api actions', () => {
+    let template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<TestEvents>,
+      TestEvents
+    >
+    beforeEach(() => {
+      template = createTestApplicationTemplate()
+    })
+
+    it('should return onEntry action with expected default values', () => {
+      const expectedAction: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+        externalDataId: 'testAction',
+        shouldPersistToExternalData: true,
+        throwOnError: true,
+      }
+
+      const testActionConfig: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+      }
+
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onEntry',
+        testActionConfig,
+      )
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onExit',
+        testActionConfig,
+      )
+
+      const helper = new ApplicationTemplateHelper(
+        createMockApplication(),
+        template,
+      )
+
+      expect(helper.getOnEntryStateAPIAction('draft')).toEqual(expectedAction)
+      expect(helper.getOnExitStateAPIAction('draft')).toEqual(expectedAction)
+    })
+
+    it('should not overwrite custom values with default values', () => {
+      const expectedAction: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+        externalDataId: 'customExternalDataId',
+        shouldPersistToExternalData: false,
+        throwOnError: false,
+      }
+
+      const testActionConfig: ApplicationTemplateAPIAction = {
+        apiModuleAction: 'testAction',
+        externalDataId: 'customExternalDataId',
+        shouldPersistToExternalData: false,
+        throwOnError: false,
+      }
+
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onEntry',
+        testActionConfig,
+      )
+      set(
+        template,
+        'stateMachineConfig.states.draft.meta.onExit',
+        testActionConfig,
+      )
+
+      const helper = new ApplicationTemplateHelper(
+        createMockApplication(),
+        template,
+      )
+
+      expect(helper.getOnEntryStateAPIAction('draft')).toEqual(expectedAction)
+      expect(helper.getOnExitStateAPIAction('draft')).toEqual(expectedAction)
     })
   })
 })

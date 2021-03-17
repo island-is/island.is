@@ -92,4 +92,10 @@ export const m = defineMessages({
     defaultMessage: 'The government',
     description: 'Some description',
   },
+  outroMessage: {
+    id: 'example.application:outro.message',
+    defaultMessage:
+      'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
+    description: 'Some description',
+  },
 })
