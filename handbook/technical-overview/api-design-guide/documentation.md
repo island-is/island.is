@@ -30,6 +30,8 @@ The following fields, not marked as (_Optional_), are required for services to b
 
 Example can be found [here](documentation.md#example).
 
+Setup example for NSwag in .NET core can be found [here](documentation.md#Setup-example).
+
 This picture shows where each OpenApi extension (x-\*) is displayed or linked in the service view.
 ![openapi-extensions-map](assets/extensions_map.png)
 
@@ -263,4 +265,40 @@ components:
           type: string
         param:
           type: string
+```
+
+## Setup example
+
+```text
+public void ConfigureServices(IServiceCollection services)
+{
+	services.AddControllers();
+	services.AddRouting(options => options.LowercaseUrls = true);
+
+	services.AddOpenApiDocument(config =>
+	{
+		//Registers all the required information for the API catalogue
+		config.PostProcess = document =>
+		{
+			//Basic information for the service, what it does and who is responsible for it
+			document.Info.Version = "v1";
+			document.Info.Title = "National Registry";
+			document.Info.Description = "Provides access to an example service that retrieves individuals.";
+			document.Info.Contact = new NSwag.OpenApiContact { Name = "Digital Iceland", Email = "stafraentisland@fjr.is", Url = "https://stafraent.island.is/" };
+			
+			//The extension fields specifically used for API catalogue to help filter services
+			document.Info.ExtensionData = new Dictionary<string, object>();
+			document.Info.ExtensionData.Add(new KeyValuePair<string, object>("x-category", new string[] { "personal", "official" }));
+			document.Info.ExtensionData.Add(new KeyValuePair<string, object>("x-pricing", new string[] { "free", "paid" }));
+			document.Info.ExtensionData.Add(new KeyValuePair<string, object>("x-links", new Dictionary<string, string>() 
+			{  
+				{ "documentation", "https://docs.my-service.island.is" }, 
+				{ "responsibleParty", "https://www.skra.is/um-okkur" },
+				{ "bugReport", "https://github.com/island-is/island.is/issues/new" },
+				{ "featureRequest", "https://github.com/island-is/island.is/issues/new" },
+			}));
+
+		};
+	});
+}
 ```
