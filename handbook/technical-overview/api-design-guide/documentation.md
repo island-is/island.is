@@ -18,15 +18,20 @@ The following fields, not marked as (_Optional_), are required for services to b
     - email — fully qualified email.
   - x-category — What kind of data does this service work with.
     - Possible values: `open`, `official`, `personal`, `health`, `financial`.
+    - These values are displayed in the service view.
   - x-pricing — Cost of using this service.
     - Possible values: `free`, `paid`.
+    - These values are displayed in the service view.
   - x-links — Links regarding the service.
-    - responsibleParty — a fully qualified url to an online page containing information about the responsible party/owner of the service.
-    - documentation — (_Optional_) a fully qualified url to the API documentation page.
-    - bugReport (_Optional_) — a fully qualified url to an online page or form a consumer can report bugs about the service.
-    - featureRequest (_Optional_) — a fully qualified url to an online page or form a consumer can ask for a new feature in api service.
+    - responsibleParty — a fully qualified url to an online page containing information about the responsible party/owner of the service. This is linked to in the service view.
+    - documentation — (_Optional_) a fully qualified url to the API documentation page. This is linked to in the service view.
+    - bugReport (_Optional_) — a fully qualified url to an online page or form a consumer can report bugs about the service. This is linked to in the service view.
+    - featureRequest (_Optional_) — a fully qualified url to an online page or form a consumer can ask for a new feature in api service. This is linked to in the service view.
 
 Example can be found [here](documentation.md#example).
+
+This picture shows where each OpenApi extension (x-\*) is displayed or linked in the service view.
+![openapi-extensions-map](assets/extensions_map.png)
 
 ## Describe error handling
 
