@@ -39,7 +39,6 @@ import {
   DeleteFlightParams,
   DeleteFlightLegParams,
   CheckFlightParams,
-  CheckFlightViewModel,
   CheckFlightBody,
 } from './dto'
 import { DiscountService } from '../discount'
@@ -74,12 +73,13 @@ export class PublicFlightController {
     description:
       'The provided discount code is either not intended for connecting flights or is expired',
   })
-  @ApiResponse({ type: CheckFlightViewModel })
+  @HttpCode(200)
+  @ApiOkResponse()
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
     @Body() body: CheckFlightBody,
     @Req() request: HttpRequest,
-  ): Promise<CheckFlightViewModel> {
+  ): Promise<void> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
@@ -105,19 +105,16 @@ export class PublicFlightController {
     }
 
     const connectingId = connectionDiscountCode.flightId
-
     const flightOk = await this.flightService.isFlightLegConnectingFlight(
       connectingId,
       incomingFlight as FlightLeg,
     )
 
-    if (flightOk) {
-      return new CheckFlightViewModel('200')
+    if (!flightOk) {
+      throw new BadRequestException(
+        `User does not have any flights that may correspond to a connection flight`,
+      )
     }
-
-    throw new BadRequestException(
-      `User does not have any flights that may correspond to a connection flight`,
-    )
   }
 
   @Post('discounts/:discountCode/flights')

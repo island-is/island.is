@@ -30,24 +30,6 @@ export class FlightLegViewModel {
   @ApiProperty()
   readonly date: Date
 }
-export class CheckFlightViewModel {
-  constructor(status: string) {
-    if (status === '200') {
-      this.message = 'OK'
-      this.statusCode = status
-    } else {
-      // Should not end here, CheckFlight should throw an exception instead
-      this.message = 'Something went wrong'
-      this.statusCode = '500'
-    }
-  }
-
-  @ApiProperty()
-  readonly message: string
-
-  @ApiProperty()
-  readonly statusCode: string
-}
 export class FlightViewModel {
   constructor(flight: Flight) {
     this.id = flight.id
