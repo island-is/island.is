@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { ApplicationUIState } from '../reducer/ReducerTypes'
 import {
+  ApplicationStatus,
   ApplicationTypes,
   buildForm,
   buildTextField,
@@ -31,6 +32,7 @@ describe('useHistorySync', () => {
         state: 'draft',
         modified: new Date(),
         created: new Date(),
+        status: ApplicationStatus.IN_PROGRESS,
       },
       form: buildForm({
         id: 'form',

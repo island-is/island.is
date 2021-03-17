@@ -166,6 +166,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
           ],
         },
+        type: 'final' as const,
       },
     },
   },

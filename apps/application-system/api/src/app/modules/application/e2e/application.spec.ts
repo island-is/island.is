@@ -1,7 +1,10 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-
 import { EmailService } from '@island.is/email-service'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
@@ -24,7 +27,7 @@ class MockEmailService {
   }
 }
 
-const nationalId = '123456-4321'
+const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
@@ -62,11 +65,12 @@ describe('Application system API', () => {
         applicant: nationalId,
         state: 'draft',
         attachments: {},
-        typeId: 'ParentalLeave',
-        assignees: ['123456-1234'],
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+        assignees: ['1234561234'],
         answers: {
           usage: 3,
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 
@@ -86,11 +90,12 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(400)
 
@@ -111,11 +116,12 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(401)
 
@@ -130,11 +136,12 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 
@@ -159,11 +166,12 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 
@@ -196,11 +204,12 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 
@@ -229,11 +238,12 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 
@@ -270,10 +280,11 @@ describe('Application system API', () => {
         state: 'draft',
         attachments: {},
         typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           careerHistoryCompanies: ['government'],
         },
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 
@@ -302,7 +313,7 @@ describe('Application system API', () => {
       .send({
         applicant: nationalId,
         attachments: {},
-        assignees: ['123456-1234'],
+        assignees: ['1234561234'],
         answers: {
           usage: 4,
         },
@@ -321,11 +332,12 @@ describe('Application system API', () => {
       applicant: nationalId,
       state: 'draft',
       attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
+      typeId: ApplicationTypes.PARENTAL_LEAVE,
+      assignees: ['1234561234'],
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
     expect(response.body.answers.usage).toBe(4)
     expect(response.body.answers.spread).toBe(undefined)
@@ -351,11 +363,12 @@ describe('Application system API', () => {
       applicant: nationalId,
       state: 'draft',
       attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
+      typeId: ApplicationTypes.PARENTAL_LEAVE,
+      assignees: ['1234561234'],
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const { id } = response.body
@@ -372,20 +385,21 @@ describe('Application system API', () => {
     expect(putResponse.body.error).toBe('Bad Request')
   })
 
-  it('GET /applicants/:nationalRegistryId/applications should return a list of applications for applicant', async () => {
+  it('GET /users/:nationalId/applications should return a list of applications of the user', async () => {
     await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
       attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
+      typeId: ApplicationTypes.PARENTAL_LEAVE,
+      assignees: ['1234561234'],
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const getResponse = await server
-      .get('/applicants/123456-4321/applications')
+      .get('/users/1234561234/applications')
       .expect(200)
 
     // Assert
@@ -396,31 +410,68 @@ describe('Application system API', () => {
     )
   })
 
-  it('GET /assignees/:nationalRegistryId/applications should return a list of applications for assignee', async () => {
+  it(`GET /users/:nationalId/applications?typeId=ParentalLeave should return the list of applications of the user by typeId`, async () => {
     await server.post('/applications').send({
       applicant: nationalId,
       state: 'draft',
       attachments: {},
-      typeId: 'ParentalLeave',
-      assignees: ['123456-1234'],
+      typeId: ApplicationTypes.PARENTAL_LEAVE,
+      assignees: ['1234561234'],
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const getResponse = await server
-      .get('/assignees/123456-1234/applications')
+      .get(
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}`,
+      )
       .expect(200)
 
     // Assert
     expect(getResponse.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ assignees: ['123456-1234'] }),
+        expect.objectContaining({
+          applicant: nationalId,
+          typeId: ApplicationTypes.PARENTAL_LEAVE,
+        }),
       ]),
     )
   })
 
-  it('PUT applications/:id/createPdf should return a presigned url', async () => {
+  it('GET /users/:nationalId/applications?typeId=ParentalLeave&status=inprogress should return the list of applications of the user by typeId and status', async () => {
+    await server.post('/applications').send({
+      applicant: nationalId,
+      state: 'draft',
+      attachments: {},
+      typeId: ApplicationTypes.PARENTAL_LEAVE,
+      assignees: ['1234561234'],
+      answers: {
+        usage: 4,
+      },
+      status: ApplicationStatus.IN_PROGRESS,
+    })
+
+    const getResponse = await server
+      .get(
+        `/users/${nationalId}/applications?typeId=${ApplicationTypes.PARENTAL_LEAVE}&status=${ApplicationStatus.IN_PROGRESS}`,
+      )
+      .expect(200)
+
+    // Assert
+    expect(getResponse.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          applicant: nationalId,
+          typeId: ApplicationTypes.PARENTAL_LEAVE,
+          status: ApplicationStatus.IN_PROGRESS,
+        }),
+      ]),
+    )
+  })
+
+  it('PUT /applications/:id/createPdf should return a presigned url', async () => {
     const expectPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
@@ -438,6 +489,7 @@ describe('Application system API', () => {
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const res = await server
@@ -451,7 +503,7 @@ describe('Application system API', () => {
     expect(res.body).toEqual({ url: 'presignedurl' })
   })
 
-  it('PUT applications/:id/requestFileSignature should return a documentToken and controlCode', async () => {
+  it('PUT /applications/:id/requestFileSignature should return a documentToken and controlCode', async () => {
     const expectedControlCode = '0000'
     const expectedDocumentToken = 'token'
     const type = 'ChildrenResidenceChange'
@@ -473,6 +525,7 @@ describe('Application system API', () => {
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const res = await server
@@ -489,7 +542,7 @@ describe('Application system API', () => {
     })
   })
 
-  it('GET applications/:id/presignedUrl should return a presigned url', async () => {
+  it('GET /applications/:id/presignedUrl should return a presigned url', async () => {
     const expectedPresignedUrl = 'presignedurl'
     const type = 'ChildrenResidenceChange'
 
@@ -507,6 +560,7 @@ describe('Application system API', () => {
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const res = await server
@@ -520,7 +574,7 @@ describe('Application system API', () => {
     expect(res.body).toEqual({ url: expectedPresignedUrl })
   })
 
-  it('PUT applications/:id/uploadSignedFile should return that document has been signed', async () => {
+  it('PUT /applications/:id/uploadSignedFile should return that document has been signed', async () => {
     const type = 'ChildrenResidenceChange'
     const fileService: FileService = app.get<FileService>(FileService)
     jest
@@ -536,6 +590,7 @@ describe('Application system API', () => {
       answers: {
         usage: 4,
       },
+      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const res = await server
@@ -574,6 +629,7 @@ describe('Application system API', () => {
         typeId: 'ExampleForm',
         assignees: ['123456-1234'],
         answers,
+        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 

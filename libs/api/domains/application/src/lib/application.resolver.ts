@@ -1,8 +1,6 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
-import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
-import { GetApplicationInput } from './dto/getApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
@@ -21,7 +19,8 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch'
+import { ApplicationApplicationInput } from './dto/applicationApplication.input'
+import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
 import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
@@ -32,53 +31,22 @@ export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
   @Query(() => Application, { nullable: true })
-  async getApplication(
-    @Args('input') input: GetApplicationInput,
+  async applicationApplication(
+    @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.findOne(input.id, user.authorization)
   }
 
   @Query(() => [Application], { nullable: true })
-  async getApplicationsByType(
-    @Args('input') input: GetApplicationsByTypeInput,
+  async applicationApplications(
     @CurrentUser() user: User,
+    @Args('input', { nullable: true }) input?: ApplicationApplicationsInput,
   ): Promise<Application[] | null> {
-    return this.applicationService.findAllByType(
-      input.typeId,
-      user.authorization,
-    )
-  }
-
-  @Query(() => [Application], { nullable: true })
-  async getApplicationsByApplicant(
-    @CurrentUser() user: User,
-    @Args('typeId', {
-      type: () => ApplicationResponseDtoTypeIdEnum,
-      nullable: true,
-    })
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ): Promise<Application[] | null> {
-    return this.applicationService.findAllByApplicant(
+    return this.applicationService.findAll(
       user.nationalId,
       user.authorization,
-      typeId,
-    )
-  }
-
-  @Query(() => [Application], { nullable: true })
-  async getApplicationsByAssignee(
-    @CurrentUser() user: User,
-    @Args('typeId', {
-      type: () => ApplicationResponseDtoTypeIdEnum,
-      nullable: true,
-    })
-    typeId?: ApplicationResponseDtoTypeIdEnum,
-  ): Promise<Application[] | null> {
-    return this.applicationService.findAllByAssignee(
-      user.nationalId,
-      user.authorization,
-      typeId,
+      input,
     )
   }
 
