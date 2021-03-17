@@ -32,6 +32,11 @@ type UtilityButtonType = {
   circle?: never
 }
 
+export type ButtonSizes = Exclude<
+  keyof typeof styles.size,
+  'utility' | 'textSmall'
+>
+
 export type ButtonTypes =
   | PrimaryButtonType
   | GhostButtonType
@@ -44,7 +49,7 @@ export interface ButtonProps {
   onFocus?: NativeButtonProps['onFocus']
   onBlur?: NativeButtonProps['onBlur']
   children?: ReactNode
-  size?: Exclude<keyof typeof styles.size, 'utility' | 'textSmall'>
+  size?: ButtonSizes
   disabled?: boolean
   focusable?: boolean
   fluid?: boolean

@@ -4,21 +4,20 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
+// import { AuthModule } from '@island.is/auth-nest-tools'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
+import { AwsService } from './files/aws.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
-import { AwsService } from './files/aws.service'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
-
-// import { AuthModule } from '@island.is/auth-nest-tools'
 
 let BullModule: DynamicModule
 

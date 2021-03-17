@@ -55,7 +55,7 @@ export class UploadProcessor {
   async onCompleted(job: Job, result: JobResult) {
     const { applicationId }: JobData = job.data
 
-    const existingApplication = await this.applicationService.findById(
+    const existingApplication = await this.applicationService.findOneById(
       applicationId,
     )
 

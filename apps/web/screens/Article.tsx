@@ -50,7 +50,7 @@ import {
   LinkType,
   useLinkResolver,
 } from '../hooks/useLinkResolver'
-import { Locale } from '../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../hooks/useScrollPosition'
 import { scrollTo } from '../hooks/useScrollSpy'
 
