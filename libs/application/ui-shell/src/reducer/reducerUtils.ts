@@ -9,6 +9,8 @@ import {
   FormLeaf,
   FormNode,
   FormValue,
+  getSectionsInForm,
+  getSubSectionsInSection,
   getValueViaPath,
   isValidScreen,
   MultiField,
@@ -67,6 +69,7 @@ export const moveToScreen = (
   }
 
   const screen = screens[screenIndex]
+  console.log('screen', screen)
   if (!screen.isNavigable) {
     if (isMovingForward) {
       // skip this screen and go to the next one
@@ -282,13 +285,22 @@ function convertFormNodeToScreens(
   if (children) {
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
+      console.log('child', child)
+      const sections = getSectionsInForm(form, answers, externalData)
       if (child.type === FormItemTypes.SECTION) {
         subSectionIndex = -1
-        sectionIndex = findSectionIndex(form, child as Section)
+        sectionIndex = findSectionIndex(sections, child as Section)
       } else if (child.type === FormItemTypes.SUB_SECTION) {
+        const section = sections[sectionIndex]
+        const subSections = getSubSectionsInSection(
+          section,
+          answers,
+          externalData,
+        )
         subSectionIndex = findSubSectionIndex(
-          form,
+          section,
           sectionIndex,
+          subSections,
           child as SubSection,
         )
       }
