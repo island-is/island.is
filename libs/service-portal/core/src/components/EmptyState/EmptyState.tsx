@@ -21,6 +21,7 @@ export const EmptyState = ({ title, description }: Props) => {
         marginTop={4}
         width="full"
         src="/assets/images/emptyState.svg"
+        alt=""
       />
     </>
   )
