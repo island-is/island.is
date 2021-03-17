@@ -237,7 +237,7 @@
     "swagger-ui-express": "4.1.4",
     "timeout-signal": "1.0.0",
     "to-querystring": "1.1.1",
-    "treat": "1.6.0",
+    "treat": "1.6.1",
     "tslib": "1.14.1",
     "turndown": "6.0.0",
     "unified": "9.2.0",
