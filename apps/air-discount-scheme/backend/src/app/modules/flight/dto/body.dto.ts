@@ -90,4 +90,18 @@ export class GetFlightLegsBody implements FlightLegsInput {
   postalCode?: number
 }
 
+export class CheckFlightBody {
+  @IsString()
+  @ApiProperty()
+  readonly origin!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly destination!: string
+
+  @IsISO8601()
+  @ApiProperty()
+  readonly date!: string
+}
+
 export class ConfirmInvoiceBody extends GetFlightLegsBody {}

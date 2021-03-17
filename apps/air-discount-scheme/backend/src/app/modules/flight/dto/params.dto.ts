@@ -25,18 +25,6 @@ export class CheckFlightParams {
   @Length(8, 8)
   @ApiProperty()
   readonly discountCode!: string
-
-  @IsString()
-  @ApiProperty()
-  readonly origin!: string
-
-  @IsString()
-  @ApiProperty()
-  readonly destination!: string
-
-  @IsISO8601()
-  @ApiProperty()
-  readonly date!: string
 }
 
 export class GetUserFlightsParams {
