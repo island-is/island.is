@@ -1,7 +1,12 @@
 import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
-import { RSKCompaniesResponse, RSKService, RSK_OPTIONS } from './rsk'
+import {
+  CompanyRegistryMember,
+  RSKCompaniesResponse,
+  RSKService,
+  RSK_OPTIONS,
+} from './rsk'
 import { Base64 } from 'js-base64'
 
 // MOCK START
@@ -120,23 +125,23 @@ describe('getCompaniesByNationalId', () => {
     rskService = await getNestModule(expectedResult.SUCCESS)
   })
 
-  it('should return success', async () => {
-    const successResults = [
+  it('should return success in teh correct format', async () => {
+    const successResults: CompanyRegistryMember[] = [
       {
-        erProkuruhafi: '1',
-        erStjorn: '1',
-        kennitala: '0000000000',
-        nafn: 'Test Testson',
-        rekstarform: 'Kassi',
-        stadaAdila: 'Standandi',
+        hasProcuration: '1',
+        isPartOfBoardOfDirectors: '1',
+        nationalId: '0000000000',
+        name: 'Test Testson',
+        operationalForm: 'Kassi',
+        companyStatus: 'Standandi',
       },
       {
-        erProkuruhafi: '0',
-        erStjorn: '1',
-        kennitala: '0000000000',
-        nafn: 'Test Testson',
-        rekstarform: 'Kassi',
-        stadaAdila: 'Standandi',
+        hasProcuration: '0',
+        isPartOfBoardOfDirectors: '1',
+        nationalId: '0000000000',
+        name: 'Test Testson',
+        operationalForm: 'Kassi',
+        companyStatus: 'Standandi',
       },
     ]
     const results = await rskService.getCompaniesByNationalId(
