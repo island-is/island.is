@@ -5,15 +5,16 @@ import { Html, mapHtml } from './html.model'
 @ObjectType()
 export class ErrorPage {
   @Field(() => ID)
-  id: string
-  @Field()
-  errorCode: string
+  id!: string
 
   @Field()
-  title: string
+  errorCode!: string
+
+  @Field()
+  title?: string
 
   @Field(() => Html, { nullable: true })
-  description: Html
+  description?: Html | null
 }
 export const mapErrorPage = ({ sys, fields }: IErrorPage): ErrorPage => ({
   id: sys.id,

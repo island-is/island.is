@@ -7,22 +7,22 @@ import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
 @ObjectType()
 export class GenericOverviewPage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  pageIdentifier: string
+  pageIdentifier!: string
 
   @Field(() => Html, { nullable: true })
-  intro: Html
+  intro?: Html | null
 
   @Field(() => Menu)
-  navigation: Menu
+  navigation!: Menu | null
 
   @Field(() => [IntroLinkImage])
-  overviewLinks: IntroLinkImage[]
+  overviewLinks?: IntroLinkImage[]
 }
 
 export const mapGenericOverviewPage = ({
