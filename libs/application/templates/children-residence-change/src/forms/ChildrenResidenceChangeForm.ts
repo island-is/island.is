@@ -13,6 +13,7 @@ import {
   buildRadioField,
   buildTextField,
   Application,
+  Comparators,
 } from '@island.is/application/core'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
@@ -62,6 +63,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'externalData',
           title: m.externalData.general.sectionTitle,
+          condition: {
+            questionId: 'useMocks',
+            value: 'no',
+            comparator: Comparators.EQUALS,
+          },
           children: [
             buildExternalDataProvider({
               title: m.externalData.general.pageTitle,
@@ -85,6 +91,50 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 buildDataProviderItem({
                   id: 'parentNationalRegistry',
                   type: 'ParentNationalRegistryProvider',
+                  title: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: 'userProfile',
+                  type: 'UserProfileProvider',
+                  title: '',
+                  subTitle: '',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'externalData',
+          title: m.externalData.general.sectionTitle,
+          condition: {
+            questionId: 'useMocks',
+            value: 'yes',
+            comparator: Comparators.EQUALS,
+          },
+          children: [
+            buildExternalDataProvider({
+              title: m.externalData.general.pageTitle,
+              id: 'approveExternalData',
+              subTitle: m.externalData.general.subTitle,
+              description: m.externalData.general.description,
+              checkboxLabel: m.externalData.general.checkboxLabel,
+              dataProviders: [
+                buildDataProviderItem({
+                  id: 'nationalRegistry',
+                  type: 'NationalRegistryProvider',
+                  title: m.externalData.applicant.title,
+                  subTitle: m.externalData.applicant.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: 'childrenNationalRegistry',
+                  type: 'MockChildrenNationalRegistryProvider',
+                  title: m.externalData.children.title,
+                  subTitle: m.externalData.children.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: 'parentNationalRegistry',
+                  type: 'MockParentNationalRegistryProvider',
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.subTitle,
                 }),
