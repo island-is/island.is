@@ -1,7 +1,10 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
-import { ApplicationStatus, ApplicationTypes } from '@island.is/application/core'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'

@@ -21,6 +21,10 @@ import {
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 
+enum FinalStates {
+  REJECTED = 'rejected',
+}
+
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -58,7 +62,7 @@ export class ApplicationTemplateHelper<
     const { state } = this.application
 
     if (this.template.stateMachineConfig.states[state].type === 'final') {
-      if (state === 'rejected') {
+      if (state === FinalStates.REJECTED) {
         return ApplicationStatus.REJECTED
       }
 
