@@ -94,19 +94,18 @@ export class PublicFlightController {
       throw new BadRequestException('Discount code is invalid')
     }
 
-    const connectionDiscountCode = discount.connectionDiscountCodes.filter(
-      (cdc) => {
-        return cdc.code === params.discountCode
-      },
+    const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
+      discount.connectionDiscountCodes,
+      params.discountCode,
     )
 
-    if (connectionDiscountCode.length !== 1) {
+    if (!connectionDiscountCode) {
       throw new ForbiddenException(
-        'The provided discount code is not intended for connecting flights',
+        'The provided discount code is either not intended for connecting flights or is expired',
       )
     }
 
-    const connectingId = connectionDiscountCode[0].flightId
+    const connectingId = connectionDiscountCode.flightId
 
     const flightOk = await this.flightService.isFlightLegConnectingFlight(
       connectingId,
@@ -180,19 +179,18 @@ export class PublicFlightController {
         !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) &&
         !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.origin)
       ) {
-        const connectionDiscountCode = discount.connectionDiscountCodes.filter(
-          (cdc) => {
-            return cdc.code === params.discountCode
-          },
+        const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
+          discount.connectionDiscountCodes,
+          params.discountCode,
         )
 
-        if (connectionDiscountCode.length !== 1) {
+        if (!connectionDiscountCode) {
           throw new ForbiddenException(
-            'The provided discount code is not intended for connecting flights',
+            'The provided discount code is either not intended for connecting flights or is expired',
           )
         }
 
-        connectingId = connectionDiscountCode[0].flightId
+        connectingId = connectionDiscountCode.flightId
 
         const isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
           connectingId,

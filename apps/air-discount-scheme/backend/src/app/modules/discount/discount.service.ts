@@ -7,11 +7,11 @@ import {
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
-import { ConnectionDiscountCodes } from '@island.is/air-discount-scheme/types'
+import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
 
 interface CachedDiscount {
   discountCode: string
-  connectionDiscountCodes: ConnectionDiscountCodes
+  connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string
 }
 
@@ -78,7 +78,7 @@ export class DiscountService {
     const discountCode = this.generateDiscountCode()
     const cacheId = CACHE_KEYS.discount(uuid())
 
-    let connectionDiscountCodes: ConnectionDiscountCodes = []
+    let connectionDiscountCodes: ConnectionDiscountCode[] = []
 
     const previousCacheId = CACHE_KEYS.user(nationalId)
     const previousCache = await this.getCache<CachedDiscount>(previousCacheId)
@@ -181,32 +181,11 @@ export class DiscountService {
   async getDiscountByDiscountCode(
     discountCode: string,
   ): Promise<Discount | null> {
-    let cacheKey = CACHE_KEYS.discountCode(discountCode)
-    let cacheValue = await this.getCache<CachedDiscount>(cacheKey)
+    const cacheKey = CACHE_KEYS.discountCode(discountCode)
+    const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
 
     if (!cacheValue) {
-      // Try searching for a connectingDiscountCode
-      cacheKey = CACHE_KEYS.connectionDiscountCode(discountCode)
-      cacheValue = await this.getCache<CachedDiscount>(cacheKey)
-      if (!cacheValue) {
-        return null
-      }
-
-      // Return nothing if the connection discount code is expired
-      const now = new Date()
-      cacheValue.connectionDiscountCodes = cacheValue.connectionDiscountCodes.filter(
-        (cdc) => {
-          if (cdc.code === discountCode) {
-            const validUntil = new Date(Date.parse(cdc.validUntil))
-            return now < validUntil
-          } else {
-            return false
-          }
-        },
-      )
-      if (cacheValue.connectionDiscountCodes.length === 0) {
-        return null
-      }
+      return this.getDiscountByConnectionDiscountCode(discountCode)
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
@@ -216,6 +195,55 @@ export class DiscountService {
       cacheValue.nationalId,
       ttl,
     )
+  }
+
+  async getDiscountByConnectionDiscountCode(
+    discountCode: string,
+  ): Promise<Discount | null> {
+    const cacheKey = CACHE_KEYS.connectionDiscountCode(discountCode)
+    const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
+
+    if (!cacheValue) {
+      return null
+    }
+
+    const connectionDiscountCode = this.filterConnectionDiscountCodes(
+      cacheValue.connectionDiscountCodes,
+      discountCode,
+    )
+
+    if (!connectionDiscountCode) {
+      return null
+    }
+
+    const ttl = await this.cacheManager.ttl(cacheKey)
+    return new Discount(
+      cacheValue.discountCode,
+      cacheValue.connectionDiscountCodes ?? [],
+      cacheValue.nationalId,
+      ttl,
+    )
+  }
+
+  filterConnectionDiscountCodes(
+    connectionDiscountCodes: ConnectionDiscountCode[],
+    discountCode: string,
+  ): ConnectionDiscountCode | null {
+    // Return nothing if the connection discount code is expired
+    const now = new Date()
+    connectionDiscountCodes = connectionDiscountCodes.filter((cdc) => {
+      if (cdc.code === discountCode) {
+        const validUntil = new Date(Date.parse(cdc.validUntil))
+        return now < validUntil
+      } else {
+        return false
+      }
+    })
+    if (connectionDiscountCodes.length === 0) {
+      return null
+    }
+
+    return connectionDiscountCodes[0]
   }
 
   async useDiscount(

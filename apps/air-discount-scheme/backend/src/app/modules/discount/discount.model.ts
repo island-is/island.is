@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 import {
-  ConnectionDiscountCodes,
+  ConnectionDiscountCode,
   Discount as TDiscount,
 } from '@island.is/air-discount-scheme/types'
 
 export class Discount implements TDiscount {
   constructor(
     discountCode: string,
-    connectionDiscountCodes: ConnectionDiscountCodes,
+    connectionDiscountCodes: ConnectionDiscountCode[],
     nationalId: string,
     ttl: number,
   ) {
@@ -22,7 +22,7 @@ export class Discount implements TDiscount {
   discountCode: string
 
   @ApiProperty()
-  connectionDiscountCodes: ConnectionDiscountCodes
+  connectionDiscountCodes: ConnectionDiscountCode[]
   @ApiProperty()
   nationalId: string
 
