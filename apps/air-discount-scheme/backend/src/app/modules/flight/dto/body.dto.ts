@@ -101,7 +101,7 @@ export class CheckFlightBody {
 
   @IsISO8601()
   @ApiProperty()
-  readonly date!: string
+  readonly date!: Date
 }
 
 export class ConfirmInvoiceBody extends GetFlightLegsBody {}
