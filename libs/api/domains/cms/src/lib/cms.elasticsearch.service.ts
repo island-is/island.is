@@ -122,7 +122,7 @@ export class CmsElasticsearchService {
     return {
       total: articlesResponse.hits.total.value,
       items: articlesResponse.hits.hits.map<News>((response) =>
-        response._source.response ? JSON.parse(response._source.response) : [],
+        JSON.parse(response._source.response ?? '[]'),
       ),
     }
   }
