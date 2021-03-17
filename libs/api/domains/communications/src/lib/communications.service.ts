@@ -90,7 +90,7 @@ export class CommunicationsService {
 
     // If we did not find an existing user we will create a new one
     if (!user) {
-      let identities = []
+      const identities = []
 
       if (input.phone) {
         identities.push({
@@ -131,7 +131,7 @@ export class CommunicationsService {
     const newTicket = JSON.stringify({
       ticket: {
         requester_id: user.id,
-        subject: input.subject ?? '',
+        subject: input.subject?.trim() ?? '',
         comment: { body: input.message ?? '' },
         tags: ['web'],
       },
