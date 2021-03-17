@@ -151,23 +151,19 @@ export class FlightService {
   async findThisYearsConnectableFlightsByNationalId(
     nationalId: string,
   ): Promise<Flight[]> {
-    const currentYear = new Date(Date.now()).getFullYear().toString()
-
-    let flights = await this.findThisYearsConnectableFlightsByNationalId(
+    const flights = await this.findThisYearsConnectableFlightsByNationalId(
       nationalId,
     )
     // Filter out non-Reykjavík flights
-    flights = flights.filter((flight) => {
+    return flights.filter((flight) => {
       return (
         flight.connectable &&
-        flight.flightLegs.length === 1 &&
-        !flight.flightLegs[0].isConnectingFlight &&
         (REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].origin) ||
-          REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].destination))
+          REYKJAVIK_FLIGHT_CODES.includes(
+            flight.flightLegs[flight.flightLegs.length - 1].destination,
+          ))
       )
     })
-
-    return flights
   }
 
   async countThisYearsFlightLegsByNationalId(

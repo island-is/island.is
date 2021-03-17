@@ -95,6 +95,7 @@ export class DiscountService {
     for (let i = 0; i < connectableFlightCounts; i++) {
       const flight = connectableFlights.pop()
       if (flight && !previousFlightIds.includes(flight.id)) {
+        const flightLegsCount = flight.flightLegs.length
         let validUntil = new Date(
           Date.parse(flight.flightLegs[0].date.toString()),
         )
@@ -104,13 +105,17 @@ export class DiscountService {
             validUntil.getTime() + CONNECTING_FLIGHT_GRACE_PERIOD,
           )
         } else if (
-          REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].destination)
+          REYKJAVIK_FLIGHT_CODES.includes(
+            flight.flightLegs[flightLegsCount - 1].destination,
+          )
         ) {
           validUntil = new Date(validUntil.getTime())
         }
 
         const flightId = flight.id
-        const flightDesc = `${flight.flightLegs[0].origin}-${flight.flightLegs[0].destination}`
+        const flightDesc = `${flight.flightLegs[0].origin}-${
+          flight.flightLegs[flightLegsCount - 1].destination
+        }`
         const connectionDiscountCode = this.generateDiscountCode()
 
         // Point every connection discount code to the cache id for lookup later

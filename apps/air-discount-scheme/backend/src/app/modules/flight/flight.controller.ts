@@ -169,46 +169,47 @@ export class PublicFlightController {
     let connectingFlight = false
     let connectingId = undefined
 
-    if (flight.flightLegs.length === 1) {
-      const incomingLeg = {
-        ...flight.flightLegs[0],
-        date: new Date(Date.parse(flight.flightLegs[0].date.toString())),
+    const flightLegCount = flight.flightLegs.length
+
+    const incomingLeg = {
+      origin: flight.flightLegs[0].origin,
+      destination: flight.flightLegs[flightLegCount - 1].destination,
+      date: new Date(Date.parse(flight.flightLegs[0].date.toString())),
+    }
+
+    if (
+      !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) &&
+      !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.origin)
+    ) {
+      const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
+        discount.connectionDiscountCodes,
+        params.discountCode,
+      )
+
+      if (!connectionDiscountCode) {
+        throw new ForbiddenException(
+          'The provided discount code is either not intended for connecting flights or is expired',
+        )
       }
 
-      if (
-        !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) &&
-        !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.origin)
-      ) {
-        const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
-          discount.connectionDiscountCodes,
-          params.discountCode,
+      connectingId = connectionDiscountCode.flightId
+
+      const isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
+        connectingId,
+        incomingLeg as FlightLeg, // must have date, destination and origin
+      )
+      if (!isConnectingFlight) {
+        throw new ForbiddenException(
+          'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Connecting flight must go from/to Akureyri',
         )
-
-        if (!connectionDiscountCode) {
-          throw new ForbiddenException(
-            'The provided discount code is either not intended for connecting flights or is expired',
-          )
-        }
-
-        connectingId = connectionDiscountCode.flightId
-
-        const isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
-          connectingId,
-          incomingLeg as FlightLeg, // must have date, destination and origin
-        )
-        if (!isConnectingFlight) {
-          throw new ForbiddenException(
-            'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Connecting flight must go from/to Akureyri',
-          )
-        } else {
-          connectingFlight = true
-        }
       } else {
-        if (discount.discountCode !== params.discountCode) {
-          throw new ForbiddenException(
-            'Provided discount code is only intended for connecting flights',
-          )
-        }
+        connectingFlight = true
+      }
+    } else {
+      if (discount.discountCode !== params.discountCode) {
+        throw new ForbiddenException(
+          'Provided discount code is only intended for connecting flights',
+        )
       }
     }
 
