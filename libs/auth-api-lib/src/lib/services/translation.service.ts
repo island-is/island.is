@@ -6,6 +6,7 @@ import { Translation } from '../entities/models/translation.model'
 import { Language } from '../entities/models/language.model'
 import { TranslationDTO } from '../entities/dto/translation.dto'
 import { LanguageDTO } from '../entities/dto/language.dto'
+import { Op } from 'sequelize/types'
 
 @Injectable()
 export class TranslationService {
@@ -20,11 +21,39 @@ export class TranslationService {
   ) {}
 
   /** Get's and counts all translations */
-  async findAndCountAllTranslations(): Promise<{
+  async findAndCountAllTranslations(
+    page: number,
+    count: number,
+  ): Promise<{
     rows: Translation[]
     count: number
   } | null> {
-    return this.translationModel.findAndCountAll()
+    page--
+    const offset = page * count
+    return this.translationModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+      distinct: true,
+    })
+  }
+
+  /** Find clients by searh string and returns with paging */
+  async findTranslations(searchString: string, page: number, count: number) {
+    if (!searchString) {
+      throw new BadRequestException('Search String must be provided')
+    }
+    page--
+    const offset = page * count
+    searchString = searchString.trim()
+
+    return this.translationModel.findAndCountAll({
+      where: {
+        value: { [Op.like]: searchString },
+      },
+      limit: count,
+      offset: offset,
+      distinct: true,
+    })
   }
 
   /** Get's all translations */
@@ -38,30 +67,14 @@ export class TranslationService {
   }
 
   /** Get's and counts all languages */
-  async findAndCountAllLanguges(): Promise<{
+  async findAndCountAllLanguages(): Promise<{
     rows: Language[]
     count: number
   } | null> {
     return this.langugeModel.findAndCountAll()
   }
 
-  /** Creates a new Translation */
-  async create(translation: TranslationDTO): Promise<Translation | undefined> {
-    this.logger.debug(`Creating translation for id - ${translation.key}`)
-
-    try {
-      return this.sequelize.transaction((t) => {
-        return this.translationModel.create(translation)
-      })
-    } catch {
-      this.logger.warn('Error when executing transaction, rollbacked.')
-    }
-  }
-
-  async findLanguage(isoKey: string): Promise<Language | null> {
-    return this.langugeModel.findByPk(isoKey)
-  }
-
+  /** Adds a new Language */
   async createLanguage(language: LanguageDTO): Promise<Language | undefined> {
     try {
       return this.sequelize.transaction((t) => {
@@ -72,6 +85,7 @@ export class TranslationService {
     }
   }
 
+  /** Updates an existing Language */
   async updateLanguage(language: LanguageDTO): Promise<Language | null> {
     this.logger.debug(`Updating language: ${language.isoKey}`)
 
@@ -82,12 +96,14 @@ export class TranslationService {
     return this.findLanguage(language.isoKey)
   }
 
+  /** Deletes a language */
   async deleteLanguage(isoKey: string): Promise<number | null> {
     this.logger.debug(`Deleting language: ${isoKey}`)
 
     return this.langugeModel.destroy({ where: { isoKey: isoKey } })
   }
 
+  /** Finds a translation by it's key */
   async findTranslation(
     language: string,
     className: string,
@@ -104,8 +120,27 @@ export class TranslationService {
     })
   }
 
-  /** Updates an existing user identity */
-  async update(translate: Translation): Promise<Translation | null> {
+  /** Creates a new Translation */
+  async createTranslation(
+    translation: TranslationDTO,
+  ): Promise<Translation | undefined> {
+    this.logger.debug(`Creating translation for id - ${translation.key}`)
+
+    try {
+      return this.sequelize.transaction((t) => {
+        return this.translationModel.create(translation)
+      })
+    } catch {
+      this.logger.warn('Error when executing transaction, rollbacked.')
+    }
+  }
+
+  async findLanguage(isoKey: string): Promise<Language | null> {
+    return this.langugeModel.findByPk(isoKey)
+  }
+
+  /** Updates an existing translation */
+  async updateTranslation(translate: Translation): Promise<Translation | null> {
     this.logger.debug('Updating the translation with key: ', translate.key)
 
     await this.translationModel.update(
@@ -129,7 +164,7 @@ export class TranslationService {
   }
 
   /** Deletes a translation */
-  async delete(translate: Translation): Promise<number> {
+  async deleteTranslation(translate: Translation): Promise<number> {
     this.logger.debug(`Deleting translation with key: ${translate.key}`)
 
     if (!translate) {
