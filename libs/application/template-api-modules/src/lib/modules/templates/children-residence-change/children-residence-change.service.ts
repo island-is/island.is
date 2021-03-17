@@ -43,15 +43,9 @@ export class ChildrenResidenceChangeService {
       .promise()
     const fileContent = file.Body?.toString('base64')
 
-    // TODO: Remove ternary for usemocks once we move mock data to externalData
-    const selectedChildren =
-      application.answers.useMocks === 'no'
-        ? application.externalData.childrenNationalRegistry.data.filter((c) =>
-            application.answers.selectChild.includes(c.name),
-          )
-        : application.answers.mockData.childrenNationalRegistry.data.filter(
-            (c) => application.answers.selectChild.includes(c.name),
-          )
+    const selectedChildren = application.externalData.childrenNationalRegistry.data.filter(
+      (c) => application.answers.selectChild.includes(c.name),
+    )
 
     if (!fileContent) {
       throw new Error('File content was undefined')

@@ -74,10 +74,7 @@ export class FileService {
     const { nationalRegistry, parentNationalRegistry } = externalData
     const isParentA = state === 'draft'
 
-    const parentBName =
-      answers.useMocks === 'yes'
-        ? answers.mockData.parentNationalRegistry.data.name
-        : parentNationalRegistry.data.name
+    const parentBName = parentNationalRegistry.data.name
 
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
@@ -109,22 +106,14 @@ export class FileService {
   private async createChildrenResidencePdf(application: CRCApplication) {
     const bucket = this.getBucketName()
 
-    // TODO: Remove ternary for usemocks once we move mock data to externalData
-    const selectedChildren =
-      application.answers.useMocks === 'no'
-        ? application.externalData.childrenNationalRegistry.data.filter((c) =>
-            application.answers.selectChild.includes(c.name),
-          )
-        : application.answers.mockData.childrenNationalRegistry.data.filter(
-            (c) => application.answers.selectChild.includes(c.name),
-          )
+    const selectedChildren = application.externalData.childrenNationalRegistry.data.filter(
+      (c) => application.answers.selectChild.includes(c.name),
+    )
 
     const pdfBuffer = await generateResidenceChangePdf(
       selectedChildren,
       (application.externalData.nationalRegistry.data as unknown) as User,
-      application.answers.useMocks === 'no'
-        ? application.externalData.parentNationalRegistry.data
-        : application.answers.mockData.parentNationalRegistry.data,
+      application.externalData.parentNationalRegistry.data,
       application.answers.selectDuration,
       application.answers.residenceChangeReason,
     )
