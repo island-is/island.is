@@ -18,9 +18,6 @@ class Fund implements TFund {
 
   @ApiProperty()
   total!: number
-
-  @ApiProperty()
-  availableConnectionFlights!: number
 }
 
 class BaseUser implements TBaseUser {

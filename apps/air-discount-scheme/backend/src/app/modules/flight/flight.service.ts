@@ -148,63 +148,6 @@ export class FlightService {
     return false
   }
 
-  async countThisYearsConnectedFlightsByNationalId(
-    nationalId: string,
-  ): Promise<number> {
-    const currentYear = new Date(Date.now()).getFullYear().toString()
-
-    const noConnectedFlightLegs = await this.flightModel.count({
-      where: Sequelize.and(
-        Sequelize.where(
-          Sequelize.fn(
-            'date_part',
-            'year',
-            Sequelize.fn('date', Sequelize.col('booking_date')),
-          ),
-          currentYear,
-        ),
-        { nationalId },
-      ),
-      include: [
-        {
-          model: this.flightLegModel,
-          where: {
-            financialState: availableFinancialStates,
-            isConnectingFlight: true,
-          },
-        },
-      ],
-    })
-
-    const noConnectableFlightLegs = await this.flightModel.count({
-      where: Sequelize.and(
-        Sequelize.where(
-          Sequelize.fn(
-            'date_part',
-            'year',
-            Sequelize.fn('date', Sequelize.col('booking_date')),
-          ),
-          currentYear,
-        ),
-        { nationalId },
-      ),
-      include: [
-        {
-          model: this.flightLegModel,
-          where: {
-            financialState: availableFinancialStates,
-            [Op.or]: [
-              { origin: { [Op.in]: REYKJAVIK_FLIGHT_CODES } },
-              { destination: { [Op.in]: REYKJAVIK_FLIGHT_CODES } },
-            ],
-          },
-        },
-      ],
-    })
-
-    return noConnectableFlightLegs - noConnectedFlightLegs
-  }
-
   async findThisYearsConnectableFlightsByNationalId(
     nationalId: string,
   ): Promise<Flight[]> {

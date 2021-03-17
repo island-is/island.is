@@ -27,9 +27,6 @@ export class UserService {
     } = await this.flightService.countThisYearsFlightLegsByNationalId(
       user.nationalId,
     )
-    const availableConnectionFlights = await this.flightService.countThisYearsConnectedFlightsByNationalId(
-      user.nationalId,
-    )
 
     const meetsADSRequirements = this.flightService.isADSPostalCode(
       user.postalcode,
@@ -39,7 +36,6 @@ export class UserService {
       credit: meetsADSRequirements ? unused : 0,
       used: used,
       total,
-      availableConnectionFlights,
     }
   }
 

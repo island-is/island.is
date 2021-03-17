@@ -51,7 +51,6 @@ describe('Get Discount By DiscountCode', () => {
       lastName: 'Jónsson',
       middleName: 'Gunnar',
       fund: {
-        availableConnectionFlights: 0,
         credit: 0,
         used: 0,
         total: 6,
