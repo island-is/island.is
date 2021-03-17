@@ -1,5 +1,5 @@
 import { EmailModule, EmailService } from '@island.is/email-service'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LoggingModule } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
@@ -29,14 +29,8 @@ describe('communicationsService', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [EmailModule.register({ useTestAccount: true })],
-      providers: [
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: logger,
-        },
-        CommunicationsService,
-      ],
+      imports: [LoggingModule, EmailModule.register({ useTestAccount: true })],
+      providers: [CommunicationsService],
     }).compile()
 
     emailService = moduleRef.get<EmailService>(EmailService)
