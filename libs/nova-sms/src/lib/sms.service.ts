@@ -56,7 +56,7 @@ export class SmsService extends RESTDataSource {
 
     this.baseURL = `${this.options.url}/NovaSmsService/`
 
-    this.initialize({} as DataSourceConfig<{}>)
+    this.initialize({} as DataSourceConfig<void>)
   }
 
   willSendRequest(request: RequestOptions) {

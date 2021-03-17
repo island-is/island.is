@@ -45,7 +45,7 @@ const postMock = jest.fn(function (
 jest.mock('apollo-datasource-rest', () => {
   class MockRESTDataSource {
     post = postMock
-    initialize = () => {}
+    initialize = () => undefined
   }
   return {
     RESTDataSource: MockRESTDataSource,
@@ -58,7 +58,6 @@ const testOptions = {
   password: 'Test Password',
 }
 const testMessage = 'Test Message'
-const testFailingMessage = 'Failing Test Message'
 
 describe('SmsService', () => {
   let smsService: SmsService
