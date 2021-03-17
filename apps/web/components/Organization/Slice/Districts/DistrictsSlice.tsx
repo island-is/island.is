@@ -32,10 +32,12 @@ export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
             </GridColumn>
           </GridRow>
           <GridRow>
-            <GridColumn span={['10/10', '10/10', '6/10', '6/10', '6/10']}>
-              <Box paddingRight={[0, 0, 6]}>
-                <Text marginTop={3}>{slice.description}</Text>
-              </Box>
+            <GridColumn span={['10/10', '10/10', '5/10']}>
+              {slice.description && (
+                <Box paddingRight={[0, 0, 6]}>
+                  <Text marginTop={3}>{slice.description}</Text>
+                </Box>
+              )}
               <Box
                 component="ul"
                 marginTop={5}
@@ -52,7 +54,7 @@ export const DistrictsSlice: React.FC<SliceProps> = ({ slice }) => {
               </Box>
             </GridColumn>
             {!!slice.image && (
-              <GridColumn span={['10/10', '10/10', '4/10']}>
+              <GridColumn span={['10/10', '10/10', '5/10']}>
                 {slice.image.url.split('.').pop() === 'svg' ? (
                   <object data={slice.image.url} type="image/svg+xml">
                     <img src={slice.image.url} alt="" />

@@ -1,5 +1,6 @@
 import { ApplicationUIState } from '../reducer/ReducerTypes'
 import {
+  ApplicationStatus,
   ApplicationTypes,
   buildForm,
   buildSection,
@@ -29,6 +30,7 @@ describe('getApplicationTitle', () => {
         state: 'draft',
         modified: new Date(),
         created: new Date(),
+        status: ApplicationStatus.IN_PROGRESS,
       },
       form: buildForm({
         id: 'form',

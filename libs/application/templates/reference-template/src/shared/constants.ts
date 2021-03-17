@@ -1,3 +1,5 @@
-export enum API_MODULE {
-  sendApplication = 'sendApplication',
+export enum ApiActions {
+  createApplication = 'createApplication',
+  doStuffThatFails = 'doStuffThatFails',
+  completeApplication = 'completeApplication',
 }

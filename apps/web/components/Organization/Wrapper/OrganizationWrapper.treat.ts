@@ -2,14 +2,41 @@ import { style } from 'treat'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  backgroundRepeat: 'no-repeat !important',
-  backgroundPosition: 'right !important',
-  backgroundBlendMode: 'overlay',
+  height: 385,
   marginTop: -130,
   paddingTop: 130,
+  backgroundBlendMode: 'saturation',
   ...themeUtils.responsiveStyle({
+    xs: {
+      background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
+        linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`,
+    },
+    lg: {
+      background: `linear-gradient(99.09deg, #003D85 23.68%, #4E8ECC 123.07%),
+        linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%),
+        url('https://images.ctfassets.net/8k0h54kbe6bj/rYkrllUrk89zvS2jhUuz5/4eb31ac72ac754df5c220e0324f451e4/Vector__1_.svg')`,
+      backgroundRepeat: 'no-repeat !important',
+      backgroundPosition: '5% 25% !important',
+      backgroundSize: '100%, 100%, 60% !important',
+    },
+  }),
+})
+
+export const iconCircle = style({
+  height: 136,
+  width: 136,
+  margin: '0 auto',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginTop: 32,
+    },
     md: {
-      marginBottom: '2px',
+      marginTop: 104,
+      position: 'relative',
     },
   }),
 })
@@ -27,14 +54,8 @@ export const headerWrapper = style({
 })
 
 export const headerLogo = style({
-  width: 50,
-  marginRight: 18,
-  ...themeUtils.responsiveStyle({
-    md: {
-      width: 111,
-      marginRight: 40,
-    },
-  }),
+  width: 70,
+  maxHeight: 70,
 })
 
 export const navigation = style({
@@ -49,28 +70,6 @@ export const navigation = style({
       paddingLeft: 24,
       paddingRight: 24,
       paddingTop: 32,
-    },
-  }),
-})
-
-export const navigationWithLogo = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginTop: -220,
-    },
-    xs: {
-      marginTop: 0,
-    },
-  }),
-})
-
-export const navigationWithoutLogo = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginTop: -195,
-    },
-    xs: {
-      marginTop: 0,
     },
   }),
 })
