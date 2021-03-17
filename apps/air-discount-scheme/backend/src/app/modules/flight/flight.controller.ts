@@ -59,7 +59,7 @@ export class PublicFlightController {
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  @Get('discounts/:discountCode/isValidConnectionFlight')
+  @Post('discounts/:discountCode/isValidConnectionFlight')
   @ApiResponse({
     status: 200,
     description: 'Input flight is eligible for discount as a connection flight',
