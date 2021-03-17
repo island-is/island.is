@@ -2,7 +2,7 @@ import { interpret, Event, EventObject, MachineOptions } from 'xstate'
 import merge from 'lodash/merge'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { ApplicationStateMetaOnEntry } from '@island.is/application/core'
+import { ApplicationTemplateAPIAction } from '@island.is/application/core'
 
 import { Application, ExternalData, FormValue } from '../types/Application'
 import {
@@ -55,12 +55,37 @@ export class ApplicationTemplateHelper<
     )
   }
 
-  getStateOnEntry(
+  private getTemplateAPIAction(
+    action: ApplicationTemplateAPIAction | null,
+  ): ApplicationTemplateAPIAction | null {
+    if (action === null) {
+      return null
+    }
+
+    return {
+      externalDataId: action.apiModuleAction,
+      shouldPersistToExternalData: true,
+      throwOnError: true,
+      ...action,
+    }
+  }
+
+  getOnExitStateAPIAction(
     stateKey: string = this.application.state,
-  ): ApplicationStateMetaOnEntry<TEvents> | null {
-    return (
+  ): ApplicationTemplateAPIAction | null {
+    const action =
+      this.template.stateMachineConfig.states[stateKey]?.meta?.onExit ?? null
+
+    return this.getTemplateAPIAction(action)
+  }
+
+  getOnEntryStateAPIAction(
+    stateKey: string = this.application.state,
+  ): ApplicationTemplateAPIAction | null {
+    const action =
       this.template.stateMachineConfig.states[stateKey]?.meta?.onEntry ?? null
-    )
+
+    return this.getTemplateAPIAction(action)
   }
 
   getApplicationStateInformation(

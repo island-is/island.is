@@ -78,6 +78,7 @@ export const CaseQuery = gql`
         custodyEndDate
         decision
         courtCaseNumber
+        ruling
       }
       childCase {
         id

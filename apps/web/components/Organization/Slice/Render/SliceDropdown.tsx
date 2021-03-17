@@ -49,7 +49,6 @@ export const SliceDropdown: React.FC<SliceProps> = ({
       <GridContainer>
         <GridRow>
           <GridColumn
-            paddingTop={[4, 4, 0]}
             paddingBottom={[4, 4, 6]}
             span={['12/12', '12/12', '12/12', '12/12', '7/12']}
           >

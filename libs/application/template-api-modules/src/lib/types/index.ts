@@ -12,6 +12,12 @@ export interface BaseTemplateAPIModuleConfig {
     }
   }
   baseApiUrl: string
+  syslumenn: {
+    url: string
+    username: string
+    password: string
+  }
+  presignBucket: string
 }
 
 export interface TemplateApiModuleActionProps {

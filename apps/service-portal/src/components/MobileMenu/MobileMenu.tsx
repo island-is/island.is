@@ -6,7 +6,8 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { Locale, useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC, useRef } from 'react'
