@@ -153,32 +153,13 @@ export class FlightService {
   ): Promise<Flight[]> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
 
-    let flights = await this.flightModel.findAll({
-      where: Sequelize.and(
-        Sequelize.where(
-          Sequelize.fn(
-            'date_part',
-            'year',
-            Sequelize.fn('date', Sequelize.col('booking_date')),
-          ),
-          currentYear,
-        ),
-        { nationalId },
-        { connectable: true },
-      ),
-      include: [
-        {
-          model: this.flightLegModel,
-          where: {
-            financialState: availableFinancialStates,
-          },
-        },
-      ],
-    })
-
+    let flights = await this.findThisYearsConnectableFlightsByNationalId(
+      nationalId,
+    )
     // Filter out non-Reykjavík flights
     flights = flights.filter((flight) => {
       return (
+        flight.connectable &&
         flight.flightLegs.length === 1 &&
         !flight.flightLegs[0].isConnectingFlight &&
         (REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].origin) ||
