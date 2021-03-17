@@ -155,11 +155,9 @@ export function findSubSectionIndex(
   if (sectionIndex === -1) {
     return -1
   }
-  // const section = sections[sectionIndex]
   if (!section) {
     return -1
   }
-  // const subSections = getSubSectionsInSection(section)
   for (let i = 0; i < subSections.length; i++) {
     if (subSections[i].id === subSection.id) {
       return i

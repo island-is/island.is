@@ -69,7 +69,6 @@ export const moveToScreen = (
   }
 
   const screen = screens[screenIndex]
-  console.log('screen', screen)
   if (!screen.isNavigable) {
     if (isMovingForward) {
       // skip this screen and go to the next one
@@ -285,7 +284,6 @@ function convertFormNodeToScreens(
   if (children) {
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
-      console.log('child', child)
       const sections = getSectionsInForm(form, answers, externalData)
       if (child.type === FormItemTypes.SECTION) {
         subSectionIndex = -1

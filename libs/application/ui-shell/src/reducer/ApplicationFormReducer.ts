@@ -24,8 +24,6 @@ export function initializeReducer(
   const currentScreen =
     form.mode === FormModes.REVIEW ? 0 : findCurrentScreen(screens, answers)
 
-  console.log('currentScreen', currentScreen)
-  console.log('-----', moveToScreen(screens, currentScreen, true))
   return {
     ...state,
     screens,
