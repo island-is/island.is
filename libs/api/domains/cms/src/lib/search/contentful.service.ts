@@ -235,7 +235,7 @@ export class ContentfulService {
       logger.info('Finding root entries from nestedEntries')
 
       // For now we will look for linked entries up to depth 2
-      for (let i = 1; i <= 2; i++) {
+      for (let i = 1; i <= 3; i++) {
         const linkedEntries = []
         for (const entryId of nestedEntries) {
           // Due to the limitation of Contentful Sync API, we need to query every entry one at a time
