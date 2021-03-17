@@ -16,8 +16,8 @@ export class Story {
   @Field()
   readMoreText!: string
 
-  @Field()
-  date: string = ''
+  @Field(() => String)
+  date = ''
 
   @Field()
   intro!: string

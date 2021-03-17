@@ -11,8 +11,8 @@ export class Menu {
   @Field(() => ID)
   id!: string
 
-  @Field()
-  title: string = ''
+  @Field(() => String)
+  title = ''
 
   @Field(() => [Link])
   links?: Link[]

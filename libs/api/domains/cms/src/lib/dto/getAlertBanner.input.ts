@@ -7,7 +7,7 @@ export class GetAlertBannerInput {
   @IsString()
   id!: string // Used in the main layout with an explicit id in the input
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }

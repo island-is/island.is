@@ -7,7 +7,7 @@ export class GetErrorPageInput {
   @IsString()
   errorCode!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }

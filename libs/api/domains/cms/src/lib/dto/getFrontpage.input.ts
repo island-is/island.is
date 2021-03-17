@@ -7,7 +7,7 @@ export class GetFrontpageInput {
   @IsString()
   pageIdentifier!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }

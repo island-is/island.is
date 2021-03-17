@@ -7,7 +7,7 @@ export class GetGenericPageInput {
   @IsString()
   slug!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }

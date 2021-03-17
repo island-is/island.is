@@ -7,7 +7,7 @@ export class GetSubpageHeaderInput {
   @IsString()
   id!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }

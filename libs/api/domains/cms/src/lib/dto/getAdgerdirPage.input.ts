@@ -8,7 +8,7 @@ export class GetAdgerdirPageInput {
   @IsOptional()
   slug!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string = 'is-IS'
+  lang = 'is-IS'
 }
