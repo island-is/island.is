@@ -14,5 +14,5 @@ export class GetOrganizationSubpageInput {
 
   @Field(() => String)
   @IsString()
-  lang: ElasticsearchIndexLocale
+  lang: ElasticsearchIndexLocale = 'is'
 }
