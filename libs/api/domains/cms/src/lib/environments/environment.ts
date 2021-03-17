@@ -40,4 +40,7 @@ export default {
     environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
     host: process.env.CONTENTFUL_HOST || 'cdn.contentful.com',
   },
+  elastic: {
+    node: process.env.ELASTIC_NODE || 'http://localhost:9200/',
+  },
 }

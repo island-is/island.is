@@ -4,16 +4,16 @@ import { ICard } from '../generated/contentfulTypes'
 @ObjectType()
 export class LinkCard {
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  body: string
+  body!: string
 
   @Field()
-  link: string
+  link?: string
 
   @Field()
-  linkText: string
+  linkText?: string
 }
 
 export const mapLinkCard = ({ fields }: ICard): LinkCard => ({
