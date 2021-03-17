@@ -184,9 +184,6 @@ export class CmsElasticsearchService {
     index: string,
     { name }: GetMenuInput,
   ): Promise<Menu | null> {
-    if (!name) {
-      return null
-    }
     // return a single news item by slug
     const query = { types: ['webMenu'], tags: [{ type: 'name', key: name }] }
     const menuResponse = await this.elasticService.getDocumentsByMetaData(
@@ -203,9 +200,6 @@ export class CmsElasticsearchService {
     { id }: GetSingleMenuInput,
   ): Promise<RequestedMenuType | null> {
     // return a single menu by id
-    if (!id) {
-      return null
-    }
     const menuResponse = await this.elasticService.findById(index, id)
     const response = menuResponse.body?._source?.response
     return response ? JSON.parse(response) : null

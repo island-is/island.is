@@ -6,7 +6,7 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 export class GetMenuInput {
   @Field()
   @IsString()
-  name?: string
+  name!: string
 
   @Field(() => String)
   @IsString()
