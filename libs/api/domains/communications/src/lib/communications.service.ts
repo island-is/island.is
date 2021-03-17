@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import axios from 'axios'
-import toQueryString from 'to-querystring'
 import { EmailService } from '@island.is/email-service'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SendMailOptions } from 'nodemailer'
@@ -64,14 +63,14 @@ export class CommunicationsService {
       },
     }
 
+    const email = input.email.trim().toLowerCase()
+
     let searchUserResponse
 
     // First check if a user is found with this email
     try {
       searchUserResponse = await axios.get(
-        `${api}/search.json?query=${encodeURIComponent(
-          `type:user "${input.email}"`,
-        )}`,
+        `${api}/search.json?query=${encodeURIComponent(`email:"${email}"`)}`,
         params,
       )
     } catch (error) {
@@ -102,7 +101,7 @@ export class CommunicationsService {
       const newUser = JSON.stringify({
         user: {
           name: input.name,
-          email: input.email,
+          email,
           identities,
         },
       })
