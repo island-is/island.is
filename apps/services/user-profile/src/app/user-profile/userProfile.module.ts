@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { UserProfileController } from './userProfile.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
-import { SmsService, SmsServiceOptions, SMS_OPTIONS } from '@island.is/nova-sms'
+import { SmsModule } from '@island.is/nova-sms'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { DataSourceConfig } from 'apollo-datasource'
 import environment from '../../environments/environment'
@@ -22,26 +22,10 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
       UserProfile,
     ]),
     EmailModule.register(environment.emailOptions),
+    SmsModule.register(environment.smsOptions),
   ],
   controllers: [UserProfileController, UserProfileInfraController],
-  providers: [
-    UserProfileService,
-    VerificationService,
-    SequelizeConfigService,
-    {
-      provide: SMS_OPTIONS,
-      useValue: environment.smsOptions,
-    },
-    {
-      provide: SmsService,
-      useFactory: (options: SmsServiceOptions, logger: Logger) => {
-        const smsService = new SmsService(options, logger)
-        smsService.initialize({} as DataSourceConfig<{}>)
-        return smsService
-      },
-      inject: [SMS_OPTIONS, LOGGER_PROVIDER],
-    },
-  ],
+  providers: [UserProfileService, VerificationService, SequelizeConfigService],
   exports: [UserProfileService],
 })
 export class UserProfileModule {}

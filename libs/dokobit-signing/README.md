@@ -18,7 +18,7 @@ Assuming `environment.signingOptions` implements `SigningServiceOptions`, add th
 ```typescript
 @Module({
   imports: [
-    SigningService.register(environment.signingOptions),
+    SigningModule.register(environment.signingOptions),
   ],
 })
 ```

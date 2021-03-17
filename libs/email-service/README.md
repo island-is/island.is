@@ -13,7 +13,7 @@ Assuming `environment.emailOptions` implements `EmailServiceOptions`, add the mo
 ```typescript
 @Module({
   imports: [
-    EmailService.register(environment.emailOptions),
+    EmailModule.register(environment.emailOptions),
   ],
 })
 ```
