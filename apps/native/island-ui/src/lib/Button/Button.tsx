@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text } from 'react-native'
 import { theme } from '@island.is/island-ui/theme'
 
-export function Button({ children }: { children: React.ReactNode }) {
+export function Button({ children }: { children?: React.ReactNode }) {
   return (
     <View
       style={{

@@ -3,23 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "react": "*",
     "react-native": "*",
-    "react-native-webview": "11.2.4",
+    "react": "*",
+    "@testing-library/react-native": "*",
     "treat": "*",
     "lodash": "*",
-    "csstype": "*"
-  },
-  "devDependencies": {
-    "@types/react-native": "0.63.18",
-    "@react-native-community/cli": "4.14.0",
-    "@react-native-community/cli-platform-android": "4.13.0",
-    "@react-native-community/cli-platform-ios": "4.13.0",
-    "metro-react-native-babel-preset": "0.63.0",
-    "@testing-library/react-native": "7.1.0",
-    "@testing-library/jest-native": "3.4.3",
-    "jest-react-native": "18.0.0",
-    "metro": "0.59.0",
-    "metro-resolver": "0.59.0"
+    "csstype": "*",
+    "@testing-library/jest-native": "*",
+    "@nrwl/workspace": "*",
+    "metro-resolver": "*",
+    "@storybook/react-native": "*",
+    "@storybook/addon-knobs": "*"
   }
 }

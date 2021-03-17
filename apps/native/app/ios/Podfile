@@ -1,10 +1,10 @@
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../../../../node_modules/@nrwl/react-native/nx_post_install'
+require_relative '../node_modules/@nrwl/react-native/nx_post_install'
 
 platform :ios, '10.0'
 
-target 'MobileApp' do
+target 'IslandApp' do
   config = use_native_modules!
   puts config
   use_react_native!(:path => config[:reactNativePath])

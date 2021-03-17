@@ -1,0 +1,48 @@
+{
+  "testRunner": "jest",
+  "runnerConfig": "config.json",
+  "apps": {
+    "ios": {
+      "type": "ios.app",
+      "binaryPath": "../app/ios/build/Build/Products/Release-iphonesimulator/MobileApp.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ../app/ios/MobileApp.xcworkspace -scheme MobileApp -configuration Release -sdk iphonesimulator -derivedDataPath ../app/ios/build ONLY_ACTIVE_ARCH=YES -quiet -UseModernBuildSystem=YES"
+    },
+    "ios-debug":{
+      "type":"ios.app",
+      "binaryPath":"/Users/birkir/Library/Developer/Xcode/DerivedData/MobileApp-eptfvntpmcpipxakkeimmivcrcut/Build/Products/Debug-iphonesimulator/MobileApp.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true &&  xcodebuild -workspace ../app/ios/MobileApp.xcworkspace -scheme MobileApp -configuration Debug -sdk iphonesimulator -derivedDataPath ../app/ios/build ONLY_ACTIVE_ARCH=YES -UseModernBuildSystem=YES"
+    },
+    "android": {
+      "type": "android.apk",
+      "binaryPath": "../app/android/app/build/outputs/apk/release/app-release.apk"
+    }
+  },
+  "devices": {
+    "simulator": {
+      "type": "ios.simulator",
+      "device": {
+        "type": "iPhone 11"
+      }
+    },
+    "emulator": {
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_3a_API_30_x86"
+      }
+    }
+  },
+  "configurations": {
+    "ios": {
+      "device": "simulator",
+      "app": "ios"
+    },
+    "ios-debug": {
+      "device": "simulator",
+      "app": "ios-debug"
+    },
+    "android": {
+      "device": "emulator",
+      "app": "android"
+    }
+  }
+}

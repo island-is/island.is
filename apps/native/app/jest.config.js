@@ -1,7 +1,7 @@
-const workspacePreset = require('../../../jest.preset')
+const workspacePreset = require('../../jest.preset')
 module.exports = {
   ...workspacePreset,
-  displayName: 'native-app',
+  displayName: 'island-app',
   preset: 'react-native',
   moduleFileExtensions: ['ts', 'js', 'html', 'tsx', 'jsx'],
   setupFilesAfterEnv: ['<rootDir>/test-setup.ts'],

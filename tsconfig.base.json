@@ -181,6 +181,7 @@
       "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
       "@island.is/infra-next-server": ["libs/infra-next-server/src/index.ts"],
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
+      "@island.is/island-ui-native": ["apps/native/island-ui/src/index.ts"],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
       ],
@@ -209,7 +210,6 @@
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
-      "@island.is/island-ui-native": ["apps/native/island-ui/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/service-portal/applications": [

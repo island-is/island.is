@@ -2,12 +2,21 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-native",
+    "jsx": "react",
     "lib": ["dom", "esnext"],
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@island.is/island-ui-native": ["apps/native/island-ui/src/index.ts"],
+      "@island.is/island-ui/contentful": [
+        "libs/island-ui/contentful/src/index.ts"
+      ],
+      "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
+      "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
+      "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"]
+    }
   },
   "files": [],
   "include": [],

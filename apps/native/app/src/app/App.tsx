@@ -1,7 +1,8 @@
 import React from 'react'
-import { SafeAreaView, StatusBar } from 'react-native'
+import { SafeAreaView, StatusBar, Image } from 'react-native'
 import { Button } from '@island.is/island-ui-native'
-import { WebView } from 'react-native-webview'
+// import { WebView } from 'react-native-webview'
+import logo from './logo.png';
 
 const App = () => {
   return (
@@ -16,10 +17,11 @@ const App = () => {
         }}
       >
         <Button>Prufu takki</Button>
-        <WebView
+        <Image source={logo} resizeMode="contain" style={{ width: 200, height: 200 }} />
+        {/* <WebView
           source={{ uri: 'https://island.is/' }}
           style={{ width: 400, height: 200 }}
-        />
+        /> */}
       </SafeAreaView>
     </>
   )

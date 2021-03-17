@@ -1,4 +1,4 @@
-package com.mobileapp;
+package com.islandapp;
 
 import com.facebook.react.ReactActivity;
 
