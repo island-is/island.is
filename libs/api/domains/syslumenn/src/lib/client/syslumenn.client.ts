@@ -1,11 +1,8 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { IHomestay } from './models/homestay'
 import { ILogin } from './models/login'
-import { Person, Attachment } from '../models/dataUpload'
-import {
-  constructUploadDataObject,
-  IDataUploadResponse,
-} from './models/dataUpload'
+import { Person, Attachment, DataUploadResponse } from '../models/dataUpload'
+import { constructUploadDataObject } from './models/dataUpload'
 
 export const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 
@@ -57,8 +54,8 @@ export class SyslumennClient {
   async uploadData(
     persons: Person[],
     attachment: Attachment,
-    extraData: object,
-  ): Promise<string> {
+    extraData: { [key: string]: string },
+  ): Promise<DataUploadResponse> {
     await this.login()
 
     const url = `${this.clientConfig.url}/api/v1/SyslMottakaGogn`
@@ -73,7 +70,7 @@ export class SyslumennClient {
     )
 
     const response: {
-      data: IDataUploadResponse
+      data: DataUploadResponse
     } = await this.httpService
       .post(url, request, { headers: headers })
       .toPromise()
@@ -81,6 +78,6 @@ export class SyslumennClient {
         throw err
       })
 
-    return response.data.skilabod
+    return response.data
   }
 }

@@ -1,7 +1,7 @@
 import { SyslumennClient } from './client/syslumenn.client'
 import { Homestay, mapHomestay } from './models/homestay'
 import { Injectable } from '@nestjs/common'
-import { Person, Attachment } from './models/dataUpload'
+import { Person, Attachment, DataUploadResponse } from './models/dataUpload'
 
 @Injectable()
 export class SyslumennService {
@@ -16,8 +16,8 @@ export class SyslumennService {
   async uploadData(
     persons: Person[],
     attachement: Attachment,
-    extraData: object,
-  ): Promise<string> {
+    extraData: { [key: string]: string },
+  ): Promise<DataUploadResponse> {
     return await this.syslumennClient.uploadData(
       persons,
       attachement,

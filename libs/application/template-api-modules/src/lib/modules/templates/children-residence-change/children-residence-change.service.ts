@@ -102,7 +102,7 @@ export class ChildrenResidenceChangeService {
 
     const extraData = {
       interviewRequested: answers.interview,
-      reasonForChildrenResidenceChange: answers.residenceChangeReason,
+      reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         answers.selectDuration[0] === 'permanent'
           ? answers.selectDuration[0]
