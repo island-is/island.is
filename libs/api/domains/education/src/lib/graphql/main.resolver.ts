@@ -1,5 +1,7 @@
 import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { UseGuards, Inject } from '@nestjs/common'
+import { uuid } from 'uuidv4'
+import { ApolloError } from 'apollo-server-express'
 
 import {
   IdsAuthGuard,
@@ -8,31 +10,46 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 
+import { Config } from '../education.module'
+import { S3Service } from '../s3.service'
 import { EducationService } from '../education.service'
 import { License } from './license.model'
-import { SendLicense } from './sendLicense.model'
-import { SendLicenseInput } from './sendLicense.input'
+import { SignedLicense } from './signedLicense.model'
+import { FetchEducationSignedLicenseUrlInput } from './license.input'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
-  constructor(private readonly educationService: EducationService) {}
+  constructor(
+    private readonly educationService: EducationService,
+    private readonly s3Service: S3Service,
+    @Inject('CONFIG')
+    private readonly config: Config,
+  ) {}
 
   @Query(() => [License])
-  educationLicense(@CurrentUser() user: User) {
+  educationLicense(@CurrentUser() user: User): Promise<License[]> {
     return this.educationService.getLicenses(user.nationalId)
   }
 
-  @Mutation(() => SendLicense, { nullable: true })
-  sendEducationLicense(
+  @Mutation(() => SignedLicense, { nullable: true })
+  async fetchEducationSignedLicenseUrl(
     @CurrentUser() user: User,
-    @Args('input', { type: () => SendLicenseInput })
-    input: SendLicenseInput,
-  ) {
-    return this.educationService.sendLicense(
+    @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })
+    input: FetchEducationSignedLicenseUrlInput,
+  ): Promise<SignedLicense> {
+    const responseStream = await this.educationService.downloadPdfLicense(
       user.nationalId,
-      input.email,
       input.licenseId,
     )
+
+    const url = await this.s3Service.uploadFileFromStream(responseStream, {
+      fileName: uuid(),
+      bucket: this.config.fileDownloadBucket,
+    })
+    if (url === null) {
+      throw new ApolloError('Could not create a download link')
+    }
+    return { url }
   }
 }
