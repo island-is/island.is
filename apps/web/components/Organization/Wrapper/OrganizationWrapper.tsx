@@ -14,6 +14,7 @@ import { HeadWithSocialSharing, Main, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme/DigitalIcelandHeader'
+import { DefaultHeader } from './Themes/DefaultTheme'
 
 interface NavigationData {
   title: string
@@ -38,7 +39,7 @@ interface HeaderProps {
 }
 
 export const isWhite = (name: string) => {
-  const whiteThemes = ['syslumenn']
+  const whiteThemes = ['syslumenn', 'default']
 
   return whiteThemes.includes(name)
 }
@@ -52,7 +53,7 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <DigitalIcelandHeader organizationPage={organizationPage} />
       break
     default:
-      return <h1>ok</h1>
+      return <DefaultHeader organizationPage={organizationPage} />
   }
 }
 
