@@ -26,12 +26,12 @@ interface CompanyRegistryMemberResponse {
 }
 
 export interface CompanyRegistryMember {
-  kennitala: string
-  nafn: string
-  rekstarform: string
-  stadaAdila: string
-  erStjorn: '0' | '1'
-  erProkuruhafi: '0' | '1'
+  nationalId: string
+  name: string
+  operationalForm: string
+  companyStatus: string
+  isPartOfBoardOfDirectors: '0' | '1'
+  hasProcuration: '0' | '1'
 }
 
 export class RSKService extends RESTDataSource {
@@ -64,12 +64,12 @@ export class RSKService extends RESTDataSource {
       },
     )
     return (response?.MemberCompanies ?? []).map((company) => ({
-      kennitala: company.Kennitala,
-      nafn: company.Nafn,
-      stadaAdila: company.StadaAdila,
-      rekstarform: company.Rekstarform,
-      erProkuruhafi: company.ErProkuruhafi,
-      erStjorn: company.ErStjorn,
+      nationalId: company.Kennitala,
+      name: company.Nafn,
+      operationalForm: company.Rekstarform,
+      companyStatus: company.StadaAdila,
+      isPartOfBoardOfDirectors: company.ErStjorn,
+      hasProcuration: company.ErProkuruhafi,
     }))
   }
 }

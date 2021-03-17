@@ -86,9 +86,9 @@ export const LetterApplicationForm: Form = buildForm({
                 value: application.applicant,
               },
               ...companies.map((company) => ({
-                label: company.nafn,
-                subLabel: company.kennitala,
-                value: company.kennitala,
+                label: company.name,
+                subLabel: company.nationalId,
+                value: company.nationalId,
               })),
             ]
           },

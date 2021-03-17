@@ -1,30 +1,9 @@
 import {
   Application,
   AnswerValidator,
-  AnswerValidationError,
+  buildValidationError,
 } from '@island.is/application/core'
-import isNumber from 'lodash/isNumber'
 import { UserCompany } from '../dataProviders/CurrentUserCompanies'
-
-const buildValidationError = (
-  path: string,
-  index?: number,
-): ((message: string, field?: string) => AnswerValidationError) => (
-  message,
-  field,
-) => {
-  if (field && isNumber(index)) {
-    return {
-      message,
-      path: `${path}[${index}].${field}`,
-    }
-  }
-
-  return {
-    message,
-    path,
-  }
-}
 
 export const PARTY_NATIONAL_ID = 'partyNationalId'
 
@@ -43,7 +22,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     const allowedNationalIds = [
       application.applicant,
-      ...userCompanies.map((company) => company.kennitala),
+      ...userCompanies.map((company) => company.nationalId),
     ]
 
     if (allowedNationalIds.includes(newNationalId)) {

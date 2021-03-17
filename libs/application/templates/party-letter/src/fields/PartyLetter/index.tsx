@@ -60,7 +60,7 @@ const PartyLetter: FC<FieldBaseProps> = ({ application }) => {
               getValueViaPath(application.answers, PARTYLETTER_ID) as string
             }
             onChange={(e) => setValue(PARTYLETTER_ID, e.target.value)}
-          ></InputController>
+          />
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
           <InputController
@@ -74,7 +74,7 @@ const PartyLetter: FC<FieldBaseProps> = ({ application }) => {
               getValueViaPath(application.answers, PARTYNAME_ID) as string
             }
             onChange={(e) => setValue(PARTYNAME_ID, e.target.value)}
-          ></InputController>
+          />
         </GridColumn>
       </GridRow>
       <Box marginTop={5} marginBottom={3}>

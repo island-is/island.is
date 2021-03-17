@@ -27,11 +27,12 @@ export const store = createStore(() => {
 
   const userCompanies: CurrentUserCompanies[] = [
     {
-      erProkuruhafi: '1',
-      erStjorn: '0',
-      kennitala: '0000000000',
-      nafn: 'Tester Testson',
-      stadaAdila: 'Standandi',
+      hasProcuration: '1',
+      isPartOfBoardOfDirectors: '0',
+      nationalId: '0000000000',
+      name: 'Tester Testson',
+      companyStatus: 'Standandi',
+      operationalForm: 'ehf',
     },
   ]
   return { applications, familyMembers, userCompanies }

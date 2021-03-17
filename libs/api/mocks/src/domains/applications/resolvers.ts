@@ -21,7 +21,7 @@ export const resolvers: Resolvers = {
     nationalRegistryFamily: () => {
       return store.familyMembers
     },
-    rskGetCurrentUserCompanies: () => {
+    rskCurrentUserCompanies: () => {
       return store.userCompanies
     },
   },

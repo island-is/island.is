@@ -16,7 +16,7 @@ export class RSKResolver {
   constructor(private RSKService: RSKService) {}
 
   @Query(() => [CurrentUserCompanies])
-  async rskGetCurrentUserCompanies(@CurrentUser() user: User) {
+  async rskCurrentUserCompanies(@CurrentUser() user: User) {
     return this.RSKService.getCompaniesByNationalId(user.nationalId)
   }
 }

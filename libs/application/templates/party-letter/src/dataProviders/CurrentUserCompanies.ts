@@ -7,10 +7,10 @@ import { CurrentUserCompanies } from '@island.is/api/schema'
 
 export type UserCompany = Pick<
   CurrentUserCompanies,
-  'kennitala' | 'nafn' | 'erProkuruhafi'
+  'nationalId' | 'name' | 'hasProcuration'
 >
 type GetUserCompaniesResponse = {
-  rskGetCurrentUserCompanies: UserCompany[]
+  rskCurrentUserCompanies: UserCompany[]
 }
 
 export class CurrentUserCompaniesProvider extends BasicDataProvider {
@@ -19,10 +19,10 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
   async provide(): Promise<UserCompany[]> {
     const query = `
       query GetUserCompanies {
-        rskGetCurrentUserCompanies {
-          kennitala
-          nafn
-          erProkuruhafi
+        rskCurrentUserCompanies {
+          nationalId
+          name
+          hasProcuration
         }
       }
     `
@@ -33,11 +33,11 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
         const response = await res.json()
 
         const uniqueAllowedCompanies = new Map<string, UserCompany>()
-        const userCompanies = response.data?.rskGetCurrentUserCompanies ?? []
+        const userCompanies = response.data?.rskCurrentUserCompanies ?? []
         userCompanies.forEach((company) => {
           // only add companies that this user does not have procurement for
-          if (company.erProkuruhafi === '1') {
-            uniqueAllowedCompanies.set(company.kennitala, company)
+          if (company.hasProcuration === '1') {
+            uniqueAllowedCompanies.set(company.nationalId, company)
           }
         })
 

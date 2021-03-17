@@ -3,17 +3,20 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class CurrentUserCompanies {
   @Field()
-  kennitala!: string
+  nationalId!: string
 
   @Field()
-  nafn!: string
+  name!: string
 
   @Field()
-  stadaAdila!: string
+  operationalForm!: string
 
   @Field()
-  erStjorn!: '0' | '1'
+  companyStatus!: string
 
   @Field()
-  erProkuruhafi!: '0' | '1'
+  isPartOfBoardOfDirectors!: '0' | '1'
+
+  @Field()
+  hasProcuration!: '0' | '1'
 }
