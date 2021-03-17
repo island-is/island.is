@@ -134,5 +134,6 @@ module.exports = {
     '<rootDir>/libs/utils/environment',
     '<rootDir>/libs/vmst-client',
     '<rootDir>/libs/clients/mms',
+    '<rootDir>/libs/zendesk-service',
   ],
 }

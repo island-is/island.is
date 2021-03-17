@@ -490,6 +490,9 @@
     "web-e2e": {
       "tags": [],
       "implicitDependencies": ["web"]
+    },
+    "zendesk-service": {
+      "tags": []
     }
   }
 }

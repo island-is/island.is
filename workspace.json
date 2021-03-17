@@ -6263,6 +6263,27 @@
           }
         }
       }
+    },
+    "zendesk-service": {
+      "root": "libs/zendesk-service",
+      "sourceRoot": "libs/zendesk-service/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/zendesk-service/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/zendesk-service"],
+          "options": {
+            "jestConfig": "libs/zendesk-service/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

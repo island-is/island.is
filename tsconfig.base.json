@@ -286,7 +286,8 @@
       "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
       "@island.is/vmst-client": ["libs/vmst-client/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/web/component*": ["apps/web/component*/real.ts"]
+      "@island.is/web/component*": ["apps/web/component*/real.ts"],
+      "@island.is/zendesk-service": ["libs/zendesk-service/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

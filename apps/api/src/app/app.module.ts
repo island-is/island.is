@@ -110,7 +110,23 @@ const autoSchemaFile = environment.production
       userProfileServiceBasePath:
         environment.userProfile.userProfileServiceBasePath,
     }),
-    CommunicationsModule,
+    CommunicationsModule.register({
+      emailOptions: {
+        useTestAccount: environment.emailOptions.useTestAccount,
+        options: {
+          region: environment.emailOptions.options.region,
+        },
+        sendFrom: environment.emailOptions.sendFrom,
+        contactUsDestination: environment.emailOptions.contactUsDestination,
+        tellUsAStoryDestination:
+          environment.emailOptions.tellUsAStoryDestination,
+      },
+      zendeskOptions: {
+        email: environment.zendeskOptions.email,
+        token: environment.zendeskOptions.token,
+        subdomain: environment.zendeskOptions.subdomain,
+      },
+    }),
     ApiCatalogueModule,
     AuthModule.register({
       audience: environment.identityServer.audience,
