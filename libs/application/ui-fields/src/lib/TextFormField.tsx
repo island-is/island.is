@@ -33,6 +33,7 @@ const TextFormField: FC<Props> = ({
     format,
     variant = 'text',
     suffix,
+    rows,
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
@@ -75,6 +76,7 @@ const TextFormField: FC<Props> = ({
           suffix={suffix}
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
+          rows={rows}
         />
       </Box>
     </div>

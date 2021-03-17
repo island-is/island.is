@@ -1,6 +1,7 @@
-import { Application } from '../../types'
 import { factory, faker } from '@island.is/shared/mocking'
-import type { DataProviderResult } from '@island.is/application/core'
+import { DataProviderResult } from '@island.is/application/core'
+
+import { Application } from '../../types'
 
 export const application = factory<Application>({
   id: () => faker.random.uuid(),
@@ -12,6 +13,7 @@ export const application = factory<Application>({
   typeId: 'ExampleForm',
   answers: [],
   externalData: {},
+  status: 'Inprogress',
 })
 
 export const externalData = factory<DataProviderResult>({
