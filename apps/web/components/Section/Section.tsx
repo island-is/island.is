@@ -32,10 +32,14 @@ export const Section: React.FC<SectionProps> = ({
 }) => {
   const { width } = useWindowSize()
 
+  const hasMobileBleedAmount = backgroundBleed?.mobileBleedAmount >= 0
+  const hasBleedAmount =
+    backgroundBleed?.bleedAmount >= 0 || hasMobileBleedAmount
+
   const generateBackgroundBleed = () => {
-    if (backgroundBleed?.bleedAmount) {
+    if (hasBleedAmount) {
       const amount =
-        backgroundBleed.mobileBleedAmount && width < theme.breakpoints.md
+        hasMobileBleedAmount && width < theme.breakpoints.md
           ? backgroundBleed.mobileBleedAmount
           : backgroundBleed.bleedAmount
 
@@ -58,7 +62,7 @@ export const Section: React.FC<SectionProps> = ({
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
       background={background}
-      {...(backgroundBleed?.bleedAmount && {
+      {...(hasBleedAmount && {
         style: generateBackgroundBleed(),
       })}
       {...rest}
