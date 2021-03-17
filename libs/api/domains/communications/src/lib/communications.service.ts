@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import axios from 'axios'
 import { EmailService } from '@island.is/email-service'
 import { ZendeskService } from '@island.is/zendesk-service'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -8,9 +7,6 @@ import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
-
-import { environment } from './environments/environment'
-const { zendeskOptions } = environment
 
 type SendEmailInput = ContactUsInput | TellUsAStoryInput
 interface EmailTypeTemplateMap {
