@@ -1,16 +1,16 @@
 import React, { FC } from 'react'
 import {
   Box,
-  Stack,
   Button,
   Text,
   Link,
   LoadingIcon,
   FocusableBox,
-  ArrowLink,
 } from '@island.is/island-ui/core'
-import * as styles from './ActionCard.treat'
 import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
+
+import * as styles from './ActionCard.treat'
 
 interface Props {
   label: string
@@ -40,7 +40,7 @@ export const ActionCard: FC<Props> = ({ label, title, date, cta, loading }) => {
           {label}
         </Text>
         <Text variant="small" as="span" color="dark400">
-          {format(date, 'dd.MM.yyyy')}
+          {format(date, dateFormat.is)}
         </Text>
       </Box>
       <Box

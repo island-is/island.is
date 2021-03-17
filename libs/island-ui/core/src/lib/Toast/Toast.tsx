@@ -4,18 +4,11 @@ import {
   toast as toastify,
   Slide,
 } from 'react-toastify'
+import cn from 'classnames'
 import { Box } from '../Box/Box'
 import { Icon } from '../Icon/Icon'
 import { Text } from '../Text/Text'
 import * as toastStyles from './Toast.treat'
-import { toastKeyframes } from './toastKeyframes'
-
-declare module 'react' {
-  // Make React recognize `jsx` prop on the style element.
-  interface StyleHTMLAttributes<T> extends React.HTMLAttributes<T> {
-    jsx?: boolean
-  }
-}
 
 interface ToastProps {
   hideProgressBar?: boolean
@@ -62,7 +55,11 @@ export const ToastContainer: React.FC<ToastProps> = ({
   useKeyframeStyles = true,
 }) => {
   return (
-    <div className={toastStyles.root}>
+    <div
+      className={cn(toastStyles.root, {
+        [toastStyles.useMotion]: useKeyframeStyles,
+      })}
+    >
       <ToastifyContainer
         position="bottom-right"
         autoClose={timeout}
@@ -74,7 +71,6 @@ export const ToastContainer: React.FC<ToastProps> = ({
         pauseOnHover
         transition={Slide}
       />
-      {useKeyframeStyles && <style jsx>{toastKeyframes}</style>}
     </div>
   )
 }

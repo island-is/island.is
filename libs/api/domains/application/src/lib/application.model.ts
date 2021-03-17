@@ -1,9 +1,17 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
+
+import {
+  ApplicationResponseDtoStatusEnum,
+  ApplicationResponseDtoTypeIdEnum,
+} from '../../gen/fetch/models/ApplicationResponseDto'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
+})
+
+registerEnumType(ApplicationResponseDtoStatusEnum, {
+  name: 'ApplicationResponseDtoStatusEnum',
 })
 
 @ObjectType()
@@ -43,4 +51,7 @@ export class Application {
 
   @Field(() => Number, { nullable: true })
   progress?: number
+
+  @Field(() => ApplicationResponseDtoStatusEnum)
+  status!: ApplicationResponseDtoStatusEnum
 }

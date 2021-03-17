@@ -18,7 +18,6 @@ import { User } from './user.model'
 @Resolver(() => User)
 export class UserResolver {
   constructor(
-    @Inject(AuditService)
     private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,

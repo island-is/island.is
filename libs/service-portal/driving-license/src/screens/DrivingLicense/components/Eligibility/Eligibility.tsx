@@ -2,7 +2,7 @@ import React from 'react'
 import format from 'date-fns/format'
 import { gql, useQuery } from '@apollo/client'
 import { defineMessage } from 'react-intl'
-
+import { dateFormat } from '@island.is/shared/constants'
 import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -13,6 +13,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+
 import { mapCategory } from './dataMapper'
 import { Application } from '../Application'
 
@@ -90,7 +91,7 @@ function Eligibility(): JSX.Element | null {
                       <Text variant="h3">{category.name}</Text>
                       <Text>
                         Gefið út{' '}
-                        {format(new Date(eligibility.issued), 'dd.MM.yyyy')}
+                        {format(new Date(eligibility.issued), dateFormat.is)}
                       </Text>
                     </Box>
                     <Box
@@ -106,7 +107,7 @@ function Eligibility(): JSX.Element | null {
                       </Box>
                       <Text variant="small">
                         Gildistími:{' '}
-                        {format(new Date(eligibility.expires), 'dd.MM.yyyy')}
+                        {format(new Date(eligibility.expires), dateFormat.is)}
                       </Text>
                     </Box>
                   </Box>

@@ -7,7 +7,6 @@ export const LEGACY_MY_PAGES_URL = 'http://minarsidur.island.is/'
 export const zIndex = {
   mobileMenu: 9,
   header: 10,
-  mobileToolbar: 10,
   notificationSidebar: 11,
   actionSidebar: 12,
   menu: 13,
