@@ -37,8 +37,9 @@ const availableFinancialStates = [
 ]
 
 export const CONNECTING_FLIGHT_GRACE_PERIOD = 48 * (1000 * 60 * 60) // 48 hours in milliseconds
-export const REYKJAVIK_FLIGHT_CODES = ['RVK', 'REK']
+export const REYKJAVIK_FLIGHT_CODES = ['RKV', 'REK']
 export const AKUREYRI_FLIGHT_CODES = ['AK']
+const ALLOWED_CONNECTING_FLIGHT_CODES = ['VPN', 'GRY', 'THO']
 
 @Injectable()
 export class FlightService {
@@ -77,6 +78,17 @@ export class FlightService {
       !REYKJAVIK_FLIGHT_CODES.includes(firstFlight.origin) &&
       !REYKJAVIK_FLIGHT_CODES.includes(secondFlight.destination) &&
       !REYKJAVIK_FLIGHT_CODES.includes(secondFlight.origin)
+    ) {
+      return false
+    }
+
+    // If neither flight is connected to the allowed connecting flight places
+    // then it is not eligible
+    if (
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(firstFlight.destination) &&
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(firstFlight.origin) &&
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(secondFlight.destination) &&
+      !ALLOWED_CONNECTING_FLIGHT_CODES.includes(secondFlight.origin)
     ) {
       return false
     }
