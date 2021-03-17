@@ -347,14 +347,14 @@ describe('validateAnswers', () => {
 })
 
 describe('buildValidationError', () => {
-  it('should return correct path when skipping optional values', () => {
+  it('should return correctly formatted error object when skipping optional values', () => {
     const buildError = buildValidationError('descriptiveNamespaceString')
     expect(buildError('Some message')).toStrictEqual({
       message: 'Some message',
       path: 'descriptiveNamespaceString',
     })
   })
-  it('should return correct path when provided all values', () => {
+  it('should return correctly formatted error object when provided all values', () => {
     const buildError = buildValidationError('descriptiveNamespaceString', 1337)
     expect(buildError('Some message', 'someField')).toStrictEqual({
       message: 'Some message',
