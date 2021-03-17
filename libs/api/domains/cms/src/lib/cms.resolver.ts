@@ -298,7 +298,7 @@ export class CmsResolver {
   ): Promise<LifeEventPage[]> {
     return this.cmsContentfulService.getLifeEventsInCategory(
       input.lang,
-      input.slug ?? '',
+      input.slug,
     )
   }
 

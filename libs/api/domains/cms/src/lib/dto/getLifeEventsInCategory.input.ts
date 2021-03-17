@@ -5,7 +5,7 @@ import { IsString } from 'class-validator'
 export class GetLifeEventsInCategoryInput {
   @Field()
   @IsString()
-  slug?: string
+  slug!: string
 
   @Field(() => String)
   @IsString()
