@@ -5,10 +5,10 @@ import { Featured, mapFeatured } from './featured.model'
 @ObjectType()
 export class Homepage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => [Featured])
-  featuredThings: Featured[]
+  featuredThings: Featured[] = []
 }
 
 export const mapHomepage = ({ sys, fields }: IHomepage): Homepage => ({

@@ -30,14 +30,14 @@ export class ArticleCategorySyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapArticleCategory(entry)
-          const content = mapped.description
+          const content = mapped.description ?? ''
           return {
             _id: mapped.slug,
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
             type: 'webArticleCategory',
-            termPool: createTerms([mapped.title, mapped.description]),
+            termPool: createTerms([mapped.title, content]),
             response: JSON.stringify({
               ...mapped,
               typename: 'ArticleCategory',

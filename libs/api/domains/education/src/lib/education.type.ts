@@ -4,7 +4,3 @@ export interface License {
   programme: string
   date: string
 }
-
-export interface SendLicense {
-  email: string
-}

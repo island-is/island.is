@@ -71,7 +71,7 @@ export const DocumentProvidersSearch = ({ organisationsPreview }: Props) => {
                     label: formatMessage(
                       m.documentProvidersSearchResultsActionCardLabel,
                     ),
-                    variant: 'secondary',
+                    variant: 'text',
                     onClick: () => {
                       history.push({
                         pathname: ServicePortalPath.DocumentProviderDocumentProvidersSingle.replace(

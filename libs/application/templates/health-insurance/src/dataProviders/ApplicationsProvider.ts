@@ -1,6 +1,5 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   ApplicationTypes,
@@ -9,9 +8,9 @@ import {
 export class ApplicationsProvider extends BasicDataProvider {
   type = 'ApplicationsProvider'
 
-  provide(application: Application): Promise<string> {
-    const query = `query GetApplicantApplications {
-      getApplicationsByApplicant(typeId: ${ApplicationTypes.HEALTH_INSURANCE}) {
+  provide(): Promise<string> {
+    const query = `query ApplicationApplications {
+      applicationApplications(input: { typeId: ${ApplicationTypes.HEALTH_INSURANCE} }) {
         id
         state
         created
@@ -25,7 +24,7 @@ export class ApplicationsProvider extends BasicDataProvider {
           return this.handleError(response.errors)
         }
 
-        return Promise.resolve(response.data?.getApplicationsByApplicant)
+        return Promise.resolve(response.data?.applicationApplications)
       })
       .catch((error) => {
         return this.handleError(error)

@@ -8,28 +8,28 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class AdgerdirPage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  description: string
+  description!: string
 
   @Field({ nullable: true })
   longDescription?: string
 
   @Field(() => [SliceUnion])
-  content: Array<typeof SliceUnion>
+  content: Array<typeof SliceUnion> = []
 
   @Field({ nullable: true })
   objective?: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field(() => [AdgerdirTag])
-  tags: AdgerdirTag[]
+  tags!: AdgerdirTag[]
 
   @Field({ nullable: true })
   link?: string
@@ -38,7 +38,7 @@ export class AdgerdirPage {
   linkButtonText?: string
 
   @Field()
-  status: string
+  status!: string
 
   @Field({ nullable: true })
   estimatedCostIsk?: number
@@ -47,7 +47,7 @@ export class AdgerdirPage {
   finalCostIsk?: number
 
   @Field(() => ProcessEntry, { nullable: true })
-  processEntry?: ProcessEntry
+  processEntry?: ProcessEntry | null
 }
 
 export const mapAdgerdirPage = ({
