@@ -25,7 +25,7 @@ const Header: React.FC = () => {
         }
         data-testid="link-to-home"
       >
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" cursor="pointer">
           <div className={styles.islandIsApplicationLogoWrapper}>
             <Logo width={146} />
           </div>

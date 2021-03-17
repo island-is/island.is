@@ -31,6 +31,7 @@ import {
   PageLayout,
   Modal,
   DateTime,
+  FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -273,217 +274,223 @@ export const StepTwo: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={7}>
-            <Text as="h1" variant="h1">
-              Óskir um fyrirtöku
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Ákærandi{' '}
-                <Box component="span" data-testid="prosecutor-tooltip">
-                  <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
-                </Box>
+          <FormContentContainer>
+            <Box marginBottom={7}>
+              <Text as="h1" variant="h1">
+                Óskir um fyrirtöku
               </Text>
             </Box>
-            <Select
-              name="prosecutor"
-              label="Veldu saksóknara"
-              defaultValue={defaultProsecutor}
-              options={prosecutors}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                setAndSendToServer(
-                  'prosecutorId',
-                  (selectedOption as ReactSelectOption).value.toString(),
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
-              required
-            />
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Dómstóll
-              </Text>
-            </Box>
-            <Select
-              name="court"
-              label="Veldu dómstól"
-              defaultValue={{
-                label:
-                  defaultCourt.length > 0
-                    ? defaultCourt[0].label
-                    : courts[0].label,
-                value:
-                  defaultCourt.length > 0
-                    ? defaultCourt[0].value
-                    : courts[0].value,
-              }}
-              options={courts}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                setAndSendToServer(
-                  'court',
-                  (selectedOption as ReactSelectOption).label,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
-            />
-          </Box>
-          {!workingCase.parentCase && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={3}>
                 <Text as="h3" variant="h3">
-                  Tími handtöku
+                  Ákærandi{' '}
+                  <Box component="span" data-testid="prosecutor-tooltip">
+                    <Tooltip text="Sá saksóknari sem valinn er hér er skráður fyrir kröfunni í öllum upplýsingaskeytum og skjölum sem tengjast kröfunni, og flytur málið fyrir dómstólum fyrir hönd síns embættis." />
+                  </Box>
+                </Text>
+              </Box>
+              <Select
+                name="prosecutor"
+                label="Veldu saksóknara"
+                defaultValue={defaultProsecutor}
+                options={prosecutors}
+                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  setAndSendToServer(
+                    'prosecutorId',
+                    (selectedOption as ReactSelectOption).value.toString(),
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+                required
+              />
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Dómstóll
+                </Text>
+              </Box>
+              <Select
+                name="court"
+                label="Veldu dómstól"
+                defaultValue={{
+                  label:
+                    defaultCourt.length > 0
+                      ? defaultCourt[0].label
+                      : courts[0].label,
+                  value:
+                    defaultCourt.length > 0
+                      ? defaultCourt[0].value
+                      : courts[0].value,
+                }}
+                options={courts}
+                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  setAndSendToServer(
+                    'court',
+                    (selectedOption as ReactSelectOption).label,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            {!workingCase.parentCase && (
+              <Box component="section" marginBottom={5}>
+                <Box marginBottom={3}>
+                  <Text as="h3" variant="h3">
+                    Tími handtöku
+                  </Text>
+                </Box>
+                <DateTime
+                  datepickerId="arrestDate"
+                  maxDate={new Date()}
+                  datepickerErrorMessage={arrestDateErrorMessage}
+                  selectedDate={
+                    workingCase.arrestDate
+                      ? new Date(workingCase.arrestDate)
+                      : null
+                  }
+                  handleCloseCalander={(date) =>
+                    setAndSendDateToServer(
+                      'arrestDate',
+                      workingCase.arrestDate,
+                      date,
+                      workingCase,
+                      false,
+                      setWorkingCase,
+                      updateCase,
+                      setArrestDateErrorMessage,
+                    )
+                  }
+                  disabledTime={!workingCase.arrestDate}
+                  timeOnChange={(evt) =>
+                    validateAndSetTime(
+                      'arrestDate',
+                      workingCase.arrestDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      setWorkingCase,
+                      arrestTimeErrorMessage,
+                      setArrestTimeErrorMessage,
+                      setArrestTime,
+                    )
+                  }
+                  timeOnBlur={(evt) =>
+                    validateAndSendTimeToServer(
+                      'arrestDate',
+                      workingCase.arrestDate,
+                      evt.target.value,
+                      ['empty', 'time-format'],
+                      workingCase,
+                      updateCase,
+                      setArrestTimeErrorMessage,
+                    )
+                  }
+                  timeName="arrestTime"
+                  timeErrorMessage={arrestTimeErrorMessage}
+                  timeDefaultValue={arrestTime}
+                />
+              </Box>
+            )}
+            <Box component="section" marginBottom={10}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Ósk um fyrirtökudag og tíma{' '}
+                  <Box
+                    data-testid="requested-court-date-tooltip"
+                    component="span"
+                  >
+                    <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
+                  </Box>
                 </Text>
               </Box>
               <DateTime
-                datepickerId="arrestDate"
-                maxDate={new Date()}
-                datepickerErrorMessage={arrestDateErrorMessage}
+                datepickerId="reqCourtDate"
+                datepickerErrorMessage={requestedCourtDateErrorMessage}
+                datepickerIcon={
+                  workingCase.courtDate ? 'lockClosed' : undefined
+                }
+                minDate={new Date()}
                 selectedDate={
-                  workingCase.arrestDate
-                    ? new Date(workingCase.arrestDate)
+                  workingCase.requestedCourtDate
+                    ? parseISO(workingCase.requestedCourtDate.toString())
                     : null
                 }
-                handleCloseCalander={(date) =>
+                handleCloseCalander={(date) => {
                   setAndSendDateToServer(
-                    'arrestDate',
-                    workingCase.arrestDate,
+                    'requestedCourtDate',
+                    workingCase.requestedCourtDate,
                     date,
                     workingCase,
-                    false,
+                    true,
                     setWorkingCase,
                     updateCase,
-                    setArrestDateErrorMessage,
+                    setRequestedCourtDateErrorMessage,
                   )
-                }
-                disabledTime={!workingCase.arrestDate}
+                }}
+                disabledDate={Boolean(workingCase.courtDate)}
+                dateIsRequired
                 timeOnChange={(evt) =>
                   validateAndSetTime(
-                    'arrestDate',
-                    workingCase.arrestDate,
+                    'requestedCourtDate',
+                    workingCase.requestedCourtDate,
                     evt.target.value,
                     ['empty', 'time-format'],
                     workingCase,
                     setWorkingCase,
-                    arrestTimeErrorMessage,
-                    setArrestTimeErrorMessage,
-                    setArrestTime,
+                    requestedCourtTimeErrorMessage,
+                    setRequestedCourtTimeErrorMessage,
+                    setRequestedCourtTime,
                   )
                 }
                 timeOnBlur={(evt) =>
                   validateAndSendTimeToServer(
-                    'arrestDate',
-                    workingCase.arrestDate,
+                    'requestedCourtDate',
+                    workingCase.requestedCourtDate,
                     evt.target.value,
                     ['empty', 'time-format'],
                     workingCase,
                     updateCase,
-                    setArrestTimeErrorMessage,
+                    setRequestedCourtTimeErrorMessage,
                   )
                 }
-                timeName="arrestTime"
-                timeErrorMessage={arrestTimeErrorMessage}
-                timeDefaultValue={arrestTime}
+                timeName="requestedCourtDate"
+                timeLabel="Ósk um tíma (kk:mm)"
+                timeErrorMessage={requestedCourtTimeErrorMessage}
+                timeDefaultValue={requestedCourtTime}
+                timeIcon={workingCase.courtDate ? 'lockClosed' : undefined}
+                disabledTime={
+                  !workingCase.requestedCourtDate ||
+                  Boolean(workingCase.courtDate)
+                }
+                timeIsRequired
               />
-            </Box>
-          )}
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Ósk um fyrirtökudag og tíma{' '}
-                <Box
-                  data-testid="requested-court-date-tooltip"
-                  component="span"
-                >
-                  <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
+              {workingCase.courtDate && (
+                <Box marginTop={1}>
+                  <Text variant="eyebrow">
+                    Fyrirtökudegi og tíma hefur verið úthlutað
+                  </Text>
                 </Box>
-              </Text>
+              )}
             </Box>
-            <DateTime
-              datepickerId="reqCourtDate"
-              datepickerErrorMessage={requestedCourtDateErrorMessage}
-              datepickerIcon={workingCase.courtDate ? 'lockClosed' : undefined}
-              minDate={new Date()}
-              selectedDate={
-                workingCase.requestedCourtDate
-                  ? parseISO(workingCase.requestedCourtDate.toString())
-                  : null
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
+              onNextButtonClick={async () => await handleNextButtonClick()}
+              nextIsDisabled={
+                transitionLoading ||
+                (workingCase.arrestDate && !isValidArrestTime?.isValid) ||
+                !isValidRequestedCourtDate?.isValid ||
+                !isValidRequestedCourtTime?.isValid
               }
-              handleCloseCalander={(date) => {
-                setAndSendDateToServer(
-                  'requestedCourtDate',
-                  workingCase.requestedCourtDate,
-                  date,
-                  workingCase,
-                  true,
-                  setWorkingCase,
-                  updateCase,
-                  setRequestedCourtDateErrorMessage,
-                )
-              }}
-              disabledDate={Boolean(workingCase.courtDate)}
-              dateIsRequired
-              timeOnChange={(evt) =>
-                validateAndSetTime(
-                  'requestedCourtDate',
-                  workingCase.requestedCourtDate,
-                  evt.target.value,
-                  ['empty', 'time-format'],
-                  workingCase,
-                  setWorkingCase,
-                  requestedCourtTimeErrorMessage,
-                  setRequestedCourtTimeErrorMessage,
-                  setRequestedCourtTime,
-                )
-              }
-              timeOnBlur={(evt) =>
-                validateAndSendTimeToServer(
-                  'requestedCourtDate',
-                  workingCase.requestedCourtDate,
-                  evt.target.value,
-                  ['empty', 'time-format'],
-                  workingCase,
-                  updateCase,
-                  setRequestedCourtTimeErrorMessage,
-                )
-              }
-              timeName="requestedCourtDate"
-              timeLabel="Ósk um tíma (kk:mm)"
-              timeErrorMessage={requestedCourtTimeErrorMessage}
-              timeDefaultValue={requestedCourtTime}
-              timeIcon={workingCase.courtDate ? 'lockClosed' : undefined}
-              disabledTime={
-                !workingCase.requestedCourtDate ||
-                Boolean(workingCase.courtDate)
-              }
-              timeIsRequired
+              nextIsLoading={transitionLoading}
             />
-            {workingCase.courtDate && (
-              <Box marginTop={1}>
-                <Text variant="eyebrow">
-                  Fyrirtökudegi og tíma hefur verið úthlutað
-                </Text>
-              </Box>
-            )}
-          </Box>
-          <FormFooter
-            previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
-            onNextButtonClick={async () => await handleNextButtonClick()}
-            nextIsDisabled={
-              transitionLoading ||
-              (workingCase.arrestDate && !isValidArrestTime?.isValid) ||
-              !isValidRequestedCourtDate?.isValid ||
-              !isValidRequestedCourtTime?.isValid
-            }
-            nextIsLoading={transitionLoading}
-          />
+          </FormContentContainer>
           {modalVisible && (
             <Modal
               title="Viltu senda tilkynningu?"
