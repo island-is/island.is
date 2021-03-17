@@ -147,17 +147,9 @@ export function findSectionIndex(
 }
 
 export function findSubSectionIndex(
-  section: Section,
-  sectionIndex: number,
   subSections: SubSection[],
   subSection: SubSection,
 ): number {
-  if (sectionIndex === -1) {
-    return -1
-  }
-  if (!section) {
-    return -1
-  }
   for (let i = 0; i < subSections.length; i++) {
     if (subSections[i].id === subSection.id) {
       return i

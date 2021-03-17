@@ -295,12 +295,10 @@ function convertFormNodeToScreens(
           answers,
           externalData,
         )
-        subSectionIndex = findSubSectionIndex(
-          section,
-          sectionIndex,
-          subSections,
-          child as SubSection,
-        )
+        subSectionIndex =
+          !section || sectionIndex === -1
+            ? -1
+            : findSubSectionIndex(subSections, child as SubSection)
       }
       newScreens = convertFormNodeToScreens(
         child,
