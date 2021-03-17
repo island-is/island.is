@@ -5,13 +5,13 @@ import { IsString } from 'class-validator'
 export class GetOrganizationSubpageInput {
   @Field()
   @IsString()
-  organizationSlug: string
+  organizationSlug!: string
 
   @Field()
   @IsString()
-  slug: string
+  slug!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang = 'is-IS'
 }

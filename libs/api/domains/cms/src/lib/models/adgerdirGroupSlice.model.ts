@@ -10,22 +10,22 @@ export class AdgerdirGroupSlice {
   }
 
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field({ nullable: true })
-  subtitle?: string
+  subtitle!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
-  description?: string
+  description!: string
 
   @Field(() => Image, { nullable: true })
-  image?: Image
+  image?: Image | null
 
   @Field(() => [AdgerdirPage])
-  pages: AdgerdirPage[]
+  pages!: AdgerdirPage[]
 }
 
 export const mapAdgerdirGroupSlice = ({

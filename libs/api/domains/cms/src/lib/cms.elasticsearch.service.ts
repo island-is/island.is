@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   dateResolution,
   ElasticService,
+  elasticTagField,
   SortDirection,
   SortField,
   sortRule,
@@ -37,7 +38,7 @@ export class CmsElasticsearchService {
     )
 
     return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
-      JSON.parse(response._source.response),
+      JSON.parse(response._source.response ?? '[]'),
     )
   }
 
@@ -47,7 +48,7 @@ export class CmsElasticsearchService {
   ): Promise<Article[]> {
     const query = {
       types: ['webArticle'],
-      tags: [],
+      tags: [] as elasticTagField[],
       sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
       size: input.size,
     }
@@ -72,7 +73,7 @@ export class CmsElasticsearchService {
       query,
     )
     return articlesResponse.hits.hits.map<Article>((response) =>
-      JSON.parse(response._source.response),
+      JSON.parse(response._source.response ?? '[]'),
     )
   }
 
@@ -121,7 +122,7 @@ export class CmsElasticsearchService {
     return {
       total: articlesResponse.hits.total.value,
       items: articlesResponse.hits.hits.map<News>((response) =>
-        JSON.parse(response._source.response),
+        JSON.parse(response._source.response ?? '[]'),
       ),
     }
   }
@@ -156,9 +157,13 @@ export class CmsElasticsearchService {
     )
 
     // we return dates as array of strings on the format y-M
-    return newsDatesResponse.aggregations.dates.buckets.map(
-      (aggregationResult) => aggregationResult.key_as_string,
-    )
+    if (newsDatesResponse.aggregations) {
+      return newsDatesResponse.aggregations.dates.buckets.map(
+        (aggregationResult) => aggregationResult.key_as_string,
+      )
+    } else {
+      return []
+    }
   }
 
   async getSingleDocumentTypeBySlug<RequestedType>(
@@ -200,8 +205,13 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
-  async getSingleAboutPage(index: string, id: string): Promise<AboutPage> {
+  async getSingleAboutPage(
+    index: string,
+    id: string,
+  ): Promise<AboutPage | null> {
     const aboutPageDocument = await this.elasticService.findById(index, id)
-    return JSON.parse(aboutPageDocument.body?._source?.response)
+    return aboutPageDocument.body?._source?.response
+      ? JSON.parse(aboutPageDocument.body?._source?.response)
+      : null
   }
 }

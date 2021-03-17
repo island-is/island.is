@@ -4,5 +4,5 @@ import { AdgerdirTag } from './adgerdirTag.model'
 @ObjectType()
 export class AdgerdirTags {
   @Field(() => [AdgerdirTag])
-  items: AdgerdirTag[]
+  items?: AdgerdirTag[]
 }
