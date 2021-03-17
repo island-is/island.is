@@ -75,11 +75,7 @@ export class ZendeskService {
     return null
   }
 
-  async createUser(
-    name: string,
-    email: string,
-    phone?: string,
-  ): Promise<User | null> {
+  async createUser(name: string, email: string, phone?: string): Promise<User> {
     const identities = []
 
     if (phone) {
