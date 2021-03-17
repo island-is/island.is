@@ -177,10 +177,18 @@ export class PublicFlightController {
       date: new Date(Date.parse(flight.flightLegs[0].date.toString())),
     }
 
-    if (
-      !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.destination) &&
-      !REYKJAVIK_FLIGHT_CODES.includes(incomingLeg.origin)
-    ) {
+    let hasReykjavik = false
+    for (const flightLeg of flight.flightLegs) {
+      if (
+        REYKJAVIK_FLIGHT_CODES.includes(flightLeg.origin) ||
+        REYKJAVIK_FLIGHT_CODES.includes(flightLeg.destination)
+      ) {
+        hasReykjavik = true
+        break
+      }
+    }
+
+    if (!hasReykjavik) {
       const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
         discount.connectionDiscountCodes,
         params.discountCode,

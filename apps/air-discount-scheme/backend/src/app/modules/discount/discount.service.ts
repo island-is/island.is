@@ -190,12 +190,12 @@ export class DiscountService {
     const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
 
     if (!cacheValue) {
-      return this.getDiscountByConnectionDiscountCode(discountCode)
+      return await this.getDiscountByConnectionDiscountCode(discountCode)
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
     return new Discount(
-      cacheValue.discountCode,
+      discountCode,
       cacheValue.connectionDiscountCodes ?? [],
       cacheValue.nationalId,
       ttl,

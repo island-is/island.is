@@ -151,9 +151,7 @@ export class FlightService {
   async findThisYearsConnectableFlightsByNationalId(
     nationalId: string,
   ): Promise<Flight[]> {
-    const flights = await this.findThisYearsConnectableFlightsByNationalId(
-      nationalId,
-    )
+    const flights = await this.findThisYearsFlightsByNationalId(nationalId)
     // Filter out non-Reykjavík flights
     return flights.filter((flight) => {
       return (
