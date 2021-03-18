@@ -9,25 +9,25 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class TwoColumnText {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field({ nullable: true })
   rightTitle?: string
 
   @Field(() => [SliceUnion], { nullable: true })
-  rightContent: Array<typeof SliceUnion>
+  rightContent?: Array<typeof SliceUnion>
 
   @Field(() => Link, { nullable: true })
-  rightLink?: Link
+  rightLink?: Link | null
 
   @Field({ nullable: true })
   leftTitle?: string
 
   @Field(() => [SliceUnion], { nullable: true })
-  leftContent: Array<typeof SliceUnion>
+  leftContent?: Array<typeof SliceUnion>
 
   @Field(() => Link, { nullable: true })
-  leftLink?: Link
+  leftLink?: Link | null
 }
 
 export const mapTwoColumnText = ({

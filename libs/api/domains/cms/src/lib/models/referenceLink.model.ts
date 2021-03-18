@@ -5,14 +5,14 @@ import { PageTypes } from '../unions/page.union'
 @ObjectType()
 export class ReferenceLink {
   @Field()
-  slug: string
+  slug!: string
 
   @Field()
-  type: string
+  type!: string
 }
 
 // this is here cause page content types names don't match in API and Contentful
-const typeMap = {
+const typeMap: { [key: string]: string } = {
   vidspyrnaPage: 'adgerdirpage',
   'vidspyrna-frontpage': 'adgerdirfrontpage',
 }

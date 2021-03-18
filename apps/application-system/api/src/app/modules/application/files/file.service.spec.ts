@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
-import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
+import { SigningModule, SigningService } from '@island.is/dokobit-signing'
 import { AwsService } from './aws.service'
 import * as pdf from './utils/pdf'
 import { Application } from './../application.model'
@@ -100,17 +100,15 @@ describe('FileService', () => {
   beforeEach(async () => {
     const config: ApplicationConfig = { presignBucket: bucket }
     const module = await Test.createTestingModule({
-      imports: [LoggingModule],
+      imports: [
+        LoggingModule,
+        SigningModule.register({
+          url: 'Test Url',
+          accessToken: 'Test Access Token',
+        }),
+      ],
       providers: [
         FileService,
-        {
-          provide: SIGNING_OPTIONS,
-          useValue: {
-            url: 'Test Url',
-            accessToken: 'Test Access Token',
-          },
-        },
-        SigningService,
         AwsService,
         { provide: APPLICATION_CONFIG, useValue: config },
       ],
