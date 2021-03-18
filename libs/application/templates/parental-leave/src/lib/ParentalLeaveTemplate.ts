@@ -33,7 +33,7 @@ enum Roles {
 }
 
 export enum States {
-  // First flow
+  // Draft flow
   DRAFT = 'draft',
 
   OTHER_PARENT_APPROVAL = 'otherParentApproval',
