@@ -7,7 +7,7 @@ import { SortField } from '@island.is/content-search-toolkit'
 export class GetArticlesInput {
   @Field(() => String)
   @IsString()
-  lang: ElasticsearchIndexLocale
+  lang: ElasticsearchIndexLocale = 'is'
 
   @Field({ nullable: true })
   @IsString()

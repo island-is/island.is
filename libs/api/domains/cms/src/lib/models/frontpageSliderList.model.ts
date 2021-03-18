@@ -5,7 +5,7 @@ import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
 @ObjectType()
 export class FrontpageSliderList {
   @Field(() => [FrontpageSlider])
-  items: FrontpageSlider[]
+  items: FrontpageSlider[] = []
 }
 
 export const mapFrontpageSliderList = ({

@@ -79,8 +79,12 @@ export const settingsModule: ServicePortalModule = {
       const res = await client.query<Query>({
         query: USER_PROFILE,
       })
+
       // If the user profile is empty, we render the onboarding modal
-      if (res.data?.getUserProfile === null)
+      if (
+        process.env.NODE_ENV !== 'development' &&
+        res.data?.getUserProfile === null
+      )
         routes.push({
           render: () =>
             lazy(() =>
@@ -90,6 +94,7 @@ export const settingsModule: ServicePortalModule = {
     } catch (error) {
       Sentry.captureException(error)
     }
+
     return routes
   },
 }

@@ -29,6 +29,7 @@ export class ScopesGuard implements CanActivate {
 
   private getUserScopes(context: ExecutionContext): string[] {
     const request = context.getArgs()[0]
+
     if (request) {
       return request.user.scope
     } else {

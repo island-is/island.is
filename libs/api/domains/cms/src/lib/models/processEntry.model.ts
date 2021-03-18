@@ -5,22 +5,22 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class ProcessEntry {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  type: string
+  type!: string
 
   @Field()
-  processTitle: string
+  processTitle!: string
 
   @Field()
-  processLink: string
+  processLink!: string
 
   @Field({ nullable: true })
   openLinkInModal?: boolean
 
   @Field()
-  buttonText: string
+  buttonText!: string
 }
 
 export const mapProcessEntry = ({

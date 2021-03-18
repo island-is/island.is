@@ -15,7 +15,7 @@ import { educationStudentAssessmentModule } from '@island.is/service-portal/educ
 // or if they are ready for beta testing. Modules that are ready
 // for beta testing should be feature flagged.
 //
-// To feature flag a module add it to the featureFlaggedMoudles below
+// To feature flag a module add it to the featureFlaggedModules below
 // and create a feature flag in Configcat called
 // `isServicePortalFinanceModuleEnabled` where your module is called `finance`.
 
