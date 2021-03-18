@@ -698,6 +698,9 @@ export interface IFeaturedArticlesFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Application Label */
+  applicationLabel: string
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -1863,8 +1866,23 @@ export interface IOrganizationPageFields {
   /** Description */
   description?: string | undefined
 
+  /** Theme */
+  theme: 'default' | 'syslumenn' | 'digital_iceland'
+
   /** Slices */
-  slices?: (IDistricts | IFeaturedArticles)[] | undefined
+  slices?:
+    | (
+        | IBigBulletList
+        | IDistricts
+        | IMailingListSignup
+        | IFeaturedArticles
+        | ISectionHeading
+        | ILogoListSlice
+        | IStorySection
+        | ITabSection
+        | ITimeline
+      )[]
+    | undefined
 
   /** Menu Links */
   menuLinks?: ILinkGroup[] | undefined
@@ -1875,8 +1893,14 @@ export interface IOrganizationPageFields {
   /** Featured Image */
   featuredImage?: Asset | undefined
 
+  /** Sidebar Cards */
+  sidebarCards?: ISidebarCard[] | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -1913,9 +1937,12 @@ export interface IOrganizationSubpageFields {
   slices?:
     | (
         | IAccordionSlice
+        | IContactUs
         | IDistricts
         | IOffices
         | IOneColumnText
+        | ITeamList
+        | ITellUsAStory
         | ITwoColumnText
       )[]
     | undefined
@@ -2322,6 +2349,37 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
     contentType: {
       sys: {
         id: 'sectionWithImage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISidebarCardFields {
+  /** Type */
+  type?: 'info' | 'warning' | undefined
+
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface ISidebarCard extends Entry<ISidebarCardFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sidebarCard'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3342,6 +3400,7 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sidebarCard'
   | 'sideMenu'
   | 'sliceConnectedComponent'
   | 'statistic'
