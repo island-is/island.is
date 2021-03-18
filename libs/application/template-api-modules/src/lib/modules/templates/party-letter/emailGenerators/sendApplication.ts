@@ -1,36 +1,44 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
-
+import { Buffer } from 'exceljs'
 import { EmailTemplateGenerator } from '../../../../types'
+import { Attachment } from 'nodemailer/lib/mailer'
 
-export const generateSendApplicationEmail: EmailTemplateGenerator = (props) => {
-  const {
-    application,
-    options: { locale, clientLocationOrigin },
-  } = props
+export const generateSendApplicationEmail = (
+  signatureExcelFileBuffer: Buffer,
+): EmailTemplateGenerator => (props) => {
+  const { application } = props
+  const destinationEmail = 's@kogk.is'
 
-  const applicantEmail = 's@kogk.is' // get(application.answers, 'applicant.email')
-  const applicationLink = `${clientLocationOrigin}/umsokn/${application.id}`
+  const partyLetter = get(application.answers, 'partyLetter')
+  const partyName = get(application.answers, 'partyName')
+  const selectedNationalId = get(application.answers, 'selectedNationalId')
+  const applicantEmail = get(application.answers, 'applicantEmail')
+  const applicantNationalId = application.applicant
+  const applicantName = get(
+    application.externalData,
+    'nationalRegistry.fullName',
+  )
 
-  // TODO translate using locale
-  const subject = locale === 'is' ? 'Umsókn samþykkt' : 'Application approved'
-  const body =
-    locale === 'is'
-      ? dedent(`Góðan dag.
+  const subject = `Umsókn um listabókstaf - ${application.id}`
+  const body = dedent(`
+    Listabókstafur: ${partyLetter}
+    Nafn flokks: ${partyName}
+    Kennitala framboðs: ${selectedNationalId}
 
-        Umsókn þín um að gerast skjalaveita hefur verið samþykkt.
-        <a href=${applicationLink} target="_blank">Smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
-        
-        Með kveðju,
-        starfsfólk island.is
-      `)
-      : dedent(`Hello.
+    Umsækjandi: ${applicantName}
+    Kennitala umsækjanda: ${applicantNationalId}
+    Netfang: ${applicantEmail}
+    
+    (Athugið að meðmælendur eru í áhengdu excel skjali)
+  `)
 
-        Your application for document providing has been approved.
-        <a href=${applicationLink} target="_blank">Click here to implement and test</a>.
-        Best regards,
-        Island.is
-      `)
+  const attachments = [
+    {
+      filename: 'signatures.xlsx',
+      content: signatureExcelFileBuffer,
+    },
+  ] as Attachment[]
 
   return {
     from: {
@@ -40,7 +48,7 @@ export const generateSendApplicationEmail: EmailTemplateGenerator = (props) => {
     to: [
       {
         name: '',
-        address: applicantEmail as string,
+        address: destinationEmail,
       },
     ],
     subject,
@@ -48,5 +56,6 @@ export const generateSendApplicationEmail: EmailTemplateGenerator = (props) => {
       .split('')
       .map((c) => (c === '\n' ? `<br />\n` : c))
       .join('')}</p>`,
+    attachments,
   }
 }

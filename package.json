@@ -136,6 +136,7 @@
     "entropy-string": "4.2.0",
     "escape-html": "1.0.3",
     "eslint-plugin-local-rules": "1.0.1",
+    "exceljs": "4.2.1",
     "express": "4.17.1",
     "express-validator": "6.4.1",
     "faker": "5.1.0",
