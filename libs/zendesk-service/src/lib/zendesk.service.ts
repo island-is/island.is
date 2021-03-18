@@ -17,7 +17,7 @@ export type User = {
   id: number
 }
 
-export interface ZendeskOptions {
+export interface ZendeskServiceOptions {
   email: string
   token: string
   subdomain: string
@@ -29,15 +29,15 @@ export class ZendeskService {
 
   constructor(
     @Inject(ZENDESK_OPTIONS)
-    private readonly config: ZendeskOptions,
+    private readonly options: ZendeskServiceOptions,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
     const token = Buffer.from(
-      `${this.config.email}/token:${this.config.token}`,
+      `${this.options.email}/token:${this.options.token}`,
     ).toString('base64')
 
-    this.#api = `https://${config.subdomain}.zendesk.com/api/v2`
+    this.#api = `https://${options.subdomain}.zendesk.com/api/v2`
 
     this.#params = {
       headers: {
