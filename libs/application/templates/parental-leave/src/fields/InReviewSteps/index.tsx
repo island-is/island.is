@@ -46,6 +46,7 @@ const statesMap: StatesMap = {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]: ReviewSectionState.complete,
     [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.complete,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
   employer: {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
@@ -53,6 +54,7 @@ const statesMap: StatesMap = {
     [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.inProgress,
     // employerRequiresAction: ReviewSectionState.requiresAction, // TODO: Replace with needs action screen.
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
   vinnumalastofnun: {
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
@@ -159,38 +161,40 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
                 )}
             </Button>
           </Box>
-          <Box display="inlineBlock">
-            <Button
-              colorScheme="default"
-              iconType="filled"
-              size="small"
-              type="button"
-              variant="text"
-              icon="pencil"
-              loading={loadingSubmit}
-              disabled={loadingSubmit}
-              onClick={async () => {
-                const res = await submitApplication({
-                  variables: {
-                    input: {
-                      id: application.id,
-                      event: 'EDIT',
-                      answers: application.answers,
+          {application.state === ApplicationStates.APPROVED && (
+            <Box display="inlineBlock">
+              <Button
+                colorScheme="default"
+                iconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                icon="pencil"
+                loading={loadingSubmit}
+                disabled={loadingSubmit}
+                onClick={async () => {
+                  const res = await submitApplication({
+                    variables: {
+                      input: {
+                        id: application.id,
+                        event: 'EDIT',
+                        answers: application.answers,
+                      },
                     },
-                  },
-                })
+                  })
 
-                if (res?.data) {
-                  // Takes them to the next state (which loads the relevant form)
-                  refetch?.()
-                }
-              }}
-            >
-              {formatMessage(
-                parentalLeaveFormMessages.reviewScreen.buttonsEdit,
-              )}
-            </Button>
-          </Box>
+                  if (res?.data) {
+                    // Takes them to the next state (which loads the relevant form)
+                    refetch?.()
+                  }
+                }}
+              >
+                {formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.buttonsEdit,
+                )}
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
 
