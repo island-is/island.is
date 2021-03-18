@@ -6,12 +6,12 @@ export function Button({ children }: { children?: React.ReactNode }) {
   return (
     <View
       style={{
-        backgroundColor: theme.color.blue400,
+        backgroundColor: theme.color.blue600,
         borderRadius: 8,
         padding: 8,
       }}
     >
-      <Text style={{ color: theme.color.white }}>{children}</Text>
+      <Text style={{ color: theme.color.blue300 }}>{children}</Text>
     </View>
   )
 }

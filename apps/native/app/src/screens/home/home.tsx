@@ -2,9 +2,9 @@ import React from 'react'
 import { SafeAreaView, StatusBar, Image } from 'react-native'
 import { Button } from '@island.is/island-ui-native'
 // import { WebView } from 'react-native-webview'
-import logo from './logo.png';
+import logo from '../../assets/logo.png';
 
-const App = () => {
+export const Home = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -27,4 +27,10 @@ const App = () => {
   )
 }
 
-export default App
+Home.options = {
+  topBar: {
+    title: {
+      text: 'Home'
+    }
+  }
+};

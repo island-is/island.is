@@ -4,9 +4,9 @@ import { render } from '@testing-library/react-native'
 
 // Avoid conflict with app.json
 // @ts-ignore
-import App from './App.tsx'
+import { Home } from './Home.tsx'
 
 it('renders correctly', () => {
-  const { getByTestId } = render(<App />)
+  const { getByTestId } = render(<Home />)
   expect(getByTestId('heading')).toHaveTextContent('Welcome')
 })
