@@ -46,7 +46,7 @@ import {
   CheckFlightParams,
   CheckFlightBody,
 } from './dto'
-import { DiscountService } from '../discount'
+import { Discount, DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import { HttpRequest } from '../../app.types'
@@ -62,6 +62,93 @@ export class PublicFlightController {
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
+
+  private async validateConnectionFlights(
+    discount: Discount,
+    discountCode: string,
+    flightLegs: FlightLeg[],
+  ): Promise<boolean> {
+    const flightLegCount = flightLegs.length
+
+    const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
+      discount.connectionDiscountCodes,
+      discountCode,
+    )
+
+    if (!connectionDiscountCode) {
+      throw new ForbiddenException(
+        'The provided discount code is either not intended for connecting flights or is expired',
+      )
+    }
+
+    const connectingId = connectionDiscountCode.flightId
+
+    // Make sure that all the flightLegs contain valid airports and valid airports only
+    // Note: at this point, none of the flightLegs contain Reykjavík
+    const ALLOWED_FLIGHT_CODES = [
+      ...AKUREYRI_FLIGHT_CODES,
+      ...ALLOWED_CONNECTING_FLIGHT_CODES,
+    ]
+    for (const flightLeg of flightLegs) {
+      if (
+        !ALLOWED_FLIGHT_CODES.includes(flightLeg.origin) ||
+        !ALLOWED_FLIGHT_CODES.includes(flightLeg.destination)
+      ) {
+        throw new ForbiddenException(
+          `A flightleg contains invalid flight code/s [${flightLeg.origin}, ${flightLeg.destination}]. Allowed flight codes: [${ALLOWED_FLIGHT_CODES}]`,
+        )
+      }
+    }
+
+    // Make sure the flightLegs are chronological
+    const chronoLogicallegs = flightLegs.sort((a, b) => {
+      const adate = new Date(Date.parse(a.date.toString()))
+      const bdate = new Date(Date.parse(b.date.toString()))
+      return adate.getTime() - bdate.getTime()
+    })
+
+    let incomingLeg = {
+      origin: chronoLogicallegs[0].origin,
+      destination: chronoLogicallegs[0].destination,
+      date: new Date(Date.parse(chronoLogicallegs[0].date.toString())),
+    }
+
+    // Validate the first chronological flightLeg of the connection flight
+    let isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
+      connectingId,
+      incomingLeg as FlightLeg, // must have date, destination and origin
+    )
+
+    // If round-trip
+    if (
+      chronoLogicallegs[0].origin ===
+      chronoLogicallegs[flightLegCount - 1].destination
+    ) {
+      // Find a valid connection for the return trip to Akureyri
+      incomingLeg = {
+        origin: chronoLogicallegs[flightLegCount - 1].origin,
+        destination: chronoLogicallegs[flightLegCount - 1].destination,
+        date: new Date(
+          Date.parse(chronoLogicallegs[flightLegCount - 1].date.toString()),
+        ),
+      }
+      // Lazy evaluation makes this cheap
+      isConnectingFlight =
+        isConnectingFlight &&
+        (await this.flightService.isFlightLegConnectingFlight(
+          connectingId,
+          incomingLeg as FlightLeg,
+        ))
+    }
+
+    if (!isConnectingFlight) {
+      throw new ForbiddenException(
+        'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Each connecting flight must go from/to Akureyri',
+      )
+    } else {
+      return true
+    }
+  }
 
   @Post('discounts/:discountCode/isValidConnectionFlight')
   @ApiResponse({
@@ -89,37 +176,15 @@ export class PublicFlightController {
       params.discountCode,
     )
 
-    const incomingFlight = {
-      ...body,
-      date: new Date(Date.parse(body.date.toString())),
-    }
-
     if (!discount) {
       throw new BadRequestException('Discount code is invalid')
     }
 
-    const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
-      discount.connectionDiscountCodes,
+    await this.validateConnectionFlights(
+      discount,
       params.discountCode,
+      body.flightLegs as FlightLeg[],
     )
-
-    if (!connectionDiscountCode) {
-      throw new ForbiddenException(
-        'The provided discount code is either not intended for connecting flights or is expired',
-      )
-    }
-
-    const connectingId = connectionDiscountCode.flightId
-    const flightOk = await this.flightService.isFlightLegConnectingFlight(
-      connectingId,
-      incomingFlight as FlightLeg,
-    )
-
-    if (!flightOk) {
-      throw new BadRequestException(
-        `User does not have any flights that may correspond to a connection flight`,
-      )
-    }
   }
 
   @Post('discounts/:discountCode/flights')
@@ -158,19 +223,8 @@ export class PublicFlightController {
       throw new ForbiddenException('User postalcode does not meet conditions')
     }
 
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countThisYearsFlightLegsByNationalId(
-      discount.nationalId,
-    )
-    if (flightLegsLeft < flight.flightLegs.length) {
-      throw new ForbiddenException('Flight leg quota is exceeded')
-    }
-
     let connectingFlight = false
     let connectingId = undefined
-
-    const flightLegCount = flight.flightLegs.length
 
     let hasReykjavik = false
     let hasAkureyri = false
@@ -190,89 +244,27 @@ export class PublicFlightController {
     }
 
     if (!hasReykjavik) {
-      const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
-        discount.connectionDiscountCodes,
+      connectingFlight = await this.validateConnectionFlights(
+        discount,
         params.discountCode,
+        flight.flightLegs as FlightLeg[],
       )
-
-      if (!connectionDiscountCode) {
-        throw new ForbiddenException(
-          'The provided discount code is either not intended for connecting flights or is expired',
+      if (connectingFlight) {
+        const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
+          discount.connectionDiscountCodes,
+          params.discountCode,
         )
-      }
-
-      connectingId = connectionDiscountCode.flightId
-
-      // Make sure that all the flightLegs contain valid airports and valid airports only
-      // Note: at this point, none of the flightLegs contain Reykjavík
-      const ALLOWED_FLIGHT_CODES = [
-        ...AKUREYRI_FLIGHT_CODES,
-        ...ALLOWED_CONNECTING_FLIGHT_CODES,
-      ]
-      for (const flightLeg of flight.flightLegs) {
-        if (
-          !ALLOWED_FLIGHT_CODES.includes(flightLeg.origin) ||
-          !ALLOWED_FLIGHT_CODES.includes(flightLeg.destination)
-        ) {
-          throw new ForbiddenException(
-            `A flightleg contains invalid flight code/s [${flightLeg.origin}, ${flightLeg.destination}]. Allowed flight codes: [${ALLOWED_FLIGHT_CODES}]`,
-          )
-        }
-      }
-
-      // Make sure the flightLegs are chronological
-      const chronoLogicallegs = flight.flightLegs.sort((a, b) => {
-        const adate = new Date(Date.parse(a.date.toString()))
-        const bdate = new Date(Date.parse(b.date.toString()))
-        return adate.getTime() - bdate.getTime()
-      })
-
-      let incomingLeg = {
-        origin: chronoLogicallegs[0].origin,
-        destination: chronoLogicallegs[0].destination,
-        date: new Date(Date.parse(chronoLogicallegs[0].date.toString())),
-      }
-
-      // Validate the first chronological flightLeg of the connection flight
-      let isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
-        connectingId,
-        incomingLeg as FlightLeg, // must have date, destination and origin
-      )
-
-      // If round-trip
-      if (
-        chronoLogicallegs[0].origin ===
-        chronoLogicallegs[flightLegCount - 1].destination
-      ) {
-        // Find a valid connection for the return trip to Akureyri
-        incomingLeg = {
-          origin: chronoLogicallegs[flightLegCount - 1].origin,
-          destination: chronoLogicallegs[flightLegCount - 1].destination,
-          date: new Date(
-            Date.parse(chronoLogicallegs[flightLegCount - 1].date.toString()),
-          ),
-        }
-        // Lazy evaluation makes this cheap
-        isConnectingFlight =
-          isConnectingFlight &&
-          (await this.flightService.isFlightLegConnectingFlight(
-            connectingId,
-            incomingLeg as FlightLeg,
-          ))
-      }
-
-      if (!isConnectingFlight) {
-        throw new ForbiddenException(
-          'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Each connecting flight must go from/to Akureyri',
-        )
-      } else {
-        connectingFlight = true
+        // connectionDiscountCode exists, validated in this.validateConnectionFlights()
+        connectingId = connectionDiscountCode!.flightId
       }
     } else {
-      if (discount.discountCode !== params.discountCode) {
-        throw new ForbiddenException(
-          'Provided discount code is only intended for connecting flights',
-        )
+      const {
+        unused: flightLegsLeft,
+      } = await this.flightService.countThisYearsFlightLegsByNationalId(
+        discount.nationalId,
+      )
+      if (flightLegsLeft < flight.flightLegs.length) {
+        throw new ForbiddenException('Flight leg quota is exceeded')
       }
     }
 
