@@ -1,13 +1,3 @@
-export type DataUpload = {
-  id: string
-  data: {
-    id: string
-    name: string
-    person: Person[]
-    attachments: Attachment[]
-  }
-}
-
 export enum PersonType {
   Plaintiff,
   CounterParty,
@@ -29,4 +19,10 @@ export type Person = {
 export type Attachment = {
   name: string
   content: string
+}
+
+export interface DataUploadResponse {
+  skilabod: string
+  audkenni: string
+  malsnumer: string
 }

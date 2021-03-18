@@ -1,5 +1,7 @@
 import { useContext } from 'react'
-import { Locale, I18nContext } from '../../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
+
+import { I18nContext } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
   href: string

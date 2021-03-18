@@ -52,6 +52,7 @@ export type Icon =
   | 'warning'
   | 'reload'
   | 'remove'
+  | 'time'
 
 export default {
   filled: {
@@ -108,6 +109,7 @@ export default {
     warning: 'Warning',
     reload: 'Reload',
     remove: 'Remove',
+    time: 'Time',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -163,5 +165,6 @@ export default {
     warning: 'WarningOutline',
     reload: 'ReloadOutline',
     remove: 'Remove',
+    time: 'TimeOutline',
   },
 }

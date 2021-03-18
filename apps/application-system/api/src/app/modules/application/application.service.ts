@@ -1,39 +1,45 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { FindOptions } from 'sequelize/types'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Op } from 'sequelize'
+import {
+  ExternalData,
+  FormValue,
+  ApplicationStatus,
+} from '@island.is/application/core'
+
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import {
-  ApplicationTypes,
-  ExternalData,
-  FormValue,
-} from '@island.is/application/core'
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
   ) {}
 
-  async findById(id: string): Promise<Application | null> {
-    this.logger.debug(`Finding application by id - "${id}"`)
-    return this.applicationModel.findOne({
-      where: { id },
-    })
+  async findOneById(id: string): Promise<Application | null> {
+    return this.applicationModel.findOne({ where: { id } })
   }
 
-  async findAll(options?: FindOptions): Promise<Application[]> {
-    return this.applicationModel.findAll(options)
-  }
+  async findAllByNationalIdAndFilters(
+    nationalId: string,
+    typeId?: string,
+    status?: string,
+  ): Promise<Application[]> {
+    const typeIds = typeId?.split(',')
+    const statuses = status?.split(',')
 
-  async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {
     return this.applicationModel.findAll({
-      where: { typeId },
+      where: {
+        ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
+        ...(statuses ? { status: { [Op.in]: statuses } } : {}),
+        [Op.or]: [
+          { applicant: nationalId },
+          { assignees: { [Op.contains]: [nationalId] } },
+        ],
+      },
+      order: [['modified', 'DESC']],
     })
   }
 
@@ -58,12 +64,13 @@ export class ApplicationService {
     state: string,
     answers: FormValue,
     assignees: string[],
+    status: ApplicationStatus,
   ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { state, answers, assignees },
+      { state, answers, assignees, status },
       {
         where: { id },
         returning: true,

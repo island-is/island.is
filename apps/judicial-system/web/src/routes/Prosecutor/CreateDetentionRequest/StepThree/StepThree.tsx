@@ -7,6 +7,7 @@ import {
   PageLayout,
   BlueBox,
   DateTime,
+  FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { useMutation, useQuery } from '@apollo/client'
@@ -131,174 +132,149 @@ export const StepThree: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={7}>
-            <Text as="h1" variant="h1">
-              Dómkröfur og lagagrundvöllur
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Dómkröfur
-              </Text>
-              {workingCase.parentCase && (
-                <Box marginTop={1}>
-                  <Text>
-                    Fyrri gæsla var/er til{' '}
-                    <Text as="span" fontWeight="semiBold">
-                      {formatDate(
-                        workingCase.parentCase.custodyEndDate,
-                        'PPPPp',
-                      )?.replace('dagur,', 'dagsins')}
-                    </Text>
-                  </Text>
-                </Box>
-              )}
-            </Box>
-            <DateTime
-              datepickerId="reqCustodyEndDate"
-              datepickerLabel={`${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'Gæsluvarðhald'
-                  : 'Farbann'
-              } til`}
-              selectedDate={
-                workingCase.requestedCustodyEndDate
-                  ? parseISO(workingCase.requestedCustodyEndDate?.toString())
-                  : null
-              }
-              minDate={new Date()}
-              datepickerErrorMessage={requestedCustodyEndDateErrorMessage}
-              handleCloseCalander={(date) =>
-                setAndSendDateToServer(
-                  'requestedCustodyEndDate',
-                  workingCase.requestedCustodyEndDate,
-                  date,
-                  workingCase,
-                  true,
-                  setWorkingCase,
-                  updateCase,
-                  setRequestedCustodyEndDateErrorMessage,
-                )
-              }
-              dateIsRequired
-              disabledTime={!workingCase?.requestedCustodyEndDate}
-              timeOnChange={(evt) =>
-                validateAndSetTime(
-                  'requestedCustodyEndDate',
-                  workingCase.requestedCustodyEndDate,
-                  evt.target.value,
-                  ['empty', 'time-format'],
-                  workingCase,
-                  setWorkingCase,
-                  requestedCustodyEndTimeErrorMessage,
-                  setRequestedCustodyEndTimeErrorMessage,
-                  setRequestedCustodyEndTime,
-                )
-              }
-              timeOnBlur={(evt) =>
-                validateAndSendTimeToServer(
-                  'requestedCustodyEndDate',
-                  workingCase.requestedCustodyEndDate,
-                  evt.target.value,
-                  ['empty', 'time-format'],
-                  workingCase,
-                  updateCase,
-                  setRequestedCustodyEndTimeErrorMessage,
-                )
-              }
-              timeName="requestedCustodyEndTime"
-              timeDefaultValue={requestedCustodyEndTime}
-              timeErrorMessage={requestedCustodyEndTimeErrorMessage}
-              timeIsRequired
-            />
-          </Box>
-          <Box component="section" marginBottom={7}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Lagaákvæði sem brot varða við
+          <FormContentContainer>
+            <Box marginBottom={7}>
+              <Text as="h1" variant="h1">
+                Dómkröfur og lagagrundvöllur
               </Text>
             </Box>
-            <Input
-              data-testid="lawsBroken"
-              name="lawsBroken"
-              label="Lagaákvæði sem ætluð brot kærða þykja varða við"
-              placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
-              defaultValue={workingCase?.lawsBroken}
-              errorMessage={lawsBrokenErrorMessage}
-              hasError={lawsBrokenErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'lawsBroken',
-                  event,
-                  ['empty'],
-                  workingCase,
-                  setWorkingCase,
-                  lawsBrokenErrorMessage,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'lawsBroken',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setLawsBrokenErrorMessage,
-                )
-              }
-              required
-              textarea
-              rows={7}
-            />
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Lagaákvæði sem krafan er byggð á{' '}
-                <Text as="span" color={'red600'} fontWeight="semiBold">
-                  *
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Dómkröfur
                 </Text>
-              </Text>
-            </Box>
-            <BlueBox>
-              <CheckboxList
-                checkboxes={
+                {workingCase.parentCase && (
+                  <Box marginTop={1}>
+                    <Text>
+                      Fyrri gæsla var/er til{' '}
+                      <Text as="span" fontWeight="semiBold">
+                        {formatDate(
+                          workingCase.parentCase.custodyEndDate,
+                          'PPPPp',
+                        )?.replace('dagur,', 'dagsins')}
+                      </Text>
+                    </Text>
+                  </Box>
+                )}
+              </Box>
+              <DateTime
+                datepickerId="reqCustodyEndDate"
+                datepickerLabel={`${
                   workingCase.type === CaseType.CUSTODY
-                    ? custodyProvisions
-                    : travelBanProvisions
+                    ? 'Gæsluvarðhald'
+                    : 'Farbann'
+                } til`}
+                selectedDate={
+                  workingCase.requestedCustodyEndDate
+                    ? parseISO(workingCase.requestedCustodyEndDate?.toString())
+                    : null
                 }
-                selected={workingCase.custodyProvisions}
-                onChange={(id) =>
-                  setCheckboxAndSendToServer(
-                    'custodyProvisions',
-                    id,
+                minDate={new Date()}
+                datepickerErrorMessage={requestedCustodyEndDateErrorMessage}
+                handleCloseCalander={(date) =>
+                  setAndSendDateToServer(
+                    'requestedCustodyEndDate',
+                    workingCase.requestedCustodyEndDate,
+                    date,
                     workingCase,
+                    true,
                     setWorkingCase,
                     updateCase,
+                    setRequestedCustodyEndDateErrorMessage,
                   )
                 }
+                dateIsRequired
+                disabledTime={!workingCase?.requestedCustodyEndDate}
+                timeOnChange={(evt) =>
+                  validateAndSetTime(
+                    'requestedCustodyEndDate',
+                    workingCase.requestedCustodyEndDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    setWorkingCase,
+                    requestedCustodyEndTimeErrorMessage,
+                    setRequestedCustodyEndTimeErrorMessage,
+                    setRequestedCustodyEndTime,
+                  )
+                }
+                timeOnBlur={(evt) =>
+                  validateAndSendTimeToServer(
+                    'requestedCustodyEndDate',
+                    workingCase.requestedCustodyEndDate,
+                    evt.target.value,
+                    ['empty', 'time-format'],
+                    workingCase,
+                    updateCase,
+                    setRequestedCustodyEndTimeErrorMessage,
+                  )
+                }
+                timeName="requestedCustodyEndTime"
+                timeDefaultValue={requestedCustodyEndTime}
+                timeErrorMessage={requestedCustodyEndTimeErrorMessage}
+                timeIsRequired
               />
-            </BlueBox>
-          </Box>
-          {workingCase.type === CaseType.CUSTODY && (
-            <Box component="section" marginBottom={10}>
+            </Box>
+            <Box component="section" marginBottom={7}>
               <Box marginBottom={3}>
-                <Box marginBottom={1}>
-                  <Text as="h3" variant="h3">
-                    Takmarkanir og tilhögun gæslu
+                <Text as="h3" variant="h3">
+                  Lagaákvæði sem brot varða við
+                </Text>
+              </Box>
+              <Input
+                data-testid="lawsBroken"
+                name="lawsBroken"
+                label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+                placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
+                defaultValue={workingCase?.lawsBroken}
+                errorMessage={lawsBrokenErrorMessage}
+                hasError={lawsBrokenErrorMessage !== ''}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'lawsBroken',
+                    event,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    lawsBrokenErrorMessage,
+                    setLawsBrokenErrorMessage,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'lawsBroken',
+                    event.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setLawsBrokenErrorMessage,
+                  )
+                }
+                required
+                textarea
+                rows={7}
+              />
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Lagaákvæði sem krafan er byggð á{' '}
+                  <Text as="span" color={'red600'} fontWeight="semiBold">
+                    *
                   </Text>
-                </Box>
-                <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+                </Text>
               </Box>
               <BlueBox>
                 <CheckboxList
-                  checkboxes={restrictions}
-                  selected={workingCase.requestedCustodyRestrictions}
+                  checkboxes={
+                    workingCase.type === CaseType.CUSTODY
+                      ? custodyProvisions
+                      : travelBanProvisions
+                  }
+                  selected={workingCase.custodyProvisions}
                   onChange={(id) =>
                     setCheckboxAndSendToServer(
-                      'requestedCustodyRestrictions',
+                      'custodyProvisions',
                       id,
                       workingCase,
                       setWorkingCase,
@@ -308,19 +284,19 @@ export const StepThree: React.FC = () => {
                 />
               </BlueBox>
             </Box>
-          )}
-          {workingCase.type === CaseType.TRAVEL_BAN && (
-            <Box component="section" marginBottom={4}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Takmarkanir og tilhögun farbanns
-                </Text>
-                <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
-              </Box>
-              <BlueBox>
+            {workingCase.type === CaseType.CUSTODY && (
+              <Box component="section" marginBottom={10}>
                 <Box marginBottom={3}>
+                  <Box marginBottom={1}>
+                    <Text as="h3" variant="h3">
+                      Takmarkanir og tilhögun gæslu
+                    </Text>
+                  </Box>
+                  <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+                </Box>
+                <BlueBox>
                   <CheckboxList
-                    checkboxes={alternativeTravelBanRestrictions}
+                    checkboxes={restrictions}
                     selected={workingCase.requestedCustodyRestrictions}
                     onChange={(id) =>
                       setCheckboxAndSendToServer(
@@ -332,48 +308,77 @@ export const StepThree: React.FC = () => {
                       )
                     }
                   />
+                </BlueBox>
+              </Box>
+            )}
+            {workingCase.type === CaseType.TRAVEL_BAN && (
+              <Box component="section" marginBottom={4}>
+                <Box marginBottom={3}>
+                  <Text as="h3" variant="h3">
+                    Takmarkanir og tilhögun farbanns
+                  </Text>
+                  <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
                 </Box>
-                <Input
-                  name="requestedOtherRestrictions"
-                  data-testid="requestedOtherRestrictions"
-                  label="Nánari útlistun eða aðrar takmarkanir"
-                  defaultValue={workingCase.requestedOtherRestrictions}
-                  placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'requestedOtherRestrictions',
-                      event,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'requestedOtherRestrictions',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  rows={10}
-                  textarea
-                />
-              </BlueBox>
-            </Box>
-          )}
-          <FormFooter
-            previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
-            nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-            nextIsDisabled={
-              !validate(workingCase.lawsBroken || '', 'empty').isValid ||
-              !isValidRequestedCustodyEndDate?.isValid ||
-              !isValidRequestedCustodyEndTime?.isValid ||
-              !workingCase.custodyProvisions ||
-              workingCase.custodyProvisions?.length === 0
-            }
-          />
+                <BlueBox>
+                  <Box marginBottom={3}>
+                    <CheckboxList
+                      checkboxes={alternativeTravelBanRestrictions}
+                      selected={workingCase.requestedCustodyRestrictions}
+                      onChange={(id) =>
+                        setCheckboxAndSendToServer(
+                          'requestedCustodyRestrictions',
+                          id,
+                          workingCase,
+                          setWorkingCase,
+                          updateCase,
+                        )
+                      }
+                    />
+                  </Box>
+                  <Input
+                    name="requestedOtherRestrictions"
+                    data-testid="requestedOtherRestrictions"
+                    label="Nánari útlistun eða aðrar takmarkanir"
+                    defaultValue={workingCase.requestedOtherRestrictions}
+                    placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'requestedOtherRestrictions',
+                        event,
+                        [],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'requestedOtherRestrictions',
+                        event.target.value,
+                        [],
+                        workingCase,
+                        updateCase,
+                      )
+                    }
+                    rows={10}
+                    textarea
+                  />
+                </BlueBox>
+              </Box>
+            )}
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
+              nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
+              nextIsDisabled={
+                !validate(workingCase.lawsBroken || '', 'empty').isValid ||
+                !isValidRequestedCustodyEndDate?.isValid ||
+                !isValidRequestedCustodyEndTime?.isValid ||
+                !workingCase.custodyProvisions ||
+                workingCase.custodyProvisions?.length === 0
+              }
+            />
+          </FormContentContainer>
         </>
       ) : null}
     </PageLayout>

@@ -13,22 +13,22 @@ import {
 @ObjectType()
 export class OrganizationSubpage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field(() => [SliceUnion], { nullable: true })
-  description: Array<typeof SliceUnion>
+  description?: Array<typeof SliceUnion>
 
   @Field(() => [Link], { nullable: true })
   links?: Array<Link>
 
   @Field(() => [SliceUnion], { nullable: true })
-  slices: Array<typeof SliceUnion>
+  slices?: Array<typeof SliceUnion | null>
 
   @Field({ nullable: true })
   sliceCustomRenderer?: string
@@ -40,10 +40,10 @@ export class OrganizationSubpage {
   parentSubpage?: string
 
   @Field(() => OrganizationPage)
-  organizationPage: OrganizationPage
+  organizationPage!: OrganizationPage | null
 
   @Field({ nullable: true })
-  featuredImage?: Image
+  featuredImage?: Image | null
 }
 
 export const mapOrganizationSubpage = ({

@@ -1,6 +1,10 @@
 import set from 'lodash/set'
 
-import { Application, ApplicationTypes } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import {
@@ -26,6 +30,7 @@ const createApplicationBase = (): Application => ({
   state: '',
   typeId: ApplicationTypes.PARENTAL_LEAVE,
   name: '',
+  status: ApplicationStatus.IN_PROGRESS,
 })
 
 let application: Application
