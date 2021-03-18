@@ -24,10 +24,7 @@ export const EditsInReview: Form = buildForm({
       children: [
         buildCustomField({
           id: 'EditsInReviewSteps',
-          title: (application) =>
-            application.state === 'approved'
-              ? parentalLeaveFormMessages.reviewScreen.titleApproved
-              : parentalLeaveFormMessages.reviewScreen.titleInReview,
+          title: parentalLeaveFormMessages.reviewScreen.titleInReview,
           component: 'EditsInReviewSteps',
         }),
       ],
