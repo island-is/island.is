@@ -12,6 +12,9 @@ import {
 } from '@island.is/application/templates/children-residence-change'
 import { User } from '@island.is/api/domains/national-registry'
 import * as AWS from 'aws-sdk'
+import { SharedTemplateApiService } from '../../shared'
+import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmitted'
+import { Application } from '@island.is/application/core'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -27,11 +30,11 @@ export class ChildrenResidenceChangeService {
   constructor(
     private readonly syslumennService: SyslumennService,
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     this.s3 = new AWS.S3()
   }
 
-  // TODO: Send email to parents
   async submitApplication({ application }: props) {
     const { answers, externalData } = application
     const { parentNationalRegistry } = externalData
@@ -41,7 +44,7 @@ export class ChildrenResidenceChangeService {
     const file = await this.s3
       .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
       .promise()
-    const fileContent = file.Body?.toString('base64')
+    const fileContent = file.Body as Buffer
 
     const selectedChildren = application.externalData.childrenNationalRegistry.data.filter(
       (c) => application.answers.selectChild.includes(c.name),
@@ -53,7 +56,7 @@ export class ChildrenResidenceChangeService {
 
     const attachment: Attachment = {
       name: `Lögheimilisbreyting-barns-${nationalRegistry.nationalId}.pdf`,
-      content: fileContent,
+      content: fileContent.toString('base64'),
     }
 
     const parentA: Person = {
@@ -94,9 +97,33 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
+    const extraData = {
+      interviewRequested: answers.interview,
+      reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
+      transferExpirationDate:
+        answers.selectDuration[0] === 'permanent'
+          ? answers.selectDuration[0]
+          : answers.selectDuration[1],
+    }
+
     const response = await this.syslumennService.uploadData(
       participants,
       attachment,
+      extraData,
+    )
+
+    await this.sharedTemplateAPIService.sendEmailWithAttachment(
+      generateApplicationSubmittedEmail,
+      (application as unknown) as Application,
+      fileContent.toString('binary'),
+      answers.parentA.email,
+    )
+
+    await this.sharedTemplateAPIService.sendEmailWithAttachment(
+      generateApplicationSubmittedEmail,
+      (application as unknown) as Application,
+      fileContent.toString('binary'),
+      answers.parentB.email,
     )
 
     return response

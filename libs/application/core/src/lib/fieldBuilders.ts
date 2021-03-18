@@ -284,6 +284,7 @@ export function buildTextField(data: {
   backgroundColor?: InputBackgroundColor
   suffix?: string
   defaultValue?: MaybeWithApplication<unknown>
+  rows?: number
 }): TextField {
   const {
     condition,
@@ -298,6 +299,7 @@ export function buildTextField(data: {
     variant = 'text',
     format,
     suffix,
+    rows,
   } = data
   return {
     children: undefined,
@@ -313,6 +315,7 @@ export function buildTextField(data: {
     variant,
     format,
     suffix,
+    rows,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

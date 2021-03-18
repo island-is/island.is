@@ -8,10 +8,10 @@ import { mapNamespace, Namespace } from './namespace.model'
 @ObjectType()
 export class Frontpage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field({ nullable: true })
-  title?: string
+  title!: string
 
   @Field(() => [Featured])
   featured?: Array<Featured>
@@ -20,7 +20,7 @@ export class Frontpage {
   slides?: Array<FrontpageSlider>
 
   @Field(() => Namespace, { nullable: true })
-  namespace?: Namespace
+  namespace!: Namespace | null
 
   @Field(() => [LifeEventPage])
   lifeEvents?: Array<LifeEventPage>

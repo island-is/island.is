@@ -427,6 +427,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceAdditionalInformation,
               placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
               variant: 'textarea',
+              rows: 4,
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
@@ -470,6 +471,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalRemarks',
               title: m.additionalRemarks,
               variant: 'textarea',
+              rows: 4,
               placeholder: m.additionalRemarksPlaceholder,
               backgroundColor: 'blue',
               condition: {
