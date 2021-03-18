@@ -2,13 +2,8 @@
 
 ## Prerequisites
 
-You will need `awscli` installed
-
-```bash
-brew install awscli
-```
-
-You will also need access to the AWS account. Ask someone from DevOps to send you an invitation.
+- You will need [AWS command line](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) installed.
+- You will also need access to the AWS account. Ask someone from DevOps to send you an invitation.
 
 ## Getting started
 
@@ -56,12 +51,12 @@ aws_session_token = <SESSION_TOKEN>
 Voilà, you are now ready to fetch and create secrets.
 
 {% hint style="warning" %}
-Remember, the session token expires every 8 hours so you will need to update `~/.aws/credentials` with the new session token generated on your AWS account.
+Remember, the session token expires every 8 hours so you will need to update it. You can either do `export AWS_SESSION_TOKEN="SESSION_TOKEN"` or change it manually by going into `~/.aws/credentials` and replacing with the new session token generated from your AWS account.
 {% endhint %}
 
 ## Usage to fetch secrets
 
-You should now be able to fetch secrets for the project you need. You can verify it by opening the `.env.secret` file at the root.
+You should now be able to fetch secrets for the project you need.
 
 ```bash
 yarn get-secrets <project> [options]
@@ -71,6 +66,12 @@ yarn get-secrets <project> [options]
 
 ```bash
 yarn get-secrets api --reset
+```
+
+You can verify it by opening the `.env.secret` file at the root, or inside your code using for example:
+
+```typescript
+const { MY_SECRET_KEY } = process.env
 ```
 
 If you configured multiples profiles using `aws configure sso` you can choose which profile to run to get the secrets:
@@ -99,7 +100,7 @@ You can run the following command and will be prompted for input.
 yarn create-secret
 ```
 
-You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-32 characters long.
+You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-128 characters long.
 
 {% hint style="warning" %}
 Only alphanumeric characters, `/` and `-` are allowed.
@@ -111,25 +112,8 @@ Environment variables that should not be tracked but needed locally should be ad
 
 Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
 
-All secrets labeled with the `dev` label can be fetched using `yarn get-secrets`.
+All secrets labeled with the `dev` label can be fetched using `yarn get-secrets <project>`.
 
 ### Environment variables with static websites
 
-To be able to access environment variables in purely static projects, you need
-to do the following:
-
-1. In the index.html file, add `<!-- environment placeholder -->`.
-2. Use the `getStaticEnv` function from the `@island.is/utils/environment`
-   library to fetch your environment variables.
-3. Prefix your environment variables with `SI_PUBLIC_`, for example
-   `SI_PUBLIC_MY_VARIABLE`.
-
-NOTE: This is only to get environment variables when running in kubernetes, not
-for when running locally. So you should only use `getStaticEnv` in your
-`environment.prod.ts` file.
-
-What happens behind the scenes is that static projects have a bash script that
-runs when the docker container starts up. This script searches for references
-of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It
-then puts all the matches inside the index.html which is then served to the
-client.
+More about it on [this page](../../README.md#environment-variables-with-static-websites).
