@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 import { IAlertBanner } from '../generated/contentfulTypes'
-import { Link, mapLink } from './link.model'
+import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
 @ObjectType()
 export class AlertBanner {
@@ -19,8 +19,11 @@ export class AlertBanner {
   @Field({ nullable: true })
   description?: string
 
-  @Field(() => Link, { nullable: true })
-  link?: Link | null
+  @Field({ nullable: true })
+  linkTitle?: string
+
+  @Field(() => ReferenceLink, { nullable: true })
+  link?: ReferenceLink | null
 
   @Field()
   isDismissable!: boolean
@@ -35,7 +38,8 @@ export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({
   bannerVariant: fields.bannerVariant ?? 'default',
   title: fields.title ?? '',
   description: fields.description ?? '',
-  link: fields.link ? mapLink(fields.link) : null,
+  linkTitle: fields.linkTitle ?? '',
+  link: fields.link ? mapReferenceLink(fields.link) : null,
   isDismissable: fields.isDismissable ?? true,
   dismissedForDays: fields.dismissedForDays ?? 7,
 })

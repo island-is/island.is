@@ -1,5 +1,5 @@
 import { application } from './factories'
-import { NationalRegistryFamilyMember } from '../../types'
+import { CurrentUserCompanies, NationalRegistryFamilyMember } from '../../types'
 import { createStore, faker } from '@island.is/shared/mocking'
 
 export const store = createStore(() => {
@@ -9,6 +9,7 @@ export const store = createStore(() => {
     .list(10)
     .concat([application({ applicant: '0000000000' })])
     .concat([application({ applicant: '0000000000', typeId: 'ParentalLeave' })])
+    .concat([application({ applicant: '0000000000', typeId: 'PartyLetter' })])
   const familyMembers: NationalRegistryFamilyMember[] = [
     {
       nationalId: '1234567890',
@@ -23,5 +24,16 @@ export const store = createStore(() => {
       familyRelation: 'child',
     },
   ]
-  return { applications, familyMembers }
+
+  const userCompanies: CurrentUserCompanies[] = [
+    {
+      hasProcuration: true,
+      isPartOfBoardOfDirectors: false,
+      nationalId: '0000000000',
+      name: 'Tester Testson',
+      companyStatus: 'Standandi',
+      operationalForm: 'ehf',
+    },
+  ]
+  return { applications, familyMembers, userCompanies }
 })
