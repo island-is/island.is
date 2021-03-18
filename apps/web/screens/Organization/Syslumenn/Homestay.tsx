@@ -92,6 +92,7 @@ const Homestay: Screen<HomestayProps> = ({
       pageTitle={subpage.title}
       organizationPage={organizationPage}
       pageFeaturedImage={subpage.featuredImage}
+      minimal={true}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
