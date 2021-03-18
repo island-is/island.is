@@ -14,31 +14,14 @@ export class MockChildrenNationalRegistryProvider extends BasicDataProvider {
 
   async provide(application: Application): Promise<PersonResidenceChange[]> {
     const crcApplication = (application as unknown) as CRCApplication
-    return (
-      crcApplication.answers?.mockData?.childrenNationalRegistry?.data ||
-      this.handleError()
-    )
+    const data =
+      crcApplication.answers?.mockData?.childrenNationalRegistry?.data
+    if (data) {
+      return data
+    }
+    throw new Error('Ekki tókst að ná í upplýsingar um börn í þinni forsjá')
   }
-  handleError() {
-    return Promise.resolve([
-      {
-        id: '1',
-        name: 'Ólafur Helgi Eiríksson',
-        ssn: '123456-7890',
-        address: 'Vesturgata 22',
-        postalCode: '101',
-        city: 'Reykjavík',
-      },
-      {
-        id: '2',
-        name: 'Rósa Líf Eiríksdóttir',
-        ssn: '123456-7890',
-        address: 'Vesturgata 22',
-        postalCode: '101',
-        city: 'Reykjavík',
-      },
-    ])
-  }
+
   onProvideError(result: string): FailedDataProviderResult {
     return {
       date: new Date(),
