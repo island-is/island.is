@@ -10,28 +10,28 @@ import { FooterItem, mapFooterItem } from './footerItem.model'
 @ObjectType()
 export class OrganizationPage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field()
-  description: string
+  description?: string
 
   @Field(() => [SliceUnion])
-  slices: Array<typeof SliceUnion>
+  slices?: Array<typeof SliceUnion | null>
 
   @Field(() => [LinkGroup])
   menuLinks?: Array<LinkGroup>
 
   @Field(() => Organization)
-  organization: Organization
+  organization!: Organization | null
 
   @Field({ nullable: true })
-  featuredImage?: Image
+  featuredImage?: Image | null
 
   @Field(() => [FooterItem], { nullable: true })
   footerItems?: Array<FooterItem>

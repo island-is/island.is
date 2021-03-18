@@ -4,13 +4,13 @@ import { IStatistic } from '../generated/contentfulTypes'
 @ObjectType()
 export class Statistic {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  value: string
+  value!: string
 
   @Field()
-  label: string
+  label!: string
 }
 
 export const mapStatistic = ({ fields, sys }: IStatistic): Statistic => ({

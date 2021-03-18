@@ -108,7 +108,11 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IVidspyrnaFrontpageFields>(lang, params)
       .catch(errorHandler('getVidspyrnaFrontpage'))
 
-    return result.items.map(mapAdgerdirFrontpage)[0] ?? null
+    return (
+      (result.items as types.IVidspyrnaFrontpage[]).map(
+        mapAdgerdirFrontpage,
+      )[0] ?? null
+    )
   }
 
   async getAdgerdirPages(lang = 'is-IS'): Promise<AdgerdirPages> {
@@ -123,7 +127,7 @@ export class CmsContentfulService {
       .catch(errorHandler('getAdgerdirPages'))
 
     return {
-      items: result.items.map(mapAdgerdirPage),
+      items: (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage),
     }
   }
 
@@ -139,7 +143,7 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganizations'))
 
     return {
-      items: result.items
+      items: (result.items as types.IOrganization[])
         .map(mapOrganization)
         .filter((organization) => organization.title && organization.slug),
     }
@@ -157,7 +161,7 @@ export class CmsContentfulService {
       .catch(errorHandler('getAdgerdirTags'))
 
     return {
-      items: result.items.map(mapAdgerdirTag),
+      items: (result.items as types.IVidspyrnaTag[]).map(mapAdgerdirTag),
     }
   }
 
@@ -173,7 +177,7 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganizationTags'))
 
     return {
-      items: result.items.map(mapOrganizationTag),
+      items: (result.items as types.IOrganizationTag[]).map(mapOrganizationTag),
     }
   }
 
@@ -188,7 +192,11 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IFrontpageSliderListFields>(lang, params)
       .catch(errorHandler('getFrontpageSliderList'))
 
-    return result.items.map(mapFrontpageSliderList)[0] ?? null
+    return (
+      (result.items as types.IFrontpageSliderList[]).map(
+        mapFrontpageSliderList,
+      )[0] ?? null
+    )
   }
 
   async getAdgerdirPage(slug: string, lang: string): Promise<AdgerdirPage> {
@@ -202,7 +210,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IVidspyrnaPageFields>(lang, params)
       .catch(errorHandler('getAdgerdirPage'))
 
-    return result.items.map(mapAdgerdirPage)[0] ?? null
+    return (
+      (result.items as types.IVidspyrnaPage[]).map(mapAdgerdirPage)[0] ?? null
+    )
   }
 
   async getOrganization(slug: string, lang: string): Promise<Organization> {
@@ -216,7 +226,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IOrganizationFields>(lang, params)
       .catch(errorHandler('getOrganization'))
 
-    return result.items.map(mapOrganization)[0] ?? null
+    return (
+      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
+    )
   }
 
   async getOrganizationPage(
@@ -233,7 +245,10 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IOrganizationPageFields>(lang, params)
       .catch(errorHandler('getOrganizationPage'))
 
-    return result.items.map(mapOrganizationPage)[0] ?? null
+    return (
+      (result.items as types.IOrganizationPage[]).map(mapOrganizationPage)[0] ??
+      null
+    )
   }
 
   async getOrganizationSubpage(
@@ -252,7 +267,11 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, params)
       .catch(errorHandler('getOrganizationSubpage'))
 
-    return result.items.map(mapOrganizationSubpage)[0] ?? null
+    return (
+      (result.items as types.IOrganizationSubpage[]).map(
+        mapOrganizationSubpage,
+      )[0] ?? null
+    )
   }
 
   async getAuctions(
@@ -283,7 +302,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAuctionFields>(lang, params)
       .catch(errorHandler('getAuctions'))
 
-    return result.items.map(mapAuction)
+    return (result.items as types.IAuction[]).map(mapAuction)
   }
 
   async getAuction(id: string, lang: string): Promise<Auction> {
@@ -296,7 +315,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAuctionFields>(lang, params)
       .catch(errorHandler('getAuction'))
 
-    return result.items.map(mapAuction)[0]
+    return (result.items as types.IAuction[]).map(mapAuction)[0]
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {
@@ -311,7 +330,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IArticleFields>(lang, params)
       .catch(errorHandler('getArticle'))
 
-    return result.items.map(mapArticle)[0] ?? null
+    return (result.items as types.IArticle[]).map(mapArticle)[0] ?? null
   }
 
   async getErrorPage({
@@ -326,7 +345,7 @@ export class CmsContentfulService {
       })
       .catch(errorHandler('getErrorPage'))
 
-    return result.items.map(mapErrorPage)[0] ?? null
+    return (result.items as types.IErrorPage[]).map(mapErrorPage)[0] ?? null
   }
 
   async getRelatedArticles(slug: string, lang: string): Promise<Article[]> {
@@ -356,7 +375,7 @@ export class CmsContentfulService {
       .catch(errorHandler('getRelatedArticles'))
 
     const sortedIds = articles.map((a) => a.sys.id)
-    const results = relatedResult.items.map(mapArticle)
+    const results = (relatedResult.items as types.IArticle[]).map(mapArticle)
     return sortBy(results, (a) => sortedIds.indexOf(a.id))
   }
 
@@ -371,7 +390,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.INewsFields>(lang, params)
       .catch(errorHandler('getNews'))
 
-    return result.items.map(mapNews)[0] ?? null
+    return (result.items as types.INews[]).map(mapNews)[0] ?? null
   }
 
   async getAboutPage({ lang }: GetAboutPageInput): Promise<AboutPage | null> {
@@ -385,7 +404,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IPageFields>(lang, params)
       .catch(errorHandler('getAboutPage'))
 
-    return result.items.map(mapAboutPage)[0] ?? null
+    return (result.items as types.IPage[]).map(mapAboutPage)[0] ?? null
   }
 
   async getAboutSubPage({
@@ -405,7 +424,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAboutSubPageFields>(lang, params)
       .catch(errorHandler('getAboutSubPage'))
 
-    return result.items.map(mapAboutSubPage)[0] ?? null
+    return (
+      (result.items as types.IAboutSubPage[]).map(mapAboutSubPage)[0] ?? null
+    )
   }
 
   async getContentSlug({
@@ -421,7 +442,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IArticleFields>(lang, params)
       .catch(errorHandler('getContentSlug'))
 
-    return result.items.map(mapContentSlug)[0] ?? null
+    return (result.items as types.IArticle[]).map(mapContentSlug)[0] ?? null
   }
 
   async getGenericPage({
@@ -438,7 +459,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IGenericPageFields>(lang, params)
       .catch(errorHandler('getGenericPage'))
 
-    return result.items.map(mapGenericPage)[0] ?? null
+    return (result.items as types.IGenericPage[]).map(mapGenericPage)[0] ?? null
   }
 
   async getGenericOverviewPage({
@@ -455,7 +476,11 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IGenericOverviewPageFields>(lang, params)
       .catch(errorHandler('getGenericOverviewPage'))
 
-    return result.items.map(mapGenericOverviewPage)[0] ?? null
+    return (
+      (result.items as types.IGenericOverviewPage[]).map(
+        mapGenericOverviewPage,
+      )[0] ?? null
+    )
   }
 
   async getNamespace(
@@ -471,7 +496,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IUiConfigurationFields>(lang, params)
       .catch(errorHandler('getNamespace'))
 
-    return result.items.map(mapNamespace)[0] ?? null
+    return (
+      (result.items as types.IUiConfiguration[]).map(mapNamespace)[0] ?? null
+    )
   }
 
   async getMenu(name: string, lang: string): Promise<Menu | null> {
@@ -484,7 +511,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IMenuFields>(lang, params)
       .catch(errorHandler('getMenu'))
 
-    return result.items.map(mapMenu)[0] ?? null
+    return (result.items as types.IMenu[]).map(mapMenu)[0] ?? null
   }
 
   async getLifeEventPage(
@@ -500,7 +527,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
       .catch(errorHandler('getLifeEventPage'))
 
-    return result.items.map(mapLifeEventPage)[0] ?? null
+    return (
+      (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)[0] ?? null
+    )
   }
 
   async getLifeEvents(lang: string): Promise<LifeEventPage[]> {
@@ -513,7 +542,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
       .catch(errorHandler('getLifeEvents'))
 
-    return result.items.map(mapLifeEventPage)
+    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
   async getAlertBanner({
@@ -529,7 +558,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IAlertBannerFields>(lang, params)
       .catch(errorHandler('getAlertBanner'))
 
-    return result.items.map(mapAlertBanner)[0] ?? null
+    return (result.items as types.IAlertBanner[]).map(mapAlertBanner)[0] ?? null
   }
 
   async getUrl(slug: string, lang: string): Promise<Url | null> {
@@ -542,7 +571,7 @@ export class CmsContentfulService {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IUrlFields>(lang, params)
       .catch(errorHandler('getUrl'))
-    return result.items.map(mapUrl)[0] ?? null
+    return (result.items as types.IUrl[]).map(mapUrl)[0] ?? null
   }
 
   async getLifeEventsInCategory(
@@ -559,7 +588,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
       .catch(errorHandler('getLifeEventsInCategory'))
 
-    return result.items.map(mapLifeEventPage)
+    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
   async getHomepage({ lang }: { lang: string }): Promise<Homepage> {
@@ -573,7 +602,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IHomepageFields>(lang, params)
       .catch(errorHandler('getHomepage'))
 
-    return result.items.map(mapHomepage)[0]
+    return (result.items as types.IHomepage[]).map(mapHomepage)[0]
   }
 
   async getFrontpage({
@@ -591,7 +620,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IFrontpageFields>(lang, params)
       .catch(errorHandler('getFrontpage'))
 
-    return result.items.map(mapFrontpage)[0]
+    return (result.items as types.IFrontpage[]).map(mapFrontpage)[0]
   }
 
   async getTellUsAStory({ lang }: { lang: string }): Promise<TellUsAStory> {
@@ -605,7 +634,7 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ITellUsAStoryFields>(lang, params)
       .catch(errorHandler('getTellUsAStory'))
 
-    return result.items.map(mapTellUsAStory)[0]
+    return (result.items as types.ITellUsAStory[]).map(mapTellUsAStory)[0]
   }
 
   async getSubpageHeader({
@@ -621,6 +650,6 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.ISubpageHeaderFields>(lang, params)
       .catch(errorHandler('getSubpageHeader'))
 
-    return result.items.map(mapSubpageHeader)[0]
+    return (result.items as types.ISubpageHeader[]).map(mapSubpageHeader)[0]
   }
 }

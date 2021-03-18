@@ -6,13 +6,13 @@ import { Statistic, mapStatistic } from './statistic.model'
 @ObjectType()
 export class Statistics {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [Statistic])
-  statistics: Statistic[]
+  statistics!: Statistic[]
 }
 
 export const mapStatistics = ({

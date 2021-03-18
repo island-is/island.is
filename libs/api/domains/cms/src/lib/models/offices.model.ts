@@ -11,10 +11,10 @@ import { SystemMetadata } from 'api-cms-domain'
 @ObjectType()
 export class Offices {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field(() => [OrganizationOffice])
   offices?: Array<OrganizationOffice>

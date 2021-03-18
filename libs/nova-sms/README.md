@@ -14,24 +14,12 @@ To be done.
 
 ### NestJS Standalone - not recommended
 
-Assuming `environment.smsOptions` implements `SmsServiceOptions`, add the service to your Module providers:
+Assuming `environment.smsOptions` implements `SmsServiceOptions`, add the module to your Module imports:
 
 ```typescript
 @Module({
-  providers: [
-    {
-      provide: SMS_OPTIONS,
-      useValue: environment.smsOptions
-    },
-    {
-      provide: SmsService,
-      useFactory: (options: SmsServiceOptions, logger: Logger) => {
-        const smsService = new SmsService(options, logger)
-        smsService.initialize({} as DataSourceConfig<{}>)
-        return smsService
-      },
-      inject: [SMS_OPTIONS, LOGGER_PROVIDER],
-    },
+  imports: [
+    SmsModule.register(environment.smsOptions),
   ],
 })
 ```

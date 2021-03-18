@@ -1,3 +1,4 @@
+import { DataSourceConfig } from 'apollo-datasource'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
 import { Injectable, Inject } from '@nestjs/common'
@@ -54,6 +55,8 @@ export class SmsService extends RESTDataSource {
     super()
 
     this.baseURL = `${this.options.url}/NovaSmsService/`
+
+    this.initialize({} as DataSourceConfig<void>)
   }
 
   willSendRequest(request: RequestOptions) {
