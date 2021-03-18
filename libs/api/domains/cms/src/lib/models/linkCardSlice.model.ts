@@ -6,13 +6,13 @@ import { LinkCard, mapLinkCard } from './linkCard.model'
 @ObjectType()
 export class LinkCardSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [LinkCard])
-  cards: LinkCard[]
+  cards!: LinkCard[]
 }
 
 export const mapLinkCardSlice = ({

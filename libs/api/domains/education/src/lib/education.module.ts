@@ -2,20 +2,14 @@ import { Module, DynamicModule } from '@nestjs/common'
 
 import { MainResolver } from './graphql'
 import { EducationService } from './education.service'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
+import { S3Service } from './s3.service'
 import { MMSApi } from './client'
 
 export interface Config {
   xroadBaseUrl: string
   xroadClientId: string
   xroadLicenseServiceId: string
-  emailOptions: {
-    sendFromEmail: string
-    useTestAccount: boolean
-    options?: {
-      region: string
-    }
-  }
+  fileDownloadBucket: string
 }
 
 @Module({})
@@ -25,6 +19,7 @@ export class EducationModule {
       module: EducationModule,
       providers: [
         MainResolver,
+        S3Service,
         EducationService,
         {
           provide: 'CONFIG',
@@ -39,11 +34,6 @@ export class EducationModule {
               config.xroadLicenseServiceId,
             ),
         },
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: config.emailOptions,
-        },
-        EmailService,
       ],
       exports: [],
     }

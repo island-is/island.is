@@ -6,8 +6,10 @@ import { Imports } from './generateFile'
 import { getFirstLevelContentType, Args } from './contentType'
 import { pushOnce } from './generateModel'
 
-const validationsToMapperFunction = (validations?: string[]): string => {
-  switch (validations.length) {
+const validationsToMapperFunction = (
+  validations?: string[],
+): string | undefined => {
+  switch (validations?.length) {
     case undefined:
     case 0:
       return
@@ -47,6 +49,12 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
     }
 
     case 'Array': {
+      if (!field.items) {
+        return {
+          value: undefined,
+          fallback: undefined,
+        }
+      }
       // When the linkType is an Entry (another document) and we have more than one, it's high chance to be a "slice" type
       if (field.items.linkType === 'Entry' && items.length > 1) {
         const base = `${value}.map(${mapper})`

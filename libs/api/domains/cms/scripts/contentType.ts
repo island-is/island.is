@@ -51,7 +51,7 @@ async function getContentTypes(
   contentType: ContentType,
   environment: Environment,
   array: LinkContentType[],
-) {
+): Promise<any> {
   // We don't generate twice the same model if the type has itself as linkContentType
   const linkTypes = getLinkContentTypes(contentType).filter(
     (type) => type !== contentType.sys.id,

@@ -6,9 +6,9 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 export class GetSingleArticleInput {
   @Field()
   @IsString()
-  slug: string
+  slug!: string
 
   @Field(() => String)
   @IsString()
-  lang: ElasticsearchIndexLocale
+  lang: ElasticsearchIndexLocale = 'is'
 }
