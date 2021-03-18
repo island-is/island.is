@@ -3,7 +3,7 @@ import { IsString } from 'class-validator'
 
 @InputType()
 export class AssignApplicationInput {
-  @Field((type) => String)
+  @Field(() => String)
   @IsString()
   token!: string
 }

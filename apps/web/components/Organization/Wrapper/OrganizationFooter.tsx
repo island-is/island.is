@@ -33,7 +33,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
               borderColor="blueberry300"
               borderBottomWidth="standard"
             >
-              {!!organizationPage.organization.logo.url && (
+              {!!organizationPage.organization.logo?.url && (
                 <Box marginRight={4}>
                   <img
                     src={organizationPage.organization.logo.url}

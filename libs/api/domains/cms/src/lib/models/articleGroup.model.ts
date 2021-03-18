@@ -4,10 +4,10 @@ import { IArticleGroup } from '../generated/contentfulTypes'
 @ObjectType()
 export class ArticleGroup {
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field({ nullable: true })
   description?: string

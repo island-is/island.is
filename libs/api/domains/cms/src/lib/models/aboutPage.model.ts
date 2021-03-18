@@ -7,25 +7,25 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class AboutPage {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field()
-  seoDescription: string
+  seoDescription?: string
 
   @Field()
-  theme: string
+  theme?: string
 
   @Field(() => PageHeader)
-  pageHeader: PageHeader
+  pageHeader!: PageHeader
 
   @Field(() => [SliceUnion])
-  slices: Array<typeof SliceUnion>
+  slices!: Array<typeof SliceUnion>
 }
 
 export const mapAboutPage = ({
