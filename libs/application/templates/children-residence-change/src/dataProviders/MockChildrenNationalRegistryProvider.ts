@@ -19,7 +19,7 @@ export class MockChildrenNationalRegistryProvider extends BasicDataProvider {
     if (data) {
       return data
     }
-    throw new Error('Some error')
+    throw new Error('Ekki tókst að ná í upplýsingar um börn í þinni forsjá')
   }
 
   onProvideError(result: { message: string }): FailedDataProviderResult {
