@@ -44,10 +44,10 @@ const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
     {
       state: statesMap['employer'][application.state],
       title: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.employerEditsTitle,
+        parentalLeaveFormMessages.editFlow.employerApprovesTitle,
       ),
       description: formatMessage(
-        parentalLeaveFormMessages.reviewScreen.employerEditsDesc,
+        parentalLeaveFormMessages.editFlow.employerApprovesDesc,
       ),
     },
     {
