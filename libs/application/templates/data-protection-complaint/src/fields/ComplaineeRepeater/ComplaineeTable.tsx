@@ -9,8 +9,8 @@ interface Props {
   address: string
   nationalId: string
   operatesWithinEurope: typeof YES | typeof NO
-  countryOfOperation: string | undefined
-  onEdit: () => void
+  countryOfOperation?: string
+  onEdit?: () => void
   onRemove?: () => void
 }
 
@@ -62,30 +62,34 @@ export const ComplaineeTable: FC<Props> = ({
         )}
       </Box>
       <Divider />
-      <Box paddingTop={2} paddingBottom={3} paddingX={4}>
-        <Inline space={3}>
-          <Button
-            variant="text"
-            size="small"
-            icon="pencil"
-            iconType="outline"
-            onClick={onEdit}
-          >
-            {formatMessage(sharedFields.edit)}
-          </Button>
-          {onRemove && (
-            <Button
-              variant="text"
-              size="small"
-              icon="removeCircle"
-              iconType="outline"
-              onClick={onRemove}
-            >
-              {formatMessage(sharedFields.remove)}
-            </Button>
-          )}
-        </Inline>
-      </Box>
+      {onEdit || onRemove ? (
+        <Box paddingTop={2} paddingBottom={3} paddingX={4}>
+          <Inline space={3}>
+            {onEdit && (
+              <Button
+                variant="text"
+                size="small"
+                icon="pencil"
+                iconType="outline"
+                onClick={onEdit}
+              >
+                {formatMessage(sharedFields.edit)}
+              </Button>
+            )}
+            {onRemove && (
+              <Button
+                variant="text"
+                size="small"
+                icon="removeCircle"
+                iconType="outline"
+                onClick={onRemove}
+              >
+                {formatMessage(sharedFields.remove)}
+              </Button>
+            )}
+          </Inline>
+        </Box>
+      ) : null}
     </Box>
   )
 }

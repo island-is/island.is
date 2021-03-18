@@ -5,43 +5,43 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class ContactUs {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field()
-  required: string
+  required!: string
 
   @Field()
-  invalidPhone: string
+  invalidPhone!: string
 
   @Field()
-  invalidEmail: string
+  invalidEmail!: string
 
   @Field()
-  labelName: string
+  labelName!: string
 
   @Field()
-  labelPhone: string
+  labelPhone!: string
 
   @Field()
-  labelEmail: string
+  labelEmail!: string
 
   @Field()
-  labelSubject: string
+  labelSubject!: string
 
   @Field()
-  labelMessage: string
+  labelMessage!: string
 
   @Field()
-  submitButtonText: string
+  submitButtonText!: string
 
   @Field()
-  successMessage: string
+  successMessage!: string
 
   @Field()
-  errorMessage: string
+  errorMessage!: string
 }
 
 export const mapContactUs = ({

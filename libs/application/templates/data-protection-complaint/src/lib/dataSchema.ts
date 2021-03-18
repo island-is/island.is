@@ -13,10 +13,41 @@ export enum OnBehalf {
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
-  url: z.string(),
+  url: z.string().optional(),
 })
 
 export const DataProtectionComplaintSchema = z.object({
+  externalData: z.object({
+    nationalRegistry: z.object({
+      data: z.object({
+        address: z.object({
+          city: z.string(),
+          code: z.string(),
+          postalCode: z.string(),
+          streetAddress: z.string(),
+        }),
+        age: z.number(),
+        citizenship: z.object({
+          code: z.string(),
+          name: z.string(),
+        }),
+        fullName: z.string(),
+        legalResidence: z.string(),
+        nationalId: z.string(),
+      }),
+      date: z.string(),
+      status: z.enum(['success', 'failure']),
+    }),
+    userProfile: z.object({
+      data: z.object({
+        email: z.string(),
+        mobilePhoneNumber: z.string(),
+      }),
+      date: z.string(),
+      status: z.enum(['success', 'failure']),
+    }),
+  }),
+  approveExternalData: z.boolean().refine((p) => p),
   inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
     message: error.inCourtProceedings.defaultMessage,
   }),
@@ -56,8 +87,7 @@ export const DataProtectionComplaintSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
-    // TODO: This should be required
-    documents: z.array(FileSchema),
+    documents: z.array(FileSchema).nonempty(),
     persons: z
       .array(
         z.object({
@@ -85,4 +115,21 @@ export const DataProtectionComplaintSchema = z.object({
       countryOfOperation: z.string().optional(),
     }),
   ),
+  subjectOfComplaint: z.object({
+    authorities: z.array(z.string()).optional(),
+    useOfPersonalInformation: z.array(z.string()).optional(),
+    other: z.array(z.string()).optional(),
+    somethingElse: z.string().optional(),
+  }),
+  complaint: z.object({
+    description: z.string().nonempty(),
+    documents: z.array(FileSchema).nonempty(),
+  }),
+  overview: z.object({
+    termsAgreement: z.array(z.string()).refine((x) => x?.includes('agreed')),
+  }),
 })
+
+export type DataProtectionComplaint = z.TypeOf<
+  typeof DataProtectionComplaintSchema
+>

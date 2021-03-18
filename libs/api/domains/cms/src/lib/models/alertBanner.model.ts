@@ -5,13 +5,13 @@ import { Link, mapLink } from './link.model'
 @ObjectType()
 export class AlertBanner {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  showAlertBanner: boolean
+  showAlertBanner!: boolean
 
   @Field()
-  bannerVariant: string
+  bannerVariant!: string
 
   @Field({ nullable: true })
   title?: string
@@ -20,13 +20,13 @@ export class AlertBanner {
   description?: string
 
   @Field(() => Link, { nullable: true })
-  link?: Link
+  link?: Link | null
 
   @Field()
-  isDismissable: boolean
+  isDismissable!: boolean
 
   @Field(() => Int)
-  dismissedForDays: number
+  dismissedForDays!: number
 }
 
 export const mapAlertBanner = ({ fields, sys }: IAlertBanner): AlertBanner => ({

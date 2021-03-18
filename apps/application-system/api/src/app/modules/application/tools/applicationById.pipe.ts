@@ -8,7 +8,7 @@ export class ApplicationByIdPipe
   constructor(private readonly applicationService: ApplicationService) {}
 
   async transform(id: string): Promise<Application> {
-    const existingApplication = await this.applicationService.findById(id)
+    const existingApplication = await this.applicationService.findOneById(id)
 
     if (!existingApplication) {
       throw new NotFoundException(

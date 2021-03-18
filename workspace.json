@@ -726,7 +726,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/application/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
+            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
       }
@@ -1407,10 +1407,17 @@
             "cwd": "apps/application-system/api"
           }
         },
+        "migrate/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:migrate:undo --name {args.name}",
+            "cwd": "apps/application-system/api"
+          }
+        },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "sequelize-cli migration:generate --name $(whoami)",
+            "command": "sequelize-cli migration:generate --name {args.name}",
             "cwd": "apps/application-system/api"
           }
         },
@@ -1470,6 +1477,7 @@
         "serve": {
           "builder": "@nrwl/web:dev-server",
           "options": {
+            "port": 4242,
             "buildTarget": "application-system-form:build"
           },
           "configurations": {
@@ -4342,11 +4350,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/applications/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/applications/src/lib/messages.ts"
           }
         }
       }
@@ -4620,6 +4624,128 @@
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/education/src/{lib,components,screens}/**/*.{js,ts,tsx}"
           }
+        }
+      }
+    },
+    "service-portal-education-career": {
+      "root": "libs/service-portal/education-career",
+      "sourceRoot": "libs/service-portal/education-career/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-career/tsconfig.lib.json",
+              "libs/service-portal/education-career/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-career/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-career/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/service-portal/education-career"]
+        }
+      }
+    },
+    "service-portal-education-degree": {
+      "root": "libs/service-portal/education-degree",
+      "sourceRoot": "libs/service-portal/education-degree/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-degree/tsconfig.lib.json",
+              "libs/service-portal/education-degree/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-degree/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-degree/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/service-portal/education-degree"]
+        }
+      }
+    },
+    "service-portal-education-license": {
+      "root": "libs/service-portal/education-license",
+      "sourceRoot": "libs/service-portal/education-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-license/tsconfig.lib.json",
+              "libs/service-portal/education-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-license/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-license/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/service-portal/education-license"]
+        }
+      }
+    },
+    "service-portal-education-student-assessment": {
+      "root": "libs/service-portal/education-student-assessment",
+      "sourceRoot": "libs/service-portal/education-student-assessment/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/service-portal/education-student-assessment/tsconfig.lib.json",
+              "libs/service-portal/education-student-assessment/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education-student-assessment/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education-student-assessment/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/libs/service-portal/education-student-assessment"
+          ]
         }
       }
     },
@@ -5419,6 +5545,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/shared/connected"]
+        }
+      }
+    },
+    "shared-constants": {
+      "root": "libs/shared/constants",
+      "sourceRoot": "libs/shared/constants/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/constants/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/constants"],
+          "options": {
+            "jestConfig": "libs/shared/constants/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },

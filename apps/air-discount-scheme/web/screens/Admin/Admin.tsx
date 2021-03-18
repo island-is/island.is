@@ -4,7 +4,6 @@ import gql from 'graphql-tag'
 import { SubmitHandler } from 'react-hook-form'
 
 import { NotFound } from '@island.is/air-discount-scheme-web/screens'
-import { Airlines } from '@island.is/air-discount-scheme/consts'
 import { UserContext } from '@island.is/air-discount-scheme-web/context'
 import {
   Box,
@@ -76,14 +75,7 @@ const Admin: Screen = ({}) => {
   } as any)
   const input = {
     ...filters,
-    airline:
-      filters.airline?.value === Airlines.norlandair
-        ? Airlines.icelandair
-        : filters.airline?.value,
-    cooperation:
-      filters.airline?.value === Airlines.norlandair
-        ? Airlines.norlandair
-        : undefined,
+    airline: filters.airline?.value,
     gender:
       filters.gender?.length === 2 ? undefined : (filters.gender || [])[0],
     age: {

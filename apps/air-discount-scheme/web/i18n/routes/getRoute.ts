@@ -1,4 +1,6 @@
-import { Locale, Routes } from '../../types'
+import { Locale } from '@island.is/shared/types'
+
+import { Routes } from '../../types'
 import icelandicRoutes from './is'
 import englishRoutes from './en'
 

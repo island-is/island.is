@@ -11,6 +11,11 @@ export const application = defineMessages({
 
 // All sections in the application
 export const section = defineMessages({
+  externalData: {
+    id: 'dpac.application:section.externalData',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Approval of external data gathering',
+  },
   delimitation: {
     id: 'dpac.application:section.delimitation',
     defaultMessage: 'Afmörkun kvörtunar',
@@ -70,6 +75,11 @@ export const section = defineMessages({
     id: 'dpac.application:section.complainee',
     defaultMessage: 'Sá sem er kvartað yfir',
     description: 'The one who is being complained about',
+  },
+  subjectOfComplaint: {
+    id: 'dpac.application:section.subjectOfComplaint',
+    defaultMessage: 'Efni kvörtunar',
+    description: 'The subject of the complaint',
   },
   overview: {
     id: 'dpac.application:section.overview',

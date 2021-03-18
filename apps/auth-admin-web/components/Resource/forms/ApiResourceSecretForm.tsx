@@ -8,6 +8,7 @@ import { ApiResourceSecretDTO } from './../../../entities/dtos/api-resource-secr
 import { ResourcesService } from './../../../services/ResourcesService'
 import ConfirmModal from './../../common/ConfirmModal'
 import InfoModal from './../../common/InfoModal'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   apiResourceName: string
@@ -201,7 +202,10 @@ const ApiResourceSecretForm: React.FC<Props> = (props: Props) => {
                     id="description"
                     type="text"
                     name="description"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     defaultValue={''}
                     className="api-resource-secret-form__input"
                     placeholder="Secret description"

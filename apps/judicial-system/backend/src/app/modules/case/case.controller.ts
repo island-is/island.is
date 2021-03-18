@@ -36,13 +36,13 @@ import {
   RolesGuard,
   RolesRule,
   RulesType,
+  TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
-import { CaseValidationPipe } from './pipes'
 import { isCaseBlockedFromUser } from './filters'
 import { CaseService } from './case.service'
 
@@ -109,6 +109,7 @@ const judgeUpdateRule = {
     'custodyEndDate',
     'custodyRestrictions',
     'otherRestrictions',
+    'isolationTo',
     'accusedAppealDecision',
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
@@ -182,15 +183,11 @@ const registrarTransitionRule = {
   dtoFieldValues: [CaseTransition.RECEIVE],
 } as RolesRule
 
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {
   constructor(
-    @Inject(UserService)
     private readonly userService: UserService,
-    @Inject(CaseService)
     private readonly caseService: CaseService,
   ) {}
 
@@ -224,17 +221,25 @@ export class CaseController {
     }
   }
 
+  @UseGuards(TokenGuaard)
+  @Post('internal/case')
+  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
+  internalCreate(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
+    return this.caseService.create(caseToCreate)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
     @CurrentHttpUser() user: User,
-    @Body(new CaseValidationPipe())
-    caseToCreate: CreateCaseDto,
+    @Body() caseToCreate: CreateCaseDto,
   ): Promise<Case> {
     return this.caseService.create(caseToCreate, user)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -264,6 +269,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(
     prosecutorTransitionRule,
     judgeTransitionRule,
@@ -305,6 +311,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('cases')
   @ApiOkResponse({
@@ -316,6 +323,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
@@ -328,6 +336,7 @@ export class CaseController {
     return existingCase
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
@@ -355,6 +364,7 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/request')
   @Header('Content-Type', 'application/pdf')
@@ -382,6 +392,7 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(judgeRule)
   @Post('case/:id/signature')
   @ApiCreatedResponse({
@@ -416,6 +427,7 @@ export class CaseController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(judgeRule)
   @Get('case/:id/signature')
   @ApiOkResponse({
@@ -442,6 +454,7 @@ export class CaseController {
     )
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case/:id/extend')
   @ApiCreatedResponse({

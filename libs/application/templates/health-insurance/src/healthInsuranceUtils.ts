@@ -110,3 +110,17 @@ export const extractKeyFromStringObject = (
     return null
   }
 }
+
+export const getBaseUrl = () => {
+  const isDev = window.location.origin === 'https://umsoknir.dev01.devland.is'
+  const isStaging =
+    window.location.origin === 'https://umsoknir.staging01.devland.is'
+
+  if (isStaging) {
+    return 'https://beta.staging01.devland.is'
+  } else if (isDev) {
+    return 'https://beta.dev01.devland.is'
+  } else {
+    return 'https://island.is'
+  }
+}

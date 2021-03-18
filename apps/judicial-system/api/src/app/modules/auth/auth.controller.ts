@@ -61,9 +61,7 @@ const REDIRECT_COOKIE: Cookie = {
 @Controller('api/auth')
 export class AuthController {
   constructor(
-    @Inject(AuthService)
     private readonly authService: AuthService,
-    @Inject(SharedAuthService)
     private readonly sharedAuthService: SharedAuthService,
     @Inject('IslandisLogin')
     private readonly loginIS: IslandisLogin,

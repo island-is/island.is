@@ -6,7 +6,6 @@ export enum ServicePortalPath {
 
   // Applications
   ApplicationRoot = '/umsoknir',
-  ApplicationIntroduction = '/umsoknir-kynning',
   ApplicationNewApplication = '/umsoknir/ny-umsokn',
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',
@@ -37,6 +36,10 @@ export enum ServicePortalPath {
 
   // Education
   EducationRoot = '/menntun',
+  EducationLicense = '/menntun/leyfisbref',
+  EducationDegree = '/menntun/profgradur',
+  EducationCareer = '/menntun/namsferill',
+  EducationStudentAssessment = '/menntun/namsferill/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
   // Assets

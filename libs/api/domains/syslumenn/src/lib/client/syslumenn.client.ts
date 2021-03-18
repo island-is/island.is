@@ -1,6 +1,8 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { IHomestay } from './models/homestay'
 import { ILogin } from './models/login'
+import { Person, Attachment, DataUploadResponse } from '../models/dataUpload'
+import { constructUploadDataObject } from './models/dataUpload'
 
 export const SYSLUMENN_CLIENT_CONFIG = 'SYSLUMENN_CLIENT_CONFIG'
 
@@ -12,6 +14,7 @@ export interface SyslumennClientConfig {
 
 @Injectable()
 export class SyslumennClient {
+  private id = ''
   private accessToken = ''
 
   constructor(
@@ -20,29 +23,60 @@ export class SyslumennClient {
     private clientConfig: SyslumennClientConfig,
   ) {}
 
-  private async getToken() {
+  private async login() {
     const config = {
       notandi: this.clientConfig.username,
       lykilord: this.clientConfig.password,
     }
 
     const response: { data: ILogin } = await this.httpService
-      .post(`${this.clientConfig.url}/dev/v1/Innskraning`, config)
+      .post(`${this.clientConfig.url}/v1/Innskraning`, config)
       .toPromise()
 
-    this.accessToken = response.data.audkenni
+    this.id = response.data.audkenni
+    this.accessToken = response.data.accessToken
   }
 
   async getHomestays(year?: number): Promise<IHomestay[] | null> {
-    await this.getToken()
+    await this.login()
 
     const url = year
-      ? `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}/${year}`
-      : `${this.clientConfig.url}/dev/v1/VirkarHeimagistingar/${this.accessToken}`
+      ? `${this.clientConfig.url}/v1/VirkarHeimagistingar/${this.id}/${year}`
+      : `${this.clientConfig.url}/v1/VirkarHeimagistingar/${this.id}`
 
     const response: { data: IHomestay[] } = await this.httpService
       .get(url)
       .toPromise()
+
+    return response.data
+  }
+
+  async uploadData(
+    persons: Person[],
+    attachment: Attachment,
+    extraData: { [key: string]: string },
+  ): Promise<DataUploadResponse> {
+    await this.login()
+
+    const url = `${this.clientConfig.url}/api/v1/SyslMottakaGogn`
+
+    const headers = {
+      'Content-type': 'application/json',
+      Authorization: `Bearer ${this.accessToken}`,
+    }
+
+    const request = JSON.stringify(
+      constructUploadDataObject(this.id, persons, attachment, extraData),
+    )
+
+    const response: {
+      data: DataUploadResponse
+    } = await this.httpService
+      .post(url, request, { headers: headers })
+      .toPromise()
+      .catch((err) => {
+        throw err
+      })
 
     return response.data
   }

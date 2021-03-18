@@ -12,8 +12,11 @@ import {
   buildSubSection,
   buildFileUploadField,
   buildRepeater,
+  buildCheckboxField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, YES, NO } from '../shared'
+import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
 import {
   section,
   delimitation,
@@ -22,8 +25,10 @@ import {
   application,
   sharedFields,
   complaint,
+  overview,
 } from '../lib/messages'
-import { OnBehalf } from '../lib/dataSchema'
+import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
+import { externalData } from '../lib/messages/externalData'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -96,6 +101,33 @@ export const ComplaintForm: Form = buildForm({
   title: application.name,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'externalData',
+      title: section.externalData,
+      children: [
+        buildExternalDataProvider({
+          title: externalData.general.pageTitle,
+          id: 'approveExternalData',
+          subTitle: externalData.general.subTitle,
+          description: externalData.general.description,
+          checkboxLabel: externalData.general.checkboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: externalData.labels.nationalRegistryTitle,
+              subTitle: externalData.labels.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: externalData.labels.userProfileTitle,
+              subTitle: externalData.labels.userProfileSubTitle,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'delimitation',
       title: section.delimitation.defaultMessage,
@@ -281,6 +313,9 @@ export const ComplaintForm: Form = buildForm({
                   id: 'applicant.name',
                   title: info.labels.name,
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.fullName,
                 }),
                 buildTextField({
                   id: 'applicant.nationalId',
@@ -288,24 +323,40 @@ export const ComplaintForm: Form = buildForm({
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data
+                      ?.nationalId,
                 }),
                 buildTextField({
                   id: 'applicant.address',
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .streetAddress,
                 }),
                 buildTextField({
                   id: 'applicant.postalCode',
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .postalCode,
                 }),
                 buildTextField({
                   id: 'applicant.city',
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .city,
                 }),
                 buildTextField({
                   id: 'applicant.email',
@@ -313,6 +364,8 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'email',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data?.email,
                 }),
                 buildTextField({
                   id: 'applicant.phoneNumber',
@@ -321,6 +374,9 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data
+                      ?.mobilePhoneNumber,
                 }),
               ],
             }),
@@ -443,17 +499,154 @@ export const ComplaintForm: Form = buildForm({
           component: 'ComplaineeRepeater',
           children: [buildComplaineeMultiField('additionalComplainees')],
         }),
+        buildSubSection({
+          id: 'subjectOfComplaint',
+          title: section.subjectOfComplaint,
+          children: [
+            buildMultiField({
+              title: complaint.general.subjectOfComplaintPageTitle,
+              description: complaint.general.subjectOfComplaintPageDescription,
+              space: 3,
+              children: [
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.authorities',
+                  title: complaint.labels.subjectPersonalInformation,
+                  options: [
+                    {
+                      label: complaint.labels.subjectAuthorities,
+                      value: SubjectOfComplaint.WITH_AUTHORITIES,
+                    },
+                    {
+                      label: complaint.labels.subjectLackOfEducation,
+                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
+                    },
+                    {
+                      label: complaint.labels.subjectSocialMedia,
+                      value: SubjectOfComplaint.SOCIAL_MEDIA,
+                    },
+                    {
+                      label: complaint.labels.subjectRequestForAccess,
+                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
+                    },
+                    {
+                      label: complaint.labels.subjectRightOfObjection,
+                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
+                    },
+                  ],
+                  large: true,
+                }),
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.useOfPersonalInformation',
+                  title: complaint.labels.subjectUseOfPersonalInformation,
+                  options: [
+                    {
+                      label: complaint.labels.subjectEmail,
+                      value: SubjectOfComplaint.EMAIL,
+                    },
+                    {
+                      label: complaint.labels.subjectNationalId,
+                      value: SubjectOfComplaint.NATIONAL_ID,
+                    },
+                    {
+                      label: complaint.labels.subjectEmailInWorkplace,
+                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
+                    },
+                    {
+                      label: complaint.labels.subjectUnauthorizedPublication,
+                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
+                    },
+                  ],
+                  large: true,
+                }),
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.other',
+                  title: complaint.labels.subjectOther,
+                  options: [
+                    {
+                      label: complaint.labels.subjectVanskilaskra,
+                      value: SubjectOfComplaint.VANSKILASKRA,
+                    },
+                    {
+                      label: complaint.labels.subjectVideoRecording,
+                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
+                    },
+                    {
+                      label: complaint.labels.subjectOtherOther,
+                      value: SubjectOfComplaint.OTHER,
+                    },
+                  ],
+                  large: true,
+                }),
+                buildTextField({
+                  id: 'subjectOfComplaint.somethingElse',
+                  title: complaint.labels.subjectSomethingElse,
+                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
+                  backgroundColor: 'blue',
+                  condition: (formValue) => {
+                    const other =
+                      ((formValue.subjectOfComplaint as FormValue)
+                        ?.other as string[]) || []
+                    return other.includes('other')
+                  },
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'complaint',
+          title: section.complaint,
+          children: [
+            buildMultiField({
+              id: 'complaintDescription',
+              title: complaint.general.complaintPageTitle,
+              description: complaint.general.complaintPageDescription,
+              space: 3,
+              children: [
+                buildTextField({
+                  id: 'complaint.description',
+                  title: complaint.labels.complaintDescription,
+                  placeholder: complaint.labels.complaintDescriptionPlaceholder,
+                  description: complaint.labels.complaintDescriptionLabel,
+                  variant: 'textarea',
+                  backgroundColor: 'blue',
+                }),
+                buildFileUploadField({
+                  id: 'complaint.documents',
+                  title: complaint.labels.complaintDocumentsTitle,
+                  introduction: complaint.labels.complaintDocumentsIntroduction,
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: complaint.labels.complaintDocumentsHeader,
+                  uploadDescription:
+                    complaint.labels.complaintDocumentsDescription,
+                  uploadButtonLabel:
+                    complaint.labels.complaintDocumentsButtonLabel,
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'overview',
+      title: section.overview,
+      children: [
+        buildCustomField({
+          id: 'overview.termsAgreement',
+          title: overview.general.pageTitle,
+          component: 'ComplaintOverview',
+        }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      title: 'Staðfesting',
+      title: 'Búið',
       children: [
         buildDescriptionField({
           id: 'field',
           title: 'Vel gert!',
-          description:
-            'Þú ert komin/n út á enda, ef þú ýtir á næsta skref þá læsist umsóknin',
+          description: 'Þú ert komin/n út á enda',
         }),
       ],
     }),

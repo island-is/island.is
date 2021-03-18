@@ -1,12 +1,11 @@
-// Set for auth library environment in local development
-process.env.AUTH_JWT_SECRET = 'securesecret'
-
 export default {
   production: false,
   auth: {
     samlEntryPoint: 'https://innskraning.island.is/?id=judicial-system.local',
     audience: 'localhost:4200',
     allowAuthBypass: true,
+    jwtSecret: 'jwt-secret',
+    secretToken: 'secret-token',
   },
   auditTrail: {
     useGenericLogger: true,
@@ -24,5 +23,10 @@ export default {
     username: process.env.COURT_USERNAME || '',
     password: process.env.COURT_PASSWORD || '',
   },
-  backendUrl: 'http://localhost:3344',
+  backend: {
+    url: 'http://localhost:3344',
+  },
+  features: {
+    hidden: '',
+  },
 }
