@@ -62,7 +62,7 @@ const registrarNotificationRule = {
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:id')
-@ApiTags('cases')
+@ApiTags('notifications')
 export class NotificationController {
   constructor(
     @Inject(NotificationService)

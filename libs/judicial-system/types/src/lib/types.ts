@@ -277,3 +277,11 @@ export interface SignatureConfirmationResponse {
 export interface CreateCustodyCourtCase {
   policeCaseNumber: string
 }
+
+export interface PresignedPost {
+  url: string
+}
+
+export interface CreatePresignedPost {
+  fileName: string
+}
