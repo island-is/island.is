@@ -27,7 +27,12 @@ import {
 
 import IslandisLogin, { VerifyResult } from 'islandis-login'
 import { Flight, FlightLeg } from './flight.model'
-import { FlightService, REYKJAVIK_FLIGHT_CODES } from './flight.service'
+import {
+  AKUREYRI_FLIGHT_CODES,
+  ALLOWED_CONNECTING_FLIGHT_CODES,
+  FlightService,
+  REYKJAVIK_FLIGHT_CODES,
+} from './flight.service'
 import {
   FlightViewModel,
   CreateFlightBody,
@@ -167,20 +172,20 @@ export class PublicFlightController {
 
     const flightLegCount = flight.flightLegs.length
 
-    const incomingLeg = {
-      origin: flight.flightLegs[0].origin,
-      destination: flight.flightLegs[flightLegCount - 1].destination,
-      date: new Date(Date.parse(flight.flightLegs[0].date.toString())),
-    }
-
     let hasReykjavik = false
+    let hasAkureyri = false
     for (const flightLeg of flight.flightLegs) {
       if (
         REYKJAVIK_FLIGHT_CODES.includes(flightLeg.origin) ||
         REYKJAVIK_FLIGHT_CODES.includes(flightLeg.destination)
       ) {
         hasReykjavik = true
-        break
+      }
+      if (
+        AKUREYRI_FLIGHT_CODES.includes(flightLeg.origin) ||
+        AKUREYRI_FLIGHT_CODES.includes(flightLeg.destination)
+      ) {
+        hasAkureyri = true
       }
     }
 
@@ -198,13 +203,67 @@ export class PublicFlightController {
 
       connectingId = connectionDiscountCode.flightId
 
-      const isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
+      // Make sure that all the flightLegs contain valid airports and valid airports only
+      // Note: at this point, none of the flightLegs contain Reykjavík
+      const ALLOWED_FLIGHT_CODES = [
+        ...AKUREYRI_FLIGHT_CODES,
+        ...ALLOWED_CONNECTING_FLIGHT_CODES,
+      ]
+      for (const flightLeg of flight.flightLegs) {
+        if (
+          !ALLOWED_FLIGHT_CODES.includes(flightLeg.origin) ||
+          !ALLOWED_FLIGHT_CODES.includes(flightLeg.destination)
+        ) {
+          throw new ForbiddenException(
+            `A flightleg contains invalid flight code/s [${flightLeg.origin}, ${flightLeg.destination}]. Allowed flight codes: [${ALLOWED_FLIGHT_CODES}]`,
+          )
+        }
+      }
+
+      // Make sure the flightLegs are chronological
+      const chronoLogicallegs = flight.flightLegs.sort((a, b) => {
+        const adate = new Date(Date.parse(a.date.toString()))
+        const bdate = new Date(Date.parse(b.date.toString()))
+        return adate.getTime() - bdate.getTime()
+      })
+
+      let incomingLeg = {
+        origin: chronoLogicallegs[0].origin,
+        destination: chronoLogicallegs[0].destination,
+        date: new Date(Date.parse(chronoLogicallegs[0].date.toString())),
+      }
+
+      // Validate the first chronological flightLeg of the connection flight
+      let isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
         connectingId,
         incomingLeg as FlightLeg, // must have date, destination and origin
       )
+
+      // If round-trip
+      if (
+        chronoLogicallegs[0].origin ===
+        chronoLogicallegs[flightLegCount - 1].destination
+      ) {
+        // Find a valid connection for the return trip to Akureyri
+        incomingLeg = {
+          origin: chronoLogicallegs[flightLegCount - 1].origin,
+          destination: chronoLogicallegs[flightLegCount - 1].destination,
+          date: new Date(
+            Date.parse(chronoLogicallegs[flightLegCount - 1].date.toString()),
+          ),
+        }
+        // Lazy evaluation makes this cheap
+        isConnectingFlight =
+          isConnectingFlight &&
+          (await this.flightService.isFlightLegConnectingFlight(
+            connectingId,
+            incomingLeg as FlightLeg,
+          ))
+      }
+
       if (!isConnectingFlight) {
         throw new ForbiddenException(
-          'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Connecting flight must go from/to Akureyri',
+          'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Each connecting flight must go from/to Akureyri',
         )
       } else {
         connectingFlight = true
@@ -221,14 +280,14 @@ export class PublicFlightController {
       flight,
       user,
       request.airline,
-      connectingFlight,
+      connectingFlight && hasAkureyri,
       connectingId,
     )
     await this.discountService.useDiscount(
       params.discountCode,
       discount.nationalId,
       newFlight.id,
-      connectingFlight,
+      connectingFlight && hasAkureyri,
     )
     return new FlightViewModel(newFlight)
   }
