@@ -14,6 +14,7 @@
     "metro-resolver": "*",
     "@storybook/react-native": "*",
     "@storybook/addon-knobs": "*",
-    "react-native-navigation": "*"
+    "react-native-navigation": "*",
+    "styled-components": "*"
   }
 }
