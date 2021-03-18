@@ -13,7 +13,7 @@ describe('answerValidators', () => {
       userCompanies: {
         data: [
           {
-            hasProcuration: '1',
+            hasProcuration: true,
             nationalId: '0000000000',
             name: 'Prófum íslenska hluti ohf',
           },

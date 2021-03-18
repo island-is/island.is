@@ -27,8 +27,8 @@ export const store = createStore(() => {
 
   const userCompanies: CurrentUserCompanies[] = [
     {
-      hasProcuration: '1',
-      isPartOfBoardOfDirectors: '0',
+      hasProcuration: true,
+      isPartOfBoardOfDirectors: false,
       nationalId: '0000000000',
       name: 'Tester Testson',
       companyStatus: 'Standandi',

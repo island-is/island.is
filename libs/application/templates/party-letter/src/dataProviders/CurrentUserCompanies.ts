@@ -36,7 +36,7 @@ export class CurrentUserCompaniesProvider extends BasicDataProvider {
         const userCompanies = response.data?.rskCurrentUserCompanies ?? []
         userCompanies.forEach((company) => {
           // only add companies that this user does not have procurement for
-          if (company.hasProcuration === '1') {
+          if (company.hasProcuration) {
             uniqueAllowedCompanies.set(company.nationalId, company)
           }
         })

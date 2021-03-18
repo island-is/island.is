@@ -128,16 +128,16 @@ describe('getCompaniesByNationalId', () => {
   it('should return success in teh correct format', async () => {
     const successResults: CompanyRegistryMember[] = [
       {
-        hasProcuration: '1',
-        isPartOfBoardOfDirectors: '1',
+        hasProcuration: true,
+        isPartOfBoardOfDirectors: true,
         nationalId: '0000000000',
         name: 'Test Testson',
         operationalForm: 'Kassi',
         companyStatus: 'Standandi',
       },
       {
-        hasProcuration: '0',
-        isPartOfBoardOfDirectors: '1',
+        hasProcuration: false,
+        isPartOfBoardOfDirectors: true,
         nationalId: '0000000000',
         name: 'Test Testson',
         operationalForm: 'Kassi',

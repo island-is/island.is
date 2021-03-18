@@ -15,8 +15,8 @@ export class CurrentUserCompanies {
   companyStatus!: string
 
   @Field()
-  isPartOfBoardOfDirectors!: '0' | '1'
+  isPartOfBoardOfDirectors!: boolean
 
   @Field()
-  hasProcuration!: '0' | '1'
+  hasProcuration!: boolean
 }

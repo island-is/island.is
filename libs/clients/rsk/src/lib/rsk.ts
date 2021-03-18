@@ -30,8 +30,8 @@ export interface CompanyRegistryMember {
   name: string
   operationalForm: string
   companyStatus: string
-  isPartOfBoardOfDirectors: '0' | '1'
-  hasProcuration: '0' | '1'
+  isPartOfBoardOfDirectors: boolean
+  hasProcuration: boolean
 }
 
 export class RSKService extends RESTDataSource {
@@ -68,8 +68,8 @@ export class RSKService extends RESTDataSource {
       name: company.Nafn,
       operationalForm: company.Rekstarform,
       companyStatus: company.StadaAdila,
-      isPartOfBoardOfDirectors: company.ErStjorn,
-      hasProcuration: company.ErProkuruhafi,
+      isPartOfBoardOfDirectors: company.ErStjorn === '1',
+      hasProcuration: company.ErProkuruhafi === '1',
     }))
   }
 }
