@@ -15,10 +15,13 @@ export class MockParentNationalRegistryProvider extends BasicDataProvider {
   async provide(application: Application): Promise<PersonResidenceChange> {
     const crcApplication = (application as unknown) as CRCApplication
     const data = crcApplication.answers?.mockData?.parentNationalRegistry?.data
-    if (data && data.ssn && data.ssn !== '') {
-      return data
+    if (!data) {
+      throw new Error('Ekki tókst að ná í gögn')
     }
-    throw new Error('Ekki tókst að ná í gögn eða kennitölu vantar')
+    if (!data.ssn || data.ssn === '') {
+      throw new Error('Kennitölu vantar')
+    }
+    return data
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
