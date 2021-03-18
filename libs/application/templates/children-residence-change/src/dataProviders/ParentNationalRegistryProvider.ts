@@ -5,10 +5,11 @@ import {
 } from '@island.is/application/core'
 
 import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
+import { DataProviderTypes } from '../types'
 
 /** This is a temporary mock provider for children residence change. National registry team are setting up real provider which we will connect to once it is up. **/
 export class ParentNationalRegistryProvider extends BasicDataProvider {
-  readonly type = 'ParentNationalRegistry'
+  readonly type = DataProviderTypes.ParentNationalRegistry
 
   async provide(): Promise<PersonResidenceChange> {
     const query = `query GetNationalRegistry {

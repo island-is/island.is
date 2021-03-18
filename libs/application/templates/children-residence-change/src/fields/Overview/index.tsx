@@ -9,11 +9,7 @@ import {
   UPLOAD_SIGNED_FILE,
   GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
-import {
-  extractParentFromApplication,
-  constructParentAddressString,
-  extractApplicantFromApplication,
-} from '../../lib/utils'
+import { constructParentAddressString } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
 import { DescriptionText } from '../components'
@@ -30,13 +26,13 @@ const Overview = ({
   application,
   setBeforeSubmitCallback,
 }: CRCFieldBaseProps) => {
-  const { answers } = application
+  const { answers, externalData } = application
   const [fileSignatureState, dispatchFileSignature] = useReducer(
     fileSignatureReducer,
     initialFileSignatureState,
   )
-  const applicant = extractApplicantFromApplication(application)
-  const parent = extractParentFromApplication(application)
+  const applicant = externalData.nationalRegistry.data
+  const parent = externalData.parentNationalRegistry.data
   const parentAddress = constructParentAddressString(parent)
   const children = answers.selectChild
   const { formatMessage } = useIntl()
