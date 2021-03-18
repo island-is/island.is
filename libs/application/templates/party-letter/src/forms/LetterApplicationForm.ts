@@ -54,17 +54,6 @@ export const LetterApplicationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'recommendations',
-      title: m.recommendations.title,
-      children: [
-        buildCustomField({
-          id: 'gatherRecommendations',
-          title: m.recommendations.title,
-          component: 'Recommendations',
-        }),
-      ],
-    }),
-    buildSection({
       id: 'companySelection',
       title: m.selectSSD.title,
       children: [

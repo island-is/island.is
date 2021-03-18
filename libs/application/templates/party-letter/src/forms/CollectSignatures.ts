@@ -23,16 +23,8 @@ export const ReviewApplication: Form = buildForm({
           children: [
             buildDescriptionField({
               id: 'final',
-              title: 'Safna meðmælum',
+              title: 'Mæla með lista',
               description: 'Þú getur nú farið að taka á móti meðmælum',
-            }),
-            buildSubmitField({
-              id: 'approvedByReviewer',
-              placement: 'footer',
-              title: 'Senda inn umsókn',
-              actions: [
-                { event: 'APPROVE', name: 'Senda inn umsókn', type: 'primary' },
-              ],
             }),
           ],
         }),

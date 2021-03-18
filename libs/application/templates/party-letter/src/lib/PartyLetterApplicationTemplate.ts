@@ -11,15 +11,21 @@ import * as z from 'zod'
 import { isValid } from 'kennitala'
 import { answerValidators } from './answerValidators'
 
-type ReferenceTemplateEvent =
+type PartyLetterTemplateEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
 
 enum Roles {
   APPLICANT = 'applicant',
   SIGNATUREE = 'signaturee',
 }
+
+enum States {
+  DRAFT = 'draft',
+  COLLECT_SIGNATURES = 'collectSignatures',
+  APPROVED = 'approved',
+}
+
 const dataSchema = z.object({
   selectKennitala: z.string().refine((x) => isValid(x)),
   partyLetter: z.string().length(1),
@@ -29,18 +35,18 @@ const dataSchema = z.object({
 
 const PartyLetterApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<ReferenceTemplateEvent>,
-  ReferenceTemplateEvent
+  ApplicationStateSchema<PartyLetterTemplateEvent>,
+  PartyLetterTemplateEvent
 > = {
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Party letter',
   dataSchema,
   stateMachineConfig: {
-    initial: 'draft',
+    initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
-          name: 'draft',
+          name: 'Draft',
           progress: 0.25,
           roles: [
             {
@@ -58,11 +64,11 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'collectSignatures',
+            target: States.COLLECT_SIGNATURES,
           },
         },
       },
-      collectSignatures: {
+      [States.COLLECT_SIGNATURES]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
@@ -73,28 +79,33 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
                 import('../forms/CollectSignatures').then((val) =>
                   Promise.resolve(val.ReviewApplication),
                 ),
-              actions: [
-                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
-              ],
-              read: 'all',
+              write: 'all',
+              read: 'all', // TODO: Scope access to data here so signaturee can't see other signaturee data
             },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/CollectSignatures').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/CollectSignaturesOverview').then((val) =>
+                  Promise.resolve(val.CollectSignaturesOverview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+              ],
               read: 'all',
             },
           ],
         },
         on: {
-          APPROVE: {
-            target: 'approved',
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
           },
         },
       },
-      approved: {
+      [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
@@ -114,13 +125,19 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(
-    id: string,
+    nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.state === 'inReview') {
+    // TODO: Applicant can recommend his own list
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    } else if (application.state === States.COLLECT_SIGNATURES) {
+      // TODO: Maybe display collection as closed in final state for signaturee
+      // everyone can be signaturee if they are not the applicant
       return Roles.SIGNATUREE
+    } else {
+      return undefined
     }
-    return Roles.APPLICANT
   },
   answerValidators,
 }
