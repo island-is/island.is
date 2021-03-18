@@ -2,6 +2,9 @@
   "name": "native-app",
   "version": "0.0.1",
   "private": true,
+  "scripts":{
+    "nx": "cd ../.. && yarn nx"
+  },
   "dependencies": {
     "react-native": "*",
     "react": "*",

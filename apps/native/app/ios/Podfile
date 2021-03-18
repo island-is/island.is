@@ -6,8 +6,10 @@ platform :ios, '10.0'
 
 target 'IslandApp' do
   config = use_native_modules!
-  puts config
   use_react_native!(:path => config[:reactNativePath])
+
+  pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
+  pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
 
   use_flipper!
   post_install do |installer|
