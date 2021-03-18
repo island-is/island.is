@@ -20,7 +20,6 @@ export const settingsModule: ServicePortalModule = {
           id: 'service.portal:settings',
           defaultMessage: 'Stillingar',
         }),
-        notifications: 0,
         path: ServicePortalPath.UserProfileRoot,
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
