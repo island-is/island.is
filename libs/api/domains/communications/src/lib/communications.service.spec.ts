@@ -1,6 +1,7 @@
 import { EmailModule, EmailService } from '@island.is/email-service'
 import { LoggingModule } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
+import { ZendeskModule, ZendeskService } from '@island.is/zendesk-service'
 import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
@@ -26,14 +27,24 @@ describe('communicationsService', () => {
   }
   let communicationsService: CommunicationsService
   let emailService: EmailService
+  let zendeskService: ZendeskService
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [LoggingModule, EmailModule.register({ useTestAccount: true })],
+      imports: [
+        LoggingModule,
+        EmailModule.register({ useTestAccount: true }),
+        ZendeskModule.register({
+          email: 'email',
+          token: 'token',
+          subdomain: 'subdomain',
+        }),
+      ],
       providers: [CommunicationsService],
     }).compile()
 
     emailService = moduleRef.get<EmailService>(EmailService)
+    zendeskService = moduleRef.get<ZendeskService>(ZendeskService)
     communicationsService = moduleRef.get<CommunicationsService>(
       CommunicationsService,
     )
