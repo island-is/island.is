@@ -14,27 +14,17 @@ export class MockParentNationalRegistryProvider extends BasicDataProvider {
 
   async provide(application: Application): Promise<PersonResidenceChange> {
     const crcApplication = (application as unknown) as CRCApplication
-    return (
-      crcApplication.answers?.mockData?.parentNationalRegistry?.data ||
-      this.handleError()
-    )
+    const data = crcApplication.answers?.mockData?.parentNationalRegistry?.data
+    if (data && data.ssn && data.ssn !== '') {
+      return data
+    }
+    throw new Error('Ekki tókst að ná í gögn eða kennitölu vantar')
   }
-  handleError() {
-    return Promise.resolve({
-      id: '1',
-      name: 'Eiríkur Jónsson',
-      ssn: '120486-7899',
-      address: 'Suðurgata 35, íbúð 2',
-      postalCode: '105',
-      city: 'Reykjavík',
-    })
-  }
-  onProvideError(result: string): FailedDataProviderResult {
+  onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: result,
+      reason: result.message,
       status: 'failure',
-      data: result,
     }
   }
   onProvideSuccess(
