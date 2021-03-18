@@ -6,10 +6,13 @@ import {
 } from '@island.is/application/core'
 import { CRCApplication } from '../types'
 
-import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
+import {
+  PersonResidenceChange,
+  DataProviderTypes,
+} from '@island.is/application/templates/children-residence-change'
 
 export class MockChildrenNationalRegistryProvider extends BasicDataProvider {
-  readonly type = 'MockChildrenNationalRegistry'
+  readonly type = DataProviderTypes.MOCK_ChildrenNationalRegistry
 
   async provide(application: Application): Promise<PersonResidenceChange[]> {
     const crcApplication = (application as unknown) as CRCApplication

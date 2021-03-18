@@ -6,11 +6,11 @@ import {
 } from '@island.is/application/core'
 
 import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
-import { CRCApplication } from '../types'
+import { CRCApplication, DataProviderTypes } from '../types'
 
 /** This is a temporary mock provider for children residence change. National registry team are setting up real provider which we will connect to once it is up. **/
 export class MockParentNationalRegistryProvider extends BasicDataProvider {
-  readonly type = 'MockParentNationalRegistry'
+  readonly type = DataProviderTypes.MOCK_ParentNationalRegistry
 
   async provide(application: Application): Promise<PersonResidenceChange> {
     const crcApplication = (application as unknown) as CRCApplication

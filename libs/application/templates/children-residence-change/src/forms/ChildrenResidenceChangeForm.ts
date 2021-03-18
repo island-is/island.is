@@ -15,6 +15,7 @@ import {
   Application,
   Comparators,
 } from '@island.is/application/core'
+import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
 
@@ -78,25 +79,25 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: 'NationalRegistryProvider',
+                  type: DataProviderTypes.NationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'childrenNationalRegistry',
-                  type: 'ChildrenNationalRegistryProvider',
+                  type: DataProviderTypes.ChildrenNationalRegistry,
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'parentNationalRegistry',
-                  type: 'ParentNationalRegistryProvider',
+                  type: DataProviderTypes.ParentNationalRegistry,
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
-                  type: 'UserProfileProvider',
+                  type: DataProviderTypes.UserProfile,
                   title: '',
                   subTitle: '',
                 }),
@@ -122,25 +123,25 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: 'NationalRegistryProvider',
+                  type: DataProviderTypes.NationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'childrenNationalRegistry',
-                  type: 'MockChildrenNationalRegistryProvider',
+                  type: DataProviderTypes.MOCK_ChildrenNationalRegistry,
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'parentNationalRegistry',
-                  type: 'MockParentNationalRegistryProvider',
+                  type: DataProviderTypes.MOCK_ParentNationalRegistry,
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
-                  type: 'UserProfileProvider',
+                  type: DataProviderTypes.UserProfile,
                   title: '',
                   subTitle: '',
                 }),
