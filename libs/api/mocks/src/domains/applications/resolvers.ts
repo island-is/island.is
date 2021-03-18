@@ -10,12 +10,14 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    getApplicationsByApplicant: (parent, args) => {
+    applicationApplications: (parent, args) => {
       return store.applications.filter(
-        (a) => a.typeId === args.typeId && a.applicant === '0000000000',
+        (a) =>
+          (args.input?.typeId ?? []).some((t) => t === a.typeId) &&
+          a.applicant === '0000000000',
       )
     },
-    getApplication: (parent, args) => {
+    applicationApplication: (parent, args) => {
       return store.applications.find((a) => a.id === args.input.id) || null
     },
     nationalRegistryFamily: () => {

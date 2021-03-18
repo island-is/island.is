@@ -7,16 +7,16 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class FooterItem {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field(() => Link, { nullable: true })
-  link: Link
+  link?: Link | null
 
   @Field(() => [SliceUnion], { nullable: true })
-  content: Array<typeof SliceUnion>
+  content?: Array<typeof SliceUnion>
 }
 
 export const mapFooterItem = ({ fields, sys }: IFooterItem): FooterItem => ({

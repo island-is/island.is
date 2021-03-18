@@ -23,9 +23,11 @@ export const getApplicationTitle = (
   let activeSection: Section | SubSection =
     state.sections[activeScreen.sectionIndex]
   if (activeSection && activeScreen.subSectionIndex >= 0) {
-    activeSection = getSubSectionsInSection(activeSection)[
-      activeScreen.subSectionIndex
-    ]
+    activeSection = getSubSectionsInSection(
+      activeSection,
+      state.application.answers,
+      state.application.externalData,
+    )[activeScreen.subSectionIndex]
   }
 
   const formName = formatMessage(state.form.title)
