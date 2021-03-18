@@ -769,7 +769,7 @@ export class ApplicationController {
     application: Application,
     @Param('pdfType') type: PdfTypes,
   ): Promise<PresignedUrlResponseDto> {
-    const url = this.fileService.getPresignedUrl(application, type)
+    const url = await this.fileService.getPresignedUrl(application, type)
 
     return { url }
   }

@@ -96,14 +96,14 @@ export class FileService {
     }
   }
 
-  getPresignedUrl(application: Application, pdfType: PdfTypes) {
+  async getPresignedUrl(application: Application, pdfType: PdfTypes) {
     this.validateApplicationType(application.typeId)
 
     const bucket = this.getBucketName()
 
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
 
-    return this.awsService.getPresignedUrl(bucket, fileName)
+    return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   private async createChildrenResidencePdf(application: CRCApplication) {
@@ -135,7 +135,7 @@ export class FileService {
 
     await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
 
-    return this.awsService.getPresignedUrl(bucket, fileName)
+    return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   private async handleChildrenResidenceChangeSignature(

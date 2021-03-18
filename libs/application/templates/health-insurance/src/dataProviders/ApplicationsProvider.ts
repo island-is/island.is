@@ -4,11 +4,12 @@ import {
   FailedDataProviderResult,
   ApplicationTypes,
 } from '@island.is/application/core'
+import { Applications } from './APIDataTypes'
 
 export class ApplicationsProvider extends BasicDataProvider {
   type = 'ApplicationsProvider'
 
-  provide(): Promise<string> {
+  provide(): Promise<Applications[]> {
     const query = `query ApplicationApplications {
       applicationApplications(input: { typeId: ${ApplicationTypes.HEALTH_INSURANCE} }) {
         id
