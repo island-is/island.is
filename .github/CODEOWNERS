@@ -12,9 +12,11 @@
 # Make sure that team names are correct or everything stops working.
 # Organisation name is @island-is, not @island.is
 
+
 /apps/web*/                                                                                   @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
+/libs/clients/rsk/                                                                            @island-is/kosmos-kaos
 
 /*/air-discount-scheme/                                                                       @island-is/vice-versa
 /*/gjafakort/                                                                                 @island-is/vice-versa @island-is/kosmos-kaos
