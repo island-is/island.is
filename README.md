@@ -8,9 +8,7 @@ The repository is a [monorepo](../technical-overview/monorepo.md) that has multi
 
 ## GitBook
 
-The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com).
-
-### For a better reading experience make sure to visit [docs.devland.is](https://docs.devland.is/handbook/).
+The apps and libraries documentation and our handbook are hosted on [GitBook](https://www.gitbook.com) and is publicly available at [docs.devland.is](https://docs.devland.is/handbook/).
 
 ## Storybook
 
@@ -20,7 +18,7 @@ The Ísland.is design system is developed and showcased using [Storybook](https:
 
 To get more technical information about the project please make sure to read this [overview](handbook/technical-overview/README.md).
 
-## How to contribute
+## External contributors
 
 If you want to contribute to the repository, please make sure to follow [this guide](handbook/repository/external-contribute.md).
 
@@ -71,8 +69,6 @@ We have many lint rules to help having a unify code all over the project. To exe
 yarn lint <project>
 ```
 
-> Running lint locally is slow and fill up heap memory. This is related to Typescript compilation and NX lint builder being slow. As a result you might get a `JavaScript heap out of memory`. NX is working on fixing this for an upcoming update. In the meantime you can do `NODE_OPTIONS=“--max-old-space-size=4096” yarn lint <project>` to raise the memory limit.
-
 ### Running unit tests
 
 To execute the unit tests via [Jest](https://jestjs.io):
@@ -113,42 +109,6 @@ To see a diagram of the dependencies of your projects:
 yarn nx dep-graph
 ```
 
-### Making dev secrets available locally
+### Secrets
 
-Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
-Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
-
-All secrets labeled with the `dev` label can be fetched using `yarn get-secrets`.
-
-### Fetch development secrets for your project
-
-```bash
-yarn get-secrets <project> [options]
-```
-
-**Example**:
-
-```bash
-yarn get-secrets gjafakort --reset
-```
-
-### Environment variables with static websites
-
-To be able to access environment variables in purely static projects, you need
-to do the following:
-
-1. In the index.html file, add `<!-- environment placeholder -->`.
-2. Use the `getStaticEnv` function from the `@island.is/utils/environment`
-   library to fetch your environment variables.
-3. Prefix your environment variables with `SI_PUBLIC_`, for example
-   `SI_PUBLIC_MY_VARIABLE`.
-
-NOTE: This is only to get environment variables when running in kubernetes, not
-for when running locally. So you should only use `getStaticEnv` in your
-`environment.prod.ts` file.
-
-What happens behind the scenes is that static projects have a bash script that
-runs when the docker container starts up. This script searches for references
-of `SI_PUBLIC_*` in the code and tries to find a match in the environment. It
-then puts all the matches inside the index.html which is then served to the
-client.
+To know everything about AWS secrets, please check out [this documentation](handbook/repository/aws-secrets.md).

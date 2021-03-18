@@ -31,7 +31,8 @@
     "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
     "license-audit": "license-checker --failOn 'GPL; AGPL; UNLICENSED' --summary",
     "generate": "nx generate",
-    "get-secrets": "./scripts/secrets.sh",
+    "get-secrets": "./scripts/get-secrets.sh",
+    "create-secret": "./scripts/create-secret.sh",
     "format": "nx format:write",
     "format:check": "nx format:check",
     "update": "nx migrate latest",
@@ -42,8 +43,7 @@
     "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
     "schemas": "node ./scripts/schemas.js",
     "postinstall": "node ./scripts/postinstall.js",
-    "gitbook": "node ./scripts/gitbook.js",
-    "create-secret": "./scripts/create-secret.sh"
+    "gitbook": "node ./scripts/gitbook.js"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",

@@ -67,7 +67,7 @@ const ExampleSchema = z.object({
 
 1. Create a test bucket for your account named `testing-islandis`. _This will eventually become configurable when we update `file-storage-service.ts`_
 2. Install the aws-cli on your machine
-3. Run `aws configure` in the command line and enter your `ACCESS_KEY_ID` and then when prompted, enter your `SECRET_ACCESS_KEY`. Then confirm that the region is `eu-west-1`. Once those are set, the node app extracts the aws config and uses it, so no .env variables needed.
+3. Configure [AWS Secrets](../../../handbook/repository/aws-secrets.md)
 4. Run you application locally and attempt to upload a file, you should get a 204 response if successful.
 
 #### Using the FileUploadController in other fields

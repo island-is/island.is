@@ -506,12 +506,6 @@
           },
           "outputs": ["coverage/apps/api"]
         },
-        "get-secrets": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./scripts/secrets.sh api --reset"
-          }
-        },
         "schemas/build-graphql-schema": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
