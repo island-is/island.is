@@ -1,6 +1,8 @@
 import { Schema } from '../types/Form'
 import { Answer, FormValue } from '../types/Application'
 import { ZodError } from 'zod'
+import isNumber from 'lodash/isNumber'
+import { AnswerValidationError } from './AnswerValidator'
 
 interface SchemaValidationError {
   [key: string]: string
@@ -96,4 +98,24 @@ export function validateAnswers(
     return e
   }
   return undefined
+}
+
+export const buildValidationError = (
+  path: string,
+  index?: number,
+): ((message: string, field?: string) => AnswerValidationError) => (
+  message,
+  field,
+) => {
+  if (field && isNumber(index)) {
+    return {
+      message,
+      path: `${path}[${index}].${field}`,
+    }
+  }
+
+  return {
+    message,
+    path,
+  }
 }

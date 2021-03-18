@@ -1,17 +1,12 @@
 import {
-  buildCheckboxField,
-  buildDividerField,
   buildForm,
   buildDescriptionField,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubmitField,
-  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
 
 export const ReviewApplication: Form = buildForm({
   id: 'Collect signatures',

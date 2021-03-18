@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { validateAnswers } from './validators'
+import { buildValidationError, validateAnswers } from './validators'
 import { FormValue } from '@island.is/application/core'
 
 const schema = z.object({
@@ -342,6 +342,23 @@ describe('validateAnswers', () => {
       expect(validateAnswers(schema, value)).toEqual({
         value: expectedMessage,
       })
+    })
+  })
+})
+
+describe('buildValidationError', () => {
+  it('should return correctly formatted error object when skipping optional values', () => {
+    const buildError = buildValidationError('descriptiveNamespaceString')
+    expect(buildError('Some message')).toStrictEqual({
+      message: 'Some message',
+      path: 'descriptiveNamespaceString',
+    })
+  })
+  it('should return correctly formatted error object when provided all values', () => {
+    const buildError = buildValidationError('descriptiveNamespaceString', 1337)
+    expect(buildError('Some message', 'someField')).toStrictEqual({
+      message: 'Some message',
+      path: 'descriptiveNamespaceString[1337].someField',
     })
   })
 })

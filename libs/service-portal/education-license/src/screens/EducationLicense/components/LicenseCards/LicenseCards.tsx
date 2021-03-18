@@ -1,5 +1,7 @@
 import React, { useRef } from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 
 import { Query, Mutation, License } from '@island.is/api/schema'
 import { Box, Button } from '@island.is/island-ui/core'
@@ -63,7 +65,13 @@ const LicenseCards = () => {
             eyebrow={license.school}
             imgPlaceholder={'MRN'}
             title={`Leyfisbréf - ${license.programme}`}
-            description={license.date}
+            description={`Útgáfudagur: ${format(
+              new Date(license.date),
+              'dd. MMMM yyyy',
+              {
+                locale: is,
+              },
+            )}`}
             CTA={
               <Button
                 variant="text"

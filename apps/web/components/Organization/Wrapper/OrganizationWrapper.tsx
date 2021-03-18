@@ -4,6 +4,9 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Hidden,
   Link,
   Navigation,
@@ -38,6 +41,7 @@ interface WrapperProps {
   sidebarContent?: ReactNode
   navigationData: NavigationData
   fullWidthContent?: boolean
+  minimal?: boolean
 }
 
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
@@ -51,6 +55,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   navigationData,
   fullWidthContent = false,
   children,
+  minimal = false,
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
 
@@ -67,7 +72,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         <Box className={styles.headerWrapper}>
           <SidebarLayout
             sidebarContent={
-              !!organizationPage.organization.logo && (
+              !!organizationPage.organization.logo &&
+              !minimal && (
                 <Link href="#">
                   <Box
                     borderRadius="circle"
@@ -111,67 +117,82 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         </Box>
       </Box>
       <Main>
-        <SidebarLayout
-          paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 4]}
-          isSticky={false}
-          sidebarContent={
-            <Sticky>
-              <Navigation
-                baseId="pageNav"
-                isMenuDialog={isMobile}
-                items={navigationData.items}
-                title={navigationData.title}
-                activeItemTitle={navigationData.activeItemTitle}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href}>{link}</NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
-              {sidebarContent}
-            </Sticky>
-          }
-        >
-          <Hidden above="sm">
-            <Box marginY={2}>
-              <Navigation
-                baseId="pageNav"
-                isMenuDialog={isMobile}
-                items={navigationData.items}
-                title={navigationData.title}
-                activeItemTitle={navigationData.activeItemTitle}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href}>{link}</NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
+        {!minimal && (
+          <SidebarLayout
+            paddingTop={[2, 2, 9]}
+            paddingBottom={[4, 4, 4]}
+            isSticky={false}
+            sidebarContent={
+              <Sticky>
+                <Navigation
+                  baseId="pageNav"
+                  isMenuDialog={isMobile}
+                  items={navigationData.items}
+                  title={navigationData.title}
+                  activeItemTitle={navigationData.activeItemTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+                {sidebarContent}
+              </Sticky>
+            }
+          >
+            <Hidden above="sm">
+              <Box marginY={2}>
+                <Navigation
+                  baseId="pageNav"
+                  isMenuDialog={isMobile}
+                  items={navigationData.items}
+                  title={navigationData.title}
+                  activeItemTitle={navigationData.activeItemTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              </Box>
+            </Hidden>
+            <Breadcrumbs
+              items={breadcrumbItems ?? []}
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href}>{link}</NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
+            <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
+              <Text variant="intro">{organizationPage.description}</Text>
             </Box>
-          </Hidden>
-          <Breadcrumbs
-            items={breadcrumbItems ?? []}
-            renderLink={(link, item) => {
-              return item?.href ? (
-                <NextLink href={item?.href}>{link}</NextLink>
-              ) : (
-                link
-              )
-            }}
-          />
-          <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
-            <Text variant="intro">{organizationPage.description}</Text>
-          </Box>
-          <Hidden above="sm">{sidebarContent}</Hidden>
-          <Box paddingTop={4}>{mainContent ?? children}</Box>
-        </SidebarLayout>
+            <Hidden above="sm">{sidebarContent}</Hidden>
+            <Box paddingTop={4}>{mainContent ?? children}</Box>
+          </SidebarLayout>
+        )}
         {!!mainContent && children}
+        {minimal && (
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                paddingTop={6}
+                span={['12/12', '12/12', '10/12']}
+                offset={['0', '0', '1/12']}
+              >
+                {children}
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        )}
       </Main>
-      <OrganizationFooter organizationPage={organizationPage} />
+      {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
     </>
   )
 }

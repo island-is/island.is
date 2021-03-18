@@ -5,71 +5,135 @@ import {
   buildRadioField,
   buildSection,
   buildSubmitField,
-  buildTextField,
   Form,
   FormModes,
+  buildCustomField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
+  Application,
 } from '@island.is/application/core'
+import { User } from '@island.is/api/domains/national-registry'
+import { UserCompany } from '../dataProviders/CurrentUserCompanies'
 import { m } from '../lib/messages'
+import { partyLetterIds } from '../fields/PartyLetter'
 
-const partyLetters = ['A', 'B', 'C', 'X', 'H', 'I', 'O', 'P', 'Q', 'T', 'R']
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
-  title: 'Framboðsstafur',
+  title: 'Listabókstafur',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'company',
-      title: m.companySection,
+      id: 'termsAndConditions',
+      title: m.externalDataSection.title,
+      children: [
+        buildExternalDataProvider({
+          id: 'approveTermsAndConditions',
+          title: m.externalDataSection.title,
+          subTitle: m.externalDataSection.subTitle,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'dmr',
+              type: undefined,
+              title: m.externalDataSection.dmrTitle,
+              subTitle: m.externalDataSection.dmrSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.externalDataSection.nationalRegistryTitle,
+              subTitle: m.externalDataSection.nationalRegistrySubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'userCompanies',
+              type: 'CurrentUserCompaniesProvider',
+              title: m.externalDataSection.islandTitle,
+              subTitle: m.externalDataSection.islandSubtitle,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'recommendations',
+      title: m.recommendations.title,
+      children: [
+        buildCustomField({
+          id: 'gatherRecommendations',
+          title: m.recommendations.title,
+          component: 'Recommendations',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'companySelection',
+      title: m.selectSSD.title,
       children: [
         buildRadioField({
-          id: 'companyNationalId',
-          title: m.companySelection,
-          options: [
-            { value: '0000000000', label: 'Sjálfstæðisflokkurinn' },
-            { value: '1111111111', label: 'Bæjar bakarí' },
-          ],
+          id: 'partyNationalId',
+          title: m.selectSSD.title,
+          largeButtons: true,
+          width: 'half',
+          options: (application: Application) => {
+            const companies = application.externalData.userCompanies
+              .data as UserCompany[]
+            const nationalRegistry = application.externalData.nationalRegistry
+              .data as User
+
+            return [
+              {
+                label: nationalRegistry.fullName,
+                subLabel: application.applicant,
+                value: application.applicant,
+              },
+              ...companies.map((company) => ({
+                label: company.name,
+                subLabel: company.nationalId,
+                value: company.nationalId,
+              })),
+            ]
+          },
         }),
       ],
     }),
     buildSection({
       id: 'partyLetter',
-      title: 'Stafur',
+      title: m.selectPartyLetter.sectionTitle,
       children: [
-        buildRadioField({
+        buildCustomField({
           id: 'partyLetter',
-          title: m.partyLetterSelection,
-          options: partyLetters.map((letter) => ({
-            value: letter,
-            label: letter,
-          })),
+          childInputIds: partyLetterIds,
+          title: m.selectPartyLetter.title,
+          component: 'PartyLetter',
         }),
       ],
     }),
+
     buildSection({
       id: 'partyName',
-      title: 'Nafn',
+      title: m.overview.title,
       children: [
         buildMultiField({
-          title: '',
+          title: m.overview.title,
+          description: m.overview.subtitle,
           children: [
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: 'Hefja söfnun',
+              title: m.overview.title,
               actions: [
-                { event: 'SUBMIT', name: 'Hefja söfnun', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: m.overview.submitButton,
+                  type: 'primary',
+                },
               ],
-            }),
-            buildTextField({
-              id: 'partyName',
-              title: m.partyName,
             }),
           ],
         }),
         buildDescriptionField({
           id: 'final',
-          title: 'Takk',
-          description: 'Umsókn þín er komin í vinnslu',
+          title: m.overview.finalTitle,
+          description: m.overview.finalSubtitle,
         }),
       ],
     }),
