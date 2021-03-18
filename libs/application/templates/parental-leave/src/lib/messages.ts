@@ -944,6 +944,18 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Your employer will confirm the dates of your parental leave.',
     },
+    employerEditsTitle: {
+      id: 'pl.application:review.employer.edits.title',
+      defaultMessage: 'Vinnuveitandi samþykkir breytingar þínar á tímabilinu',
+      description: 'Employer approves your period edits',
+    },
+    employerEditsDesc: {
+      id: 'pl.application:review.employer.edits.description',
+      defaultMessage:
+        'Vinnuveitandi þinn mun staðfesta breytingarnar sem þú gerðir á foreldraorlofstímabilinu þínu.',
+      description:
+        'Your employer will confirm the edits you made to your your parental leave periods.',
+    },
     deptTitle: {
       id: 'pl.application:review.dept.title',
       defaultMessage: 'Vinnumálastofnun samþykkir umsókn',

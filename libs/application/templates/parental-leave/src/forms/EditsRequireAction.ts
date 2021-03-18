@@ -2,7 +2,10 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
+  coreMessages,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -31,16 +34,56 @@ export const EditsRequireAction: Form = buildForm({
         //       : parentalLeaveFormMessages.reviewScreen.titleInReview,
         //   component: 'InReviewSteps',
         // }),
-        buildDescriptionField({
-          id: 'intro',
-          title: '',
-          description: {
+        // buildDescriptionField({
+        //   id: 'intro',
+        //   title: '',
+        //   description: {
+        //     id: 'pl.application:form.editsNeedsAction.title',
+        //     defaultMessage:
+        //       'Your edits were not approved, you can choose to modify them and resubmit or discard the modifications.',
+        //     description:
+        //       'Your edits were not approved, you can choose to modify them and resubmit or discard the modifications.',
+        //   },
+        // }),
+
+        buildMultiField({
+          id: 'multi',
+          title: {
             id: 'pl.application:form.editsNeedsAction.title',
-            defaultMessage:
-              'Your edits were not approved, you can choose to modify them and resubmit or discard the modifications.',
-            description:
-              'Your edits were not approved, you can choose to modify them and resubmit or discard the modifications.',
+            defaultMessage: 'Edits not approved',
+            description: 'Edits not approved',
           },
+          children: [
+            buildDescriptionField({
+              id: 'intro',
+              title: '',
+              description: {
+                id: 'pl.application:form.editsNeedsAction.title',
+                defaultMessage:
+                  'Your edits were not approved, you can choose to modify them and resubmit or discard the modifications.',
+                description:
+                  'Your edits were not approved, you can choose to modify them and resubmit or discard the modifications.',
+              },
+            }),
+            buildSubmitField({
+              id: 'submit',
+              title: {
+                id: 'pl.application:form.editsNeedsAction.submitField',
+                defaultMessage: '',
+                description: '',
+              },
+              placement: 'screen',
+              actions: [
+                { name: 'Cancel Edits', type: 'cancel', event: 'ABORT' },
+                { name: 'Edit', type: 'primary', event: 'EDIT' },
+              ],
+            }),
+          ],
+        }),
+        buildDescriptionField({
+          id: 'final',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),

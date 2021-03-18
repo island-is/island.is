@@ -32,7 +32,7 @@ enum Roles {
   ASSIGNEE = 'assignee',
 }
 
-enum States {
+export enum States {
   // First flow
   DRAFT = 'draft',
 
@@ -325,8 +325,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        entry: 'copyPeriodsToTemp',
-        exit: 'mergePeriodAnswers',
+        // entry: 'copyPeriodsToTemp',
+        // exit: 'mergePeriodAnswers',
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           progress: 1,
