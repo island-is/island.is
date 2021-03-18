@@ -58,7 +58,7 @@ export class CaseResolver {
 
     return this.auditService.audit(
       user.id,
-      AuditedAction.OVERVIEW,
+      AuditedAction.GET_CASES,
       backendApi.getCases(),
       (cases: Case[]) => cases.map((aCase) => aCase.id),
     )
@@ -76,7 +76,7 @@ export class CaseResolver {
 
     return this.auditService.audit(
       user.id,
-      AuditedAction.VIEW_DETAILS,
+      AuditedAction.GET_CASE,
       backendApi.getCase(input.id),
       input.id,
     )
@@ -94,7 +94,7 @@ export class CaseResolver {
 
     return this.auditService.audit(
       user.id,
-      AuditedAction.CREATE,
+      AuditedAction.CREATE_CASE,
       backendApi.createCase(input),
       (theCase) => theCase.id,
     )
@@ -114,7 +114,7 @@ export class CaseResolver {
 
     return this.auditService.audit(
       user.id,
-      AuditedAction.UPDATE,
+      AuditedAction.UPDATE_CASE,
       backendApi.updateCase(id, updateCase),
       id,
     )
@@ -134,7 +134,7 @@ export class CaseResolver {
 
     return this.auditService.audit(
       user.id,
-      AuditedAction.TRANSITION,
+      AuditedAction.TRANSITION_CASE,
       backendApi.transitionCase(id, transitionCase),
       id,
     )
@@ -206,7 +206,7 @@ export class CaseResolver {
 
     return this.auditService.audit(
       user.id,
-      AuditedAction.EXTEND,
+      AuditedAction.EXTEND_CASE,
       backendApi.extendCase(input.id),
       (theCase) => theCase.id,
     )

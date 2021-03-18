@@ -6,6 +6,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
+import { AuditedAction } from '@island.is/judicial-system/audit-trail'
 import { User } from '@island.is/judicial-system/types'
 
 import { BackendAPI } from '../../../services'
@@ -33,6 +34,11 @@ export class FileResolver {
 
     this.logger.debug(`Creating a presign post for case ${caseId}`)
 
-    return backendApi.createPresignedPost(caseId, createPresignedPost)
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.CREATE_PRESIGNED_POST,
+      backendApi.createPresignedPost(caseId, createPresignedPost),
+      caseId,
+    )
   }
 }
