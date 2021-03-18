@@ -13,6 +13,8 @@ import {
   buildFileUploadField,
   buildRepeater,
   buildCheckboxField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
 import {
@@ -25,7 +27,8 @@ import {
   complaint,
   overview,
 } from '../lib/messages'
-import { OnBehalf } from '../lib/dataSchema'
+import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
+import { externalData } from '../lib/messages/externalData'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -102,6 +105,33 @@ export const ComplaintForm: Form = buildForm({
   title: application.name,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'externalData',
+      title: section.externalData,
+      children: [
+        buildExternalDataProvider({
+          title: externalData.general.pageTitle,
+          id: 'approveExternalData',
+          subTitle: externalData.general.subTitle,
+          description: externalData.general.description,
+          checkboxLabel: externalData.general.checkboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: externalData.labels.nationalRegistryTitle,
+              subTitle: externalData.labels.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: externalData.labels.userProfileTitle,
+              subTitle: externalData.labels.userProfileSubTitle,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'delimitation',
       title: section.delimitation.defaultMessage,
@@ -287,6 +317,9 @@ export const ComplaintForm: Form = buildForm({
                   id: 'applicant.name',
                   title: info.labels.name,
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.fullName,
                 }),
                 buildTextField({
                   id: 'applicant.nationalId',
@@ -294,24 +327,40 @@ export const ComplaintForm: Form = buildForm({
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data
+                      ?.nationalId,
                 }),
                 buildTextField({
                   id: 'applicant.address',
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .streetAddress,
                 }),
                 buildTextField({
                   id: 'applicant.postalCode',
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .postalCode,
                 }),
                 buildTextField({
                   id: 'applicant.city',
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .city,
                 }),
                 buildTextField({
                   id: 'applicant.email',
@@ -319,6 +368,8 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'email',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data?.email,
                 }),
                 buildTextField({
                   id: 'applicant.phoneNumber',
@@ -327,6 +378,9 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data
+                      ?.mobilePhoneNumber,
                 }),
               ],
             }),

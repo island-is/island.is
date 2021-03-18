@@ -19,6 +19,7 @@ import {
   Form,
   StaticText,
   TextField,
+  ApplicationStatus,
 } from '@island.is/application/core'
 
 const ExampleForm: Form = buildForm({
@@ -129,6 +130,7 @@ describe('formatText', () => {
     modified: new Date(),
     state: '',
     typeId: ApplicationTypes.EXAMPLE,
+    status: ApplicationStatus.IN_PROGRESS,
   }
   const formatMessage: (descriptor: StaticText, values?: unknown) => string = (
     descriptor,

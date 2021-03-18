@@ -4,10 +4,11 @@ import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
-
-import { defaultLanguage } from './I18n'
-import { Locale, Routes } from '../types'
+import { Locale } from '@island.is/shared/types'
+import { defaultLanguage } from '@island.is/shared/constants'
 import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
+
+import { Routes } from '../types'
 
 export const GetNamespaceQuery = gql`
   query GetNamespace($input: GetNamespaceInput!) {

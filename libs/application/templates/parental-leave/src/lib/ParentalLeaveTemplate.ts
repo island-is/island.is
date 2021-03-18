@@ -348,7 +348,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         }
 
         const { application } = context
-
         const { answers } = application
 
         set(answers, 'employer.nationalRegistryId', application.assignees[0])

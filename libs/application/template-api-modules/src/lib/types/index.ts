@@ -12,6 +12,12 @@ export interface BaseTemplateAPIModuleConfig {
     }
   }
   baseApiUrl: string
+  syslumenn: {
+    url: string
+    username: string
+    password: string
+  }
+  presignBucket: string
 }
 
 export interface TemplateApiModuleActionProps {
@@ -34,4 +40,10 @@ export type AssignmentEmailTemplateGenerator = (
 
 export type EmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
+) => SendMailOptions
+
+export type AttachmentEmailTemplateGenerator = (
+  props: EmailTemplateGeneratorProps,
+  fileContent: string,
+  email: string,
 ) => SendMailOptions

@@ -25,9 +25,7 @@ import { Case, SignatureConfirmationResponse } from './models'
 @Injectable()
 export class CaseService {
   constructor(
-    @Inject(SigningService)
     private readonly signingService: SigningService,
-    @Inject(EmailService)
     private readonly emailService: EmailService,
     @InjectModel(Case)
     private readonly caseModel: typeof Case,

@@ -7,9 +7,9 @@ import {
   ReactDatePickerProps,
 } from 'react-datepicker'
 import getYear from 'date-fns/getYear'
-import pl from 'date-fns/locale/pl'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
+import { dateFormat } from '@island.is/shared/constants'
 
 import { Icon } from '../IconRC/Icon'
 import { Text } from '../Text/Text'
@@ -23,16 +23,12 @@ import range from 'lodash/range'
 
 const languageConfig = {
   is: {
-    format: 'dd.MM.yyyy',
+    format: dateFormat.is,
     locale: is,
   },
   en: {
-    format: 'MM/dd/yyyy',
+    format: dateFormat.en,
     locale: en,
-  },
-  pl: {
-    format: 'dd.MM.yyyy',
-    locale: pl,
   },
 }
 
@@ -67,10 +63,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const currentLanguage = languageConfig[locale]
 
   useEffect(() => {
-    if (locale === 'is') {
+    if (locale === 'en') {
+      registerLocale('en', en)
+    } else {
       registerLocale('is', is)
-    } else if (locale === 'pl') {
-      registerLocale('pl', pl)
     }
   }, [locale])
 
