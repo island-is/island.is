@@ -52,7 +52,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+<false/>
   <key>UIStatusBarStyle</key>
   <string>UIStatusBarStyleDefault</string>
 </dict>

@@ -1,25 +1,10 @@
 import React from 'react'
 import { SafeAreaView, StatusBar, Image } from 'react-native'
 import { Button } from '@island.is/island-ui-native'
-import { WebView } from 'react-native-webview'
-import logo from './logo.png';
-import { Platform } from 'react-native';
-import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
+// import { WebView } from 'react-native-webview'
+import logo from '../../assets/logo.png';
 
-
-// Refer to https://github.com/storybookjs/storybook/tree/master/app/react-native#start-command-parameters
-// To find allowed options for getStorybookUI
-const StorybookUIRoot = getStorybookUI({
-  host: Platform.OS === 'android' ? '10.0.2.2' : '0.0.0.0',
-  asyncStorage: require('@react-native-community/async-storage').default
-});
-
-configure(() => {
-  require('../../../island-ui/src/lib/Button/Button.stories');
-}, module);
-
-
-const App = () => {
+export const Home = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -43,4 +28,10 @@ const App = () => {
   )
 }
 
-export default App
+Home.options = {
+  topBar: {
+    title: {
+      text: 'Home'
+    }
+  }
+};

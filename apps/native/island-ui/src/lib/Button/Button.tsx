@@ -11,7 +11,7 @@ export function Button({ children, backgroundColor = theme.color.blue400 }: { ch
         padding: 8,
       }}
     >
-      <Text style={{ color: theme.color.white }}>{children}</Text>
+      <Text style={{ color: theme.color.blue300 }}>{children}</Text>
     </View>
   )
 }
