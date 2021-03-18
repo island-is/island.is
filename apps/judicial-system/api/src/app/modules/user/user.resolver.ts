@@ -25,22 +25,34 @@ export class UserResolver {
 
   @Query(() => [User], { nullable: true })
   users(
+    @CurrentGraphQlUser() user: TUser,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<User[]> {
     this.logger.debug('Getting all users')
 
-    return backendApi.getUsers()
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.GET_USERS,
+      backendApi.getUsers(),
+      (users: TUser[]) => users.map((user) => user.id),
+    )
   }
 
   @Query(() => User, { nullable: true })
   async user(
     @Args('input', { type: () => UserQueryInput })
     input: UserQueryInput,
+    @CurrentGraphQlUser() user: TUser,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<User | undefined> {
     this.logger.debug(`Getting user ${input.id}`)
 
-    return backendApi.getUser(input.id)
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.GET_USER,
+      backendApi.getUser(input.id),
+      (user: TUser) => user.id,
+    )
   }
 
   @Query(() => User, { nullable: true })
