@@ -122,6 +122,7 @@
     "contentful-management": "6.0.5",
     "contentful-ui-extensions-sdk": "3.32.0",
     "cookie-parser": "1.4.5",
+    "copy-to-clipboard": "3.3.1",
     "core-js": "3.6.5",
     "crypto-js": "4.0.0",
     "csv-stringify": "5.5.1",
