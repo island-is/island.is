@@ -1,6 +1,6 @@
 import { TagVariant } from 'libs/island-ui/core/src'
 import { Case, CaseState } from 'libs/judicial-system/types/src/lib/types'
-import { Validation } from './utils/validate'
+import { Validation } from '../utils/validate'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',

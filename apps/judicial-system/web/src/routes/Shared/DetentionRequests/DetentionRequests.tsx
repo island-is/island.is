@@ -1,19 +1,31 @@
 import React, { useEffect, useState, useContext, useMemo } from 'react'
-import { AlertMessage, TagVariant, Box } from '@island.is/island-ui/core'
+import cn from 'classnames'
+import {
+  AlertMessage,
+  TagVariant,
+  Box,
+  Icon,
+  Tag,
+} from '@island.is/island-ui/core'
 import {
   DropdownMenu,
   Loading,
   Logo,
+  Table,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseState,
   CaseTransition,
+  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  insertAt,
+  parseTransition,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
@@ -25,6 +37,10 @@ import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as styles from './DetentionRequests.treat'
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
+import { formatDate } from 'libs/judicial-system/formatters/src'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import localeIS from 'date-fns/locale/is'
 
 type directionType = 'ascending' | 'descending'
 interface SortConfig {
@@ -245,6 +261,92 @@ export const DetentionRequests: React.FC = () => {
     }
   }
 
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'Málsnr. ',
+        accessor: 'courtCaseNumber' as keyof Case,
+        Cell: (row: {
+          row: {
+            original: { courtCaseNumber: string; policeCaseNumber: string }
+          }
+        }) => {
+          return (
+            <>
+              {row.row.original.courtCaseNumber}
+              {row.row.original.policeCaseNumber}
+            </>
+          )
+        },
+      },
+      {
+        Header: 'Sakborningur',
+        accessor: 'accusedName' as keyof Case,
+        Cell: (row: {
+          row: { original: { accusedName: string; accusedNationalId: string } }
+        }) => {
+          return (
+            <>
+              <Box component="span" display="block">
+                {row.row.original.accusedName}
+              </Box>
+              {row.row.original.accusedNationalId}
+            </>
+          )
+        },
+      },
+      {
+        Header: 'Tegund',
+        accessor: 'type' as keyof Case,
+        Cell: (row: {
+          row: { original: { type: CaseType; parentCase: any } }
+        }) => {
+          return (
+            <>
+              {row.row.original.type === CaseType.CUSTODY
+                ? 'Gæsluvarðhald'
+                : 'Farbann'}
+              {row.row.original.parentCase && <p>framlenging</p>}
+            </>
+          )
+        },
+      },
+      {
+        Header: 'Staða',
+        accessor: 'state' as keyof Case,
+        disableSortBy: true,
+        Cell: ({ cell: { value } }: { cell: { value: CaseState } }) => {
+          return (
+            <Tag outlined disabled>
+              {mapCaseStateToTagVariant(value).text}
+            </Tag>
+          )
+        },
+      },
+      {
+        Header: 'Gildistími',
+        accessor: 'rulingDate' as keyof Case,
+        disableSortBy: true,
+        Cell: (row: {
+          row: { original: { rulingDate: string; custodyEndDate: string } }
+        }) => {
+          return `${formatDate(
+            parseISO(row.row.original.rulingDate),
+            'd.M.y',
+          )} - ${formatDate(
+            parseISO(row.row.original.custodyEndDate),
+            'd.M.y',
+          )}`
+        },
+      },
+    ],
+    [],
+  )
+
+  const d = useMemo(() => pastCases, [pastCases])
+
+  const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
+
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -282,13 +384,19 @@ export const DetentionRequests: React.FC = () => {
             setRequestToRemoveIndex={setRequestToRemoveIndex}
             deleteCase={deleteCase}
           />
-          <PastRequests
+          <Table
+            columns={columns}
+            data={d || []}
+            className={styles.pastRequestsTable}
+            sortableColumnIds={sortableColumnIds}
+          />
+          {/* <PastRequests
             requestSort={requestSort}
             getClassNamesFor={getClassNamesFor}
             cases={pastCases}
             handleClick={handleClick}
             mapCaseStateToTagVariant={mapCaseStateToTagVariant}
-          />
+          /> */}
         </>
       ) : error ? (
         <div
