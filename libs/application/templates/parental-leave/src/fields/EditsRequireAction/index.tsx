@@ -100,7 +100,7 @@ const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
                   variables: {
                     input: {
                       id: application.id,
-                      event: 'EDIT',
+                      event: 'MODIFY',
                       answers: application.answers,
                     },
                   },

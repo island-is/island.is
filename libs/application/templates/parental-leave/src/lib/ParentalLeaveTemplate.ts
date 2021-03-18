@@ -1,5 +1,9 @@
 import { assign } from 'xstate'
+
 import set from 'lodash/set'
+import unset from 'lodash/unset'
+import cloneDeep from 'lodash/cloneDeep'
+
 import {
   ApplicationContext,
   ApplicationRole,
@@ -26,6 +30,7 @@ type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
+  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -317,7 +322,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
         },
-        type: 'final' as const,
         on: {
           [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         },
@@ -325,8 +329,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
-        // entry: 'copyPeriodsToTemp',
-        // exit: 'mergePeriodAnswers',
+        entry: 'createTempPeriods',
+        exit: 'restorePeriodsFromTemp',
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
           progress: 1,
@@ -337,18 +341,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 import('../forms/EditOrAddPeriods').then((val) =>
                   Promise.resolve(val.EditOrAddPeriods),
                 ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Submit',
-                  type: 'primary',
-                },
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Abort',
-                  type: 'abort',
-                },
-              ],
               write: 'all',
               read: 'all',
             },
@@ -420,6 +412,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
+        exit: 'restorePeriodsFromTemp',
         meta: {
           name: 'Employer rejected the period edits',
           progress: 0.4,
@@ -436,7 +429,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: {
+          MODIFY: {
             target: States.EDIT_OR_ADD_PERIODS,
           },
           [DefaultEvents.ABORT]: { target: States.APPROVED },
@@ -466,6 +459,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
+        exit: 'restorePeriodsFromTemp',
         meta: {
           name: 'VMLST rejected the period edits',
           progress: 0.4,
@@ -482,7 +476,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: {
+          MODIFY: {
             target: States.EDIT_OR_ADD_PERIODS,
           },
           [DefaultEvents.ABORT]: { target: States.APPROVED },
@@ -493,73 +487,67 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       /*
-      When the user enters the edit state we will copy the current
-      periods to temp so that if they cancel out, we will bring
-      back the original periods answer.
+      Copy the current periods to temp. If the user cancels the edits,
+      we will restore the periods to their original state from temp.
       */
-      // copyPeriodsToTemp: assign((context, event) => {
-      //   // Only continue if going to edit (skip init event)
-      //   if (event.type !== DefaultEvents.EDIT) {
-      //     return context
-      //   }
+      createTempPeriods: assign((context, event) => {
+        // Only continue if going to EDIT (skip init event)
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
 
-      //   const currentApplicationAnswers = context.application.answers
+        const { application } = context
+        const { answers } = application
 
-      //   if (currentApplicationAnswers['periods'] !== undefined) {
-      //     return {
-      //       ...context,
-      //       application: {
-      //         ...context.application,
-      //         answers: {
-      //           ...context.application.answers,
-      //           tempPeriods: currentApplicationAnswers['periods'],
-      //         },
-      //       },
-      //     }
-      //   }
-      //   return context
-      // }),
+        set(answers, 'tempPeriods', answers['periods'])
+
+        return {
+          ...context,
+          application,
+        }
+      }),
+
       /*
-      When the user submits or cancels an edit we no longer need to 
-      store temp periods, so we will clear them out from the answers.
+        The user canceled the edits.
+        Restore the periods to their original state from temp.
       */
-      // mergePeriodAnswers: assign((context, event) => {
-      //   console.log('######mergePeriodAnswers#######', event.type)
+      restorePeriodsFromTemp: assign((context, event) => {
+        // Only continue if event is ABORT (skip init event)
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
 
-      //   // Only continue if submiting or aborting (skip init event)
-      //   if (
-      //     event.type !== DefaultEvents.SUBMIT &&
-      //     event.type !== DefaultEvents.REJECT
-      //   ) {
-      //     return context
-      //   }
+        const { application } = context
+        const { answers } = application
 
-      //   console.log('22222######mergePeriodAnswers#######', event.type)
+        set(answers, 'periods', cloneDeep(answers['tempPeriods']))
+        unset(answers, 'tempPeriods')
 
-      //   // If they are aborting, bring back the old periods from temp,
-      //   // otherwise we already saved the periods, so just need
-      //   // to clear temp
-      //   const periodsToSave =
-      //     event.type === DefaultEvents.REJECT
-      //       ? Object.assign(
-      //           context.application.answers['tempPeriods'] as Object,
-      //         )
-      //       : context.application.answers['periods']
+        return {
+          ...context,
+          application,
+        }
+      }),
 
-      //   // Don't need these anymore so let's remove them.
-      //   delete context.application.answers['tempPeriods']
+      /*
+        The edits were approved. Clear out temp.
+      */
+      clearTemp: assign((context, event) => {
+        // Only continue if event is APPROVE (skip init event)
+        if (event.type !== DefaultEvents.APPROVE) {
+          return context
+        }
 
-      //   return {
-      //     ...context,
-      //     application: {
-      //       ...context.application,
-      //       answers: {
-      //         ...context.application.answers,
-      //         periods: periodsToSave,
-      //       },
-      //     },
-      //   }
-      // }),
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'tempPeriods')
+
+        return {
+          ...context,
+          application,
+        }
+      }),
 
       assignToOtherParent: assign((context) => {
         const currentApplicationAnswers = context.application
