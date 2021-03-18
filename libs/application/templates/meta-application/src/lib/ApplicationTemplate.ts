@@ -77,6 +77,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.META_APPLICATION,
   name: 'Umsókn um aðild að umsóknarkerfi island.is',
+  readyForProduction: false,
   dataSchema: Schema,
   stateMachineConfig: {
     initial: 'draft',

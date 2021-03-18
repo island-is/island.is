@@ -44,6 +44,7 @@ const DrivingLessonsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LESSONS,
   name: 'Umsókn um ökunám',
+  readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',

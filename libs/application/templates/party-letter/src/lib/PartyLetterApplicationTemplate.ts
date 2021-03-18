@@ -33,6 +33,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Reference application',
+  readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',
