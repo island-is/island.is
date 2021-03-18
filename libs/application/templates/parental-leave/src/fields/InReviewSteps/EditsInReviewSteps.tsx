@@ -31,7 +31,7 @@ const statesMap: StatesMap = {
   },
 }
 
-const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
+const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
   const dob = getExpectedDateOfBirth(application)
   if (!dob) {
     return null
@@ -90,4 +90,4 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export default InReviewSteps
+export default EditInReviewSteps
