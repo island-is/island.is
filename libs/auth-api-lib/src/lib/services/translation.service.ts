@@ -62,7 +62,7 @@ export class TranslationService {
   }
 
   /** Get's all languages */
-  async findAllLanguges(): Promise<Language[] | null> {
+  async findAllLanguages(): Promise<Language[] | null> {
     return this.langugeModel.findAll()
   }
 
@@ -107,8 +107,8 @@ export class TranslationService {
   async findTranslation(
     language: string,
     className: string,
-    key: string,
     property: string,
+    key: string,
   ): Promise<Translation | null> {
     return this.translationModel.findOne({
       where: {

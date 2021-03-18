@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import ContentWrapper from './../../../components/Layout/ContentWrapper'
 import { AdminTab } from './../../../entities/common/AdminTab'
 import { Language } from './../../../entities/models/language.model'
-import LanguageCreateForm from './../../../components/Translation/forms/LanguageCreateForm'
+import LanguageCreateForm from '../../../components/Admin/form/LanguageCreateForm'
 import { LanguageDTO } from './../../../entities/dtos/language.dto'
 
 const Index: React.FC = () => {

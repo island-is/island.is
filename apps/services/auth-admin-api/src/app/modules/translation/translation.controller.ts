@@ -109,6 +109,14 @@ export class TranslationController {
     return languages
   }
 
+  /** Get's and counts all languages */
+  @Get('all-languages')
+  @ApiOkResponse({ type: [Language] })
+  async findAllLanguages(): Promise<Language[] | null> {
+    const languages = await this.translationService.findAllLanguages()
+    return languages
+  }
+
   /** Adds a new Language */
   @Post('language')
   @ApiCreatedResponse({ type: Language })
@@ -152,6 +160,25 @@ export class TranslationController {
     @Body() translation: TranslationDTO,
   ): Promise<Translation | null> {
     return await this.translationService.createTranslation(translation)
+  }
+
+  /** Gets translation by it's key */
+  @Get('translation/:language/:className/:property/:key')
+  @ApiOkResponse({ type: Translation })
+  async findTranslation(
+    @Param('language') language: string,
+    @Param('className') className: string,
+    @Param('property') property: string,
+    @Param('key') key: string,
+  ): Promise<Translation | null> {
+    console.log('KDKDKD')
+    console.log(language)
+    return await this.translationService.findTranslation(
+      language,
+      className,
+      property,
+      key,
+    )
   }
 
   /** Updates a translation */

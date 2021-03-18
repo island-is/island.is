@@ -31,6 +31,11 @@ export class TranslationService extends BaseService {
     return BaseService.GET(`translation/languages?page=${page}&count=${count}`)
   }
 
+  /** Find all languages */
+  static async findAllLanguages(): Promise<Language[] | null> {
+    return BaseService.GET(`translation/all-languages`)
+  }
+
   /** Gets language by it's isoKey */
   static async findLanguage(isoKey: string): Promise<Language | null> {
     return BaseService.GET(`translation/language/${isoKey}`)
@@ -70,5 +75,17 @@ export class TranslationService extends BaseService {
     translation: TranslationDTO,
   ): Promise<number | null> {
     return BaseService.DELETE(`translation`, translation)
+  }
+
+  /** Gets a translation by it's key */
+  static async findTranslation(
+    language: string,
+    className: string,
+    property: string,
+    key: string,
+  ): Promise<Translation | null> {
+    return BaseService.GET(
+      `translation/${language}/${className}/${property}/${key}`,
+    )
   }
 }
