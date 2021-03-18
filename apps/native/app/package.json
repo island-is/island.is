@@ -16,12 +16,7 @@
     "@nrwl/workspace": "*",
     "metro-resolver": "*",
     "@storybook/react-native": "*",
-<<<<<<< HEAD
     "@storybook/addon-knobs": "*",
-    "react-native-navigation": "*",
     "styled-components": "*"
-=======
-    "@storybook/addon-knobs": "*"
->>>>>>> 2debc9196000ddb3c6a9045c6a61dad01e68a776
   }
 }
