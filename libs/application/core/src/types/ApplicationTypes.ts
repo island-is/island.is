@@ -38,7 +38,7 @@ export const ApplicationConfigurations = {
     translation: 'meta.application',
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
-    slug: 'skjalaveitandi',
+    slug: 'skjalaveita',
     translation: 'dpo.application',
   },
   [ApplicationTypes.HEALTH_INSURANCE]: {

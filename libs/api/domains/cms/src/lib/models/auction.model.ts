@@ -7,25 +7,25 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class Auction {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  updatedAt: string
+  updatedAt!: string
 
   @Field()
-  date: string
+  date?: string
 
   @Field()
-  type: string
+  type!: string
 
   @Field(() => [SliceUnion], { nullable: true })
-  content: Array<typeof SliceUnion>
+  content?: Array<typeof SliceUnion>
 
   @Field(() => Organization)
-  organization: Organization
+  organization!: Organization | null
 }
 
 export const mapAuction = ({ fields, sys }: IAuction): Auction => ({

@@ -6,10 +6,10 @@ import { TeamMember, mapTeamMember } from './teamMember.model'
 @ObjectType()
 export class TeamList {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => [TeamMember])
-  teamMembers: Array<TeamMember>
+  teamMembers?: Array<TeamMember>
 }
 
 export const mapTeamList = ({

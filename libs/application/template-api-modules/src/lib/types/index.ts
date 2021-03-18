@@ -41,3 +41,9 @@ export type AssignmentEmailTemplateGenerator = (
 export type EmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
 ) => SendMailOptions
+
+export type AttachmentEmailTemplateGenerator = (
+  props: EmailTemplateGeneratorProps,
+  fileContent: string,
+  email: string,
+) => SendMailOptions

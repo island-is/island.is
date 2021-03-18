@@ -1,17 +1,18 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @InputType()
 export class GetOrganizationSubpageInput {
   @Field()
   @IsString()
-  organizationSlug: string
+  organizationSlug!: string
 
   @Field()
   @IsString()
-  slug: string
+  slug!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang: ElasticsearchIndexLocale = 'is'
 }

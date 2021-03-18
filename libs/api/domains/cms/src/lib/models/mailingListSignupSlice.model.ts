@@ -5,19 +5,19 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class MailingListSignupSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
-  description: string
+  description?: string
 
   @Field()
-  inputLabel: string
+  inputLabel!: string
 
   @Field()
-  buttonText: string
+  buttonText!: string
 }
 
 export const mapMailingListSignup = ({

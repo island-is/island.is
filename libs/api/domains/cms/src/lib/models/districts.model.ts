@@ -8,16 +8,16 @@ import { SystemMetadata } from 'api-cms-domain'
 @ObjectType()
 export class Districts {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
-  description: string
+  description?: string
 
   @Field({ nullable: true })
-  image?: Image
+  image?: Image | null
 
   @Field(() => [Link])
   links?: Array<Link>
