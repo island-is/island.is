@@ -93,6 +93,14 @@ export const routesTemplate = {
     is: '/covid-adgerdir',
     en: '/en/covid-operations',
   },
+  regulationshome: {
+    is: '/reglugerdir',
+    en: '',
+  },
+  regulation: {
+    is: '/reglugerdir/nr/[number]',
+    en: '',
+  },
   webservicedetailpage: {
     is: '/throun/vefthjonustur/[slug]',
     en: '/en/developers/webservices/[slug]',

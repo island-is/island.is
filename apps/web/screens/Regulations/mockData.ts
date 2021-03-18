@@ -1,12 +1,14 @@
 import { range } from 'lodash'
-import { RegulationsSearchSectionProps } from './RegulationsSearchSection'
+import { regulationHtml } from './mockData-regulationHtml'
 
-export type MinistryListItem = {
+// ---------------------------------------------------------------------------
+
+export type Ministry = {
   name: string
   shortCode: string
   legacy?: true
 }
-export const allMinistries: Array<MinistryListItem> = [
+export const allMinistries: Array<Ministry> = [
   {
     name: 'Atvinnuvega- og nýsköpunarráðuneytið',
     shortCode: 'ANR',
@@ -14,7 +16,13 @@ export const allMinistries: Array<MinistryListItem> = [
   { name: 'Dómsmálaráðuneytið', shortCode: 'DR' },
   { name: 'Hjaðningavígaráðuneytið', shortCode: 'HVR', legacy: true },
   { name: 'Heilbrigðisráðuneytið', shortCode: 'HR' },
+  { name: 'Innanríkisráðuneyti', shortCode: 'IR', legacy: true },
 ]
+
+const _getMinistry = (shortCode: string): Ministry =>
+  allMinistries.find((m) => m.shortCode === shortCode) || allMinistries[0]
+
+// ---------------------------------------------------------------------------
 
 type LawSubChapter = {
   name: string
@@ -67,62 +75,68 @@ export const allLawChaptersFlat: Array<LawChapter> = [
   },
 ]
 
+// ---------------------------------------------------------------------------
+
 export type RegulationListItem = {
   name: string
   title: string
-  ministry?: MinistryListItem
+  ministry?: Ministry
 }
 export const regulationsSearchResults: Array<RegulationListItem> = [
   {
     name: '1052/2020',
     title:
       'Reglugerð um (3.) breytingu á reglugerð nr. 1364/2019 um endurgreiðslu kostnaðar vegna þjónustu sjálfstætt starfandi sjúkraþjálfara sem starfa án samnings við Sjúkratryggingar Íslands.',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'HR'),
+    ministry: _getMinistry('HR'),
   },
   {
     name: '1051/2020',
     title: 'Reglugerð um takmörkun á samkomum vegna farsóttar.',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'HR'),
+    ministry: _getMinistry('HR'),
   },
   {
     name: '1050/2020',
     title: 'Reglugerð um gjöld fyrir einkaleyfi, vörumerki, hönnun o.fl.',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'ANR'),
+    ministry: _getMinistry('ANR'),
   },
   {
     name: '1049/2020',
     title:
       'Reglugerð um (8.) breytingu á reglugerð nr. 678/2009 um raforkuvirki.',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'HR'),
+    ministry: _getMinistry('HR'),
   },
   {
     name: '1048/2020',
     title: 'Reglugerð um breytingu á reglugerð um útlendinga, nr. 540/2017.',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'DR'),
+    ministry: _getMinistry('DR'),
   },
   {
     name: '1029/2020',
     title:
       'Reglugerð um (1.) breytingu á reglugerð nr. 871/2020, um heimildir hjúkrunarfræðinga og ljósmæðra til að ávísa lyfjum, um námskröfur og veitingu leyfa.',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'HR'),
+    ministry: _getMinistry('HR'),
   },
   {
     name: '1016/2020',
     title:
       'Reglugerð um (2.) breytingu á reglugerð nr. 958/2020, um takmörkun á skólastarfi vegna farsóttar.',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'HR'),
+    ministry: _getMinistry('HR'),
   },
   {
     name: '1014/2020',
     title:
       'Reglugerð um gildistöku framkvæmdarreglugerðar framkvæmdastjórnarinnar (ESB) 2020/466 um tímabundnar ráðstafanir til að halda í skefjum áhættu fyrir heilbrigði manna og dýra og plöntuheilbrigði og velferð dýra við tiltekna alvarlega röskun á eftirlitskerfum aðildarríkjanna vegna kórónaveirufaraldursins (COVID-19).',
-    ministry: allMinistries.find(({ shortCode }) => shortCode === 'ANR'),
+    ministry: _getMinistry('ANR'),
   },
 ]
+
+// ---------------------------------------------------------------------------
 
 export const regulationYears = range(1999, 2021).filter(
   (y) => y <= 2003 || y >= 2006,
 )
+
+// ---------------------------------------------------------------------------
 
 const _searchTexts = {
   searchTitleLabel: 'Leita að reglugerðum',
@@ -150,14 +164,150 @@ const _searchTexts = {
 
 export type SearchTexts = typeof _searchTexts
 
-export const uiTexts = {
-  navigationTitle: 'Upplýsingasvæði',
+export const homeTexts = {
+  // navigationTitle: 'Upplýsingasvæði',
   regulationsLegend: 'Reglugerðir',
   regulationsIntro:
     'Eitthvað hressandi um reglugerðir og fleira skemmtilegt og fræðandi.',
+
+  regulationsImageUrl: 'https://placekitten.com/400/400',
+  regulationsImageThumbnailUrl: 'https://placekitten.com/50/50',
 
   crumbs_1: 'Ísland.is',
   crumbs_2: 'Upplýsingaasvæði',
 
   ..._searchTexts,
 } as const
+
+// ===========================================================================
+// ===========================================================================
+
+export const regulationPageTexts = {
+  historyTitle: 'Reglugeðrir sem breyta þessari',
+} as const
+
+// ---------------------------------------------------------------------------
+
+type ISODate = string
+
+export type Regulation = {
+  name: string
+  title: string
+  /* The regulation text in HTML format */
+  body: string
+  signatureDate: ISODate
+  publishedDate: ISODate
+  effectiveDate: ISODate
+  lastAmendDate?: ISODate | null
+  repealedDate?: ISODate | null
+  ministry: Ministry
+}
+
+export const exampleRegulation: Regulation = {
+  name: '0830/2011',
+  title: 'Reglugerð um ökuskírteini.',
+  body: regulationHtml,
+  signatureDate: '2011-08-25',
+  publishedDate: '2011-09-09',
+  effectiveDate: '2011-09-10',
+  lastAmendDate: '2021-03-03',
+  repealedDate: null,
+  ministry: _getMinistry('IR'),
+}
+
+// ---------------------------------------------------------------------------
+
+export type RegulationHistoryItem = {
+  name: string
+  title: string
+}
+
+export const regulationHistory: Array<RegulationHistoryItem> = [
+  {
+    name: '0199/2012',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1176/2012',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0027/2013',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0801/2013',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1198/2013',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1149/2014',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0628/2015',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0534/2016',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1159/2016',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0344/2017',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0767/2017',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1067/2017',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1249/2018',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0322/2019',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0449/2019',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0380/2020',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '0584/2020',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1184/2020',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+  {
+    name: '1187/2020',
+    title:
+      'Reglugerð á sviði samgangna um innleiðingu reglugerðar Evrópuþingsins og ráðsins (ESB) 2020/698.',
+  },
+  {
+    name: '1410/2020',
+    title: 'Reglugerð um breytingu á reglugerð um ökuskírteini nr. 830/2011.',
+  },
+  {
+    name: '0235/2021',
+    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+  },
+]
+
+// ---------------------------------------------------------------------------

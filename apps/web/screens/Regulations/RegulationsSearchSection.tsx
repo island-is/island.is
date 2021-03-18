@@ -16,8 +16,9 @@ import {
 } from '@island.is/island-ui/core'
 import { NamespaceGetter } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
-import { LawChapter, MinistryListItem, SearchTexts } from './mockData'
+import { LawChapter, Ministry, SearchTexts } from './mockData'
 import { OptionTypeBase, ValueType } from 'react-select'
+import { nameToSlug, useRegulationLinkResolver } from './regulationUtils'
 
 // ---------------------------------------------------------------------------
 
@@ -62,7 +63,7 @@ const findValueOption = (
 }
 
 const isLegacyMinistry = (
-  ministries: ReadonlyArray<MinistryListItem>,
+  ministries: ReadonlyArray<Ministry>,
   shortCode: string,
 ) => {
   const ministry = ministries.find((m) => m.shortCode === shortCode)
@@ -115,7 +116,7 @@ export type RegulationsSearchSectionProps = {
   }>
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: ReadonlyArray<MinistryListItem>
+  ministries: ReadonlyArray<Ministry>
   lawcCapters: ReadonlyArray<LawChapter>
   getText: NamespaceGetter<SearchTexts>
 } & NoChildren
@@ -126,6 +127,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   const filters = props.searchFilters
   const txt = props.getText
 
+  const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
   const router = useRouter()
 
   const activeFilters = useMemo(
@@ -268,6 +270,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
                     paddingBottom={4}
                   >
                     <CategoryCard
+                      href={linkToRegulation(reg.name)}
                       heading={reg.name}
                       text={reg.title}
                       tags={

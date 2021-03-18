@@ -15,7 +15,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useScript } from '@island.is/web/hooks/useScript'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { RichText, richText } from '@island.is/island-ui/contentful'
 import {
@@ -25,10 +24,10 @@ import {
 import {
   regulationsSearchResults,
   regulationYears,
-  uiTexts,
+  homeTexts,
   allMinistries,
   allLawChaptersFlat,
-  MinistryListItem,
+  Ministry,
   LawChapter,
 } from './mockData'
 import { ParsedUrlQuery } from 'querystring'
@@ -58,20 +57,14 @@ const getParams = <K extends string>(
 
 type RegulationsHomeProps = {
   searchResults: typeof regulationsSearchResults
-  texts: typeof uiTexts
+  texts: typeof homeTexts
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: ReadonlyArray<MinistryListItem>
+  ministries: ReadonlyArray<Ministry>
   lawcCapters: ReadonlyArray<LawChapter>
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
-  useScript(
-    'https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js',
-    true,
-    'redoc',
-  )
-
   const router = useRouter()
   const n = useNamespace(props.texts)
   const { linkResolver } = useLinkResolver()
@@ -204,8 +197,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             >
               <Image
                 type="custom"
-                src="https://placekitten.com/400/400"
-                thumbnail="https://placekitten.com/50/50"
+                src={n('regulationsImageUrl')}
+                thumbnail={n('regulationsImageThumbnailUrl')}
                 originalWidth={400}
                 originalHeight={400}
                 alt=""
@@ -296,7 +289,7 @@ RegulationsHome.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     searchResults,
-    texts: uiTexts,
+    texts: homeTexts,
     searchQuery: getParams(query, ['q', 'rn', 'year', 'ch', 'all']),
     years: regulationYears,
     ministries: allMinistries,
