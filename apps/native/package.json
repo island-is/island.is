@@ -3,9 +3,17 @@
   "version": "0.0.01",
   "description": "",
   "license": "MIT",
+  "scripts": {
+    "nx": "cd .. && yarn nx"
+  },
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
     "react-native-navigation": "7.11.3",
     "react-native-webview": "11.3.1"
+  },
+  "devDependencies": {
+    "detox": "18.7.1",
+    "jest": "26.6.3",
+    "jest-circus": "26.6.3"
   }
 }

@@ -1,12 +1,16 @@
 package com.islandapp;
 
+// npm packages
+import com.reactnativenavigation.NavigationApplication;
+import com.reactnativenavigation.react.NavigationPackage;
+import com.reactnativenavigation.react.NavigationReactNativeHost;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
-import com.reactnativenavigation.NavigationApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
-import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
@@ -27,12 +31,14 @@ public class MainApplication extends NavigationApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          packages.add(new NavigationPackage(mReactNativeHost));
+          packages.add(new RNCWebViewPackage());
           return packages;
         }
 
         @Override
         protected String getJSMainModuleName() {
-          return "apps/native/island-app/src/main";
+          return "apps/native/app/src/main";
         }
       };
 
@@ -44,7 +50,7 @@ public class MainApplication extends NavigationApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    
+
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 

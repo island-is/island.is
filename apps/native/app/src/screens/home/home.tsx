@@ -1,7 +1,7 @@
 import React from 'react'
 import { SafeAreaView, StatusBar, Image } from 'react-native'
 import { Button } from '@island.is/island-ui-native'
-// import { WebView } from 'react-native-webview'
+import { WebView } from 'react-native-webview'
 import logo from '../../assets/logo.png';
 
 export const Home = () => {
