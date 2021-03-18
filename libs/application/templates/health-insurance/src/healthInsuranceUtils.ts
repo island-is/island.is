@@ -22,7 +22,7 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
   const response = externalData?.applications
   if (response && typeof response === 'object') {
     const applications = response.data as Applications[]
-    const pendingApplications = applications?.filter(
+    const draftApplications = applications?.filter(
       (application) => application.state === 'draft',
     )
     const sortedApplications = sortApplicationsByDateAscending(applications)
@@ -33,7 +33,7 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
       return false
     }
 
-    return pendingApplications?.length > 1
+    return draftApplications?.length > 1
   }
   // If we can not find any pending applications becausee of failure to fetch info, we will return false to allow the user to continue to create a new application
   return false
