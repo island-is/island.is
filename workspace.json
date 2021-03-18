@@ -726,7 +726,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/application/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
+            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
       }
