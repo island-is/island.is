@@ -10,6 +10,7 @@ import {
 import * as z from 'zod'
 import { isValid } from 'kennitala'
 import { answerValidators } from './answerValidators'
+import { API_MODULE_ACTIONS } from '../constants'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -98,6 +99,9 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Approved',
           progress: 1,
+          onEntry: {
+            apiModuleAction: API_MODULE_ACTIONS.sendApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
