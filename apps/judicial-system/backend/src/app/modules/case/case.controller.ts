@@ -109,6 +109,7 @@ const judgeUpdateRule = {
     'custodyEndDate',
     'custodyRestrictions',
     'otherRestrictions',
+    'isolationTo',
     'accusedAppealDecision',
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
@@ -186,9 +187,7 @@ const registrarTransitionRule = {
 @ApiTags('cases')
 export class CaseController {
   constructor(
-    @Inject(UserService)
     private readonly userService: UserService,
-    @Inject(CaseService)
     private readonly caseService: CaseService,
   ) {}
 

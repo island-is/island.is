@@ -9,10 +9,10 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class ConnectedComponent {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
   type?: string
@@ -21,7 +21,7 @@ export class ConnectedComponent {
   // should ideally handle its own data fetching) to get data from contentful in case we can't
   // fetch it from the API and also to quickly change the graphql endpoint for the data.
   @Field(() => graphqlTypeJson, { nullable: true })
-  json?: Record<string, any>
+  json?: Record<string, any> | null
 }
 
 const parseJson = (fields: ISliceConnectedComponentFields) => {

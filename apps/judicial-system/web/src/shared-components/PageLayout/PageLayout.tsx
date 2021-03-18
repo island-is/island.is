@@ -157,18 +157,12 @@ const PageLayout: React.FC<PageProps> = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
             <Box
-              paddingY={[0, 0, 10, 10]}
               background="white"
               borderColor="white"
               borderRadius="large"
               className={styles.processContent}
             >
-              <GridColumn
-                span={['9/9', '9/9', '7/9', '7/9']}
-                offset={['0', '0', '1/9', '1/9']}
-              >
-                {children}
-              </GridColumn>
+              {children}
             </Box>
           </GridColumn>
           {showSidepanel && (

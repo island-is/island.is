@@ -39,17 +39,20 @@ export class AboutPageSyncService
           !!entry.fields.title &&
           !isCircular(entry),
       )
-      .reduce((subPageMap, subPage) => {
-        const parentId = subPage.fields.parent?.sys.id
-        if (parentId) {
-          return {
-            ...subPageMap,
-            [parentId]: [...(subPageMap[parentId] ?? []), subPage],
+      .reduce(
+        (subPageMap: { [parentId: string]: IAboutSubPage[] }, subPage) => {
+          const parentId = subPage.fields.parent?.sys.id
+          if (parentId) {
+            return {
+              ...subPageMap,
+              [parentId]: [...(subPageMap[parentId] ?? []), subPage],
+            }
+          } else {
+            return subPageMap
           }
-        } else {
-          return subPageMap
-        }
-      }, {})
+        },
+        {},
+      )
 
     return { aboutPages, aboutSubPages }
   }

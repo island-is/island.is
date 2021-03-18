@@ -214,6 +214,11 @@ export class UpdateCaseDto {
   readonly otherRestrictions?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly isolationTo?: Date
+
+  @IsOptional()
   @IsEnum(CaseAppealDecision)
   @ApiPropertyOptional({ enum: CaseAppealDecision })
   readonly accusedAppealDecision?: CaseAppealDecision

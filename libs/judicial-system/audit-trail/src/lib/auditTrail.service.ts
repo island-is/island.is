@@ -31,7 +31,10 @@ export interface AuditTrailOptions {
 
 @Injectable()
 export class AuditTrailService {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
 
   private trail?: Logger
   private useGenericLogger = true

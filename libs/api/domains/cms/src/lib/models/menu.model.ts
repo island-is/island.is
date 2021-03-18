@@ -9,16 +9,16 @@ import {
 @ObjectType()
 export class Menu {
   @Field(() => ID)
-  id: string
+  id!: string
 
-  @Field()
-  title: string
+  @Field(() => String)
+  title = ''
 
   @Field(() => [Link])
-  links: Link[]
+  links?: Link[]
 
   @Field(() => [MenuLinkWithChildren])
-  menuLinks: MenuLinkWithChildren[]
+  menuLinks?: MenuLinkWithChildren[]
 }
 
 export const mapMenu = ({ sys, fields }: IMenu): Menu => ({

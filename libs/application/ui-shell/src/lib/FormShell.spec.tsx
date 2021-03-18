@@ -10,6 +10,7 @@ import {
   buildForm,
   buildDescriptionField,
   Form,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import { initializeClient } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
@@ -28,6 +29,7 @@ describe(' FormShell', () => {
     state: 'draft',
     modified: new Date(),
     created: new Date(),
+    status: ApplicationStatus.IN_PROGRESS,
   }
   const form: Form = buildForm({
     id: 'ParentalLeaveForm',
