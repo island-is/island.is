@@ -1,9 +1,19 @@
-const { configure } = require('@storybook/react-native');
-const { loadStories } = require('./storyLoader');
+module.exports = {
+  stories: ['../src/**/*.stories.@(ts|tsx)'],
+  addons: [
+    // '@storybook/addon-knobs/register'
+    // '@storybook/addon-a11y/register',
+    // '@storybook/addon-docs',
+    // '@storybook/addon-essentials',
+    // '@storybook/addon-controls'
+  ],
+}
 
-configure(() => {
-  loadStories()
-}, module);
+// const { loadStories } = require('./storyLoader');
+
+// configure(() => {
+  // loadStories()
+// }, module);
 
 // if you use expo remove this line
 // import { AppRegistry, Platform } from 'react-native';

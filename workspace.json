@@ -4066,6 +4066,21 @@
             "lintFilePatterns": ["apps/native/island-ui/**/*.{ts,tsx,js,jsx}"]
           }
         },
+        "storybook": {
+          "builder": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": {
+              "configFolder": "apps/native/island-ui/storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/native/island-ui"],

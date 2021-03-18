@@ -6,9 +6,11 @@ platform :ios, '11.0'
 
 target 'IslandApp' do
   config = use_native_modules!
-  puts config
   use_react_native!(:path => config[:reactNativePath])
-  # pod 'ReactNativeNavigation', :podspec => '../../../../node_modules/react-native-navigation/ReactNativeNavigation.podspec'
+
+  pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
+  pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
+  pod 'ReactNativeNavigation', :podspec => '../../node_modules/react-native-navigation'
 
   use_flipper!
   post_install do |installer|

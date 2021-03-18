@@ -4,13 +4,13 @@
   "apps": {
     "ios": {
       "type": "ios.app",
-      "binaryPath": "../app/ios/build/Build/Products/Release-iphonesimulator/MobileApp.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ../app/ios/MobileApp.xcworkspace -scheme MobileApp -configuration Release -sdk iphonesimulator -derivedDataPath ../app/ios/build ONLY_ACTIVE_ARCH=YES -quiet -UseModernBuildSystem=YES"
+      "binaryPath": "./app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ./app/ios/IslandApp.xcworkspace -scheme IslandApp -configuration Release -sdk iphonesimulator -derivedDataPath ./app/ios/build ONLY_ACTIVE_ARCH=YES -quiet -UseModernBuildSystem=YES"
     },
     "ios-debug":{
       "type":"ios.app",
-      "binaryPath":"/Users/birkir/Library/Developer/Xcode/DerivedData/MobileApp-eptfvntpmcpipxakkeimmivcrcut/Build/Products/Debug-iphonesimulator/MobileApp.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true &&  xcodebuild -workspace ../app/ios/MobileApp.xcworkspace -scheme MobileApp -configuration Debug -sdk iphonesimulator -derivedDataPath ../app/ios/build ONLY_ACTIVE_ARCH=YES -UseModernBuildSystem=YES"
+      "binaryPath":"./app/ios/build/IslandApp/Build/Products/Debug-iphonesimulator/IslandApp.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ./app/ios/IslandApp.xcworkspace -scheme IslandApp -configuration Debug -sdk iphonesimulator -derivedDataPath ./app/ios/build ONLY_ACTIVE_ARCH=YES -UseModernBuildSystem=YES"
     },
     "android": {
       "type": "android.apk",

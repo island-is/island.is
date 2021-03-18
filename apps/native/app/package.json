@@ -2,6 +2,9 @@
   "name": "native-app",
   "version": "0.0.1",
   "private": true,
+  "scripts":{
+    "nx": "cd ../.. && yarn nx"
+  },
   "dependencies": {
     "react-native": "*",
     "react": "*",
@@ -13,8 +16,12 @@
     "@nrwl/workspace": "*",
     "metro-resolver": "*",
     "@storybook/react-native": "*",
+<<<<<<< HEAD
     "@storybook/addon-knobs": "*",
     "react-native-navigation": "*",
     "styled-components": "*"
+=======
+    "@storybook/addon-knobs": "*"
+>>>>>>> 2debc9196000ddb3c6a9045c6a61dad01e68a776
   }
 }

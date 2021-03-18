@@ -78,7 +78,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "apps/native/island-app/src/main.tsx",
+    entryFile: "apps/native/app/src/main.tsx",
     enableHermes: false,  // clean and rebuild if changing
 ]
 
@@ -201,6 +201,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(':react-native-navigation')
+    implementation project(':rnWebView')
+
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
