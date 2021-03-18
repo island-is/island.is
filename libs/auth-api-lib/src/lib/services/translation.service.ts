@@ -6,7 +6,7 @@ import { Translation } from '../entities/models/translation.model'
 import { Language } from '../entities/models/language.model'
 import { TranslationDTO } from '../entities/dto/translation.dto'
 import { LanguageDTO } from '../entities/dto/language.dto'
-import { Op } from 'sequelize/types'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class TranslationService {
@@ -140,7 +140,9 @@ export class TranslationService {
   }
 
   /** Updates an existing translation */
-  async updateTranslation(translate: Translation): Promise<Translation | null> {
+  async updateTranslation(
+    translate: TranslationDTO,
+  ): Promise<Translation | null> {
     this.logger.debug('Updating the translation with key: ', translate.key)
 
     await this.translationModel.update(
@@ -164,7 +166,7 @@ export class TranslationService {
   }
 
   /** Deletes a translation */
-  async deleteTranslation(translate: Translation): Promise<number> {
+  async deleteTranslation(translate: TranslationDTO): Promise<number | null> {
     this.logger.debug(`Deleting translation with key: ${translate.key}`)
 
     if (!translate) {

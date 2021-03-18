@@ -144,7 +144,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                       validate: ValidationUtils.validateDescription,
                     })}
                     name="language.englishDescription"
-                    defaultValue={language.description ?? ''}
+                    defaultValue={language.englishDescription ?? ''}
                     className="language-create-form__input"
                     title="The language name in English"
                     placeholder="Icelandic"

@@ -130,14 +130,18 @@ export class TranslationController {
   /** Deletes a Language */
   @Delete('language/:isoKey')
   @ApiCreatedResponse({ type: Language })
-  async deleteLanguage(@Param('isoKey') isoKey: string): Promise<Language> {
+  async deleteLanguage(
+    @Param('isoKey') isoKey: string,
+  ): Promise<number | null> {
     return await this.translationService.deleteLanguage(isoKey)
   }
 
   /** Deletes a Language */
   @Get('language/:isoKey')
   @ApiOkResponse({ type: Language })
-  async findLanguage(@Param('isoKey') isoKey: string): Promise<Language> {
+  async findLanguage(
+    @Param('isoKey') isoKey: string,
+  ): Promise<Language | null> {
     return await this.translationService.findLanguage(isoKey)
   }
 
@@ -164,7 +168,7 @@ export class TranslationController {
   @ApiCreatedResponse({ type: Translation })
   async deleteTranslation(
     @Body() translation: TranslationDTO,
-  ): Promise<Translation | null> {
+  ): Promise<number | null> {
     return await this.translationService.deleteTranslation(translation)
   }
 }

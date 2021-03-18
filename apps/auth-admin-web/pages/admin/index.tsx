@@ -6,6 +6,7 @@ import { AdminTab } from './../../entities/common/AdminTab'
 import AdminUsersList from './../../components/Admin/lists/AdminUsersList'
 import IdpProvidersList from './../../components/Admin/lists/IdpProviderList'
 import GrantTypesList from './../../components/Admin/lists/GrantTypesList'
+import LanguageList from './../../components/Admin/lists/LanguageList'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -81,6 +82,15 @@ const Index: React.FC = () => {
                 here
               </a>
             </div>
+          </AdminTabNav>
+        </ContentWrapper>
+      )
+    }
+    case AdminTab.Language: {
+      return (
+        <ContentWrapper>
+          <AdminTabNav handleTabChange={handleTabChange} activeTab={activeTab}>
+            <LanguageList />
           </AdminTabNav>
         </ContentWrapper>
       )
