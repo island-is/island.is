@@ -1,5 +1,8 @@
 import { factory, faker } from '@island.is/shared/mocking'
-import { DataProviderResult } from '@island.is/application/core'
+import {
+  ApplicationStatus,
+  DataProviderResult,
+} from '@island.is/application/core'
 
 import { Application } from '../../types'
 
@@ -13,7 +16,7 @@ export const application = factory<Application>({
   typeId: 'ExampleForm',
   answers: [],
   externalData: {},
-  status: 'Inprogress',
+  status: ApplicationStatus.IN_PROGRESS,
 })
 
 export const externalData = factory<DataProviderResult>({

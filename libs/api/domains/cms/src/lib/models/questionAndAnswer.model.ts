@@ -5,13 +5,13 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class QuestionAndAnswer {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  question: string
+  question!: string
 
   @Field(() => [SliceUnion])
-  answer: Array<typeof SliceUnion>
+  answer: Array<typeof SliceUnion> = []
 }
 
 export const mapQuestionAndAnswer = ({

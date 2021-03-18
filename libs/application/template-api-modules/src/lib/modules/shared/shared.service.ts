@@ -8,6 +8,7 @@ import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
+  AttachmentEmailTemplateGenerator,
 } from '../../types'
 
 import { createAssignToken, getConfigValue } from './shared.utils'
@@ -68,6 +69,33 @@ export class SharedTemplateApiService {
         },
       },
       assignLink,
+    )
+
+    return this.emailService.sendEmail(template)
+  }
+
+  async sendEmailWithAttachment(
+    templateGenerator: AttachmentEmailTemplateGenerator,
+    application: Application,
+    fileContent: string,
+    email: string,
+    locale = 'is',
+  ) {
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    const template = templateGenerator(
+      {
+        application,
+        options: {
+          clientLocationOrigin,
+          locale,
+        },
+      },
+      fileContent,
+      email,
     )
 
     return this.emailService.sendEmail(template)

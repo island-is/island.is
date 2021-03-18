@@ -5,7 +5,6 @@ import {
   IsString,
   IsOptional,
   IsArray,
-  IsBoolean,
 } from 'class-validator'
 import {
   ApplicationStatus,

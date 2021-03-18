@@ -260,8 +260,13 @@ const Layout: NextComponentType<
             title={alertBannerContent.title}
             description={alertBannerContent.description}
             link={{
-              href: alertBannerContent.link.url,
-              title: alertBannerContent.link.text,
+              ...(!!alertBannerContent.link &&
+                !!alertBannerContent.linkTitle && {
+                  href: linkResolver(alertBannerContent.link.type as LinkType, [
+                    alertBannerContent.link.slug,
+                  ]).href,
+                  title: alertBannerContent.linkTitle,
+                }),
             }}
             variant={alertBannerContent.bannerVariant as AlertBannerVariants}
             dismissable={alertBannerContent.isDismissable}

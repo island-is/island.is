@@ -38,7 +38,7 @@ export class AwsService {
     await this.s3.upload(uploadParams).promise()
   }
 
-  getPresignedUrl(bucket: string, fileName: string): string {
+  async getPresignedUrl(bucket: string, fileName: string): Promise<string> {
     const oneMinute = 60
     const presignedUrlParams = {
       Bucket: bucket,
@@ -46,6 +46,6 @@ export class AwsService {
       Expires: oneMinute * 120, // TODO: Select length for presigned url's in island.is
     }
 
-    return this.s3.getSignedUrl('getObject', presignedUrlParams)
+    return await this.s3.getSignedUrlPromise('getObject', presignedUrlParams)
   }
 }
