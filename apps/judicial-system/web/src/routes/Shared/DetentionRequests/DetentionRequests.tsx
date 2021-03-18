@@ -1,17 +1,5 @@
 import React, { useEffect, useState, useContext, useMemo } from 'react'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import localeIS from 'date-fns/locale/is'
-import cn from 'classnames'
-import {
-  AlertMessage,
-  Button,
-  Text,
-  Tag,
-  TagVariant,
-  Box,
-  Icon,
-} from '@island.is/island-ui/core'
+import { AlertMessage, TagVariant, Box } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
   Loading,
@@ -21,16 +9,11 @@ import {
   Case,
   CaseState,
   CaseTransition,
-  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { UserRole } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  insertAt,
-  parseTransition,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
@@ -261,7 +244,7 @@ export const DetentionRequests: React.FC = () => {
       }
     }
   }
-  console.log(pastCases)
+
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -288,16 +271,6 @@ export const DetentionRequests: React.FC = () => {
       )}
       {activeCases && pastCases ? (
         <>
-          <Box marginBottom={3}>
-            {/**
-             * This should be a <caption> tag inside the table but
-             * Safari has a bug that doesn't allow that. See more
-             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-             */}
-            <Text variant="h3" id="tableCaption">
-              Gæsluvarðhaldskröfur
-            </Text>
-          </Box>
           <ActiveRequests
             requestSort={requestSort}
             getClassNamesFor={getClassNamesFor}
