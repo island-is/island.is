@@ -28,7 +28,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 - You have Node installed `>= 12.0.0` and Yarn at `>= 1.20.0`.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
-- You have [java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
+- You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
 - You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html) installed (for fetching secrets).
 - Run `yarn` to install the dependencies.
 

@@ -10,7 +10,7 @@ The web consolidates content from multiple sources and displays it in a user fri
 - [Staging](https://beta.staging01.devland.is)
 - [Production](https://island.is)
 
-## Getting started:
+## Getting started
 
 First off: Configure which API to fetch data from.
 
