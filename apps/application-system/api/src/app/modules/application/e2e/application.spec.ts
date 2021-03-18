@@ -549,7 +549,7 @@ describe('Application system API', () => {
     const fileService: FileService = app.get<FileService>(FileService)
     jest
       .spyOn(fileService, 'getPresignedUrl')
-      .mockImplementation(() => expectedPresignedUrl)
+      .mockImplementation(() => Promise.resolve(expectedPresignedUrl))
 
     const postResponse = await server.post('/applications').send({
       applicant: nationalId,
