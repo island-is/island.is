@@ -275,7 +275,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          // TODO: How does VMLST approve? Do we need a form like in employer approval?
+          // TODO: How does VMLST approve? Do we need a form like we have for employer approval?
           // Or is it a webhook that sets the application as approved?
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
