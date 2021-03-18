@@ -36,17 +36,6 @@ export const Applications: FC = () => {
   const nationalRegistryId = userInfo?.profile?.nationalId
   const type = getTypeFromSlug(slug)
 
-  if (!type) {
-    return (
-      <NotFound
-        title={formatMessage(coreMessages.notFoundApplicationType)}
-        subTitle={formatMessage(coreMessages.notFoundApplicationTypeMessage, {
-          type,
-        })}
-      />
-    )
-  }
-
   useApplicationNamespaces(type)
 
   const { data, loading, error: applicationsError } = useQuery(

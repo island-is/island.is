@@ -5,11 +5,12 @@ import {
 
 import { useNamespaces } from './useNamespaces'
 
-export const useApplicationNamespaces = (type: ApplicationTypes) => {
+export const useApplicationNamespaces = (type?: ApplicationTypes) => {
   const array = [
     'application.system',
-    ApplicationConfigurations?.[type].translation ?? null,
+    type ? ApplicationConfigurations?.[type].translation ?? null : null,
   ]
+
   const filtered = array.filter(
     (namespace): namespace is string => namespace !== null,
   )

@@ -3,7 +3,7 @@ describe('application-system-form', () => {
     cy.server()
     cy.route('POST', '/api/graphql').as('graphql')
   })
-  beforeEach(() => cy.visit('/umsoknir/ExampleForm'))
+  beforeEach(() => cy.visit('/umsoknir/example'))
 
   it('should display form title', () => {
     cy.wait('@graphql')
