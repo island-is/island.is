@@ -8,7 +8,6 @@ import { CRCApplication } from '../types'
 
 import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
 
-/** This is a temporary mock provider for children residence change. National registry team are setting up real provider which we will connect to once it is up. **/
 export class MockChildrenNationalRegistryProvider extends BasicDataProvider {
   readonly type = 'MockChildrenNationalRegistry'
 
