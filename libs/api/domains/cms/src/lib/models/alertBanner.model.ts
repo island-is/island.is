@@ -23,7 +23,7 @@ export class AlertBanner {
   linkTitle?: string
 
   @Field(() => ReferenceLink, { nullable: true })
-  link: ReferenceLink
+  link?: ReferenceLink | null
 
   @Field()
   isDismissable!: boolean
