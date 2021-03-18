@@ -32,6 +32,7 @@ function handleError(error: string, formatMessage: MessageFormatter): void {
   )
 }
 
+import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 type StateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
   otherParent: StateMapEntry
@@ -40,21 +41,24 @@ type StatesMap = {
 }
 const statesMap: StatesMap = {
   otherParent: {
-    otherParentApproval: ReviewSectionState.inProgress,
-    otherParentRequiresAction: ReviewSectionState.requiresAction,
-    employerApproval: ReviewSectionState.complete,
-    vinnumalastofnunApproval: ReviewSectionState.complete,
+    [ApplicationStates.OTHER_PARENT_APPROVAL]: ReviewSectionState.inProgress,
+    // otherParentRequiresAction: ReviewSectionState.requiresAction, // TODO: Replace with needs action screen.
+    [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]: ReviewSectionState.complete,
+    [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
   },
   employer: {
-    employerWaitingToAssign: ReviewSectionState.inProgress,
-    employerApproval: ReviewSectionState.inProgress,
-    employerRequiresAction: ReviewSectionState.requiresAction,
-    vinnumalastofnunApproval: ReviewSectionState.complete,
+    [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
+      ReviewSectionState.inProgress,
+    [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.inProgress,
+    // employerRequiresAction: ReviewSectionState.requiresAction, // TODO: Replace with needs action screen.
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
   },
   vinnumalastofnun: {
-    vinnumalastofnunApproval: ReviewSectionState.inProgress,
-    vinnumalastofnunRequiresAction: ReviewSectionState.requiresAction,
-    approved: ReviewSectionState.complete,
+    [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
+      ReviewSectionState.inProgress,
+    // vinnumalastofnunRequiresAction: ReviewSectionState.requiresAction, // TODO: Replace with needs action screen.
+    [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
 }
 

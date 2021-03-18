@@ -8,10 +8,10 @@ import { Box, Text } from '@island.is/island-ui/core'
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 
+import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 type StateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
   employer: StateMapEntry
