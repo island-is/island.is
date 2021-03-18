@@ -957,6 +957,41 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
   }),
 
+  draftFlow: defineMessages({
+    draftNotApprovedTitle: {
+      id: 'pl.application:draftFlow.requiresAction.title',
+      defaultMessage: 'Your application was not approved',
+      description: 'Your application was not approved',
+    },
+    draftNotApprovedOtherParentDesc: {
+      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      defaultMessage: 'The other parent did not approve your request.',
+      description: 'The other parent did not approve your request.',
+    },
+    draftNotApprovedEmployerDesc: {
+      id: 'pl.application:draftFlow.requiresAction.employerDesc',
+      defaultMessage: 'Your employer did not approve your application.',
+      description: 'Your employer did not approve your application.',
+    },
+    draftNotApprovedVMLSTDesc: {
+      id: 'pl.application:draftFlow.requiresAction.VMLSTDesc',
+      defaultMessage: 'Vinnumalastofnun did not approve your application.',
+      description: 'Vinnumalastofnun did not approve your application.',
+    },
+    modifyDraftDesc: {
+      id: 'pl.application:draftFlow.modifyDesc',
+      defaultMessage:
+        'You can make edits to your application and re-submit for consideration.',
+      description:
+        'You can make edits to your application and re-submit for consideration.',
+    },
+    modifyDraftButton: {
+      id: 'pl.application:draftFlow.modifyDraftButton',
+      defaultMessage: 'Make changes',
+      description: 'Make changes',
+    },
+  }),
+
   editFlow: defineMessages({
     // For EditFlowInReviewSteps
     employerApprovesTitle: {

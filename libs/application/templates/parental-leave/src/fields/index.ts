@@ -14,6 +14,7 @@ export { default as Review } from './Review'
 export { default as EditPeriodsReview } from './EditPeriodsReview'
 export { default as InReviewSteps } from './InReviewSteps'
 export { default as Conclusion } from './PeriodsSectionImage/ConclusionImageScreen'
+export { default as DraftRequiresAction } from './DraftRequiresAction'
 export { default as PeriodsSectionImage } from './PeriodsSectionImage/PeriodsSectionImage'
 
 export { default as EditsInReviewSteps } from './InReviewSteps/EditsInReviewSteps'
