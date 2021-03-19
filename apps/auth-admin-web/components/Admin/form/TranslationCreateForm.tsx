@@ -104,7 +104,7 @@ const TranslationCreateForm: React.FC<Props> = (props: Props) => {
                       )
                     })}
                   </select>
-                  <HelpBox helpText="The iso key (identifier) for this language" />
+                  <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
                   <ErrorMessage
                     as="span"
                     errors={errors}

@@ -126,7 +126,7 @@ const LanguageCreateForm: React.FC<Props> = (props: Props) => {
                     name="language.description"
                     message="Language name is required and needs to be in the right format"
                   />
-                  <HelpBox helpText="The email of the admin user" />
+                  <HelpBox helpText="The language name in it's own language" />
                 </div>
 
                 <div className="language-create-form__container__field">
