@@ -2,10 +2,26 @@ import { Home } from './screens/home/home';
 import { Navigation } from "react-native-navigation";
 import { Inbox } from './screens/inbox/inbox';
 import { Wallet } from './screens/wallet/wallet';
+import React from 'react';
+import { authStore } from './auth/auth';
 
-Navigation.registerComponent('is.island.HomeScreen', () => Home);
-Navigation.registerComponent('is.island.InboxScreen', () => Inbox);
-Navigation.registerComponent('is.island.WalletScreen', () => Wallet);
+function registerComponent(name: string, Component: React.FunctionComponent) {
+  Navigation.registerComponent(
+    name,
+    () => (props) => <Component {...props} />,
+    () => Component,
+  );
+}
+
+registerComponent('is.island.HomeScreen', Home);
+registerComponent('is.island.InboxScreen', Inbox);
+registerComponent('is.island.WalletScreen', Wallet);
+
+if (authStore.getState().isAuthenticated) {
+  // show main screen
+} else {
+  // show login screen
+}
 
 const mainRoot = {
   root: {

@@ -83,6 +83,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-ultimate-config/android/rnuc.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -202,6 +203,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(':react-native-navigation')
+    implementation project(':react-native-keychain')
+    implementation project(':react-native-ultimate-config')
     implementation project(':rnWebView')
 
     //noinspection GradleDynamicVersion

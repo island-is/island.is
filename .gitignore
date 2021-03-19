@@ -126,15 +126,9 @@ buck-out/
 **/ios/Pods/
 /
 
-## Nested node_modules
+# react-native-ultimate-config
+rnuc.xcconfig
 
-node_modules/
-## Nested node_modules
-
-node_modules/
-## Nested node_modules
-
-node_modules/
 ## Nested node_modules
 
 node_modules/

@@ -2,7 +2,7 @@
   "name": "native-app",
   "version": "0.0.1",
   "private": true,
-  "scripts":{
+  "scripts": {
     "nx": "cd ../.. && yarn nx"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "@nrwl/workspace": "*",
     "metro-resolver": "*",
     "@storybook/react-native": "*",
-    "@storybook/addon-knobs": "*"
+    "@storybook/addon-knobs": "*",
+    "@apollo/client": "*"
   }
 }

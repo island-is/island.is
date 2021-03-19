@@ -1,7 +1,17 @@
 import React from 'react'
-import { SafeAreaView, StatusBar, Text } from 'react-native'
+import { SafeAreaView, StatusBar, Text, Button } from 'react-native'
+import { authorize } from 'react-native-app-auth';
+import Keychain from 'react-native-keychain';
 
 export const Wallet = () => {
+
+  const config = {
+    issuer: 'https://identity-server.dev01.devland.is',
+    clientId: '@island.is-app',
+    redirectUrl: 'is.island.app-dev://oauth',
+    scopes: ['openid', 'profile', 'offline_access'],
+  };
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -13,6 +23,12 @@ export const Wallet = () => {
           justifyContent: 'center',
         }}
       >
+          <Button title="Authenticate" onPress={async () => {
+            const result = await authorize(config);
+            if (result) {
+              await Keychain.setGenericPassword('island.is', JSON.stringify(result));
+            }
+          }} />
         <Text>Wallet</Text>
       </SafeAreaView>
     </>

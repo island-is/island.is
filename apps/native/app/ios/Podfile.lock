@@ -1,4 +1,9 @@
 PODS:
+  - AppAuth (1.4.0):
+    - AppAuth/Core (= 1.4.0)
+    - AppAuth/ExternalUserAgent (= 1.4.0)
+  - AppAuth/Core (1.4.0)
+  - AppAuth/ExternalUserAgent (1.4.0)
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
@@ -252,6 +257,11 @@ PODS:
     - React-jsi (= 0.64.0)
     - React-perflogger (= 0.64.0)
   - React-jsinspector (0.64.0)
+  - react-native-app-auth (6.2.0):
+    - AppAuth (= 1.4.0)
+    - React-Core
+  - react-native-ultimate-config (3.3.1):
+    - React
   - react-native-webview (11.3.1):
     - React-Core
   - React-perflogger (0.64.0)
@@ -329,6 +339,8 @@ PODS:
     - React-RCTText
   - RNCAsyncStorage (1.12.1):
     - React-Core
+  - RNKeychain (6.2.0):
+    - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -370,6 +382,8 @@ DEPENDENCIES:
   - React-jsi (from `../../../../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../../../../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../../../../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-app-auth (from `../../node_modules/react-native-app-auth`)
+  - react-native-ultimate-config (from `../../node_modules/react-native-ultimate-config`)
   - react-native-webview (from `../../node_modules/react-native-webview`)
   - React-perflogger (from `../../../../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../../../../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -385,10 +399,12 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../../../../node_modules/react-native/ReactCommon`)
   - ReactNativeNavigation (from `../../node_modules/react-native-navigation`)
   - "RNCAsyncStorage (from `../../node_modules/@react-native-community/async-storage`)"
+  - RNKeychain (from `../../node_modules/react-native-keychain`)
   - Yoga (from `../../../../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
+    - AppAuth
     - boost-for-react-native
     - CocoaAsyncSocket
     - Flipper
@@ -433,6 +449,10 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../../../../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-app-auth:
+    :podspec: "../../node_modules/react-native-app-auth"
+  react-native-ultimate-config:
+    :path: "../../node_modules/react-native-ultimate-config"
   react-native-webview:
     :path: "../../node_modules/react-native-webview"
   React-perflogger:
@@ -463,10 +483,13 @@ EXTERNAL SOURCES:
     :podspec: "../../node_modules/react-native-navigation"
   RNCAsyncStorage:
     :path: "../../node_modules/@react-native-community/async-storage"
+  RNKeychain:
+    :path: "../../node_modules/react-native-keychain"
   Yoga:
     :path: "../../../../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
@@ -493,6 +516,8 @@ SPEC CHECKSUMS:
   React-jsi: 74341196d9547cbcbcfa4b3bbbf03af56431d5a1
   React-jsiexecutor: 06a9c77b56902ae7ffcdd7a4905f664adc5d237b
   React-jsinspector: 0ae35a37b20d5e031eb020a69cc5afdbd6406301
+  react-native-app-auth: 65e59e33e956bd6d83599c22b8f9bea529a0ea5c
+  react-native-ultimate-config: 38859f2b2018e3de04afd6203300f47f4803d8f4
   react-native-webview: 07fca3f4378bd6ea26254bf63119bfd70f4fabeb
   React-perflogger: 9c547d8f06b9bf00cb447f2b75e8d7f19b7e02af
   React-RCTActionSheet: 3080b6e12e0e1a5b313c8c0050699b5c794a1b11
@@ -508,9 +533,10 @@ SPEC CHECKSUMS:
   ReactCommon: cfe2b7fd20e0dbd2d1185cd7d8f99633fbc5ff05
   ReactNativeNavigation: 906b631a6847c26cacf5cb3791566f1fe205c65c
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
+  RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: aeaa9e5a782e49626fe9087de85f5b40a74ef0b8
+PODFILE CHECKSUM: f3ea381e3c8bb55578c1421fa1ae89179241e57f
 
 COCOAPODS: 1.10.1

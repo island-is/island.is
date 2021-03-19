@@ -5,7 +5,11 @@ import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationPackage;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.oblador.keychain.KeychainPackage;
+import com.reactnativeultimateconfig.UltimateConfigPackage;
+import com.reactnativeultimateconfig.UltimateConfigModule;
 
+// android and react native
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -33,6 +37,8 @@ public class MainApplication extends NavigationApplication {
           // packages.add(new MyReactNativePackage());
           packages.add(new NavigationPackage(mReactNativeHost));
           packages.add(new RNCWebViewPackage());
+          packages.add(new UltimateConfigPackage());
+          packages.add(new KeychainPackage());
           return packages;
         }
 
@@ -50,8 +56,8 @@ public class MainApplication extends NavigationApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    UltimateConfigModule.setBuildConfig(BuildConfig.class);
   }
 
   /**

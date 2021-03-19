@@ -6,6 +6,11 @@ applyNativeModulesSettingsGradle(settings)
 include ':react-native-navigation'
 project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-navigation/lib/android/app')
 
+include ':react-native-keychain'
+project(':react-native-keychain').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-keychain/android')
+
+include ':react-native-ultimate-config'
+project(':react-native-ultimate-config').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-ultimate-config/android')
 
 include ':rnWebView'
 project(':rnWebView').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-webview/android')
