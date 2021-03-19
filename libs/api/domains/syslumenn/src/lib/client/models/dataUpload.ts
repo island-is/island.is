@@ -1,12 +1,5 @@
 import { uuid } from 'uuidv4'
 import { Person, Attachment, PersonType } from '../../models/dataUpload'
-
-export interface IDataUploadResponse {
-  skilabod: string
-  audkenni: string
-  malsnumer: string
-}
-
 export interface IDataUpload {
   audkenni: string
   gognSkeytis: {
@@ -14,6 +7,7 @@ export interface IDataUpload {
     skeytaHeiti: string
     adilar: ChildrenTransferPerson[]
     attachments: File[]
+    gagnaMengi: object
   }
 }
 
@@ -45,6 +39,7 @@ export function constructUploadDataObject(
   id: string,
   persons: Person[],
   attachment: Attachment,
+  extraData: { [key: string]: string },
 ): IDataUpload {
   return {
     audkenni: id,
@@ -68,6 +63,7 @@ export function constructUploadDataObject(
       attachments: [
         { nafnSkraar: attachment.name, innihaldSkraar: attachment.content },
       ],
+      gagnaMengi: extraData,
     },
   }
 }

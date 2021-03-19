@@ -10,19 +10,19 @@ import { Link, mapLink } from './link.model'
 @ObjectType()
 export class FeaturedArticles {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
-  image?: Image
+  image?: Image | null
 
   @Field(() => [Article])
-  articles: Array<Article>
+  articles?: Array<Article>
 
   @Field(() => Link, { nullable: true })
-  link?: Link
+  link?: Link | null
 }
 
 export const mapFeaturedArticles = ({

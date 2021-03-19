@@ -726,7 +726,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/application/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
+            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
       }
@@ -1063,6 +1063,33 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/national-registry"]
+        }
+      }
+    },
+    "api-domains-rsk": {
+      "root": "libs/api/domains/rsk",
+      "sourceRoot": "libs/api/domains/rsk/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/rsk/tsconfig.lib.json",
+              "libs/api/domains/rsk/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/rsk/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/rsk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/rsk"]
         }
       }
     },
@@ -1918,6 +1945,14 @@
               "!libs/application/templates/party-letter/**/*"
             ]
           }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/party-letter/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/application/templates/party-letter"]
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
@@ -4228,6 +4263,33 @@
         }
       }
     },
+    "rsk": {
+      "root": "libs/clients/rsk",
+      "sourceRoot": "libs/clients/rsk/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/rsk/tsconfig.lib.json",
+              "libs/clients/rsk/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/rsk/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/rsk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/rsk"]
+        }
+      }
+    },
     "service-portal": {
       "root": "apps/service-portal",
       "sourceRoot": "apps/service-portal/src",
@@ -4248,7 +4310,7 @@
               "apps/service-portal/src/mockServiceWorker.js",
               "apps/service-portal/src/assets"
             ],
-            "styles": [],
+            "styles": ["apps/service-portal/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/service-portal/webpack.config.js",
             "maxWorkers": 2
