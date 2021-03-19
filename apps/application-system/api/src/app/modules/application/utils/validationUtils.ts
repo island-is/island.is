@@ -81,8 +81,6 @@ export async function validateApplicationSchema(
     false,
   )
 
-  console.log(schemaFormValidationError)
-
   if (schemaFormValidationError) {
     // TODO improve error message
     throw new HttpException(`Schema validation has failed`, 403)
