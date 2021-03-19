@@ -26,9 +26,9 @@ import {
   regulationYears,
   homeTexts,
   allMinistries,
-  allLawChaptersFlat,
+  allLawChaptersTree,
   Ministry,
-  LawChapter,
+  LawMainChapters,
 } from './mockData'
 import { ParsedUrlQuery } from 'querystring'
 import { shuffle } from 'lodash'
@@ -61,7 +61,7 @@ type RegulationsHomeProps = {
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
-  lawcCapters: ReadonlyArray<LawChapter>
+  lawcCapters: Readonly<LawMainChapters>
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
@@ -293,7 +293,7 @@ RegulationsHome.getInitialProps = async ({ apolloClient, locale, query }) => {
     searchQuery: getParams(query, ['q', 'rn', 'year', 'ch', 'all']),
     years: regulationYears,
     ministries: allMinistries,
-    lawcCapters: allLawChaptersFlat,
+    lawcCapters: allLawChaptersTree,
   }
 }
 

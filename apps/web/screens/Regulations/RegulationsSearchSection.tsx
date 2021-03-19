@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { NamespaceGetter } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
-import { LawChapter, Ministry, SearchTexts } from './mockData'
+import { LawChapterTree, Ministry, SearchTexts } from './mockData'
 import { OptionTypeBase, ValueType } from 'react-select'
 import { useRegulationLinkResolver } from './regulationUtils'
 
@@ -117,7 +117,7 @@ export type RegulationsSearchSectionProps = {
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
-  lawcCapters: ReadonlyArray<LawChapter>
+  lawcCapters: Readonly<LawChapterTree>
   getText: NamespaceGetter<SearchTexts>
 } & NoChildren
 

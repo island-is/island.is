@@ -27,17 +27,18 @@ const _getMinistry = (shortCode: string): Ministry =>
 
 // ---------------------------------------------------------------------------
 
-type LawSubChapter = {
+export type LawChapter = {
   name: string
   numberCode: string // '01a' |'01b' |'01c' | etc.
 }
-export type LawChapter = {
-  name: string
-  numberCode: string // '01' | '02' | '03' | etc.
-  subChapters: Array<LawSubChapter>
-}
 
-export const allLawChaptersFlat: Array<LawChapter> = [
+export type LawChapterTree = Array<
+  LawChapter & {
+    subChapters: ReadonlyArray<LawChapter>
+  }
+>
+
+export const allLawChaptersTree: LawChapterTree = [
   {
     numberCode: '01',
     name: 'Stjórnskipunarlög o.fl.',
@@ -216,6 +217,7 @@ export type Regulation = {
   lastAmendDate?: ISODate | null
   repealedDate?: ISODate | null
   ministry: Ministry
+  lawChapters: ReadonlyArray<LawChapter>
 }
 
 export const exampleRegulation: Regulation = {
@@ -228,7 +230,10 @@ export const exampleRegulation: Regulation = {
   lastAmendDate: '2021-03-03',
   repealedDate: null,
   ministry: _getMinistry('IR'),
+  lawChapters: [allLawChaptersTree[0].subChapters[2]],
 }
+
+const foo: string = undefined
 
 export const exampleRegulationOriginalBody = regulationHtmlOriginal
 
