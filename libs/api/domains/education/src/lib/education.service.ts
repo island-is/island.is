@@ -1,14 +1,22 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { Response } from 'node-fetch'
+import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/auth-nest-tools'
+import { MMSApi } from '@island.is/clients/mms'
 
+import { Config } from './education.module'
 import { License } from './education.type'
-import { MMSApi } from './client'
+import { S3Service } from './s3.service'
 
 @Injectable()
 export class EducationService {
-  constructor(private readonly mmsApi: MMSApi) {}
+  constructor(
+    private readonly mmsApi: MMSApi,
+    private readonly s3Service: S3Service,
+    @Inject('CONFIG')
+    private readonly config: Config,
+  ) {}
 
   async getLicenses(nationalId: User['nationalId']): Promise<License[]> {
     const licenses = await this.mmsApi.getLicenses(nationalId)
@@ -21,10 +29,30 @@ export class EducationService {
     }))
   }
 
+  async getStudentAssessmentGrades(
+    nationalId: User['nationalId'],
+  ): Promise<any[]> {
+    const studentAssessmentGrades = await this.mmsApi.getStudentAssessmentGrades(
+      nationalId,
+    )
+
+    return studentAssessmentGrades.map((grade) => ({
+      id: grade.id,
+    }))
+  }
+
   async downloadPdfLicense(
     nationalId: string,
     licenseId: string,
-  ): Promise<Response> {
-    return this.mmsApi.downloadLicensePDF(nationalId, licenseId)
+  ): Promise<string | null> {
+    const responseStream = await this.mmsApi.downloadLicensePDF(
+      nationalId,
+      licenseId,
+    )
+
+    return this.s3Service.uploadFileFromStream(responseStream, {
+      fileName: uuid(),
+      bucket: this.config.fileDownloadBucket,
+    })
   }
 }

@@ -1,6 +1,5 @@
 import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
-import { UseGuards, Inject } from '@nestjs/common'
-import { uuid } from 'uuidv4'
+import { UseGuards } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
 import {
@@ -10,26 +9,27 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 
-import { Config } from '../education.module'
-import { S3Service } from '../s3.service'
 import { EducationService } from '../education.service'
 import { License } from './license.model'
 import { SignedLicense } from './signedLicense.model'
 import { FetchEducationSignedLicenseUrlInput } from './license.input'
+import { StudentAssessmentGrades } from './grade'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
-  constructor(
-    private readonly educationService: EducationService,
-    private readonly s3Service: S3Service,
-    @Inject('CONFIG')
-    private readonly config: Config,
-  ) {}
+  constructor(private readonly educationService: EducationService) {}
 
   @Query(() => [License])
   educationLicense(@CurrentUser() user: User): Promise<License[]> {
     return this.educationService.getLicenses(user.nationalId)
+  }
+
+  @Query(() => StudentAssessmentGrades)
+  educationStudentAssessmentGrades(
+    @CurrentUser() user: User,
+  ): Promise<StudentAssessmentGrades[]> {
+    return this.educationService.getStudentAssessmentGrades(user.nationalId)
   }
 
   @Mutation(() => SignedLicense, { nullable: true })
@@ -38,15 +38,10 @@ export class MainResolver {
     @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })
     input: FetchEducationSignedLicenseUrlInput,
   ): Promise<SignedLicense> {
-    const responseStream = await this.educationService.downloadPdfLicense(
+    const url = await this.educationService.downloadPdfLicense(
       user.nationalId,
       input.licenseId,
     )
-
-    const url = await this.s3Service.uploadFileFromStream(responseStream, {
-      fileName: uuid(),
-      bucket: this.config.fileDownloadBucket,
-    })
     if (url === null) {
       throw new ApolloError('Could not create a download link')
     }
