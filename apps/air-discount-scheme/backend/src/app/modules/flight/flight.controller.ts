@@ -145,9 +145,8 @@ export class PublicFlightController {
       throw new ForbiddenException(
         'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Each connecting flight must go from/to Akureyri',
       )
-    } else {
-      return connectingId
     }
+    return connectingId
   }
 
   @Post('discounts/:discountCode/isValidConnectionFlight')
@@ -253,6 +252,10 @@ export class PublicFlightController {
       if (flightLegsLeft < flight.flightLegs.length) {
         throw new ForbiddenException('Flight leg quota is exceeded')
       }
+    }
+
+    if (connectingId) {
+      connectingFlight = true
     }
 
     const newFlight = await this.flightService.create(
