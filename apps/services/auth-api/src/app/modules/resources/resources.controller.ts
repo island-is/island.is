@@ -31,7 +31,7 @@ export class ResourcesController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
-  async FindIdentityResourcesByScopeName(
+  async findIdentityResourcesByScopeName(
     @Query(
       'scopeNames',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
@@ -55,7 +55,7 @@ export class ResourcesController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({ type: ApiScope, isArray: true })
-  async FindApiScopesByNameAsync(
+  async findApiScopesByNameAsync(
     @Query(
       'scopeNames',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
@@ -85,7 +85,7 @@ export class ResourcesController {
     allowEmptyValue: true,
   })
   @ApiOkResponse({ type: ApiResource, isArray: true })
-  async FindApiResourcesByNameAsync(
+  async findApiResourcesByNameAsync(
     @Query(
       'apiResourceNames',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),

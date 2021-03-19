@@ -2,11 +2,9 @@ import { useEffect } from 'react'
 
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { createClient } from '@island.is/feature-flags'
-import { setClientAuthToken } from '@island.is/service-portal/graphql'
 
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
-import { userManager } from '../../utils/userManager'
 import { featureFlaggedModules, ModuleKeys } from '../../store/modules'
 import { environment } from '../../environments'
 
