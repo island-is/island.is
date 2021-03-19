@@ -57,6 +57,7 @@ describe('validate-template', () => {
       const { isTemplateReady } = require('./validationUtils')
 
       expect(isTemplateReady({ readyForProduction: false })).toBe(false)
+      expect(isTemplateReady({ readyForProduction: true })).toBe(true)
     })
 
     it('should be ready if running a production build on production environment with readyForProduction=true', () => {
@@ -70,6 +71,7 @@ describe('validate-template', () => {
       const { isTemplateReady } = require('./validationUtils')
 
       expect(isTemplateReady({ readyForProduction: true })).toBe(true)
+      expect(isTemplateReady({ readyForProduction: false })).toBe(false)
     })
   })
 })
