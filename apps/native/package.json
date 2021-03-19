@@ -9,7 +9,8 @@
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
     "react-native-navigation": "7.11.3",
-    "react-native-webview": "11.3.1"
+    "react-native-webview": "11.3.1",
+    "react-native-navigation-hooks": "6.3.0"
   },
   "devDependencies": {
     "detox": "18.7.1",

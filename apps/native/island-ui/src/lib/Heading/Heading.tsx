@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme';
 
 const Host = styled.Text<{ isCenter?: boolean}>`
   padding: 20px 30px;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 
   font-size: 30px;
   font-weight: bold;

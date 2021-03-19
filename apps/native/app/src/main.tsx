@@ -2,12 +2,52 @@ import { Home } from './screens/home/home';
 import { Navigation } from "react-native-navigation";
 import { Inbox } from './screens/inbox/inbox';
 import { Wallet } from './screens/wallet/wallet';
+import { User } from './screens/user/user';
+import { Login } from './screens/login/login';
+import { NavigationProvider } from 'react-native-navigation-hooks'
+import React from 'react';
 
-Navigation.registerComponent('is.island.HomeScreen', () => Home);
-Navigation.registerComponent('is.island.InboxScreen', () => Inbox);
-Navigation.registerComponent('is.island.WalletScreen', () => Wallet);
+function registerScreen(name: string, Component: React.FunctionComponent) {
+  Navigation.registerComponent(
+    name,
+    () => (props) => {
+      return (
+        <NavigationProvider value={{ componentId: props.componentId }}>
+          <Component {...props} />
+        </NavigationProvider>
+      )
+    },
+    () => Component
+  )
+}
 
-const mainRoot = {
+registerScreen('is.island.Login', Login);
+registerScreen('is.island.HomeScreen', Home);
+registerScreen('is.island.InboxScreen', Inbox);
+registerScreen('is.island.WalletScreen', Wallet);
+registerScreen('is.island.UserScreen', User);
+
+// login screen
+const loginRoot = {
+  root: {
+    component: {
+      name: 'is.island.Login',
+    }
+  }
+};
+
+// show user screen
+Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => {
+  if (buttonId === 'userButton') {
+    Navigation.showModal({
+      component: {
+        name: 'is.island.UserScreen' }
+      });
+  }
+});
+
+// bottom tabs
+export const mainRoot = {
   root: {
     bottomTabs: {
      id: 'BOTTOM_TABS_LAYOUT',
@@ -33,7 +73,7 @@ const mainRoot = {
                icon: {
                  system: 'tray'
                }
-             }
+             },
            }
          }
        },
@@ -53,7 +93,7 @@ const mainRoot = {
                icon: {
                  system: 'house',
                }
-             }
+             },
            }
          }
        },
@@ -73,7 +113,7 @@ const mainRoot = {
                icon: {
                 system: 'wallet.pass'
                }
-             }
+             },
            }
          }
        },
@@ -82,13 +122,22 @@ const mainRoot = {
   }
 }
 
-
-Navigation.events().registerAppLaunchedListener(() => {
-  Navigation.setRoot(mainRoot);
+// register root
+Navigation.events().registerAppLaunchedListener(async() => {
+  Navigation.setRoot(await isLoggedIn() ? mainRoot : loginRoot);
+  // Navigation.setRoot(mainRoot);
 });
 
+// auth business logic goes here
+async function isLoggedIn() {
+  await new Promise(r => setTimeout(r, 2000));
+  return false
+}
+
+// native navigation options
 Navigation.setDefaultOptions({
   topBar: {
+    animate: true,
     title: {
       color: '#13134b'
     },
@@ -100,7 +149,15 @@ Navigation.setDefaultOptions({
     },
     borderHeight: 0,
     borderColor: 'transparent',
-
+    rightButtons: [
+      {
+        id: 'userButton',
+        text: 'User',
+        icon: {
+          system: 'person.crop.circle'
+        }
+      },
+    ],
   },
   bottomTab: {
     fontSize: 28,
@@ -110,4 +167,5 @@ Navigation.setDefaultOptions({
     badgeColor: 'red',
   },
 });
+
 

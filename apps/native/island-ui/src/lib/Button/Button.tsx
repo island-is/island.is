@@ -5,6 +5,7 @@ import { theme } from '@island.is/island-ui/theme';
 interface ButtonProps {
   title: string,
   onPress: () => void,
+  style?: any,
 }
 
 const Host = styled.TouchableHighlight`
@@ -19,9 +20,9 @@ const Text = styled.Text`
   text-align: center;
 `;
 
-export function Button({ title, onPress }: ButtonProps) {
+export function Button({ title, onPress, style, ...rest }: ButtonProps) {
   return (
-    <Host onPress={onPress}>
+    <Host onPress={onPress} style={style} {...rest}>
       <Text>{title}</Text>
     </Host>
   )
