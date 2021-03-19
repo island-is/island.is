@@ -492,7 +492,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       we will restore the periods to their original state from temp.
       */
       createTempPeriods: assign((context, event) => {
-        // Only continue if going to EDIT (skip init event)
         if (event.type !== DefaultEvents.EDIT) {
           return context
         }
@@ -513,7 +512,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         Restore the periods to their original state from temp.
       */
       restorePeriodsFromTemp: assign((context, event) => {
-        // Only continue if event is ABORT (skip init event)
         if (event.type !== DefaultEvents.ABORT) {
           return context
         }
@@ -534,7 +532,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         The edits were approved. Clear out temp.
       */
       clearTemp: assign((context, event) => {
-        // Only continue if event is APPROVE (skip init event)
         if (event.type !== DefaultEvents.APPROVE) {
           return context
         }
