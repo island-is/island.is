@@ -1,5 +1,8 @@
 import { range } from 'lodash'
-import { regulationHtml } from './mockData-regulationHtml'
+import {
+  regulationHtml,
+  regulationHtmlOriginal,
+} from './mockData-regulationHtml'
 
 // ---------------------------------------------------------------------------
 
@@ -84,6 +87,11 @@ export type RegulationListItem = {
 }
 export const regulationsSearchResults: Array<RegulationListItem> = [
   {
+    name: '0221/2001',
+    title: 'Reglugerð um bólusetningar á Íslandi.',
+    ministry: _getMinistry('HR'),
+  },
+  {
     name: '1052/2020',
     title:
       'Reglugerð um (3.) breytingu á reglugerð nr. 1364/2019 um endurgreiðslu kostnaðar vegna þjónustu sjálfstætt starfandi sjúkraþjálfara sem starfa án samnings við Sjúkratryggingar Íslands.',
@@ -140,7 +148,7 @@ export const regulationYears = range(1999, 2021).filter(
 
 const _searchTexts = {
   searchTitleLabel: 'Leita að reglugerðum',
-  searchClearLabel: 'Núllstilla',
+  searchClearLabel: 'Núllstilla leit',
   searchOpenLabel: 'Opna leit',
   searchCloseLabel: 'Loka leit',
   searchResultLabel: 'Sýna niðurstöður',
@@ -174,7 +182,7 @@ export const homeTexts = {
   regulationsImageThumbnailUrl: 'https://placekitten.com/50/50',
 
   crumbs_1: 'Ísland.is',
-  crumbs_2: 'Upplýsingaasvæði',
+  crumbs_2: 'Upplýsingasvæði',
 
   ..._searchTexts,
 } as const
@@ -183,7 +191,14 @@ export const homeTexts = {
 // ===========================================================================
 
 export const regulationPageTexts = {
-  historyTitle: 'Reglugeðrir sem breyta þessari',
+  historyTitle: 'Breytingasaga reglugerðar ',
+
+  showDiff: 'Sýna breytingar',
+  hideDiff: 'Fela breytingar',
+
+  crumbs_1: 'Ísland.is',
+  crumbs_2: 'Upplýsingasvæði',
+  crumbs_3: 'Reglugerðir',
 } as const
 
 // ---------------------------------------------------------------------------
@@ -204,16 +219,18 @@ export type Regulation = {
 }
 
 export const exampleRegulation: Regulation = {
-  name: '0830/2011',
-  title: 'Reglugerð um ökuskírteini.',
+  name: '0221/2001',
+  title: 'Reglugerð um bólusetningar á Íslandi.',
   body: regulationHtml,
-  signatureDate: '2011-08-25',
-  publishedDate: '2011-09-09',
-  effectiveDate: '2011-09-10',
+  signatureDate: '2001-03-09',
+  publishedDate: '2001-03-20',
+  effectiveDate: '2001-03-20',
   lastAmendDate: '2021-03-03',
   repealedDate: null,
   ministry: _getMinistry('IR'),
 }
+
+export const exampleRegulationOriginalBody = regulationHtmlOriginal
 
 // ---------------------------------------------------------------------------
 
@@ -224,89 +241,19 @@ export type RegulationHistoryItem = {
 
 export const regulationHistory: Array<RegulationHistoryItem> = [
   {
-    name: '0199/2012',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1176/2012',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0027/2013',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0801/2013',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1198/2013',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1149/2014',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0628/2015',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0534/2016',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1159/2016',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0344/2017',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0767/2017',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1067/2017',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1249/2018',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0322/2019',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0449/2019',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0380/2020',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '0584/2020',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1184/2020',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
-  },
-  {
-    name: '1187/2020',
+    name: '0904/2013',
     title:
-      'Reglugerð á sviði samgangna um innleiðingu reglugerðar Evrópuþingsins og ráðsins (ESB) 2020/698.',
+      'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
   },
   {
-    name: '1410/2020',
-    title: 'Reglugerð um breytingu á reglugerð um ökuskírteini nr. 830/2011.',
+    name: '1197/2019',
+    title:
+      'Reglugerð um (2.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
   },
   {
-    name: '0235/2021',
-    title: 'Reglugerð um breytingu á reglugerð nr. 830/2011 um ökuskírteini.',
+    name: '1198/2020',
+    title:
+      'Reglugerð um (3.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
   },
 ]
 

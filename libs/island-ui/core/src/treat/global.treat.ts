@@ -27,7 +27,7 @@ globalStyle('strong', {
   fontWeight: theme.typography.semiBold,
 })
 
-globalStyle('ol, ul', {
+globalStyle('ol:not([type]), ul', {
   listStyle: 'none',
 })
 

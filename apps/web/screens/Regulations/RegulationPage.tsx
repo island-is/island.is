@@ -1,6 +1,15 @@
-import * as styles from './RegulationPage.treat'
+import * as s from './RegulationPage.treat'
 
-import React from 'react'
+import {
+  exampleRegulation,
+  exampleRegulationOriginalBody,
+  regulationPageTexts,
+  regulationHistory,
+  Regulation,
+  RegulationHistoryItem,
+} from './mockData'
+
+import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -14,54 +23,41 @@ import {
   GridContainer,
   GridRow,
   Navigation,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import {
-  exampleRegulation,
-  regulationPageTexts,
-  regulationHistory,
-  Regulation,
-  RegulationHistoryItem,
-} from './mockData'
-import { ParsedUrlQuery } from 'querystring'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { dateFormat, defaultLanguage } from '@island.is/shared/constants'
-import { useRegulationLinkResolver } from './regulationUtils'
+import { dateFormat } from '@island.is/shared/constants'
+import { prettyName, useRegulationLinkResolver } from './regulationUtils'
+import htmldiff from 'htmldiff-js'
+import cn from 'classnames'
 
 // const { publicRuntimeConfig } = getConfig()
 
 // ---------------------------------------------------------------------------
 
-/** Returns the first query parameter value as string, falling back to '' */
-const getParamStr = (query: ParsedUrlQuery, key: string): string => {
-  const val = query[key]
-  return val == null ? '' : typeof val === 'string' ? val : val[0]
+type BallProps = {
+  type?: 'green' | 'red'
 }
-
-/** Picks named keys from the query object and defaults them to '' */
-const getParams = <K extends string>(
-  query: ParsedUrlQuery,
-  keys: Array<K>,
-): Record<K, string> =>
-  keys.reduce((obj, key) => {
-    obj[key] = getParamStr(query, key)
-    return obj
-  }, {} as Record<K, string>)
+const Ball: React.FC<BallProps> = ({ type, children }) => (
+  <span className={cn(s.ball, type === 'red' && s.ballRed)}>{children}</span>
+)
 
 // ---------------------------------------------------------------------------
 
 type RegulationPageProps = {
   regulation: Regulation
+  originalBody?: string
   history: Array<RegulationHistoryItem>
   texts: typeof regulationPageTexts
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, history } = props
+  const { regulation, originalBody, history } = props
   const router = useRouter()
   const dateUtl = useDateUtils()
+  const [showDiff, setShowDiff] = useState(false)
   const formatDate = (isoDate: string) => {
     // Eff this! 👇
     // return dateUtl.format(new Date(isoDate), dateFormat[dateUtl.locale.code || defaultLanguage])
@@ -69,6 +65,17 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
   }
   const n = useNamespace(props.texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
+
+  const regulationBody = useMemo(
+    () =>
+      originalBody && showDiff
+        ? htmldiff
+            .execute(originalBody, regulation.body)
+            .replace(/<del [^>]+>\s+<\/del>/g, '')
+            .replace(/<ins [^>]+>\s+<\/ins>/g, '')
+        : regulation.body,
+    [showDiff, originalBody, regulation.body],
+  )
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']} marginBottom={4}>
@@ -85,7 +92,7 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
           },
           {
             title: n('crumbs_3'),
-            href: linkResolver('article').href,
+            href: linkResolver('regulationshome').href,
           },
         ]}
       />
@@ -99,19 +106,29 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
           <GridContainer>
             <GridRow>
               <GridColumn
-                span={['1/1', '1/1', '9/12', '8/12']}
-                offset={['0', '0', '0', '1/12']}
+                span={['1/1', '1/1', '1/1', '9/12', '8/12']}
+                offset={['0', '0', '0', '0', '1/12']}
                 order={1}
               >
                 {breadCrumbs}
 
+                {originalBody && (
+                  <button
+                    className={s.diffToggler}
+                    onClick={() => setShowDiff(!showDiff)}
+                  >
+                    {showDiff ? n('hideDiff') : n('showDiff')}
+                  </button>
+                )}
+
                 {!regulation.repealedDate ? (
                   <Text>
+                    <Ball type="green" />
                     Núgildandi reglugerð
                     {regulation.lastAmendDate ? (
                       <>
                         {' – '}
-                        <span>
+                        <span className={s.metaDate}>
                           uppfærð {formatDate(regulation.lastAmendDate)}
                         </span>
                       </>
@@ -121,28 +138,44 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
                   </Text>
                 ) : (
                   <Text>
+                    <Ball type="red" />
                     Úrelt reglugerð{' – '}
-                    <span>
+                    <span className={s.metaDate}>
                       felld úr gildi {formatDate(regulation.repealedDate)}
                     </span>
                   </Text>
                 )}
-                <Text as="h1" variant="h1" marginTop={2}>
-                  {regulation.name} {regulation.title}
+                <Text
+                  as="h1"
+                  variant="h3"
+                  marginTop={[2, 3, 4, 5]}
+                  marginBottom={[2, 4]}
+                >
+                  {prettyName(regulation.name)} {regulation.title}
                 </Text>
-                <div dangerouslySetInnerHTML={{ __html: regulation.body }} />
+                <div
+                  className={s.bodyText}
+                  dangerouslySetInnerHTML={{ __html: regulationBody }}
+                />
               </GridColumn>
 
-              <GridColumn span={['1/1', '1/1', '3/12']} order={[1, 1, 0]}>
-                <Navigation
-                  baseId="???"
-                  title={n('historyTitle')}
-                  items={history.map((item) => ({
-                    title: item.name + ' ' + item.title,
-                    href: linkToRegulation(item.name),
-                  }))}
-                />
-                my sidebar content...
+              <GridColumn
+                span={['1/1', '1/1', '1/1', '3/12']}
+                order={[1, 1, 0]}
+              >
+                <Stack space={2}>
+                  <Navigation
+                    baseId="???"
+                    title={
+                      n('historyTitle') + ' ' + prettyName(regulation.name)
+                    }
+                    items={history.map((item) => ({
+                      title: prettyName(item.name) + ' ' + item.title,
+                      href: linkToRegulation(item.name),
+                    }))}
+                  />
+                  {/* <p>Other sidebar content</p> */}
+                </Stack>{' '}
               </GridColumn>
             </GridRow>
           </GridContainer>
@@ -155,60 +188,10 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
 RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
-  /** /
-  const [
-    linkStrings,
-    filterContent,
-    openApiContent,
-    { data },
-  ] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ApiCatalogueLinks',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ApiCatalogFilter',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'OpenApiView',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient.query<Query, QueryGetApiServiceByIdArgs>({
-      query: GET_API_SERVICE_QUERY,
-      variables: {
-        input: {
-          id: serviceId,
-        },
-      },
-    }),
-  ] as const)
-/**/
-
   // FIXME: use apollo GQL api
   return {
     regulation: exampleRegulation,
+    originalBody: exampleRegulationOriginalBody,
     history: regulationHistory,
     texts: regulationPageTexts,
   }

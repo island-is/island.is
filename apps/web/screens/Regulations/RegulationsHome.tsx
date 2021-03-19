@@ -283,8 +283,8 @@ RegulationsHome.getInitialProps = async ({ apolloClient, locale, query }) => {
   // FIXME: use apollo GQL api
 
   // make all result sets look new and exciting!
-  const searchResults = shuffle(regulationsSearchResults).slice(
-    Math.floor(5 * Math.random()),
+  const searchResults = [regulationsSearchResults[0]].concat(
+    shuffle(regulationsSearchResults).slice(Math.floor(5 * Math.random())),
   )
 
   return {

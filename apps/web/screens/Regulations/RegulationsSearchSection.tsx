@@ -18,7 +18,7 @@ import { NamespaceGetter } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
 import { LawChapter, Ministry, SearchTexts } from './mockData'
 import { OptionTypeBase, ValueType } from 'react-select'
-import { nameToSlug, useRegulationLinkResolver } from './regulationUtils'
+import { useRegulationLinkResolver } from './regulationUtils'
 
 // ---------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   const filters = props.searchFilters
   const txt = props.getText
 
-  const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
+  const { linkToRegulation } = useRegulationLinkResolver()
   const router = useRouter()
 
   const activeFilters = useMemo(
