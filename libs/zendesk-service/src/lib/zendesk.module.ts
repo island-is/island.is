@@ -13,7 +13,7 @@ export class ZendeskModule {
       providers: [
         {
           provide: ZENDESK_OPTIONS,
-          useFactory: () => options,
+          useValue: options,
         },
         ZendeskService,
       ],
