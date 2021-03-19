@@ -20,9 +20,9 @@ import { useHistory } from 'react-router-dom'
 
 import { m } from '../../lib/messages'
 
-const isDev = window.location.origin === 'https://beta.dev01.devland.is'
-const isStaging = window.location.origin === 'https://beta.staging01.devland.is'
-const isProduction = window.location.origin === 'https://island.is'
+const isDev = window.location.origin.includes('beta.dev01.devland.is')
+const isStaging = window.location.origin.includes('beta.staging01.devland.is')
+const isProduction = window.location.origin.includes('https://island.is')
 
 const baseUrlForm = isDev
   ? 'https://umsoknir.dev01.devland.is'
