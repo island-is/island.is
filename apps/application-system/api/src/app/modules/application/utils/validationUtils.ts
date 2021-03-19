@@ -14,6 +14,50 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
+import { Unwrap } from '@island.is/shared/types'
+
+const isRunningOnProductionEnvironment =
+  environment.production === true &&
+  environment.name !== 'local' &&
+  environment.name !== 'dev' &&
+  environment.name !== 'staging'
+
+export async function validateThatApplicationIsReady(application: Application) {
+  const applicationTemplate = await getApplicationTemplateByTypeId(
+    application.typeId,
+  )
+
+  if (!applicationTemplate) {
+    throw new BadRequestException(
+      `No template exists for type: ${application.typeId}`,
+    )
+  }
+
+  validateThatTemplateIsReady(applicationTemplate)
+}
+
+export function isTemplateReady(
+  template: Pick<
+    Unwrap<typeof getApplicationTemplateByTypeId>,
+    'readyForProduction'
+  >,
+) {
+  if (isRunningOnProductionEnvironment && !template.readyForProduction) {
+    return false
+  }
+
+  return true
+}
+
+export function validateThatTemplateIsReady(
+  template: Unwrap<typeof getApplicationTemplateByTypeId>,
+) {
+  if (!isTemplateReady(template)) {
+    throw new BadRequestException(
+      `Template ${template.type} is not ready for production`,
+    )
+  }
+}
 
 export async function validateApplicationSchema(
   application: Pick<Application, 'typeId'>,
@@ -27,14 +71,9 @@ export async function validateApplicationSchema(
     throw new BadRequestException(
       `No template exists for type: ${application.typeId}`,
     )
-  } else if (
-    environment.environment === 'production' &&
-    !applicationTemplate.readyForProduction
-  ) {
-    throw new BadRequestException(
-      `Template ${application.typeId} is not ready for production`,
-    )
   }
+
+  validateThatTemplateIsReady(applicationTemplate)
 
   const schemaFormValidationError = validateAnswers(
     applicationTemplate.dataSchema,

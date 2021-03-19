@@ -5,6 +5,7 @@ const baseApiUrl = 'http://localhost:4444'
 export default {
   production: false,
   environment: 'local',
+  name: 'local',
   baseApiUrl,
   redis: {
     urls: [
