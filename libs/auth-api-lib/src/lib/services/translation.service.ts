@@ -67,11 +67,20 @@ export class TranslationService {
   }
 
   /** Get's and counts all languages */
-  async findAndCountAllLanguages(): Promise<{
+  async findAndCountAllLanguages(
+    page: number,
+    count: number,
+  ): Promise<{
     rows: Language[]
     count: number
   } | null> {
-    return this.langugeModel.findAndCountAll()
+    page--
+    const offset = page * count
+    return this.langugeModel.findAndCountAll({
+      limit: count,
+      offset: offset,
+      distinct: true,
+    })
   }
 
   /** Adds a new Language */

@@ -100,7 +100,7 @@ export class TranslationController {
   async findAndCountAllLanguages(
     @Query('page') page: number,
     @Query('count') count: number,
-  ): Promise<{ rows: Translation[]; count: number } | null> {
+  ): Promise<{ rows: Language[]; count: number } | null> {
     const languages = await this.translationService.findAndCountAllLanguages(
       page,
       count,
