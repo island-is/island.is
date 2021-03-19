@@ -17,6 +17,7 @@
 /libs/api/domains/cms/                                                                        @island-is/kosmos-kaos @island-is/aranja
 /libs/application/templates/party-letter/                                                     @island-is/kosmos-kaos
 /libs/clients/rsk/                                                                            @island-is/kosmos-kaos
+/libs/zendesk-service/                                                                        @island-is/kosmos-kaos
 
 /*/air-discount-scheme/                                                                       @island-is/vice-versa
 /*/gjafakort/                                                                                 @island-is/vice-versa @island-is/kosmos-kaos
