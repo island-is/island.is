@@ -24,11 +24,11 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
     const draftApplications = applications?.filter(
       (application) => application.state === 'draft',
     )
-    const sortedApplications = sortApplicationsByDateAscending(applications)
-    const firstCreatedId = sortedApplications[0].id
+    const sortedDraftApplications = sortApplicationsByDateAscending(draftApplications)
+    const firstCreatedDraftId = sortedDraftApplications[0].id
     const currentPathname = window.location.pathname
 
-    if (currentPathname.includes(firstCreatedId)) {
+    if (currentPathname.includes(firstCreatedDraftId)) {
       return false
     }
 
