@@ -42,7 +42,6 @@ type StatesMap = {
 const statesMap: StatesMap = {
   otherParent: {
     [ApplicationStates.OTHER_PARENT_APPROVAL]: ReviewSectionState.inProgress,
-    // otherParentRequiresAction: ReviewSectionState.requiresAction, // TODO: Replace with needs action screen.
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]: ReviewSectionState.complete,
     [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.complete,
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
@@ -52,14 +51,12 @@ const statesMap: StatesMap = {
     [ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN]:
       ReviewSectionState.inProgress,
     [ApplicationStates.EMPLOYER_APPROVAL]: ReviewSectionState.inProgress,
-    // employerRequiresAction: ReviewSectionState.requiresAction, // TODO: Replace with needs action screen.
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]: ReviewSectionState.complete,
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
   vinnumalastofnun: {
     [ApplicationStates.VINNUMALASTOFNUN_APPROVAL]:
       ReviewSectionState.inProgress,
-    // vinnumalastofnunRequiresAction: ReviewSectionState.requiresAction, // TODO: Replace with needs action screen.
     [ApplicationStates.APPROVED]: ReviewSectionState.complete,
   },
 }
