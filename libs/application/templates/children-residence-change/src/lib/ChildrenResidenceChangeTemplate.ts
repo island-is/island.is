@@ -34,7 +34,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
   name: 'Children residence change application',
-  readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,

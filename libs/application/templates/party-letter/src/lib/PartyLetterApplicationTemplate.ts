@@ -34,7 +34,6 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Party letter',
-  readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',

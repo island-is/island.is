@@ -54,7 +54,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE,
   name: 'Reference application',
-  readyForProduction: false,
   dataSchema: ExampleSchema,
   stateMachineConfig: {
     initial: 'draft',

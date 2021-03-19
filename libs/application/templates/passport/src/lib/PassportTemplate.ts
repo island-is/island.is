@@ -42,7 +42,6 @@ const PassportTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PASSPORT,
   name: 'Umsókn um vegabréf',
-  readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',

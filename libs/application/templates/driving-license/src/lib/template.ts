@@ -41,7 +41,6 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
   name: 'Umsókn um ökuskilríki',
-  readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',

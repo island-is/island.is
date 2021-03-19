@@ -62,7 +62,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE,
   name: 'Umsókn um fæðingarorlof',
-  readyForProduction: false,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

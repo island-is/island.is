@@ -28,7 +28,6 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT,
   name: 'Data Protection Authority Complaint',
-  readyForProduction: false,
   dataSchema: DataProtectionComplaintSchema,
   stateMachineConfig: {
     initial: 'draft',
