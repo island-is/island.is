@@ -201,6 +201,9 @@
     "cache": {
       "tags": []
     },
+    "clients-mms": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
