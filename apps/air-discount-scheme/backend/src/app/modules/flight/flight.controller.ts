@@ -67,7 +67,7 @@ export class PublicFlightController {
     discount: Discount,
     discountCode: string,
     flightLegs: FlightLeg[],
-  ): Promise<boolean> {
+  ): Promise<string> {
     const flightLegCount = flightLegs.length
 
     const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
@@ -146,7 +146,7 @@ export class PublicFlightController {
         'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Each connecting flight must go from/to Akureyri',
       )
     } else {
-      return true
+      return connectingId
     }
   }
 
@@ -226,37 +226,24 @@ export class PublicFlightController {
     let connectingFlight = false
     let connectingId = undefined
 
-    let hasReykjavik = false
-    let hasAkureyri = false
-    for (const flightLeg of flight.flightLegs) {
-      if (
+    const hasReykjavik = flight.flightLegs.some(
+      (flightLeg) =>
         REYKJAVIK_FLIGHT_CODES.includes(flightLeg.origin) ||
-        REYKJAVIK_FLIGHT_CODES.includes(flightLeg.destination)
-      ) {
-        hasReykjavik = true
-      }
-      if (
+        REYKJAVIK_FLIGHT_CODES.includes(flightLeg.destination),
+    )
+
+    const hasAkureyri = flight.flightLegs.some(
+      (flightLeg) =>
         AKUREYRI_FLIGHT_CODES.includes(flightLeg.origin) ||
-        AKUREYRI_FLIGHT_CODES.includes(flightLeg.destination)
-      ) {
-        hasAkureyri = true
-      }
-    }
+        AKUREYRI_FLIGHT_CODES.includes(flightLeg.destination),
+    )
 
     if (!hasReykjavik && hasAkureyri) {
-      connectingFlight = await this.validateConnectionFlights(
+      connectingId = await this.validateConnectionFlights(
         discount,
         params.discountCode,
         flight.flightLegs as FlightLeg[],
       )
-      if (connectingFlight) {
-        const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
-          discount.connectionDiscountCodes,
-          params.discountCode,
-        )
-        // connectionDiscountCode exists, validated in this.validateConnectionFlights()
-        connectingId = connectionDiscountCode!.flightId
-      }
     } else {
       const {
         unused: flightLegsLeft,
