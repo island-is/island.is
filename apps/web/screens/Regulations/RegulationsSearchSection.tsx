@@ -245,6 +245,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             size="sm"
           />
           <Checkbox
+            id='regulations-search-amendments-checkbox'
             label={txt('searchFieldIncludeAmendingLabel')}
             checked={!!filters.all}
             onChange={() => doSearch('all', !filters.all ? 'y' : '')}
