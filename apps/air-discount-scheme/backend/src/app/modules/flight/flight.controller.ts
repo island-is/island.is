@@ -243,7 +243,7 @@ export class PublicFlightController {
       }
     }
 
-    if (!hasReykjavik) {
+    if (!hasReykjavik && hasAkureyri) {
       connectingFlight = await this.validateConnectionFlights(
         discount,
         params.discountCode,
@@ -272,14 +272,14 @@ export class PublicFlightController {
       flight,
       user,
       request.airline,
-      connectingFlight && hasAkureyri,
+      connectingFlight,
       connectingId,
     )
     await this.discountService.useDiscount(
       params.discountCode,
       discount.nationalId,
       newFlight.id,
-      connectingFlight && hasAkureyri,
+      connectingFlight,
     )
     return new FlightViewModel(newFlight)
   }
