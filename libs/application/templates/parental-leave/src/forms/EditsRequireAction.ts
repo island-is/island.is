@@ -16,7 +16,7 @@ export const EditsRequireAction: Form = buildForm({
   id: 'ParentalLeaveEditsRequireAction',
   title: inReviewFormMessages.formTitle,
   logo: Logo,
-  mode: FormModes.REVIEW,
+  mode: FormModes.REJECTED,
   children: [
     buildSection({
       id: 'Edits not approved, require action',
