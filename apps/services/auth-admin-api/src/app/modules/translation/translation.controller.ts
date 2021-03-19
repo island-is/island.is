@@ -6,7 +6,6 @@ import {
   Language,
 } from '@island.is/auth-api-lib'
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
