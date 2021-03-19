@@ -4,7 +4,8 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 // import getConfig from 'next/config'
 // import { CustomNextError } from '@island.is/web/units/errors'
-import { Image, SubpageDetailsContent } from '@island.is/web/components'
+import { SubpageDetailsContent } from '@island.is/web/components'
+import Img from './RegulationsHomeImg'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
@@ -176,7 +177,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
         <GridContainer>
           <GridRow>
             <GridColumn
-              span={['1/1', '1/1', '1/1', '9/12']}
+              offset={['0','0','0','1/12']}
+              span={['1/1', '1/1', '1/1', '7/12']}
               paddingTop={paddingTop}
               paddingBottom={paddingBottom}
             >
@@ -195,14 +197,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
               paddingTop={paddingTop}
               paddingBottom={paddingBottom}
             >
-              <Image
-                type="custom"
-                src={n('regulationsImageUrl')}
-                thumbnail={n('regulationsImageThumbnailUrl')}
-                originalWidth={400}
-                originalHeight={400}
-                alt=""
-              />
+              <Img />
             </GridColumn>
           </GridRow>
         </GridContainer>
