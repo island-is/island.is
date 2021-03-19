@@ -436,6 +436,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
+        exit: 'clearTemp',
         meta: {
           name: 'VMLST is reviewing the period edits',
           progress: 0.4,
