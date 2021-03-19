@@ -60,14 +60,14 @@ export class TranslationService extends BaseService {
   static async createTranslation(
     translation: TranslationDTO,
   ): Promise<Translation | null> {
-    return BaseService.POST(`translation`, translation)
+    return BaseService.POST(`translation/translation`, translation)
   }
 
   /** Updates a Translation */
   static async updateTranslation(
     translation: TranslationDTO,
   ): Promise<Translation | null> {
-    return BaseService.PUT(`translation`, translation)
+    return BaseService.PUT(`translation/translation`, translation)
   }
 
   /** Updates a Translation */
@@ -85,7 +85,7 @@ export class TranslationService extends BaseService {
     key: string,
   ): Promise<Translation | null> {
     return BaseService.GET(
-      `translation/${language}/${className}/${property}/${key}`,
+      `translation/translation/${language}/${className}/${property}/${key}`,
     )
   }
 }

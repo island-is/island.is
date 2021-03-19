@@ -171,8 +171,6 @@ export class TranslationController {
     @Param('property') property: string,
     @Param('key') key: string,
   ): Promise<Translation | null> {
-    console.log('KDKDKD')
-    console.log(language)
     return await this.translationService.findTranslation(
       language,
       className,

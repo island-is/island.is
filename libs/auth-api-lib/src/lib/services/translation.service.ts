@@ -160,8 +160,8 @@ export class TranslationService {
     return this.findTranslation(
       translate.language,
       translate.className,
-      translate.key,
       translate.property,
+      translate.key,
     )
   }
 
