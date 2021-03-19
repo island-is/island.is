@@ -69,6 +69,26 @@ const AdminTabNav: React.FC<Props> = ({
               Logs
             </button>
           </li>
+          <li className={activetab === AdminTab.Language ? 'active' : ''}>
+            <button
+              type="button"
+              onClick={() => handleTabChange(AdminTab.Language)}
+              className={activetab === AdminTab.Language ? 'active' : ''}
+              title="Language"
+            >
+              Language
+            </button>
+          </li>
+          <li className={activetab === AdminTab.Language ? 'active' : ''}>
+            <button
+              type="button"
+              onClick={() => handleTabChange(AdminTab.Translation)}
+              className={activetab === AdminTab.Translation ? 'active' : ''}
+              title="Translations"
+            >
+              Translations
+            </button>
+          </li>
         </ul>
       </nav>
       <div className="admin-tab-nav__container__content">{children}</div>

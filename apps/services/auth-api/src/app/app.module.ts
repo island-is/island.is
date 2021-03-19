@@ -7,6 +7,7 @@ import { GrantsModule } from './modules/grants/grants.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { UsersModule } from './modules/users/users.module'
 import { environment } from '../environments'
+import { TranslationModule } from './modules/translation/translation.module'
 @Module({
   imports: [
     AuthModule.register({
@@ -21,6 +22,7 @@ import { environment } from '../environments'
     ClientsModule,
     ResourcesModule,
     GrantsModule,
+    TranslationModule,
   ],
 })
 export class AppModule {}
