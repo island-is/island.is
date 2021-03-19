@@ -4,12 +4,10 @@ import { useApolloClient } from '@apollo/client/react'
 import gql from 'graphql-tag'
 import difference from 'lodash/difference'
 import isEmpty from 'lodash/isEmpty'
+import { Locale } from '@island.is/shared/types'
+import { defaultLanguage, supportedLocales } from '@island.is/shared/constants'
+
 import { polyfill } from './polyfills'
-
-export type Locale = 'is' | 'en'
-
-export const supportedLocales: Locale[] = ['is', 'en']
-export const defaultLanguage: Locale = 'is'
 
 export const isLocale = (value: string): value is Locale => {
   return supportedLocales.includes(value as Locale)

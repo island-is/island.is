@@ -17,7 +17,7 @@ import {
   ReviewFieldProps,
 } from '../../types'
 
-const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
+const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 

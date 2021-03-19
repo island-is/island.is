@@ -1,7 +1,7 @@
 import { callDataProviders } from './dataProviderUtils'
 import { BasicDataProvider } from '../types/BasicDataProvider'
 import { ApplicationTypes } from '../types/ApplicationTypes'
-import { Application } from '../types/Application'
+import { Application, ApplicationStatus } from '../types/Application'
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'
 
@@ -29,6 +29,7 @@ const application: Application = {
   attachments: {},
   answers: {},
   externalData: {},
+  status: ApplicationStatus.IN_PROGRESS,
 }
 
 describe('dataProviderUtils', () => {

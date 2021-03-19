@@ -6,13 +6,13 @@ import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 @ObjectType()
 export class MenuLinkWithChildren {
   @Field()
-  title: string
+  title!: string
 
   @Field(() => ReferenceLink, { nullable: true })
-  link: ReferenceLink
+  link?: ReferenceLink | null
 
   @Field(() => [MenuLink])
-  childLinks: MenuLink[]
+  childLinks?: MenuLink[]
 }
 
 export const mapMenuLinkWithChildren = ({

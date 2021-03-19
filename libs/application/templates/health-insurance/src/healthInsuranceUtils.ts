@@ -19,10 +19,9 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
 }
 
 export const hasActiveDraftApplication = (externalData: ExternalData) => {
-  const response = externalData?.applications
-  if (response && typeof response === 'object') {
-    const applications = response.data as Applications[]
-    const pendingApplications = applications?.filter(
+  const applications = externalData?.applications?.data as Applications[]
+  if (applications?.length) {
+    const draftApplications = applications?.filter(
       (application) => application.state === 'draft',
     )
     const sortedApplications = sortApplicationsByDateAscending(applications)
@@ -33,9 +32,9 @@ export const hasActiveDraftApplication = (externalData: ExternalData) => {
       return false
     }
 
-    return pendingApplications?.length > 1
+    return draftApplications?.length > 1
   }
-  // If we can not find any pending applications becausee of failure to fetch info, we will return false to allow the user to continue to create a new application
+  // If there are no applications becausee of failure to fetch info, we will return false to allow the user to continue and create a new application
   return false
 }
 
@@ -108,5 +107,19 @@ export const extractKeyFromStringObject = (
     return value
   } catch (error) {
     return null
+  }
+}
+
+export const getBaseUrl = () => {
+  const isDev = window.location.origin === 'https://umsoknir.dev01.devland.is'
+  const isStaging =
+    window.location.origin === 'https://umsoknir.staging01.devland.is'
+
+  if (isStaging) {
+    return 'https://beta.staging01.devland.is'
+  } else if (isDev) {
+    return 'https://beta.dev01.devland.is'
+  } else {
+    return 'https://island.is'
   }
 }

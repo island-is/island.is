@@ -7,6 +7,7 @@ import {
   hasActiveDraftApplication,
   hasPendingApplications,
   hasIcelandicAddress,
+  getBaseUrl,
 } from '../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
 import { ContentType } from '../types'
@@ -16,6 +17,7 @@ import { Applications } from '../dataProviders/APIDataTypes'
 export const useModalContent = (externalData: ExternalData) => {
   const [content, setContent] = useState<ContentType>()
   const history = useHistory()
+  const baseUrl = getBaseUrl()
   const { lang } = useLocale()
 
   const getFirstCreatedApplicationId = () => {
@@ -56,8 +58,8 @@ export const useModalContent = (externalData: ExternalData) => {
       buttonAction: () =>
         (window.location.href =
           lang === 'is'
-            ? 'https://www.island.is/logheimili-upplysingar-innflytjendur'
-            : 'https://www.island.is/en/legal-domicile-immigrant'),
+            ? `${baseUrl}/logheimili-upplysingar-innflytjendur`
+            : `${baseUrl}/en/legal-domicile-immigrant`),
     },
   }
 

@@ -22,6 +22,7 @@ import {
   PoliceRequestAccordionItem,
   RulingAccordionItem,
   CourtRecordAccordionItem,
+  FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -192,153 +193,157 @@ export const SignedVerdictOverview: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={5}>
-            <Box marginBottom={3}>
-              <Button
-                variant="text"
-                preTextIcon="arrowBack"
-                onClick={() => router.push(Constants.REQUEST_LIST_ROUTE)}
-              >
-                Til baka
-              </Button>
-            </Box>
-            <Box display="flex" justifyContent="spaceBetween">
-              <Box>
-                <Box marginBottom={1}>
-                  <Text as="h1" variant="h1">
-                    {titleForCase(workingCase)}
+          <FormContentContainer>
+            <Box marginBottom={5}>
+              <Box marginBottom={3}>
+                <Button
+                  variant="text"
+                  preTextIcon="arrowBack"
+                  onClick={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+                >
+                  Til baka
+                </Button>
+              </Box>
+              <Box display="flex" justifyContent="spaceBetween">
+                <Box>
+                  <Box marginBottom={1}>
+                    <Text as="h1" variant="h1">
+                      {titleForCase(workingCase)}
+                    </Text>
+                  </Box>
+                  <Text as="h5" variant="h5">
+                    {subtitleForCase(workingCase)}
                   </Text>
                 </Box>
-                <Text as="h5" variant="h5">
-                  {subtitleForCase(workingCase)}
-                </Text>
-              </Box>
-              <Box display="flex" flexDirection="column">
-                {
-                  // Custody restrictions
-                  workingCase.decision === CaseDecision.ACCEPTING &&
-                    workingCase.type === CaseType.CUSTODY &&
-                    workingCase.custodyRestrictions
-                      ?.filter((restriction) =>
-                        [
-                          CaseCustodyRestrictions.ISOLATION,
-                          CaseCustodyRestrictions.VISITAION,
-                          CaseCustodyRestrictions.COMMUNICATION,
-                          CaseCustodyRestrictions.MEDIA,
-                        ].includes(restriction),
-                      )
-                      ?.map((custodyRestriction, index) => (
-                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                          <Tag
-                            variant={getRestrictionTagVariant(
-                              custodyRestriction,
-                            )}
-                            outlined
-                            disabled
-                          >
-                            {getShortRestrictionByValue(custodyRestriction)}
-                          </Tag>
-                        </Box>
-                      ))
-                }
-                {
-                  // Alternative travel ban restrictions
-                  (workingCase.decision ===
-                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                    (CaseType.TRAVEL_BAN &&
-                      workingCase.decision === CaseDecision.ACCEPTING)) &&
-                    workingCase.custodyRestrictions
-                      ?.filter((restriction) =>
-                        [
-                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-                        ].includes(restriction),
-                      )
-                      ?.map((custodyRestriction, index) => (
-                        <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                          <Tag
-                            variant={getRestrictionTagVariant(
-                              custodyRestriction,
-                            )}
-                            outlined
-                            disabled
-                          >
-                            {getShortRestrictionByValue(custodyRestriction)}
-                          </Tag>
-                        </Box>
-                      ))
-                }
+                <Box display="flex" flexDirection="column">
+                  {
+                    // Custody restrictions
+                    workingCase.decision === CaseDecision.ACCEPTING &&
+                      workingCase.type === CaseType.CUSTODY &&
+                      workingCase.custodyRestrictions
+                        ?.filter((restriction) =>
+                          [
+                            CaseCustodyRestrictions.ISOLATION,
+                            CaseCustodyRestrictions.VISITAION,
+                            CaseCustodyRestrictions.COMMUNICATION,
+                            CaseCustodyRestrictions.MEDIA,
+                          ].includes(restriction),
+                        )
+                        ?.map((custodyRestriction, index) => (
+                          <Box marginTop={index > 0 ? 1 : 0} key={index}>
+                            <Tag
+                              variant={getRestrictionTagVariant(
+                                custodyRestriction,
+                              )}
+                              outlined
+                              disabled
+                            >
+                              {getShortRestrictionByValue(custodyRestriction)}
+                            </Tag>
+                          </Box>
+                        ))
+                  }
+                  {
+                    // Alternative travel ban restrictions
+                    (workingCase.decision ===
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                      (CaseType.TRAVEL_BAN &&
+                        workingCase.decision === CaseDecision.ACCEPTING)) &&
+                      workingCase.custodyRestrictions
+                        ?.filter((restriction) =>
+                          [
+                            CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+                            CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+                          ].includes(restriction),
+                        )
+                        ?.map((custodyRestriction, index) => (
+                          <Box marginTop={index > 0 ? 1 : 0} key={index}>
+                            <Tag
+                              variant={getRestrictionTagVariant(
+                                custodyRestriction,
+                              )}
+                              outlined
+                              disabled
+                            >
+                              {getShortRestrictionByValue(custodyRestriction)}
+                            </Tag>
+                          </Box>
+                        ))
+                  }
+                </Box>
               </Box>
             </Box>
-          </Box>
-          <Box marginBottom={5}>
-            <InfoCard
-              data={[
-                {
-                  title: 'LÖKE málsnúmer',
-                  value: workingCase.policeCaseNumber,
-                },
-                {
-                  title: 'Málsnúmer héraðsdóms',
-                  value: workingCase.courtCaseNumber,
-                },
-                {
-                  title: 'Embætti',
-                  value: `${
-                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
-                  }`,
-                },
-                { title: 'Dómstóll', value: workingCase.court },
-                { title: 'Ákærandi', value: workingCase.prosecutor?.name },
-                { title: 'Dómari', value: workingCase.judge?.name },
-              ]}
-              accusedName={workingCase.accusedName}
-              accusedNationalId={workingCase.accusedNationalId}
-              accusedAddress={workingCase.accusedAddress}
-              defender={{
-                name: workingCase.defenderName || '',
-                email: workingCase.defenderEmail,
-              }}
-            />
-          </Box>
-          <Box marginBottom={5}>
-            <Accordion>
-              <PoliceRequestAccordionItem workingCase={workingCase} />
-              <CourtRecordAccordionItem workingCase={workingCase} />
-              <RulingAccordionItem workingCase={workingCase} />
-            </Accordion>
-          </Box>
-          <Box marginBottom={15}>
-            <Box marginBottom={3}>
-              <PdfButton
-                caseId={workingCase.id}
-                title="Opna PDF kröfu"
-                pdfType="request"
+            <Box marginBottom={5}>
+              <InfoCard
+                data={[
+                  {
+                    title: 'LÖKE málsnúmer',
+                    value: workingCase.policeCaseNumber,
+                  },
+                  {
+                    title: 'Málsnúmer héraðsdóms',
+                    value: workingCase.courtCaseNumber,
+                  },
+                  {
+                    title: 'Embætti',
+                    value: `${
+                      workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                    }`,
+                  },
+                  { title: 'Dómstóll', value: workingCase.court },
+                  { title: 'Ákærandi', value: workingCase.prosecutor?.name },
+                  { title: 'Dómari', value: workingCase.judge?.name },
+                ]}
+                accusedName={workingCase.accusedName}
+                accusedNationalId={workingCase.accusedNationalId}
+                accusedAddress={workingCase.accusedAddress}
+                defender={{
+                  name: workingCase.defenderName || '',
+                  email: workingCase.defenderEmail,
+                }}
               />
             </Box>
-            <PdfButton
-              caseId={workingCase.id}
-              title="Opna PDF þingbók og úrskurð"
-              pdfType="ruling"
+            <Box marginBottom={5}>
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <CourtRecordAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} />
+              </Accordion>
+            </Box>
+            <Box marginBottom={15}>
+              <Box marginBottom={3}>
+                <PdfButton
+                  caseId={workingCase.id}
+                  title="Opna PDF kröfu"
+                  pdfType="request"
+                />
+              </Box>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Opna PDF þingbók og úrskurð"
+                pdfType="ruling"
+              />
+            </Box>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={Constants.REQUEST_LIST_ROUTE}
+              hideNextButton={
+                user?.role !== UserRole.PROSECUTOR ||
+                workingCase.decision ===
+                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                workingCase.decision === CaseDecision.REJECTING ||
+                workingCase.isCustodyEndDateInThePast ||
+                (workingCase.childCase && true)
+              }
+              nextButtonText={`Framlengja ${
+                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
+              }`}
+              onNextButtonClick={() => handleNextButtonClick()}
+              nextIsLoading={isCreatingExtension}
+              infoBoxText={getInfoText(workingCase)}
             />
-          </Box>
-          <FormFooter
-            previousUrl={Constants.REQUEST_LIST_ROUTE}
-            hideNextButton={
-              user?.role !== UserRole.PROSECUTOR ||
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-              workingCase.decision === CaseDecision.REJECTING ||
-              workingCase.isCustodyEndDateInThePast ||
-              (workingCase.childCase && true)
-            }
-            nextButtonText={`Framlengja ${
-              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbann'
-            }`}
-            onNextButtonClick={() => handleNextButtonClick()}
-            nextIsLoading={isCreatingExtension}
-            infoBoxText={getInfoText(workingCase)}
-          />
+          </FormContentContainer>
         </>
       ) : null}
     </PageLayout>

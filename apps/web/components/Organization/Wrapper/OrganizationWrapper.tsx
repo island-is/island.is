@@ -4,25 +4,26 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  GridColumn,
   GridContainer,
+  GridRow,
+  Hidden,
   Link,
   Navigation,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-
 import * as styles from './OrganizationWrapper.treat'
-import cn from 'classnames'
 import NextLink from 'next/link'
 import {
   HeadWithSocialSharing,
   Main,
   OrganizationFooter,
-  SidebarWrapper,
+  Sticky,
 } from '@island.is/web/components'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface NavigationData {
   title: string
@@ -40,6 +41,7 @@ interface WrapperProps {
   sidebarContent?: ReactNode
   navigationData: NavigationData
   fullWidthContent?: boolean
+  minimal?: boolean
 }
 
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
@@ -53,13 +55,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   navigationData,
   fullWidthContent = false,
   children,
+  minimal = false,
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
-  const { linkResolver } = useLinkResolver()
-
-  const headerBg = pageFeaturedImage
-    ? `url(${pageFeaturedImage.url}), linear-gradient(99.09deg, #24268E 23.68%, #CD1270 123.07%)`
-    : `linear-gradient(99.09deg, #24268E 23.68%, #CD1270 123.07%)`
 
   return (
     <>
@@ -70,11 +68,99 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <Box className={styles.headerBg} style={{ background: headerBg }}>
-        <GridContainer>
-          <Box marginTop={[1, 1, 3]} marginBottom={5}>
+      <Box className={styles.headerBg}>
+        <Box className={styles.headerWrapper}>
+          <SidebarLayout
+            sidebarContent={
+              !!organizationPage.organization.logo &&
+              !minimal && (
+                <Link href="#">
+                  <Box
+                    borderRadius="circle"
+                    className={styles.iconCircle}
+                    background="white"
+                  >
+                    <img
+                      src={organizationPage.organization.logo.url}
+                      className={styles.headerLogo}
+                      alt=""
+                    />
+                  </Box>
+                </Link>
+              )
+            }
+          >
+            <Hidden above="sm">
+              <Link href="#">
+                <Box
+                  borderRadius="circle"
+                  className={styles.iconCircle}
+                  background="white"
+                >
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                </Box>
+              </Link>
+            </Hidden>
+            <Box
+              marginTop={[2, 2, 6]}
+              textAlign={['center', 'center', 'right']}
+            >
+              <Text variant="h1" color="white">
+                {organizationPage.title}
+              </Text>
+            </Box>
+          </SidebarLayout>
+        </Box>
+      </Box>
+      <Main>
+        {!minimal && (
+          <SidebarLayout
+            paddingTop={[2, 2, 9]}
+            paddingBottom={[4, 4, 4]}
+            isSticky={false}
+            sidebarContent={
+              <Sticky>
+                <Navigation
+                  baseId="pageNav"
+                  isMenuDialog={isMobile}
+                  items={navigationData.items}
+                  title={navigationData.title}
+                  activeItemTitle={navigationData.activeItemTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+                {sidebarContent}
+              </Sticky>
+            }
+          >
+            <Hidden above="sm">
+              <Box marginY={2}>
+                <Navigation
+                  baseId="pageNav"
+                  isMenuDialog={isMobile}
+                  items={navigationData.items}
+                  title={navigationData.title}
+                  activeItemTitle={navigationData.activeItemTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              </Box>
+            </Hidden>
             <Breadcrumbs
-              color="white"
               items={breadcrumbItems ?? []}
               renderLink={(link, item) => {
                 return item?.href ? (
@@ -84,77 +170,29 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 )
               }}
             />
-          </Box>
-        </GridContainer>
-        <Box className={styles.headerWrapper}>
-          <SidebarWrapper sidebarContent={''} hideSidebarInMobile={true}>
-            <Box paddingTop={2}>
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-              >
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  {!!organizationPage.organization.logo.url && (
-                    <img
-                      src={organizationPage.organization.logo.url}
-                      className={styles.headerLogo}
-                      alt=""
-                    />
-                  )}
-                  <Text
-                    variant="h1"
-                    as="h1"
-                    color="white"
-                    marginTop={[0, 0, 3]}
-                  >
-                    {organizationPage.title}
-                  </Text>
-                </Box>
-              </Link>
+            <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
+              <Text variant="intro">{organizationPage.description}</Text>
             </Box>
-          </SidebarWrapper>
-        </Box>
-      </Box>
-      <Main>
-        <Box paddingTop={[0, 0, 8]}>
-          <SidebarWrapper
-            fullWidthContent={fullWidthContent}
-            sidebarContent={
-              <>
-                <Box
-                  className={cn(
-                    styles.navigation,
-                    organizationPage.organization.logo.url
-                      ? styles.navigationWithLogo
-                      : styles.navigationWithoutLogo,
-                  )}
-                >
-                  <Navigation
-                    baseId="pageNav"
-                    isMenuDialog={isMobile}
-                    items={navigationData.items}
-                    title={navigationData.title}
-                    activeItemTitle={navigationData.activeItemTitle}
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <NextLink href={item?.href}>{link}</NextLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                  />
-                </Box>
-                {sidebarContent}
-              </>
-            }
-          >
-            {mainContent ?? children}
-          </SidebarWrapper>
-        </Box>
-        {mainContent ? children : ''}
+            <Hidden above="sm">{sidebarContent}</Hidden>
+            <Box paddingTop={4}>{mainContent ?? children}</Box>
+          </SidebarLayout>
+        )}
+        {!!mainContent && children}
+        {minimal && (
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                paddingTop={6}
+                span={['12/12', '12/12', '10/12']}
+                offset={['0', '0', '1/12']}
+              >
+                {children}
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        )}
       </Main>
-      <OrganizationFooter organizationPage={organizationPage} />
+      {!minimal && <OrganizationFooter organizationPage={organizationPage} />}
     </>
   )
 }

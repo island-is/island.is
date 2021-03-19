@@ -12,6 +12,10 @@ export async function generateResidenceChangePdf(
   expiry: Array<string>,
   reason?: string,
 ): Promise<Buffer> {
+  const formatSsn = (ssn: string) => {
+    return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
+  }
+
   const doc = new PDFDocument({
     size: PdfConstants.PAGE_SIZE,
     margins: {
@@ -75,7 +79,7 @@ export async function generateResidenceChangePdf(
       i === childrenAppliedFor.length - 1
         ? PdfConstants.LARGE_LINE_GAP
         : PdfConstants.NO_LINE_GAP,
-      `Nafn og kennitala barns: ${c.name}, ${c.ssn}`,
+      `Nafn og kennitala barns: ${c.name}, ${formatSsn(c.ssn)}`,
     ),
   )
 
@@ -90,7 +94,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Nafn og kennitala: ${parentA.fullName}, ${parentA.nationalId}`,
+    `Nafn og kennitala: ${parentA.fullName}, ${formatSsn(parentA.nationalId)}`,
   )
 
   addToDoc(
@@ -111,7 +115,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Nafn og kennitala: ${parentB.name}, ${parentB.ssn}`,
+    `Nafn og kennitala: ${parentB.name}, ${formatSsn(parentB.ssn)}`,
   )
 
   addToDoc(

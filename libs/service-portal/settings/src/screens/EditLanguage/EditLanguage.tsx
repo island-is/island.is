@@ -8,7 +8,8 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { Link, Redirect } from 'react-router-dom'
-import { Locale, useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
