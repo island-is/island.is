@@ -204,6 +204,12 @@
     "clients-mms": {
       "tags": []
     },
+    "clients-rsk": {
+      "tags": []
+    },
+    "clients-vmst": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
@@ -356,9 +362,6 @@
     "reference-next-app": {
       "tags": []
     },
-    "rsk": {
-      "tags": []
-    },
     "service-portal": {
       "tags": []
     },
@@ -479,9 +482,6 @@
       "tags": []
     },
     "utils-environment": {
-      "tags": []
-    },
-    "vmst-client": {
       "tags": []
     },
     "web": {

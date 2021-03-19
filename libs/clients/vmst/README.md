@@ -1,4 +1,4 @@
-# VMST Client
+# VMST
 
 ## About
 
@@ -9,11 +9,11 @@ This library implements a client to use VMST APIs
 Add the service to your module imports:
 
 ```typescript
-import { VMSTClientModule } from '@island.is/vmst-client'
+import { VMSTModule } from '@island.is/clients/vmst'
 
 @Module({
   imports: [
-    VMSTClientModule.register({
+    VMSTModule.register({
       xRoadBasePath: XROAD_BASE_PATH,
       xRoadClient: XROAD_CLIENT,
       apiKey: VMST_API_KEY,
@@ -25,7 +25,7 @@ import { VMSTClientModule } from '@island.is/vmst-client'
 Then you'll have access to VMST APIs:
 
 ```typescript
-import { UnionApi } from '@island.is/vmst-client'
+import { UnionApi } from '@island.is/clients/vmst'
 
 @Injectable()
 export class SomeService {
