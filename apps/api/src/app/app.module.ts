@@ -58,9 +58,14 @@ const autoSchemaFile = environment.production
       secret: environment.drivingLicense.secret,
     }),
     EducationModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      xroadLicenseServiceId: environment.education.xroadLicenseServiceId,
+      xroad: {
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        services: {
+          license: environment.education.xroadLicenseServiceId,
+          grade: environment.education.xroadGradeServiceId,
+        },
+      },
       fileDownloadBucket: environment.education.fileDownloadBucket,
     }),
     ApplicationModule.register({

@@ -1,15 +1,14 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
+import { XRoadConfig, MMSApi } from '@island.is/clients/mms'
+
 import { MainResolver } from './graphql'
 import { EducationService } from './education.service'
 import { S3Service } from './s3.service'
-import { MMSApi } from './client'
 
 export interface Config {
-  xroadBaseUrl: string
-  xroadClientId: string
-  xroadLicenseServiceId: string
   fileDownloadBucket: string
+  xroad: XRoadConfig
 }
 
 @Module({})
@@ -27,12 +26,7 @@ export class EducationModule {
         },
         {
           provide: MMSApi,
-          useFactory: async () =>
-            new MMSApi(
-              config.xroadBaseUrl,
-              config.xroadClientId,
-              config.xroadLicenseServiceId,
-            ),
+          useFactory: async () => new MMSApi(config.xroad),
         },
       ],
       exports: [],
