@@ -17,6 +17,7 @@
     "metro-resolver": "*",
     "@storybook/react-native": "*",
     "@storybook/addon-knobs": "*",
-    "@apollo/client": "*"
+    "@apollo/client": "*",
+    "styled-components": "*"
   }
 }

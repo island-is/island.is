@@ -1,13 +1,8 @@
 import { Heading } from '@island.is/island-ui-native';
 import React from 'react'
 import { SafeAreaView, StatusBar, Text } from 'react-native'
-import { useAuthStore } from '../../auth/auth'
 
-export const Inbox = () => {
-  const { authorizeResult } = useAuthStore();
-
-  console.log({authorizeResult});
-
+export const User = () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -17,16 +12,16 @@ export const Inbox = () => {
           height: '100%',
         }}
       >
-        <Heading>Inbox</Heading>
+        <Heading>User</Heading>
       </SafeAreaView>
     </>
   )
 }
 
-Inbox.options = {
+User.options = {
   topBar: {
     title: {
-      text: 'Inbox'
+      text: 'User'
     }
   }
 };

@@ -1,3 +1,4 @@
+import { Heading } from '@island.is/island-ui-native';
 import React from 'react'
 import { SafeAreaView, StatusBar, Text, Button } from 'react-native'
 import { authorize } from 'react-native-app-auth';
@@ -19,17 +20,15 @@ export const Wallet = () => {
         style={{
           width: '100%',
           height: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
         }}
       >
-          <Button title="Authenticate" onPress={async () => {
-            const result = await authorize(config);
-            if (result) {
-              await Keychain.setGenericPassword('island.is', JSON.stringify(result));
-            }
-          }} />
-        <Text>Wallet</Text>
+        <Button title="Authenticate" onPress={async () => {
+          const result = await authorize(config);
+          if (result) {
+            await Keychain.setGenericPassword('island.is', JSON.stringify(result));
+          }
+        }} />
+        <Heading>Wallet</Heading>
       </SafeAreaView>
     </>
   )

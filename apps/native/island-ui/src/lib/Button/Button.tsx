@@ -1,17 +1,29 @@
 import React from 'react'
-import { View, Text } from 'react-native'
-import { theme } from '@island.is/island-ui/theme'
+import styled from 'styled-components/native';
+import { theme } from '@island.is/island-ui/theme';
 
-export function Button({ children, backgroundColor = theme.color.blue400 }: { children?: React.ReactNode, backgroundColor?: string }) {
+interface ButtonProps {
+  title: string,
+  onPress: () => void,
+  style?: any,
+}
+
+const Host = styled.TouchableHighlight`
+  padding: 20px 30px;
+  background-color: ${theme.color.blue600};
+  border-radius: 5px;
+  min-width: 250px;
+`;
+
+const Text = styled.Text`
+  color: #fff;
+  text-align: center;
+`;
+
+export function Button({ title, onPress, style, ...rest }: ButtonProps) {
   return (
-    <View
-      style={{
-        backgroundColor,
-        borderRadius: 8,
-        padding: 8,
-      }}
-    >
-      <Text style={{ color: theme.color.blue300 }}>{children}</Text>
-    </View>
+    <Host onPress={onPress} style={style} {...rest}>
+      <Text>{title}</Text>
+    </Host>
   )
 }
