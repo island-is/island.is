@@ -62,15 +62,7 @@ describe('Application system API', () => {
     const response = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
         typeId: ApplicationTypes.PARENTAL_LEAVE,
-        assignees: ['1234561234'],
-        answers: {
-          usage: 3,
-        },
-        status: ApplicationStatus.IN_PROGRESS,
       })
       .expect(201)
 
@@ -89,8 +81,8 @@ describe('Application system API', () => {
         applicant: nationalId,
         state: 'draft',
         attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['1234561234'],
+        typeId: ApplicationTypes.EXAMPLE,
+        assignees: [nationalId],
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
@@ -112,16 +104,7 @@ describe('Application system API', () => {
     const failedResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['1234561234'],
-        answers: {
-          careerHistoryCompanies: ['government'],
-          dreamJob: 'pilot',
-        },
-        status: ApplicationStatus.IN_PROGRESS,
+        typeId: ApplicationTypes.EXAMPLE,
       })
       .expect(401)
 
@@ -129,24 +112,25 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing answers on an application which dont comply the dataschema', async () => {
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['1234561234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
       })
-      .expect(201)
+      .expect(200)
 
     const putResponse = await server
-      .put(`/applications/${response.body.id}`)
+      .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
           careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
@@ -159,31 +143,32 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['1234561234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
       })
-      .expect(201)
+      .expect(200)
 
     const newStateResponse = await server
-      .put(`/applications/${response.body.id}/submit`)
+      .put(`/applications/${creationResponse.body.id}/submit`)
       .send({ event: 'SUBMIT' })
       .expect(200)
 
     expect(newStateResponse.body.state).toBe('inReview')
 
     const failedResponse = await server
-      .put(`/applications/${response.body.id}`)
+      .put(`/applications/${creationResponse.body.id}`)
       .send({
         answers: {
           dreamJob: 'firefighter',
@@ -197,21 +182,22 @@ describe('Application system API', () => {
   })
 
   it('should be able to PUT answers when updating the state of the application', async () => {
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['1234561234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
       })
-      .expect(201)
+      .expect(200)
 
     const newStateResponse = await server
       .put(`/applications/${response.body.id}/submit`)
@@ -231,21 +217,22 @@ describe('Application system API', () => {
   })
 
   it('should not update non-writable answers when PUT-ing answers while updating the state', async () => {
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['1234561234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
           dreamJob: 'pilot',
         },
-        status: ApplicationStatus.IN_PROGRESS,
       })
-      .expect(201)
+      .expect(200)
 
     await server
       .put(`/applications/${response.body.id}/submit`)
@@ -273,20 +260,21 @@ describe('Application system API', () => {
   })
 
   it('should fail when PUT-ing externalData on an application where it is in a state where it is not permitted', async () => {
-    const response = await server
+    const creationResponse = await server
       .post('/applications')
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['1234561234'],
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
         answers: {
           careerHistoryCompanies: ['government'],
         },
-        status: ApplicationStatus.IN_PROGRESS,
       })
-      .expect(201)
+      .expect(200)
 
     const newStateResponse = await server
       .put(`/applications/${response.body.id}/submit`)
@@ -311,9 +299,6 @@ describe('Application system API', () => {
     const response = await server
       .put('/applications/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
       .send({
-        applicant: nationalId,
-        attachments: {},
-        assignees: ['1234561234'],
         answers: {
           usage: 4,
         },
@@ -328,17 +313,20 @@ describe('Application system API', () => {
   })
 
   it('should successfully PUT answers to an existing application if said answers comply to the schema', async () => {
-    const response = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: ApplicationTypes.PARENTAL_LEAVE,
-      assignees: ['1234561234'],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          usage: 4,
+        },
+      })
     expect(response.body.answers.usage).toBe(4)
     expect(response.body.answers.spread).toBe(undefined)
 
@@ -359,17 +347,20 @@ describe('Application system API', () => {
   })
 
   it('PUT /applications/:id should not be able to overwrite external data', async () => {
-    const response = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: ApplicationTypes.PARENTAL_LEAVE,
-      assignees: ['1234561234'],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          usage: 4,
+        },
+      })
 
     const { id } = response.body
     const putResponse = await server
@@ -386,16 +377,17 @@ describe('Application system API', () => {
   })
 
   it('GET /users/:nationalId/applications should return a list of applications of the user', async () => {
-    await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: ApplicationTypes.PARENTAL_LEAVE,
-      assignees: ['1234561234'],
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
+
+    await server.put(`/applications/${creationResponse.body.id}`).send({
       answers: {
         usage: 4,
       },
-      status: ApplicationStatus.IN_PROGRESS,
     })
 
     const getResponse = await server
@@ -411,17 +403,12 @@ describe('Application system API', () => {
   })
 
   it(`GET /users/:nationalId/applications?typeId=ParentalLeave should return the list of applications of the user by typeId`, async () => {
-    await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: ApplicationTypes.PARENTAL_LEAVE,
-      assignees: ['1234561234'],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
 
     const getResponse = await server
       .get(
@@ -441,17 +428,12 @@ describe('Application system API', () => {
   })
 
   it('GET /users/:nationalId/applications?typeId=ParentalLeave&status=inprogress should return the list of applications of the user by typeId and status', async () => {
-    await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: ApplicationTypes.PARENTAL_LEAVE,
-      assignees: ['1234561234'],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.PARENTAL_LEAVE,
+      })
+      .expect(201)
 
     const getResponse = await server
       .get(
@@ -480,20 +462,15 @@ describe('Application system API', () => {
       .spyOn(fileService, 'createPdf')
       .mockImplementation(() => Promise.resolve(expectPresignedUrl))
 
-    const postResponse = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: {},
-      typeId: 'ChildrenResidenceChange',
-      assignees: [],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
 
     const res = await server
-      .put(`/applications/${postResponse.body.id}/createPdf`)
+      .put(`/applications/${creationResponse.body.id}/createPdf`)
       .send({
         type: type,
       })
@@ -516,20 +493,15 @@ describe('Application system API', () => {
       }),
     )
 
-    const postResponse = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'draft',
-      attachments: { [type]: 'url' },
-      typeId: 'ChildrenResidenceChange',
-      assignees: [],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
 
     const res = await server
-      .put(`/applications/${postResponse.body.id}/requestFileSignature`)
+      .put(`/applications/${creationResponse.body.id}/requestFileSignature`)
       .send({
         type: type,
       })
@@ -551,20 +523,15 @@ describe('Application system API', () => {
       .spyOn(fileService, 'getPresignedUrl')
       .mockImplementation(() => Promise.resolve(expectedPresignedUrl))
 
-    const postResponse = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'review',
-      attachments: {},
-      typeId: type,
-      assignees: [],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
 
     const res = await server
-      .get(`/applications/${postResponse.body.id}/${type}/presignedUrl`)
+      .get(`/applications/${creationResponse.body.id}/${type}/presignedUrl`)
       .send({
         type: type,
       })
@@ -581,20 +548,15 @@ describe('Application system API', () => {
       .spyOn(fileService, 'uploadSignedFile')
       .mockImplementation(() => Promise.resolve())
 
-    const postResponse = await server.post('/applications').send({
-      applicant: nationalId,
-      state: 'review',
-      attachments: {},
-      typeId: type,
-      assignees: [],
-      answers: {
-        usage: 4,
-      },
-      status: ApplicationStatus.IN_PROGRESS,
-    })
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      })
+      .expect(201)
 
     const res = await server
-      .put(`/applications/${postResponse.body.id}/uploadSignedFile`)
+      .put(`/applications/${creationResponse.body.id}/uploadSignedFile`)
       .send({
         type: type,
         documentToken: '0000',
@@ -606,6 +568,13 @@ describe('Application system API', () => {
   })
 
   it('should update external data with template api module action response', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
     const answers = {
       person: {
         name: 'Tester',
@@ -621,17 +590,11 @@ describe('Application system API', () => {
     }
 
     const draftStateResponse = await server
-      .post('/applications')
+      .put(`/applications/${creationResponse.body.id}`)
       .send({
-        applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: 'ExampleForm',
-        assignees: ['123456-1234'],
         answers,
-        status: ApplicationStatus.IN_PROGRESS,
       })
-      .expect(201)
+      .expect(200)
 
     expect(draftStateResponse.body.state).toBe('draft')
     expect(draftStateResponse.body.externalData).toEqual({})

@@ -33,6 +33,7 @@ import {
   ExternalData,
   ApplicationTemplateAPIAction,
   PdfTypes,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -168,14 +169,52 @@ export class ApplicationController {
   async create(
     @Body()
     application: CreateApplicationDto,
+    @NationalId()
+    nationalId: string,
   ): Promise<ApplicationResponseDto> {
-    // TODO not post the state, it should follow the initialstate of the machine
-    await validateApplicationSchema(
-      application,
-      application.answers as FormValue,
-    )
+    const { typeId } = application
 
-    return this.applicationService.create(application)
+    const template = await getApplicationTemplateByTypeId(typeId)
+
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${typeId}`,
+      )
+    }
+
+    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
+
+    // TODO: initial state should be required
+    const initialState =
+      template.stateMachineConfig.initial ??
+      Object.keys(template.stateMachineConfig.states)[0]
+
+    if (typeof initialState !== 'string') {
+      throw new BadRequestException(
+        `No initial state found for type: ${typeId}`,
+      )
+    }
+
+    const applicationDto: Pick<
+      BaseApplication,
+      | 'answers'
+      | 'applicant'
+      | 'assignees'
+      | 'attachments'
+      | 'state'
+      | 'status'
+      | 'typeId'
+    > = {
+      answers: {},
+      applicant: nationalId,
+      assignees: [],
+      attachments: {},
+      state: initialState,
+      status: ApplicationStatus.IN_PROGRESS,
+      typeId: application.typeId,
+    }
+
+    return this.applicationService.create(applicationDto)
   }
 
   @Put('applications/assign')
