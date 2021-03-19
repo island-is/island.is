@@ -1,5 +1,5 @@
 import {
-  buildDescriptionField,
+  buildTextField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -11,11 +11,26 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   Application,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { User } from '@island.is/api/domains/national-registry'
 import { UserCompany } from '../dataProviders/CurrentUserCompanies'
 import { m } from '../lib/messages'
-import { partyLetterIds } from '../fields/PartyLetter'
+import { format } from 'kennitala'
+
+export type IDS =
+  | 'ssd'
+  | 'party.letter'
+  | 'party.name'
+  | 'signatures'
+  | 'warnings'
+
+export const PARTY_SSD: IDS = 'ssd'
+export const PARTYLETTER_ID: IDS = 'party.letter'
+export const PARTYNAME_ID: IDS = 'party.name'
+
+const partyLetterIds = [PARTYLETTER_ID, PARTYNAME_ID]
+export const SSDS = []
 
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
@@ -53,23 +68,13 @@ export const LetterApplicationForm: Form = buildForm({
         }),
       ],
     }),
+
     buildSection({
-      id: 'recommendations',
-      title: m.recommendations.title,
-      children: [
-        buildCustomField({
-          id: 'gatherRecommendations',
-          title: m.recommendations.title,
-          component: 'Recommendations',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'companySelection',
+      id: 'company',
       title: m.selectSSD.title,
       children: [
         buildRadioField({
-          id: 'partyNationalId',
+          id: PARTY_SSD,
           title: m.selectSSD.title,
           largeButtons: true,
           width: 'half',
@@ -82,7 +87,7 @@ export const LetterApplicationForm: Form = buildForm({
             return [
               {
                 label: nationalRegistry.fullName,
-                subLabel: application.applicant,
+                subLabel: format(application.applicant),
                 value: application.applicant,
               },
               ...companies.map((company) => ({
@@ -96,26 +101,71 @@ export const LetterApplicationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'partyLetter',
+      id: 'party',
       title: m.selectPartyLetter.sectionTitle,
       children: [
+        buildMultiField({
+          id: 'party',
+          title: m.selectPartyLetter.sectionTitle,
+          children: [
+            buildTextField({
+              id: PARTYLETTER_ID,
+              title: m.selectPartyLetter.partyLetterLabel,
+              placeholder: m.selectPartyLetter.partyLetterPlaceholder,
+              width: 'half',
+              defaultValue: (application: Application) =>
+                (getValueViaPath(
+                  application.answers,
+                  PARTYLETTER_ID,
+                ) as string) ?? '',
+            }),
+            buildTextField({
+              id: PARTYNAME_ID,
+              title: m.selectPartyLetter.partyNameLabel,
+              placeholder: m.selectPartyLetter.partyNamePlaceholder,
+              width: 'half',
+              defaultValue: (application: Application) =>
+                (getValueViaPath(
+                  application.answers,
+                  PARTYNAME_ID,
+                ) as string) ?? '',
+            }),
+            buildCustomField({
+              id: 'partyLetter',
+              childInputIds: partyLetterIds,
+              title: m.selectPartyLetter.title,
+              component: 'PartyLetter',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'recommendations',
+      title: m.recommendations.title,
+      children: [
         buildCustomField({
-          id: 'partyLetter',
-          childInputIds: partyLetterIds,
-          title: m.selectPartyLetter.title,
-          component: 'PartyLetter',
+          id: 'gatherRecommendations',
+          title: m.recommendations.title,
+          component: 'Recommendations',
         }),
       ],
     }),
 
     buildSection({
-      id: 'partyName',
+      id: 'reviewApplication',
       title: m.overview.title,
       children: [
         buildMultiField({
+          id: 'confirmation',
           title: m.overview.title,
           description: m.overview.subtitle,
           children: [
+            buildCustomField({
+              id: 'confirmationScreen',
+              title: '',
+              component: 'Review',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -130,10 +180,10 @@ export const LetterApplicationForm: Form = buildForm({
             }),
           ],
         }),
-        buildDescriptionField({
-          id: 'final',
+        buildCustomField({
+          id: 'thankYou',
           title: m.overview.finalTitle,
-          description: m.overview.finalSubtitle,
+          component: 'Conclusion',
         }),
       ],
     }),
