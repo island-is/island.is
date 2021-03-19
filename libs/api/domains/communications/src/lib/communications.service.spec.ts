@@ -63,6 +63,32 @@ describe('communicationsService', () => {
     })
   })
 
+  describe('submitTicket', () => {
+    it('should try to submit a ticket', async () => {
+      const testUser = {
+        name: 'John Smith',
+        email: 'john@smith.com',
+        id: 1234,
+      }
+
+      jest
+        .spyOn(zendeskService, 'submitTicket')
+        .mockImplementation(() => Promise.resolve(true))
+
+      jest
+        .spyOn(zendeskService, 'getUserByEmail')
+        .mockImplementation(() => Promise.resolve(testUser))
+
+      jest
+        .spyOn(zendeskService, 'createUser')
+        .mockImplementation(() => Promise.resolve(testUser))
+
+      expect(
+        await communicationsService.sendZendeskTicket(fakeContactUsInput),
+      ).toBe(true)
+    })
+  })
+
   describe('sendEmail', () => {
     it('should try to send emails', async () => {
       const result = 'successId'
