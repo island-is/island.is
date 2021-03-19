@@ -7,24 +7,10 @@ import {
   useTooltipState,
 } from 'reakit'
 import * as styles from './Tooltip.treat'
+import { Icon } from '@island.is/island-ui/core'
+import { Colors } from '@island.is/island-ui/theme'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
-
-const InfoIcon: FC = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      className={styles.iconSVG}
-      viewBox={`0 0 20 20`}
-    >
-      <path
-        className={styles.iconPath}
-        d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm0 15c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1s1 .45 1 1v4c0 .55-.45 1-1 1zm1-8H9V5h2v2z"
-      ></path>
-    </svg>
-  )
-}
 
 interface ArrowIconProps {
   placement: string
@@ -67,6 +53,7 @@ interface TooltipProps {
   placement?: Placement
   text: React.ReactNode
   iconSize?: number
+  color?: Colors
   children?: ReactElement
   as?: ElementType
 }
@@ -75,6 +62,7 @@ export const Tooltip: FC<TooltipProps> = ({
   placement,
   text,
   iconSize = 14,
+  color = 'dark200',
   children,
   as = 'span',
 }) => {
@@ -99,7 +87,7 @@ export const Tooltip: FC<TooltipProps> = ({
             height: `${iconSize}px`,
           }}
         >
-          <InfoIcon />
+          <Icon icon="informationCircle" color={color} />
         </TooltipReference>
       )}
       <ReakitTooltip {...tooltip}>

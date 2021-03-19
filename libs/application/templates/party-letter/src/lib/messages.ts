@@ -198,5 +198,10 @@ export const m: MessageDir = {
       defaultMessage: 'Vinsamlegast veldu nafn á flokkinn',
       description: 'Error message if party name is empty',
     },
+    signatureInvalid: {
+      id: 'ple.application:validationmessages.signature.invalid',
+      defaultMessage: 'Undirskrift ekki lengur gild',
+      description: 'Error message if signature has new address',
+    },
   }),
 }
