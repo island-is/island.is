@@ -2,12 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import ContentWrapper from '../../../components/Layout/ContentWrapper'
 import { AdminTab } from './../../../entities/common/AdminTab'
-
 import { TranslationService } from './../../../services/TranslationService'
-import LanguageCreateForm from '../../../components/Admin/form/LanguageCreateForm'
 import { Translation } from './../../../entities/models/translation.model'
-import TranslationCreateForm from 'apps/auth-admin-web/components/Admin/form/TranslationCreateForm'
-import { TranslationDTO } from 'apps/auth-admin-web/entities/dtos/translation.dto'
+import TranslationCreateForm from './../../../components/Admin/form/TranslationCreateForm'
 
 const Index: React.FC = () => {
   const { query } = useRouter()

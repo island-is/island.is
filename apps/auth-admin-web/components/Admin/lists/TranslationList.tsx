@@ -4,9 +4,8 @@ import Paginator from '../../common/Paginator'
 import Link from 'next/link'
 import ConfirmModal from '../../common/ConfirmModal'
 import { TranslationService } from './../../../services/TranslationService'
-import { IdpProvider } from './../../../entities/models/IdpProvider.model'
 import { TranslationDTO } from './../../../entities/dtos/translation.dto'
-import { Translation } from 'apps/auth-admin-web/entities/models/translation.model'
+import { Translation } from './../../../entities/models/translation.model'
 
 class TranslationList extends Component {
   state = {
