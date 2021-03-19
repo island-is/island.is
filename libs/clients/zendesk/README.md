@@ -14,4 +14,4 @@ export ZENDESK_CONTACT_FORM_SUBDOMAIN={your_zendesk_subdomain}
 
 ## Running unit tests
 
-Run `nx test zendesk-service` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test clients-zendesk` to execute the unit tests via [Jest](https://jestjs.io).

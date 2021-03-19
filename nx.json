@@ -204,6 +204,9 @@
     "clients-mms": {
       "tags": []
     },
+    "clients-zendesk": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
@@ -490,9 +493,6 @@
     "web-e2e": {
       "tags": [],
       "implicitDependencies": ["web"]
-    },
-    "zendesk-service": {
-      "tags": []
     }
   }
 }

@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'zendesk-service',
-  preset: '../../jest.preset.js',
+  displayName: 'clients-zendesk',
+  preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/zendesk-service',
+  coverageDirectory: '../../../coverage/libs/clients/zendesk',
 }

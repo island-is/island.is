@@ -150,6 +150,7 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
+      "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],
@@ -286,8 +287,7 @@
       "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
       "@island.is/vmst-client": ["libs/vmst-client/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/web/component*": ["apps/web/component*/real.ts"],
-      "@island.is/zendesk-service": ["libs/zendesk-service/src/index.ts"]
+      "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

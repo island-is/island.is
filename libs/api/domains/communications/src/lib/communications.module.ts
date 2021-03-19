@@ -1,5 +1,5 @@
 import { EmailModule } from '@island.is/email-service'
-import { ZendeskModule } from '@island.is/zendesk-service'
+import { ZendeskModule } from '@island.is/clients/zendesk'
 import { Module } from '@nestjs/common'
 import { CommunicationsResolver } from './communications.resolver'
 import { CommunicationsService } from './communications.service'
