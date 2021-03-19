@@ -64,6 +64,9 @@ import {
   validateApplicationSchema,
   validateIncomingAnswers,
   validateIncomingExternalDataProviders,
+  validateThatTemplateIsReady,
+  isTemplateReady,
+  validateThatApplicationIsReady,
 } from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -124,6 +127,8 @@ export class ApplicationController {
       )
     }
 
+    await validateThatApplicationIsReady(application as BaseApplication)
+
     return application
   }
 
@@ -156,11 +161,38 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
-    return await this.applicationService.findAllByNationalIdAndFilters(
+    const applications = await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
     )
+
+    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const filteredApplications = []
+
+    for (const application of applications) {
+      // We've already checked an application with this type and it is ready
+      if (templateTypeToIsReady[application.typeId]) {
+        filteredApplications.push(application)
+      } else if (templateTypeToIsReady[application.typeId] === false) {
+        // We've already checked an application with this type
+        // and it is NOT ready so we will skip it
+        continue
+      }
+
+      const applicationTemplate = await getApplicationTemplateByTypeId(
+        application.typeId,
+      )
+
+      if (isTemplateReady(applicationTemplate)) {
+        templateTypeToIsReady[application.typeId] = true
+        filteredApplications.push(application)
+      } else {
+        templateTypeToIsReady[application.typeId] = false
+      }
+    }
+
+    return filteredApplications
   }
 
   @Post('applications')
@@ -258,6 +290,8 @@ export class ApplicationController {
         `No application template exists for type: ${existingApplication.typeId}`,
       )
     }
+
+    validateThatTemplateIsReady(template)
 
     const assignees = [nationalId]
 

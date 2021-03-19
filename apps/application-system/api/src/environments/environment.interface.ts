@@ -8,6 +8,7 @@ import { SyslumennClientConfig } from '@island.is/api/domains/syslumenn'
 export interface Environment {
   production: boolean
   environment: string
+  name: string
   baseApiUrl: string
   redis: {
     urls: string[]

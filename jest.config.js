@@ -133,5 +133,6 @@ module.exports = {
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
     '<rootDir>/libs/vmst-client',
+    '<rootDir>/libs/clients/mms',
   ],
 }
