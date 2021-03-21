@@ -111,10 +111,8 @@ export const LetterApplicationForm: Form = buildForm({
               placeholder: m.selectPartyLetter.partyLetterPlaceholder,
               width: 'half',
               defaultValue: (application: Application) =>
-                (getValueViaPath(
-                  application.answers,
-                  PartyLetter,
-                ) as string) ?? '',
+                (getValueViaPath(application.answers, PartyLetter) as string) ??
+                '',
             }),
             buildTextField({
               id: PartyName,
@@ -122,10 +120,8 @@ export const LetterApplicationForm: Form = buildForm({
               placeholder: m.selectPartyLetter.partyNamePlaceholder,
               width: 'half',
               defaultValue: (application: Application) =>
-                (getValueViaPath(
-                  application.answers,
-                  PartyName,
-                ) as string) ?? '',
+                (getValueViaPath(application.answers, PartyName) as string) ??
+                '',
             }),
             buildCustomField({
               id: 'partyLetter',
