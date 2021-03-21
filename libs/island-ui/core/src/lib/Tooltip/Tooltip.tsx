@@ -7,8 +7,8 @@ import {
   useTooltipState,
 } from 'reakit'
 import * as styles from './Tooltip.treat'
-import { Icon } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
+import { Icon } from '../IconRC/Icon'
+import { Colors } from '../theme'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
 
