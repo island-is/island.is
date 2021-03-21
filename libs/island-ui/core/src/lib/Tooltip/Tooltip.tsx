@@ -8,7 +8,7 @@ import {
 } from 'reakit'
 import * as styles from './Tooltip.treat'
 import { Icon } from '../IconRC/Icon'
-import { Colors } from '../theme'
+import { Colors } from '@island.is/island-ui/theme'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
 
