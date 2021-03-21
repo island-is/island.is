@@ -222,7 +222,12 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               value={sortOptions.find((x) => x.value === sort)}
               options={sortOptions}
               onChange={({ value }: Option) => {
-                Router.replace(`?sort=${value}`)
+                Router.push({
+                  pathname: linkResolver('organizationservices', [
+                    organizationPage.slug,
+                  ]).href,
+                  query: { sort: value },
+                })
               }}
               size="sm"
             />

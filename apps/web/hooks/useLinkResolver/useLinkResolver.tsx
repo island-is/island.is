@@ -65,6 +65,10 @@ export const routesTemplate = {
     is: '/stofnanir/[slug]/[subSlug]',
     en: '/en/organizations/[slug]/[subSlug]',
   },
+  organizationservices: {
+    is: '/stofnanir/[slug]/thjonusta',
+    en: '/en/organizations/[slug]/services',
+  },
   lifeevents: {
     is: '/lifsvidburdir',
     en: '/en/life-events',
