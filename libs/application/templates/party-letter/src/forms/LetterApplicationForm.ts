@@ -25,12 +25,9 @@ export type IDS =
   | 'signatures'
   | 'warnings'
 
-export const PARTY_SSD: IDS = 'ssd'
-export const PARTYLETTER_ID: IDS = 'party.letter'
-export const PARTYNAME_ID: IDS = 'party.name'
-
-const partyLetterIds = [PARTYLETTER_ID, PARTYNAME_ID]
-export const SSDS = []
+const PartySSD: IDS = 'ssd'
+const PartyLetter: IDS = 'party.letter'
+const PartyName: IDS = 'party.name'
 
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
@@ -74,7 +71,7 @@ export const LetterApplicationForm: Form = buildForm({
       title: m.selectSSD.title,
       children: [
         buildRadioField({
-          id: PARTY_SSD,
+          id: PartySSD,
           title: m.selectSSD.title,
           largeButtons: true,
           width: 'half',
@@ -109,30 +106,29 @@ export const LetterApplicationForm: Form = buildForm({
           title: m.selectPartyLetter.sectionTitle,
           children: [
             buildTextField({
-              id: PARTYLETTER_ID,
+              id: PartyLetter,
               title: m.selectPartyLetter.partyLetterLabel,
               placeholder: m.selectPartyLetter.partyLetterPlaceholder,
               width: 'half',
               defaultValue: (application: Application) =>
                 (getValueViaPath(
                   application.answers,
-                  PARTYLETTER_ID,
+                  PartyLetter,
                 ) as string) ?? '',
             }),
             buildTextField({
-              id: PARTYNAME_ID,
+              id: PartyName,
               title: m.selectPartyLetter.partyNameLabel,
               placeholder: m.selectPartyLetter.partyNamePlaceholder,
               width: 'half',
               defaultValue: (application: Application) =>
                 (getValueViaPath(
                   application.answers,
-                  PARTYNAME_ID,
+                  PartyName,
                 ) as string) ?? '',
             }),
             buildCustomField({
               id: 'partyLetter',
-              childInputIds: partyLetterIds,
               title: m.selectPartyLetter.title,
               component: 'PartyLetter',
             }),
