@@ -187,9 +187,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 )
               }}
             />
-            <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
-              <Text variant="intro">{organizationPage.description}</Text>
-            </Box>
+            {pageDescription && (
+              <Box paddingTop={[2, 2, 5]} paddingBottom={2}>
+                <Text variant="intro">{pageDescription}</Text>
+              </Box>
+            )}
             <Hidden above="sm">{sidebarContent}</Hidden>
             <Box paddingTop={4}>{mainContent ?? children}</Box>
           </SidebarLayout>
