@@ -6,6 +6,8 @@ import {
   User,
 } from 'oidc-client'
 
+import { ApplicationIdentityServerScope } from '@island.is/application/core'
+
 import { environment } from '../environments'
 
 export const settings: UserManagerSettings = {
@@ -17,7 +19,7 @@ export const settings: UserManagerSettings = {
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
   automaticSilentRenew: true,
-  scope: 'openid profile api_resource.scope',
+  scope: `openid profile api_resource.scope ${ApplicationIdentityServerScope.read} ${ApplicationIdentityServerScope.write}`,
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 

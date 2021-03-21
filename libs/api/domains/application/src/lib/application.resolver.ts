@@ -17,7 +17,9 @@ import {
   ScopesGuard,
   CurrentUser,
   User,
+  Scopes,
 } from '@island.is/auth-nest-tools'
+import { ApplicationIdentityServerScope } from '@island.is/application/core'
 import { UseGuards } from '@nestjs/common'
 import { ApplicationApplicationInput } from './dto/applicationApplication.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
@@ -30,6 +32,7 @@ import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Query(() => Application, { nullable: true })
   async applicationApplication(
     @Args('input') input: ApplicationApplicationInput,
@@ -38,6 +41,7 @@ export class ApplicationResolver {
     return this.applicationService.findOne(input.id, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Query(() => [Application], { nullable: true })
   async applicationApplications(
     @CurrentUser() user: User,
@@ -50,6 +54,7 @@ export class ApplicationResolver {
     )
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => Application, { nullable: true })
   async createApplication(
     @Args('input') input: CreateApplicationInput,
@@ -58,6 +63,7 @@ export class ApplicationResolver {
     return this.applicationService.create(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => Application, { nullable: true })
   async updateApplication(
     @Args('input') input: UpdateApplicationInput,
@@ -66,6 +72,7 @@ export class ApplicationResolver {
     return this.applicationService.update(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => Application, { nullable: true })
   updateApplicationExternalData(
     @Args('input') input: UpdateApplicationExternalDataInput,
@@ -74,6 +81,7 @@ export class ApplicationResolver {
     return this.applicationService.updateExternalData(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => Application, { nullable: true })
   async addAttachment(
     @Args('input') input: AddAttachmentInput,
@@ -82,6 +90,7 @@ export class ApplicationResolver {
     return this.applicationService.addAttachment(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => Application, { nullable: true })
   async deleteAttachment(
     @Args('input') input: DeleteAttachmentInput,
@@ -90,6 +99,7 @@ export class ApplicationResolver {
     return this.applicationService.deleteAttachment(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => Application, { nullable: true })
   async submitApplication(
     @Args('input') input: SubmitApplicationInput,
@@ -98,6 +108,7 @@ export class ApplicationResolver {
     return this.applicationService.submitApplication(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => Application, { nullable: true })
   async assignApplication(
     @Args('input') input: AssignApplicationInput,
@@ -106,6 +117,7 @@ export class ApplicationResolver {
     return this.applicationService.assignApplication(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => PresignedUrlResponse, { nullable: true })
   async createPdfPresignedUrl(
     @Args('input') input: CreatePdfInput,
@@ -117,6 +129,7 @@ export class ApplicationResolver {
     )
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => RequestFileSignatureResponse, { nullable: true })
   requestFileSignature(
     @Args('input') input: RequestFileSignatureInput,
@@ -128,6 +141,7 @@ export class ApplicationResolver {
     )
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Mutation(() => UploadSignedFileResponse, { nullable: true })
   uploadSignedFile(
     @Args('input') input: UploadSignedFileInput,
@@ -136,6 +150,7 @@ export class ApplicationResolver {
     return this.applicationService.uploadSignedFile(input, user.authorization)
   }
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Query(() => PresignedUrlResponse, { nullable: true })
   getPresignedUrl(
     @Args('input') input: GetPresignedUrlInput,
