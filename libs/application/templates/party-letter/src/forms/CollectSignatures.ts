@@ -19,7 +19,6 @@ export const ReviewApplication: Form = buildForm({
       id: 'intro',
       title: 'Samþykkja',
       children: [
-
         buildMultiField({
           id: 'about',
           title: 'Listabókstafs meðmælendalisti (Q)',
@@ -34,7 +33,7 @@ export const ReviewApplication: Form = buildForm({
               title: 'Nafn',
               variant: 'text',
               placeholder: 'Nafn',
-              backgroundColor: 'blue'
+              backgroundColor: 'blue',
             }),
 
             buildSubmitField({
