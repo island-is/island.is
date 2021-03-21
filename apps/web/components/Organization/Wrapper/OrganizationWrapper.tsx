@@ -24,6 +24,7 @@ import {
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface NavigationData {
   title: string
@@ -58,6 +59,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   minimal = false,
 }) => {
   const isMobile = useWindowSize().width < theme.breakpoints.md
+  const { linkResolver } = useLinkResolver()
 
   return (
     <>
@@ -74,7 +76,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             sidebarContent={
               !!organizationPage.organization.logo &&
               !minimal && (
-                <Link href="#">
+                <Link
+                  href={
+                    linkResolver('organizationpage', [organizationPage.slug])
+                      .href
+                  }
+                >
                   <Box
                     borderRadius="circle"
                     className={styles.iconCircle}
@@ -91,7 +98,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             }
           >
             <Hidden above="sm">
-              <Link href="#">
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+              >
                 <Box
                   borderRadius="circle"
                   className={styles.iconCircle}
@@ -109,9 +120,15 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               marginTop={[2, 2, 6]}
               textAlign={['center', 'center', 'right']}
             >
-              <Text variant="h1" color="white">
-                {organizationPage.title}
-              </Text>
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+              >
+                <Text variant="h1" color="white">
+                  {organizationPage.title}
+                </Text>
+              </Link>
             </Box>
           </SidebarLayout>
         </Box>
