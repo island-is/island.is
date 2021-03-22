@@ -5,6 +5,7 @@ import { Wallet } from './screens/wallet/wallet'
 import { User } from './screens/user/user'
 import { Login } from './screens/login/login'
 import { NavigationProvider } from 'react-native-navigation-hooks'
+import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
 import { checkIsAuthenticated } from './auth/auth'
 import { config } from './utils/config'
@@ -99,7 +100,7 @@ export const mainRoot: LayoutRoot = {
             ],
             options: {
               bottomTab: {
-                selectedIconColor: '#0061ff',
+                selectedIconColor: theme.color.blue600,
                 icon: {
                   system: 'tray',
                 },
@@ -144,7 +145,7 @@ export const mainRoot: LayoutRoot = {
             ],
             options: {
               bottomTab: {
-                selectedIconColor: '#0061ff',
+                selectedIconColor: theme.color.blue600,
                 icon: {
                   system: 'wallet.pass',
                 },
@@ -191,6 +192,6 @@ Navigation.setDefaultOptions({
   bottomTab: {
     fontSize: 28,
     selectedFontSize: 18,
-    selectedTextColor: '#0061ff',
+    selectedTextColor: theme.color.blue600,
   },
 })

@@ -1,14 +1,13 @@
 import React from 'react'
 import styled from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
 
-const Host = styled.Text<{ isCenter?: boolean}>`
-  padding: 20px 30px;
-  margin-bottom: 30px;
+const Host = styled.Text<{ isCenter?: boolean }>`
+  padding: 20px 0;
+  margin-bottom: 20px;
 
   font-size: 30px;
   font-weight: bold;
-  text-align: ${(props) => props.isCenter ? 'center' : 'left'};
+  text-align: ${(props: any) => props.isCenter ? 'center' : 'left'};
 `;
 
 interface HeadingProps {

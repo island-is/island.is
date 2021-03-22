@@ -1,24 +1,23 @@
-import { Heading } from '@island.is/island-ui-native';
+import { Container, Heading } from '@island.is/island-ui-native';
 import React from 'react'
-import { Button, SafeAreaView, StatusBar } from 'react-native'
+import { Button, SafeAreaView, StatusBar, Text } from 'react-native'
 import { Navigation } from 'react-native-navigation';
 import { useNavigation, showModal } from 'react-native-navigation-hooks';
+import { useAuthStore } from '../../auth/auth';
 
 export const User = () => {
+  const authStore = useAuthStore();
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-      >
-        <Heading>User</Heading>
-        <Button title="Storybook" onPress={() => {
-          showModal('is.island.StorybookScreen')
-        }} />
-      </SafeAreaView>
-    </>
+    <SafeAreaView
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      <Container>
+        <Heading>{authStore.userInfo?.name}</Heading>
+        <Text>Kt. {authStore.userInfo?.nationalId}</Text>
+      </Container>
+    </SafeAreaView>
   )
 }
