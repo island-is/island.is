@@ -1,16 +1,13 @@
 import {
   buildCustomField,
   buildDateField,
-  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildRepeater,
   buildSection,
   buildSelectField,
   buildSubmitField,
-  coreMessages,
   Form,
-  FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'

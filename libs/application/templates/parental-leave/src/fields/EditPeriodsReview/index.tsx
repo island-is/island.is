@@ -1,27 +1,15 @@
-import React, { FC, useMemo, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import {
-  Application,
-  getValueViaPath,
-  ValidAnswers,
-  buildFieldOptions,
-} from '@island.is/application/core'
+import React, { FC } from 'react'
+
+import { Application } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
 
 import Timeline from '../components/Timeline'
-import {
-  formatPeriods,
-  getExpectedDateOfBirth,
-  getOtherParentOptions,
-} from '../../parentalLeaveUtils'
+import { formatPeriods, getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { Period } from '../../types'
-import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 
-type ValidOtherParentAnswer = 'no' | 'manual' | undefined
+import { parentalLeaveFormMessages } from '../../lib/messages'
 
 interface ReviewScreenProps {
   application: Application

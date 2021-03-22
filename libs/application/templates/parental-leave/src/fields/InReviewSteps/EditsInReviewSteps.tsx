@@ -33,10 +33,7 @@ const statesMap: StatesMap = {
 
 const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
   const dob = getExpectedDateOfBirth(application)
-  if (!dob) {
-    return null
-  }
-  const dobDate = new Date(dob)
+  const dobDate = dob ? new Date(dob) : null
 
   const { formatMessage } = useLocale()
 
@@ -65,13 +62,15 @@ const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       >
-        <Text variant="h4" color="blue400">
-          {formatMessage(
-            parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
-          )}
-          <br />
-          {format(dobDate, 'dd.MM.yyyy')}
-        </Text>
+        {dobDate && (
+          <Text variant="h4" color="blue400">
+            {formatMessage(
+              parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
+            )}
+            <br />
+            {format(dobDate, 'dd.MM.yyyy')}
+          </Text>
+        )}
       </Box>
 
       <Box marginTop={7} marginBottom={8}>

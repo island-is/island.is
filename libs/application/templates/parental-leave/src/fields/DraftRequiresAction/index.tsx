@@ -11,6 +11,9 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 
+import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
+import { MessageDescriptor } from '@formatjs/intl'
+
 function handleError(error: string, formatMessage: MessageFormatter): void {
   toast.error(
     formatMessage(
@@ -23,9 +26,6 @@ function handleError(error: string, formatMessage: MessageFormatter): void {
     ),
   )
 }
-
-import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
-import { MessageDescriptor } from '@formatjs/intl'
 
 const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(

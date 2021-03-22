@@ -18,6 +18,7 @@ import { YES } from '../../constants'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { useMutation } from '@apollo/client'
+import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 
 function handleError(error: string, formatMessage: MessageFormatter): void {
   toast.error(
@@ -32,7 +33,6 @@ function handleError(error: string, formatMessage: MessageFormatter): void {
   )
 }
 
-import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 type StateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
   otherParent: StateMapEntry
@@ -62,12 +62,6 @@ const statesMap: StatesMap = {
 }
 
 const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
-  const dob = getExpectedDateOfBirth(application)
-  if (!dob) {
-    return null
-  }
-  const dobDate = new Date(dob)
-
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -116,19 +110,24 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
 
   if (!isRequestingRights) steps.shift()
 
+  const dob = getExpectedDateOfBirth(application)
+  const dobDate = dob ? new Date(dob) : null
+
   return (
     <Box marginBottom={10}>
       <Box
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       >
-        <Text variant="h4" color="blue400">
-          {formatMessage(
-            parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
-          )}
-          <br />
-          {format(dobDate, 'dd.MM.yyyy')}
-        </Text>
+        {dobDate && (
+          <Text variant="h4" color="blue400">
+            {formatMessage(
+              parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
+            )}
+            <br />
+            {format(dobDate, 'dd.MM.yyyy')}
+          </Text>
+        )}
         <Box>
           <Box
             display={['block', 'inlineBlock']}
