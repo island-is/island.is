@@ -1,18 +1,8 @@
 import { Heading } from '@island.is/island-ui-native';
 import React from 'react'
-import { SafeAreaView, StatusBar, Text, Button } from 'react-native'
-import { authorize } from 'react-native-app-auth';
-import Keychain from 'react-native-keychain';
+import { SafeAreaView, StatusBar } from 'react-native'
 
 export const Wallet = () => {
-
-  const config = {
-    issuer: 'https://identity-server.dev01.devland.is',
-    clientId: '@island.is-app',
-    redirectUrl: 'is.island.app-dev://oauth',
-    scopes: ['openid', 'profile', 'offline_access'],
-  };
-
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -22,12 +12,6 @@ export const Wallet = () => {
           height: '100%',
         }}
       >
-        <Button title="Authenticate" onPress={async () => {
-          const result = await authorize(config);
-          if (result) {
-            await Keychain.setGenericPassword('island.is', JSON.stringify(result));
-          }
-        }} />
         <Heading>Wallet</Heading>
       </SafeAreaView>
     </>

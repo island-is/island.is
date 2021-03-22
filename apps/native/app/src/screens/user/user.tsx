@@ -1,6 +1,8 @@
 import { Heading } from '@island.is/island-ui-native';
 import React from 'react'
-import { SafeAreaView, StatusBar, Text } from 'react-native'
+import { Button, SafeAreaView, StatusBar } from 'react-native'
+import { Navigation } from 'react-native-navigation';
+import { useNavigation, showModal } from 'react-native-navigation-hooks';
 
 export const User = () => {
   return (
@@ -13,15 +15,10 @@ export const User = () => {
         }}
       >
         <Heading>User</Heading>
+        <Button title="Storybook" onPress={() => {
+          showModal('is.island.StorybookScreen')
+        }} />
       </SafeAreaView>
     </>
   )
 }
-
-User.options = {
-  topBar: {
-    title: {
-      text: 'User'
-    }
-  }
-};

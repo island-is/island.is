@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/react-native'
-import { select, withKnobs } from '@storybook/addon-knobs';
+import { select, text, withKnobs } from '@storybook/addon-knobs';
 import React from 'react'
 import { View } from 'react-native';
 import { Button } from './Button'
@@ -13,12 +13,11 @@ storiesOf('Button', module)
   .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
   .addDecorator(withKnobs)
   .add('btn a', () => {
-    const backgroundColor = select('hello world', theme.color, theme.color.blue300);
-    console.log({ backgroundColor });
+    const title = text('Button title', 'Hello button');
     return (
-      <Button backgroundColor={backgroundColor}>{backgroundColor}</Button>
+      <Button title={title} onPress={() => void 0} />
     );
   })
   .add('btn b', () => (
-    <Button>hi 2</Button>
+    <Button title="Howdy" onPress={() => void 0} />
   ))

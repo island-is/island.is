@@ -1,4 +1,3 @@
-import fetch from 'cross-fetch'
 import {
   ApolloClient,
   InMemoryCache,
@@ -8,10 +7,9 @@ import {
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
-import Keychain from 'react-native-keychain';
+import { config } from '../utils/config'
 
-const uri = 'https://beta.dev01.devland.is/api/graphql';
-// const uri = 'http://localhost:4444/api/graphql'
+const uri = `${config.apiEndpoint.replace(/\/$/, '')}/graphql`;
 
 const httpLink = new HttpLink({
   uri,
