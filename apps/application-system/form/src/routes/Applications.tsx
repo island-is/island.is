@@ -44,6 +44,7 @@ export const Applications: FC = () => {
       variables: {
         input: { typeId: type },
       },
+      skip: !type,
     },
   )
 
@@ -56,7 +57,7 @@ export const Applications: FC = () => {
     },
   )
 
-  function createApplication() {
+  const createApplication = () => {
     createApplicationMutation({
       variables: {
         input: {
@@ -73,12 +74,12 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
-    if (data && isEmpty(data.applicationApplications)) {
+    if (type && data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
-  }, [data])
+  }, [type, data])
 
-  if (applicationsError) {
+  if (!type || applicationsError) {
     return (
       <NotFound
         title={formatMessage(coreMessages.notFoundApplicationType)}

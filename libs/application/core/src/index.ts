@@ -16,7 +16,7 @@ export * from './lib/fieldBuilders'
 export * from './lib/formBuilders'
 export * from './lib/ApplicationTemplateHelper'
 export * from './lib/messages'
-export * from './lib/slugUtil'
+export * from './lib/configurationUtils'
 
 export * from './validation/validators'
 export * from './validation/AnswerValidator'
