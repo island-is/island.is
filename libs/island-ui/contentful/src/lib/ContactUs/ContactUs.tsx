@@ -145,6 +145,7 @@ export const ContactUs: FC<ContactUsProps> = ({
                       <Button
                         htmlType="submit"
                         loading={state === 'submitting'}
+                        disabled={state === 'submitting'}
                       >
                         {submitButtonText}
                       </Button>
