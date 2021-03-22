@@ -30,15 +30,15 @@ const CACHE_KEYS = {
 
 @Injectable()
 export class DiscountService {
-  constructor(
+  constructor (
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
-  private getRandomRange(min: number, max: number): number {
+  private getRandomRange (min: number, max: number): number {
     return Math.random() * (max + 1 - min) + min
   }
 
-  private generateDiscountCode(): string {
+  private generateDiscountCode (): string {
     return [...Array(DISCOUNT_CODE_LENGTH)]
       .map(() => {
         // We are excluding 0 and O because users mix them up
@@ -54,7 +54,7 @@ export class DiscountService {
       .join('')
   }
 
-  private async setCache<T>(
+  private async setCache<T> (
     key: string,
     value: T,
     ttl: number = ONE_DAY,
@@ -62,7 +62,7 @@ export class DiscountService {
     return this.cacheManager.set(key, value, { ttl })
   }
 
-  private async getCache<T>(cacheKey: string): Promise<T | null> {
+  private async getCache<T> (cacheKey: string): Promise<T | null> {
     const cacheId = await this.cacheManager.get(cacheKey)
     if (!cacheId) {
       return null
@@ -71,7 +71,7 @@ export class DiscountService {
     return this.cacheManager.get(cacheId)
   }
 
-  async createDiscountCode(
+  async createDiscountCode (
     nationalId: string,
     connectableFlights: Flight[],
   ): Promise<Discount> {
@@ -134,7 +134,7 @@ export class DiscountService {
     }
 
     // Filter out connectionCodes that are expired in their validity
-    const now = new Date()
+    const now = new Date(Date.now())
     connectionDiscountCodes = connectionDiscountCodes.filter((cdc) => {
       const validUntil = new Date(Date.parse(cdc.validUntil))
 
@@ -157,7 +157,7 @@ export class DiscountService {
     )
   }
 
-  async getDiscountByNationalId(nationalId: string): Promise<Discount | null> {
+  async getDiscountByNationalId (nationalId: string): Promise<Discount | null> {
     const cacheKey = CACHE_KEYS.user(nationalId)
     const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
     if (!cacheValue) {
@@ -183,7 +183,7 @@ export class DiscountService {
     )
   }
 
-  async getDiscountByDiscountCode(
+  async getDiscountByDiscountCode (
     discountCode: string,
   ): Promise<Discount | null> {
     const cacheKey = CACHE_KEYS.discountCode(discountCode)
@@ -202,7 +202,7 @@ export class DiscountService {
     )
   }
 
-  async getDiscountByConnectionDiscountCode(
+  async getDiscountByConnectionDiscountCode (
     discountCode: string,
   ): Promise<Discount | null> {
     const cacheKey = CACHE_KEYS.connectionDiscountCode(discountCode)
@@ -230,12 +230,12 @@ export class DiscountService {
     )
   }
 
-  filterConnectionDiscountCodes(
+  filterConnectionDiscountCodes (
     connectionDiscountCodes: ConnectionDiscountCode[],
     discountCode: string,
   ): ConnectionDiscountCode | null {
     // Return nothing if the connection discount code is expired
-    const now = new Date()
+    const now = new Date(Date.now())
     connectionDiscountCodes = connectionDiscountCodes.filter((cdc) => {
       if (cdc.code === discountCode) {
         const validUntil = new Date(Date.parse(cdc.validUntil))
@@ -251,7 +251,7 @@ export class DiscountService {
     return connectionDiscountCodes[0]
   }
 
-  async useDiscount(
+  async useDiscount (
     discountCode: string,
     nationalId: string,
     flightId: string,
@@ -295,7 +295,7 @@ export class DiscountService {
   // the flight with us and used the discount. To avoid making the user get a
   // new discount, we reactivate the discount here only if the flight is
   // cancelled before the ttl on the discount code expires.
-  async reactivateDiscount(flightId: string): Promise<void> {
+  async reactivateDiscount (flightId: string): Promise<void> {
     const usedDiscountCacheKey = CACHE_KEYS.flight(flightId)
     const cacheId = await this.cacheManager.get(usedDiscountCacheKey)
     if (!cacheId) {

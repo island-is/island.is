@@ -20,7 +20,7 @@ import { FlightService } from '../flight'
 
 @Controller('api/private')
 export class PrivateDiscountController {
-  constructor(
+  constructor (
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
     @Inject(forwardRef(() => FlightService))
@@ -29,7 +29,7 @@ export class PrivateDiscountController {
 
   @Get('users/:nationalId/discounts/current')
   @ApiExcludeEndpoint()
-  getCurrentDiscountByNationalId(
+  getCurrentDiscountByNationalId (
     @Param() params: GetCurrentDiscountByNationalIdParams,
   ): Promise<Discount | null> {
     return this.discountService.getDiscountByNationalId(params.nationalId)
@@ -37,7 +37,7 @@ export class PrivateDiscountController {
 
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()
-  async createDiscountCode(
+  async createDiscountCode (
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
     const user = await this.nationalRegistryService.getUser(params.nationalId)

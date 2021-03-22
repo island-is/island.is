@@ -56,14 +56,14 @@ import { HttpRequest } from '../../app.types'
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class PublicFlightController {
-  constructor(
+  constructor (
     private readonly flightService: FlightService,
     @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  private async validateConnectionFlights(
+  private async validateConnectionFlights (
     discount: Discount,
     discountCode: string,
     flightLegs: FlightLeg[],
@@ -166,7 +166,7 @@ export class PublicFlightController {
   })
   @HttpCode(200)
   @ApiOkResponse()
-  async checkFlightStatus(
+  async checkFlightStatus (
     @Param() params: CheckFlightParams,
     @Body() body: CheckFlightBody,
     @Req() request: HttpRequest,
@@ -188,7 +188,7 @@ export class PublicFlightController {
 
   @Post('discounts/:discountCode/flights')
   @ApiCreatedResponse({ type: FlightViewModel })
-  async create(
+  async create (
     @Param() params: CreateFlightParams,
     @Body() flight: CreateFlightBody,
     @Req() request: HttpRequest,
@@ -243,7 +243,7 @@ export class PublicFlightController {
         params.discountCode,
         flight.flightLegs as FlightLeg[],
       )
-    } else {
+    } else if (hasReykjavik && hasAkureyri) {
       const {
         unused: flightLegsLeft,
       } = await this.flightService.countThisYearsFlightLegsByNationalId(
@@ -252,6 +252,10 @@ export class PublicFlightController {
       if (flightLegsLeft < flight.flightLegs.length) {
         throw new ForbiddenException('Flight leg quota is exceeded')
       }
+    } else {
+      throw new ForbiddenException(
+        'Eligible flights must be from/to Reykjavík or be connecting flights from/to Akureyri',
+      )
     }
 
     if (connectingId) {
@@ -276,7 +280,7 @@ export class PublicFlightController {
 
   @Get('flights/:flightId')
   @ApiOkResponse({ type: FlightViewModel })
-  async getFlightById(
+  async getFlightById (
     @Param() params: GetFlightParams,
     @Req() request: HttpRequest,
   ): Promise<FlightViewModel> {
@@ -293,7 +297,7 @@ export class PublicFlightController {
   @Delete('flights/:flightId')
   @HttpCode(204)
   @ApiNoContentResponse()
-  async delete(
+  async delete (
     @Param() params: DeleteFlightParams,
     @Req() request: HttpRequest,
   ): Promise<void> {
@@ -311,7 +315,7 @@ export class PublicFlightController {
   @Delete('flights/:flightId/flightLegs/:flightLegId')
   @HttpCode(204)
   @ApiNoContentResponse()
-  async deleteFlightLeg(
+  async deleteFlightLeg (
     @Param() params: DeleteFlightLegParams,
     @Req() request: HttpRequest,
   ): Promise<void> {
@@ -337,23 +341,23 @@ export class PublicFlightController {
 
 @Controller('api/private')
 export class PrivateFlightController {
-  constructor(private readonly flightService: FlightService) {}
+  constructor (private readonly flightService: FlightService) {}
 
   @Get('flights')
   @ApiExcludeEndpoint()
-  get(): Promise<Flight[]> {
+  get (): Promise<Flight[]> {
     return this.flightService.findAll()
   }
 
   @Post('flightLegs')
   @ApiExcludeEndpoint()
-  getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
+  getFlightLegs (@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
     return this.flightService.findAllLegsByFilter(body)
   }
 
   @Post('flightLegs/confirmInvoice')
   @ApiExcludeEndpoint()
-  async confirmInvoice(
+  async confirmInvoice (
     @Body() body: ConfirmInvoiceBody | {},
   ): Promise<FlightLeg[]> {
     let flightLegs = await this.flightService.findAllLegsByFilter(body)
@@ -363,7 +367,7 @@ export class PrivateFlightController {
 
   @Get('users/:nationalId/flights')
   @ApiExcludeEndpoint()
-  getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
+  getUserFlights (@Param() params: GetUserFlightsParams): Promise<Flight[]> {
     return this.flightService.findThisYearsFlightsByNationalId(
       params.nationalId,
     )
