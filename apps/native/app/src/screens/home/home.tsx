@@ -33,8 +33,8 @@ export const Home = () => {
             }}>
               <Image source={logo} resizeMode="contain" style={{ width: 45, height: 45, marginBottom: 20 }} />
             </View>
+            <Text style={{ marginTop: 16, textAlign: 'center', fontWeight: 'bold' }}>Hæ {authStore.userInfo?.name}</Text>
             <Heading isCenterAligned>Staða umsókna</Heading>
-            <Text>Hæ {authStore.userInfo?.name}</Text>
             <StatusCard
               title="Fæðingarorlof 4/6"
               description="Skipting orlofstíma"
