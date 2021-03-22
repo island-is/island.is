@@ -26,7 +26,7 @@ export const ApplicationConfigurations = {
     translation: 'dl.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
-    slug: 'okuskilriki',
+    slug: 'okuskirteini',
     translation: 'dl.application',
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
