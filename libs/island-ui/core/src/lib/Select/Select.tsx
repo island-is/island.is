@@ -28,7 +28,7 @@ export interface SelectProps {
   name: string
   id?: string
   disabled?: boolean
-  options: Option[]
+  options: ReadonlyArray<Option>
   hasError?: boolean
   errorMessage?: string
   noOptionsMessage?: string

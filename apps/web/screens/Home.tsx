@@ -93,7 +93,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
   )
   return (
     <div id="main-content" style={{ overflow: 'hidden' }}>
-      <Section paddingY={[0, 0, 4, 4, 6]} aria-label={t.carouselTitle}>
+      <Section aria-label={t.carouselTitle}>
         <FrontpageSlider
           slides={page.slides as FrontpageSliderType[]}
           searchContent={searchContent}
@@ -101,14 +101,11 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
       </Section>
       <Section
         aria-labelledby="lifeEventsTitle"
-        paddingTop={4}
         backgroundBleed={{
           bleedAmount: 150,
-          mobileBleedAmount: 250,
           bleedDirection: 'bottom',
           fromColor: 'white',
           toColor: 'purple100',
-          bleedInMobile: true,
         }}
       >
         <LifeEventsCardsSection

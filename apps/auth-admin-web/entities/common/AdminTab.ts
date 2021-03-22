@@ -4,4 +4,6 @@ export enum AdminTab {
   GrantTypes = 3,
   IPNumbersControl = 4,
   Logs = 5,
+  Language = 6,
+  Translation = 7,
 }

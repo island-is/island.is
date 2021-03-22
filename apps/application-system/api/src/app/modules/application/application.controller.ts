@@ -7,26 +7,23 @@ import {
   Post,
   Put,
   Delete,
-  Query,
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
   Optional,
+  Query,
 } from '@nestjs/common'
-
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
-import { WhereOptions } from 'sequelize/types'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
-  ApiQuery,
   ApiHeader,
+  ApiQuery,
 } from '@nestjs/swagger'
-import { Op } from 'sequelize'
 import {
   Application as BaseApplication,
   callDataProviders,
@@ -34,7 +31,9 @@ import {
   FormValue,
   ApplicationTemplateHelper,
   ExternalData,
+  ApplicationTemplateAPIAction,
   PdfTypes,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -65,6 +64,9 @@ import {
   validateApplicationSchema,
   validateIncomingAnswers,
   validateIncomingExternalDataProviders,
+  validateThatTemplateIsReady,
+  isTemplateReady,
+  validateThatApplicationIsReady,
 } from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -77,12 +79,25 @@ import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
 
-// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
-
 interface DecodedAssignmentToken {
   applicationId: string
   state: string
 }
+
+interface StateChangeResult {
+  error?: string
+  hasError: boolean
+  hasChanged: boolean
+  application: BaseApplication
+}
+
+interface TemplateAPIModuleActionResult {
+  updatedApplication: BaseApplication
+  hasError: boolean
+  error?: string
+}
+
+// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
 
 @ApiTags('applications')
 @ApiHeader({
@@ -104,7 +119,7 @@ export class ApplicationController {
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<ApplicationResponseDto> {
-    const application = await this.applicationService.findById(id)
+    const application = await this.applicationService.findOneById(id)
 
     if (!application) {
       throw new NotFoundException(
@@ -112,73 +127,72 @@ export class ApplicationController {
       )
     }
 
+    await validateThatApplicationIsReady(application as BaseApplication)
+
     return application
   }
 
-  // TODO REMOVE
-  @Get()
+  @Get('users/:nationalId/applications')
+  @ApiParam({
+    name: 'nationalId',
+    type: String,
+    required: true,
+    description: `To get the applications for a specific user's national id.`,
+    allowEmptyValue: false,
+  })
+  @ApiQuery({
+    name: 'typeId',
+    required: false,
+    type: 'string',
+    description:
+      'To filter applications by type. Comma-separated for multiple values.',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: 'string',
+    description:
+      'To filter applications by status. Comma-separated for multiple values.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   async findAll(
-    @Query('typeId') typeId: string,
-  ): Promise<ApplicationResponseDto[]> {
-    if (typeId) {
-      return this.applicationService.findAllByType(typeId as ApplicationTypes)
-    } else {
-      return this.applicationService.findAll()
-    }
-  }
-
-  @Get('applicants/:nationalRegistryId/applications')
-  @ApiQuery({
-    name: 'typeId',
-    required: false,
-    type: String,
-  })
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findApplicantApplications(
-    @Param('nationalRegistryId') nationalRegistryId: string,
+    @NationalId() nationalId: string,
     @Query('typeId') typeId?: string,
+    @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
-    const whereOptions: WhereOptions = {
-      applicant: nationalRegistryId,
+    const applications = await this.applicationService.findAllByNationalIdAndFilters(
+      nationalId,
+      typeId,
+      status,
+    )
+
+    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const filteredApplications = []
+
+    for (const application of applications) {
+      // We've already checked an application with this type and it is ready
+      if (templateTypeToIsReady[application.typeId]) {
+        filteredApplications.push(application)
+      } else if (templateTypeToIsReady[application.typeId] === false) {
+        // We've already checked an application with this type
+        // and it is NOT ready so we will skip it
+        continue
+      }
+
+      const applicationTemplate = await getApplicationTemplateByTypeId(
+        application.typeId,
+      )
+
+      if (isTemplateReady(applicationTemplate)) {
+        templateTypeToIsReady[application.typeId] = true
+        filteredApplications.push(application)
+      } else {
+        templateTypeToIsReady[application.typeId] = false
+      }
     }
 
-    if (typeId) {
-      whereOptions.typeId = typeId
-    }
-
-    return this.applicationService.findAll({
-      where: whereOptions,
-    })
-  }
-
-  @Get('assignees/:nationalRegistryId/applications')
-  @ApiQuery({
-    name: 'typeId',
-    required: false,
-    type: String,
-  })
-  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
-  @UseInterceptors(ApplicationSerializer)
-  async findAssigneeApplications(
-    @Param('nationalRegistryId') nationalRegistryId: string,
-    @Query('typeId') typeId?: string,
-  ): Promise<Application[]> {
-    const whereOptions: WhereOptions = {
-      assignees: {
-        [Op.contains]: [nationalRegistryId],
-      },
-    }
-
-    if (typeId) {
-      whereOptions.typeId = typeId
-    }
-
-    return this.applicationService.findAll({
-      where: whereOptions,
-    })
+    return filteredApplications
   }
 
   @Post('applications')
@@ -187,14 +201,52 @@ export class ApplicationController {
   async create(
     @Body()
     application: CreateApplicationDto,
+    @NationalId()
+    nationalId: string,
   ): Promise<ApplicationResponseDto> {
-    // TODO not post the state, it should follow the initialstate of the machine
-    await validateApplicationSchema(
-      application,
-      application.answers as FormValue,
-    )
+    const { typeId } = application
 
-    return this.applicationService.create(application)
+    const template = await getApplicationTemplateByTypeId(typeId)
+
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${typeId}`,
+      )
+    }
+
+    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
+
+    // TODO: initial state should be required
+    const initialState =
+      template.stateMachineConfig.initial ??
+      Object.keys(template.stateMachineConfig.states)[0]
+
+    if (typeof initialState !== 'string') {
+      throw new BadRequestException(
+        `No initial state found for type: ${typeId}`,
+      )
+    }
+
+    const applicationDto: Pick<
+      BaseApplication,
+      | 'answers'
+      | 'applicant'
+      | 'assignees'
+      | 'attachments'
+      | 'state'
+      | 'status'
+      | 'typeId'
+    > = {
+      answers: {},
+      applicant: nationalId,
+      assignees: [],
+      attachments: {},
+      state: initialState,
+      status: ApplicationStatus.IN_PROGRESS,
+      typeId: application.typeId,
+    }
+
+    return this.applicationService.create(applicationDto)
   }
 
   @Put('applications/assign')
@@ -213,7 +265,7 @@ export class ApplicationController {
       throw new BadRequestException('Invalid token')
     }
 
-    const existingApplication = await this.applicationService.findById(
+    const existingApplication = await this.applicationService.findOneById(
       decodedToken.applicationId,
     )
 
@@ -239,6 +291,8 @@ export class ApplicationController {
       )
     }
 
+    validateThatTemplateIsReady(template)
+
     const assignees = [nationalId]
 
     const mergedApplication: BaseApplication = {
@@ -246,14 +300,23 @@ export class ApplicationController {
       assignees,
     }
 
-    const [hasChanged, updatedApplication] = await this.changeState(
+    const {
+      hasChanged,
+      hasError,
+      error,
+      application: updatedApplication,
+    } = await this.changeState(
       mergedApplication,
       template,
       DefaultEvents.ASSIGN,
       authorization,
     )
 
-    if (hasChanged && updatedApplication) {
+    if (hasError) {
+      throw new BadRequestException(error)
+    }
+
+    if (hasChanged) {
       return updatedApplication
     }
 
@@ -403,20 +466,93 @@ export class ApplicationController {
       answers: mergedAnswers,
     }
 
-    const [hasChanged, updatedApplication] = await this.changeState(
+    const {
+      hasChanged,
+      hasError,
+      error,
+      application: updatedApplication,
+    } = await this.changeState(
       mergedApplication,
       template,
       updateApplicationStateDto.event,
       authorization,
     )
 
-    // TODO: should not have to specificially check for updatedApplication
-    // because of return type on this.changeState
-    if (hasChanged === true && updatedApplication) {
+    if (hasError) {
+      throw new BadRequestException(error)
+    }
+
+    if (hasChanged) {
       return updatedApplication
     }
 
     return existingApplication
+  }
+
+  async performActionOnApplication(
+    application: BaseApplication,
+    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+    authorization: string,
+    action: ApplicationTemplateAPIAction,
+  ): Promise<TemplateAPIModuleActionResult> {
+    const {
+      apiModuleAction,
+      shouldPersistToExternalData,
+      externalDataId,
+      throwOnError,
+    } = action
+
+    const actionResult = await this.templateAPIService.performAction({
+      templateId: template.type,
+      type: apiModuleAction,
+      props: {
+        application,
+        authorization,
+      },
+    })
+
+    let updatedApplication: BaseApplication = application
+
+    if (shouldPersistToExternalData) {
+      const newExternalDataEntry: ExternalData = {
+        [externalDataId || apiModuleAction]: {
+          status: actionResult.success ? 'success' : 'failure',
+          date: new Date(),
+          data: actionResult.success
+            ? (actionResult.response as ExternalData['data'])
+            : actionResult.error,
+        },
+      }
+
+      const {
+        updatedApplication: withExternalData,
+      } = await this.applicationService.updateExternalData(
+        updatedApplication.id,
+        updatedApplication.externalData,
+        newExternalDataEntry,
+      )
+
+      updatedApplication = {
+        ...updatedApplication,
+        externalData: {
+          ...updatedApplication.externalData,
+          ...withExternalData.externalData,
+        },
+      }
+    }
+
+    if (!actionResult.success && throwOnError) {
+      return {
+        updatedApplication,
+        hasError: true,
+        error: actionResult.error,
+      }
+    }
+
+    return {
+      updatedApplication,
+      hasError: false,
+    }
   }
 
   async changeState(
@@ -424,65 +560,109 @@ export class ApplicationController {
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
     authorization: string,
-  ): Promise<[false] | [true, BaseApplication]> {
+  ): Promise<StateChangeResult> {
     const helper = new ApplicationTemplateHelper(application, template)
+    const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
+    const status = helper.getApplicationStatus()
+    let updatedApplication: BaseApplication = application
 
-    const [hasChanged, newState, newApplication] = helper.changeState(event)
+    if (onExitStateAction) {
+      const {
+        hasError,
+        error,
+        updatedApplication: withUpdatedExternalData,
+      } = await this.performActionOnApplication(
+        updatedApplication,
+        template,
+        authorization,
+        onExitStateAction,
+      )
+      updatedApplication = withUpdatedExternalData
 
-    if (!hasChanged) {
-      return [false]
-    }
-
-    const update = await this.applicationService.updateApplicationState(
-      application.id,
-      newState,
-      newApplication.answers,
-      newApplication.assignees,
-    )
-
-    const updatedApplication = update.updatedApplication as BaseApplication
-    const newStateOnEntry = helper.getStateOnEntry(newState)
-
-    if (newStateOnEntry !== null) {
-      const { apiModuleAction, onSuccessEvent, onErrorEvent } = newStateOnEntry
-
-      const [success] = await this.templateAPIService.performAction({
-        templateId: template.type,
-        type: apiModuleAction,
-        props: {
+      if (hasError) {
+        return {
+          hasChanged: false,
           application: updatedApplication,
-          authorization,
-        },
-      })
-
-      let nextEvent: string | null = null
-
-      if (success && onSuccessEvent) {
-        nextEvent = onSuccessEvent
-      } else if (!success && onErrorEvent) {
-        nextEvent = onErrorEvent
-      }
-
-      if (nextEvent !== null) {
-        // We now have to make a nested changeState call that might
-        // further update the already updated application
-        const [
-          hasChangedAgain,
-          furtherUpdatedApplication,
-        ] = await this.changeState(
-          updatedApplication,
-          template,
-          nextEvent,
-          authorization,
-        )
-
-        if (hasChangedAgain && furtherUpdatedApplication) {
-          return [true, furtherUpdatedApplication]
+          error,
+          hasError: true,
         }
       }
     }
 
-    return [true, updatedApplication]
+    const [
+      hasChanged,
+      newState,
+      withUpdatedState,
+    ] = new ApplicationTemplateHelper(updatedApplication, template).changeState(
+      event,
+    )
+    updatedApplication = {
+      ...updatedApplication,
+      answers: withUpdatedState.answers,
+      assignees: withUpdatedState.assignees,
+      state: withUpdatedState.state,
+    }
+
+    if (!hasChanged) {
+      return {
+        hasChanged: false,
+        hasError: false,
+        application: updatedApplication,
+      }
+    }
+
+    const onEnterStateAction = new ApplicationTemplateHelper(
+      updatedApplication,
+      template,
+    ).getOnEntryStateAPIAction(newState)
+
+    if (onEnterStateAction) {
+      const {
+        hasError,
+        error,
+        updatedApplication: withUpdatedExternalData,
+      } = await this.performActionOnApplication(
+        updatedApplication,
+        template,
+        authorization,
+        onEnterStateAction,
+      )
+      updatedApplication = withUpdatedExternalData
+
+      if (hasError) {
+        return {
+          hasError: true,
+          hasChanged: false,
+          error,
+          application,
+        }
+      }
+    }
+
+    try {
+      const update = await this.applicationService.updateApplicationState(
+        application.id,
+        newState,
+        updatedApplication.answers,
+        updatedApplication.assignees,
+        status,
+      )
+
+      updatedApplication = update.updatedApplication as BaseApplication
+    } catch (e) {
+      return {
+        hasChanged: false,
+        hasError: true,
+        application,
+        error: 'Could not update application',
+      }
+    }
+
+    return {
+      hasChanged: true,
+      application: updatedApplication,
+      hasError: false,
+    }
   }
 
   @Put('applications/:id/attachments')
@@ -628,7 +808,7 @@ export class ApplicationController {
     application: Application,
     @Param('pdfType') type: PdfTypes,
   ): Promise<PresignedUrlResponseDto> {
-    const url = this.fileService.getPresignedUrl(application, type)
+    const url = await this.fileService.getPresignedUrl(application, type)
 
     return { url }
   }

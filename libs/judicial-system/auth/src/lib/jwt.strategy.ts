@@ -11,7 +11,10 @@ import { cookieExtractor } from './cookieExtractor'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject('JWT_SECRET') jwtSecret: string) {
+  constructor(
+    @Inject('JWT_SECRET')
+    jwtSecret: string,
+  ) {
     super({
       jwtFromRequest: cookieExtractor,
       secretOrKey: jwtSecret,

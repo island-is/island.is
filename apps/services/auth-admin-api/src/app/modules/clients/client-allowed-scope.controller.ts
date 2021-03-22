@@ -26,7 +26,7 @@ export class ClientAllowedScopeController {
 
   /** Gets all scopes for client to select from */
   @Get()
-  async FindAvailabeScopes(): Promise<ApiScope[]> {
+  async findAvailabeScopes(): Promise<ApiScope[]> {
     return await this.clientsService.FindAvailabeScopes()
   }
 

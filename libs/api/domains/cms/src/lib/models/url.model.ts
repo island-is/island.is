@@ -5,16 +5,16 @@ import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 @ObjectType()
 export class Url {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field({ nullable: true })
-  title: string
+  title?: string
 
   @Field(() => ReferenceLink, { nullable: true })
-  page: ReferenceLink | null
+  page!: ReferenceLink | null
 
   @Field(() => [String])
-  urlsList: Array<string> = []
+  urlsList!: Array<string>
 }
 
 export const mapUrl = ({ fields, sys }: IUrl): Url => ({

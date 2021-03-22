@@ -7,7 +7,6 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import { extractParentFromApplication } from './utils'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
@@ -126,9 +125,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     actions: {
       assignToOtherParent: assign((context) => {
         // TODO: fix this..
-        const otherParent = extractParentFromApplication(
-          (context.application as unknown) as CRCApplication,
-        )
+        const {
+          externalData,
+        } = (context.application as unknown) as CRCApplication
+        const otherParent = externalData.parentNationalRegistry.data
 
         return {
           ...context,

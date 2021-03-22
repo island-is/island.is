@@ -2,11 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import {
-  extractApplicantFromApplication,
-  extractParentFromApplication,
-  constructParentAddressString,
-} from '../../lib/utils'
+import { constructParentAddressString } from '../../lib/utils'
 import { newResidence } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
@@ -17,9 +13,10 @@ const ChangeInformation = ({
   error,
 }: CRCFieldBaseProps) => {
   const { id, disabled } = field
+  const { externalData } = application
   const { formatMessage } = useIntl()
-  const applicant = extractApplicantFromApplication(application)
-  const parent = extractParentFromApplication(application)
+  const applicant = externalData.nationalRegistry.data
+  const parent = externalData.parentNationalRegistry.data
   const parentAddress = constructParentAddressString(parent)
   return (
     <>

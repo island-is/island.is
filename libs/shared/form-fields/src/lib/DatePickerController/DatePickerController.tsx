@@ -6,6 +6,7 @@ import {
   DatePicker,
   DatePickerBackgroundColor,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 
 interface Props {
   defaultValue?: string
@@ -13,7 +14,7 @@ interface Props {
   id: string
   disabled?: boolean
   name?: string
-  locale?: 'en' | 'is'
+  locale?: Locale
   label: string
   placeholder?: string
   backgroundColor?: DatePickerBackgroundColor
