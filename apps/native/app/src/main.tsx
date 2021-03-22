@@ -1,10 +1,11 @@
 import { Home } from './screens/home/home';
-import { Navigation } from "react-native-navigation";
+import { LayoutRoot, Navigation } from "react-native-navigation";
 import { Inbox } from './screens/inbox/inbox';
 import { Wallet } from './screens/wallet/wallet';
 import { User } from './screens/user/user';
 import { Login } from './screens/login/login';
 import { NavigationProvider } from 'react-native-navigation-hooks'
+import { theme } from '@island.is/island-ui/theme';
 import React from 'react';
 
 function registerScreen(name: string, Component: React.FunctionComponent) {
@@ -47,7 +48,7 @@ Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => {
 });
 
 // bottom tabs
-export const mainRoot = {
+export const mainRoot: LayoutRoot = {
   root: {
     bottomTabs: {
      id: 'BOTTOM_TABS_LAYOUT',
@@ -90,9 +91,9 @@ export const mainRoot = {
            ],
            options: {
              bottomTab: {
-               icon: {
-                 system: 'house',
-               }
+               icon: require('../assets/logo-island.png'),
+               iconHeight: 25,
+               iconWidth: 25
              },
            }
          }
@@ -162,9 +163,8 @@ Navigation.setDefaultOptions({
   bottomTab: {
     fontSize: 28,
     selectedFontSize: 18,
-    selectedTextColor: '#0061ff',
-    selectedIconColor: '#0061ff',
-    badgeColor: 'red',
+    selectedTextColor: theme.color.blue600,
+    selectedIconColor: theme.color.blue600,
   },
 });
 

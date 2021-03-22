@@ -16,9 +16,8 @@ storiesOf('Button', module)
     const backgroundColor = select('hello world', theme.color, theme.color.blue300);
     console.log({ backgroundColor });
     return (
-      <Button backgroundColor={backgroundColor}>{backgroundColor}</Button>
-    );
+      <Button title={backgroundColor} onPress={() => console.log('pressed button')} style={backgroundColor} />
   })
   .add('btn b', () => (
-    <Button>hi 2</Button>
+    <Button title="Button 2" onPress={() => console.log('pressed button')} />
   ))

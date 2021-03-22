@@ -11,7 +11,7 @@ interface ButtonProps {
 const Host = styled.TouchableHighlight`
   padding: 20px 30px;
   background-color: ${theme.color.blue600};
-  border-radius: 5px;
+  border-radius: ${theme.border.radius.standard};
   min-width: 250px;
 `;
 

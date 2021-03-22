@@ -1,20 +1,19 @@
-import { Heading } from '@island.is/island-ui-native';
+import { Container, Heading } from '@island.is/island-ui-native';
 import React from 'react'
-import { SafeAreaView, StatusBar, Text } from 'react-native'
+import { SafeAreaView } from 'react-native'
 
 export const User = () => {
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-      >
+    <SafeAreaView
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      <Container>
         <Heading>User</Heading>
-      </SafeAreaView>
-    </>
+      </Container>
+    </SafeAreaView>
   )
 }
 
