@@ -204,6 +204,9 @@
     "clients-mms": {
       "tags": []
     },
+    "clients-zendesk": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
