@@ -6,15 +6,29 @@ export interface LogoListProps {
   title: string
   body: string
   images: string[]
+  variant?: 'light' | 'dark'
 }
 
-export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
+export const LogoList: FC<LogoListProps> = ({
+  title,
+  body,
+  images,
+  variant = 'light',
+}) => (
   <div>
-    <Text variant="h1" as="h2" color="white">
+    <Text
+      variant="h1"
+      as="h2"
+      color={variant === 'light' ? 'white' : 'dark400'}
+    >
       {title}
     </Text>
     <Box paddingTop={3} marginBottom={7}>
-      <Text variant="intro" as="p" color="white">
+      <Text
+        variant="intro"
+        as="p"
+        color={variant === 'light' ? 'white' : 'dark400'}
+      >
         {body}
       </Text>
     </Box>
@@ -25,7 +39,12 @@ export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
       justifyContent="spaceBetween"
     >
       {images.map((src, i) => (
-        <Box marginBottom={5} className={styles.logo} key={i}>
+        <Box
+          marginBottom={5}
+          className={styles.logo}
+          key={i}
+          style={variant === 'dark' && { filter: 'invert(0.9)' }}
+        >
           <img src={src} alt="" />
         </Box>
       ))}

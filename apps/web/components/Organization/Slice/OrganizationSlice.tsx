@@ -31,6 +31,34 @@ const AccordionSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.AccordionSlice),
 )
 
+const MailingListSignupSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.MailingListSignupSlice),
+)
+
+const LogoListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LogoListSlice),
+)
+
+const TabSectionSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.TabSectionSlice),
+)
+
+const BulletListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.BulletListSlice),
+)
+
+const StorySlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.StorySlice),
+)
+
+const ContactUs = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.ContactUs),
+)
+
+const TeamList = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.TeamList),
+)
+
 interface OrganizationSliceProps {
   slice: Slice
   namespace?: Namespace
@@ -55,6 +83,20 @@ export const OrganizationSlice: FC<OrganizationSliceProps> = ({
       return <OneColumnTextSlice slice={slice} />
     case 'AccordionSlice':
       return <AccordionSlice slice={slice} />
+    case 'MailingListSignupSlice':
+      return <MailingListSignupSlice slice={slice} namespace={namespace} />
+    case 'LogoListSlice':
+      return <LogoListSlice slice={slice} />
+    case 'TabSection':
+      return <TabSectionSlice slice={slice} />
+    case 'BulletListSlice':
+      return <BulletListSlice slice={slice} />
+    case 'StorySlice':
+      return <StorySlice slice={slice} />
+    case 'TeamList':
+      return <TeamList {...slice} />
+    case 'ContactUs':
+      return <ContactUs {...slice} />
     default:
       return <></>
   }
