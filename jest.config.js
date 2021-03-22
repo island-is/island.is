@@ -76,7 +76,6 @@ module.exports = {
     '<rootDir>/libs/content-search-indexer/types',
     '<rootDir>/libs/content-search-metrics',
     '<rootDir>/libs/content-search-toolkit',
-    '<rootDir>/libs/contentful-importer',
     '<rootDir>/libs/contentful-translation-extension',
     '<rootDir>/libs/dokobit-signing',
     '<rootDir>/libs/email-service',
