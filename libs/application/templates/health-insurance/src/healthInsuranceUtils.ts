@@ -116,9 +116,8 @@ export const extractKeyFromStringObject = (
 }
 
 export const getBaseUrl = () => {
-  const isDev = window.location.origin === 'https://umsoknir.dev01.devland.is'
-  const isStaging =
-    window.location.origin === 'https://umsoknir.staging01.devland.is'
+  const isDev = window.location.origin.includes('dev01.devland.is')
+  const isStaging = window.location.origin.includes('staging01.devland.is')
 
   if (isStaging) {
     return 'https://beta.staging01.devland.is'
