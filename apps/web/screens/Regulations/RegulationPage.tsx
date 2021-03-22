@@ -19,12 +19,15 @@ import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
   Breadcrumbs,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   Navigation,
   Stack,
   Text,
+  Typography,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -32,6 +35,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import htmldiff from 'htmldiff-js'
 import cn from 'classnames'
+import { Sidebar } from '@island.is/web/components'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -174,8 +178,85 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
                       href: linkToRegulation(item.name),
                     }))}
                   />
-                  {/* <p>Other sidebar content</p> */}
-                </Stack>{' '}
+                  <Sidebar title="Stofnreglugerð" colorScheme="blueberry">
+                    {history.slice(0, 1).map((item) => (
+                      <Link href={linkToRegulation(item.name)}>
+                        <FocusableBox flexDirection={'column'} color="purple">
+                          {({
+                            isFocused,
+                            isHovered,
+                          }: {
+                            isFocused: boolean
+                            isHovered: boolean
+                          }) => {
+                            const textColor =
+                              isFocused || isHovered
+                                ? 'blueberry400'
+                                : 'blueberry600'
+
+                            return (
+                              <>
+                                <Typography
+                                  color={textColor}
+                                  variant="h5"
+                                  as="h3"
+                                >
+                                  {prettyName(item.name)}
+                                </Typography>
+                                <Typography color={textColor} variant="p">
+                                  {item.title}
+                                </Typography>
+                              </>
+                            )
+                          }}
+                        </FocusableBox>
+                      </Link>
+                    ))}
+                  </Sidebar>
+                  <Sidebar
+                    title={
+                      n('historyTitle') + ' ' + prettyName(regulation.name)
+                    }
+                    colorScheme="blueberry"
+                  >
+                    {history.map((item) => (
+                      <Link href={linkToRegulation(item.name)}>
+                        <FocusableBox flexDirection={'column'} color="purple">
+                          {({
+                            isFocused,
+                            isHovered,
+                          }: {
+                            isFocused: boolean
+                            isHovered: boolean
+                          }) => {
+                            const textColor =
+                              isFocused || isHovered
+                                ? 'blueberry400'
+                                : 'blueberry600'
+
+                            return (
+                              <>
+                                <Typography
+                                  color={textColor}
+                                  variant="h5"
+                                  as="h3"
+                                >
+                                  {prettyName(item.name)}
+                                </Typography>
+                                <Typography color={textColor} variant="p">
+                                  {item.title}
+                                </Typography>
+                              </>
+                            )
+                          }}
+                        </FocusableBox>
+                      </Link>
+                    ))}
+                  </Sidebar>
+                  <Sidebar title="Tengt efni">
+                    <FocusableBox></FocusableBox>
+                  </Sidebar>
+                </Stack>
               </GridColumn>
             </GridRow>
           </GridContainer>
