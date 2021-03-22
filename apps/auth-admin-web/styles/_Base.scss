@@ -275,6 +275,10 @@ nav[class$='pagination'] {
   display: none !important;
 }
 
+.vh {
+  visibility: hidden;
+}
+
 a {
   &[class$='new'] {
     padding: 20px 0px;
