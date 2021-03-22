@@ -499,7 +499,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'tempPeriods', answers['periods'])
+        set(answers, 'tempPeriods', answers.periods)
 
         return {
           ...context,
@@ -519,7 +519,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'periods', cloneDeep(answers['tempPeriods']))
+        set(answers, 'periods', cloneDeep(answers.tempPeriods))
         unset(answers, 'tempPeriods')
 
         return {
