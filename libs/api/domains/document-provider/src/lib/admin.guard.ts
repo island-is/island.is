@@ -23,8 +23,6 @@ export class AdminGuard implements CanActivate {
     const request = ctx.getContext().req
     const user = request.user
 
-    console.log(`admins: ${this.admins}`)
-
     return this.admins.includes(user.nationalId)
   }
 }
