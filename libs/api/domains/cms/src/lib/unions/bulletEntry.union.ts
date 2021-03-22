@@ -8,6 +8,7 @@ import { mapIconBullet } from '../models/iconBullet.model'
 export const BulletEntryUnion = createUnionType({
   name: 'BulletEntry',
   types: () => [IconBullet, NumberBulletGroup],
+  resolveType: (document) => document.typename,
 })
 
 export const mapBulletEntryUnion = (
