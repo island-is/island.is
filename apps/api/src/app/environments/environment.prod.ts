@@ -65,4 +65,9 @@ export default {
     username: process.env.SYSLUMENN_USERNAME,
     password: process.env.SYSLUMENN_PASSWORD,
   },
+  rskDomain: {
+    username: process.env.RSK_API_USERNAME,
+    password: process.env.RSK_API_PASSWORD,
+    url: process.env.RSK_API_URL,
+  },
 }

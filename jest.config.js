@@ -46,6 +46,7 @@ module.exports = {
     '<rootDir>/libs/api/domains/file-upload',
     '<rootDir>/libs/api/domains/health-insurance',
     '<rootDir>/libs/api/domains/national-registry',
+    '<rootDir>/libs/api/domains/rsk',
     '<rootDir>/libs/api/domains/syslumenn',
     '<rootDir>/libs/api/domains/translations',
     '<rootDir>/libs/api/domains/user-profile',
@@ -104,6 +105,7 @@ module.exports = {
     '<rootDir>/libs/message-queue',
     '<rootDir>/libs/nova-sms',
     '<rootDir>/libs/plausible',
+    '<rootDir>/libs/rsk',
     '<rootDir>/libs/service-portal/applications',
     '<rootDir>/libs/service-portal/assets',
     '<rootDir>/libs/service-portal/constants',
@@ -130,5 +132,6 @@ module.exports = {
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
     '<rootDir>/libs/vmst-client',
+    '<rootDir>/libs/clients/mms',
   ],
 }

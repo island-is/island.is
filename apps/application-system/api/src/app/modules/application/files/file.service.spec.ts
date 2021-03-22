@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
-import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
+import { SigningModule, SigningService } from '@island.is/dokobit-signing'
 import { AwsService } from './aws.service'
 import * as pdf from './utils/pdf'
 import { Application } from './../application.model'
@@ -100,17 +100,15 @@ describe('FileService', () => {
   beforeEach(async () => {
     const config: ApplicationConfig = { presignBucket: bucket }
     const module = await Test.createTestingModule({
-      imports: [LoggingModule],
+      imports: [
+        LoggingModule,
+        SigningModule.register({
+          url: 'Test Url',
+          accessToken: 'Test Access Token',
+        }),
+      ],
       providers: [
         FileService,
-        {
-          provide: SIGNING_OPTIONS,
-          useValue: {
-            url: 'Test Url',
-            accessToken: 'Test Access Token',
-          },
-        },
-        SigningService,
         AwsService,
         { provide: APPLICATION_CONFIG, useValue: config },
       ],
@@ -126,7 +124,9 @@ describe('FileService', () => {
       .spyOn(awsService, 'uploadFile')
       .mockImplementation(() => Promise.resolve())
 
-    jest.spyOn(awsService, 'getPresignedUrl').mockImplementation(() => 'url')
+    jest
+      .spyOn(awsService, 'getPresignedUrl')
+      .mockImplementation(() => Promise.resolve('url'))
 
     jest
       .spyOn(pdf, 'generateResidenceChangePdf')
@@ -260,7 +260,7 @@ describe('FileService', () => {
     const application = createApplication()
     const fileName = `children-residence-change/${application.id}.pdf`
 
-    const result = service.getPresignedUrl(
+    const result = await service.getPresignedUrl(
       application,
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
@@ -322,18 +322,24 @@ describe('FileService', () => {
   it('should throw error for getPresignedUrl since application type is not supported', async () => {
     const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
 
-    const act = () =>
-      service.getPresignedUrl(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
+    const act = async () =>
+      await service.getPresignedUrl(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
 
-    expect(act).toThrowError(BadRequestException)
+    expect(act).rejects.toEqual(BadRequestException)
   })
 
   it('should have an application type that is valid for getPresignedUrl', async () => {
     const application = createApplication()
 
-    const act = () =>
-      service.getPresignedUrl(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
+    const act = async () =>
+      await service.getPresignedUrl(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
 
-    expect(act).not.toThrow()
+    expect(act).rejects.toEqual(BadRequestException)
   })
 })

@@ -46,15 +46,9 @@ export class ChildrenResidenceChangeService {
       .promise()
     const fileContent = file.Body as Buffer
 
-    // TODO: Remove ternary for usemocks once we move mock data to externalData
-    const selectedChildren =
-      application.answers.useMocks === 'no'
-        ? application.externalData.childrenNationalRegistry.data.filter((c) =>
-            application.answers.selectChild.includes(c.name),
-          )
-        : application.answers.mockData.childrenNationalRegistry.data.filter(
-            (c) => application.answers.selectChild.includes(c.name),
-          )
+    const selectedChildren = application.externalData.childrenNationalRegistry.data.filter(
+      (c) => application.answers.selectChild.includes(c.name),
+    )
 
     if (!fileContent) {
       throw new Error('File content was undefined')
@@ -103,9 +97,19 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
+    const extraData = {
+      interviewRequested: answers.interview,
+      reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
+      transferExpirationDate:
+        answers.selectDuration[0] === 'permanent'
+          ? answers.selectDuration[0]
+          : answers.selectDuration[1],
+    }
+
     const response = await this.syslumennService.uploadData(
       participants,
       attachment,
+      extraData,
     )
 
     await this.sharedTemplateAPIService.sendEmailWithAttachment(
