@@ -2319,6 +2319,27 @@
         }
       }
     },
+    "clients-zendesk": {
+      "root": "libs/clients/zendesk",
+      "sourceRoot": "libs/clients/zendesk/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/zendesk/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/zendesk"],
+          "options": {
+            "jestConfig": "libs/clients/zendesk/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "content-search-index-manager": {
       "root": "libs/content-search-index-manager",
       "sourceRoot": "libs/content-search-index-manager/src",
