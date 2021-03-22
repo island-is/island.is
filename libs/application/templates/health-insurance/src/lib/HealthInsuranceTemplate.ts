@@ -20,12 +20,6 @@ type Events =
   | { type: 'ABORT' }
   | { type: 'MISSING_INFO' }
 
-const FileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string(),
-})
-
 const HealthInsuranceSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
