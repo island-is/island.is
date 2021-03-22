@@ -46,6 +46,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      theme
+      themeProperties
       menuLinks {
         primaryLink {
           text
