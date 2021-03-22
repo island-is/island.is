@@ -26,6 +26,10 @@ export class DocumentProviderModule {
         }),
       ],
       providers: [
+        {
+          provide: DOCUMENT_PROVIDER_ADMINS,
+          useValue: config.documentProviderAdmins,
+        },
         DocumentProviderResolver,
         DocumentProviderService,
         DocumentProviderClientTest,
@@ -57,10 +61,6 @@ export class DocumentProviderModule {
                 basePath: config.documentsServiceBasePath,
               }),
             ),
-        },
-        {
-          provide: DOCUMENT_PROVIDER_ADMINS,
-          useValue: config.documentProviderAdmins,
         },
       ],
     }
