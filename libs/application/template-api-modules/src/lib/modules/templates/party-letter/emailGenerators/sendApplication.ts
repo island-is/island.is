@@ -10,14 +10,14 @@ export const generateSendApplicationEmail = (
   const { application } = props
   const destinationEmail = 's@kogk.is'
 
-  const partyLetter = get(application.answers, 'partyLetter')
-  const partyName = get(application.answers, 'partyName')
-  const selectedNationalId = get(application.answers, 'selectedNationalId')
+  const partyLetter = get(application.answers, 'partyLetterInput')
+  const partyName = get(application.answers, 'patyNameInput')
+  const selectedNationalId = get(application.answers, 'partyNationalId')
   const applicantEmail = get(application.answers, 'applicantEmail')
   const applicantNationalId = application.applicant
   const applicantName = get(
     application.externalData,
-    'nationalRegistry.fullName',
+    'nationalRegistry.data.fullName',
   )
 
   const subject = `Umsókn um listabókstaf - ${application.id}`
