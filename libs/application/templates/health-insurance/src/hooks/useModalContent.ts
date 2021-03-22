@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { ExternalData } from '@island.is/application/core'
+import {
+  ApplicationTypes,
+  ExternalData,
+  getSlugFromType,
+} from '@island.is/application/core'
 import {
   sortApplicationsByDateAscending,
   hasHealthInsurance,
@@ -14,11 +18,15 @@ import { ContentType } from '../types'
 import { m } from '../forms/messages'
 import { Applications } from '../dataProviders/APIDataTypes'
 
-export const useModalContent = (externalData: ExternalData) => {
+export const useModalContent = (
+  externalData: ExternalData,
+  typeId: ApplicationTypes,
+) => {
   const [content, setContent] = useState<ContentType>()
   const history = useHistory()
   const baseUrl = getBaseUrl()
   const { lang } = useLocale()
+  const applicationSlug = getSlugFromType(typeId)
 
   const getFirstCreatedApplicationId = () => {
     const applications = externalData?.applications.data as Applications[]
@@ -83,7 +91,7 @@ export const useModalContent = (externalData: ExternalData) => {
       setContent({
         ...contentList.activeDraftApplication,
         buttonAction: () =>
-          history.push(`../umsokn/${firstCreatedApplicationId}`),
+          history.push(`../${applicationSlug}/${firstCreatedApplicationId}`),
       })
     }
   }, [externalData])
