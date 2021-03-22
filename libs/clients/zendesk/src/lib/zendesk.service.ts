@@ -24,8 +24,8 @@ export interface ZendeskServiceOptions {
 }
 
 export class ZendeskService {
-  #api: string
-  #params: object
+  api: string
+  params: object
 
   constructor(
     @Inject(ZENDESK_OPTIONS)
@@ -37,9 +37,9 @@ export class ZendeskService {
       `${this.options.email}/token:${this.options.token}`,
     ).toString('base64')
 
-    this.#api = `https://${options.subdomain}.zendesk.com/api/v2`
+    this.api = `https://${options.subdomain}.zendesk.com/api/v2`
 
-    this.#params = {
+    this.params = {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Basic ${token}`,
@@ -52,10 +52,10 @@ export class ZendeskService {
 
     try {
       response = await axios.get(
-        `${this.#api}/search.json?query=${encodeURIComponent(
+        `${this.api}/search.json?query=${encodeURIComponent(
           `email:"${email}"`,
         )}`,
-        this.#params,
+        this.params,
       )
     } catch (e) {
       const errMsg = 'Failed to search for user'
@@ -97,9 +97,9 @@ export class ZendeskService {
 
     try {
       response = await axios.post(
-        `${this.#api}/users.json`,
+        `${this.api}/users.json`,
         newUser,
-        this.#params,
+        this.params,
       )
     } catch (e) {
       const errMsg = 'Failed to create Zendesk user'
@@ -131,7 +131,7 @@ export class ZendeskService {
     })
 
     try {
-      await axios.post(`${this.#api}/tickets.json`, newTicket, this.#params)
+      await axios.post(`${this.api}/tickets.json`, newTicket, this.params)
     } catch (e) {
       const errMsg = 'Failed to submit Zendesk ticket'
       const description = e.response.data.description
