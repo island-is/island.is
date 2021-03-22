@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { ExternalData } from '@island.is/application/core'
 import {
-  sortApplicationsByDateAscending,
   hasHealthInsurance,
   hasActiveDraftApplication,
   hasPendingApplications,
   hasIcelandicAddress,
   getBaseUrl,
+  getOldestDraftApplicationId,
 } from '../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
 import { ContentType } from '../types'
@@ -19,12 +19,6 @@ export const useModalContent = (externalData: ExternalData) => {
   const history = useHistory()
   const baseUrl = getBaseUrl()
   const { lang } = useLocale()
-
-  const getFirstCreatedApplicationId = () => {
-    const applications = externalData?.applications.data as Applications[]
-    const sortedApplications = sortApplicationsByDateAscending(applications)
-    return sortedApplications[0]?.id
-  }
 
   const contentList = {
     hasHealthInsurance: {
@@ -79,11 +73,12 @@ export const useModalContent = (externalData: ExternalData) => {
     } else if (hasIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
     } else if (hasActiveDraftApplication(externalData)) {
-      const firstCreatedApplicationId = getFirstCreatedApplicationId()
+      const applications = externalData?.applications.data as Applications[]
+      const oldestDraftApplicationId = getOldestDraftApplicationId(applications)
       setContent({
         ...contentList.activeDraftApplication,
         buttonAction: () =>
-          history.push(`../umsokn/${firstCreatedApplicationId}`),
+          history.push(`../umsokn/${oldestDraftApplicationId}`),
       })
     }
   }, [externalData])
