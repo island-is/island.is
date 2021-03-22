@@ -108,50 +108,8 @@ describe('Create Flight', () => {
 })
 
 describe('ConnectionDiscountCodes generation', () => {
-  it('Should create a connection discount code for Reykjavík-Akureyri flight', async () => {
-    // Create discount without flights in the system
-    let createDiscount = await request(app.getHttpServer())
-      .post('/api/private/users/1234567890/discounts')
-      .set('Authorization', 'Bearer norlandair')
-      .send({
-        nationalId: user.nationalId,
-      })
-      .expect(201)
-
-    const discountCode = createDiscount.body.discountCode
-
-    await request(app.getHttpServer())
-      .post(`/api/public/discounts/${discountCode}/flights`)
-      .set('Authorization', 'Bearer norlandair')
-      .send({
-        bookingDate: '2020-08-10T14:26:22.018Z',
-        flightLegs: [
-          {
-            origin: 'REK',
-            destination: 'AK',
-            originalPrice: 50000,
-            discountPrice: 30000,
-            date: '2020-08-17T14:26:22',
-          },
-        ],
-      })
-      .expect(201)
-
-    // Re-create discounts with a flight in the system
-    createDiscount = await request(app.getHttpServer())
-      .post('/api/private/users/1234567890/discounts')
-      .set('Authorization', 'Bearer norlandair')
-      .send({
-        nationalId: user.nationalId,
-      })
-      .expect(201)
-
-    expect(createDiscount.body.connectionDiscountCodes.length).toBe(1)
-  })
-
   it('Should not create a discount code for Reykjavík-Gjögur flight', async () => {
     // Create discount without flights in the system
-    cacheManager.reset()
     let createDiscount = await request(app.getHttpServer())
       .post('/api/private/users/1234567890/discounts')
       .set('Authorization', 'Bearer norlandair')
