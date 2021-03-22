@@ -1,10 +1,12 @@
 import { setClientAuthToken } from '@island.is/application/graphql'
+import { useLocation } from 'react-router-dom'
 
 import { ActionType, useAuthState } from '../context/AuthProvider'
 import { userManager } from '../utils/userManager'
 
 const useAuth = () => {
   const [{ userInfo, userInfoState }, dispatch] = useAuthState()
+  const { pathname, search } = useLocation()
 
   async function signInUser() {
     dispatch({
@@ -24,7 +26,7 @@ const useAuth = () => {
       }
     } catch {
       await userManager.signinRedirect({
-        state: window.location.pathname,
+        state: { redirect: `${pathname}${search}` },
       })
     }
   }
