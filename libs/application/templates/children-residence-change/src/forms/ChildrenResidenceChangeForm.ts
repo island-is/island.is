@@ -13,7 +13,9 @@ import {
   buildRadioField,
   buildTextField,
   Application,
+  Comparators,
 } from '@island.is/application/core'
+import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
 
@@ -62,6 +64,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'externalData',
           title: m.externalData.general.sectionTitle,
+          condition: {
+            questionId: 'useMocks',
+            value: 'no',
+            comparator: Comparators.EQUALS,
+          },
           children: [
             buildExternalDataProvider({
               title: m.externalData.general.pageTitle,
@@ -72,25 +79,69 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: 'NationalRegistryProvider',
+                  type: DataProviderTypes.NationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'childrenNationalRegistry',
-                  type: 'ChildrenNationalRegistryProvider',
+                  type: DataProviderTypes.ChildrenNationalRegistry,
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'parentNationalRegistry',
-                  type: 'ParentNationalRegistryProvider',
+                  type: DataProviderTypes.ParentNationalRegistry,
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
-                  type: 'UserProfileProvider',
+                  type: DataProviderTypes.UserProfile,
+                  title: '',
+                  subTitle: '',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'externalData',
+          title: m.externalData.general.sectionTitle,
+          condition: {
+            questionId: 'useMocks',
+            value: 'yes',
+            comparator: Comparators.EQUALS,
+          },
+          children: [
+            buildExternalDataProvider({
+              title: m.externalData.general.pageTitle,
+              id: 'approveExternalData',
+              subTitle: m.externalData.general.subTitle,
+              description: m.externalData.general.description,
+              checkboxLabel: m.externalData.general.checkboxLabel,
+              dataProviders: [
+                buildDataProviderItem({
+                  id: 'nationalRegistry',
+                  type: DataProviderTypes.NationalRegistry,
+                  title: m.externalData.applicant.title,
+                  subTitle: m.externalData.applicant.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: 'childrenNationalRegistry',
+                  type: DataProviderTypes.MOCK_ChildrenNationalRegistry,
+                  title: m.externalData.children.title,
+                  subTitle: m.externalData.children.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: 'parentNationalRegistry',
+                  type: DataProviderTypes.MOCK_ParentNationalRegistry,
+                  title: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: 'userProfile',
+                  type: DataProviderTypes.UserProfile,
                   title: '',
                   subTitle: '',
                 }),

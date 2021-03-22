@@ -35,20 +35,21 @@ const deepChange = (obj: Document | TopLevelBlock | RichText, id: string) => ({
 const sanitizeData = (html: Document | TopLevelBlock) => ({
   ...deepChange(html, html?.data?.target?.sys?.id),
   content: (
-    html?.content ?? ([] as (TopLevelBlock | RichText)[])
+    (html?.content as (TopLevelBlock | RichText)[]) ??
+    ([] as (TopLevelBlock | RichText)[])
   ).map((content) => deepChange(content, content?.data?.target?.sys?.id)),
 })
 
 @ObjectType()
 export class Html {
-  @Field()
-  typename: string
+  @Field(() => String)
+  typename = 'Html'
 
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => graphqlTypeJson)
-  document: Document
+  document?: Document
 }
 
 export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {

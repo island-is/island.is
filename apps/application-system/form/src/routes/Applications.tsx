@@ -5,7 +5,7 @@ import format from 'date-fns/format'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
-  APPLICANT_APPLICATIONS,
+  APPLICATION_APPLICATIONS,
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -17,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   Application,
+  ApplicationStatus,
   ApplicationTypes,
   coreMessages,
 } from '@island.is/application/core'
@@ -35,10 +36,10 @@ export const Applications: FC = () => {
   useApplicationNamespaces(type)
 
   const { data, loading, error: applicationsError } = useQuery(
-    APPLICANT_APPLICATIONS,
+    APPLICATION_APPLICATIONS,
     {
       variables: {
-        typeId: type,
+        input: { typeId: type },
       },
     },
   )
@@ -56,19 +57,14 @@ export const Applications: FC = () => {
     createApplicationMutation({
       variables: {
         input: {
-          applicant: nationalRegistryId,
-          state: 'draft',
-          attachments: {},
           typeId: type,
-          assignees: [nationalRegistryId],
-          answers: {},
         },
       },
     })
   }
 
   useEffect(() => {
-    if (data && isEmpty(data.getApplicationsByApplicant)) {
+    if (data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
   }, [data])
@@ -95,14 +91,14 @@ export const Applications: FC = () => {
 
   return (
     <Page>
-      {!loading && !isEmpty(data?.getApplicationsByApplicant) && (
+      {!loading && !isEmpty(data?.applicationApplications) && (
         <Box padding="containerGutter">
           <Box marginTop={5} marginBottom={5}>
             <Text variant="h1">{formatMessage(coreMessages.applications)}</Text>
           </Box>
 
           <Stack space={2}>
-            {data?.getApplicationsByApplicant?.map(
+            {(data?.applicationApplications ?? []).map(
               (application: Application) => (
                 <ActionCard
                   key={application.id}
@@ -110,7 +106,7 @@ export const Applications: FC = () => {
                   text={format(new Date(application.modified), 'do MMMM yyyy')}
                   cta={{
                     label: formatMessage(coreMessages.buttonNext),
-                    variant: 'secondary',
+                    variant: 'text',
                     onClick: () => history.push(`../umsokn/${application.id}`),
                   }}
                   progressMeter={{

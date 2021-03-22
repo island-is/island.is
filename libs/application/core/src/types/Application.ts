@@ -1,6 +1,12 @@
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
 
+export enum ApplicationStatus {
+  IN_PROGRESS = 'inprogress',
+  COMPLETED = 'completed',
+  REJECTED = 'rejected',
+}
+
 export interface ExternalData {
   [key: string]: DataProviderResult
 }
@@ -24,4 +30,5 @@ export interface Application {
   externalData: ExternalData
   name?: string
   progress?: number
+  status: ApplicationStatus
 }

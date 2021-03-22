@@ -7,106 +7,106 @@ import { Image, mapImage } from './image.model'
 @ObjectType()
 export class TellUsAStory {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  introTitle: string
+  introTitle!: string
 
   @Field(() => Html, { nullable: true })
-  introDescription: Html
+  introDescription!: Html
 
   @Field({ nullable: true })
-  introImage?: Image
+  introImage?: Image | null
 
   @Field()
-  firstSectionTitle: string
+  firstSectionTitle!: string
 
   @Field()
-  organizationLabel: string
+  organizationLabel!: string
 
   @Field()
-  organizationPlaceholder: string
+  organizationPlaceholder!: string
 
   @Field()
-  organizationInputErrorMessage: string
+  organizationInputErrorMessage!: string
 
   @Field()
-  dateOfStoryLabel: string
+  dateOfStoryLabel!: string
 
   @Field()
-  dateOfStoryPlaceholder: string
+  dateOfStoryPlaceholder!: string
 
   @Field()
-  dateOfStoryInputErrorMessage: string
+  dateOfStoryInputErrorMessage!: string
 
   @Field()
-  secondSectionTitle: string
+  secondSectionTitle!: string
 
   @Field()
-  subjectLabel: string
+  subjectLabel!: string
 
   @Field()
-  subjectPlaceholder: string
+  subjectPlaceholder!: string
 
   @Field({ nullable: true })
   subjectInputErrorMessage?: string
 
   @Field()
-  messageLabel: string
+  messageLabel!: string
 
   @Field()
-  messagePlaceholder: string
+  messagePlaceholder!: string
 
   @Field()
-  messageInputErrorMessage: string
+  messageInputErrorMessage!: string
 
   @Field()
-  thirdSectionTitle: string
+  thirdSectionTitle!: string
 
   @Field(() => Html, { nullable: true })
-  instructionsDescription: Html
+  instructionsDescription!: Html
 
   @Field()
-  instructionsImage: Image
+  instructionsImage!: Image
 
   @Field()
-  instructionsTitle: string
+  instructionsTitle!: string
 
   @Field()
-  nameLabel: string
+  nameLabel!: string
 
   @Field()
-  namePlaceholder: string
+  namePlaceholder!: string
 
   @Field()
-  nameInputErrorMessage: string
+  nameInputErrorMessage!: string
 
   @Field()
-  emailLabel: string
+  emailLabel!: string
 
   @Field()
-  emailPlaceholder: string
+  emailPlaceholder!: string
 
   @Field()
-  emailInputErrorMessage: string
+  emailInputErrorMessage!: string
 
   @Field()
-  publicationAllowedLabel: string
+  publicationAllowedLabel!: string
 
   @Field()
-  submitButtonTitle: string
+  submitButtonTitle!: string
 
   @Field()
-  SuccessMessageTitle: string
+  SuccessMessageTitle!: string
 
   @Field(() => Html, { nullable: true })
-  successMessage: Html
+  successMessage!: Html
 
   @Field()
-  errorMessageTitle: string
+  errorMessageTitle!: string
 
   @Field(() => Html, { nullable: true })
-  errorMessage: Html
+  errorMessage!: Html
 }
 
 export const mapTellUsAStory = ({
@@ -120,7 +120,7 @@ export const mapTellUsAStory = ({
     (fields.introDescription &&
       mapHtml(fields.introDescription, sys.id + ':introDescription')) ??
     null,
-  introImage: mapImage(fields.introImage),
+  introImage: fields.introImage ? mapImage(fields.introImage) : null,
   instructionsTitle: fields.instructionsTitle ?? '',
   firstSectionTitle: fields.firstSectionTitle ?? '',
   organizationLabel: fields.organizationLabel ?? '',

@@ -4,7 +4,12 @@ import get from 'lodash/get'
 import has from 'lodash/has'
 import { ApplicationTemplateAPIAction } from '@island.is/application/core'
 
-import { Application, ExternalData, FormValue } from '../types/Application'
+import {
+  Application,
+  ApplicationStatus,
+  ExternalData,
+  FormValue,
+} from '../types/Application'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -15,6 +20,10 @@ import {
   ReadWriteValues,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
+
+enum FinalStates {
+  REJECTED = 'rejected',
+}
 
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
@@ -47,6 +56,20 @@ export class ApplicationTemplateHelper<
       merge(stateMachineOptions || {}, this.template.stateMachineOptions),
       stateMachineContext,
     )
+  }
+
+  getApplicationStatus(): ApplicationStatus {
+    const { state } = this.application
+
+    if (this.template.stateMachineConfig.states[state].type === 'final') {
+      if (state === FinalStates.REJECTED) {
+        return ApplicationStatus.REJECTED
+      }
+
+      return ApplicationStatus.COMPLETED
+    }
+
+    return ApplicationStatus.IN_PROGRESS
   }
 
   getApplicationProgress(stateKey: string = this.application.state): number {
@@ -94,29 +117,33 @@ export class ApplicationTemplateHelper<
     return this.template.stateMachineConfig.states[stateKey]?.meta
   }
 
-  /***
+  /**
    * Changes the application state
    * @param event A state machine event
    * returns [hasChanged, newState, newApplication] where newApplication has the updated state value
    */
   changeState(event: Event<TEvents>): [boolean, string, Application] {
     this.initializeStateMachine(undefined)
+
     const service = interpret(
       this.stateMachine,
       this.template.stateMachineOptions,
     )
+
     service.start()
     service.send(event)
 
-    const newState = service.state
+    const state = service.state
+    const stateValue = state.value.toString()
+
     service.stop()
-    const newApplicationState = newState.value.toString()
+
     return [
-      Boolean(newState.changed),
-      newApplicationState,
+      Boolean(state.changed),
+      stateValue,
       {
-        ...newState.context.application,
-        state: newApplicationState,
+        ...state.context.application,
+        state: stateValue,
       },
     ]
   }

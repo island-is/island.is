@@ -1,9 +1,8 @@
-import isNumber from 'lodash/isNumber'
 import {
   Application,
   AnswerValidator,
-  AnswerValidationError,
   getValueViaPath,
+  buildValidationError,
 } from '@island.is/application/core'
 import { Status, FormerInsurance, Applicant } from '../types'
 import { NO, YES, StatusTypes } from '../constants'
@@ -11,26 +10,6 @@ import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
-
-const buildValidationError = (
-  path: string,
-  index?: number,
-): ((message: string, field?: string) => AnswerValidationError) => (
-  message,
-  field,
-) => {
-  if (field && isNumber(index)) {
-    return {
-      message,
-      path: `${path}[${index}].${field}`,
-    }
-  }
-
-  return {
-    message,
-    path,
-  }
-}
 
 const STATUS = 'status'
 const FORMER_INSURANCE = 'formerInsurance'

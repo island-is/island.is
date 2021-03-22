@@ -21,6 +21,7 @@ import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { RSKModule } from '@island.is/api/domains/rsk'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -60,7 +61,7 @@ const autoSchemaFile = environment.production
       xroadBaseUrl: environment.xroad.baseUrl,
       xroadClientId: environment.xroad.clientId,
       xroadLicenseServiceId: environment.education.xroadLicenseServiceId,
-      emailOptions: environment.education.emailOptions,
+      fileDownloadBucket: environment.education.fileDownloadBucket,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
@@ -120,6 +121,11 @@ const autoSchemaFile = environment.production
       url: environment.syslumennService.url,
       username: environment.syslumennService.username,
       password: environment.syslumennService.password,
+    }),
+    RSKModule.register({
+      password: environment.rskDomain.password,
+      url: environment.rskDomain.url,
+      username: environment.rskDomain.username,
     }),
   ],
 })

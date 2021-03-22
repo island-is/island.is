@@ -5,6 +5,7 @@ const baseApiUrl = 'http://localhost:4444'
 export default {
   production: false,
   environment: 'local',
+  name: 'local',
   baseApiUrl,
   redis: {
     urls: [
@@ -23,7 +24,7 @@ export default {
       'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   templateApi: {
-    clientLocationOrigin: 'http://localhost:4200',
+    clientLocationOrigin: 'http://localhost:4242',
     emailOptions: {
       useTestAccount: true,
     },

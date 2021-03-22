@@ -8,13 +8,13 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 @ObjectType()
 export class LatestNewsSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [News])
-  news: GetNewsInput
+  news!: GetNewsInput
 }
 
 export const mapLatestNewsSlice = ({

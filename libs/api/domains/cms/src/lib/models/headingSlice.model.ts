@@ -5,13 +5,13 @@ import { SystemMetadata } from '@island.is/shared/types'
 @ObjectType()
 export class HeadingSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field()
-  body: string
+  body?: string
 }
 
 export const mapHeadingSlice = ({
