@@ -61,13 +61,7 @@ export const Applications: FC = () => {
     createApplicationMutation({
       variables: {
         input: {
-          applicant: nationalRegistryId,
-          state: 'draft',
-          attachments: {},
           typeId: type,
-          assignees: [nationalRegistryId],
-          answers: {},
-          status: ApplicationStatus.IN_PROGRESS,
         },
       },
     })

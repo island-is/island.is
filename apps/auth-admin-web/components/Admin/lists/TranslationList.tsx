@@ -42,7 +42,12 @@ class TranslationList extends Component {
   }
 
   deleteTranslation = async (): Promise<void> => {
-    await TranslationService.deleteTranslation(this.state.translationToRemove)
+    const translationObj = new TranslationDTO()
+    translationObj.className = this.state.translationToRemove.className
+    translationObj.key = this.state.translationToRemove.key
+    translationObj.language = this.state.translationToRemove.language
+    translationObj.property = this.state.translationToRemove.property
+    await TranslationService.deleteTranslation(translationObj)
     this.getTranslations(
       this.state.searchString,
       this.state.page,

@@ -5,6 +5,7 @@ const baseApiUrl = process.env.GRAPHQL_API_URL
 export default {
   production: true,
   environment: process.env.ENVIRONMENT,
+  name: process.env.name,
   baseApiUrl,
   redis: {
     urls: [process.env.REDIS_URL_NODE_01],
