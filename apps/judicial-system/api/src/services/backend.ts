@@ -97,13 +97,11 @@ class BackendAPI extends RESTDataSource {
     return this.get(`case/${id}/notifications`)
   }
 
-  async createPresignedPost(
+  createPresignedPost(
     id: string,
     createPresignedPost: CreatePresignedPost,
   ): Promise<PresignedPost> {
-    return {
-      url: 'http://localhost:4200/file',
-    }
+    return this.post(`case/${id}/file/url/`)
   }
 }
 

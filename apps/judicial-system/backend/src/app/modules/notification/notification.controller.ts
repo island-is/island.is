@@ -64,27 +64,9 @@ const registrarNotificationRule = {
 @ApiTags('notifications')
 export class NotificationController {
   constructor(
-    private readonly notificationService: NotificationService,
     private readonly caseService: CaseService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private readonly notificationService: NotificationService,
   ) {}
-
-  private async findCaseById(id: string, user: User) {
-    const existingCase = await this.caseService.findById(id)
-
-    if (!existingCase) {
-      throw new NotFoundException(`Case ${id} does not exist`)
-    }
-
-    if (isCaseBlockedFromUser(existingCase, user)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have access to case ${id}`,
-      )
-    }
-
-    return existingCase
-  }
 
   @RolesRules(
     prosecutorNotificationRule,
@@ -101,7 +83,7 @@ export class NotificationController {
     @CurrentHttpUser() user: User,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     return this.notificationService.sendCaseNotification(
       notification,
@@ -119,7 +101,7 @@ export class NotificationController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Notification[]> {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     return this.notificationService.getAllCaseNotifications(existingCase)
   }

@@ -9,7 +9,6 @@ import {
   Param,
   Post,
   Put,
-  Inject,
   ForbiddenException,
   Query,
   ConflictException,
@@ -43,7 +42,6 @@ import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
-import { isCaseBlockedFromUser } from './filters'
 import { CaseService } from './case.service'
 
 // Allows prosecutors to perform any action
@@ -187,25 +185,9 @@ const registrarTransitionRule = {
 @ApiTags('cases')
 export class CaseController {
   constructor(
-    private readonly userService: UserService,
     private readonly caseService: CaseService,
+    private readonly userService: UserService,
   ) {}
-
-  private async findCaseById(id: string, user: User): Promise<Case> {
-    const existingCase = await this.caseService.findById(id)
-
-    if (!existingCase) {
-      throw new NotFoundException(`Case ${id} does not exist`)
-    }
-
-    if (isCaseBlockedFromUser(existingCase, user)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have access to case ${id}`,
-      )
-    }
-
-    return existingCase
-  }
 
   private async validateProsecutor(prosecutorId: string, existingCase: Case) {
     const user = await this.userService.findById(prosecutorId)
@@ -249,7 +231,7 @@ export class CaseController {
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case> {
     // Make sure the user has access to this case
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     // Make sure a valid prosecutor is assigned to the case
     if (caseToUpdate.prosecutorId && existingCase.prosecutorId) {
@@ -287,7 +269,7 @@ export class CaseController {
   ): Promise<Case> {
     // Use existingCase.modified when client is ready to send last modified timestamp with all updates
 
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     const state = transitionCase(transition.transition, existingCase.state)
 
@@ -331,7 +313,7 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     return existingCase
   }
@@ -349,7 +331,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     const pdf = await this.caseService.getRulingPdf(existingCase)
 
@@ -377,7 +359,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     const pdf = await this.caseService.getRequestPdf(existingCase)
 
@@ -404,7 +386,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Res() res: Response,
   ) {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     if (user?.id !== existingCase.judgeId) {
       throw new ForbiddenException(
@@ -440,7 +422,7 @@ export class CaseController {
     @CurrentHttpUser() user: User,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     if (user?.id !== existingCase.judgeId) {
       throw new ForbiddenException(
@@ -465,7 +447,7 @@ export class CaseController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<Case> {
-    const existingCase = await this.findCaseById(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     if (existingCase.childCase) {
       return existingCase.childCase
