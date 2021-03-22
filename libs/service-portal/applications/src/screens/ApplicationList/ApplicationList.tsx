@@ -22,7 +22,7 @@ import { m } from '../../lib/messages'
 
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
 const isStaging = window.location.origin.includes('beta.staging01.devland.is')
-const isProduction = window.location.origin.includes('https://island.is')
+const isProduction = window.location.origin === 'https://island.is'
 
 const baseUrlForm = isDev
   ? 'https://dev01.devland.is/umsoknir'
