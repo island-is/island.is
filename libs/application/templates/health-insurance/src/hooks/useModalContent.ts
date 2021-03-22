@@ -6,12 +6,12 @@ import {
   getSlugFromType,
 } from '@island.is/application/core'
 import {
-  sortApplicationsByDateAscending,
   hasHealthInsurance,
   hasActiveDraftApplication,
   hasPendingApplications,
   hasIcelandicAddress,
   getBaseUrl,
+  getOldestDraftApplicationId,
 } from '../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
 import { ContentType } from '../types'
@@ -27,12 +27,6 @@ export const useModalContent = (
   const baseUrl = getBaseUrl()
   const { lang } = useLocale()
   const applicationSlug = getSlugFromType(typeId)
-
-  const getFirstCreatedApplicationId = () => {
-    const applications = externalData?.applications.data as Applications[]
-    const sortedApplications = sortApplicationsByDateAscending(applications)
-    return sortedApplications[0]?.id
-  }
 
   const contentList = {
     hasHealthInsurance: {
@@ -87,11 +81,12 @@ export const useModalContent = (
     } else if (hasIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
     } else if (hasActiveDraftApplication(externalData)) {
-      const firstCreatedApplicationId = getFirstCreatedApplicationId()
+      const applications = externalData?.applications.data as Applications[]
+      const oldestDraftApplicationId = getOldestDraftApplicationId(applications)
       setContent({
         ...contentList.activeDraftApplication,
         buttonAction: () =>
-          history.push(`../${applicationSlug}/${firstCreatedApplicationId}`),
+          history.push(`../${applicationSlug}/${oldestDraftApplicationId}`),
       })
     }
   }, [externalData])
