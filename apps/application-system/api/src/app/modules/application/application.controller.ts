@@ -33,6 +33,7 @@ import {
   ExternalData,
   ApplicationTemplateAPIAction,
   PdfTypes,
+  ApplicationStatus,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 // import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
@@ -63,6 +64,9 @@ import {
   validateApplicationSchema,
   validateIncomingAnswers,
   validateIncomingExternalDataProviders,
+  validateThatTemplateIsReady,
+  isTemplateReady,
+  validateThatApplicationIsReady,
 } from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -123,6 +127,8 @@ export class ApplicationController {
       )
     }
 
+    await validateThatApplicationIsReady(application as BaseApplication)
+
     return application
   }
 
@@ -155,11 +161,38 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
-    return await this.applicationService.findAllByNationalIdAndFilters(
+    const applications = await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
     )
+
+    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const filteredApplications = []
+
+    for (const application of applications) {
+      // We've already checked an application with this type and it is ready
+      if (templateTypeToIsReady[application.typeId]) {
+        filteredApplications.push(application)
+      } else if (templateTypeToIsReady[application.typeId] === false) {
+        // We've already checked an application with this type
+        // and it is NOT ready so we will skip it
+        continue
+      }
+
+      const applicationTemplate = await getApplicationTemplateByTypeId(
+        application.typeId,
+      )
+
+      if (isTemplateReady(applicationTemplate)) {
+        templateTypeToIsReady[application.typeId] = true
+        filteredApplications.push(application)
+      } else {
+        templateTypeToIsReady[application.typeId] = false
+      }
+    }
+
+    return filteredApplications
   }
 
   @Post('applications')
@@ -168,14 +201,52 @@ export class ApplicationController {
   async create(
     @Body()
     application: CreateApplicationDto,
+    @NationalId()
+    nationalId: string,
   ): Promise<ApplicationResponseDto> {
-    // TODO not post the state, it should follow the initialstate of the machine
-    await validateApplicationSchema(
-      application,
-      application.answers as FormValue,
-    )
+    const { typeId } = application
 
-    return this.applicationService.create(application)
+    const template = await getApplicationTemplateByTypeId(typeId)
+
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${typeId}`,
+      )
+    }
+
+    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
+
+    // TODO: initial state should be required
+    const initialState =
+      template.stateMachineConfig.initial ??
+      Object.keys(template.stateMachineConfig.states)[0]
+
+    if (typeof initialState !== 'string') {
+      throw new BadRequestException(
+        `No initial state found for type: ${typeId}`,
+      )
+    }
+
+    const applicationDto: Pick<
+      BaseApplication,
+      | 'answers'
+      | 'applicant'
+      | 'assignees'
+      | 'attachments'
+      | 'state'
+      | 'status'
+      | 'typeId'
+    > = {
+      answers: {},
+      applicant: nationalId,
+      assignees: [],
+      attachments: {},
+      state: initialState,
+      status: ApplicationStatus.IN_PROGRESS,
+      typeId: application.typeId,
+    }
+
+    return this.applicationService.create(applicationDto)
   }
 
   @Put('applications/assign')
@@ -219,6 +290,8 @@ export class ApplicationController {
         `No application template exists for type: ${existingApplication.typeId}`,
       )
     }
+
+    validateThatTemplateIsReady(template)
 
     const assignees = [nationalId]
 

@@ -74,7 +74,7 @@ export class TranslationService extends BaseService {
   static async deleteTranslation(
     translation: TranslationDTO,
   ): Promise<number | null> {
-    return BaseService.DELETE(`translation`, translation)
+    return BaseService.DELETE(`translation/translation`, translation)
   }
 
   /** Gets a translation by it's key */
