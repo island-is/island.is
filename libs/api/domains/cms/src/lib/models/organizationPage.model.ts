@@ -21,6 +21,12 @@ export class OrganizationPage {
   @Field()
   description?: string
 
+  @Field()
+  theme!: string
+
+  @Field()
+  themeProperties?: string
+
   @Field(() => [SliceUnion])
   slices?: Array<typeof SliceUnion | null>
 
@@ -45,6 +51,10 @@ export const mapOrganizationPage = ({
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   description: fields.description ?? '',
+  theme: fields.theme ?? '',
+  themeProperties: fields.themeProperties
+    ? JSON.stringify(fields.themeProperties)
+    : '',
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   organization: fields.organization
