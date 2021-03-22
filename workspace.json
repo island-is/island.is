@@ -1460,6 +1460,7 @@
         "build": {
           "builder": "@nrwl/web:build",
           "options": {
+            "baseHref": "/umsoknir/",
             "outputPath": "dist/apps/application-system/form",
             "index": "apps/application-system/form/src/index.html",
             "main": "apps/application-system/form/src/main.tsx",
