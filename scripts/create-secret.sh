@@ -16,7 +16,7 @@ SSM_PREFIX="/k8s/"
 MIN_LENGTH="{6,128}"
 
 # Secret name can only be alphanumeric and dash
-ALPHANUMERIC_DASH="^[a-zA-Z0-9\/_-]"
+ALPHANUMERIC_DASH="^[a-zA-Z0-9\//_-]"
 
 # Atleast one valid char
 ONE_OR_MORE="+$"
@@ -57,8 +57,7 @@ validate_slash () {
 validate_whitespace () {
   if [ ! ${1+x} ]
   then
-    printf "%sNo empty values please%s" "$RED" "$RESET"
-    exit 0
+    error_empty
   fi
   # No whitespace
   if [[ $1 =~ $ILLEGAL_CHARS ]]
