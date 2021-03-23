@@ -32,8 +32,8 @@ const Overview = ({
     initialFileSignatureState,
   )
   const applicant = externalData.nationalRegistry.data
-  const parent = externalData.parentNationalRegistry.data
-  const parentAddress = constructParentAddressString(parent)
+  const otherParent = applicant?.children?.[0].otherParent
+  const parentAddress = constructParentAddressString(otherParent.address)
   const children = answers.selectChild
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
@@ -163,7 +163,9 @@ const Overview = ({
           text={m.contract.general.description}
           format={{
             otherParent:
-              application.state === 'draft' ? parent.name : applicant.fullName,
+              application.state === 'draft'
+                ? otherParent.fullName
+                : applicant.fullName,
           }}
         />
       </Box>
@@ -203,7 +205,7 @@ const Overview = ({
           })}
         </Text>
         <Text>{applicant?.fullName}</Text>
-        <Text>{applicant?.legalResidence}</Text>
+        {/* <Text>{applicant?.legalResidence}</Text> */}
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>

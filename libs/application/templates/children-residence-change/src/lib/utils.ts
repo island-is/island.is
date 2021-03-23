@@ -1,8 +1,8 @@
-import { PersonResidenceChange } from '../types'
+import { Address } from '../types'
 
-export const constructParentAddressString = (parent: PersonResidenceChange) => {
-  if (!parent) {
+export const constructParentAddressString = (address: Address) => {
+  if (!address) {
     return null
   }
-  return `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
+  return `${address?.streetName}, ${address?.postalCode} ${address?.city}`
 }

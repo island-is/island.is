@@ -1,8 +1,34 @@
-import { NationalRegistryUser } from '@island.is/api/schema'
+// import { NationalRegistryUser } from '@island.is/api/schema'
 import { Application, FieldBaseProps } from '@island.is/application/core'
 import { answersSchema } from '../lib/dataSchema'
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2
+
+export interface Address {
+  streetName: string
+  postalCode: string
+  city: string
+}
+
+interface OtherParent {
+  nationalId: string
+  fullName: string
+  address: Address
+}
+
+interface Child {
+  nationalId: string
+  livesWithApplicant: boolean
+  fullName: string
+  otherParent: OtherParent
+}
+
+export interface NationalRegistry {
+  nationalId: string
+  fullName: string
+  address: Address
+  children: Child[]
+}
 
 export interface PersonResidenceChange {
   id: string
@@ -22,7 +48,7 @@ export interface UserInfo {
 
 export interface ExternalData {
   nationalRegistry: {
-    data: NationalRegistryUser
+    data: NationalRegistry
   }
   parentNationalRegistry: {
     data: PersonResidenceChange
@@ -35,9 +61,24 @@ export interface ExternalData {
   }
 }
 
+interface Person {
+  nationalId: string
+  fullName: string
+  address: Address
+}
+
+interface MockChildren extends Person {
+  livesWithApplicant: 'yes' | undefined
+  otherParent: number
+}
+interface MockData {
+  parents: Person[]
+  children: MockChildren[]
+}
+
 // We are using mockData that is not defined in the zod schema
 export interface Answers extends answersSchema {
-  mockData: ExternalData
+  mockData: MockData
 }
 
 export type CRCApplication = Override<
@@ -51,10 +92,9 @@ export type CRCFieldBaseProps = Override<
 >
 
 export enum DataProviderTypes {
-  MOCK_ChildrenNationalRegistry = 'MockChildrenNationalRegistryProvider',
   ChildrenNationalRegistry = 'ChildrenNationalRegistryProvider',
-  MOCK_ParentNationalRegistry = 'MockParentNationalRegistryProvider',
   ParentNationalRegistry = 'ParentNationalRegistryProvider',
+  MOCK_NationalRegistry = 'MockNationalRegistryProvider',
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
 }
