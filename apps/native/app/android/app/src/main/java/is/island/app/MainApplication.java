@@ -1,4 +1,6 @@
-package com.islandapp;
+package is.island.app;
+
+import is.island.app.generated.BasePackageList;
 
 // npm packages
 import com.reactnativenavigation.NavigationApplication;
@@ -8,6 +10,9 @@ import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.reactnativeultimateconfig.UltimateConfigPackage;
 import com.reactnativeultimateconfig.UltimateConfigModule;
+import org.unimodules.adapters.react.ModuleRegistryAdapter;
+import org.unimodules.adapters.react.ReactModuleRegistryProvider;
+import org.unimodules.core.interfaces.SingletonModule;
 
 // android and react native
 import android.app.Application;
@@ -19,8 +24,11 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Arrays;
+
 
 public class MainApplication extends NavigationApplication {
+  private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
 
   private final ReactNativeHost mReactNativeHost =
       new NavigationReactNativeHost(this) {
@@ -39,6 +47,12 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNCWebViewPackage());
           packages.add(new UltimateConfigPackage());
           packages.add(new KeychainPackage());
+
+          // Unimodules
+          List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
+            new ModuleRegistryAdapter(mModuleRegistryProvider)
+          );
+          packages.addAll(unimodules);
           return packages;
         }
 
@@ -75,7 +89,7 @@ public class MainApplication extends NavigationApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.islandapp.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("is.island.app.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

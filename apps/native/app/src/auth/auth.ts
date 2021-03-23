@@ -91,7 +91,6 @@ export const authStore = create<AuthStore>((set, get) => ({
 export const useAuthStore = createUse(authStore);
 
 export async function checkIsAuthenticated() {
-  return true;
   // Fetch initial authorization result from keychain
   try {
     const res = await Keychain.getGenericPassword();

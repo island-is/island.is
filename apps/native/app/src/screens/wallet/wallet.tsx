@@ -6,7 +6,20 @@ export const Wallet = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView horizontal={false}>
-        <ScrollView horizontal style={{ marginTop: 50, marginBottom: 50 }}>
+        <ScrollView
+          horizontal
+          snapToInterval={260+30}
+          snapToAlignment={"start"}
+          contentInset={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 30,
+          }}
+          contentInsetAdjustmentBehavior="automatic"
+          decelerationRate={0}
+          style={{ marginTop: 50, marginBottom: 50 }}
+        >
           <Card title="Ökuskírteini" />
           <Card title="Skotvopnaleyfi" />
           <Card title="Fyrsta hjálp" />

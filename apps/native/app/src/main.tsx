@@ -1,16 +1,83 @@
+import React from 'react'
+import { AppState, AppStateStatus, Text, View } from 'react-native';
+import { Navigation, LayoutRoot, NavigationFunctionComponent } from 'react-native-navigation'
+import { NavigationProvider } from 'react-native-navigation-hooks'
 import { Home } from './screens/home/home'
-import { Navigation, LayoutRoot } from 'react-native-navigation'
 import { Inbox } from './screens/inbox/inbox'
 import { Wallet } from './screens/wallet/wallet'
 import { User } from './screens/user/user'
 import { Login } from './screens/login/login'
-import { NavigationProvider } from 'react-native-navigation-hooks'
 import { theme } from '@island.is/island-ui/theme'
-import React from 'react'
-import { checkIsAuthenticated } from './auth/auth'
+import { authStore, checkIsAuthenticated } from './auth/auth'
 import { config } from './utils/config'
+import { LockScreen } from './screens/lockscreen/lockscreen';
+import { authenticateAsync } from 'expo-local-authentication';
 
-function registerScreen(name: string, Component: React.FunctionComponent) {
+// native navigation options
+Navigation.setDefaultOptions({
+  topBar: {
+    animate: true,
+    title: {
+      color: '#13134b',
+    },
+    backButton: {
+      color: '#13134b',
+    },
+    background: {
+      color: '#f2f7ff',
+    },
+    borderHeight: 0,
+    borderColor: 'transparent',
+  },
+  bottomTabs: {
+    elevation: 0,
+    borderWidth: 0,
+    hideShadow: true,
+    titleDisplayMode: 'alwaysHide'
+  },
+})
+
+let lockScreenComponentId: string | undefined;
+let isAuthenticating: boolean = false;
+
+AppState.addEventListener("change", (status: AppStateStatus) => {
+  console.log('status', status);
+  if (!authStore.getState().userInfo) {
+    console.log('no auth, fail');
+    return;
+  }
+  if (isAuthenticating) {
+    console.log('authenticating, waiting');
+    return;
+  }
+  if (status === 'background' || status === 'inactive') {
+    if (!lockScreenComponentId) {
+      Navigation.showOverlay({
+        component: {
+          id: 'LOCK_SCREEN',
+          name: 'is.island.LockScreen'
+        }
+      }).then(componentId => {
+        lockScreenComponentId = componentId;
+      })
+    }
+  } else {
+    if (lockScreenComponentId) {
+      isAuthenticating = true;
+      authenticateAsync()
+      .then((response) => {
+        if (response.success && lockScreenComponentId) {
+          Navigation.dismissOverlay(lockScreenComponentId).then(() => {
+            lockScreenComponentId = undefined;
+          });
+        }
+        isAuthenticating = false;
+      })
+    }
+  }
+});
+
+function registerScreen(name: string, Component: NavigationFunctionComponent) {
   Navigation.registerComponent(
     name,
     () => (props) => {
@@ -24,21 +91,36 @@ function registerScreen(name: string, Component: React.FunctionComponent) {
   )
 }
 
+
+const TitleComponent = ({ title }: any) => (
+  <View style={{ flex: 1, justifyContent: 'center' }}>
+  <Text style={{
+    color: theme.color.blue600,
+    fontSize: 19,
+    fontWeight: '700',
+    paddingLeft: 16
+   }}>{title}</Text>
+   </View>
+);
+
+
 if (config.storybookMode) {
   registerScreen(
     'is.island.StorybookScreen',
     require('./screens/storybook/storybook').Storybook,
   )
 } else {
+  Navigation.registerComponent('is.island.TitleComponent', () => TitleComponent);
   registerScreen('is.island.Login', Login)
   registerScreen('is.island.HomeScreen', Home)
   registerScreen('is.island.InboxScreen', Inbox)
   registerScreen('is.island.WalletScreen', Wallet)
   registerScreen('is.island.UserScreen', User)
+  registerScreen('is.island.LockScreen', LockScreen)
 }
 
 // login screen
-const loginRoot = {
+export const loginRoot = {
   root: {
     component: {
       name: 'is.island.Login',
@@ -55,6 +137,7 @@ Navigation.events().registerAppLaunchedListener(async () => {
   } else {
     const isAuthenticated = await checkIsAuthenticated()
     Navigation.setRoot(isAuthenticated ? mainRoot : loginRoot)
+    // Navigation.setRoot(loginRoot)
   }
 })
 
@@ -75,6 +158,16 @@ Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => {
     })
   }
 })
+
+const rightButtons = [
+  {
+    id: 'userButton',
+    text: 'User',
+    icon: {
+      system: 'person.crop.circle',
+    },
+  },
+];
 
 // bottom tabs
 export const mainRoot: LayoutRoot = {
@@ -100,15 +193,15 @@ export const mainRoot: LayoutRoot = {
             ],
             options: {
               bottomTab: {
-                selectedIconColor: theme.color.blue600,
-                icon: {
-                  system: 'tray',
-                },
+                selectedIconColor: theme.color.blue400,
+                icon: require('./assets/icons/tabbar-inbox.png'),
+                selectedIcon: require('./assets/icons/tabbar-inbox-selected.png'),
               },
               topBar: {
                 largeTitle: {
                   visible: true,
                 },
+                rightButtons,
               },
             },
           },
@@ -126,9 +219,12 @@ export const mainRoot: LayoutRoot = {
             ],
             options: {
               bottomTab: {
-                icon: require('./assets/tabbar-icon-home.png'),
-                selectedIcon: require('./assets/tabbar-icon-home.png'),
+                icon: require('./assets/icons/tabbar-home.png'),
+                selectedIcon: require('./assets/icons/tabbar-home-selected.png'),
               },
+              topBar: {
+                rightButtons,
+              }
             },
           },
         },
@@ -144,11 +240,15 @@ export const mainRoot: LayoutRoot = {
               },
             ],
             options: {
+              topBar: {
+                rightButtons,
+              },
               bottomTab: {
-                selectedIconColor: theme.color.blue600,
-                icon: {
-                  system: 'wallet.pass',
-                },
+                testID: 'MAIN_TABS_WALLET_TAB',
+                text: 'Wallet',
+                selectedIconColor: theme.color.blue400,
+                icon: require('./assets/icons/tabbar-wallet.png'),
+                selectedIcon: require('./assets/icons/tabbar-wallet-selected.png'),
               },
             },
           },
@@ -157,41 +257,3 @@ export const mainRoot: LayoutRoot = {
     },
   },
 }
-
-// native navigation options
-Navigation.setDefaultOptions({
-  topBar: {
-    animate: true,
-    title: {
-      color: '#13134b',
-    },
-    backButton: {
-      color: '#13134b',
-    },
-    background: {
-      color: '#f2f7ff',
-    },
-    borderHeight: 0,
-    borderColor: 'transparent',
-    rightButtons: [
-      {
-        id: 'userButton',
-        text: 'User',
-        icon: {
-          system: 'person.crop.circle',
-        },
-      },
-    ],
-  },
-  bottomTabs: {
-    elevation: 0,
-    borderWidth: 0,
-    hideShadow: true,
-    titleDisplayMode: 'alwaysHide',
-  },
-  bottomTab: {
-    fontSize: 28,
-    selectedFontSize: 18,
-    selectedTextColor: theme.color.blue600,
-  },
-})

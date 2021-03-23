@@ -1,5 +1,8 @@
 #import "AppDelegate.h"
 #import <ReactNativeNavigation/ReactNativeNavigation.h>
+#import <UMCore/UMModuleRegistry.h>
+#import <UMReactNativeAdapter/UMNativeModulesProxy.h>
+#import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
@@ -23,6 +26,13 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+
+@interface AppDelegate () <RCTBridgeDelegate>
+
+@property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
+
+@end
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -31,12 +41,16 @@ static void InitializeFlipper(UIApplication *application) {
   InitializeFlipper(application);
 #endif
 
+  self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
   [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
   return YES;
 }
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge {
-  return [ReactNativeNavigation extraModulesForBridge:bridge];
+  NSArray<id<RCTBridgeModule>> *extraModules = [_moduleRegistryAdapter extraModulesForBridge:bridge];
+  NSArray<id<RCTBridgeModule>> *rnnModules = [ReactNativeNavigation extraModulesForBridge:bridge];
+  return [rnnModules arrayByAddingObjectsFromArray:extraModules];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

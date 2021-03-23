@@ -48,6 +48,8 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>NSFaceIDUsageDescription</key>
+  <string>Used for locking the app while not in use</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>

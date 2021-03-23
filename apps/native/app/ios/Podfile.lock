@@ -7,6 +7,12 @@ PODS:
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
+  - EXConstants (9.3.5):
+    - UMConstantsInterface
+    - UMCore
+  - EXLocalAuthentication (10.0.0):
+    - UMConstantsInterface
+    - UMCore
   - FBLazyVector (0.64.0)
   - FBReactNativeSpec (0.64.0):
     - RCT-Folly (= 2020.01.13.00)
@@ -341,12 +347,22 @@ PODS:
     - React-Core
   - RNKeychain (6.2.0):
     - React
+  - UMAppLoader (1.4.0)
+  - UMConstantsInterface (5.4.0)
+  - UMCore (6.0.0)
+  - UMFontInterface (5.4.0)
+  - UMReactNativeAdapter (5.7.0):
+    - React-Core
+    - UMCore
+    - UMFontInterface
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
 
 DEPENDENCIES:
   - DoubleConversion (from `../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EXConstants (from `../../node_modules/expo-constants/ios`)
+  - EXLocalAuthentication (from `../../node_modules/expo-local-authentication/ios`)
   - FBLazyVector (from `../../../../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../../../../node_modules/react-native/React/FBReactNativeSpec`)
   - Flipper (~> 0.75.1)
@@ -400,6 +416,11 @@ DEPENDENCIES:
   - ReactNativeNavigation (from `../../node_modules/react-native-navigation`)
   - "RNCAsyncStorage (from `../../node_modules/@react-native-community/async-storage`)"
   - RNKeychain (from `../../node_modules/react-native-keychain`)
+  - UMAppLoader (from `../../node_modules/unimodules-app-loader/ios`)
+  - UMConstantsInterface (from `../../node_modules/unimodules-constants-interface/ios`)
+  - "UMCore (from `../../node_modules/@unimodules/core/ios`)"
+  - UMFontInterface (from `../../node_modules/unimodules-font-interface/ios`)
+  - "UMReactNativeAdapter (from `../../node_modules/@unimodules/react-native-adapter/ios`)"
   - Yoga (from `../../../../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -421,6 +442,10 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   DoubleConversion:
     :podspec: "../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXConstants:
+    :path: "../../node_modules/expo-constants/ios"
+  EXLocalAuthentication:
+    :path: "../../node_modules/expo-local-authentication/ios"
   FBLazyVector:
     :path: "../../../../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
@@ -485,6 +510,16 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@react-native-community/async-storage"
   RNKeychain:
     :path: "../../node_modules/react-native-keychain"
+  UMAppLoader:
+    :path: "../../node_modules/unimodules-app-loader/ios"
+  UMConstantsInterface:
+    :path: "../../node_modules/unimodules-constants-interface/ios"
+  UMCore:
+    :path: "../../node_modules/@unimodules/core/ios"
+  UMFontInterface:
+    :path: "../../node_modules/unimodules-font-interface/ios"
+  UMReactNativeAdapter:
+    :path: "../../node_modules/@unimodules/react-native-adapter/ios"
   Yoga:
     :path: "../../../../node_modules/react-native/ReactCommon/yoga"
 
@@ -493,6 +528,8 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
+  EXConstants: 54d0bf04319d1692c6c7bc03ca151ef7a71705a4
+  EXLocalAuthentication: fee862d288cefd30480d2c0e8fa50a5721ce0dfd
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
   FBReactNativeSpec: 8df7b65459958769f0081bcf6c0ce0006cbf6217
   Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
@@ -534,9 +571,14 @@ SPEC CHECKSUMS:
   ReactNativeNavigation: 906b631a6847c26cacf5cb3791566f1fe205c65c
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
+  UMAppLoader: 92d044af52626af3d81a69796ad666fc7a9a7d78
+  UMConstantsInterface: 6825ea3832d26ed392ca6eff2df84edd69968fd0
+  UMCore: 97ba5041c9c92317ce61739f6d126a692c8ef4a8
+  UMFontInterface: 85fe1b845fb7caab45e04d9ce47e1677a5ce90a5
+  UMReactNativeAdapter: 172def7895b2cb44a7dd021336e316d5fa8ea958
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 290990c3e5cb4f3f1360993624627f8b5a59c40c
+PODFILE CHECKSUM: c98713eb586d468574c6512d50f7e52caf399f65
 
 COCOAPODS: 1.10.1
