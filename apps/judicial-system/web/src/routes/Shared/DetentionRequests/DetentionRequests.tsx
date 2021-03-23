@@ -2,10 +2,11 @@ import React, { useEffect, useState, useContext, useMemo } from 'react'
 import cn from 'classnames'
 import {
   AlertMessage,
-  TagVariant,
   Box,
-  Icon,
+  Text,
   Tag,
+  Icon,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
@@ -28,38 +29,32 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useMutation, useQuery } from '@apollo/client'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { useRouter } from 'next/router'
 import {
   SendNotificationMutation,
   TransitionCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as styles from './DetentionRequests.treat'
-import ActiveRequests from './ActiveRequests'
-import PastRequests from './PastRequests'
-import { formatDate } from 'libs/judicial-system/formatters/src'
-import format from 'date-fns/format'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import parseISO from 'date-fns/parseISO'
+import {
+  getClassNamesFor,
+  handleClick,
+  mapCaseStateToTagVariant,
+  requestSort,
+} from './utils'
+import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
-
-type directionType = 'ascending' | 'descending'
-interface SortConfig {
-  key: keyof Case
-  direction: directionType
-}
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const DetentionRequests: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
-  const [sortConfig, setSortConfig] = useState<SortConfig>()
 
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   const { user } = useContext(UserContext)
-  const router = useRouter()
-
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
@@ -69,9 +64,8 @@ export const DetentionRequests: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
-
   const [sendNotificationMutation] = useMutation(SendNotificationMutation)
+  const [transitionCaseMutation] = useMutation(TransitionCaseMutation)
 
   const sendNotification = async (id: string) => {
     const { data } = await sendNotificationMutation({
@@ -87,24 +81,6 @@ export const DetentionRequests: React.FC = () => {
   }
 
   const resCases = data?.cases
-
-  useMemo(() => {
-    const sortedCases = activeCases || []
-
-    if (sortConfig) {
-      sortedCases.sort((a: Case, b: Case) => {
-        // Credit: https://stackoverflow.com/a/51169
-        return sortConfig.direction === 'ascending'
-          ? ('' + a[sortConfig.key]).localeCompare(
-              b[sortConfig.key]?.toString() || '',
-            )
-          : ('' + b[sortConfig.key]).localeCompare(
-              a[sortConfig.key]?.toString() || '',
-            )
-      })
-    }
-    return sortedCases
-  }, [activeCases, sortConfig])
 
   useEffect(() => {
     document.title = 'Allar kröfur - Réttarvörslugátt'
@@ -152,71 +128,107 @@ export const DetentionRequests: React.FC = () => {
     resCases,
   ])
 
-  const mapCaseStateToTagVariant = (
-    state: CaseState,
-    isCustodyEndDateInThePast?: boolean,
-  ): { color: TagVariant; text: string } => {
-    switch (state) {
-      case CaseState.NEW:
-      case CaseState.DRAFT:
-        return { color: 'red', text: 'Drög' }
-      case CaseState.SUBMITTED:
-        return {
-          color: 'purple',
-          text: `${isJudge ? 'Ný krafa' : 'Krafa send'}`,
-        }
-      case CaseState.RECEIVED:
-        return { color: 'darkerMint', text: 'Krafa móttekin' }
-      case CaseState.ACCEPTED:
-        if (isCustodyEndDateInThePast) {
-          return {
-            color: 'darkerBlue',
-            text: 'Lokið',
+  const pastRequestsColumns = useMemo(
+    () => [
+      {
+        Header: 'Málsnr. ',
+        accessor: 'courtCaseNumber' as keyof Case,
+        Cell: (row: {
+          row: {
+            original: { courtCaseNumber: string; policeCaseNumber: string }
           }
-        } else {
-          return {
-            color: 'blue',
-            text: 'Virkt',
+        }) => {
+          return (
+            <>
+              <Box component="span" display="block">
+                {row.row.original.courtCaseNumber}
+              </Box>
+              <Text as="span" variant="small">
+                {row.row.original.policeCaseNumber}
+              </Text>
+            </>
+          )
+        },
+      },
+      {
+        Header: 'Sakborningur',
+        accessor: 'accusedName' as keyof Case,
+        Cell: (row: {
+          row: { original: { accusedName: string; accusedNationalId: string } }
+        }) => {
+          return (
+            <>
+              <Box component="span" display="block">
+                {row.row.original.accusedName}
+              </Box>
+              <Text as="span" variant="small">
+                {`kt. ${row.row.original.accusedNationalId}`}
+              </Text>
+            </>
+          )
+        },
+      },
+      {
+        Header: 'Tegund',
+        accessor: 'type' as keyof Case,
+        Cell: (row: {
+          row: { original: { type: CaseType; parentCase: any } }
+        }) => {
+          return (
+            <>
+              {row.row.original.type === CaseType.CUSTODY
+                ? 'Gæsluvarðhald'
+                : 'Farbann'}
+              {row.row.original.parentCase && <p>framlenging</p>}
+            </>
+          )
+        },
+      },
+      {
+        Header: 'Staða',
+        accessor: 'state' as keyof Case,
+        disableSortBy: true,
+        Cell: (row: {
+          row: {
+            original: { state: CaseState; isCustodyEndDateInThePast: boolean }
           }
-        }
-      case CaseState.REJECTED:
-        return { color: 'rose', text: 'Kröfu hafnað' }
-      default:
-        return { color: 'white', text: 'Óþekkt' }
-    }
-  }
+        }) => {
+          return (
+            <Tag outlined disabled>
+              {
+                mapCaseStateToTagVariant(
+                  row.row.original.state,
+                  isJudge,
+                  row.row.original.isCustodyEndDateInThePast,
+                ).text
+              }
+            </Tag>
+          )
+        },
+      },
+      {
+        Header: 'Gildistími',
+        accessor: 'rulingDate' as keyof Case,
+        disableSortBy: true,
+        Cell: (row: {
+          row: { original: { rulingDate: string; custodyEndDate: string } }
+        }) => {
+          return `${formatDate(
+            parseISO(row.row.original.rulingDate),
+            'd.M.y',
+          )} - ${formatDate(
+            parseISO(row.row.original.custodyEndDate),
+            'd.M.y',
+          )}`
+        },
+      },
+    ],
+    [],
+  )
 
-  const handleClick = (c: Case): void => {
-    if (c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED) {
-      router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${c.id}`)
-    } else if (isJudge || isRegistrar) {
-      router.push(`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${c.id}`)
-    } else if (c.state === CaseState.RECEIVED && c.isCourtDateInThePast) {
-      router.push(`${Constants.STEP_FIVE_ROUTE}/${c.id}`)
-    } else {
-      router.push(`${Constants.STEP_ONE_ROUTE}/${c.id}`)
-    }
-  }
+  const pastRequestsData = useMemo(() => pastCases, [pastCases])
 
-  const requestSort = (key: keyof Case) => {
-    let d: directionType = 'ascending'
-
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
-    ) {
-      d = 'descending'
-    }
-    setSortConfig({ key, direction: d })
-  }
-
-  const getClassNamesFor = (name: keyof Case) => {
-    if (!sortConfig) {
-      return
-    }
-    return sortConfig.key === name ? sortConfig.direction : undefined
-  }
+  const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
   const deleteCase = async (caseToDelete: Case) => {
     if (
@@ -261,92 +273,6 @@ export const DetentionRequests: React.FC = () => {
     }
   }
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: 'Málsnr. ',
-        accessor: 'courtCaseNumber' as keyof Case,
-        Cell: (row: {
-          row: {
-            original: { courtCaseNumber: string; policeCaseNumber: string }
-          }
-        }) => {
-          return (
-            <>
-              {row.row.original.courtCaseNumber}
-              {row.row.original.policeCaseNumber}
-            </>
-          )
-        },
-      },
-      {
-        Header: 'Sakborningur',
-        accessor: 'accusedName' as keyof Case,
-        Cell: (row: {
-          row: { original: { accusedName: string; accusedNationalId: string } }
-        }) => {
-          return (
-            <>
-              <Box component="span" display="block">
-                {row.row.original.accusedName}
-              </Box>
-              {row.row.original.accusedNationalId}
-            </>
-          )
-        },
-      },
-      {
-        Header: 'Tegund',
-        accessor: 'type' as keyof Case,
-        Cell: (row: {
-          row: { original: { type: CaseType; parentCase: any } }
-        }) => {
-          return (
-            <>
-              {row.row.original.type === CaseType.CUSTODY
-                ? 'Gæsluvarðhald'
-                : 'Farbann'}
-              {row.row.original.parentCase && <p>framlenging</p>}
-            </>
-          )
-        },
-      },
-      {
-        Header: 'Staða',
-        accessor: 'state' as keyof Case,
-        disableSortBy: true,
-        Cell: ({ cell: { value } }: { cell: { value: CaseState } }) => {
-          return (
-            <Tag outlined disabled>
-              {mapCaseStateToTagVariant(value).text}
-            </Tag>
-          )
-        },
-      },
-      {
-        Header: 'Gildistími',
-        accessor: 'rulingDate' as keyof Case,
-        disableSortBy: true,
-        Cell: (row: {
-          row: { original: { rulingDate: string; custodyEndDate: string } }
-        }) => {
-          return `${formatDate(
-            parseISO(row.row.original.rulingDate),
-            'd.M.y',
-          )} - ${formatDate(
-            parseISO(row.row.original.custodyEndDate),
-            'd.M.y',
-          )}`
-        },
-      },
-    ],
-    [],
-  )
-
-  const d = useMemo(() => pastCases, [pastCases])
-
-  const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
-
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -373,30 +299,260 @@ export const DetentionRequests: React.FC = () => {
       )}
       {activeCases && pastCases ? (
         <>
-          <ActiveRequests
-            requestSort={requestSort}
-            getClassNamesFor={getClassNamesFor}
-            isProsecutor={isProsecutor}
-            cases={activeCases}
-            requestToRemoveIndex={requestToRemoveIndex}
-            handleClick={handleClick}
-            mapCaseStateToTagVariant={mapCaseStateToTagVariant}
-            setRequestToRemoveIndex={setRequestToRemoveIndex}
-            deleteCase={deleteCase}
-          />
+          {activeCases ? (
+            <>
+              <Box
+                marginBottom={3}
+                className={styles.activeRequestsTableCaption}
+              >
+                {/**
+                 * This should be a <caption> tag inside the table but
+                 * Safari has a bug that doesn't allow that. See more
+                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+                 */}
+                <Text variant="h3" id="activeRequestsTableCaption">
+                  Kröfur í vinnslu
+                </Text>
+              </Box>
+              <table
+                className={styles.activeRequestsTable}
+                data-testid="detention-requests-table"
+                aria-describedby="activeRequestsTableCaption"
+              >
+                <thead className={styles.thead}>
+                  <tr>
+                    <th className={styles.th}>
+                      <Text as="span" fontWeight="regular">
+                        Málsnr.
+                      </Text>
+                    </th>
+                    <th className={cn(styles.th, styles.largeColumn)}>
+                      <Box
+                        component="button"
+                        display="flex"
+                        alignItems="center"
+                        className={styles.thButton}
+                        onClick={() => requestSort('accusedName')}
+                      >
+                        <Text fontWeight="regular">Sakborningur</Text>
+                        <Box
+                          className={cn(styles.sortIcon, {
+                            [styles.sortAccusedNameAsc]:
+                              getClassNamesFor('accusedName') === 'ascending',
+                            [styles.sortAccusedNameDes]:
+                              getClassNamesFor('accusedName') === 'descending',
+                          })}
+                          marginLeft={1}
+                          component="span"
+                          display="flex"
+                          alignItems="center"
+                        >
+                          <Icon icon="caretDown" size="small" />
+                        </Box>
+                      </Box>
+                    </th>
+                    <th className={styles.th}>
+                      <Text as="span" fontWeight="regular">
+                        Tegund
+                      </Text>
+                    </th>
+                    <th className={styles.th}>
+                      <Text as="span" fontWeight="regular">
+                        Staða
+                      </Text>
+                    </th>
+                    <th className={styles.th}>
+                      <Box
+                        component="button"
+                        display="flex"
+                        alignItems="center"
+                        className={styles.thButton}
+                        onClick={() => requestSort('created' as keyof Case)}
+                      >
+                        <Text fontWeight="regular">Krafa stofnuð</Text>
+                        <Box
+                          className={cn(styles.sortIcon, {
+                            [styles.sortCreatedAsc]:
+                              getClassNamesFor('created') === 'ascending',
+                            [styles.sortCreatedDes]:
+                              getClassNamesFor('created') === 'descending',
+                          })}
+                          marginLeft={1}
+                          component="span"
+                          display="flex"
+                          alignItems="center"
+                        >
+                          <Icon icon="caretUp" size="small" />
+                        </Box>
+                      </Box>
+                    </th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeCases.map((c, i) => (
+                    <tr
+                      key={i}
+                      className={cn(
+                        styles.tableRowContainer,
+                        requestToRemoveIndex === i && 'isDeleting',
+                      )}
+                      data-testid="detention-requests-table-row"
+                      role="button"
+                      aria-label="Opna kröfu"
+                      onClick={() => {
+                        handleClick &&
+                          handleClick(
+                            c.state,
+                            c.id,
+                            user?.role,
+                            c.isCourtDateInThePast,
+                          )
+                      }}
+                    >
+                      <td className={styles.td}>
+                        <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                      </td>
+                      <td className={cn(styles.td, styles.largeColumn)}>
+                        <Text>
+                          <Box component="span" className={styles.accusedName}>
+                            {c.accusedName || '-'}
+                          </Box>
+                        </Text>
+                        <Text>
+                          {c.accusedNationalId && (
+                            <Text as="span" variant="small" color="dark400">
+                              {`kt: ${
+                                insertAt(
+                                  c.accusedNationalId.replace('-', ''),
+                                  '-',
+                                  6,
+                                ) || '-'
+                              }`}
+                            </Text>
+                          )}
+                        </Text>
+                      </td>
+                      <td className={styles.td}>
+                        <Box
+                          component="span"
+                          display="flex"
+                          flexDirection="column"
+                        >
+                          <Text as="span">
+                            {c.type === CaseType.CUSTODY
+                              ? 'Gæsluvarðhald'
+                              : 'Farbann'}
+                          </Text>
+                          {c.parentCase && (
+                            <Text as="span" variant="small" color="dark400">
+                              Framlenging
+                            </Text>
+                          )}
+                        </Box>
+                      </td>
+                      <td className={styles.td} data-testid="tdTag">
+                        <Tag
+                          variant={
+                            mapCaseStateToTagVariant(
+                              c.state,
+                              isJudge,
+                              c.isCustodyEndDateInThePast,
+                            ).color
+                          }
+                          outlined
+                          disabled
+                        >
+                          {
+                            mapCaseStateToTagVariant(
+                              c.state,
+                              isJudge,
+                              c.isCustodyEndDateInThePast,
+                            ).text
+                          }
+                        </Tag>
+                      </td>
+                      <td className={styles.td}>
+                        <Text as="span">
+                          {format(parseISO(c.created), 'd.M.y', {
+                            locale: localeIS,
+                          })}
+                        </Text>
+                      </td>
+                      <td className={cn(styles.td, 'secondLast')}>
+                        {isProsecutor &&
+                          (c.state === CaseState.NEW ||
+                            c.state === CaseState.DRAFT ||
+                            c.state === CaseState.SUBMITTED ||
+                            c.state === CaseState.RECEIVED) && (
+                            <Box
+                              data-testid="deleteCase"
+                              component="button"
+                              aria-label="Viltu afturkalla kröfu?"
+                              className={styles.deleteButton}
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                                setRequestToRemoveIndex &&
+                                  setRequestToRemoveIndex(
+                                    requestToRemoveIndex === i ? undefined : i,
+                                  )
+                              }}
+                            >
+                              <Icon icon="close" color="blue400" />
+                            </Box>
+                          )}
+                      </td>
+                      <td
+                        className={cn(
+                          styles.deleteButtonContainer,
+                          styles.td,
+                          requestToRemoveIndex === i && 'open',
+                        )}
+                      >
+                        <Button
+                          colorScheme="destructive"
+                          size="small"
+                          onClick={(evt) => {
+                            evt.stopPropagation()
+                            deleteCase(activeCases[i])
+                          }}
+                        >
+                          <Box as="span" className={styles.deleteButtonText}>
+                            Afturkalla
+                          </Box>
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : (
+            <div className={styles.activeRequestsTableInfo}>
+              <AlertMessage
+                title="Engar kröfur í vinnslu."
+                message="Allar kröfur hafa verið afgreiddar."
+                type="info"
+              />
+            </div>
+          )}
+          <Box marginBottom={3} className={styles.pastRequestsTableCaption}>
+            {/**
+             * This should be a <caption> tag inside the table but
+             * Safari has a bug that doesn't allow that. See more
+             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+             */}
+            <Text variant="h3" id="activeRequestsTableCaption">
+              Afgreiddar kröfur
+            </Text>
+          </Box>
           <Table
-            columns={columns}
-            data={d || []}
+            columns={pastRequestsColumns}
+            data={pastRequestsData || []}
+            handleRowClick={handleClick}
             className={styles.pastRequestsTable}
             sortableColumnIds={sortableColumnIds}
           />
-          {/* <PastRequests
-            requestSort={requestSort}
-            getClassNamesFor={getClassNamesFor}
-            cases={pastCases}
-            handleClick={handleClick}
-            mapCaseStateToTagVariant={mapCaseStateToTagVariant}
-          /> */}
         </>
       ) : error ? (
         <div

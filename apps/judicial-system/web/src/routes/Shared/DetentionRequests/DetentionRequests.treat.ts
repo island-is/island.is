@@ -34,6 +34,11 @@ export const activeRequestsTable = style({
   width: '100%',
 })
 
+export const activeRequestsTableInfo = style({
+  gridColumn: '1 / span 6',
+  marginBottom: theme.spacing[10],
+})
+
 export const pastRequestsTableCaption = style({
   gridRow: '4',
   gridColumn: '1 / -1',
@@ -57,7 +62,6 @@ export const detentionRequestsError = style({
 
 export const thead = style({
   background: theme.color.blue100,
-  boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
   textAlign: 'left',
 })
 

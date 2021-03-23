@@ -25,3 +25,7 @@ export const expandLabel = style({
   color: theme.color.blue400,
   cursor: 'pointer',
 })
+
+export const row = style({
+  cursor: 'pointer',
+})

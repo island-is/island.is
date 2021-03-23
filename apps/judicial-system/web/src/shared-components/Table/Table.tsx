@@ -5,6 +5,7 @@ import cn from 'classnames'
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import * as styles from './Table.treat'
 import { theme } from '@island.is/island-ui/theme'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 type column<T> = {
   Header: string
@@ -14,6 +15,12 @@ type column<T> = {
 interface TableProps<T extends object> {
   data: Array<T>
   columns: column<T>[]
+  handleRowClick: (
+    caseState: CaseState,
+    caseId: string,
+    role?: UserRole,
+    isCourtDateInThePast?: boolean,
+  ) => void
   truncate?: boolean
   showMoreLabel?: string
   showLessLabel?: string
@@ -27,6 +34,7 @@ const Table = <T extends object>(
   const {
     columns,
     data,
+    handleRowClick,
     truncate,
     showMoreLabel = 'See all',
     showLessLabel = 'See less',
@@ -51,11 +59,22 @@ const Table = <T extends object>(
     restRows = rows.slice(3, lastIndex)
   }
 
-  const renderRow = (row: Row<T>) => {
+  const renderRow = (row: any) => {
     prepareRow(row)
+
     return (
-      <tr {...row.getRowProps()} style={{}}>
-        {row.cells.map((cell) => {
+      <tr
+        {...row.getRowProps()}
+        className={styles.row}
+        onClick={() =>
+          handleRowClick(
+            row.original.state,
+            row.original.id,
+            row.original.isCourtDateInThePast,
+          )
+        }
+      >
+        {row.cells.map((cell: any) => {
           return (
             <td {...cell.getCellProps()} style={{}}>
               <Text>{cell.render('Cell')}</Text>
@@ -122,9 +141,9 @@ const Table = <T extends object>(
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore - Same as above
                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  <Text variant="h5" as="span">
-                    {`${column.render('Header')} `}
-                  </Text>
+                  <Text fontWeight="regular" as="span">{`${column.render(
+                    'Header',
+                  )} `}</Text>
                   <span>
                     {column.isSorted ? (
                       column.isSortedDesc ? (
