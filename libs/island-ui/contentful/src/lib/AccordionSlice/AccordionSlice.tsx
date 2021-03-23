@@ -14,7 +14,6 @@ export const AccordionSlice: React.FC<AccordionSliceProps> = ({
   title,
   accordionItems,
 }) => {
-  console.log(title)
   return (
     <Box>
       <Text variant="h3" as="h2" marginBottom={2}>
