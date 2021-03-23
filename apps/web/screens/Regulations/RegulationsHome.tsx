@@ -29,7 +29,7 @@ import {
   allMinistries,
   allLawChaptersTree,
   Ministry,
-  LawMainChapters,
+  LawChapterTree,
 } from './mockData'
 import { ParsedUrlQuery } from 'querystring'
 import { shuffle } from 'lodash'
@@ -62,7 +62,7 @@ type RegulationsHomeProps = {
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
-  lawcCapters: Readonly<LawMainChapters>
+  lawcCapters: Readonly<LawChapterTree>
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {

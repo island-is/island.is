@@ -64,9 +64,9 @@ const findValueOption = (
 
 const isLegacyMinistry = (
   ministries: ReadonlyArray<Ministry>,
-  shortCode: string,
+  slug: string,
 ) => {
-  const ministry = ministries.find((m) => m.shortCode === shortCode)
+  const ministry = ministries.find((m) => m.slug === slug)
   return !!(ministry && ministry.legacy)
 }
 
@@ -112,7 +112,7 @@ export type RegulationsSearchSectionProps = {
   searchResults: ReadonlyArray<{
     name: string
     title: string
-    ministry?: { name: string; shortCode: string }
+    ministry?: { name: string; slug: string }
   }>
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
@@ -151,7 +151,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
         )
         .map(
           (m): Option => ({
-            value: m.shortCode,
+            value: m.slug,
             label:
               m.name +
               (m.legacy ? ` ${txt('searchFieldLegacyMinistrySuffix')}` : ''),
@@ -163,14 +163,14 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   const lawChapterOptions = useMemo(
     () =>
       props.lawcCapters.reduce<Array<Option>>(
-        (opts, { name, numberCode, subChapters }) => {
+        (opts, { name, slug, subChapters }) => {
           opts.push({
-            value: numberCode,
-            label: `${Number(numberCode)}. ${name}`,
+            value: slug,
+            label: `${Number(slug)}. ${name}`,
           })
           opts = opts.concat(
-            subChapters.map(({ name, numberCode }) => ({
-              value: numberCode,
+            subChapters.map(({ name, slug }) => ({
+              value: slug,
               label: `    ${name}`,
             })),
           )

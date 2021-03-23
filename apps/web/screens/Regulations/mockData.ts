@@ -8,28 +8,28 @@ import {
 
 export type Ministry = {
   name: string
-  shortCode: string
+  slug: string
   legacy?: true
 }
 export const allMinistries: Array<Ministry> = [
   {
     name: 'Atvinnuvega- og nýsköpunarráðuneytið',
-    shortCode: 'ANR',
+    slug: 'ANR',
   },
-  { name: 'Dómsmálaráðuneytið', shortCode: 'DR' },
-  { name: 'Hjaðningavígaráðuneytið', shortCode: 'HVR', legacy: true },
-  { name: 'Heilbrigðisráðuneytið', shortCode: 'HR' },
-  { name: 'Innanríkisráðuneyti', shortCode: 'IR', legacy: true },
+  { name: 'Dómsmálaráðuneytið', slug: 'DR' },
+  { name: 'Hjaðningavígaráðuneytið', slug: 'HVR', legacy: true },
+  { name: 'Heilbrigðisráðuneytið', slug: 'HR' },
+  { name: 'Innanríkisráðuneyti', slug: 'IR', legacy: true },
 ]
 
-const _getMinistry = (shortCode: string): Ministry =>
-  allMinistries.find((m) => m.shortCode === shortCode) || allMinistries[0]
+const _getMinistry = (slug: string): Ministry =>
+  allMinistries.find((m) => m.slug === slug) || allMinistries[0]
 
 // ---------------------------------------------------------------------------
 
 export type LawChapter = {
   name: string
-  numberCode: string // '01a' |'01b' |'01c' | etc.
+  slug: string // '01a' |'01b' |'01c' | etc.
 }
 
 export type LawChapterTree = Array<
@@ -40,41 +40,41 @@ export type LawChapterTree = Array<
 
 export const allLawChaptersTree: LawChapterTree = [
   {
-    numberCode: '01',
+    slug: '01',
     name: 'Stjórnskipunarlög o.fl.',
     subChapters: [
-      { numberCode: '01a', name: 'Stjórnskipunarlög' },
-      { numberCode: '01b', name: 'Yfirráðasvæði ríkisins' },
-      { numberCode: '01c', name: 'Þjóðfáni, skjaldarmerki, o.fl.' },
-      { numberCode: '01d', name: 'Þjóðaratkvæðagreiðslur' },
+      { slug: '01a', name: 'Stjórnskipunarlög' },
+      { slug: '01b', name: 'Yfirráðasvæði ríkisins' },
+      { slug: '01c', name: 'Þjóðfáni, skjaldarmerki, o.fl.' },
+      { slug: '01d', name: 'Þjóðaratkvæðagreiðslur' },
     ],
   },
   {
-    numberCode: '02',
+    slug: '02',
     name: 'Manréttindi',
-    subChapters: [{ numberCode: '02a', name: 'Jafnrétti kynja' }],
+    subChapters: [{ slug: '02a', name: 'Jafnrétti kynja' }],
   },
   {
-    numberCode: '03',
+    slug: '03',
     name: 'Forseti slands',
     subChapters: [],
   },
   {
-    numberCode: '04',
+    slug: '04',
     name: 'Alþingi og lagasetning',
-    subChapters: [{ numberCode: '04a', name: 'Birting laga o.fl.' }],
+    subChapters: [{ slug: '04a', name: 'Birting laga o.fl.' }],
   },
   {
-    numberCode: '05',
+    slug: '05',
     name: 'Dómstólar og réttarfar',
     subChapters: [
-      { numberCode: '05a', name: 'Dómstólaskipan' },
-      { numberCode: '05b', name: 'Fullnustugerðir' },
-      { numberCode: '05c', name: 'Lögmenn o.fl.' },
-      { numberCode: '05d', name: 'Meðferð einkamála' },
-      { numberCode: '05e', name: 'Meðferð sakamála' },
-      { numberCode: '05f', name: 'Skipti' },
-      { numberCode: '05g', name: 'Ýmislegt' },
+      { slug: '05a', name: 'Dómstólaskipan' },
+      { slug: '05b', name: 'Fullnustugerðir' },
+      { slug: '05c', name: 'Lögmenn o.fl.' },
+      { slug: '05d', name: 'Meðferð einkamála' },
+      { slug: '05e', name: 'Meðferð sakamála' },
+      { slug: '05f', name: 'Skipti' },
+      { slug: '05g', name: 'Ýmislegt' },
     ],
   },
 ]
