@@ -7,7 +7,7 @@ import {
   getDraftApplications,
 } from './healthInsuranceUtils'
 
-describe('health insurance utils', () => {
+describe('Health insurance utils', () => {
   const applicant = {
     nationalId: '1234567890',
     fullName: 'Test name',
@@ -51,7 +51,7 @@ describe('health insurance utils', () => {
       },
     } as unknown) as Application)
 
-  describe('Filter draft applications', () => {
+  describe('Check draft applications', () => {
     it('should return false if draft application list is undefined', () => {
       // assert
       const application = createApplication()
@@ -220,7 +220,7 @@ describe('health insurance utils', () => {
       expect(currentApplicationId).toBe(oldestDraftId)
     })
   })
-  describe('oldest draft application id', () => {
+  describe('Getting oldest draft application id', () => {
     it('should return application that was created first', () => {
       // assert
       const expectedApplicationId = faker.random.uuid()
