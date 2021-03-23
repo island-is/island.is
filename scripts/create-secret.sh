@@ -102,18 +102,18 @@ validate_length () {
 #-------------------CREATE SECRET--------------------------#
 prepare_secret () {
   # Prompt user for secret name
-  read -r -p "$BLUE Secret name: $RESET$SSM_PREFIX" SECRET_NAME
+  read -p "$BLUE Secret name: $RESET$SSM_PREFIX" SECRET_NAME
   validate_whitespace "$SECRET_NAME"
   validate_chars "$SECRET_NAME"
   validate_length "$SECRET_NAME"
 
   # Prompt user for secret value
-  read -r -p "$BLUE Secret value: $RESET" SECRET_VALUE
+  read -p "$BLUE Secret value: $RESET" SECRET_VALUE
   validate_whitespace "$SECRET_VALUE"
   validate_length "$SECRET_VALUE"
 
 
-  read -r -p "$YELLOW Are you sure [y/n]? $RESET"
+  read -p "$YELLOW Are you sure [y/n]? $RESET"
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     printf "%sCreating secret....%s\n" "$GREEN" "$RESET"
