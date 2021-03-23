@@ -1,11 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node", "jest"],
-    "strict": false
-  },
-  "include": [],
+  "extends": "../../../tsconfig.base.json",
   "files": [],
+  "include": [],
   "references": [
     {
       "path": "./tsconfig.lib.json"
