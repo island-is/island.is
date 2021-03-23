@@ -32,3 +32,8 @@ export interface Application {
   progress?: number
   status: ApplicationStatus
 }
+
+export enum ApplicationIdentityServerScope {
+  read = '@island.is/applications:read',
+  write = '@island.is/applications:write',
+}
