@@ -299,234 +299,229 @@ export const DetentionRequests: React.FC = () => {
       )}
       {activeCases && pastCases ? (
         <>
-          {activeCases ? (
-            <>
-              <Box
-                marginBottom={3}
-                className={styles.activeRequestsTableCaption}
-              >
-                {/**
-                 * This should be a <caption> tag inside the table but
-                 * Safari has a bug that doesn't allow that. See more
-                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-                 */}
-                <Text variant="h3" id="activeRequestsTableCaption">
-                  Kröfur í vinnslu
-                </Text>
-              </Box>
-              <table
-                className={styles.activeRequestsTable}
-                data-testid="detention-requests-table"
-                aria-describedby="activeRequestsTableCaption"
-              >
-                <thead className={styles.thead}>
-                  <tr>
-                    <th className={styles.th}>
-                      <Text as="span" fontWeight="regular">
-                        Málsnr.
-                      </Text>
-                    </th>
-                    <th className={cn(styles.th, styles.largeColumn)}>
-                      <Box
-                        component="button"
-                        display="flex"
-                        alignItems="center"
-                        className={styles.thButton}
-                        onClick={() => requestSort('accusedName')}
-                      >
-                        <Text fontWeight="regular">Sakborningur</Text>
-                        <Box
-                          className={cn(styles.sortIcon, {
-                            [styles.sortAccusedNameAsc]:
-                              getClassNamesFor('accusedName') === 'ascending',
-                            [styles.sortAccusedNameDes]:
-                              getClassNamesFor('accusedName') === 'descending',
-                          })}
-                          marginLeft={1}
-                          component="span"
-                          display="flex"
-                          alignItems="center"
-                        >
-                          <Icon icon="caretDown" size="small" />
-                        </Box>
-                      </Box>
-                    </th>
-                    <th className={styles.th}>
-                      <Text as="span" fontWeight="regular">
-                        Tegund
-                      </Text>
-                    </th>
-                    <th className={styles.th}>
-                      <Text as="span" fontWeight="regular">
-                        Staða
-                      </Text>
-                    </th>
-                    <th className={styles.th}>
-                      <Box
-                        component="button"
-                        display="flex"
-                        alignItems="center"
-                        className={styles.thButton}
-                        onClick={() => requestSort('created' as keyof Case)}
-                      >
-                        <Text fontWeight="regular">Krafa stofnuð</Text>
-                        <Box
-                          className={cn(styles.sortIcon, {
-                            [styles.sortCreatedAsc]:
-                              getClassNamesFor('created') === 'ascending',
-                            [styles.sortCreatedDes]:
-                              getClassNamesFor('created') === 'descending',
-                          })}
-                          marginLeft={1}
-                          component="span"
-                          display="flex"
-                          alignItems="center"
-                        >
-                          <Icon icon="caretUp" size="small" />
-                        </Box>
-                      </Box>
-                    </th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeCases.map((c, i) => (
-                    <tr
-                      key={i}
-                      className={cn(
-                        styles.tableRowContainer,
-                        requestToRemoveIndex === i && 'isDeleting',
-                      )}
-                      data-testid="detention-requests-table-row"
-                      role="button"
-                      aria-label="Opna kröfu"
-                      onClick={() => {
-                        handleClick &&
-                          handleClick(
-                            c.state,
-                            c.id,
-                            user?.role,
-                            c.isCourtDateInThePast,
-                          )
-                      }}
+          <Box marginBottom={3} className={styles.activeRequestsTableCaption}>
+            {/**
+             * This should be a <caption> tag inside the table but
+             * Safari has a bug that doesn't allow that. See more
+             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
+             */}
+            <Text variant="h3" id="activeRequestsTableCaption">
+              Kröfur í vinnslu
+            </Text>
+          </Box>
+          {activeCases && activeCases.length > 0 ? (
+            <table
+              className={styles.activeRequestsTable}
+              data-testid="detention-requests-table"
+              aria-describedby="activeRequestsTableCaption"
+            >
+              <thead className={styles.thead}>
+                <tr>
+                  <th className={styles.th}>
+                    <Text as="span" fontWeight="regular">
+                      Málsnr.
+                    </Text>
+                  </th>
+                  <th className={cn(styles.th, styles.largeColumn)}>
+                    <Box
+                      component="button"
+                      display="flex"
+                      alignItems="center"
+                      className={styles.thButton}
+                      onClick={() => requestSort('accusedName')}
                     >
-                      <td className={styles.td}>
-                        <Text as="span">{c.policeCaseNumber || '-'}</Text>
-                      </td>
-                      <td className={cn(styles.td, styles.largeColumn)}>
-                        <Text>
-                          <Box component="span" className={styles.accusedName}>
-                            {c.accusedName || '-'}
-                          </Box>
-                        </Text>
-                        <Text>
-                          {c.accusedNationalId && (
-                            <Text as="span" variant="small" color="dark400">
-                              {`kt: ${
-                                insertAt(
-                                  c.accusedNationalId.replace('-', ''),
-                                  '-',
-                                  6,
-                                ) || '-'
-                              }`}
-                            </Text>
-                          )}
-                        </Text>
-                      </td>
-                      <td className={styles.td}>
-                        <Box
-                          component="span"
-                          display="flex"
-                          flexDirection="column"
-                        >
-                          <Text as="span">
-                            {c.type === CaseType.CUSTODY
-                              ? 'Gæsluvarðhald'
-                              : 'Farbann'}
-                          </Text>
-                          {c.parentCase && (
-                            <Text as="span" variant="small" color="dark400">
-                              Framlenging
-                            </Text>
-                          )}
-                        </Box>
-                      </td>
-                      <td className={styles.td} data-testid="tdTag">
-                        <Tag
-                          variant={
-                            mapCaseStateToTagVariant(
-                              c.state,
-                              isJudge,
-                              c.isCustodyEndDateInThePast,
-                            ).color
-                          }
-                          outlined
-                          disabled
-                        >
-                          {
-                            mapCaseStateToTagVariant(
-                              c.state,
-                              isJudge,
-                              c.isCustodyEndDateInThePast,
-                            ).text
-                          }
-                        </Tag>
-                      </td>
-                      <td className={styles.td}>
-                        <Text as="span">
-                          {format(parseISO(c.created), 'd.M.y', {
-                            locale: localeIS,
-                          })}
-                        </Text>
-                      </td>
-                      <td className={cn(styles.td, 'secondLast')}>
-                        {isProsecutor &&
-                          (c.state === CaseState.NEW ||
-                            c.state === CaseState.DRAFT ||
-                            c.state === CaseState.SUBMITTED ||
-                            c.state === CaseState.RECEIVED) && (
-                            <Box
-                              data-testid="deleteCase"
-                              component="button"
-                              aria-label="Viltu afturkalla kröfu?"
-                              className={styles.deleteButton}
-                              onClick={(evt) => {
-                                evt.stopPropagation()
-                                setRequestToRemoveIndex &&
-                                  setRequestToRemoveIndex(
-                                    requestToRemoveIndex === i ? undefined : i,
-                                  )
-                              }}
-                            >
-                              <Icon icon="close" color="blue400" />
-                            </Box>
-                          )}
-                      </td>
-                      <td
-                        className={cn(
-                          styles.deleteButtonContainer,
-                          styles.td,
-                          requestToRemoveIndex === i && 'open',
-                        )}
+                      <Text fontWeight="regular">Sakborningur</Text>
+                      <Box
+                        className={cn(styles.sortIcon, {
+                          [styles.sortAccusedNameAsc]:
+                            getClassNamesFor('accusedName') === 'ascending',
+                          [styles.sortAccusedNameDes]:
+                            getClassNamesFor('accusedName') === 'descending',
+                        })}
+                        marginLeft={1}
+                        component="span"
+                        display="flex"
+                        alignItems="center"
                       >
-                        <Button
-                          colorScheme="destructive"
-                          size="small"
-                          onClick={(evt) => {
-                            evt.stopPropagation()
-                            deleteCase(activeCases[i])
-                          }}
-                        >
-                          <Box as="span" className={styles.deleteButtonText}>
-                            Afturkalla
+                        <Icon icon="caretDown" size="small" />
+                      </Box>
+                    </Box>
+                  </th>
+                  <th className={styles.th}>
+                    <Text as="span" fontWeight="regular">
+                      Tegund
+                    </Text>
+                  </th>
+                  <th className={styles.th}>
+                    <Text as="span" fontWeight="regular">
+                      Staða
+                    </Text>
+                  </th>
+                  <th className={styles.th}>
+                    <Box
+                      component="button"
+                      display="flex"
+                      alignItems="center"
+                      className={styles.thButton}
+                      onClick={() => requestSort('created' as keyof Case)}
+                    >
+                      <Text fontWeight="regular">Krafa stofnuð</Text>
+                      <Box
+                        className={cn(styles.sortIcon, {
+                          [styles.sortCreatedAsc]:
+                            getClassNamesFor('created') === 'ascending',
+                          [styles.sortCreatedDes]:
+                            getClassNamesFor('created') === 'descending',
+                        })}
+                        marginLeft={1}
+                        component="span"
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <Icon icon="caretUp" size="small" />
+                      </Box>
+                    </Box>
+                  </th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {activeCases.map((c, i) => (
+                  <tr
+                    key={i}
+                    className={cn(
+                      styles.tableRowContainer,
+                      requestToRemoveIndex === i && 'isDeleting',
+                    )}
+                    data-testid="detention-requests-table-row"
+                    role="button"
+                    aria-label="Opna kröfu"
+                    onClick={() => {
+                      handleClick &&
+                        handleClick(
+                          c.state,
+                          c.id,
+                          user?.role,
+                          c.isCourtDateInThePast,
+                        )
+                    }}
+                  >
+                    <td className={styles.td}>
+                      <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                    </td>
+                    <td className={cn(styles.td, styles.largeColumn)}>
+                      <Text>
+                        <Box component="span" className={styles.accusedName}>
+                          {c.accusedName || '-'}
+                        </Box>
+                      </Text>
+                      <Text>
+                        {c.accusedNationalId && (
+                          <Text as="span" variant="small" color="dark400">
+                            {`kt: ${
+                              insertAt(
+                                c.accusedNationalId.replace('-', ''),
+                                '-',
+                                6,
+                              ) || '-'
+                            }`}
+                          </Text>
+                        )}
+                      </Text>
+                    </td>
+                    <td className={styles.td}>
+                      <Box
+                        component="span"
+                        display="flex"
+                        flexDirection="column"
+                      >
+                        <Text as="span">
+                          {c.type === CaseType.CUSTODY
+                            ? 'Gæsluvarðhald'
+                            : 'Farbann'}
+                        </Text>
+                        {c.parentCase && (
+                          <Text as="span" variant="small" color="dark400">
+                            Framlenging
+                          </Text>
+                        )}
+                      </Box>
+                    </td>
+                    <td className={styles.td} data-testid="tdTag">
+                      <Tag
+                        variant={
+                          mapCaseStateToTagVariant(
+                            c.state,
+                            isJudge,
+                            c.isCustodyEndDateInThePast,
+                          ).color
+                        }
+                        outlined
+                        disabled
+                      >
+                        {
+                          mapCaseStateToTagVariant(
+                            c.state,
+                            isJudge,
+                            c.isCustodyEndDateInThePast,
+                          ).text
+                        }
+                      </Tag>
+                    </td>
+                    <td className={styles.td}>
+                      <Text as="span">
+                        {format(parseISO(c.created), 'd.M.y', {
+                          locale: localeIS,
+                        })}
+                      </Text>
+                    </td>
+                    <td className={cn(styles.td, 'secondLast')}>
+                      {isProsecutor &&
+                        (c.state === CaseState.NEW ||
+                          c.state === CaseState.DRAFT ||
+                          c.state === CaseState.SUBMITTED ||
+                          c.state === CaseState.RECEIVED) && (
+                          <Box
+                            data-testid="deleteCase"
+                            component="button"
+                            aria-label="Viltu afturkalla kröfu?"
+                            className={styles.deleteButton}
+                            onClick={(evt) => {
+                              evt.stopPropagation()
+                              setRequestToRemoveIndex &&
+                                setRequestToRemoveIndex(
+                                  requestToRemoveIndex === i ? undefined : i,
+                                )
+                            }}
+                          >
+                            <Icon icon="close" color="blue400" />
                           </Box>
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
+                        )}
+                    </td>
+                    <td
+                      className={cn(
+                        styles.deleteButtonContainer,
+                        styles.td,
+                        requestToRemoveIndex === i && 'open',
+                      )}
+                    >
+                      <Button
+                        colorScheme="destructive"
+                        size="small"
+                        onClick={(evt) => {
+                          evt.stopPropagation()
+                          deleteCase(activeCases[i])
+                        }}
+                      >
+                        <Box as="span" className={styles.deleteButtonText}>
+                          Afturkalla
+                        </Box>
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <div className={styles.activeRequestsTableInfo}>
               <AlertMessage
@@ -546,13 +541,23 @@ export const DetentionRequests: React.FC = () => {
               Afgreiddar kröfur
             </Text>
           </Box>
-          <Table
-            columns={pastRequestsColumns}
-            data={pastRequestsData || []}
-            handleRowClick={handleClick}
-            className={styles.pastRequestsTable}
-            sortableColumnIds={sortableColumnIds}
-          />
+          {pastCases && pastCases.length > 0 ? (
+            <Table
+              columns={pastRequestsColumns}
+              data={pastRequestsData || []}
+              handleRowClick={handleClick}
+              className={styles.pastRequestsTable}
+              sortableColumnIds={sortableColumnIds}
+            />
+          ) : (
+            <div className={styles.activeRequestsTableInfo}>
+              <AlertMessage
+                title="Engar kröfur hafa verið afgreiddar."
+                message="Allar kröfur eru í vinnslu."
+                type="info"
+              />
+            </div>
+          )}
         </>
       ) : error ? (
         <div
