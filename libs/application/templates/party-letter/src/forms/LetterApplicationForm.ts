@@ -18,16 +18,13 @@ import { UserCompany } from '../dataProviders/CurrentUserCompanies'
 import { m } from '../lib/messages'
 import { format } from 'kennitala'
 
-export type IDS =
-  | 'ssd'
-  | 'party.letter'
-  | 'party.name'
-  | 'signatures'
-  | 'warnings'
-
-const PartySSD: IDS = 'ssd'
-const PartyLetter: IDS = 'party.letter'
-const PartyName: IDS = 'party.name'
+export enum IDS {
+  PartySSD = 'ssd',
+  PartyLetter = 'party.letter',
+  PartyName = 'party.name',
+  Signatures = 'signatures',
+  Warnings = 'warnings',
+}
 
 export const LetterApplicationForm: Form = buildForm({
   id: 'LetterApplicationDraft',
@@ -71,7 +68,7 @@ export const LetterApplicationForm: Form = buildForm({
       title: m.selectSSD.title,
       children: [
         buildRadioField({
-          id: PartySSD,
+          id: IDS.PartySSD,
           title: m.selectSSD.title,
           largeButtons: true,
           width: 'half',
@@ -106,22 +103,26 @@ export const LetterApplicationForm: Form = buildForm({
           title: m.selectPartyLetter.sectionTitle,
           children: [
             buildTextField({
-              id: PartyLetter,
+              id: IDS.PartyLetter,
               title: m.selectPartyLetter.partyLetterLabel,
               placeholder: m.selectPartyLetter.partyLetterPlaceholder,
               width: 'half',
               defaultValue: (application: Application) =>
-                (getValueViaPath(application.answers, PartyLetter) as string) ??
-                '',
+                (getValueViaPath(
+                  application.answers,
+                  IDS.PartyLetter,
+                ) as string) ?? '',
             }),
             buildTextField({
-              id: PartyName,
+              id: IDS.PartyName,
               title: m.selectPartyLetter.partyNameLabel,
               placeholder: m.selectPartyLetter.partyNamePlaceholder,
               width: 'half',
               defaultValue: (application: Application) =>
-                (getValueViaPath(application.answers, PartyName) as string) ??
-                '',
+                (getValueViaPath(
+                  application.answers,
+                  IDS.PartyName,
+                ) as string) ?? '',
             }),
             buildCustomField({
               id: 'partyLetter',
