@@ -320,34 +320,6 @@ export class CaseController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @Get('case/:id/ruling')
-  @Header('Content-Type', 'application/pdf')
-  @ApiOkResponse({
-    content: { 'application/pdf': {} },
-    description: 'Gets the ruling for an existing case as a pdf document',
-  })
-  async getRulingPdf(
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-    @Res() res: Response,
-  ) {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
-
-    const pdf = await this.caseService.getRulingPdf(existingCase)
-
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -362,6 +334,34 @@ export class CaseController {
     const existingCase = await this.caseService.findByIdAndUser(id, user)
 
     const pdf = await this.caseService.getRequestPdf(existingCase)
+
+    const stream = new ReadableStreamBuffer({
+      frequency: 10,
+      chunkSize: 2048,
+    })
+    stream.put(pdf, 'binary')
+
+    res.header('Content-length', pdf.length.toString())
+
+    return stream.pipe(res)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @Get('case/:id/ruling')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the ruling for an existing case as a pdf document',
+  })
+  async getRulingPdf(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+    @Res() res: Response,
+  ) {
+    const existingCase = await this.caseService.findByIdAndUser(id, user)
+
+    const pdf = await this.caseService.getRulingPdf(existingCase)
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
