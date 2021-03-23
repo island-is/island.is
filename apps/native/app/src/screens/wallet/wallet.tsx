@@ -6,7 +6,7 @@ export const Wallet = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView horizontal={false}>
-        <ScrollView horizontal style={{ marginTop: 50, marginBottom: 50 }}>
+        <ScrollView horizontal style={{ marginTop: 50 }}>
           <Card title="Ökuskírteini" />
           <Card title="Skotvopnaleyfi" />
           <Card title="Fyrsta hjálp" />
