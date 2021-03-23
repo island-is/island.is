@@ -7,3 +7,11 @@ export const CONTACT_US_MUTATION = gql`
     }
   }
 `
+
+export const CONTACT_US_ZENDESK_TICKET_MUTATION = gql`
+  mutation ContactUsZendeskTicket($input: ContactUsInput!) {
+    contactUsZendeskTicket(input: $input) {
+      sent
+    }
+  }
+`
