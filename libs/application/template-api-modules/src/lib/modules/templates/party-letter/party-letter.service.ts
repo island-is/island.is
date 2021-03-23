@@ -7,6 +7,7 @@ import {
   Signature,
 } from './utils/createSignaturesExcelFile'
 
+// TODO: Swap these for real signatures when signature system is ready
 const mockSignatures: Signature[] = [
   {
     signaturee: '0000000000',
