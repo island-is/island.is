@@ -231,7 +231,7 @@ export type Appendix = {
 export type Regulation = {
   /** Publication name (NNNN/YYYY) of the regulation */
   name: string
-  /** The title of the regulation */
+  /** The title of the regulation in HTML format */
   title: string
   /* The regulation text in HTML format */
   text: string
@@ -243,15 +243,37 @@ export type Regulation = {
   publishedDate: ISODate
   /** Date when the regulation took effect for the first time */
   effectiveDate: ISODate
-  /** Date of last amendment of this regulation */
+  /** Date of last amendment of this regulation
+   *
+   * This date is always a past date – UNLESS a future timeline Date is being
+   */
   lastAmendDate?: ISODate | null
-  /** Date when (if) this regulation was repealed and became a thing of the past */
+  /** Date when (if) this regulation was repealed and became a thing of the past.
+   *
+   * NOTE: This date is **NEVER** set in the future
+   */
   repealedDate?: ISODate | null
   /** The ministry this regulation is published by/linked to */
   ministry: Ministry
   /** Law chapters that this regulation is linked to */
   lawChapters: ReadonlyArray<LawChapter>
   // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
+
+  /** Present if a NON-CURRENT version of the regulation is being served
+   *
+   * Is undefined by default (when the "current" version is served).
+   */
+  timelineDate?: ISODate
+
+  /** Present if the regulation contains inlined change-markers (via htmldiff-js) */
+  showingDiff?: {
+    /** The date of the base version being compared against */
+    from: ISODate
+    /** The date of the version being viewed
+     *
+     * Generally the same as `timelineDate` defaulting to `lastAmendDate` */
+    to: ISODate
+  }
 }
 
 export const exampleRegulation: Regulation = {

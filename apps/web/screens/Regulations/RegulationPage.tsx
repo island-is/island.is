@@ -196,7 +196,11 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
                                   {prettyName(item.name)}
                                 </Typography>
                                 <Typography color={textColor} variant="p">
-                                  {item.title}
+                                  <span
+                                    dangerouslySetInnerHTML={{
+                                      __html: item.title,
+                                    }}
+                                  />
                                 </Typography>
                               </>
                             )
