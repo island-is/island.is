@@ -20,9 +20,9 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getAllAvailableClaims = async () => {
-    const response = await ClaimService.findAll()
+    const response = await ResourcesService.findAllIdentityResourceUserClaims()
     if (response) {
-      setClaims(response.map((x) => x.type))
+      setClaims(response.map((x) => x.claimName))
     }
   }
 
@@ -99,7 +99,7 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
             <NoActiveConnections
               title="No User Claims are selected"
               show={!props.claims || props.claims.length === 0}
-              helpText="If necessary, check user the user claims needed"
+              helpText="Some claims need to be associated with this Identity Resource"
             ></NoActiveConnections>
 
             <div className="identity-resource-user-claims__buttons__container">

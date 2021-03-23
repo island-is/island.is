@@ -636,4 +636,37 @@ export class ResourcesService {
       where: { apiResourceName: apiResourceName, scopeName: scopeName },
     })
   }
+
+  // User Claims
+
+  /** Gets all Identity Resource User Claims */
+  async findAllIdentityResourceUserClaims(): Promise<
+    IdentityResourceUserClaim[] | undefined
+  > {
+    return this.identityResourceUserClaimModel.findAll({
+      attributes: [
+        [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
+      ],
+    })
+  }
+
+  /** Gets all Api Scope User Claims */
+  async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[] | undefined> {
+    return this.apiScopeUserClaimModel.findAll({
+      attributes: [
+        [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
+      ],
+    })
+  }
+
+  /** Gets all Api Resource User Claims */
+  async findAllApiResourceUserClaims(): Promise<
+    ApiResourceUserClaim[] | undefined
+  > {
+    return this.apiResourceUserClaim.findAll({
+      attributes: [
+        [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
+      ],
+    })
+  }
 }
