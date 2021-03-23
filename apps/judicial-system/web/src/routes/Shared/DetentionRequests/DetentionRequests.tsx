@@ -41,15 +41,19 @@ import {
   getClassNamesFor,
   handleClick,
   mapCaseStateToTagVariant,
-  requestSort,
 } from './utils'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
+import {
+  directionType,
+  SortConfig,
+} from '@island.is/judicial-system-web/src/types'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const DetentionRequests: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
+  const [sortConfig, setSortConfig] = useState<SortConfig>()
 
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
@@ -127,6 +131,24 @@ export const DetentionRequests: React.FC = () => {
     isRegistrar,
     resCases,
   ])
+
+  useMemo(() => {
+    const sortedCases = activeCases || []
+
+    if (sortConfig) {
+      sortedCases.sort((a: Case, b: Case) => {
+        // Credit: https://stackoverflow.com/a/51169
+        return sortConfig.direction === 'ascending'
+          ? ('' + a[sortConfig.key]).localeCompare(
+              b[sortConfig.key]?.toString() || '',
+            )
+          : ('' + b[sortConfig.key]).localeCompare(
+              a[sortConfig.key]?.toString() || '',
+            )
+      })
+    }
+    return sortedCases
+  }, [activeCases, sortConfig])
 
   const pastRequestsColumns = useMemo(
     () => [
@@ -223,7 +245,7 @@ export const DetentionRequests: React.FC = () => {
         },
       },
     ],
-    [],
+    [isJudge],
   )
 
   const pastRequestsData = useMemo(() => pastCases, [pastCases])
@@ -273,6 +295,19 @@ export const DetentionRequests: React.FC = () => {
     }
   }
 
+  const requestSort = (key: keyof Case) => {
+    let d: directionType = 'ascending'
+
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === 'ascending'
+    ) {
+      d = 'descending'
+    }
+    setSortConfig({ key, direction: d })
+  }
+
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -297,7 +332,7 @@ export const DetentionRequests: React.FC = () => {
           )}
         </div>
       )}
-      {activeCases && pastCases ? (
+      {activeCases || pastCases ? (
         <>
           <Box marginBottom={3} className={styles.activeRequestsTableCaption}>
             {/**
@@ -329,14 +364,17 @@ export const DetentionRequests: React.FC = () => {
                       alignItems="center"
                       className={styles.thButton}
                       onClick={() => requestSort('accusedName')}
+                      data-testid="accusedNameSortButton"
                     >
                       <Text fontWeight="regular">Sakborningur</Text>
                       <Box
                         className={cn(styles.sortIcon, {
                           [styles.sortAccusedNameAsc]:
-                            getClassNamesFor('accusedName') === 'ascending',
+                            getClassNamesFor('accusedName', sortConfig) ===
+                            'ascending',
                           [styles.sortAccusedNameDes]:
-                            getClassNamesFor('accusedName') === 'descending',
+                            getClassNamesFor('accusedName', sortConfig) ===
+                            'descending',
                         })}
                         marginLeft={1}
                         component="span"
@@ -363,15 +401,17 @@ export const DetentionRequests: React.FC = () => {
                       display="flex"
                       alignItems="center"
                       className={styles.thButton}
-                      onClick={() => requestSort('created' as keyof Case)}
+                      onClick={() => requestSort('created')}
                     >
                       <Text fontWeight="regular">Krafa stofnuð</Text>
                       <Box
                         className={cn(styles.sortIcon, {
                           [styles.sortCreatedAsc]:
-                            getClassNamesFor('created') === 'ascending',
+                            getClassNamesFor('created', sortConfig) ===
+                            'ascending',
                           [styles.sortCreatedDes]:
-                            getClassNamesFor('created') === 'descending',
+                            getClassNamesFor('created', sortConfig) ===
+                            'descending',
                         })}
                         marginLeft={1}
                         component="span"

@@ -1,14 +1,6 @@
 import { TagVariant } from '@island.is/island-ui/core'
-import {
-  directionType,
-  SortConfig,
-} from '@island.is/judicial-system-web/src/types'
-import {
-  Case,
-  CaseState,
-  CaseTransition,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { SortConfig } from '@island.is/judicial-system-web/src/types'
+import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 import router from 'next/router'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -45,23 +37,6 @@ export const mapCaseStateToTagVariant = (
     default:
       return { color: 'white', text: 'Óþekkt' }
   }
-}
-
-export const requestSort = (
-  key: keyof Case,
-  sortConfig?: SortConfig,
-  setSortConfig?: React.Dispatch<React.SetStateAction<SortConfig | undefined>>,
-) => {
-  let d: directionType = 'ascending'
-
-  if (
-    sortConfig &&
-    sortConfig.key === key &&
-    sortConfig.direction === 'ascending'
-  ) {
-    d = 'descending'
-  }
-  setSortConfig && setSortConfig({ key, direction: d })
 }
 
 export const getClassNamesFor = (name: keyof Case, sortConfig?: SortConfig) => {

@@ -102,7 +102,7 @@ const mockCasesQuery = [
 ]
 
 describe('Detention requests route', () => {
-  test('should list all cases that do not have status NEW or DELETED in a list if you are a judge', async () => {
+  test('should list all cases that do not have status NEW, DELETED, ACCEPTED or REJECTED in a active cases table if you are a judge', async () => {
     render(
       <MockedProvider
         mocks={[...mockCasesQuery, ...mockJudgeQuery]}
@@ -193,7 +193,7 @@ describe('Detention requests route', () => {
     ).toEqual(5)
   })
 
-  test('should not show deleted requests', async () => {
+  test('should not show deleted or past requests', async () => {
     render(
       <MockedProvider
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -209,7 +209,7 @@ describe('Detention requests route', () => {
       await waitFor(
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
-    ).toEqual(6)
+    ).toEqual(5)
   })
 
   test('should display the prosecutor logo if you are a prosecutor', async () => {
@@ -229,7 +229,7 @@ describe('Detention requests route', () => {
     ).toBeInTheDocument()
   })
 
-  test('should list all cases in a list if you are a prosecutor', async () => {
+  test('should list all active cases in a list if you are a prosecutor', async () => {
     render(
       <MockedProvider
         mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -243,22 +243,7 @@ describe('Detention requests route', () => {
 
     expect(
       (await screen.findAllByTestId('detention-requests-table-row')).length,
-    ).toEqual(6)
-  })
-
-  test('should display custody end date if case has ACCEPTED status', async () => {
-    render(
-      <MockedProvider
-        mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
-        addTypename={false}
-      >
-        <UserProvider>
-          <DetentionRequests />
-        </UserProvider>
-      </MockedProvider>,
-    )
-
-    expect(await screen.findByText('11.11.2020')).toBeInTheDocument()
+    ).toEqual(5)
   })
 
   test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
@@ -273,7 +258,7 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    userEvent.click(await screen.findByText('Sakborningur'))
+    userEvent.click(await screen.findByTestId('accusedNameSortButton'))
 
     const tableRows = await screen.findAllByTestId(
       'detention-requests-table-row',
@@ -283,8 +268,7 @@ describe('Detention requests route', () => {
     expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
     expect(tableRows[2]).toHaveTextContent('Jon Harring')
     expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
-    expect(tableRows[4]).toHaveTextContent('Mikki Refur')
-    expect(tableRows[5]).toHaveTextContent('Moe')
+    expect(tableRows[4]).toHaveTextContent('Moe')
   })
 
   test('should order the table data by accused name in descending order when the user clicks the accused name table header twice', async () => {
@@ -299,17 +283,16 @@ describe('Detention requests route', () => {
       </MockedProvider>,
     )
 
-    userEvent.dblClick(await screen.findByText('Sakborningur'))
+    userEvent.dblClick(await screen.findByTestId('accusedNameSortButton'))
 
     const tableRows = await screen.findAllByTestId(
       'detention-requests-table-row',
     )
 
-    expect(tableRows[5]).toHaveTextContent('D. M. Kil')
-    expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
-    expect(tableRows[3]).toHaveTextContent('Jon Harring')
-    expect(tableRows[2]).toHaveTextContent('Jon Harring Sr.')
-    expect(tableRows[1]).toHaveTextContent('Mikki Refur')
+    expect(tableRows[4]).toHaveTextContent('D. M. Kil')
+    expect(tableRows[3]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring')
+    expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
     expect(tableRows[0]).toHaveTextContent('Moe')
   })
 
@@ -331,12 +314,11 @@ describe('Detention requests route', () => {
       'detention-requests-table-row',
     )
 
-    expect(tableRows[0]).toHaveTextContent('Mikki Refur')
-    expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
-    expect(tableRows[2]).toHaveTextContent('Jon Harring Sr.')
-    expect(tableRows[3]).toHaveTextContent('Jon Harring')
-    expect(tableRows[4]).toHaveTextContent('D. M. Kil')
-    expect(tableRows[5]).toHaveTextContent('Moe')
+    expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
+    expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
+    expect(tableRows[2]).toHaveTextContent('Jon Harring')
+    expect(tableRows[3]).toHaveTextContent('D. M. Kil')
+    expect(tableRows[4]).toHaveTextContent('Moe')
   })
 
   test('should order the table data by created in descending order when the user clicks the created table header twice', async () => {
@@ -357,7 +339,6 @@ describe('Detention requests route', () => {
       'detention-requests-table-row',
     )
 
-    expect(tableRows[5]).toHaveTextContent('Mikki Refur')
     expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
     expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
     expect(tableRows[2]).toHaveTextContent('Jon Harring')
