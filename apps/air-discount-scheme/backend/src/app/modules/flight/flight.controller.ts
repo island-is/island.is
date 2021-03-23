@@ -245,6 +245,11 @@ export class PublicFlightController {
         flight.flightLegs as FlightLeg[],
       )
     } else if (hasReykjavik) {
+      if (discount.discountCode !== params.discountCode) {
+        throw new ForbiddenException(
+          'This discount code is only intended for connecting flights',
+        )
+      }
       const {
         unused: flightLegsLeft,
       } = await this.flightService.countThisYearsFlightLegsByNationalId(

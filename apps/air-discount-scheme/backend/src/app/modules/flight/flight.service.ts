@@ -165,19 +165,7 @@ export class FlightService {
   ): Promise<Flight[]> {
     const flights = await this.findThisYearsFlightsByNationalId(nationalId)
     // Filter out non-Reykjavík and non-Akureyri flights
-    return flights.filter((flight) => {
-      return (
-        flight.connectable &&
-        (REYKJAVIK_FLIGHT_CODES.includes(flight.flightLegs[0].origin) ||
-          REYKJAVIK_FLIGHT_CODES.includes(
-            flight.flightLegs[flight.flightLegs.length - 1].destination,
-          )) &&
-        (AKUREYRI_FLIGHT_CODES.includes(flight.flightLegs[0].origin) ||
-          AKUREYRI_FLIGHT_CODES.includes(
-            flight.flightLegs[flight.flightLegs.length - 1].destination,
-          ))
-      )
-    })
+    return flights.filter((flight) => flight.connectable)
   }
 
   async countThisYearsFlightLegsByNationalId(
@@ -337,7 +325,7 @@ export class FlightService {
     if (!isConnectable && connectingId) {
       this.flightModel.update(
         {
-          connectable: isConnectable,
+          connectable: false,
         },
         {
           where: { id: connectingId },
@@ -351,7 +339,7 @@ export class FlightService {
         flightLegs: flight.flightLegs.map((flightLeg) => ({
           ...flightLeg,
           airline,
-          isConnectingFlight: !isConnectable,
+          isConnectingFlight: !isConnectable && Boolean(connectingId),
         })),
         nationalId,
         userInfo: {
