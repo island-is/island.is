@@ -7,7 +7,7 @@ import {
   useTooltipState,
 } from 'reakit'
 import * as styles from './Tooltip.treat'
-import { Icon } from '../IconRC/Icon'
+import { Icon, Size } from '../IconRC/Icon'
 import { Colors } from '@island.is/island-ui/theme'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
@@ -52,7 +52,7 @@ const ArrowIcon: FC<ArrowIconProps> = ({ placement }) => {
 interface TooltipProps {
   placement?: Placement
   text: React.ReactNode
-  iconSize?: number
+  iconSize?: Size
   color?: Colors
   children?: ReactElement
   as?: ElementType
@@ -61,7 +61,7 @@ interface TooltipProps {
 export const Tooltip: FC<TooltipProps> = ({
   placement,
   text,
-  iconSize = 14,
+  iconSize = 'small',
   color = 'dark200',
   children,
   as = 'span',
@@ -78,16 +78,8 @@ export const Tooltip: FC<TooltipProps> = ({
           {(referenceProps) => React.cloneElement(children, referenceProps)}
         </TooltipReference>
       ) : (
-        <TooltipReference
-          {...tooltip}
-          as={as}
-          className={cn(styles.icon)}
-          style={{
-            width: `${iconSize}px`,
-            height: `${iconSize}px`,
-          }}
-        >
-          <Icon icon="informationCircle" color={color} />
+        <TooltipReference {...tooltip} as={as} className={cn(styles.icon)}>
+          <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipReference>
       )}
       <ReakitTooltip {...tooltip}>

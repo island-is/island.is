@@ -36,7 +36,7 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
                     <Box marginLeft={2}>
                       <Tooltip
                         color="yellow600"
-                        iconSize={16}
+                        iconSize="medium"
                         text={formatMessage(
                           m.validationMessages.signatureInvalid,
                         )}
