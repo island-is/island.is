@@ -15,12 +15,15 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   CaseQuery,
   UpdateCaseMutation,
+  CreatePresignedPostMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
+import { forEach } from 'lodash'
+import { uploadFile } from '@island.is/judicial-system-web/src/services/api'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -62,6 +65,22 @@ export const StepFive: React.FC = () => {
     return resCase
   }
 
+  const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
+
+  const uploadFiles = (id: string, files: File[]) => {
+    forEach(files, async (file) => {
+      const { data } = await createPresignedPostMutation({
+        variables: { input: { caseId: id, fileName: file.name } },
+      })
+
+      const presignedPost = data?.createPresignedPost
+
+      if (presignedPost) {
+        uploadFile(presignedPost, file)
+      }
+    })
+  }
+
   return (
     <PageLayout
       activeSection={
@@ -90,7 +109,10 @@ export const StepFive: React.FC = () => {
                 header="Dragðu skjöl hingað til að hlaða upp"
                 description="Tekið er við skjölum með endingu: .pdf, .docx, .rtf"
                 buttonLabel="Velja skjöl til að hlaða upp"
-                onChange={(evt) => console.log(evt)}
+                onChange={(evt) => {
+                  console.log(evt)
+                  uploadFiles(workingCase.id, evt)
+                }}
                 onRemove={() => console.log('remove')}
                 errorMessage={''}
               />

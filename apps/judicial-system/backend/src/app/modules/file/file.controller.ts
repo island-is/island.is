@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  ForbiddenException,
-  NotFoundException,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -18,7 +10,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import { User, UserRole } from '@island.is/judicial-system/types'
 
-import { Case, CaseService, isCaseBlockedFromUser } from '../case'
+import { CaseService } from '../case'
 import { CreatePresignedPostDto } from './dto'
 import { PresignedPost } from './models'
 import { FileService } from './file.service'

@@ -5,4 +5,7 @@ import { PresignedPost as TPresignedPost } from '@island.is/judicial-system/type
 export class PresignedPost implements TPresignedPost {
   @ApiProperty()
   url: string
+
+  @ApiProperty()
+  fields: { [key: string]: string }
 }

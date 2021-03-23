@@ -1,3 +1,5 @@
+import graphqlTypeJson from 'graphql-type-json'
+
 import { Field, ObjectType } from '@nestjs/graphql'
 
 import { PresignedPost as TPresignedPost } from '@island.is/judicial-system/types'
@@ -6,4 +8,7 @@ import { PresignedPost as TPresignedPost } from '@island.is/judicial-system/type
 export class PresignedPost implements TPresignedPost {
   @Field()
   readonly url!: string
+
+  @Field(() => graphqlTypeJson)
+  readonly fields!: { [key: string]: string }
 }

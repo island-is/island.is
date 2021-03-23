@@ -101,7 +101,7 @@ class BackendAPI extends RESTDataSource {
     id: string,
     createPresignedPost: CreatePresignedPost,
   ): Promise<PresignedPost> {
-    return this.post(`case/${id}/file/url/`)
+    return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 }
 

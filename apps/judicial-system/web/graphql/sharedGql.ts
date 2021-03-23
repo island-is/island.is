@@ -124,3 +124,12 @@ export const SendNotificationMutation = gql`
     }
   }
 `
+
+export const CreatePresignedPostMutation = gql`
+  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+    createPresignedPost(input: $input) {
+      url
+      fields
+    }
+  }
+`
