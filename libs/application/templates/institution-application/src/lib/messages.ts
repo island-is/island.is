@@ -122,13 +122,13 @@ export const institutionApplicationMessages = {
     },
     scopeLabel: {
       id: 'ia.application:project.scope.label',
-      defaultMessage: 'Afmörkun verkefnis',
+      defaultMessage: 'Umfang (e. Scope) verkefins',
       description: 'Form label for project scope formfield',
     },
     scopePlaceholder: {
       id: 'ia.application:project.scope.placeholder',
       defaultMessage:
-        'Hverjar eru grófar útlínur verkefnisins, hvað telst hluti af því og hvað ekki',
+        'Hverjar eru grófar útlínur verkefnisins, hvað telst hluti af því og hvað ekki?',
       description: 'Placeholder for project scope formfield',
     },
     financeLabel: {
@@ -171,12 +171,12 @@ export const institutionApplicationMessages = {
   constraints: defineMessages({
     subSectionLabel: {
       id: 'ia.application:constraints.subSection.label',
-      defaultMessage: 'Skorður verkefnis',
+      defaultMessage: 'Áskoranir og úrlausnarefni',
       description: 'Sub section label',
     },
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
-      defaultMessage: 'Skorður verkefnis',
+      defaultMessage: 'Áskoranir og úrlausnarefni',
       description: 'Section title',
     },
 
@@ -276,7 +276,7 @@ export const institutionApplicationMessages = {
   review: defineMessages({
     sectionLabel: {
       id: 'ia.application:review.section.label',
-      defaultMessage: 'Yfirlit Umsóknar',
+      defaultMessage: 'Staðfesta upplýsingar',
       description: 'Section label',
     },
     sectionTitle: {
@@ -287,7 +287,7 @@ export const institutionApplicationMessages = {
     sectionDescription: {
       id: 'ia.application:review.section.description',
       defaultMessage:
-        'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins hjá SÍ ef umsóknin er skýr og hnitmiðuð.',
+        'Farðu vel yfir efnið áður en þú sendir inn umsóknina. Það flýtir fyrir afgreiðslu málsins hjá Stafrænu Íslandi ef umsóknin er skýr og hnitmiðuð.',
       description: 'Section description',
     },
     submitButtonLabel: {
