@@ -37,8 +37,13 @@ export class DocumentBuilder {
     )
     if (found) return found
     return {
-      url: '',
+      url: this.formatDownloadServiceUrl(document),
       fileType: FileType.PDF,
     }
+  }
+
+  private static formatDownloadServiceUrl(document: DocumentInfoDTO): string {
+    const base = 'localhost:1111' // dont know this yet
+    return `https://${base}/documents/${document.id}`
   }
 }
