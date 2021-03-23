@@ -24,21 +24,21 @@ export class ResourcesService extends BaseService {
   static async findAllIdentityResourceUserClaims(): Promise<
     IdentityResourceUserClaim[] | undefined
   > {
-    return BaseService.GET('identity-resource-user-claims')
+    return BaseService.GET('identity-resource-user-claim')
   }
 
   /** Gets all identity resource user claims */
   static async findAllApiScopeUserClaims(): Promise<
     ApiScopeUserClaim[] | undefined
   > {
-    return BaseService.GET('api-scope-user-claims')
+    return BaseService.GET('api-scope-user-claim')
   }
 
   /** Gets all Api resource user claims */
   static async findAllApiResourceUserClaims(): Promise<
     ApiResourceUserClaim[] | undefined
   > {
-    return BaseService.GET('api-resource-user-claims')
+    return BaseService.GET('api-resource-user-claim')
   }
 
   /** Gets API scope by name */

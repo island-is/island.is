@@ -1,0 +1,22 @@
+.user-claim-create-form {
+  position: relative;
+  z-index: 2;
+
+  &__button__show {
+    display: block;
+
+    a {
+      cursor: pointer;
+    }
+  }
+
+  &__wrapper {
+    background: $color-bg-content;
+    padding: 25px;
+    border: solid 1px $color-border;
+
+    h1 {
+      font-size: 1.3rem;
+    }
+  }
+}
