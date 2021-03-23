@@ -73,11 +73,11 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     () =>
       originalBody && showDiff
         ? htmldiff
-            .execute(originalBody, regulation.body)
+            .execute(originalBody, regulation.text)
             .replace(/<del [^>]+>\s+<\/del>/g, '')
             .replace(/<ins [^>]+>\s+<\/ins>/g, '')
-        : regulation.body,
-    [showDiff, originalBody, regulation.body],
+        : regulation.text,
+    [showDiff, originalBody, regulation.text],
   )
 
   const breadCrumbs = (

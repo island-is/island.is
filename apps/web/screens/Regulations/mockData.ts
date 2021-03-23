@@ -7,8 +7,13 @@ import {
 // ---------------------------------------------------------------------------
 
 export type Ministry = {
+  /** Name (title) of the ministry */
   name: string
+  /** Short, URL-friendly token to use for search filters, etc.  */
   slug: string
+  /** Custom sorting modifier – i.e. to push Forsætisráðuneytið to the top of a list. */
+  order?: number
+  /** True if this ministry is not current */
   legacy?: true
 }
 export const allMinistries: Array<Ministry> = [
@@ -28,12 +33,18 @@ const _getMinistry = (slug: string): Ministry =>
 // ---------------------------------------------------------------------------
 
 export type LawChapter = {
+  /** Name (title) of the LawChapter */
   name: string
+  /** Short, URL-friendly token to use for search filters, etc.  */
   slug: string // '01a' |'01b' |'01c' | etc.
 }
 
 export type LawChapterTree = Array<
   LawChapter & {
+    /** List of child-chapters for this top-level chapter.
+     *
+     * NOTE: The "tree" never goes more than one level down.
+     */
     subChapters: ReadonlyArray<LawChapter>
   }
 >
@@ -82,8 +93,11 @@ export const allLawChaptersTree: LawChapterTree = [
 // ---------------------------------------------------------------------------
 
 export type RegulationListItem = {
+  /** Publication name */
   name: string
+  /** The title of the Regulation */
   title: string
+  /** The ministry that the regulation is linked to */
   ministry?: Ministry
 }
 export const regulationsSearchResults: Array<RegulationListItem> = [
@@ -206,24 +220,45 @@ export const regulationPageTexts = {
 
 type ISODate = string
 
+/** Regulation appendix/attachment chapter */
+export type Appendix = {
+  /** Title of the appendix */
+  title: string
+  /** The appendix text in HTML format */
+  text: string
+}
+
 export type Regulation = {
+  /** Publication name (NNNN/YYYY) of the regulation */
   name: string
+  /** The title of the regulation */
   title: string
   /* The regulation text in HTML format */
-  body: string
+  text: string
+  /** List of the regulation's appendixes */
+  appendixes: ReadonlyArray<Appendix>
+  /** Date signed in the ministry */
   signatureDate: ISODate
+  /** Date officially published in Stjórnartíðindi */
   publishedDate: ISODate
+  /** Date when the regulation took effect for the first time */
   effectiveDate: ISODate
+  /** Date of last amendment of this regulation */
   lastAmendDate?: ISODate | null
+  /** Date when (if) this regulation was repealed and became a thing of the past */
   repealedDate?: ISODate | null
+  /** The ministry this regulation is published by/linked to */
   ministry: Ministry
+  /** Law chapters that this regulation is linked to */
   lawChapters: ReadonlyArray<LawChapter>
+  // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
 }
 
 export const exampleRegulation: Regulation = {
   name: '0221/2001',
   title: 'Reglugerð um bólusetningar á Íslandi.',
-  body: regulationHtml,
+  text: regulationHtml,
+  appendixes: [],
   signatureDate: '2001-03-09',
   publishedDate: '2001-03-20',
   effectiveDate: '2001-03-20',
@@ -240,26 +275,62 @@ export const exampleRegulationOriginalBody = regulationHtmlOriginal
 // ---------------------------------------------------------------------------
 
 export type RegulationHistoryItem = {
+  /** The date this this history item took effect */
+  date: ISODate
+  /** Publication name of the affecting Regulation */
   name: string
+  /** The title of the affecting Regulation */
   title: string
+  /** What type of history item is this.
+   *
+   * Staring with the regulation at the `root` of the timeline
+   * ...possibly ending with the final `repeal` of that regulation
+   */
+  reason: 'root' | 'amend' | 'repeal'
 }
 
 export const regulationHistory: Array<RegulationHistoryItem> = [
   {
+    date: '2013-09-13',
     name: '0904/2013',
     title:
       'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+    reason: 'amend',
   },
   {
+    date: '2013-11-08',
+    name: '0904/2013',
+    title:
+      'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+    reason: 'amend',
+  },
+  {
+    date: '2019-12-24',
     name: '1197/2019',
     title:
       'Reglugerð um (2.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+    reason: 'amend',
   },
   {
+    date: '2020-11-30',
     name: '1198/2020',
     title:
       'Reglugerð um (3.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+    reason: 'amend',
   },
 ]
 
 // ---------------------------------------------------------------------------
+
+export type Effect = {
+  /** effectiveDate for this impact */
+  date: ISODate
+  /** Publication name of the affected Regulation */
+  name: string
+  /** Publication name of the affected Regulation */
+  title: string
+  /** Type of effect */
+  type: 'amend' | 'repeal'
+}
+
+export type EffectList = Array<Effect>
