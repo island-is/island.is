@@ -7,6 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import {
+  FormContentContainer,
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
@@ -27,6 +28,7 @@ import { uploadFile } from '@island.is/judicial-system-web/src/services/api'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+  const [files, setFiles] = useState<File[]>([])
 
   const router = useRouter()
   const id = router.query.id
@@ -97,31 +99,34 @@ export const StepFive: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
-            <Text as="h1" variant="h1">
-              Rannsóknargögn
-            </Text>
-          </Box>
-          <Box marginBottom={[2, 2, 3]}>
-            <ContentBlock>
-              <InputFileUpload
-                fileList={[]}
-                header="Dragðu skjöl hingað til að hlaða upp"
-                description="Tekið er við skjölum með endingu: .pdf, .docx, .rtf"
-                buttonLabel="Velja skjöl til að hlaða upp"
-                onChange={(evt) => {
-                  console.log(evt)
-                  uploadFiles(workingCase.id, evt)
-                }}
-                onRemove={() => console.log('remove')}
-                errorMessage={''}
-              />
-            </ContentBlock>
-          </Box>
-          <FormFooter
-            previousUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-            nextUrl={`${Constants.STEP_SIX_ROUTE}/${workingCase.id}`}
-          />
+          <FormContentContainer>
+            <Box marginBottom={10}>
+              <Text as="h1" variant="h1">
+                Rannsóknargögn
+              </Text>
+            </Box>
+            <Box marginBottom={[2, 2, 3]}>
+              <ContentBlock>
+                <InputFileUpload
+                  fileList={files}
+                  header="Dragðu skjöl hingað til að hlaða upp"
+                  buttonLabel="Velja skjöl til að hlaða upp"
+                  onChange={(evt) => {
+                    uploadFiles(workingCase.id, evt)
+                    setFiles(evt)
+                  }}
+                  onRemove={() => console.log('remove')}
+                  errorMessage={'Herro'}
+                />
+              </ContentBlock>
+            </Box>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
+              nextUrl={`${Constants.STEP_SIX_ROUTE}/${workingCase.id}`}
+            />
+          </FormContentContainer>
         </>
       ) : null}
     </PageLayout>
