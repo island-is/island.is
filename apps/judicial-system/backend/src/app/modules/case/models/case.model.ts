@@ -218,6 +218,13 @@ export class Case extends Model<Case> {
   prosecutor: User
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  setCourtCaseNumberManually: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -338,6 +345,13 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   otherRestrictions: string
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isolationTo: Date
 
   @Column({
     type: DataType.ENUM,

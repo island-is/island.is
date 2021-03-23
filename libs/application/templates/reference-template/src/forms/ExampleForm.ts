@@ -14,6 +14,7 @@ import {
   FormValue,
   buildFileUploadField,
 } from '@island.is/application/core'
+import { ApiActions } from '../shared'
 import { m } from './messages'
 
 export const ExampleForm: Form = buildForm({
@@ -30,7 +31,7 @@ export const ExampleForm: Form = buildForm({
           title: m.introField,
           description: (application) => ({
             ...m.introIntroduction,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             values: { name: application.answers.name },
           }),
@@ -150,7 +151,24 @@ export const ExampleForm: Form = buildForm({
         buildDescriptionField({
           id: 'final',
           title: 'Takk',
-          description: 'Umsókn þín er komin í vinnslu',
+          description: (application) => {
+            const sendApplicationActionResult =
+              application.externalData[ApiActions.createApplication]
+
+            let id = 'unknown'
+            if (sendApplicationActionResult) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              id = sendApplicationActionResult.data.id
+            }
+
+            return {
+              ...m.outroMessage,
+              values: {
+                id,
+              },
+            }
+          },
         }),
       ],
     }),

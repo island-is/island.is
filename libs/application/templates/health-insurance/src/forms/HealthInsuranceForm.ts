@@ -256,11 +256,11 @@ export const HealthInsuranceForm: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
+            buildDescriptionField({
               id: 'confirmationOfStudiesDescription',
-              title: m.confirmationOfStudies,
-              description: m.confirmationOfStudiesTooltip,
-              component: 'TextWithTooltip',
+              title: '',
+              description: m.confirmationOfStudies,
+              tooltip: m.confirmationOfStudiesTooltip,
               condition: (answers) =>
                 (answers.status as { type: string })?.type ===
                 StatusTypes.STUDENT,
@@ -384,11 +384,15 @@ export const HealthInsuranceForm: Form = buildForm({
                 return requireConfirmationOfResidency(formerCountry)
               },
             }),
-            buildCustomField({
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
+            }),
+            buildDescriptionField({
               id: 'formerInsurance.entitlementDescription',
-              title: m.formerInsuranceEntitlement,
-              description: m.formerInsuranceEntitlementTooltip,
-              component: 'TextWithTooltip',
+              title: '',
+              description: m.formerInsuranceEntitlement,
+              tooltip: m.formerInsuranceEntitlementTooltip,
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
                   formerInsurance: { country: string }
@@ -423,6 +427,7 @@ export const HealthInsuranceForm: Form = buildForm({
               title: m.formerInsuranceAdditionalInformation,
               placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
               variant: 'textarea',
+              rows: 4,
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
                 const formerCountry = (answers as {
@@ -466,6 +471,7 @@ export const HealthInsuranceForm: Form = buildForm({
               id: 'additionalRemarks',
               title: m.additionalRemarks,
               variant: 'textarea',
+              rows: 4,
               placeholder: m.additionalRemarksPlaceholder,
               backgroundColor: 'blue',
               condition: {
@@ -482,6 +488,15 @@ export const HealthInsuranceForm: Form = buildForm({
               uploadHeader: m.fileUploadHeader,
               uploadDescription: m.fileUploadDescription,
               uploadButtonLabel: m.fileUploadButton,
+              condition: {
+                questionId: 'hasAdditionalInfo',
+                comparator: Comparators.EQUALS,
+                value: YES,
+              },
+            }),
+            buildDividerField({
+              title: ' ',
+              color: 'transparent',
               condition: {
                 questionId: 'hasAdditionalInfo',
                 comparator: Comparators.EQUALS,

@@ -4,7 +4,7 @@ This [GitHub organization](https://github.com/island-is) is the center of develo
 
 These solutions are [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and open to contributions, but most development will be performed by teams that win tenders to develop new functionality for Digital Iceland.
 
-The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services is stored in there.
+The repository is a [monorepo](../technical-overview/monorepo.md) that has multiple apps (something that can be built and run) and libraries (which other apps and libraries can depend on). All custom-written services are also stored there.
 
 ## GitBook
 
@@ -26,9 +26,10 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Prerequisites
 
-- You have Node installed `>= 12.0.0` and Yarn at `>= 1.20.0`.
-- You have [java](https://www.java.com/en/download/manual.jsp) installed.
+- You have Node installed `^14.16.0` and Yarn at `^1.22.0`.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
+- You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
+- You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html) installed (for fetching secrets).
 - Run `yarn` to install the dependencies.
 
 ## Usage

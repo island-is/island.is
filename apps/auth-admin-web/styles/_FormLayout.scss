@@ -22,7 +22,10 @@
 .api-resource-user-claims,
 .client-basic,
 .admin-user-create-form,
-.idp-provider-create-form {
+.idp-provider-create-form,
+.grant-type-create-form,
+.language-create-form,
+.translation-create-form {
   &__help {
     padding: 0 10px 20px 10px;
 
@@ -52,10 +55,11 @@
   }
 
   section {
-    background: #eae8e8;
-    border: dotted 1px black;
+    border: solid 2px #9a9191;
     padding: 10px 0 30px 0;
-    margin-bottom: 20px;
+    margin: 20px 0;
+    border-left: none;
+    border-right: none;
     h3 {
       margin-left: 18px;
       font-size: 1rem;
@@ -83,13 +87,22 @@
       font-size: 0.9rem;
     }
 
-    span // validation
-    {
+    // validation
+    span {
       position: absolute;
       left: 60%;
       color: $color-error;
       text-shadow: 0 0 $color-shadow;
+      margin-left: -60px;
+      padding-right: 120px;
     }
+
+    @media only screen and (max-width: 1066px) {
+      span {
+        margin-left: -30px;
+      }
+    }
+    // end validation
 
     &__available {
       position: absolute;

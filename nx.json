@@ -1,5 +1,4 @@
 {
-  "npmScope": "island.is",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -9,6 +8,10 @@
     "nx.json": "*",
     "tsconfig.base.json": "*"
   },
+  "affected": {
+    "defaultBase": "main"
+  },
+  "npmScope": "island.is",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
@@ -98,6 +101,9 @@
       "tags": []
     },
     "api-domains-national-registry": {
+      "tags": []
+    },
+    "api-domains-rsk": {
       "tags": []
     },
     "api-domains-syslumenn": {
@@ -198,6 +204,12 @@
     "cache": {
       "tags": []
     },
+    "clients-mms": {
+      "tags": []
+    },
+    "clients-zendesk": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
@@ -211,9 +223,6 @@
       "tags": []
     },
     "content-search-toolkit": {
-      "tags": []
-    },
-    "contentful-importer": {
       "tags": []
     },
     "contentful-translation-extension": {
@@ -350,6 +359,9 @@
     "reference-next-app": {
       "tags": []
     },
+    "rsk": {
+      "tags": []
+    },
     "service-portal": {
       "tags": []
     },
@@ -379,6 +391,18 @@
       "implicitDependencies": ["service-portal"]
     },
     "service-portal-education": {
+      "tags": []
+    },
+    "service-portal-education-career": {
+      "tags": []
+    },
+    "service-portal-education-degree": {
+      "tags": []
+    },
+    "service-portal-education-license": {
+      "tags": []
+    },
+    "service-portal-education-student-assessment": {
       "tags": []
     },
     "service-portal-eligibility": {
@@ -421,6 +445,9 @@
       "tags": []
     },
     "shared-connected": {
+      "tags": []
+    },
+    "shared-constants": {
       "tags": []
     },
     "shared-form-fields": {
@@ -467,8 +494,5 @@
       "tags": [],
       "implicitDependencies": ["web"]
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   }
 }

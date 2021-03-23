@@ -6,8 +6,9 @@ import deepmerge from 'deepmerge'
 import isArray from 'lodash/isArray'
 import HtmlParser from 'react-html-parser'
 
+import { shouldShowFormItem } from '@island.is/application/core'
 import { Field, RecordObject } from '../types/Fields'
-import { Application, FormValue } from '../types/Application'
+import { Application, ExternalData, FormValue } from '../types/Application'
 import {
   Form,
   FormItemTypes,
@@ -50,7 +51,7 @@ export function getValueViaPath(
         .call(path, regexp)
         .filter(Boolean)
         .reduce(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           (res, key) => (res !== null && res !== undefined ? res[key] : res),
           obj,
@@ -101,27 +102,39 @@ export const getFormNodeLeaves = (node: FormNode): FormLeaf[] => {
   return leaves
 }
 
-export function getSectionsInForm(form: Form): Section[] {
+export function getSectionsInForm(
+  form: Form,
+  answers: FormValue,
+  externalData: ExternalData,
+): Section[] {
   const sections: Section[] = []
   form.children.forEach((child) => {
-    if (child.type === FormItemTypes.SECTION) {
+    const shouldShowSection = shouldShowFormItem(child, answers, externalData)
+    if (child.type === FormItemTypes.SECTION && shouldShowSection) {
       sections.push(child as Section)
     }
   })
   return sections
 }
-export function getSubSectionsInSection(section: Section): SubSection[] {
+export function getSubSectionsInSection(
+  section: Section,
+  answers: FormValue,
+  externalData: ExternalData,
+): SubSection[] {
   const subSections: SubSection[] = []
-  section.children.forEach((child) => {
-    if (child.type === FormItemTypes.SUB_SECTION) {
+  section?.children.forEach((child) => {
+    const shouldShowSection = shouldShowFormItem(child, answers, externalData)
+    if (child.type === FormItemTypes.SUB_SECTION && shouldShowSection) {
       subSections.push(child as SubSection)
     }
   })
   return subSections
 }
 
-export function findSectionIndex(form: Form, section: Section): number {
-  const sections = getSectionsInForm(form)
+export function findSectionIndex(
+  sections: Section[],
+  section: Section,
+): number {
   if (!sections.length) {
     return -1
   }
@@ -134,19 +147,9 @@ export function findSectionIndex(form: Form, section: Section): number {
 }
 
 export function findSubSectionIndex(
-  form: Form,
-  sectionIndex: number,
+  subSections: SubSection[],
   subSection: SubSection,
 ): number {
-  if (sectionIndex === -1) {
-    return -1
-  }
-  const sections = getSectionsInForm(form)
-  const section = sections[sectionIndex]
-  if (!section) {
-    return -1
-  }
-  const subSections = getSubSectionsInSection(section)
   for (let i = 0; i < subSections.length; i++) {
     if (subSections[i].id === subSection.id) {
       return i

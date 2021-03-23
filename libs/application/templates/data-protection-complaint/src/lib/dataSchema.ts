@@ -6,11 +6,48 @@ import * as kennitala from 'kennitala'
 export enum OnBehalf {
   MYSELF = 'myself',
   MYSELF_AND_OR_OTHERS = 'myselfAndOrOthers',
-  COMPANY = 'company',
+  OTHERS = 'others',
   ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
 }
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const DataProtectionComplaintSchema = z.object({
+  externalData: z.object({
+    nationalRegistry: z.object({
+      data: z.object({
+        address: z.object({
+          city: z.string(),
+          code: z.string(),
+          postalCode: z.string(),
+          streetAddress: z.string(),
+        }),
+        age: z.number(),
+        citizenship: z.object({
+          code: z.string(),
+          name: z.string(),
+        }),
+        fullName: z.string(),
+        legalResidence: z.string(),
+        nationalId: z.string(),
+      }),
+      date: z.string(),
+      status: z.enum(['success', 'failure']),
+    }),
+    userProfile: z.object({
+      data: z.object({
+        email: z.string(),
+        mobilePhoneNumber: z.string(),
+      }),
+      date: z.string(),
+      status: z.enum(['success', 'failure']),
+    }),
+  }),
+  approveExternalData: z.boolean().refine((p) => p),
   inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
     message: error.inCourtProceedings.defaultMessage,
   }),
@@ -24,22 +61,12 @@ export const DataProtectionComplaintSchema = z.object({
     message: error.concernsLibel.defaultMessage,
   }),
   info: z.object({
-    onBehalf: z
-      .enum([
-        OnBehalf.MYSELF,
-        OnBehalf.MYSELF_AND_OR_OTHERS,
-        OnBehalf.COMPANY,
-        OnBehalf.ORGANIZATION_OR_INSTITUTION,
-      ])
-      .refine(
-        (p) =>
-          p === OnBehalf.MYSELF ||
-          p === OnBehalf.MYSELF_AND_OR_OTHERS ||
-          p === OnBehalf.ORGANIZATION_OR_INSTITUTION,
-        {
-          message: error.onBehalfOfACompany.defaultMessage,
-        },
-      ),
+    onBehalf: z.enum([
+      OnBehalf.MYSELF,
+      OnBehalf.MYSELF_AND_OR_OTHERS,
+      OnBehalf.OTHERS,
+      OnBehalf.ORGANIZATION_OR_INSTITUTION,
+    ]),
   }),
   applicant: z.object({
     name: z.string().nonempty(),
@@ -59,4 +86,50 @@ export const DataProtectionComplaintSchema = z.object({
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
   }),
+  commissions: z.object({
+    documents: z.array(FileSchema).nonempty(),
+    persons: z
+      .array(
+        z.object({
+          name: z.string().nonempty(),
+          nationalId: z
+            .string()
+            .refine((x) => (x ? kennitala.isPerson(x) : false)),
+        }),
+      )
+      .nonempty(),
+  }),
+  complainee: z.object({
+    name: z.string().nonempty(),
+    address: z.string().nonempty(),
+    nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
+    operatesWithinEurope: z.enum([YES, NO]),
+    countryOfOperation: z.string().optional(),
+  }),
+  additionalComplainees: z.array(
+    z.object({
+      name: z.string().nonempty(),
+      address: z.string().nonempty(),
+      nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
+      operatesWithinEurope: z.enum([YES, NO]),
+      countryOfOperation: z.string().optional(),
+    }),
+  ),
+  subjectOfComplaint: z.object({
+    authorities: z.array(z.string()).optional(),
+    useOfPersonalInformation: z.array(z.string()).optional(),
+    other: z.array(z.string()).optional(),
+    somethingElse: z.string().optional(),
+  }),
+  complaint: z.object({
+    description: z.string().nonempty(),
+    documents: z.array(FileSchema).nonempty(),
+  }),
+  overview: z.object({
+    termsAgreement: z.array(z.string()).refine((x) => x?.includes('agreed')),
+  }),
 })
+
+export type DataProtectionComplaint = z.TypeOf<
+  typeof DataProtectionComplaintSchema
+>

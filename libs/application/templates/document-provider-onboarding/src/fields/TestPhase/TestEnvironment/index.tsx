@@ -35,7 +35,7 @@ const TestEnvironment: FC<FieldBaseProps> = ({ application, error }) => {
 
   const [keys, setKeys] = useState<Key[]>([])
   const [currentAnswer, setCurrentAnswer] = useState(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     (formValue.testProviderId as string) || '',
   )

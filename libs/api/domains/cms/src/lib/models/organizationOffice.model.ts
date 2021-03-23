@@ -6,10 +6,10 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class OrganizationOffice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field({ nullable: true })
-  name?: string
+  name!: string
 
   @Field({ nullable: true })
   city?: string
@@ -27,7 +27,7 @@ export class OrganizationOffice {
   openingHours?: string
 
   @Field(() => [SliceUnion], { nullable: true })
-  content: Array<typeof SliceUnion>
+  content?: Array<typeof SliceUnion>
 }
 
 export const mapOrganizationOffice = ({

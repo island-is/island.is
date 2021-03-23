@@ -11,6 +11,7 @@ import { ClaimsModule } from './modules/claims/claims.module'
 import { environment } from '../environments/environment'
 import { AccessModule } from './modules/access/access.module'
 import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
+import { TranslationModule } from './modules/translation/translation.module'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { IdpProviderModule } from './modules/idp-provider/idp-provider.module'
     ClaimsModule,
     AccessModule,
     IdpProviderModule,
+    TranslationModule,
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.secret'],
     }),

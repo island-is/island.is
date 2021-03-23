@@ -38,6 +38,7 @@ export const CaseQuery = gql`
           name
         }
       }
+      setCourtCaseNumberManually
       courtCaseNumber
       courtDate
       isCourtDateInThePast
@@ -57,6 +58,7 @@ export const CaseQuery = gql`
       isCustodyEndDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationTo
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
@@ -76,6 +78,7 @@ export const CaseQuery = gql`
         custodyEndDate
         decision
         courtCaseNumber
+        ruling
       }
       childCase {
         id

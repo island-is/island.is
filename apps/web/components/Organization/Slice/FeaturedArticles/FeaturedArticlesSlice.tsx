@@ -38,60 +38,35 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
           borderTopWidth="standard"
           borderColor="standard"
           paddingTop={[8, 6, 8]}
-          paddingBottom={[4, 5, 10]}
+          paddingBottom={[8, 6, 6]}
         >
-          <GridRow>
-            <GridColumn span={['10/10', '10/10', '3/10']}>
-              <Box className={styles.popularTitleWrap}>
-                <Text
-                  variant="h2"
-                  as="h2"
-                  marginBottom={4}
-                  id={'sliceTitle-' + slice.id}
+          <Text as="h2" variant="h3" paddingBottom={6}>
+            {slice.title}
+          </Text>
+          <Stack space={2}>
+            {slice.articles.map(({ title, slug, processEntry }) => {
+              const url = linkResolver('Article' as LinkType, [slug])
+              return (
+                <FocusableBox
+                  key={slug}
+                  href={url.href}
+                  target={isMobile ? '' : '_blank'}
+                  borderRadius="large"
                 >
-                  {slice.title}
-                </Text>
-                {!!slice.image && (
-                  <Box display={['none', 'none', 'block']}>
-                    <img src={slice.image.url} alt="" />
-                  </Box>
-                )}
-              </Box>
-            </GridColumn>
-            <GridColumn span={['10/10', '10/10', '7/10']}>
-              <Stack space={2}>
-                {slice.articles.map(({ title, slug, processEntry }) => {
-                  const url = linkResolver('Article' as LinkType, [slug])
-                  return (
-                    <FocusableBox
-                      key={slug}
-                      href={url.href}
-                      target={isMobile ? '' : '_blank'}
-                      borderRadius="large"
+                  {({ isFocused }) => (
+                    <LinkCard
+                      isFocused={isFocused}
+                      tag={!!processEntry && n('applicationProcess', 'Umsókn')}
                     >
-                      {({ isFocused }) => (
-                        <LinkCard
-                          isFocused={isFocused}
-                          tag={
-                            !!processEntry && n('applicationProcess', 'Umsókn')
-                          }
-                        >
-                          {title}
-                        </LinkCard>
-                      )}
-                    </FocusableBox>
-                  )
-                })}
-              </Stack>
-            </GridColumn>
-          </GridRow>
+                      {title}
+                    </LinkCard>
+                  )}
+                </FocusableBox>
+              )
+            })}
+          </Stack>
           {!!slice.link && (
-            <Box
-              display="flex"
-              justifyContent="flexEnd"
-              paddingTop={4}
-              paddingBottom={1}
-            >
+            <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
               <Link href={slice.link.url}>
                 <Button
                   icon="arrowForward"

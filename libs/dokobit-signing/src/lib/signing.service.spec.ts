@@ -5,7 +5,8 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { SigningService, SIGNING_OPTIONS } from './signing.service'
+import { SigningModule } from './signing.module'
+import { SigningService } from './signing.service'
 
 const testOptions = {
   url: 'Test Url',
@@ -21,7 +22,7 @@ const testDocumentContent = 'Test Document Content'
 const testSignUrl = `${testOptions.url}/mobile/sign.json?access_token=${testOptions.accessToken}`
 const testSignResponse = {
   status: 'ok',
-  control_code: 'Test Control Code', // eslint-disable-line @typescript-eslint/camelcase
+  control_code: 'Test Control Code',
   token: 'Test Document Token',
 }
 
@@ -86,14 +87,7 @@ describe('SigningService', () => {
     fetchMock.mockClear()
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggingModule],
-      providers: [
-        {
-          provide: SIGNING_OPTIONS,
-          useValue: testOptions,
-        },
-        SigningService,
-      ],
+      imports: [LoggingModule, SigningModule.register(testOptions)],
     }).compile()
 
     signingService = module.get<SigningService>(SigningService)

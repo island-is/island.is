@@ -1,6 +1,7 @@
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { EmailModule, EmailService } from '@island.is/email-service'
+import { LoggingModule } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
+import { ZendeskModule, ZendeskService } from '@island.is/clients/zendesk'
 import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
@@ -26,24 +27,24 @@ describe('communicationsService', () => {
   }
   let communicationsService: CommunicationsService
   let emailService: EmailService
+  let zendeskService: ZendeskService
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: { useTestAccount: true },
-        },
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: logger,
-        },
-        CommunicationsService,
-        EmailService,
+      imports: [
+        LoggingModule,
+        EmailModule.register({ useTestAccount: true }),
+        ZendeskModule.register({
+          email: 'email',
+          token: 'token',
+          subdomain: 'subdomain',
+        }),
       ],
+      providers: [CommunicationsService],
     }).compile()
 
     emailService = moduleRef.get<EmailService>(EmailService)
+    zendeskService = moduleRef.get<ZendeskService>(ZendeskService)
     communicationsService = moduleRef.get<CommunicationsService>(
       CommunicationsService,
     )
@@ -59,6 +60,32 @@ describe('communicationsService', () => {
         fakeTellUsAStoryInput,
       )
       expect(contactUsTemplate).not.toMatchObject(tellUsAStoryTemplate)
+    })
+  })
+
+  describe('submitTicket', () => {
+    it('should try to submit a ticket', async () => {
+      const testUser = {
+        name: 'John Smith',
+        email: 'john@smith.com',
+        id: 1234,
+      }
+
+      jest
+        .spyOn(zendeskService, 'submitTicket')
+        .mockImplementation(() => Promise.resolve(true))
+
+      jest
+        .spyOn(zendeskService, 'getUserByEmail')
+        .mockImplementation(() => Promise.resolve(testUser))
+
+      jest
+        .spyOn(zendeskService, 'createUser')
+        .mockImplementation(() => Promise.resolve(testUser))
+
+      expect(
+        await communicationsService.sendZendeskTicket(fakeContactUsInput),
+      ).toBe(true)
     })
   })
 

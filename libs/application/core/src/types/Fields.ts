@@ -105,6 +105,7 @@ export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
   readonly description: FormText
+  tooltip?: FormText
 }
 
 export interface RadioField extends BaseField {
@@ -145,6 +146,7 @@ export interface TextField extends BaseField {
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
   suffix?: string
+  rows?: number
 }
 
 export interface FileUploadField extends BaseField {

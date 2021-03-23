@@ -67,9 +67,9 @@ export const m = defineMessages({
   dataProvidersMoreInfo: {
     id: 'hi.application:externalData.moreInfo',
     defaultMessage:
-      'Nánari útlistun á hvaða upplýsinga er aflað frá ofangreindum stofnunum og hvaða upplýsingum verður miðlað áfram er að finna undir **[Persónuverndarsíðu SÍ](https://www.sjukra.is/personuvernd)**',
+      'Nánari útlistun á hvaða upplýsinga er aflað frá ofangreindum stofnunum og hvaða upplýsingum verður miðlað áfram er að finna undir <a href="https://www.sjukra.is/personuvernd" target="_blank" style="color:#0061ff">Persónuverndarsíðu SÍ</a>',
     description:
-      'Further details on what information is obtained from the above institutions and what personal data will be passed on can be found on IHI’s **[Privacy page](https://www.sjukra.is/english/privacy)**',
+      'Further details on what information is obtained from the above institutions and what personal data will be passed on can be found on IHI’s <a href="https://www.sjukra.is/english/privacy" target="_blank" style="color:#0061ff">Privacy page</a>',
   },
   confirmationOfResidencyTitle: {
     id: 'hi.application:confirmationOfResidency.title',
@@ -126,9 +126,9 @@ export const m = defineMessages({
   editNationalRegistryData: {
     id: 'hi.application:nationalRegistryData.edit',
     defaultMessage:
-      'Tilkynna **[flutning lögheimilis](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)**',
+      'Tilkynna <a href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/" target="_blank" style="color:#0061ff">flutning lögheimilis</a>',
     description:
-      'Need to update your address? Go to **[Change of Address](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/)**',
+      'Need to update your address? Go to <a href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/" target="_blank" style="color:#0061ff">Change of Address</a>',
   },
   email: {
     id: 'hi.application:applicant.email',
@@ -143,9 +143,9 @@ export const m = defineMessages({
   editDigitalIslandData: {
     id: 'hi.application:digitalIslandData.edit',
     defaultMessage:
-      'Vinsamlegast uppfærið netfang og símanúmer á **[Mínum síðum](https://island.is/minarsidur/stillingar)** ef með þarf.',
+      'Vinsamlegast uppfærið netfang og símanúmer á <a href="https://island.is/minarsidur/stillingar" target="_blank" style="color:#0061ff">Mínum síðum</a> ef með þarf.',
     description:
-      'Please update your E-mail and Phone number on **[My Pages](https://island.is/minarsidur/stillingar)** if not correct.',
+      'Please update your E-mail and Phone number on <a href="https://island.is/minarsidur/stillingar" target="_blank" style="color:#0061ff">My Pages</a> if not correct.',
   },
   statusAndChildren: {
     id: 'hi.application:statusAndChildrend.section',
@@ -208,7 +208,7 @@ export const m = defineMessages({
   confirmationOfStudiesTooltip: {
     id: 'hi.application:student.confirmationOfStudiesTooltip',
     defaultMessage:
-      'Þú þarft að senda inn afrit af útskriftarskírteini eða staðfestingu á námsferli fyrir hverja önn.\n Skráningar- eða inntökustaðfesting nægir ekki',
+      'Þú þarft að senda inn afrit af útskriftarskírteini eða staðfestingu á námsferli fyrir hverja önn. Skráningar- eða inntökustaðfesting nægir ekki',
     description:
       'You need to submit a copy of your Graduation certificate or a confirmation of completed credits for each semester. Admission or enrollement letters are not sufficient.',
   },
@@ -371,7 +371,7 @@ export const m = defineMessages({
   },
   successfulSubmissionTitle: {
     id: 'hi.application:successfulSubmission.title',
-    defaultMessage: 'Við höfum móttekið umsókn þína!',
+    defaultMessage: 'Við höfum sent umsóknina þína!',
     description: 'Your application is sent!',
   },
   successfulSubmissionMissingInfoTitle: {
@@ -435,9 +435,9 @@ export const m = defineMessages({
   waitingPeriodDescription: {
     id: 'hi.application:waitingPeriod.description',
     defaultMessage:
-      'Þegar flutt er til Íslands frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan **[EES svæðisins](https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/)**, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.\n Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar **[læknisfræðilegar undanþágur](https://island.is/umsokn-um-sjukratryggingu#laeknisfraedilegar-undanthagur)** eru frá sex mánaða biðtímanum.',
+      'Þegar flutt er til Íslands frá landi utan <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum fer einstaklingur á sex mánaða biðtíma eftir sjúkratryggingu. Þetta á einnig við um einstaklinga með ríkisborgararétt frá landi utan <a href="https://www.sjukra.is/heilbrigdisthjonusta/rettindi-milli-landa/evropska-sjukratryggingakortid/ees-londin/" target="_blank" style="color:#0061ff">EES svæðisins</a>, Grænlandi eða Færeyjum sem flytja til Íslands frá landi utan Norðurlandanna.<br/><br/> Þú lendir á biðtíma og verður sjálfkrafa sjúkratryggður sex mánuðum eftir að lögheimili þitt var skráð á Íslandi hjá Þjóðskrá. Við ráðleggjum þér að kaupa einkatryggingar meðan á þessum biðtíma stendur. Ákveðnar <a href="https://island.is/umsokn-um-sjukratryggingu#laeknisfraedilegar-undanthagur" target="_blank" style="color:#0061ff">læknisfræðilegar undanþágur</a> eru frá sex mánaða biðtímanum.',
     description:
-      'When moving to Iceland or being a citizen from a country outside the **[EU/EEA](https://www.sjukra.is/english/health-insurance-abroad/european-health-insurance-card/european-countries/)**, Greenland or the Faroe Islands there is a six-month waiting period before qualifying for national health insurance. You will need to wait. You will be automatically covered by the national health insurance six months from the day you registered your legal residence with Registers Iceland. We advise you to buy private health insurance until you are covered. There are some **[medical exceptions](https://island.is/en/apply-for-health-insurance#waiting-period)** to the waiting period.',
+      'When moving to Iceland or being a citizen from a country outside the <a href="https://www.sjukra.is/english/health-insurance-abroad/european-health-insurance-card/european-countries/" target="_blank" style="color:#0061ff">EU/EEA</a>, Greenland or the Faroe Islands there is a six-month waiting period before qualifying for national health insurance. You will need to wait.<br/><br/> You will be automatically covered by the national health insurance six months from the day you registered your legal residence with Registers Iceland. We advise you to buy private health insurance until you are covered. There are some <a href="https://island.is/en/apply-for-health-insurance#waiting-period" target="_blank" style="color:#0061ff">medical exceptions</a> to the waiting period.',
   },
   waitingPeriodButtonText: {
     id: 'hi.application:waitingPeriod.buttonText',
@@ -502,9 +502,9 @@ export const m = defineMessages({
   alreadyInsuredDescription: {
     id: 'hi.application:alreadyInsured.description',
     defaultMessage:
-      'Þú ert nú þegar með virka sjúkratryggingu hjá Sjúkratryggingum Íslands og þarft því ekki að sækja um.\n Nánari upplýsingar er að finna á heimasíðu Sjúkratrygginga Íslands.',
+      'Þú ert nú þegar með virka sjúkratryggingu hjá Sjúkratryggingum Íslands og þarft því ekki að sækja um.<br/><br/> Nánari upplýsingar er að finna á heimasíðu Sjúkratrygginga Íslands.',
     description:
-      'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at **[sjukra.is/english](https://www.sjukra.is/english)**',
+      'You are already covered by the Icelandic Health Insurance. You do not need to apply. You can read more about your health insurance at <a href="https://www.sjukra.is/english" target="_blank" style="color:#0061ff">sjukra.is/english</a>',
   },
   alreadyInsuredButtonText: {
     id: 'hi.application:alreadyInsured.buttonText',

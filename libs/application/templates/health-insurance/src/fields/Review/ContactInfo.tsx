@@ -17,7 +17,7 @@ import {
   ReviewFieldProps,
 } from '../../types'
 
-const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
+const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -39,8 +39,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
             <GridRow>
               <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
                 <Input
-                  id={'applicant.name'}
-                  name={'applicant.name'}
+                  id="applicant.name"
+                  name="applicant.name"
                   label={formatText(m.name, application, formatMessage)}
                   ref={register}
                   disabled
@@ -49,8 +49,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
               </GridColumn>
               <GridColumn span={['12/12', '6/12']}>
                 <Input
-                  id={'applicant.nationalId'}
-                  name={'applicant.nationalId'}
+                  id="applicant.nationalId"
+                  name="applicant.nationalId"
                   label={formatText(m.nationalId, application, formatMessage)}
                   ref={register}
                   disabled
@@ -61,8 +61,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
             <GridRow>
               <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
                 <Input
-                  id={'applicant.address'}
-                  name={'applicant.address'}
+                  id="applicant.address"
+                  name="applicant.address"
                   label={formatText(m.address, application, formatMessage)}
                   ref={register}
                   disabled
@@ -73,8 +73,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
               </GridColumn>
               <GridColumn span={['12/12', '6/12']}>
                 <Input
-                  id={'applicant.postalCode'}
-                  name={'applicant.postalCode'}
+                  id="applicant.postalCode"
+                  name="applicant.postalCode"
                   label={formatText(m.postalCode, application, formatMessage)}
                   ref={register}
                   disabled
@@ -83,10 +83,10 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
               </GridColumn>
             </GridRow>
             <GridRow>
-              <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
+              <GridColumn span={['12/12', '6/12']}>
                 <Input
-                  id={'applicant.city'}
-                  name={'applicant.city'}
+                  id="applicant.city"
+                  name="applicant.city"
                   label={formatText(m.city, application, formatMessage)}
                   ref={register}
                   disabled
@@ -107,8 +107,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
           <GridRow>
             <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 2, 0]}>
               <Input
-                id={'applicant.email'}
-                name={'applicant.email'}
+                id="applicant.email"
+                name="applicant.email"
                 label={formatText(m.email, application, formatMessage)}
                 ref={register}
                 disabled
@@ -117,8 +117,8 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application, isEditable }) => {
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
               <Input
-                id={'applicant.phoneNumber'}
-                name={'applicant.phoneNumber'}
+                id="applicant.phoneNumber"
+                name="applicant.phoneNumber"
                 label={formatText(m.phoneNumber, application, formatMessage)}
                 ref={register}
                 disabled

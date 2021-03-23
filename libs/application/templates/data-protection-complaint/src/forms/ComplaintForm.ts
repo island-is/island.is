@@ -10,19 +10,128 @@ import {
   buildCustomField,
   FormValue,
   buildSubSection,
+  buildFileUploadField,
+  buildRepeater,
+  buildCheckboxField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
-import { YES } from '../shared'
-import { section, delimitation, errorCards, info } from '../lib/messages'
-import { OnBehalf } from '../lib/dataSchema'
+import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
+import {
+  section,
+  delimitation,
+  errorCards,
+  info,
+  application,
+  sharedFields,
+  complaint,
+  overview,
+} from '../lib/messages'
+import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
+import { externalData } from '../lib/messages/externalData'
 
-const yesOption = { value: 'yes', label: 'Já' }
-const noOption = { value: 'no', label: 'Nei' }
+const yesOption = { value: YES, label: sharedFields.yes }
+const noOption = { value: NO, label: sharedFields.no }
+
+const buildComplaineeMultiField = (id: string) =>
+  buildMultiField({
+    id: `${id}MultiField`,
+    title: complaint.general.complaineePageTitle,
+    description: complaint.general.complaineePageDescription,
+    children: [
+      buildCustomField({
+        id: `${id}NameLabel`,
+        title: complaint.general.complaineePageTitle,
+        component: 'FieldLabel',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}name`,
+        title: complaint.labels.complaineeName,
+        backgroundColor: 'blue',
+      }),
+      buildCustomField({
+        id: `${id}InfoLabel`,
+        title: complaint.labels.complaineeInfoLabel,
+        component: 'FieldLabel',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}address`,
+        title: complaint.labels.complaineeAddress,
+        backgroundColor: 'blue',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}nationalId`,
+        title: complaint.labels.complaineeNationalId,
+        format: '######-####',
+        backgroundColor: 'blue',
+      }),
+      buildCustomField({
+        id: `${id}operatesWithinEuropeSpacer`,
+        title: '',
+        component: 'FieldLabel',
+      }),
+      buildRadioField({
+        id: `${id === 'complainee' ? `${id}.` : ''}operatesWithinEurope`,
+        title: complaint.labels.complaineeOperatesWithinEurope,
+        options: [yesOption, noOption],
+        largeButtons: true,
+        width: 'half',
+      }),
+      buildTextField({
+        id: `${id === 'complainee' ? `${id}.` : ''}countryOfOperation`,
+        title: complaint.labels.complaineeCountryOfOperation,
+        backgroundColor: 'blue',
+        condition: (formValue) => {
+          const operatesWithinEurope = (formValue.complainee as FormValue)
+            ?.operatesWithinEurope
+          return operatesWithinEurope === 'yes'
+        },
+      }),
+      buildCustomField({
+        id: `${id}operatesWithinEuropeMessage`,
+        title: complaint.labels.complaineeOperatesWithinEuropeMessage,
+        component: 'FieldAlertMessage',
+        condition: (formValue) => {
+          const operatesWithinEurope = (formValue.complainee as FormValue)
+            ?.operatesWithinEurope
+          return operatesWithinEurope === 'yes'
+        },
+      }),
+    ],
+  })
 
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
-  title: 'Atvinnuleysisbætur',
+  title: application.name,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'externalData',
+      title: section.externalData,
+      children: [
+        buildExternalDataProvider({
+          title: externalData.general.pageTitle,
+          id: 'approveExternalData',
+          subTitle: externalData.general.subTitle,
+          description: externalData.general.description,
+          checkboxLabel: externalData.general.checkboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: externalData.labels.nationalRegistryTitle,
+              subTitle: externalData.labels.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: externalData.labels.userProfileTitle,
+              subTitle: externalData.labels.userProfileSubTitle,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'delimitation',
       title: section.delimitation.defaultMessage,
@@ -43,14 +152,22 @@ export const ComplaintForm: Form = buildForm({
                   largeButtons: true,
                   width: 'half',
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'inCourtProceedingsAlert',
-                  title: errorCards.inCourtProceedingsTitle,
-                  description: errorCards.inCourtProceedingsDescription,
-                  condition: (formValue) =>
-                    formValue.inCourtProceedings === YES,
-                }),
+                buildCustomField(
+                  {
+                    component: 'FieldAlertMessage',
+                    id: 'inCourtProceedingsAlert',
+                    title: errorCards.inCourtProceedingsTitle,
+                    description: errorCards.inCourtProceedingsDescription,
+                    // TODO: The application system is not passing props down to custom components
+                    // Use defaultValue as a workaround until that gets fixed
+                    defaultValue: 'https://example.com/',
+                    condition: (formValue) =>
+                      formValue.inCourtProceedings === YES,
+                  },
+                  {
+                    url: 'https://example.com/',
+                  },
+                ),
               ],
             }),
           ],
@@ -161,7 +278,7 @@ export const ComplaintForm: Form = buildForm({
                       value: OnBehalf.MYSELF_AND_OR_OTHERS,
                       label: info.labels.myselfAndOrOthers,
                     },
-                    { value: OnBehalf.COMPANY, label: info.labels.company },
+                    { value: OnBehalf.OTHERS, label: info.labels.others },
                     {
                       value: OnBehalf.ORGANIZATION_OR_INSTITUTION,
                       label: info.labels.organizationInstitution,
@@ -171,13 +288,9 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                 }),
                 buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'info.onBehalfOfACompanyAlertMessage',
-                  title: errorCards.onBehalfOfACompanyTitle,
-                  description: errorCards.onBehalfOfACompanyDescription,
-                  condition: (formValue) =>
-                    (formValue.info as FormValue)?.onBehalf ===
-                    OnBehalf.COMPANY,
+                  id: 'onBehalfDescription',
+                  title: '',
+                  component: 'CompanyDisclaimer',
                 }),
               ],
             }),
@@ -187,10 +300,11 @@ export const ComplaintForm: Form = buildForm({
           id: 'applicant',
           title: section.applicant.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
               onBehalf === OnBehalf.MYSELF ||
-              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS ||
+              onBehalf === OnBehalf.OTHERS
             )
           },
           children: [
@@ -203,30 +317,50 @@ export const ComplaintForm: Form = buildForm({
                   id: 'applicant.name',
                   title: info.labels.name,
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.fullName,
                 }),
                 buildTextField({
                   id: 'applicant.nationalId',
                   title: info.labels.nationalId,
+                  format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data
+                      ?.nationalId,
                 }),
                 buildTextField({
                   id: 'applicant.address',
                   title: info.labels.address,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .streetAddress,
                 }),
                 buildTextField({
                   id: 'applicant.postalCode',
                   title: info.labels.postalCode,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .postalCode,
                 }),
                 buildTextField({
                   id: 'applicant.city',
                   title: info.labels.city,
                   width: 'half',
                   backgroundColor: 'blue',
+                  disabled: true,
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.nationalRegistry?.data?.address
+                      .city,
                 }),
                 buildTextField({
                   id: 'applicant.email',
@@ -234,13 +368,19 @@ export const ComplaintForm: Form = buildForm({
                   width: 'half',
                   variant: 'email',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data?.email,
                 }),
                 buildTextField({
                   id: 'applicant.phoneNumber',
                   title: info.labels.tel,
+                  format: '###-####',
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
+                  defaultValue: (application: DataProtectionComplaint) =>
+                    application.externalData?.userProfile?.data
+                      ?.mobilePhoneNumber,
                 }),
               ],
             }),
@@ -267,6 +407,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'organizationOrInstitution.nationalId',
                   title: info.labels.nationalId,
+                  format: '######-####',
                   width: 'half',
                   backgroundColor: 'blue',
                 }),
@@ -298,6 +439,7 @@ export const ComplaintForm: Form = buildForm({
                 buildTextField({
                   id: 'organizationOrInstitution.phoneNumber',
                   title: info.labels.tel,
+                  format: '###-####',
                   width: 'half',
                   variant: 'tel',
                   backgroundColor: 'blue',
@@ -310,19 +452,35 @@ export const ComplaintForm: Form = buildForm({
           id: 'commissions',
           title: section.commissions.defaultMessage,
           condition: (formValue) => {
-            const onBehalf = (formValue.info as FormValue).onBehalf
-            return onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS
+            const onBehalf = (formValue.info as FormValue)?.onBehalf
+            return (
+              onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS ||
+              onBehalf === OnBehalf.OTHERS
+            )
           },
           children: [
             buildMultiField({
-              title: 'Umboð',
-              description: 'Lýsing',
+              id: 'comissionsSection',
+              title: info.general.commissionsPageTitle,
+              // TODO: We probably need a custom component for the description
+              // so we can include the document link
+              description: info.general.commissionsPageDescription,
               children: [
-                buildTextField({
-                  id: 'commissions.name',
-                  title: info.labels.name,
-                  backgroundColor: 'blue',
-                  width: 'half',
+                buildFileUploadField({
+                  id: 'commissions.documents',
+                  title: '',
+                  introduction: '',
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: info.labels.commissionsDocumentsHeader,
+                  uploadDescription:
+                    info.labels.commissionsDocumentsDescription,
+                  uploadButtonLabel:
+                    info.labels.commissionsDocumentsButtonLabel,
+                }),
+                buildCustomField({
+                  id: 'commissions.persons',
+                  title: info.labels.commissionsPerson,
+                  component: 'CommissionFieldRepeater',
                 }),
               ],
             }),
@@ -331,14 +489,168 @@ export const ComplaintForm: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'complaint',
+      title: section.complaint.defaultMessage,
+      children: [
+        buildSubSection({
+          id: 'complainee',
+          title: section.complainee.defaultMessage,
+          children: [buildComplaineeMultiField('complainee')],
+        }),
+        buildRepeater({
+          id: 'additionalComplainees',
+          title: complaint.general.complaineePageTitle,
+          component: 'ComplaineeRepeater',
+          children: [buildComplaineeMultiField('additionalComplainees')],
+        }),
+        buildSubSection({
+          id: 'subjectOfComplaint',
+          title: section.subjectOfComplaint,
+          children: [
+            buildMultiField({
+              title: complaint.general.subjectOfComplaintPageTitle,
+              description: complaint.general.subjectOfComplaintPageDescription,
+              space: 3,
+              children: [
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.authorities',
+                  title: complaint.labels.subjectPersonalInformation,
+                  options: [
+                    {
+                      label: complaint.labels.subjectAuthorities,
+                      value: SubjectOfComplaint.WITH_AUTHORITIES,
+                    },
+                    {
+                      label: complaint.labels.subjectLackOfEducation,
+                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
+                    },
+                    {
+                      label: complaint.labels.subjectSocialMedia,
+                      value: SubjectOfComplaint.SOCIAL_MEDIA,
+                    },
+                    {
+                      label: complaint.labels.subjectRequestForAccess,
+                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
+                    },
+                    {
+                      label: complaint.labels.subjectRightOfObjection,
+                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
+                    },
+                  ],
+                  large: true,
+                }),
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.useOfPersonalInformation',
+                  title: complaint.labels.subjectUseOfPersonalInformation,
+                  options: [
+                    {
+                      label: complaint.labels.subjectEmail,
+                      value: SubjectOfComplaint.EMAIL,
+                    },
+                    {
+                      label: complaint.labels.subjectNationalId,
+                      value: SubjectOfComplaint.NATIONAL_ID,
+                    },
+                    {
+                      label: complaint.labels.subjectEmailInWorkplace,
+                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
+                    },
+                    {
+                      label: complaint.labels.subjectUnauthorizedPublication,
+                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
+                    },
+                  ],
+                  large: true,
+                }),
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.other',
+                  title: complaint.labels.subjectOther,
+                  options: [
+                    {
+                      label: complaint.labels.subjectVanskilaskra,
+                      value: SubjectOfComplaint.VANSKILASKRA,
+                    },
+                    {
+                      label: complaint.labels.subjectVideoRecording,
+                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
+                    },
+                    {
+                      label: complaint.labels.subjectOtherOther,
+                      value: SubjectOfComplaint.OTHER,
+                    },
+                  ],
+                  large: true,
+                }),
+                buildTextField({
+                  id: 'subjectOfComplaint.somethingElse',
+                  title: complaint.labels.subjectSomethingElse,
+                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
+                  backgroundColor: 'blue',
+                  condition: (formValue) => {
+                    const other =
+                      ((formValue.subjectOfComplaint as FormValue)
+                        ?.other as string[]) || []
+                    return other.includes('other')
+                  },
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'complaint',
+          title: section.complaint,
+          children: [
+            buildMultiField({
+              id: 'complaintDescription',
+              title: complaint.general.complaintPageTitle,
+              description: complaint.general.complaintPageDescription,
+              space: 3,
+              children: [
+                buildTextField({
+                  id: 'complaint.description',
+                  title: complaint.labels.complaintDescription,
+                  placeholder: complaint.labels.complaintDescriptionPlaceholder,
+                  description: complaint.labels.complaintDescriptionLabel,
+                  variant: 'textarea',
+                  backgroundColor: 'blue',
+                }),
+                buildFileUploadField({
+                  id: 'complaint.documents',
+                  title: complaint.labels.complaintDocumentsTitle,
+                  introduction: complaint.labels.complaintDocumentsIntroduction,
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: complaint.labels.complaintDocumentsHeader,
+                  uploadDescription:
+                    complaint.labels.complaintDocumentsDescription,
+                  uploadButtonLabel:
+                    complaint.labels.complaintDocumentsButtonLabel,
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'overview',
+      title: section.overview,
+      children: [
+        buildCustomField({
+          id: 'overview.termsAgreement',
+          title: overview.general.pageTitle,
+          component: 'ComplaintOverview',
+        }),
+      ],
+    }),
+    buildSection({
       id: 'confirmation',
-      title: 'Staðfesting',
+      title: 'Búið',
       children: [
         buildDescriptionField({
           id: 'field',
           title: 'Vel gert!',
-          description:
-            'Þú ert komin/n út á enda, ef þú ýtir á næsta skref þá læsist umsóknin',
+          description: 'Þú ert komin/n út á enda',
         }),
       ],
     }),

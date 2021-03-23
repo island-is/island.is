@@ -102,6 +102,9 @@ export class Case implements TCase {
   readonly prosecutor?: User
 
   @Field({ nullable: true })
+  readonly setCourtCaseNumberManually?: boolean
+
+  @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
   @Field({ nullable: true })
@@ -148,6 +151,9 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   isCustodyEndDateInThePast?: boolean
+
+  @Field({ nullable: true })
+  readonly isolationTo?: string
 
   @Field(() => [String], { nullable: true })
   readonly custodyRestrictions?: CaseCustodyRestrictions[]

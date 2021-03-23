@@ -42,8 +42,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:applications',
           defaultMessage: 'Umsóknir',
         }),
-        path: ServicePortalPath.ApplicationIntroduction,
-
+        path: ServicePortalPath.ApplicationRoot,
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',
@@ -172,13 +171,43 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           id: 'service.portal:education',
           defaultMessage: 'Menntun',
         }),
-        path: ServicePortalPath.EducationExternal,
-        external: true,
-        systemRoute: true,
+        path: ServicePortalPath.EducationRoot,
         icon: {
           type: 'outline',
           icon: 'school',
         },
+        children: [
+          {
+            name: defineMessage({
+              id: 'service.portal:educationDegree',
+              defaultMessage: 'Prófskírteini',
+            }),
+            path: ServicePortalPath.EducationDegree,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:educationLicense',
+              defaultMessage: 'Starfsleyfi',
+            }),
+            path: ServicePortalPath.EducationLicense,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:educationCareer',
+              defaultMessage: 'Námsferill',
+            }),
+            path: ServicePortalPath.EducationCareer,
+          },
+          {
+            name: defineMessage({
+              id: 'service.portal:grades',
+              defaultMessage: 'Einkunnir',
+            }),
+            path: ServicePortalPath.EducationExternal,
+            external: true,
+            systemRoute: true,
+          },
+        ],
       },
 
       // Fasteignir

@@ -7,10 +7,10 @@ import { mapOneColumnText, OneColumnText } from './oneColumnText.model'
 @ObjectType()
 export class AccordionSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title?: string
 
   @Field(() => [OneColumnText], { nullable: true })
   accordionItems?: Array<OneColumnText>

@@ -1,6 +1,5 @@
 module.exports = {
-  name: 'api-domains-user-profile',
-  preset: '../../../../jest.config.js',
+  preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsConfig: '<rootDir>/tsconfig.spec.json',
@@ -12,4 +11,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../../coverage/libs/api/domains/user-profile',
+  displayName: 'api-domains-user-profile',
 }

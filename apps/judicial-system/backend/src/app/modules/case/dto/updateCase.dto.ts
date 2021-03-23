@@ -124,6 +124,11 @@ export class UpdateCaseDto {
   readonly prosecutorId?: string
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly setCourtCaseNumberManually?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtCaseNumber?: string
@@ -207,6 +212,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly otherRestrictions?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly isolationTo?: Date
 
   @IsOptional()
   @IsEnum(CaseAppealDecision)

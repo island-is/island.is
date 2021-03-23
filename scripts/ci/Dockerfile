@@ -1,5 +1,5 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-FROM node:12.19.0-alpine3.11 as deps
+FROM node:14.16.0-alpine3.11 as deps
 
 RUN apk add -U git
 
@@ -24,7 +24,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
-FROM node:12.19.0-alpine3.11 as output-base
+FROM node:14.16.0-alpine3.11 as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -59,11 +59,7 @@ FROM output-base as output-next
 
 ENV PORT=4200
 
-COPY --from=builder /build/${APP_HOME}/next.config.js /webapp
-COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
-COPY --from=builder /build/${APP_HOME}/public /webapp/public
-COPY --from=builder /build/${APP_DIST_HOME}/.next /webapp/.next
-COPY --from=builder /build/${APP_DIST_HOME}/main.js* /webapp
+COPY --from=builder /build/${APP_DIST_HOME} /webapp
 
 ENTRYPOINT [ "node", "main.js" ]
 
@@ -82,9 +78,9 @@ ENV BASEPATH=/
 
 RUN mkdir -p /etc/nginx/templates
 RUN apk add bash && \
-    curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && \
-    chmod a+x /tmp/jq-linux64 && \
-    mv /tmp/jq-linux64 /usr/bin/jq
+  curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o /tmp/jq-linux64 && \
+  chmod a+x /tmp/jq-linux64 && \
+  mv /tmp/jq-linux64 /usr/bin/jq
 ADD scripts/ci/dockerfile-assets/nginx/* /etc/nginx/templates
 ADD scripts/ci/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html

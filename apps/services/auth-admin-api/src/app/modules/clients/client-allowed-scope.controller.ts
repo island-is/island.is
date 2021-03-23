@@ -14,11 +14,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOAuth2, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { NationalIdGuard } from '../access/national-id-guard'
 
-// @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(IdsAuthGuard, NationalIdGuard)
 @ApiTags('client-allowed-scope')
 @Controller('backend/client-allowed-scope')
@@ -27,7 +26,7 @@ export class ClientAllowedScopeController {
 
   /** Gets all scopes for client to select from */
   @Get()
-  async FindAvailabeScopes(): Promise<ApiScope[]> {
+  async findAvailabeScopes(): Promise<ApiScope[]> {
     return await this.clientsService.FindAvailabeScopes()
   }
 

@@ -7,6 +7,7 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { ApiScope } from './../../../entities/models/api-scope.model'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   clientId: string
@@ -17,9 +18,12 @@ interface Props {
 }
 
 const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<
-    ClientAllowedScopeDTO
-  >()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+  } = useForm<ClientAllowedScopeDTO>()
   const { isSubmitting } = formState
   const [scopes, setScopes] = useState<ApiScope[]>([])
   const [selectedScope, setSelectedScope] = useState<ApiScope>(new ApiScope())
@@ -44,7 +48,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getAvailableScopes = async () => {
-    const response = await ClientService.FindAvailabeScopes()
+    const response = await ClientService.findAvailabeScopes()
     if (response) {
       setScopes(response)
     }
@@ -111,7 +115,10 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
                     id="scopeName"
                     className="client-allowed-scopes__select"
                     name="scopeName"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateScope,
+                    })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {

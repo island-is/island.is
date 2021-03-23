@@ -127,7 +127,7 @@ export class ClientService extends BaseService {
   }
 
   /** Finds available scopes for AdminUI to select allowed scopes */
-  static async FindAvailabeScopes(): Promise<ApiScope[] | null> {
+  static async findAvailabeScopes(): Promise<ApiScope[] | null> {
     return BaseService.GET(`client-allowed-scope`)
   }
 
