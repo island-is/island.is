@@ -57,7 +57,8 @@ validate_slash () {
 validate_whitespace () {
   if [ ! ${1+x} ]
   then
-    error_empty
+    printf "%sNo empty values please%s" "$RED" "$RESET"
+    exit 0
   fi
   # No whitespace
   if [[ $1 =~ $ILLEGAL_CHARS ]]
@@ -102,18 +103,18 @@ validate_length () {
 #-------------------CREATE SECRET--------------------------#
 prepare_secret () {
   # Prompt user for secret name
-  read -p "$BLUE Secret name: $RESET$SSM_PREFIX" SECRET_NAME
+  read -r -p "$BLUE Secret name: $RESET$SSM_PREFIX" SECRET_NAME
   validate_whitespace "$SECRET_NAME"
   validate_chars "$SECRET_NAME"
   validate_length "$SECRET_NAME"
 
   # Prompt user for secret value
-  read -p "$BLUE Secret value: $RESET" SECRET_VALUE
+  read -r -p "$BLUE Secret value: $RESET" SECRET_VALUE
   validate_whitespace "$SECRET_VALUE"
   validate_length "$SECRET_VALUE"
 
 
-  read -p "$YELLOW Are you sure [y/n]? $RESET"
+  read -r -p "$YELLOW Are you sure [y/n]? $RESET"
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     printf "%sCreating secret....%s\n" "$GREEN" "$RESET"
