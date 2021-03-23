@@ -24,7 +24,6 @@ import {
   GridContainer,
   GridRow,
   Link,
-  Navigation,
   Stack,
   Text,
   Typography,
@@ -35,7 +34,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import htmldiff from 'htmldiff-js'
 import cn from 'classnames'
-import { Sidebar } from '@island.is/web/components'
+import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -168,20 +167,13 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
                 order={[1, 1, 0]}
               >
                 <Stack space={2}>
-                  <Navigation
-                    baseId="???"
-                    title={
-                      n('historyTitle') + ' ' + prettyName(regulation.name)
-                    }
-                    items={history.map((item) => ({
-                      title: prettyName(item.name) + ' ' + item.title,
-                      href: linkToRegulation(item.name),
-                    }))}
-                  />
-                  <Sidebar title="Stofnreglugerð" colorScheme="blueberry">
+                  <RegulationsSidebarBox
+                    title="Stofnreglugerð"
+                    colorScheme="blueberry"
+                  >
                     {history.slice(0, 1).map((item) => (
                       <Link href={linkToRegulation(item.name)}>
-                        <FocusableBox flexDirection={'column'} color="purple">
+                        <FocusableBox flexDirection={'column'}>
                           {({
                             isFocused,
                             isHovered,
@@ -212,8 +204,8 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
                         </FocusableBox>
                       </Link>
                     ))}
-                  </Sidebar>
-                  <Sidebar
+                  </RegulationsSidebarBox>
+                  <RegulationsSidebarBox
                     title={
                       n('historyTitle') + ' ' + prettyName(regulation.name)
                     }
@@ -221,7 +213,7 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
                   >
                     {history.map((item) => (
                       <Link href={linkToRegulation(item.name)}>
-                        <FocusableBox flexDirection={'column'} color="purple">
+                        <FocusableBox flexDirection={'column'}>
                           {({
                             isFocused,
                             isHovered,
@@ -252,10 +244,13 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
                         </FocusableBox>
                       </Link>
                     ))}
-                  </Sidebar>
-                  <Sidebar title="Tengt efni">
+                  </RegulationsSidebarBox>
+                  <RegulationsSidebarBox
+                    title="Tengt efni"
+                    colorScheme="blueberry"
+                  >
                     <FocusableBox></FocusableBox>
-                  </Sidebar>
+                  </RegulationsSidebarBox>
                 </Stack>
               </GridColumn>
             </GridRow>
