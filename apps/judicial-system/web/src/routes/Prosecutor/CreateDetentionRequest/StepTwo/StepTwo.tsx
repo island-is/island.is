@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import parseISO from 'date-fns/parseISO'
 import { ValueType } from 'react-select/src/types'
 import { useMutation, useQuery } from '@apollo/client'
 
@@ -20,17 +19,13 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
-  validateAndSendTimeToServer,
-  validateAndSetTime,
   setAndSendToServer,
-  getTimeFromDate,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   FormFooter,
   PageLayout,
   Modal,
-  DateTime,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -43,8 +38,8 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
 import { useRouter } from 'next/router'
+import NewDateTime from 'apps/judicial-system/web/src/shared-components/NewDateTime/NewDateTime'
 
 interface CaseData {
   case?: Case
@@ -55,38 +50,14 @@ export const StepTwo: React.FC = () => {
   const id = router.query.id
 
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [arrestTime, setArrestTime] = useState<string | undefined>('')
-  const [requestedCourtTime, setRequestedCourtTime] = useState<string>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
+  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
+  const [requestedCourtDateIsValid, setRequestedCourtDateIsValid] = useState(
+    false,
+  )
+
   const { user } = useContext(UserContext)
-
-  // Validate date and time fields
-  const { isValidTime: isValidArrestTime } = useDateTime({ time: arrestTime })
-  const { isValidDate: isValidRequestedCourtDate } = useDateTime({
-    date: workingCase?.requestedCourtDate,
-  })
-  const { isValidTime: isValidRequestedCourtTime } = useDateTime({
-    time: requestedCourtTime,
-  })
-
-  const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
-    '',
-  )
-
-  const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
-    '',
-  )
-
-  const [
-    requestedCourtDateErrorMessage,
-    setRequestedCourtDateErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    requestedCourtTimeErrorMessage,
-    setRequestedCourtTimeErrorMessage,
-  ] = useState<string>('')
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -193,8 +164,8 @@ export const StepTwo: React.FC = () => {
 
   useEffect(() => {
     if (!workingCase && data) {
-      setArrestTime(getTimeFromDate(data.case?.arrestDate))
-      setRequestedCourtTime(getTimeFromDate(data.case?.requestedCourtDate))
+      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== undefined)
+
       setWorkingCase(data.case)
     }
   }, [workingCase, setWorkingCase, data])
@@ -344,55 +315,20 @@ export const StepTwo: React.FC = () => {
                     Tími handtöku
                   </Text>
                 </Box>
-                <DateTime
-                  datepickerId="arrestDate"
-                  maxDate={new Date()}
-                  datepickerErrorMessage={arrestDateErrorMessage}
-                  selectedDate={
-                    workingCase.arrestDate
-                      ? new Date(workingCase.arrestDate)
-                      : null
-                  }
-                  handleCloseCalander={(date) =>
-                    setAndSendDateToServer(
+                <NewDateTime
+                  name="arrestDate"
+                  selectedDate={workingCase.arrestDate}
+                  onChange={(date: Date | undefined, valid: boolean) =>
+                    newSetAndSendDateToServer(
                       'arrestDate',
-                      workingCase.arrestDate,
                       date,
-                      workingCase,
-                      false,
-                      setWorkingCase,
-                      updateCase,
-                      setArrestDateErrorMessage,
-                    )
-                  }
-                  disabledTime={!workingCase.arrestDate}
-                  timeOnChange={(evt) =>
-                    validateAndSetTime(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
+                      valid,
                       workingCase,
                       setWorkingCase,
-                      arrestTimeErrorMessage,
-                      setArrestTimeErrorMessage,
-                      setArrestTime,
-                    )
-                  }
-                  timeOnBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'arrestDate',
-                      workingCase.arrestDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
+                      setArrestDateIsValid,
                       updateCase,
-                      setArrestTimeErrorMessage,
                     )
                   }
-                  timeName="arrestTime"
-                  timeErrorMessage={arrestTimeErrorMessage}
-                  timeDefaultValue={arrestTime}
                 />
               </Box>
             )}
@@ -408,66 +344,22 @@ export const StepTwo: React.FC = () => {
                   </Box>
                 </Text>
               </Box>
-              <DateTime
-                datepickerId="reqCourtDate"
-                datepickerErrorMessage={requestedCourtDateErrorMessage}
-                datepickerIcon={
-                  workingCase.courtDate ? 'lockClosed' : undefined
-                }
-                minDate={new Date()}
-                selectedDate={
-                  workingCase.requestedCourtDate
-                    ? parseISO(workingCase.requestedCourtDate.toString())
-                    : null
-                }
-                handleCloseCalander={(date) => {
-                  setAndSendDateToServer(
+              <NewDateTime
+                name="reqCourtDate"
+                selectedDate={workingCase.requestedCourtDate}
+                onChange={(date: Date | undefined, valid: boolean) =>
+                  newSetAndSendDateToServer(
                     'requestedCourtDate',
-                    workingCase.requestedCourtDate,
                     date,
-                    workingCase,
-                    true,
-                    setWorkingCase,
-                    updateCase,
-                    setRequestedCourtDateErrorMessage,
-                  )
-                }}
-                disabledDate={Boolean(workingCase.courtDate)}
-                dateIsRequired
-                timeOnChange={(evt) =>
-                  validateAndSetTime(
-                    'requestedCourtDate',
-                    workingCase.requestedCourtDate,
-                    evt.target.value,
-                    ['empty', 'time-format'],
+                    valid,
                     workingCase,
                     setWorkingCase,
-                    requestedCourtTimeErrorMessage,
-                    setRequestedCourtTimeErrorMessage,
-                    setRequestedCourtTime,
-                  )
-                }
-                timeOnBlur={(evt) =>
-                  validateAndSendTimeToServer(
-                    'requestedCourtDate',
-                    workingCase.requestedCourtDate,
-                    evt.target.value,
-                    ['empty', 'time-format'],
-                    workingCase,
+                    setRequestedCourtDateIsValid,
                     updateCase,
-                    setRequestedCourtTimeErrorMessage,
                   )
                 }
-                timeName="requestedCourtDate"
-                timeLabel="Ósk um tíma (kk:mm)"
-                timeErrorMessage={requestedCourtTimeErrorMessage}
-                timeDefaultValue={requestedCourtTime}
-                timeIcon={workingCase.courtDate ? 'lockClosed' : undefined}
-                disabledTime={
-                  !workingCase.requestedCourtDate ||
-                  Boolean(workingCase.courtDate)
-                }
-                timeIsRequired
+                locked={workingCase.courtDate !== null}
+                required
               />
               {workingCase.courtDate && (
                 <Box marginTop={1}>
@@ -484,9 +376,8 @@ export const StepTwo: React.FC = () => {
               onNextButtonClick={async () => await handleNextButtonClick()}
               nextIsDisabled={
                 transitionLoading ||
-                (workingCase.arrestDate && !isValidArrestTime?.isValid) ||
-                !isValidRequestedCourtDate?.isValid ||
-                !isValidRequestedCourtTime?.isValid
+                !arrestDateIsValid ||
+                !requestedCourtDateIsValid
               }
               nextIsLoading={transitionLoading}
             />
