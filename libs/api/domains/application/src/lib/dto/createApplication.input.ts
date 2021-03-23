@@ -1,12 +1,5 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsObject,
-  IsArray,
-} from 'class-validator'
+import { IsEnum } from 'class-validator'
 import { CreateApplicationDtoTypeIdEnum } from '../../../gen/fetch'
 
 registerEnumType(CreateApplicationDtoTypeIdEnum, {
@@ -15,28 +8,7 @@ registerEnumType(CreateApplicationDtoTypeIdEnum, {
 
 @InputType()
 export class CreateApplicationInput {
-  @Field((type) => String)
-  @IsString()
-  applicant!: string
-
-  @Field((type) => [String])
-  @IsArray()
-  assignees!: string[]
-
-  @Field((type) => String)
-  @IsString()
-  state!: string
-
-  @Field((type) => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  attachments?: object
-
-  @Field((type) => CreateApplicationDtoTypeIdEnum)
+  @Field(() => CreateApplicationDtoTypeIdEnum)
   @IsEnum(CreateApplicationDtoTypeIdEnum)
   typeId!: CreateApplicationDtoTypeIdEnum
-
-  @Field((type) => graphqlTypeJson)
-  @IsObject()
-  answers!: object
 }

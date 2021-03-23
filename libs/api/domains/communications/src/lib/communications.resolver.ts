@@ -27,4 +27,14 @@ export class CommunicationsResolver {
       sent: true,
     }
   }
+
+  @Mutation(() => CommunicationResponse)
+  async contactUsZendeskTicket(
+    @Args('input') input: ContactUsInput,
+  ): Promise<CommunicationResponse> {
+    await this.communicationsService.sendZendeskTicket(input)
+    return {
+      sent: true,
+    }
+  }
 }

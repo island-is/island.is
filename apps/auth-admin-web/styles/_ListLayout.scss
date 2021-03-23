@@ -4,7 +4,9 @@
 .api-resources-list,
 .admin-users-list,
 .idp-providers-list,
-.grant-type-list {
+.grant-type-list,
+.language-list,
+.translation-list {
   &__wrapper {
     max-width: 1024px;
   }

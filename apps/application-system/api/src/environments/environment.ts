@@ -5,6 +5,7 @@ const baseApiUrl = 'http://localhost:4444'
 export default {
   production: false,
   environment: 'local',
+  name: 'local',
   baseApiUrl,
   redis: {
     urls: [
@@ -18,12 +19,12 @@ export default {
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: 'api_resource.scope', // TODO update scope when a new one has been created, uses same scope as graphql api atm
+    audience: '@island.is',
     jwksUri:
       'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
   templateApi: {
-    clientLocationOrigin: 'http://localhost:4200',
+    clientLocationOrigin: 'http://localhost:4242',
     emailOptions: {
       useTestAccount: true,
     },

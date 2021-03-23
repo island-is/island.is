@@ -1,13 +1,5 @@
-<!-- gitbook-ignore -->
+# Application Templates Parental Leave
 
-# application-templates-parental-leave
+This application template is handling request for parental leave. It handles connections with external API, like Vinnumálastofnun or Þjóðskrá to get the information needed to create an application.
 
-This library was generated with [Nx](https://nx.dev).
-
-## Running lint:
-
-Run `yarn nx lint application-templates-parental-leave` to lint
-
-## Running unit tests
-
-Run `ng test application-templates-parental-leave` to execute the unit tests via [Jest](https://jestjs.io).
+This application contains all the steps for the parents, employers, institutions to process the request along the way, until it is completed.

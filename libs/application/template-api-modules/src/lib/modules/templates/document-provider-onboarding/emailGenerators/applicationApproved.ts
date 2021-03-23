@@ -1,5 +1,6 @@
 import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
+import { getSlugFromType } from '@island.is/application/core'
 
 import { EmailTemplateGenerator } from '../../../../types'
 
@@ -12,7 +13,8 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
   } = props
 
   const applicantEmail = get(application.answers, 'applicant.email')
-  const applicationLink = `${clientLocationOrigin}/umsokn/${application.id}`
+  const applicationSlug = getSlugFromType(application.typeId) as string
+  const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
 
   // TODO translate using locale
   const subject = locale === 'is' ? 'Umsókn samþykkt' : 'Application approved'
@@ -22,7 +24,7 @@ export const generateApplicationApprovedEmail: EmailTemplateGenerator = (
 
         Umsókn þín um að gerast skjalaveita hefur verið samþykkt.
         <a href=${applicationLink} target="_blank">Smelltu hér til þess að halda áfram í útfærslu og prófanir</a>.
-        
+
         Með kveðju,
         starfsfólk island.is
       `)

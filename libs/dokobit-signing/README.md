@@ -13,16 +13,12 @@ To be done.
 
 ### NestJS Standalone - not recommended
 
-Assuming `environment.signingOptions` implements `SigningServiceOptions`, add the service to your Module providers:
+Assuming `environment.signingOptions` implements `SigningServiceOptions`, add the module to your Module imports:
 
 ```typescript
 @Module({
-  providers: [
-    {
-      provide: SIGNING_OPTIONS,
-      useValue: environment.signingOptions
-    },
-    SigningService,
+  imports: [
+    SigningModule.register(environment.signingOptions),
   ],
 })
 ```

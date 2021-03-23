@@ -7,7 +7,7 @@ export class GetNewsInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  lang?: ElasticsearchIndexLocale = 'is'
+  lang: ElasticsearchIndexLocale = 'is'
 
   @Field(() => Int, { nullable: true })
   @IsInt()
