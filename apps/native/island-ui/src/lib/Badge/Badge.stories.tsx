@@ -1,19 +1,20 @@
 import { storiesOf } from '@storybook/react-native'
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { select, text, withKnobs } from '@storybook/addon-knobs';
 import React from 'react'
 import { View } from 'react-native';
-import { Button } from './Button'
+import { Badge } from './Badge'
+import { theme } from '@island.is/island-ui/theme'
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>{children}</View>
 )
 
-storiesOf('Button', module)
+storiesOf('Badge', module)
   .addDecorator((getStory) => <CenterView>{ getStory() }</CenterView>)
   .addDecorator(withKnobs)
   .add('Default', () => {
-    const title = text('Button title', 'Auðkenna');
+    const title = text('Badge title', 'Vantar gögn');
     return (
-      <Button title={title} onPress={() => void 0} />
+      <Badge title={title} />
     );
   })

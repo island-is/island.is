@@ -1,6 +1,6 @@
-import { Card, Input, ListItem, Container } from '@island.is/island-ui-native';
+import { Card, CardColor, ListItem } from '@island.is/island-ui-native';
 import React from 'react'
-import { SafeAreaView, ScrollView, } from 'react-native'
+import { SafeAreaView, ScrollView } from 'react-native'
 
 export const Wallet = () => {
   return (
@@ -21,13 +21,14 @@ export const Wallet = () => {
           style={{ marginTop: 50, marginBottom: 50 }}
         >
           <Card title="Ökuskírteini" />
-          <Card title="Skotvopnaleyfi" />
+          <Card title="Skotvopnaleyfi" color={CardColor.YELLOW} />
           <Card title="Fyrsta hjálp" />
-          <Card title="Siglinga réttindi" />
+          <Card title="Siglinga réttindi" color={CardColor.YELLOW} />
         </ScrollView>
-        <Container>
+        {/* <Container>
           <Input placeholder="Finndu skírteini" />
-        </Container>
+        </Container> */}
+
         <ListItem
           title="Ríkislögreglustjóri"
           description="Ökuskírteini"
