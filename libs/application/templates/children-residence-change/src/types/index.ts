@@ -1,4 +1,3 @@
-// import { NationalRegistryUser } from '@island.is/api/schema'
 import { Application, FieldBaseProps } from '@island.is/application/core'
 import { answersSchema } from '../lib/dataSchema'
 
@@ -16,7 +15,7 @@ interface OtherParent {
   address: Address
 }
 
-interface Child {
+export interface Child {
   nationalId: string
   livesWithApplicant: boolean
   fullName: string
@@ -31,12 +30,9 @@ export interface NationalRegistry {
 }
 
 export interface PersonResidenceChange {
-  id: string
-  name: string
-  ssn: string
-  postalCode: string
-  address: string
-  city: string
+  nationalId: string
+  fullName: string
+  address: Address
 }
 
 export interface UserInfo {
@@ -50,29 +46,17 @@ export interface ExternalData {
   nationalRegistry: {
     data: NationalRegistry
   }
-  parentNationalRegistry: {
-    data: PersonResidenceChange
-  }
-  childrenNationalRegistry: {
-    data: PersonResidenceChange[]
-  }
   userProfile: {
     data: UserInfo
   }
 }
 
-interface Person {
-  nationalId: string
-  fullName: string
-  address: Address
-}
-
-interface MockChildren extends Person {
+interface MockChildren extends PersonResidenceChange {
   livesWithApplicant: 'yes' | undefined
   otherParent: number
 }
 interface MockData {
-  parents: Person[]
+  parents: PersonResidenceChange[]
   children: MockChildren[]
 }
 
@@ -92,8 +76,6 @@ export type CRCFieldBaseProps = Override<
 >
 
 export enum DataProviderTypes {
-  ChildrenNationalRegistry = 'ChildrenNationalRegistryProvider',
-  ParentNationalRegistry = 'ParentNationalRegistryProvider',
   MOCK_NationalRegistry = 'MockNationalRegistryProvider',
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',

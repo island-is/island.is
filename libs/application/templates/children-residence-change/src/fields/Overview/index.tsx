@@ -9,7 +9,10 @@ import {
   UPLOAD_SIGNED_FILE,
   GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
-import { constructParentAddressString } from '../../lib/utils'
+import {
+  constructParentAddressString,
+  getSelectedChildrenFromExternalData,
+} from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
 import { DescriptionText } from '../components'
@@ -32,9 +35,12 @@ const Overview = ({
     initialFileSignatureState,
   )
   const applicant = externalData.nationalRegistry.data
-  const otherParent = applicant?.children?.[0].otherParent
+  const children = getSelectedChildrenFromExternalData(
+    applicant.children,
+    answers.selectChild,
+  )
+  const otherParent = children?.[0].otherParent
   const parentAddress = constructParentAddressString(otherParent.address)
-  const children = answers.selectChild
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
@@ -176,7 +182,7 @@ const Overview = ({
           })}
         </Text>
         {children.map((child) => (
-          <Text key={child}>{child}</Text>
+          <Text key={child.nationalId}>{child.fullName}</Text>
         ))}
       </Box>
       <Box marginTop={4}>
