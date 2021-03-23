@@ -30,7 +30,7 @@ export const generateSendApplicationEmail = (
     Kennitala umsækjanda: ${applicantNationalId}
     Netfang: ${applicantEmail}
     
-    (Athugið að meðmælendur eru í áhengdu excel skjali)
+    (Athugið að meðmælendur eru skráðir í áhengt excel skjal)
   `)
 
   const attachments = [
