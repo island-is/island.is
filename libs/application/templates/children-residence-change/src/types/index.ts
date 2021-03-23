@@ -55,6 +55,6 @@ export enum DataProviderTypes {
   ChildrenNationalRegistry = 'ChildrenNationalRegistryProvider',
   MOCK_ParentNationalRegistry = 'MockParentNationalRegistryProvider',
   ParentNationalRegistry = 'ParentNationalRegistryProvider',
-  NationalRegistry = 'NationalRegistryProviderProvider',
-  UserProfile = 'UserProfileProviderProvider',
+  NationalRegistry = 'NationalRegistryProvider',
+  UserProfile = 'UserProfileProvider',
 }

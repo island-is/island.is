@@ -156,7 +156,7 @@ export class ResourcesController {
   @Get('identity-resources/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
-  async FindIdentityResourcesByScopeName(
+  async findIdentityResourcesByScopeName(
     @Query('scopeNames') scopeNames: string,
   ): Promise<IdentityResource[]> {
     const identityResources = await this.resourcesService.findIdentityResourcesByScopeName(
@@ -170,7 +170,7 @@ export class ResourcesController {
   @Get('api-scopes/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: ApiScope, isArray: true })
-  async FindApiScopesByNameAsync(
+  async findApiScopesByNameAsync(
     @Query('scopeNames') scopeNames: string,
   ): Promise<ApiScope[]> {
     const apiScopes = await this.resourcesService.findApiScopesByNameAsync(
@@ -185,7 +185,7 @@ export class ResourcesController {
   @ApiQuery({ name: 'apiResourceNames', required: false })
   @ApiQuery({ name: 'apiScopeNames', required: false })
   @ApiOkResponse({ type: ApiResource, isArray: true })
-  async FindApiResourcesByNameAsync(
+  async findApiResourcesByNameAsync(
     @Query('apiResourceNames') apiResourceNames: string,
     @Query('apiScopeNames') apiScopeNames: string,
   ): Promise<ApiResource[]> {
@@ -207,7 +207,7 @@ export class ResourcesController {
   }
 
   @Get('identity-resource/:id')
-  async GetIdentityResourceByName(
+  async getIdentityResourceByName(
     @Param('id') name: string,
   ): Promise<IdentityResource> {
     return await this.resourcesService.getIdentityResourceByName(name)
@@ -248,6 +248,28 @@ export class ResourcesController {
     }
 
     return await this.resourcesService.deleteIdentityResource(name)
+  }
+
+  /** Gets all Identity Resource User Claims */
+  @Get('identity-resource-user-claims')
+  async findAllIdentityResourceUserClaims(): Promise<
+    IdentityResourceUserClaim[] | undefined
+  > {
+    return await this.resourcesService.findAllIdentityResourceUserClaims()
+  }
+
+  /** Gets all Api Scope User Claims */
+  @Get('api-scope-user-claims')
+  async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[] | undefined> {
+    return await this.resourcesService.findAllApiScopeUserClaims()
+  }
+
+  /** Gets all Api Resource User Claims */
+  @Get('api-resource-user-claims')
+  async findAllApiResourceUserClaims(): Promise<
+    ApiResourceUserClaim[] | undefined
+  > {
+    return await this.resourcesService.findAllApiResourceUserClaims()
   }
 
   /** Creates a new Api Scope */
