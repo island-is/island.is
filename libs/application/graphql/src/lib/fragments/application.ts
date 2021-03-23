@@ -14,5 +14,6 @@ export const ApplicationFragment = gql`
     externalData
     progress
     name
+    status
   }
 `

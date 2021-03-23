@@ -142,7 +142,7 @@ const ShellWrapper: FC<{
         width="full"
         className={styles.root}
       >
-        <LoadingIcon animate color="blue400" size={50} />
+        <LoadingIcon animate size={50} />
       </Box>
     )
   }

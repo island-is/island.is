@@ -1,9 +1,12 @@
 import React from 'react'
 import { ApolloProvider } from '@apollo/client'
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Box, GridContainer } from '@island.is/island-ui/core'
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'
+import { NotFound } from '@island.is/application/ui-shell'
+import { defaultLanguage } from '@island.is/shared/constants'
+
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Signin } from '../routes/SignIn'
@@ -13,54 +16,45 @@ import { AuthProvider } from '../context/AuthProvider'
 import Header from '../components/Header'
 import Authenticator from '../components/Authenticator'
 import { environment } from '../environments'
-import { NotFound } from '@island.is/application/ui-shell'
-import { defaultLanguage } from '@island.is/shared/constants'
 
-export const App = () => {
-  return (
-    <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
-      <AuthProvider>
-        <LocaleProvider locale={defaultLanguage} messages={{}}>
-          <BrowserRouter>
-            <Box background="white">
-              <GridContainer>
-                <Header />
-              </GridContainer>
-            </Box>
-            <Switch>
-              <Route path="/signin-oidc" component={Signin} />
-              <Route path="/silent/signin-oidc" component={SilentSignIn} />
-              <Redirect from="/applications/:type" to="/umsoknir/:type" />
-              <Redirect from="/application/:id" to="/umsokn/:id" />
+export const App = () => (
+  <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
+    <AuthProvider>
+      <LocaleProvider locale={defaultLanguage} messages={{}}>
+        <Router basename="/umsoknir">
+          <Box background="white">
+            <GridContainer>
+              <Header />
+            </GridContainer>
+          </Box>
+
+          <Switch>
+            <Route path="/signin-oidc" component={Signin} />
+            <Route path="/silent/signin-oidc" component={SilentSignIn} />
+
+            <Route>
               <Authenticator>
                 <Switch>
                   <Route
-                    strict
                     exact
                     path="/tengjast-umsokn"
                     component={AssignApplication}
                   />
 
-                  <Route
-                    strict
-                    exact
-                    path="/umsoknir/:type"
-                    component={Applications}
-                  />
-
-                  <Route path="/umsokn/:id" component={Application} />
+                  <Route exact path="/:slug" component={Applications} />
+                  <Route exact path="/:slug/:id" component={Application} />
 
                   <Route path="*">
                     <NotFound />
                   </Route>
                 </Switch>
               </Authenticator>
-            </Switch>
-          </BrowserRouter>
-        </LocaleProvider>
-      </AuthProvider>
-    </ApolloProvider>
-  )
-}
+            </Route>
+          </Switch>
+        </Router>
+      </LocaleProvider>
+    </AuthProvider>
+  </ApolloProvider>
+)
 
 export default App

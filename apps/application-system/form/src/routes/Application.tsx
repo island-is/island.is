@@ -7,12 +7,12 @@ import { coreMessages } from '@island.is/application/core'
 import useAuth from '../hooks/useAuth'
 
 export const Application = () => {
-  const { id } = useParams<{ id: string }>()
+  const { slug, id } = useParams<{ slug: string; id: string }>()
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
 
-  if (!id) {
+  if (!id || !slug) {
     return <NotFound />
   }
 
