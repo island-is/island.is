@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
-// import { User } from '@island.is/api/domains/national-registry'
 
 export async function generateResidenceChangePdf(
   childrenAppliedFor: Array<Child>,
