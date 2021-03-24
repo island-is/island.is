@@ -69,6 +69,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
             size="medium"
             colored={false}
             activeLocale={activeLocale}
+            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
             placeholder={n('heroSearchPlaceholder')}
           />
         </Box>
