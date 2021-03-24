@@ -1,16 +1,14 @@
-import React, { useEffect, useState, useContext, useMemo } from 'react'
-import { AlertMessage, Box, Text, Tag } from '@island.is/island-ui/core'
+import React, { useEffect, useState, useContext } from 'react'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
   Loading,
   Logo,
-  Table,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
   Case,
   CaseState,
   CaseTransition,
-  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import { UserRole } from '@island.is/judicial-system/types'
@@ -24,10 +22,8 @@ import {
 } from '@island.is/judicial-system-web/graphql'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as styles from './DetentionRequests.treat'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import parseISO from 'date-fns/parseISO'
-import { handleClick, mapCaseStateToTagVariant } from './utils'
 import ActiveDetentionRequests from './ActiveDetentionRequests'
+import PastDetentionRequests from './PastDetentionRequests'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const DetentionRequests: React.FC = () => {
@@ -72,32 +68,27 @@ export const DetentionRequests: React.FC = () => {
       const casesWithoutDeleted = resCases.filter((c: Case) => {
         return c.state !== CaseState.DELETED
       })
-      if (isProsecutor) {
-        setActiveCases(
-          casesWithoutDeleted.filter((c: Case) => {
-            return (
-              c.state !== CaseState.ACCEPTED && c.state !== CaseState.REJECTED
-            )
-          }),
-        )
 
-        setPastCases(
-          casesWithoutDeleted.filter((c: Case) => {
-            return (
-              c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED
-            )
-          }),
-        )
-      } else if (isJudge || isRegistrar) {
-        const judgeCases = casesWithoutDeleted.filter((c: Case) => {
-          // Judges should see all cases except cases with status code NEW.
-          return c.state !== CaseState.NEW
-        })
+      setActiveCases(
+        casesWithoutDeleted.filter((c: Case) => {
+          return isProsecutor
+            ? c.state !== CaseState.ACCEPTED && c.state !== CaseState.REJECTED
+            : // Judges and registrars should see all cases except cases with status code NEW.
+            isJudge || isRegistrar
+            ? c.state !== CaseState.NEW &&
+              c.state !== CaseState.ACCEPTED &&
+              c.state !== CaseState.REJECTED
+            : null
+        }),
+      )
 
-        setActiveCases(judgeCases)
-      } else {
-        setActiveCases([])
-      }
+      setPastCases(
+        casesWithoutDeleted.filter((c: Case) => {
+          return (
+            c.state === CaseState.ACCEPTED || c.state === CaseState.REJECTED
+          )
+        }),
+      )
     }
   }, [
     activeCases,
@@ -107,107 +98,6 @@ export const DetentionRequests: React.FC = () => {
     isRegistrar,
     resCases,
   ])
-
-  const pastRequestsColumns = useMemo(
-    () => [
-      {
-        Header: 'Málsnr. ',
-        accessor: 'courtCaseNumber' as keyof Case,
-        Cell: (row: {
-          row: {
-            original: { courtCaseNumber: string; policeCaseNumber: string }
-          }
-        }) => {
-          return (
-            <>
-              <Box component="span" display="block">
-                {row.row.original.courtCaseNumber}
-              </Box>
-              <Text as="span" variant="small">
-                {row.row.original.policeCaseNumber}
-              </Text>
-            </>
-          )
-        },
-      },
-      {
-        Header: 'Sakborningur',
-        accessor: 'accusedName' as keyof Case,
-        Cell: (row: {
-          row: { original: { accusedName: string; accusedNationalId: string } }
-        }) => {
-          return (
-            <>
-              <Box component="span" display="block">
-                {row.row.original.accusedName}
-              </Box>
-              <Text as="span" variant="small">
-                {`kt. ${row.row.original.accusedNationalId}`}
-              </Text>
-            </>
-          )
-        },
-      },
-      {
-        Header: 'Tegund',
-        accessor: 'type' as keyof Case,
-        Cell: (row: {
-          row: { original: { type: CaseType; parentCase: any } }
-        }) => {
-          return (
-            <>
-              {row.row.original.type === CaseType.CUSTODY
-                ? 'Gæsluvarðhald'
-                : 'Farbann'}
-              {row.row.original.parentCase && <p>framlenging</p>}
-            </>
-          )
-        },
-      },
-      {
-        Header: 'Staða',
-        accessor: 'state' as keyof Case,
-        disableSortBy: true,
-        Cell: (row: {
-          row: {
-            original: { state: CaseState; isCustodyEndDateInThePast: boolean }
-          }
-        }) => {
-          return (
-            <Tag outlined disabled>
-              {
-                mapCaseStateToTagVariant(
-                  row.row.original.state,
-                  isJudge,
-                  row.row.original.isCustodyEndDateInThePast,
-                ).text
-              }
-            </Tag>
-          )
-        },
-      },
-      {
-        Header: 'Gildistími',
-        accessor: 'rulingDate' as keyof Case,
-        disableSortBy: true,
-        Cell: (row: {
-          row: { original: { rulingDate: string; custodyEndDate: string } }
-        }) => {
-          return `${formatDate(
-            parseISO(row.row.original.rulingDate),
-            'd.M.y',
-          )} - ${formatDate(
-            parseISO(row.row.original.custodyEndDate),
-            'd.M.y',
-          )}`
-        },
-      },
-    ],
-    [isJudge],
-  )
-
-  const pastRequestsData = useMemo(() => pastCases, [pastCases])
-  const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
   const deleteCase = async (caseToDelete: Case) => {
     if (
@@ -311,13 +201,7 @@ export const DetentionRequests: React.FC = () => {
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
-            <Table
-              columns={pastRequestsColumns}
-              data={pastRequestsData || []}
-              handleRowClick={handleClick}
-              className={styles.pastRequestsTable}
-              sortableColumnIds={sortableColumnIds}
-            />
+            <PastDetentionRequests cases={pastCases} />
           ) : (
             <div className={styles.activeRequestsTableInfo}>
               <AlertMessage

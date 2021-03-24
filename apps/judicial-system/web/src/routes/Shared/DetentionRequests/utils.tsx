@@ -39,13 +39,6 @@ export const mapCaseStateToTagVariant = (
   }
 }
 
-export const getClassNamesFor = (name: keyof Case, sortConfig?: SortConfig) => {
-  if (!sortConfig) {
-    return
-  }
-  return sortConfig.key === name ? sortConfig.direction : undefined
-}
-
 export const handleClick = (
   caseState: CaseState,
   caseId: string,

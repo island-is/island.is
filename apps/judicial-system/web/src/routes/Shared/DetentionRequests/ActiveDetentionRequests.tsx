@@ -3,11 +3,7 @@ import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
 import * as styles from './DetentionRequests.treat'
-import {
-  getClassNamesFor,
-  handleClick,
-  mapCaseStateToTagVariant,
-} from './utils'
+import { handleClick, mapCaseStateToTagVariant } from './utils'
 import {
   Case,
   CaseState,
@@ -71,6 +67,13 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
     setSortConfig({ key, direction: d })
   }
 
+  const getClassNamesFor = (name: keyof Case) => {
+    if (!sortConfig) {
+      return
+    }
+    return sortConfig.key === name ? sortConfig.direction : undefined
+  }
+
   return (
     <table
       className={styles.activeRequestsTable}
@@ -97,10 +100,9 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortAccusedNameAsc]:
-                    getClassNamesFor('accusedName', sortConfig) === 'ascending',
+                    getClassNamesFor('accusedName') === 'ascending',
                   [styles.sortAccusedNameDes]:
-                    getClassNamesFor('accusedName', sortConfig) ===
-                    'descending',
+                    getClassNamesFor('accusedName') === 'descending',
                 })}
                 marginLeft={1}
                 component="span"
@@ -133,9 +135,9 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortCreatedAsc]:
-                    getClassNamesFor('created', sortConfig) === 'ascending',
+                    getClassNamesFor('created') === 'ascending',
                   [styles.sortCreatedDes]:
-                    getClassNamesFor('created', sortConfig) === 'descending',
+                    getClassNamesFor('created') === 'descending',
                 })}
                 marginLeft={1}
                 component="span"
