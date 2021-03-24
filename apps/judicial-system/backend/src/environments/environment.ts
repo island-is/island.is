@@ -34,6 +34,6 @@ export default {
   files: {
     region: 'eu-west-1',
     bucket: 'island-is-dev-upload-judicial-system',
-    timeToLivePost: 15,
+    timeToLivePost: '15',
   },
 }
