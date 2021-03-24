@@ -10,6 +10,7 @@ import {
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
+import { getSelectedChildrenFromExternalData } from './utils'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
@@ -127,14 +128,20 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         // TODO: fix this..
         const {
           externalData,
+          answers,
         } = (context.application as unknown) as CRCApplication
-        const otherParent = externalData.parentNationalRegistry.data
+        const applicant = externalData.nationalRegistry.data
+        const selectedChildren = getSelectedChildrenFromExternalData(
+          applicant.children,
+          answers.selectChild,
+        )
+        const otherParent = selectedChildren[0].otherParent
 
         return {
           ...context,
           application: {
             ...context.application,
-            assignees: [otherParent.ssn],
+            assignees: [otherParent.nationalId],
           },
         }
       }),

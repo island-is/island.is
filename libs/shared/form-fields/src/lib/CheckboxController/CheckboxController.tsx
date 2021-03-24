@@ -5,7 +5,7 @@ import {
   Checkbox,
   InputError,
   Stack,
-  Tooltip,
+  InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
 interface Option {
@@ -23,6 +23,7 @@ interface CheckboxControllerProps {
   name?: string
   large?: boolean
   options?: Option[]
+  backgroundColor?: InputBackgroundColor
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
   defaultValue,
@@ -32,6 +33,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
   name = id,
   large,
   options = [],
+  backgroundColor,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -79,6 +81,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   value={option.value}
                   hasError={error !== undefined}
                   tooltip={option.tooltip}
+                  backgroundColor={backgroundColor}
                 />
               </Box>
             ))}

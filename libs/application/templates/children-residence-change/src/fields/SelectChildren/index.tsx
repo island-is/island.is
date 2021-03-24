@@ -10,10 +10,9 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
   const {
-    externalData: { parentNationalRegistry, childrenNationalRegistry },
+    externalData: { nationalRegistry },
   } = application
-  const otherParent = parentNationalRegistry.data
-  const children = childrenNationalRegistry.data
+  const children = nationalRegistry.data.children
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -30,10 +29,10 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         error={error}
         large={true}
         options={children.map((c) => ({
-          value: c.name,
-          label: c.name,
+          value: c.nationalId,
+          label: c.fullName,
           subLabel: formatMessage(selectChildren.checkboxes.subLabel, {
-            parentName: otherParent.name,
+            parentName: c.otherParent.fullName,
           }),
         }))}
       />
