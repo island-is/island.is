@@ -28,7 +28,7 @@ export class FileService {
       this.s3.createPresignedPost(
         {
           Bucket: environment.files.bucket,
-          Expires: environment.files.timeToLivePost,
+          Expires: +environment.files.timeToLivePost,
           Fields: {
             key: `${caseId}/${uuid()}_${createPresignedPost.fileName}`,
           },
@@ -37,7 +37,6 @@ export class FileService {
           if (err) {
             reject(err)
           } else {
-            console.log(data)
             resolve(data)
           }
         },
