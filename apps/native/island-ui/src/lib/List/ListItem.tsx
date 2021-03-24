@@ -15,10 +15,12 @@ const Title = styled.Text`
 
   font-size: 12px;
   font-weight: bold;
+  color: ${theme.color.dark400};
 `;
 
 const Description = styled.Text`
   font-size: 16px;
+  color: ${theme.color.dark400};
 `;
 
 interface ListItemProps {
