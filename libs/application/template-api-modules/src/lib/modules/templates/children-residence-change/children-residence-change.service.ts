@@ -38,7 +38,7 @@ export class ChildrenResidenceChangeService {
   async submitApplication({ application }: props) {
     const { answers, externalData } = application
     const { nationalRegistry } = externalData
-    const applicant = nationalRegistry?.data
+    const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
     const file = await this.s3
       .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
@@ -50,7 +50,7 @@ export class ChildrenResidenceChangeService {
       answers.selectChild,
     )
 
-    const otherParent = selectedChildren?.[0]?.otherParent
+    const otherParent = selectedChildren[0].otherParent
 
     if (!fileContent) {
       throw new Error('File content was undefined')
@@ -89,7 +89,8 @@ export class ChildrenResidenceChangeService {
       return {
         name: child.fullName,
         ssn: child.nationalId,
-        // Not sure if this should be the current address or the future address
+        // TODO: change address when we handle that both parents can
+        // apply for the change regardless of where the children currently live
         homeAddress: parentA.homeAddress,
         postalCode: parentA.postalCode,
         city: parentA.city,

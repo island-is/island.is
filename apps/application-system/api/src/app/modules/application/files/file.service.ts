@@ -84,15 +84,20 @@ export class FileService {
 
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const name = isParentA ? applicant.fullName : parentB.fullName
-        const phoneNumber = isParentA
-          ? answers.parentA.phoneNumber
-          : answers.parentB.phoneNumber
+        const { fullName, phoneNumber } = isParentA
+          ? {
+              fullName: applicant.fullName,
+              phoneNumber: answers.parentA.phoneNumber,
+            }
+          : {
+              fullName: parentB.fullName,
+              phoneNumber: answers.parentB.phoneNumber,
+            }
 
         return await this.handleChildrenResidenceChangeSignature(
           pdfType,
           id,
-          name,
+          fullName,
           phoneNumber,
         )
       }

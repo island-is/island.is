@@ -1,10 +1,10 @@
 import { Address, Child } from '../types'
 
-export const constructAddressString = (address: Address) => {
+export const formatAddress = (address: Address) => {
   if (!address) {
     return null
   }
-  return `${address?.streetName}, ${address?.postalCode} ${address?.city}`
+  return `${address.streetName}, ${address.postalCode} ${address.city}`
 }
 
 export const getSelectedChildrenFromExternalData = (

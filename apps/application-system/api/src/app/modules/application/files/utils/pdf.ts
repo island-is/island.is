@@ -3,6 +3,7 @@ import streamBuffers from 'stream-buffers'
 import {
   PersonResidenceChange,
   Child,
+  formatAddress,
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
@@ -103,7 +104,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${parentA.address.streetName}, ${parentA.address.postalCode} ${parentA.address.city}`,
+    `Heimilisfang: ${formatAddress(parentA.address)}`,
   )
 
   addToDoc(
@@ -124,7 +125,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${parentB.address.streetName}, ${parentB.address.postalCode} ${parentB.address.city}`,
+    `Heimilisfang: ${formatAddress(parentB.address)}`,
   )
 
   addToDoc(

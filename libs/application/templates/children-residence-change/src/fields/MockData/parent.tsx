@@ -20,7 +20,9 @@ const MockParents = ({ application, field }: CRCFieldBaseProps) => {
 
   useEffect(() => {
     // The repeater should include one line by default
-    if (fields.length === 0) handleAddPerson()
+    if (fields.length === 0) {
+      handleAddPerson()
+    }
   }, [fields])
 
   const handleAddPerson = () =>

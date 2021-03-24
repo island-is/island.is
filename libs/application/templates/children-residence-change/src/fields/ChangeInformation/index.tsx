@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import { constructAddressString } from '../../lib/utils'
+import { formatAddress } from '../../lib/utils'
 import { newResidence } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
@@ -29,9 +29,7 @@ const ChangeInformation = ({
         <Text variant="h4" color="blue400">
           {applicant?.fullName}
         </Text>
-        <Text fontWeight="light">
-          {constructAddressString(applicant?.address)}
-        </Text>
+        <Text fontWeight="light">{formatAddress(applicant?.address)}</Text>
       </Box>
       <Box marginBottom={5}>
         <Text variant="h4">
@@ -40,9 +38,7 @@ const ChangeInformation = ({
         <Text variant="h4" color="blue400">
           {parentB?.fullName}
         </Text>
-        <Text fontWeight="light">
-          {constructAddressString(parentB?.address)}
-        </Text>
+        <Text fontWeight="light">{formatAddress(parentB?.address)}</Text>
       </Box>
       <CheckboxController
         id={id}

@@ -36,14 +36,11 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
     if (!children) {
       throw new Error('Engin börn fundust í þinni forsjá')
     }
-    const childrenArray: NationalRegistry['children'] = []
-    children?.map((child) => {
-      childrenArray.push({
-        ...child,
-        livesWithApplicant: child?.livesWithApplicant?.includes('yes') || false,
-        otherParent: parents[child.otherParent],
-      })
-    })
+    const childrenArray = children.map((child) => ({
+      ...child,
+      livesWithApplicant: child?.livesWithApplicant?.includes('yes') || false,
+      otherParent: parents[child.otherParent],
+    }))
     return this.useGraphqlGateway(query)
       .then(async (res: Response) => {
         const response = await res.json()
