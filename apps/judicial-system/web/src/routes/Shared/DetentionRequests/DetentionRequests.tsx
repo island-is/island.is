@@ -34,9 +34,6 @@ export const DetentionRequests: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
 
-  // The index of requset that's about to be removed
-  const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
-
   const { user } = useContext(UserContext)
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
@@ -212,10 +209,6 @@ export const DetentionRequests: React.FC = () => {
   const pastRequestsData = useMemo(() => pastCases, [pastCases])
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
-  const handleDeleteButtonClick = (index: number) => {
-    setRequestToRemoveIndex(index === requestToRemoveIndex ? undefined : index)
-  }
-
   const deleteCase = async (caseToDelete: Case) => {
     if (
       caseToDelete.state === CaseState.NEW ||
@@ -235,8 +228,6 @@ export const DetentionRequests: React.FC = () => {
         if (!data) {
           return
         }
-
-        setRequestToRemoveIndex(undefined)
 
         setTimeout(() => {
           setActiveCases(
@@ -299,8 +290,6 @@ export const DetentionRequests: React.FC = () => {
             <ActiveDetentionRequests
               cases={activeCases}
               onDeleteCase={deleteCase}
-              requestToRemoveIndex={requestToRemoveIndex}
-              handleDeleteButtonClick={handleDeleteButtonClick}
             />
           ) : (
             <div className={styles.activeRequestsTableInfo}>

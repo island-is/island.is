@@ -27,23 +27,18 @@ import localeIS from 'date-fns/locale/is'
 interface Props {
   cases: Case[]
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
-  requestToRemoveIndex?: number
-  handleDeleteButtonClick?: (index: number) => void
 }
 
 const ActiveDetentionRequests: React.FC<Props> = (props) => {
-  const {
-    cases,
-    onDeleteCase,
-    requestToRemoveIndex,
-    handleDeleteButtonClick,
-  } = props
+  const { cases, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
 
   const [sortConfig, setSortConfig] = useState<SortConfig>()
+  // The index of requset that's about to be removed
+  const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   useMemo(() => {
     const sortedCases = cases || []
@@ -242,7 +237,9 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
                     className={styles.deleteButton}
                     onClick={(evt) => {
                       evt.stopPropagation()
-                      handleDeleteButtonClick && handleDeleteButtonClick(i)
+                      setRequestToRemoveIndex(
+                        requestToRemoveIndex === i ? undefined : i,
+                      )
                     }}
                   >
                     <Icon icon="close" color="blue400" />
@@ -261,6 +258,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
                 size="small"
                 onClick={(evt) => {
                   evt.stopPropagation()
+                  setRequestToRemoveIndex(undefined)
                   onDeleteCase && onDeleteCase(cases[i])
                 }}
               >
