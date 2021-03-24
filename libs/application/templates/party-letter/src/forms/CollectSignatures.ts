@@ -3,25 +3,37 @@ import {
   buildCustomField,
   buildMultiField,
   buildDescriptionField,
+  buildCheckboxField,
   buildSection,
   buildSubmitField,
   buildTextField,
   Form,
   FormModes,
+  Application,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
+import { NationalRegistryUser } from '@island.is/api/schema'
+import { ExternalData } from '@island.is/application/core'
+
+const fullName = (externalData: ExternalData) => {
+  const fullName = (externalData?.nationalRegistry?.data as {
+    fullName?: NationalRegistryUser
+  })?.fullName
+  return fullName ?? ''
+}
 
 export const ReviewApplication: Form = buildForm({
   id: 'Collect signatures',
-  title: 'Safna undirskriftum',
+  title: m.collectSignatures.applicationTitle,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
-      title: 'Samþykkja',
+      title: m.collectSignatures.stepTitle,
       children: [
         buildMultiField({
           id: 'about',
-          title: 'Listabókstafs meðmælendalisti (Q)',
+          title: m.collectSignatures.sectionTitle,
           children: [
             buildCustomField({
               id: 'disclaimer',
@@ -30,18 +42,47 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildTextField({
               id: 'signature',
-              title: 'Nafn',
+              title: m.collectSignatures.nameInput,
               variant: 'text',
-              placeholder: 'Nafn',
+              placeholder: m.collectSignatures.nameInput,
               backgroundColor: 'blue',
+              width: 'half',
+              defaultValue: (application: Application) =>
+                fullName(application.externalData),
+            }),
+            buildDescriptionField({
+              id: 'firstDescription',
+              title: '',
+              space: 5,
+              description: m.collectSignatures.descriptionPt1,
+            }),
+            buildDescriptionField({
+              id: 'secondDescription',
+              title: '',
+              space: 4,
+              description: m.collectSignatures.descriptionPt2,
+            }),
+            buildCheckboxField({
+              id: 'terms',
+              title: '',
+              options: [
+                { value: 'agree', label: m.collectSignatures.agreeTermsLabel },
+              ],
+              large: true,
+              backgroundColor: 'blue',
+              defaultValue: '',
             }),
 
             buildSubmitField({
               id: 'sign',
               placement: 'footer',
-              title: 'Senda inn umsókn',
+              title: m.collectSignatures.submitButton,
               actions: [
-                { event: 'APPROVE', name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: 'APPROVE',
+                  name: m.collectSignatures.submitButton,
+                  type: 'primary',
+                },
               ],
             }),
           ],
