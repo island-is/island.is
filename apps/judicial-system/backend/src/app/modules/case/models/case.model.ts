@@ -383,6 +383,13 @@ export class Case extends Model<Case> {
   @ApiProperty()
   prosecutorAppealAnnouncement: string
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rulingDate: Date
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,

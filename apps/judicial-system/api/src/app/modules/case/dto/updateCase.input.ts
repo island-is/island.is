@@ -172,11 +172,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly isolationTo?: string
+  readonly otherRestrictions?: string
 
   @Allow()
   @Field({ nullable: true })
-  readonly otherRestrictions?: string
+  readonly isolationTo?: string
 
   @Allow()
   @Field(() => String, { nullable: true })
