@@ -8,10 +8,10 @@ import {
 @ObjectType()
 export class BulletListSlice {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => [BulletEntryUnion])
-  bullets: Array<typeof BulletEntryUnion>
+  bullets!: Array<typeof BulletEntryUnion>
 }
 
 export const mapBulletListSlice = ({

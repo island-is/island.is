@@ -50,7 +50,7 @@ import {
   LinkType,
   useLinkResolver,
 } from '../hooks/useLinkResolver'
-import { Locale } from '../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../hooks/useScrollPosition'
 import { scrollTo } from '../hooks/useScrollSpy'
 
@@ -518,7 +518,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               <InstitutionsPanel
                 institution={{
                   title: article.organization[0].title,
-                  label: article.organization[0].title,
+                  label: n('organization'),
                   href: article.organization[0].link,
                 }}
                 responsibleParty={article.responsibleParty.map(

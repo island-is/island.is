@@ -5,6 +5,8 @@ import {
   InputError,
   GridRow,
   GridColumn,
+  Stack,
+  InputBackgroundColor,
 } from '@island.is/island-ui/core'
 
 interface Option {
@@ -23,6 +25,7 @@ interface CheckboxControllerProps {
   large?: boolean
   options?: Option[]
   split?: '1/1' | '1/2' | '1/3' | '1/4'
+  backgroundColor?: InputBackgroundColor
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
   defaultValue,
@@ -33,6 +36,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
   large,
   options = [],
   split = '1/1',
+  backgroundColor,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -83,6 +87,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                 value={option.value}
                 hasError={error !== undefined}
                 tooltip={option.tooltip}
+                backgroundColor={backgroundColor}
               />
             </GridColumn>
           ))}

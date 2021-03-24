@@ -99,6 +99,8 @@ const Screen: FC<ScreenProps> = ({
     context: { dataSchema, formNode: screen },
   })
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const refetch = useContext<() => void>(RefetchContext)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -145,10 +147,13 @@ const Screen: FC<ScreenProps> = ({
   const onSubmit: SubmitHandler<FormValue> = async (data, e) => {
     let response
 
+    setIsSubmitting(true)
+
     if (typeof beforeSubmitCallback.current === 'function') {
       const [canContinue] = await beforeSubmitCallback.current()
 
       if (!canContinue) {
+        setIsSubmitting(false)
         // TODO set error message
         return
       }
@@ -179,6 +184,10 @@ const Screen: FC<ScreenProps> = ({
           },
         },
       })
+
+      if (response?.data) {
+        addExternalData(response.data?.submitApplication.externalData)
+      }
     } else {
       response = await updateApplication({
         variables: {
@@ -197,12 +206,8 @@ const Screen: FC<ScreenProps> = ({
       answerAndGoToNextScreen(data)
       setBeforeSubmitCallback(null)
     }
-  }
 
-  function canProceed(): boolean {
-    const isLoadingOrPending = loading || loadingSubmit
-
-    return !isLoadingOrPending
+    setIsSubmitting(false)
   }
 
   const [isMobile, setIsMobile] = useState(false)
@@ -220,6 +225,8 @@ const Screen: FC<ScreenProps> = ({
     const target = isMobile ? headerHeight : 0
     window.scrollTo(0, target)
   }, [activeScreenIndex, isMobile])
+
+  const isLoadingOrPending = loading || loadingSubmit || isSubmitting
 
   return (
     <FormProvider {...hookFormData}>
@@ -303,7 +310,7 @@ const Screen: FC<ScreenProps> = ({
           goBack={goBack}
           submitField={submitField}
           loading={loading}
-          canProceed={canProceed()}
+          canProceed={!isLoadingOrPending}
         />
       </Box>
     </FormProvider>

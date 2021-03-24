@@ -5,13 +5,14 @@ const baseApiUrl = process.env.GRAPHQL_API_URL
 export default {
   production: true,
   environment: process.env.ENVIRONMENT,
+  name: process.env.name,
   baseApiUrl,
   redis: {
     urls: [process.env.REDIS_URL_NODE_01],
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '',
+    audience: '@island.is',
     jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
   templateApi: {
@@ -25,6 +26,12 @@ export default {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
+    syslumenn: {
+      url: 'https://api.syslumenn.is/api',
+      username: process.env.SYSLUMENN_USERNAME,
+      password: process.env.SYSLUMENN_PASSWORD,
+    },
+    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,

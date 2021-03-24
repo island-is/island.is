@@ -8,6 +8,7 @@ import { ApiResourceScopeDTO } from './../../../entities/dtos/api-resource-allow
 import { ResourcesService } from './../../../services/ResourcesService'
 import ConfirmModal from '../../common/ConfirmModal'
 import { ApiScope } from './../../../entities/models/api-scope.model'
+import ValidationUtils from './../../../utils/validation.utils'
 
 interface Props {
   apiResourceName: string
@@ -50,7 +51,7 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getAvailableScopes = async () => {
-    const response = await ClientService.FindAvailabeScopes()
+    const response = await ClientService.findAvailabeScopes()
     if (response) {
       setScopes(response)
     }
@@ -116,7 +117,10 @@ const ApiResourceScopeForm: React.FC<Props> = (props: Props) => {
                     id="scopeName"
                     className="api-resource-scope-form__select"
                     name="scopeName"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateScope,
+                    })}
                     onChange={(e) => setSelectedItem(e.target.value)}
                   >
                     {scopes.map((scope: ApiScope) => {

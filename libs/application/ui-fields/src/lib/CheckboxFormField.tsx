@@ -25,7 +25,16 @@ const CheckboxFormField: FC<Props> = ({
   field,
   application,
 }) => {
-  const { id, title, description, options, disabled, large, width } = field
+  const {
+    id,
+    title,
+    description,
+    options,
+    disabled,
+    large,
+    backgroundColor,
+    width,
+  } = field
   const { formatMessage } = useLocale()
 
   const finalOptions = useMemo(() => buildFieldOptions(options, application), [
@@ -54,6 +63,7 @@ const CheckboxFormField: FC<Props> = ({
           large={large}
           name={`${id}`}
           split={width === 'half' ? '1/2' : '1/1'}
+          backgroundColor={backgroundColor}
           defaultValue={
             (getValueViaPath(application.answers, id) as string[]) ??
             getDefaultValue(field, application)

@@ -9,10 +9,7 @@ import { environment } from '../../../environments'
 
 @Injectable()
 export class AuditService {
-  constructor(
-    @Inject(AuditTrailService)
-    private readonly auditTrailService: AuditTrailService,
-  ) {
+  constructor(private readonly auditTrailService: AuditTrailService) {
     auditTrailService.initTrail(environment.auditTrail)
   }
 

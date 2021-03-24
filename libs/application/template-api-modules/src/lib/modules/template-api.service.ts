@@ -9,6 +9,7 @@ import {
   ReferenceTemplateService,
   DocumentProviderOnboardingService,
   HealthInsuranceService,
+  ChildrenResidenceChangeService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -17,11 +18,15 @@ interface ApplicationApiAction {
   props: TemplateApiModuleActionProps
 }
 
-interface PerformActionEvent {
-  response: Error | string
-}
-
-type PerformActionResult = [boolean, PerformActionEvent?]
+type PerformActionResult =
+  | {
+      success: true
+      response: unknown
+    }
+  | {
+      success: false
+      error: string
+    }
 
 @Injectable()
 export class TemplateAPIService {
@@ -30,6 +35,7 @@ export class TemplateAPIService {
     private readonly referenceTemplateService: ReferenceTemplateService,
     private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
     private readonly healthInsuranceService: HealthInsuranceService,
+    private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -37,7 +43,8 @@ export class TemplateAPIService {
       | ReferenceTemplateService
       | ParentalLeaveService
       | DocumentProviderOnboardingService
-      | HealthInsuranceService,
+      | HealthInsuranceService
+      | ChildrenResidenceChangeService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -50,13 +57,22 @@ export class TemplateAPIService {
         // @ts-ignore
         const response = await service[action.type](action.props)
 
-        return [true, { response }]
+        return {
+          success: true,
+          response,
+        }
       } catch (e) {
-        return [false, { response: e }]
+        return {
+          success: false,
+          error: e.message,
+        }
       }
     }
 
-    return [false, { response: new Error('invalid action') }]
+    return {
+      success: false,
+      error: 'action.invalid',
+    }
   }
 
   async performAction(
@@ -80,8 +96,16 @@ export class TemplateAPIService {
           this.healthInsuranceService,
           action,
         )
+      case ApplicationTypes.CHILDREN_RESIDENCE_CHANGE:
+        return this.tryRunningActionOnService(
+          this.childrenResidenceChangeService,
+          action,
+        )
     }
 
-    return [false]
+    return {
+      success: false,
+      error: 'invalid template',
+    }
   }
 }

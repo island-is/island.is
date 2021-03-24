@@ -25,9 +25,7 @@ import { Case, SignatureConfirmationResponse } from './models'
 @Injectable()
 export class CaseService {
   constructor(
-    @Inject(SigningService)
     private readonly signingService: SigningService,
-    @Inject(EmailService)
     private readonly emailService: EmailService,
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
@@ -170,12 +168,12 @@ export class CaseService {
     })
   }
 
-  create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
+  create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.caseModel.create({
       ...caseToCreate,
-      prosecutorId: user.id,
+      prosecutorId: user?.id,
     })
   }
 

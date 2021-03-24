@@ -18,13 +18,9 @@ const adminRule = UserRole.ADMIN as RolesRule
 @Controller('api')
 @ApiTags('institutions')
 export class InstitutionController {
-  constructor(
-    @Inject(InstitutionService)
-    private readonly institutionService: InstitutionService,
-  ) {}
+  constructor(private readonly institutionService: InstitutionService) {}
 
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
   @Get('institutions')
   @ApiOkResponse({

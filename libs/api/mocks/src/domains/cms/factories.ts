@@ -143,7 +143,7 @@ export const alertBanner = factory<AlertBanner>({
   description: () => faker.lorem.sentence(),
   isDismissable: () => faker.random.boolean(),
   dismissedForDays: 7,
-  link: () => link(),
+  link: () => referenceLink(),
   bannerVariant: () => alertBannerVariant(),
   showAlertBanner: () => faker.random.boolean(),
 })

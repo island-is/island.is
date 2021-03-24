@@ -1,6 +1,6 @@
 import React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { defaultLanguage } from '@island.is/localization'
+import { defaultLanguage } from '@island.is/shared/constants'
 
 interface Props {
   lang: string

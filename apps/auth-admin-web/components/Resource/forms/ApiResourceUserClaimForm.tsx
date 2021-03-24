@@ -1,8 +1,8 @@
-import { ClaimService } from '../../../services/ClaimService'
 import React, { useEffect, useState } from 'react'
 import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ResourcesService } from '../../../services/ResourcesService'
+import UserClaimCreateForm from './UserClaimCreateForm'
 
 interface Props {
   apiResourceName: string
@@ -10,6 +10,7 @@ interface Props {
   handleNext?: () => void
   handleBack?: () => void
   handleChanges?: () => void
+  handleNewClaimsAdded: () => void
 }
 
 const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
@@ -17,12 +18,12 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     getAllAvailableClaims()
-  }, [])
+  }, [props.claims])
 
   const getAllAvailableClaims = async () => {
-    const response = await ClaimService.findAll()
+    const response = await ResourcesService.findAllApiResourceUserClaims()
     if (response) {
-      setClaims(response.map((x) => x.type))
+      setClaims(response.map((x) => x.claimName))
     }
   }
 
@@ -58,6 +59,16 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
     }
   }
 
+  const saveNewUserClaim = async (claim: string): Promise<void> => {
+    const response = await ResourcesService.createApiResourceUserClaim({
+      resourceName: props.apiResourceName,
+      claimName: claim,
+    })
+    if (response) {
+      props.handleNewClaimsAdded()
+    }
+  }
+
   return (
     <div className="api-resource-user-claims">
       <div className="api-resource-user-claims__wrapper">
@@ -70,6 +81,11 @@ const ApiResourceUserClaimsForm: React.FC<Props> = (props: Props) => {
               access token. The claims specified here will be added to the list
               of claims specified for the API.
             </div>
+            <UserClaimCreateForm
+              resourceName={props.apiResourceName}
+              handleSave={saveNewUserClaim}
+              existingClaims={props.claims}
+            />
             <div className="api-resource-user-claims__container__fields">
               {claims?.map((claim: string) => {
                 return (

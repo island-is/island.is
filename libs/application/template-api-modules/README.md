@@ -16,8 +16,7 @@ Your API module consists of a NestJS [module](https://docs.nestjs.com/modules) a
 
 Start by creating `{your_template_name}.module.ts` and `{your_template_name}.service.ts` in your newly created directory.
 
-<details>
-  <summary>See an example of a template API module</summary>
+Example of a template API module:
 
 ```typescript
 import { DynamicModule } from '@nestjs/common'
@@ -44,10 +43,7 @@ export class ReferenceTemplateModule {
 }
 ```
 
-</details>
-
-<details>
-  <summary>See an example of a template API service</summary>
+Example of a template API service:
 
 ```typescript
 import { Injectable } from '@nestjs/common'
@@ -76,7 +72,6 @@ export class ReferenceTemplateService {
 }
 ```
 
-</details>
 ### 3. Register your new module
 
 To start using your new module it has to be imported/registered by the central template API module found in `src/lib/modules/template-api.module.ts`, this is the module imported by the application-system-api module.
@@ -88,8 +83,7 @@ To start using your new module it has to be imported/registered by the central t
 - Add it to the modules array
 - Export your service `export { YourService } from './your-module/your-module.service'`
 
-<details>
-  <summary>See example</summary>
+Example:
 
 ```typescript
 // Other module imports
@@ -101,20 +95,15 @@ export const modules = [/* other modules , */ ReferenceTemplateModule]
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
 ```
 
-</details>
-
 <br/>
 
 **Import your module from the template API module**
 
-<details>
-  <summary>See example</summary>
+Example:
 
 ```typescript
 import { ParentalLeaveModule, ReferenceTemplateModule } from './templates'
 ```
-
-</details>
 
 <br/>
 
@@ -178,10 +167,16 @@ enum TEMPLATE_API_ACTIONS {
           // ...
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
-            // (optional) This event will be sent to state machine if action is successful
-            onSuccessEvent: 'SUCCESS_EVENT',
-            // (optional) This event will be sent to state machine if action fails
-            onErrorEvent: 'ERROR_EVENT',
+            // (Optional) Should the response/error be persisted to application.externalData
+            // Defaults to true
+            shouldPersistToExternalData: false,
+            // (Optional) Id that will store the result inside application.externalData
+            // Defaults to value of apiModuleAction
+            externalDataId: 'string',
+            // (Optional) Should the state transition be blocked if this action errors out?
+            // Will revert changes to answers/assignees/state
+            // Defaults to true
+            throwOnError: false,
           },
         },
       },

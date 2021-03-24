@@ -27,6 +27,7 @@ export type Flight = {
   flightLegs: FlightLeg[]
   created: Date
   modified: Date
+  connectable: boolean
 }
 
 export type Travel = {
