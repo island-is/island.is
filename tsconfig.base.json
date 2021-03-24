@@ -151,6 +151,7 @@
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
       ],

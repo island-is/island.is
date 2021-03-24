@@ -361,7 +361,6 @@ export class ResourcesService {
     identityResource: IdentityResourcesDTO,
   ): Promise<IdentityResource> {
     this.logger.debug('Creating a new identity resource')
-    console.log(identityResource)
     return await this.identityResourceModel.create({ ...identityResource })
   }
 
@@ -370,9 +369,7 @@ export class ResourcesService {
     identityResource: IdentityResourcesDTO,
     name: string,
   ): Promise<IdentityResource | null> {
-    console.log('NAME:' + name)
     this.logger.debug('Updating identity resource with name: ', name)
-    console.log(identityResource)
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
@@ -637,6 +634,39 @@ export class ResourcesService {
 
     return await this.apiResourceScope.destroy({
       where: { apiResourceName: apiResourceName, scopeName: scopeName },
+    })
+  }
+
+  // User Claims
+
+  /** Gets all Identity Resource User Claims */
+  async findAllIdentityResourceUserClaims(): Promise<
+    IdentityResourceUserClaim[] | undefined
+  > {
+    return this.identityResourceUserClaimModel.findAll({
+      attributes: [
+        [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
+      ],
+    })
+  }
+
+  /** Gets all Api Scope User Claims */
+  async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[] | undefined> {
+    return this.apiScopeUserClaimModel.findAll({
+      attributes: [
+        [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
+      ],
+    })
+  }
+
+  /** Gets all Api Resource User Claims */
+  async findAllApiResourceUserClaims(): Promise<
+    ApiResourceUserClaim[] | undefined
+  > {
+    return this.apiResourceUserClaim.findAll({
+      attributes: [
+        [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
+      ],
     })
   }
 }

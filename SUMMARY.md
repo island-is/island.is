@@ -135,6 +135,7 @@
   - [Clients Mms](libs/clients/mms/README.md)
   - [Rsk](libs/clients/rsk/README.md)
   - [VMST](libs/clients/vmst/README.md)
+  - [Zendesk Service](libs/clients/zendesk/README.md)
 - [Content Search Index Manager](libs/content-search-index-manager/README.md)
 - [Content Search Indexer](libs/content-search-indexer/README.md)
 - [Content Search Metrics](libs/content-search-metrics/README.md)

@@ -93,8 +93,13 @@ export const coreMessages = defineMessages({
   },
   tagsInProgress: {
     id: 'application.system:tags.inProgress',
-    defaultMessage: 'Í vinnslu',
-    description: 'In progress',
+    defaultMessage: 'Opin',
+    description: 'Open',
+  },
+  tagsInCompleted: {
+    id: 'application.system:tags.completed',
+    defaultMessage: 'Afgreidd',
+    description: 'Completed',
   },
   tagsRequiresAction: {
     id: 'application.system:tags.requiresAction',
