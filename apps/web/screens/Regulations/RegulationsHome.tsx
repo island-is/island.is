@@ -1,3 +1,13 @@
+import {
+  regulationsSearchResults,
+  regulationYears,
+  homeTexts,
+  allMinistries,
+  allLawChaptersTree,
+  Ministry,
+  LawChapterTree,
+} from './mockData'
+
 import React from 'react'
 import { useRouter } from 'next/router'
 import { Screen } from '@island.is/web/types'
@@ -22,37 +32,10 @@ import {
   RegulationSearchFilters,
   RegulationsSearchSection,
 } from './RegulationsSearchSection'
-import {
-  regulationsSearchResults,
-  regulationYears,
-  homeTexts,
-  allMinistries,
-  allLawChaptersTree,
-  Ministry,
-  LawChapterTree,
-} from './mockData'
-import { ParsedUrlQuery } from 'querystring'
 import { shuffle } from 'lodash'
+import { getParams } from './regulationUtils'
 
 // const { publicRuntimeConfig } = getConfig()
-
-// ---------------------------------------------------------------------------
-
-/** Returns the first query parameter value as string, falling back to '' */
-const getParamStr = (query: ParsedUrlQuery, key: string): string => {
-  const val = query[key]
-  return val == null ? '' : typeof val === 'string' ? val : val[0]
-}
-
-/** Picks named keys from the query object and defaults them to '' */
-const getParams = <K extends string>(
-  query: ParsedUrlQuery,
-  keys: Array<K>,
-): Record<K, string> =>
-  keys.reduce((obj, key) => {
-    obj[key] = getParamStr(query, key)
-    return obj
-  }, {} as Record<K, string>)
 
 // ---------------------------------------------------------------------------
 

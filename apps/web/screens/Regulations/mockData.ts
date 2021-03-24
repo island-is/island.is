@@ -217,9 +217,17 @@ export const regulationPageTexts = {
   crumbs_3: 'Reglugerðir',
 } as const
 
+export type RegulationPageTexts = typeof regulationPageTexts
+
 // ---------------------------------------------------------------------------
 
-type ISODate = string
+declare const _RegNameToken_: unique symbol
+export type RegName = string & { [_RegNameToken_]: true }
+
+declare const _ISODateToken_: unique symbol
+export type ISODate = string & { [_ISODateToken_]: true }
+
+// ---------------------------------------------------------------------------
 
 /** Regulation appendix/attachment chapter */
 export type Appendix = {
@@ -231,7 +239,7 @@ export type Appendix = {
 
 export type Regulation = {
   /** Publication name (NNNN/YYYY) of the regulation */
-  name: string
+  name: RegName
   /** The title of the regulation in HTML format */
   title: string
   /* The regulation text in HTML format */
@@ -278,20 +286,18 @@ export type Regulation = {
 }
 
 export const exampleRegulation: Regulation = {
-  name: '0221/2001',
+  name: '0221/2001' as RegName,
   title: 'Reglugerð um bólusetningar á Íslandi.',
   text: regulationHtml,
   appendixes: [],
-  signatureDate: '2001-03-09',
-  publishedDate: '2001-03-20',
-  effectiveDate: '2001-03-20',
-  lastAmendDate: '2021-03-03',
+  signatureDate: '2001-03-09' as ISODate,
+  publishedDate: '2001-03-20' as ISODate,
+  effectiveDate: '2001-03-20' as ISODate,
+  lastAmendDate: '2021-03-03' as ISODate,
   repealedDate: null,
   ministry: _getMinistry('IR'),
   lawChapters: [allLawChaptersTree[0].subChapters[2]],
 }
-
-const foo: string = undefined
 
 export const exampleRegulationOriginalBody = regulationHtmlOriginal
 
@@ -299,14 +305,14 @@ export const exampleRegulationOriginalBody = regulationHtmlOriginal
 
 export type RegulationRedirect = {
   /** Publication name (NNNN/YYYY) of the regulation */
-  name: string
+  name: RegName
   /** The title of the regulation in HTML format */
   title: string
   /** The regulation data has not been fully migrated and should be viewed at this URL */
   redirectUrl: string
 }
 export const exampleRegulationRedirect: RegulationRedirect = {
-  name: '0504/1975',
+  name: '0504/1975' as RegName,
   title: 'Reglugerð um gatnagerðargjöld í Hvolhreppi, Rangárvallasýslu.',
   redirectUrl: 'https://www.reglugerd.is/reglugerdir/allar/nr/0504-1975',
 }
@@ -317,7 +323,7 @@ export type RegulationHistoryItem = {
   /** The date this this history item took effect */
   date: ISODate
   /** Publication name of the affecting Regulation */
-  name: string
+  name: RegName
   /** The title of the affecting Regulation */
   title: string
   /** What type of history item is this.
@@ -330,29 +336,29 @@ export type RegulationHistoryItem = {
 
 export const regulationHistory: Array<RegulationHistoryItem> = [
   {
-    date: '2013-09-13',
-    name: '0904/2013',
+    date: '2013-09-13' as ISODate,
+    name: '0904/2013' as RegName,
     title:
       'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
     reason: 'amend',
   },
   {
-    date: '2013-11-08',
-    name: '0904/2013',
+    date: '2013-11-08' as ISODate,
+    name: '0904/2013' as RegName,
     title:
       'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
     reason: 'amend',
   },
   {
-    date: '2019-12-24',
-    name: '1197/2019',
+    date: '2019-12-24' as ISODate,
+    name: '1197/2019' as RegName,
     title:
       'Reglugerð um (2.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
     reason: 'amend',
   },
   {
-    date: '2020-11-30',
-    name: '1198/2020',
+    date: '2020-11-30' as ISODate,
+    name: '1198/2020' as RegName,
     title:
       'Reglugerð um (3.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
     reason: 'amend',
