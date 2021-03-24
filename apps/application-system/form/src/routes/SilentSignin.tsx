@@ -1,4 +1,5 @@
 import React, { FC, useEffect } from 'react'
+
 import AuthenticationLoading from '../components/AuthenticationLoading/AuthenticationLoading'
 import { userManager } from '../utils/userManager'
 
@@ -6,7 +7,7 @@ import { userManager } from '../utils/userManager'
 // For further optimization it can be minimized into a barebones html file
 export const SilentSignIn: FC = () => {
   useEffect(() => {
-    userManager.signinSilentCallback().catch(function (error) {
+    userManager.signinSilentCallback().catch((error) => {
       // TODO: Handle error
       console.log(error)
     })
