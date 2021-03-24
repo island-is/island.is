@@ -12,6 +12,21 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.MOCK_NationalRegistry
 
   async provide(application: Application): Promise<NationalRegistry> {
+    const query = `
+      query NationalRegistryUserQuery {
+        nationalRegistryUser {
+          nationalId
+          fullName
+          address {
+            code
+            postalCode
+            city
+            streetAddress
+            lastUpdated
+          }
+        }
+      }
+    `
     const crcApplication = (application as unknown) as CRCApplication
     const {
       answers: {
@@ -19,7 +34,7 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
       },
     } = crcApplication
     if (!children) {
-      throw new Error('Ekki tókst að ná í upplýsingar um börn í þinni forsjá')
+      throw new Error('Engin börn fundust í þinni forsjá')
     }
     const childrenArray: NationalRegistry['children'] = []
     children?.map((child) => {
@@ -29,16 +44,34 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
         otherParent: parents[child.otherParent],
       })
     })
-    return {
-      nationalId: '3311305959',
-      fullName: 'Ólafur pái Höskuldsson',
-      address: {
-        streetName: 'Öskubakki 15',
-        postalCode: '113',
-        city: 'Reykjavík',
-      },
-      children: childrenArray,
-    }
+    return this.useGraphqlGateway(query)
+      .then(async (res: Response) => {
+        const response = await res.json()
+        if (response.errors) {
+          return this.handleError(response.errors)
+        }
+
+        const returnObject = {
+          fullName: response.data.nationalRegistryUser.fullName,
+          nationalId: response.data.nationalRegistryUser.nationalId,
+          address: {
+            city: response.data.nationalRegistryUser.address.city,
+            postalCode: response.data.nationalRegistryUser.address.postalCode,
+            streetName:
+              response.data.nationalRegistryUser.address.streetAddress,
+          },
+          children: childrenArray,
+        }
+
+        return Promise.resolve(returnObject as any)
+      })
+      .catch((error) => {
+        return this.handleError(error)
+      })
+  }
+  handleError(error: any) {
+    console.log('Provider error - NationalRegistry:', error)
+    return Promise.resolve({})
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
