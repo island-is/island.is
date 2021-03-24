@@ -4,7 +4,8 @@
   "description": "",
   "license": "MIT",
   "scripts": {
-    "nx": "cd .. && yarn nx"
+    "nx": "cd .. && yarn nx",
+    "postinstall": "cd app && yarn build:env .env"
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
