@@ -66,6 +66,12 @@ const autoSchemaFile = environment.production
           grade: environment.education.xroadGradeServiceId,
         },
       },
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
       fileDownloadBucket: environment.education.fileDownloadBucket,
     }),
     ApplicationModule.register({
@@ -98,10 +104,12 @@ const autoSchemaFile = environment.production
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
-      baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-      user: environment.nationalRegistry.user,
-      password: environment.nationalRegistry.password,
-      host: environment.nationalRegistry.host,
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
     }),
     HealthInsuranceModule.register({
       wsdlUrl: environment.healthInsurance.wsdlUrl,
