@@ -67,23 +67,27 @@ const MockChildren = ({ application, field }: CRCFieldBaseProps) => {
                 label="Foreldri"
                 id={`${id}[${index}].otherParent`}
                 name={`${id}[${index}].otherParent`}
+                defaultValue={parents.length === 1 ? 0 : null}
                 options={parents?.map((parent, i) => ({
                   value: i,
                   label: parent.fullName,
                 }))}
               />
             </Box>
-            <CheckboxController
-              id={`${id}[${index}].livesWithApplicant`}
-              name={`${id}[${index}].livesWithApplicant`}
-              large={true}
-              options={[
-                {
-                  value: 'yes',
-                  label: 'Lives with applicant',
-                },
-              ]}
-            />
+            <Box marginTop={2}>
+              <CheckboxController
+                id={`${id}[${index}].livesWithApplicant`}
+                name={`${id}[${index}].livesWithApplicant`}
+                large={true}
+                defaultValue={['yes']}
+                options={[
+                  {
+                    value: 'yes',
+                    label: 'Lives with applicant',
+                  },
+                ]}
+              />
+            </Box>
           </Box>
         )
       })}
