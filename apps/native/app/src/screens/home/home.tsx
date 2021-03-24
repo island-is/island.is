@@ -1,7 +1,5 @@
 import React from 'react'
 import {
-  SafeAreaView,
-  StatusBar,
   Image,
   ScrollView,
   View,
@@ -20,40 +18,16 @@ import { useAuthStore } from '../../auth/auth'
 import { useNavigation } from 'react-native-navigation-hooks'
 import { NavigationFunctionComponent, Options } from 'react-native-navigation'
 import { theme } from '@island.is/island-ui/theme'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
 import { config } from '../../utils/config'
 import { ComponentRegistry } from '../../utils/navigation-registry'
+import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
 
 export const HomeScreen: NavigationFunctionComponent = () => {
   const { push } = useNavigation()
   const authStore = useAuthStore()
-  const res = useQuery(
-    gql`
-      {
-        nationalRegistryUser {
-          nationalId
-          fullName
-          gender
-          legalResidence
-          birthday
-          birthPlace
-          religion
-          maritalStatus
-          age
-          address {
-            code
-          }
-        }
-        listDocuments {
-          id
-        }
-      }
-    `,
-    {
-      client,
-    },
-  )
+  const res = useQuery(NATION_REGISTRY_USER_QUERY, { client })
 
   return (
     <>

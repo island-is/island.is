@@ -3,10 +3,10 @@ import styled from 'styled-components/native';
 import { theme, Colors } from '@island.is/island-ui/theme';
 
 const Host = styled.View<{ backgroundColor: Colors; borderColor: Colors; }>`
-  padding: 20px 30px;
+  padding: 16px 16px;
   background-color: ${(props) => theme.color[props.backgroundColor]};
 
-  border-width: ${theme.border.width.standard};
+  border-width: ${theme.border.width.standard}px;
   border-style: ${theme.border.style.solid};
   border-color: ${(props) => theme.color[props.borderColor]};
   border-radius: ${theme.border.radius.standard};
@@ -14,12 +14,16 @@ const Host = styled.View<{ backgroundColor: Colors; borderColor: Colors; }>`
 
 const Title = styled.Text`
   font-size: 16px;
-  font-weight: 500;
-  color: #000;
+  font-weight: ${theme.typography.semiBold};
+  color: ${theme.color.dark400};
+  line-height: 24px;
 `;
 
 const Description = styled.Text`
-  color: #000;
+  margin-top: 15px;
+  font-size: 12px;
+  color: ${theme.color.dark400};
+  line-height: 18px;
 `;
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning'

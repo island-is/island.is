@@ -1,10 +1,14 @@
 import { ListItem } from '@island.is/island-ui-native'
 import { theme } from '@island.is/island-ui/theme'
 import React, { useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { client } from '../../graphql/client'
 import { RefreshControl, SafeAreaView, ScrollView } from 'react-native'
 import { NavigationFunctionComponent, Options, Navigation } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { ComponentRegistry } from '../../utils/navigation-registry'
+import { LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
+import logo from '../../assets/logo/logo-64w.png'
 
 export const InboxScreen: NavigationFunctionComponent = () => {
   // const [idle, setIdle] = useState(true)
@@ -13,6 +17,9 @@ export const InboxScreen: NavigationFunctionComponent = () => {
     setLoading(true)
     setTimeout(() => setLoading(false), 1000)
   }
+
+  const res = useQuery(LIST_DOCUMENTS_QUERY, { client });
+  const inboxItems = res?.data?.listDocuments ?? [];
 
   // useNavigationComponentDidAppear(() => {
   //   setIdle(false)
@@ -31,22 +38,9 @@ export const InboxScreen: NavigationFunctionComponent = () => {
         <RefreshControl refreshing={loading} onRefresh={onRefresh} />
       }
     >
-      <ListItem
-        title="Skatturinn"
-        description="Greiðsluseðill (Bifr.gjöld TSE12) sem fer svo í tvær línur"
-      />
-      <ListItem title="Skatturinn" description="Greiðsluseðill" />
-      <ListItem title="Fjársýsla ríkisins" description="Greiðsluáskorun" />
-      <ListItem title="Skatturinn" description="Álagningaseðill" />
-      <ListItem title="Skatturinn" description="Greiðsluseðill" />
-      <ListItem title="Fjársýsla ríkisins" description="Greiðsluáskorun" />
-      <ListItem title="Skatturinn" description="Álagningaseðill" />
-      <ListItem title="Skatturinn" description="Greiðsluseðill" />
-      <ListItem title="Fjársýsla ríkisins" description="Greiðsluáskorun" />
-      <ListItem title="Skatturinn" description="Álagningaseðill" />
-      <ListItem title="Skatturinn" description="Greiðsluseðill" />
-      <ListItem title="Fjársýsla ríkisins" description="Greiðsluáskorun" />
-      <ListItem title="Skatturinn" description="Álagningaseðill" />
+      {inboxItems.map(({ id, title, subtitle }: { id: string, title: string, subtitle: string }) => (
+        <ListItem key={id} title={title} subtitle={subtitle} icon={logo} />
+      ))}
     </ScrollView>
   )
 }
@@ -72,12 +66,12 @@ InboxScreen.options = {
     //   fontSize: 24,
     //   fontWeight: '700',
     // },
-    // searchBar: {
-    //   visible: true,
-    //   hideOnScroll: true,
-    //   hideTopBarOnFocus: true,
-    //   placeholder: 'Leita í rafrænum skjölum',
-    //   // obscuresBackgroundDuringPresentation: true
-    // },
+    searchBar: {
+      visible: true,
+      hideOnScroll: true,
+      hideTopBarOnFocus: true,
+      placeholder: 'Leita í rafrænum skjölum',
+      // obscuresBackgroundDuringPresentation: true
+    },
   },
 } as Options

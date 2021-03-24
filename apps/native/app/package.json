@@ -21,6 +21,7 @@
     "@storybook/react-native": "*",
     "@storybook/addon-knobs": "*",
     "@apollo/client": "*",
-    "styled-components": "*"
+    "styled-components": "*",
+    "graphql-tag": "*"
   }
 }

@@ -1,11 +1,18 @@
 import { Card, CardColor, ListItem } from '@island.is/island-ui-native';
 import React from 'react'
 import { Linking, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
+import { useQuery } from '@apollo/client'
+import { client } from '../../graphql/client'
 import { NavigationFunctionComponent } from 'react-native-navigation';
 import { config } from '../../utils/config';
 import { ComponentRegistry } from '../../utils/navigation-registry';
+import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query';
+import logo from '../../assets/logo/logo-64w.png'
 
 export const WalletScreen: NavigationFunctionComponent = () => {
+  const res = useQuery(LIST_LICENSES_QUERY, { client });
+  const licenseItems = res?.data?.listLicenses ?? [];
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView horizontal={false}>
@@ -22,7 +29,7 @@ export const WalletScreen: NavigationFunctionComponent = () => {
           }}
           contentInsetAdjustmentBehavior="automatic"
           decelerationRate={0}
-          style={{ marginTop: 50, marginBottom: 50 }}
+          style={{ marginTop: 50, marginBottom: 10 }}
         >
           <TouchableOpacity onPress={() => {
             Linking.openURL(`${config.bundleId}://wallet/drivers-license`);
@@ -35,22 +42,9 @@ export const WalletScreen: NavigationFunctionComponent = () => {
           <Input placeholder="Finndu skírteini" />
         </Container> */}
 
-        <ListItem
-          title="Ríkislögreglustjóri"
-          description="Ökuskírteini"
-        />
-        <ListItem
-          title="Ríkislögreglustjóri"
-          description="Skotvopnaleyfi"
-        />
-        <ListItem
-          title="Rauði Krossinn"
-          description="Fyrsta hjálp"
-        />
-        <ListItem
-          title="Ríkislögreglustjóri"
-          description="Siglingaréttindi"
-        />
+        {licenseItems.map(({ id, title, subtitle }: { id: string, title: string, subtitle: string }) => (
+          <ListItem key={id} title={title} subtitle={subtitle} icon={logo} />
+        ))}
       </ScrollView>
     </SafeAreaView>
   )
@@ -71,10 +65,10 @@ WalletScreen.options = {
     // largeTitle: {
     //   visible: true
     // },
-    searchBar: {
-      visible: true,
-      hideOnScroll: true,
-      hideTopBarOnFocus: true,
-    }
+    // searchBar: {
+    //   visible: true,
+    //   hideOnScroll: true,
+    //   hideTopBarOnFocus: true,
+    // }
   }
 };
