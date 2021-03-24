@@ -4,7 +4,7 @@
     <list default="true" id="4f6b173d-195e-440c-8f9d-de05124312f2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../../app-e2e/.detoxrc.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../app-e2e/.detoxrc.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/islandapp/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/islandapp/MainApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/is/island/app/MainApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/is/island/app/MainApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />

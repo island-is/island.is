@@ -1,13 +1,32 @@
 import { Card, CardColor, ListItem } from '@island.is/island-ui-native';
 import React from 'react'
-import { SafeAreaView, ScrollView } from 'react-native'
+import { Linking, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation';
+import { config } from '../../utils/config';
+import { ComponentRegistry } from '../../utils/navigation-registry';
 
-export const Wallet = () => {
+export const WalletScreen: NavigationFunctionComponent = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView horizontal={false}>
-        <ScrollView horizontal style={{ marginTop: 50 }}>
-          <Card title="Ökuskírteini" />
+        <ScrollView
+          horizontal
+          snapToInterval={260+30}
+          showsHorizontalScrollIndicator={false}
+          snapToAlignment={"start"}
+          contentInset={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 30,
+          }}
+          contentInsetAdjustmentBehavior="automatic"
+          decelerationRate={0}
+          style={{ marginTop: 50, marginBottom: 50 }}
+        >
+          <TouchableOpacity onPress={() => {
+            Linking.openURL(`${config.bundleId}://wallet/drivers-license`);
+          }}><Card title="Ökuskírteini" /></TouchableOpacity>
           <Card title="Skotvopnaleyfi" color={CardColor.YELLOW} />
           <Card title="Fyrsta hjálp" />
           <Card title="Siglinga réttindi" color={CardColor.YELLOW} />
@@ -37,17 +56,25 @@ export const Wallet = () => {
   )
 }
 
-Wallet.options = {
+WalletScreen.options = {
   topBar: {
     title: {
-      text: 'Skírteinin þín'
+      text: 'Skírteinin þín',
+      component: {
+        name: ComponentRegistry.NavigationBarTitle,
+        alignment: 'fill',
+        passProps: {
+          title: 'Skírteinin þín',
+        },
+      },
     },
-    largeTitle: {
-      visible: true
-    },
+    // largeTitle: {
+    //   visible: true
+    // },
     searchBar: {
       visible: true,
       hideOnScroll: true,
+      hideTopBarOnFocus: true,
     }
   }
 };

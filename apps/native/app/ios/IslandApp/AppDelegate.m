@@ -1,8 +1,13 @@
 #import "AppDelegate.h"
-#import <ReactNativeNavigation/ReactNativeNavigation.h>
-
+// React libs
+#import <React/RCTLinkingManager.h>
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
+
+#import <ReactNativeNavigation/ReactNativeNavigation.h>
+#import <UMCore/UMModuleRegistry.h>
+#import <UMReactNativeAdapter/UMNativeModulesProxy.h>
+#import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -23,6 +28,13 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+
+@interface AppDelegate () <RCTBridgeDelegate>
+
+@property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
+
+@end
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -31,12 +43,16 @@ static void InitializeFlipper(UIApplication *application) {
   InitializeFlipper(application);
 #endif
 
+  self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
   [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
   return YES;
 }
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge {
-  return [ReactNativeNavigation extraModulesForBridge:bridge];
+  NSArray<id<RCTBridgeModule>> *extraModules = [_moduleRegistryAdapter extraModulesForBridge:bridge];
+  NSArray<id<RCTBridgeModule>> *rnnModules = [ReactNativeNavigation extraModulesForBridge:bridge];
+  return [rnnModules arrayByAddingObjectsFromArray:extraModules];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
@@ -46,6 +62,22 @@ static void InitializeFlipper(UIApplication *application) {
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+
+- (BOOL)application:(UIApplication *)application
+   openURL:(NSURL *)url
+   options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+ restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+ return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
 }
 
 @end

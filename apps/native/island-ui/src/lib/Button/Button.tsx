@@ -9,15 +9,18 @@ interface ButtonProps {
 }
 
 const Host = styled.TouchableHighlight`
-  padding: 20px 30px;
-  background-color: ${theme.color.blue600};
-  border-radius: ${theme.border.radius.standard};
-  min-width: 250px;
+  padding: ${theme.spacing.p3}px ${theme.spacing.p4}px;
+  background-color: ${theme.color.blue400};
+  border-radius: ${theme.border.radius.large};
+  min-width: 192px;
 `;
 
 const Text = styled.Text`
   color: #fff;
   text-align: center;
+  font-family: 'IBMPlexSans-SemiBold';
+  font-size: 16px;
+  line-height: 20px;
 `;
 
 export function Button({ title, onPress, style, ...rest }: ButtonProps) {

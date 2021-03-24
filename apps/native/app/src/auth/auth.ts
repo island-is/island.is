@@ -83,7 +83,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       sendClientId: true,
     });
     await Keychain.resetGenericPassword();
-    set(state => ({ ...state, authorizeResult: undefined, userProfile: undefined }), true);
+    set(state => ({ ...state, authorizeResult: undefined, userInfo: undefined }), true);
     return true;
   }
 }));
@@ -91,7 +91,6 @@ export const authStore = create<AuthStore>((set, get) => ({
 export const useAuthStore = createUse(authStore);
 
 export async function checkIsAuthenticated() {
-  // return true;
   // Fetch initial authorization result from keychain
   try {
     const res = await Keychain.getGenericPassword();
@@ -103,7 +102,7 @@ export async function checkIsAuthenticated() {
       return false;
     }
   } catch (err) {
-    console.error('Unable to read from keystore: ', err);
+    console.log('Unable to read from keystore: ', err);
   }
 
   // Attempt to fetch user info (validate the token is all good)
@@ -113,5 +112,6 @@ export async function checkIsAuthenticated() {
   } catch (err) {
     // noop
   }
+
   return false;
 }

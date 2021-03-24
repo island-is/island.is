@@ -4,15 +4,18 @@
   "description": "",
   "license": "MIT",
   "scripts": {
-    "nx": "cd .. && yarn nx"
+    "nx": "cd .. && yarn nx",
+    "postinstall": "cd app && yarn build:env .env"
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
+    "expo-local-authentication": "10.0.0",
     "react-native-app-auth": "6.2.0",
     "react-native-keychain": "6.2.0",
-    "react-native-navigation-hooks": "6.3.0",
     "react-native-navigation": "7.11.3",
+    "react-native-navigation-hooks": "6.3.0",
     "react-native-ultimate-config": "3.3.1",
+    "react-native-unimodules": "0.12.0",
     "react-native-webview": "11.3.1",
     "zustand": "3.3.3"
   },

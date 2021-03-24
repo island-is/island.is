@@ -16,7 +16,7 @@ const Host = styled.View<{ color: string }>`
   padding: 30px 30px;
   margin-bottom: 30px;
   margin-left: 30px;
-  min-width: 230px;
+  width: 260px;
   min-height: 350px;
 
   background-color: ${(props) => props.color !== CardColor.YELLOW ? colorTheme.pink : colorTheme.yellow};

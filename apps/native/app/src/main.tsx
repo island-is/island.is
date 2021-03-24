@@ -1,80 +1,228 @@
-import { Home } from './screens/home/home'
-import { Navigation, LayoutRoot } from 'react-native-navigation'
-import { Inbox } from './screens/inbox/inbox'
-import { Wallet } from './screens/wallet/wallet'
-import { User } from './screens/user/user'
-import { Login } from './screens/login/login'
-import { NavigationProvider } from 'react-native-navigation-hooks'
-import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
-import { checkIsAuthenticated } from './auth/auth'
+import { AppState, AppStateStatus, Linking } from 'react-native';
+import { Navigation, LayoutRoot } from 'react-native-navigation'
+import { theme } from '@island.is/island-ui/theme'
+import { authStore, checkIsAuthenticated } from './auth/auth'
 import { config } from './utils/config'
+import { authenticateAsync } from 'expo-local-authentication';
+import { addRoute, addScheme, evaluateUrl } from './utils/deep-linking';
+import { ComponentRegistry } from './utils/navigation-registry';
+import { ButtonRegistry } from './utils/navigation-registry';
+import { registerAllComponents } from './screens';
 
-function registerScreen(name: string, Component: React.FunctionComponent) {
-  Navigation.registerComponent(
-    name,
-    () => (props) => {
-      return (
-        <NavigationProvider value={{ componentId: props.componentId }}>
-          <Component {...props} />
-        </NavigationProvider>
-      )
-    },
-    () => Component,
-  )
-}
+registerAllComponents();
 
-if (config.storybookMode) {
-  registerScreen(
-    'is.island.StorybookScreen',
-    require('./screens/storybook/storybook').Storybook,
-  )
-} else {
-  registerScreen('is.island.Login', Login)
-  registerScreen('is.island.HomeScreen', Home)
-  registerScreen('is.island.InboxScreen', Inbox)
-  registerScreen('is.island.WalletScreen', Wallet)
-  registerScreen('is.island.UserScreen', User)
-}
+function registerEventListeners() {
+  // @todo create a shared store with navigation stack hierarcy
 
-// login screen
-const loginRoot = {
-  root: {
-    component: {
-      name: 'is.island.Login',
-    },
-  },
-}
+  Navigation.events().registerCommandListener((...args) => {
+    console.log('registerCommandListener', args);
+  });
+  Navigation.events().registerScreenPoppedListener((...args) => {
+    console.log('registerScreenPoppedListener', args);
+  });
+  Navigation.events().registerCommandCompletedListener((...args) => {
+    console.log('registerCommandCompletedListener', args);
+  });
+  Navigation.events().registerComponentDidAppearListener((...args) => {
+    console.log('registerComponentDidAppearListener', args);
+  });
+  Navigation.events().registerModalDismissedListener((...args) => {
+    console.log('registerModalDismissedListener', args);
+  });
+  Navigation.events().registerModalAttemptedToDismissListener((...args) => {
+    console.log('registerModalAttemptedToDismissListener', args);
+  });
 
-// register root
-Navigation.events().registerAppLaunchedListener(async () => {
-  if (config.storybookMode) {
-    Navigation.setRoot({
-      root: { component: { name: 'is.island.StorybookScreen' } },
+  // deep linking
+  addScheme(`${config.bundleId}://`);
+  addRoute('/inbox', () => {
+    console.log('inbox');
+  });
+  addRoute('/', () => {
+    console.log('home')
+  });
+  addRoute('/wallet', (...x) => {
+    console.log('wallet', x);
+  });
+
+  addRoute('/wallet/:passId', ({ passId }: any) => {
+
+    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+      bottomTabs: {
+        currentTabIndex: 2,
+      },
+    });
+    // ensure WALLET_SCREEN doesn't already have same screen with same componentId etc.
+    Navigation.popToRoot('WALLET_SCREEN', {
+      animations: {
+        pop: {
+          enabled: false,
+        }
+      }
     })
-  } else {
-    const isAuthenticated = await checkIsAuthenticated()
-    Navigation.setRoot(isAuthenticated ? mainRoot : loginRoot)
-  }
-})
-
-// show user screen
-Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => {
-  console.log('pressed', buttonId)
-  if (buttonId === 'userButton') {
+    .then(() => {
+      Navigation.push('WALLET_TAB', {
+        component: {
+          name: ComponentRegistry.WalletPassScreen,
+          passProps: {
+            passId,
+          },
+        },
+      })
+    });
+  });
+  addRoute('/user', () => {
     Navigation.showModal({
       stack: {
         children: [
           {
             component: {
-              name: 'is.island.UserScreen',
+              name: ComponentRegistry.UserScreen,
             },
           },
         ],
       },
     })
-  }
+  })
+  Linking.addEventListener('url', ({ url }) => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        evaluateUrl(url);
+      }
+    });
+  });
+  Linking.getInitialURL().then((url) => {
+    console.log('initial url', url);
+    if (url) {
+      Linking.openURL(url);
+    }
+  })
+  .catch(err => console.error('An error occurred', err));
+
+  // app change events
+  AppState.addEventListener("change", (status: AppStateStatus) => {
+    console.log(authStore.getState());
+    if (!authStore.getState().userInfo) {
+      return;
+    }
+
+    if (status === 'active' && isAuthenticating) {
+      isAuthenticating = false;
+      return;
+    }
+
+    if (status === 'background' || status === 'inactive') {
+      showLockScreen();
+    }
+
+    if (status === 'active') {
+      showFaceID();
+    }
+  });
+
+  // show user screen
+  Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => {
+    if (buttonId === 'userButton') {
+      Linking.openURL(`${config.bundleId}://user`);
+    }
+  })
+
+}
+
+// native navigation options
+Navigation.setDefaultOptions({
+  topBar: {
+    animate: true,
+    title: {
+      color: '#13134b',
+    },
+    backButton: {
+      color: '#13134b',
+    },
+    background: {
+      color: '#f2f7ff',
+    },
+    borderHeight: 0,
+    borderColor: 'transparent',
+  },
+  bottomTabs: {
+    elevation: 0,
+    borderWidth: 0,
+    hideShadow: true,
+    titleDisplayMode: 'alwaysHide'
+  },
 })
+
+let isAuthenticating: boolean = false;
+
+function showLockScreen() {
+  if (config.disableLockScreen) {
+    return Promise.resolve();
+  }
+
+  return Navigation.showOverlay({
+    component: {
+      id: 'LOCK_SCREEN',
+      name: ComponentRegistry.AppLockScreen
+    }
+  });
+}
+
+function showFaceID() {
+  if (config.disableLockScreen) {
+    return Promise.resolve();
+  }
+
+  isAuthenticating = true;
+  return authenticateAsync()
+  .then((response) => {
+    if (response.success) {
+      Navigation.dismissAllOverlays()
+    } else {
+      isAuthenticating = false;
+    }
+  })
+  .catch(err => {
+    console.log('FaceID failure', err)
+  })
+}
+
+// register root
+Navigation.events().registerAppLaunchedListener(async () => {
+  registerEventListeners();
+  if (config.storybookMode) {
+    Navigation.setRoot({
+      root: { component: { name: ComponentRegistry.StorybookScreen } },
+    })
+  } else {
+    const isAuthenticated = await checkIsAuthenticated()
+    Navigation.setRoot(isAuthenticated ? mainRoot : loginRoot)
+    if (isAuthenticated) {
+      showLockScreen()
+      .then(() => showFaceID())
+    }
+  }
+});
+
+// login screen
+export const loginRoot = {
+  root: {
+    component: {
+      name: ComponentRegistry.LoginScreen,
+    },
+  },
+}
+
+const rightButtons = [
+  {
+    id: ButtonRegistry.UserButton,
+    text: 'User',
+    icon: {
+      system: 'person.crop.circle',
+    },
+  },
+];
 
 // bottom tabs
 export const mainRoot: LayoutRoot = {
@@ -94,21 +242,21 @@ export const mainRoot: LayoutRoot = {
               {
                 component: {
                   id: 'INBOX_SCREEN',
-                  name: 'is.island.InboxScreen',
+                  name: ComponentRegistry.InboxScreen,
                 },
               },
             ],
             options: {
               bottomTab: {
-                selectedIconColor: theme.color.blue600,
-                icon: {
-                  system: 'tray',
-                },
+                selectedIconColor: theme.color.blue400,
+                icon: require('./assets/icons/tabbar-inbox.png'),
+                selectedIcon: require('./assets/icons/tabbar-inbox-selected.png'),
               },
               topBar: {
                 largeTitle: {
                   visible: true,
                 },
+                rightButtons,
               },
             },
           },
@@ -120,15 +268,18 @@ export const mainRoot: LayoutRoot = {
               {
                 component: {
                   id: 'HOME_SCREEN',
-                  name: 'is.island.HomeScreen',
+                  name: ComponentRegistry.HomeScreen,
                 },
               },
             ],
             options: {
               bottomTab: {
-                icon: require('./assets/tabbar-icon-home.png'),
-                selectedIcon: require('./assets/tabbar-icon-home.png'),
+                icon: require('./assets/icons/tabbar-home.png'),
+                selectedIcon: require('./assets/icons/tabbar-home-selected.png'),
               },
+              topBar: {
+                rightButtons,
+              }
             },
           },
         },
@@ -139,16 +290,18 @@ export const mainRoot: LayoutRoot = {
               {
                 component: {
                   id: 'WALLET_SCREEN',
-                  name: 'is.island.WalletScreen',
+                  name: ComponentRegistry.WalletScreen,
                 },
               },
             ],
             options: {
+              topBar: {
+                rightButtons,
+              },
               bottomTab: {
-                selectedIconColor: theme.color.blue600,
-                icon: {
-                  system: 'wallet.pass',
-                },
+                selectedIconColor: theme.color.blue400,
+                icon: require('./assets/icons/tabbar-wallet.png'),
+                selectedIcon: require('./assets/icons/tabbar-wallet-selected.png'),
               },
             },
           },
@@ -157,41 +310,3 @@ export const mainRoot: LayoutRoot = {
     },
   },
 }
-
-// native navigation options
-Navigation.setDefaultOptions({
-  topBar: {
-    animate: true,
-    title: {
-      color: '#13134b',
-    },
-    backButton: {
-      color: '#13134b',
-    },
-    background: {
-      color: '#f2f7ff',
-    },
-    borderHeight: 0,
-    borderColor: 'transparent',
-    rightButtons: [
-      {
-        id: 'userButton',
-        text: 'User',
-        icon: {
-          system: 'person.crop.circle',
-        },
-      },
-    ],
-  },
-  bottomTabs: {
-    elevation: 0,
-    borderWidth: 0,
-    hideShadow: true,
-    titleDisplayMode: 'alwaysHide',
-  },
-  bottomTab: {
-    fontSize: 28,
-    selectedFontSize: 18,
-    selectedTextColor: theme.color.blue600,
-  },
-})

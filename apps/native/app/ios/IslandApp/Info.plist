@@ -2,6 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>IBMPlexSans-Regular.ttf</string>
+		<string>IBMPlexSans-Italic.ttf</string>
+		<string>IBMPlexSans-Bold.ttf</string>
+		<string>IBMPlexSans-BoldItalic.ttf</string>
+		<string>IBMPlexSans-SemiBold.ttf</string>
+		<string>IBMPlexSans-SemiBoldItalic.ttf</string>
+		<string>IBMPlexSans-Light.ttf</string>
+		<string>IBMPlexSans-LightItalic.ttf</string>
+		<string>IBMPlexSans-ExtraLight.ttf</string>
+		<string>IBMPlexSans-ExtraLightItalic.ttf</string>
+		<string>IBMPlexSans-Thin.ttf</string>
+		<string>IBMPlexSans-ThinItalic.ttf</string>
+		<string>IBMPlexSans-ExtraLight.ttf</string>
+		<string>IBMPlexSans-ExtraLightItalic.ttf</string>
+		<string>IBMPlexSans-Medium.ttf</string>
+		<string>IBMPlexSans-MediumItalic.ttf</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -48,6 +67,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Used for locking the app while not in use</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>

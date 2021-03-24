@@ -83,6 +83,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 apply from: "../../../node_modules/react-native-ultimate-config/android/rnuc.gradle"
 
 /**
@@ -131,11 +132,14 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.islandapp"
+        applicationId project.config.get("BUNDLE_ID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [
+            appAuthRedirectScheme: project.config.get("BUNDLE_ID")
+        ]
     }
     splits {
         abi {
@@ -206,6 +210,24 @@ dependencies {
     implementation project(':react-native-keychain')
     implementation project(':react-native-ultimate-config')
     implementation project(':rnWebView')
+
+    addUnimodulesDependencies([
+      modulesPath:['../../node_modules'],
+      exclude: [
+        'expo-file-system',
+        'expo-image-loader',
+        'expo-permissions',
+        'unimodules-app-loader',
+        'unimodules-file-system-interface',
+        'unimodules-barcode-scanner-interface',
+        'unimodules-camera-interface',
+        'unimodules-image-loader-interface',
+        'unimodules-sensors-interface',
+        'unimodules-face-detector-interface',
+        'unimodules-permissions-interface',
+        'unimodules-task-manager-interface'
+      ]
+    ])
 
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
