@@ -11,6 +11,7 @@ module.exports = {
     '<rootDir>/apps/gjafakort/application',
     '<rootDir>/apps/gjafakort/queue-listener',
     '<rootDir>/apps/gjafakort/web',
+    '<rootDir>/apps/icelandic-names/backend',
     '<rootDir>/apps/judicial-system/api',
     '<rootDir>/apps/judicial-system/backend',
     '<rootDir>/apps/judicial-system/web',
