@@ -9,7 +9,7 @@ export interface Address {
   city: string
 }
 
-interface OtherParent {
+export interface PersonResidenceChange {
   nationalId: string
   fullName: string
   address: Address
@@ -19,20 +19,11 @@ export interface Child {
   nationalId: string
   livesWithApplicant: boolean
   fullName: string
-  otherParent: OtherParent
+  otherParent: PersonResidenceChange
 }
 
-export interface NationalRegistry {
-  nationalId: string
-  fullName: string
-  address: Address
+export interface NationalRegistry extends PersonResidenceChange {
   children: Child[]
-}
-
-export interface PersonResidenceChange {
-  nationalId: string
-  fullName: string
-  address: Address
 }
 
 export interface UserInfo {
