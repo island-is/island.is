@@ -44,7 +44,7 @@ describe('FileService', () => {
 
   const child = {
     fullName: 'child',
-    nationalId: '123456-7890',
+    nationalId: '1234567890',
     otherParent: parentB,
   }
 
