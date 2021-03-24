@@ -168,7 +168,7 @@ const Overview = ({
         <DescriptionText
           text={m.contract.general.description}
           format={{
-            parentB:
+            otherParent:
               application.state === 'draft'
                 ? parentB.fullName
                 : applicant.fullName,
