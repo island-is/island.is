@@ -6,7 +6,7 @@ import * as styles from './InputFileUpload.treat'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
-import { theme, Colors } from '@island.is/island-ui/theme'
+import { theme, Colors } from '../../utils/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
 

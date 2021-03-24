@@ -1,4 +1,4 @@
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 import { style } from 'treat'
 
 export const container = style({

@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 import React, { useState } from 'react'
 
 import { Input } from '../Input/Input'

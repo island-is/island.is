@@ -1,5 +1,5 @@
 import { styleMap, style, globalStyle } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 
 const speed = '150ms'
 
@@ -333,14 +333,14 @@ export const variants = styleMap({
       backgroundColor: theme.color.transparent,
     },
     selectors: {
-      [`&:hover:focus`]: {
+      '&:hover:focus': {
         borderColor: theme.color.transparent,
         backgroundColor: theme.color.transparent,
       },
-      [`&:hover:after`]: {
+      '&:hover:after': {
         borderColor: theme.color.blue400,
       },
-      [`&:focus:after`]: {
+      '&:focus:after': {
         borderColor: theme.color.mint400,
         opacity: 1,
       },
@@ -376,14 +376,14 @@ export const white = style({
     backgroundColor: theme.color.transparent,
   },
   selectors: {
-    [`&:focus:hover`]: {
+    '&:focus:hover': {
       borderColor: theme.color.transparent,
       backgroundColor: theme.color.transparent,
     },
-    [`&:hover:after`]: {
+    '&:hover:after': {
       borderColor: theme.color.white,
     },
-    [`&:focus:after`]: {
+    '&:focus:after': {
       borderColor: theme.color.mint400,
       opacity: 1,
     },

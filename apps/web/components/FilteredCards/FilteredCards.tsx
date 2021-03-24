@@ -13,7 +13,7 @@ import {
   Icon,
   LoadingIcon,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { Organization, OrganizationTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { Card } from '../Card/Card'

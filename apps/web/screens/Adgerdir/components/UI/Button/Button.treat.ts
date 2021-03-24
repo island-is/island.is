@@ -1,5 +1,5 @@
 import { style, Style, styleMap } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/core'
 import covidColors from '../colors'
 
 // this is used to generate uniqe classname for button so we can target empty styles for icon

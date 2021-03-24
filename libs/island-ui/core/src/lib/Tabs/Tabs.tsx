@@ -6,7 +6,7 @@ import { Select, Option } from '../Select/Select'
 
 import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { Colors, theme } from '../../utils/theme'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { useWindowSize } from 'react-use'
 

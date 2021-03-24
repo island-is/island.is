@@ -12,7 +12,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { PageLayout, InlineError } from '@island.is/skilavottord-web/components'

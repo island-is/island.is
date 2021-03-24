@@ -19,7 +19,7 @@ import {
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import {
   RecyclingRequest,
   RecyclingRequestTypes,

@@ -3202,6 +3202,13 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "dist/ui",
+            "command": "scripts/npm/prepare-ui.sh"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
@@ -3279,60 +3286,6 @@
           "outputs": ["{options.outputPath}"]
         },
         "docker-static": {}
-      }
-    },
-    "island-ui-theme": {
-      "root": "libs/island-ui/theme",
-      "sourceRoot": "libs/island-ui/theme/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/island-ui/theme/tsconfig.lib.json",
-              "libs/island-ui/theme/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/island-ui/theme/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/island-ui/theme/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/island-ui/theme"]
-        }
-      }
-    },
-    "island-ui-utils": {
-      "root": "libs/island-ui/utils",
-      "sourceRoot": "libs/island-ui/utils/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/island-ui/utils/tsconfig.lib.json",
-              "libs/island-ui/utils/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/island-ui/utils/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/island-ui/utils/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/island-ui/utils"]
-        }
       }
     },
     "judicial-system-api": {

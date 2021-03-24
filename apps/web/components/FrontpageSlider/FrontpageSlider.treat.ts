@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { ThemeOrAny } from 'treat/theme'
 import { ThemedStyle, Style } from 'treat/lib/types/types'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/core'
 
 const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
   '@media': {

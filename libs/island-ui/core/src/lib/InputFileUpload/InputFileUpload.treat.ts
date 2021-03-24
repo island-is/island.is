@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 import { errorMessage as inputErrorMessage } from '../Input/Input.mixins'
 
 export const container = style({

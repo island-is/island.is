@@ -1,6 +1,9 @@
 {
-  "name": "@island.is/island-ui-core",
+  "version": "0.0.0-alpha.1",
+  "name": "@island.is/ui",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "sideEffects": [
-    "src/index.ts"
+    "src/index.js"
   ]
 }

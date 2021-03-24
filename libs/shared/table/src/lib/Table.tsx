@@ -3,7 +3,7 @@ import { Row, useTable } from 'react-table'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './Table.treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 
 type column<T> = {
   Header: string

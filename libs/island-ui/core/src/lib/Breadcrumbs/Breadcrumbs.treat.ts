@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 
 const colorScheme = (text: string, hover: string) => ({
   display: 'inline-flex',

@@ -9,7 +9,7 @@ import {
   ProcessPageLayout,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
 import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
 import { Car, WithApolloProps } from '@island.is/skilavottord-web/types'

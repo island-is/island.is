@@ -8,7 +8,7 @@ import {
   Typography,
   ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors } from '@island.is/island-ui/core'
 
 type StatusOptions = {
   background: Colors

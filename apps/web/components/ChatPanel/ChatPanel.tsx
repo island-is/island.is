@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { Button, Icon } from '@island.is/island-ui/core'
 import { config, ID, CONVERSATION_KEY, URL } from './config'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { useWindowSize } from 'react-use'
 import * as styles from './ChatPanel.treat'
 

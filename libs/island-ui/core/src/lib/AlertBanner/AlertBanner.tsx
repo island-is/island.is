@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors } from '../../utils/theme'
 
 import { Box } from '../Box/Box'
 import * as styles from './AlertBanner.treat'

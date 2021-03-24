@@ -1,6 +1,6 @@
 import { styleMap, style } from 'treat'
 import mapValues from 'lodash/mapValues'
-import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
+import { themeUtils, Theme, theme } from '../../../utils/theme'
 
 const ColumnRange = [
   '12/12',

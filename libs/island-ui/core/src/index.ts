@@ -89,7 +89,15 @@ export * from './lib/context'
 
 // Treat
 export * from './treat/global.treat'
+
+// Utils
 export * from './utils/globalStyles'
+export * from './utils/deorphanize'
+export * from './utils/escapeGrid'
+export * from './utils/hexToRgba'
+export * from './utils/colors'
+export * from './utils/responsiveStyleMap'
+export * from './utils/theme'
 
 // Type exports:
 export type { BoxProps } from './lib/Box/Box'

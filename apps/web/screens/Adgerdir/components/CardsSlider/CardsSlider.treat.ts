@@ -1,5 +1,5 @@
 import { style, styleMap, globalStyle } from 'treat'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/core'
 import covidColors from '../UI/colors'
 
 export const wrapper = style({

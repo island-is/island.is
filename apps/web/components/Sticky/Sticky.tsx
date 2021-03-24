@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 
 interface Props {
   top?: number

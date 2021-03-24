@@ -1,6 +1,6 @@
 import { style } from 'treat'
 import { zIndex } from '@island.is/service-portal/constants'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/core'
 
 export const actionSidebarTransitionTiming = 400
 

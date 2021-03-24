@@ -92,8 +92,6 @@ module.exports = {
     '<rootDir>/libs/infra-tracing',
     '<rootDir>/libs/island-ui/contentful',
     '<rootDir>/libs/island-ui/core',
-    '<rootDir>/libs/island-ui/theme',
-    '<rootDir>/libs/island-ui/utils',
     '<rootDir>/libs/judicial-system/audit-trail',
     '<rootDir>/libs/judicial-system/auth',
     '<rootDir>/libs/judicial-system/consts',

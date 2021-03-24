@@ -1,6 +1,6 @@
 import React, { ElementType, useState } from 'react'
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 
 type BackgroundBleed = {

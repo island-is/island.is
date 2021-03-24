@@ -21,7 +21,7 @@ import {
 import BackgroundImage from '../BackgroundImage/BackgroundImage'
 import { Slice as SliceType, richText } from '../..'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 
 import * as styles from './TellUsAStoryFrom.treat'
 

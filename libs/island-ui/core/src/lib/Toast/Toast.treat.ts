@@ -1,5 +1,5 @@
 import { style, globalStyle } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 
 export const root = style({
   position: 'relative',

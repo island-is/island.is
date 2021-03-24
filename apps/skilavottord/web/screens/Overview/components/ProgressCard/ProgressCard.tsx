@@ -13,7 +13,7 @@ import ProgressBar from '../ProgressBar/ProgressBar'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { Car } from '@island.is/skilavottord-web/types'
 import { formatYear } from '@island.is/skilavottord-web/utils'
 

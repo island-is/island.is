@@ -4,7 +4,7 @@ import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
 import 'react-alice-carousel/lib/alice-carousel.css'
 import { Inline, Text, Box, Hidden, Button } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { Card, CardProps } from '@island.is/web/components'
 import * as styles from './CardsSlider.treat'
 

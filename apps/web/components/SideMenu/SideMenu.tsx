@@ -23,7 +23,7 @@ import {
   FocusableBox,
   Logo,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '@island.is/web/i18n'
 import { SearchInput } from '../SearchInput/SearchInput'

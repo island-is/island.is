@@ -1,6 +1,6 @@
 import { styleMap, style, globalStyle } from 'treat'
 import * as CSS from 'csstype'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 

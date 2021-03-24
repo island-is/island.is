@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 
 export const TooltipContainer = style({
   filter: 'drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.15))',

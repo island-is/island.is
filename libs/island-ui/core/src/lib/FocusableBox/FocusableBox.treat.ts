@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 
 export const focusable = style({
   position: 'relative',
@@ -29,7 +29,7 @@ export const focusable = style({
   },
 
   selectors: {
-    [`&:focus::before`]: {
+    '&:focus::before': {
       borderWidth: 3,
       borderStyle: 'solid',
       borderColor: theme.color.mint400,

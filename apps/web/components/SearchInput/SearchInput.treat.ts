@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 
 export const menuColumn = style({
   padding: `${theme.spacing[1]}px 0`,

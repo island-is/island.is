@@ -1,4 +1,4 @@
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors } from '../../utils/theme'
 import cn from 'classnames'
 import React, { useContext, forwardRef } from 'react'
 import { Box } from '../Box/Box'

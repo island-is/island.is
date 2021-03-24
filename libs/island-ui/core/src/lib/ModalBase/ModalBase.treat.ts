@@ -1,6 +1,6 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 import { style, styleMap } from 'treat'
-import { hexToRgba } from '@island.is/island-ui/utils'
+import { hexToRgba } from '../../utils/hexToRgba'
 
 export const backdrop = style({
   position: 'fixed',

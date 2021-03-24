@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/core'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 
 const top = STICKY_NAV_HEIGHT + theme.spacing[1]

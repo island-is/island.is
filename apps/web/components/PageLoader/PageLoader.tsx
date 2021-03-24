@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import LoadingBar from 'react-top-loading-bar'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 
 export const PageLoader = () => {
   const router = useRouter()

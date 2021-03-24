@@ -13,7 +13,7 @@ import {
   fontWeight as fontWeightStyles,
   defaultFontWeights,
 } from './Typography.treat'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors } from '../../utils/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
 import { Box } from '../Box/Box'
 

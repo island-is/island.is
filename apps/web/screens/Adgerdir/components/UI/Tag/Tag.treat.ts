@@ -1,5 +1,5 @@
 import { styleMap, style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import colors from '../colors'
 
 export const container = style({

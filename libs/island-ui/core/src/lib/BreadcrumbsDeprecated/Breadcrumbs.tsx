@@ -2,7 +2,7 @@
 import React, { FC, Children } from 'react'
 import { Text } from '../Text/Text'
 import { Icon } from '../Icon/Icon'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors } from '../../utils/theme'
 import * as styles from './Breadcrumbs.treat'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 

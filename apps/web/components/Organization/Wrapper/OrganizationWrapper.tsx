@@ -21,7 +21,7 @@ import {
   SidebarWrapper,
 } from '@island.is/web/components'
 import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface NavigationData {

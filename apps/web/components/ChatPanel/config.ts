@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { ChatPanelConfig } from './types'
 
 export const ID = '246covid-island'

@@ -1,6 +1,6 @@
 import React, { ReactNode, FC, useState, useEffect } from 'react'
 import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import {
   Box,
   GridContainer,

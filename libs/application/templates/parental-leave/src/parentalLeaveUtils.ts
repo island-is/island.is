@@ -5,7 +5,7 @@ import {
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from './lib/messages'

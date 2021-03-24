@@ -279,8 +279,7 @@
       "tags": []
     },
     "island-ui-core": {
-      "tags": [],
-      "implicitDependencies": ["island-ui-theme"]
+      "tags": []
     },
     "island-ui-fonts": {
       "tags": []
@@ -288,12 +287,6 @@
     "island-ui-storybook": {
       "tags": [],
       "implicitDependencies": ["island-ui-core"]
-    },
-    "island-ui-theme": {
-      "tags": []
-    },
-    "island-ui-utils": {
-      "tags": []
     },
     "judicial-system-api": {
       "tags": []

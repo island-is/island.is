@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import { LinkContext } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 
 interface LinkProviderProps {
   children: ReactNode

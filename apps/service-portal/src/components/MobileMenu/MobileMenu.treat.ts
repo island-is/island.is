@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/core'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex,

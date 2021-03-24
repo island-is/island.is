@@ -115,6 +115,14 @@ export type Colors = keyof typeof color
 type RequiredTokens = Pick<Theme, 'breakpoints'>
 type StyleWithoutMediaQueries = Exclude<Style['@media'], undefined>[string]
 
+interface ResponsiveStyle {
+  xs?: StyleWithoutMediaQueries
+  sm?: StyleWithoutMediaQueries
+  md?: StyleWithoutMediaQueries
+  lg?: StyleWithoutMediaQueries
+  xl?: StyleWithoutMediaQueries
+}
+
 export const makeThemeUtils = (tokens: RequiredTokens) => {
   const makeMediaQuery = (breakpoint: keyof RequiredTokens['breakpoints']) => (
     styles: StyleWithoutMediaQueries,
@@ -130,14 +138,6 @@ export const makeThemeUtils = (tokens: RequiredTokens) => {
     md: makeMediaQuery('md'),
     lg: makeMediaQuery('lg'),
     xl: makeMediaQuery('xl'),
-  }
-
-  interface ResponsiveStyle {
-    xs?: StyleWithoutMediaQueries
-    sm?: StyleWithoutMediaQueries
-    md?: StyleWithoutMediaQueries
-    lg?: StyleWithoutMediaQueries
-    xl?: StyleWithoutMediaQueries
   }
 
   const responsiveStyle = ({ xs, sm, md, lg, xl }: ResponsiveStyle): Style => {

@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../utils/theme'
 
 export const closeBtn = style({
   position: 'absolute',

@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '../../../../utils/theme'
 
 export const input = style({
   appearance: 'none',
@@ -21,7 +21,7 @@ export const input = style({
     borderColor: theme.color.blue400,
   },
   selectors: {
-    [`&:focus:hover`]: {
+    '&:focus:hover': {
       borderColor: theme.color.transparent,
     },
   },
@@ -36,7 +36,7 @@ export const open = style({
   borderBottomRightRadius: 0,
   borderColor: theme.color.blue200,
   selectors: {
-    [`&:focus:hover`]: {
+    '&:focus:hover': {
       borderColor: theme.color.blue200,
     },
   },
@@ -46,7 +46,7 @@ export const colored = style({
   background: theme.color.blue100,
   borderColor: theme.color.blue200,
   selectors: {
-    [`&:focus:hover`]: {
+    '&:focus:hover': {
       borderColor: theme.color.blue200,
     },
   },
@@ -89,7 +89,7 @@ export const white = style({
     borderColor: theme.color.white,
   },
   selectors: {
-    [`&:focus:hover`]: {
+    '&:focus:hover': {
       backgroundColor: theme.color.transparent,
     },
   },
