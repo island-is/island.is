@@ -206,6 +206,7 @@ export const homeTexts = {
 // ===========================================================================
 
 export const regulationPageTexts = {
+  redirectText: 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:',
   historyTitle: 'Breytingasaga reglugerðar ',
 
   showDiff: 'Sýna breytingar',
@@ -293,6 +294,22 @@ export const exampleRegulation: Regulation = {
 const foo: string = undefined
 
 export const exampleRegulationOriginalBody = regulationHtmlOriginal
+
+// ---------------------------------------------------------------------------
+
+export type RegulationRedirect = {
+  /** Publication name (NNNN/YYYY) of the regulation */
+  name: string
+  /** The title of the regulation in HTML format */
+  title: string
+  /** The regulation data has not been fully migrated and should be viewed at this URL */
+  redirectUrl: string
+}
+export const exampleRegulationRedirect: RegulationRedirect = {
+  name: '0504/1975',
+  title: 'Reglugerð um gatnagerðargjöld í Hvolhreppi, Rangárvallasýslu.',
+  redirectUrl: 'https://www.reglugerd.is/reglugerdir/allar/nr/0504-1975',
+}
 
 // ---------------------------------------------------------------------------
 

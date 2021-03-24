@@ -177,7 +177,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
         <GridContainer>
           <GridRow>
             <GridColumn
-              offset={['0','0','0','1/12']}
+              offset={['0', '0', '0', '1/12']}
               span={['1/1', '1/1', '1/1', '7/12']}
               paddingTop={paddingTop}
               paddingBottom={paddingBottom}
