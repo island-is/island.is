@@ -1,6 +1,6 @@
 import { Address, Child } from '../types'
 
-export const constructParentAddressString = (address: Address) => {
+export const constructAddressString = (address: Address) => {
   if (!address) {
     return null
   }

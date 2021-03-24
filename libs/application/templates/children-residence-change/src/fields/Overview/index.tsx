@@ -10,7 +10,7 @@ import {
   GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
 import {
-  constructParentAddressString,
+  constructAddressString,
   getSelectedChildrenFromExternalData,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
@@ -39,8 +39,8 @@ const Overview = ({
     applicant.children,
     answers.selectChild,
   )
-  const otherParent = children?.[0].otherParent
-  const parentAddress = constructParentAddressString(otherParent.address)
+  const parentB = children?.[0].otherParent
+  const parentAddress = constructAddressString(parentB.address)
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
@@ -168,9 +168,9 @@ const Overview = ({
         <DescriptionText
           text={m.contract.general.description}
           format={{
-            otherParent:
+            parentB:
               application.state === 'draft'
-                ? otherParent.fullName
+                ? parentB.fullName
                 : applicant.fullName,
           }}
         />
@@ -211,7 +211,7 @@ const Overview = ({
           })}
         </Text>
         <Text>{applicant?.fullName}</Text>
-        <Text>{constructParentAddressString(applicant?.address)}</Text>
+        <Text>{constructAddressString(applicant?.address)}</Text>
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
@@ -219,7 +219,7 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{otherParent?.fullName}</Text>
+        <Text>{parentB?.fullName}</Text>
         <Text fontWeight="light">{parentAddress}</Text>
       </Box>
       <Box marginTop={4}>

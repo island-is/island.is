@@ -103,7 +103,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${parentA.address?.streetName}, ${parentA.address?.postalCode} ${parentA.address?.city}`,
+    `Heimilisfang: ${parentA.address.streetName}, ${parentA.address.postalCode} ${parentA.address.city}`,
   )
 
   addToDoc(
