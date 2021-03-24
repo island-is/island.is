@@ -48,10 +48,10 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
-          return this.handleError(response.errors)
+          throw new Error('Error from NationalRegistry')
         }
 
-        const returnObject = {
+        const returnObject: NationalRegistry = {
           fullName: response.data.nationalRegistryUser.fullName,
           nationalId: response.data.nationalRegistryUser.nationalId,
           address: {
@@ -63,15 +63,11 @@ export class MockNationalRegistryProvider extends BasicDataProvider {
           children: childrenArray,
         }
 
-        return Promise.resolve(returnObject as any)
+        return Promise.resolve(returnObject)
       })
-      .catch((error) => {
-        return this.handleError(error)
+      .catch(() => {
+        throw new Error('Error from NationalRegistry')
       })
-  }
-  handleError(error: any) {
-    console.log('Provider error - NationalRegistry:', error)
-    return Promise.resolve({})
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {

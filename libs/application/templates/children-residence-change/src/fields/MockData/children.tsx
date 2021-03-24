@@ -19,9 +19,8 @@ const MockChildren = ({ application, field }: CRCFieldBaseProps) => {
     append({
       name: '',
       nationalId: '',
-      address: '',
-      postalCode: '',
-      city: '',
+      otherParent: '',
+      livesWithApplicant: '',
     })
   const handleRemovePerson = (index: number) => remove(index)
 
