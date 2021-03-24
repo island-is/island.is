@@ -1,8 +1,8 @@
-import { ClaimService } from '../../../services/ClaimService'
 import React, { useEffect, useState } from 'react'
 import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ResourcesService } from '../../../services/ResourcesService'
+import UserClaimCreateForm from './UserClaimCreateForm'
 
 interface Props {
   identityResourceName: string
@@ -10,6 +10,7 @@ interface Props {
   handleNext?: () => void
   handleBack?: () => void
   handleChanges?: () => void
+  handleNewClaimsAdded: () => void
 }
 
 const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
@@ -17,7 +18,7 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     getAllAvailableClaims()
-  }, [])
+  }, [props.claims])
 
   const getAllAvailableClaims = async () => {
     const response = await ResourcesService.findAllIdentityResourceUserClaims()
@@ -58,6 +59,16 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
     }
   }
 
+  const saveNewUserClaim = async (claim: string): Promise<void> => {
+    const response = await ResourcesService.createIdentityResourceUserClaim({
+      resourceName: props.identityResourceName,
+      claimName: claim,
+    })
+    if (response) {
+      props.handleNewClaimsAdded()
+    }
+  }
+
   return (
     <div className="identity-resource-user-claims">
       <div className="identity-resource-user-claims__wrapper">
@@ -69,6 +80,11 @@ const IdentityResourceUserClaims: React.FC<Props> = (props: Props) => {
               List of associated user claim types that should be included in the
               identity token.
             </div>
+            <UserClaimCreateForm
+              resourceName={props.identityResourceName}
+              handleSave={saveNewUserClaim}
+              existingClaims={props.claims}
+            />
             <div className="identity-resource-user-claims__container__fields">
               {claims?.map((claim: string) => {
                 return (
