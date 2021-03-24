@@ -19,7 +19,7 @@ export class MockChildrenNationalRegistryProvider extends BasicDataProvider {
     const data =
       crcApplication.answers?.mockData?.childrenNationalRegistry?.data
     if (!data) {
-      throw new Error('Ekki tókst að ná í upplýsingar um börn í þinni forsjá')
+      throw new Error('Engin börn fundust í þinni forsjá')
     }
     return data
   }
