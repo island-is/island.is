@@ -4,21 +4,20 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
 import { FileService } from './files/file.service'
+import { AwsService } from './files/aws.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
-import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
-import { AwsService } from './files/aws.service'
+import { SigningModule } from '@island.is/dokobit-signing'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
-
-// import { AuthModule } from '@island.is/auth-nest-tools'
 
 let BullModule: DynamicModule
 
@@ -43,22 +42,18 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
-    // AuthModule.register(environment.auth),
+    AuthModule.register(environment.auth),
     TemplateAPIModule.register(environment.templateApi),
     SequelizeModule.forFeature([Application]),
     FileStorageModule.register(environment.fileStorage),
     BullModule,
+    SigningModule.register(environment.signingOptions),
   ],
   controllers: [ApplicationController],
   providers: [
     ApplicationService,
     FileService,
     UploadProcessor,
-    {
-      provide: SIGNING_OPTIONS,
-      useValue: environment.signingOptions,
-    },
-    SigningService,
     {
       provide: APPLICATION_CONFIG,
       useValue: environment.application as ApplicationConfig,

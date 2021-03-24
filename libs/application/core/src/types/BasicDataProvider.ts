@@ -4,6 +4,7 @@ import {
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
 import fetch from 'isomorphic-fetch'
+import { GraphQLError } from 'graphql'
 
 export interface DataProvider {
   readonly type: string
@@ -17,6 +18,13 @@ export interface DataProviderConfig {
   authorization: string
   /** GraphQL api base url **/
   baseApiUrl: string
+}
+
+export interface GraphqlGatewayResponse<DataType> extends Response {
+  json: () => Promise<{
+    data?: DataType
+    errors?: GraphQLError
+  }>
 }
 
 export abstract class BasicDataProvider implements DataProvider {
@@ -36,7 +44,9 @@ export abstract class BasicDataProvider implements DataProvider {
    */
   abstract async provide(application: Application): Promise<unknown>
 
-  protected async useGraphqlGateway(query: string): Promise<Response> {
+  protected async useGraphqlGateway<DataType = any>(
+    query: string,
+  ): Promise<GraphqlGatewayResponse<DataType>> {
     return fetch(`${this.config.baseApiUrl}/api/graphql`, {
       method: 'POST',
       headers: {

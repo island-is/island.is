@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Box } from '../Box/Box'
-import { Button } from '../Button/Button'
-import { Stack } from '../Stack/Stack'
+import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
@@ -10,20 +9,22 @@ import {
   ProgressMeterVariant,
 } from '../ProgressMeter/ProgressMeter'
 import * as styles from './ActionCard.treat'
+import { Icon } from '../IconRC/Icon'
 
 type ActionCardProps = {
+  date?: string
   heading: string
   text?: string
   tag?: {
     label: string
     variant?: TagVariant
+    outlined?: boolean
   }
   cta: {
     label: string
-    /**
-     * 'primary' renders a button, 'secondary' renders a text button
-     */
-    variant?: 'primary' | 'secondary'
+    variant?: ButtonTypes['variant']
+    size?: ButtonSizes
+    icon?: 'arrowForward'
     onClick?: () => void
   }
   progressMeter?: {
@@ -40,11 +41,13 @@ type ActionCardProps = {
 
 const defaultCta = {
   variant: 'primary',
+  icon: 'arrowForward',
   onClick: () => null,
 } as const
 
 const defaultTag = {
   variant: 'blue',
+  outlined: true,
   label: '',
 } as const
 
@@ -61,6 +64,7 @@ const defaultUnavailable = {
 } as const
 
 export const ActionCard: React.FC<ActionCardProps> = ({
+  date,
   heading,
   text,
   cta: _cta,
@@ -75,10 +79,51 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const renderDisabled = () => {
     const { label, message } = unavailable
+
     return (
       <Box display="flex">
         <Text variant="small">{label}&nbsp;</Text>
         <Tooltip placement="top" as="button" text={message} />
+      </Box>
+    )
+  }
+
+  const renderDate = () => {
+    if (!date) {
+      return null
+    }
+
+    return (
+      <Box
+        alignItems={['flexStart', 'center']}
+        display="flex"
+        flexDirection={['column', 'row']}
+        justifyContent="spaceBetween"
+        marginBottom={1}
+      >
+        <Box display="flex" flexDirection="row" alignItems="center">
+          <Box marginRight="smallGutter">
+            <Icon size="small" icon="time" type="outline" color="blue400" />
+          </Box>
+
+          <Text variant="small">{date}</Text>
+        </Box>
+
+        {renderTag()}
+      </Box>
+    )
+  }
+
+  const renderTag = () => {
+    if (!tag.label) {
+      return null
+    }
+
+    return (
+      <Box paddingTop={[1, 1, 0]}>
+        <Tag outlined={tag.outlined} variant={tag.variant}>
+          {tag.label}
+        </Tag>
       </Box>
     )
   }
@@ -88,20 +133,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
     return (
       <>
-        {!!tag.label && (
-          <Box>
-            <Tag outlined variant={tag.variant}>
-              {tag.label}
-            </Tag>
-          </Box>
-        )}
+        {!date && renderTag()}
+
         {!!hasCTA && (
           <Box paddingTop={tag.label ? 'gutter' : 0}>
-            <Button
-              variant={cta.variant === 'secondary' ? 'text' : 'primary'}
-              size="small"
-              onClick={cta.onClick}
-            >
+            <Button variant={cta.variant} size="small" onClick={cta.onClick}>
               {cta.label}
             </Button>
           </Box>
@@ -112,24 +148,30 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   const renderProgressMeter = () => {
     const { variant, progress } = progressMeter
+    const paddingWithDate = date ? 0 : 1
+    const alignWithDate = date ? 'flexEnd' : 'center'
+
     return (
       <Box
         width="full"
-        paddingTop={2}
+        paddingTop={[1, 1, 1, paddingWithDate]}
         display="flex"
-        alignItems={['flexStart', 'flexStart', 'center']}
+        alignItems={['flexStart', 'flexStart', alignWithDate]}
         flexDirection={['column', 'column', 'row']}
+        className={date ? styles.progressMeterWithDate : undefined}
       >
         <ProgressMeter
           variant={variant}
           progress={progress}
           className={styles.progressMeter}
         />
+
         <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
           <Button
-            variant={cta.variant === 'secondary' ? 'text' : 'primary'}
+            variant={cta.variant}
             onClick={cta.onClick}
-            icon="arrowForward"
+            icon={cta.icon}
+            size={cta.size}
           >
             {cta.label}
           </Button>
@@ -148,6 +190,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       paddingX={[3, 3, 4]}
       paddingY={3}
     >
+      {renderDate()}
+
       <Box
         alignItems={['flexStart', 'center']}
         display="flex"
@@ -168,6 +212,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
+
       {progressMeter.active && renderProgressMeter()}
     </Box>
   )

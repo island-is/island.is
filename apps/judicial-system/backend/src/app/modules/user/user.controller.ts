@@ -19,6 +19,7 @@ import {
   RolesGuard,
   RolesRule,
   RolesRules,
+  TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
 import { CreateUserDto, UpdateUserDto } from './dto'
@@ -31,13 +32,9 @@ const adminRule = UserRole.ADMIN as RolesRule
 @Controller('api')
 @ApiTags('users')
 export class UserController {
-  constructor(
-    @Inject(UserService)
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
@@ -48,8 +45,7 @@ export class UserController {
     return this.userService.create(userToCreate)
   }
 
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
   @Put('user/:id')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
@@ -96,10 +92,7 @@ export class UserController {
     return user
   }
 
-  /*
-   * This endpoint is not guarded as it needs to respond to unauthenticated requests
-   * from the authentication service.
-   */
+  @UseGuards(TokenGuaard)
   @Get('user')
   @ApiOkResponse({
     type: User,

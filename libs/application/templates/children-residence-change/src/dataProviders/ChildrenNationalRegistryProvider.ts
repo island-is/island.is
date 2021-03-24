@@ -4,11 +4,14 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
-import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
+import {
+  PersonResidenceChange,
+  DataProviderTypes,
+} from '@island.is/application/templates/children-residence-change'
 
 /** This is a temporary mock provider for children residence change. National registry team are setting up real provider which we will connect to once it is up. **/
 export class ChildrenNationalRegistryProvider extends BasicDataProvider {
-  readonly type = 'ChildrenNationalRegistry'
+  readonly type = DataProviderTypes.ChildrenNationalRegistry
 
   async provide(): Promise<PersonResidenceChange> {
     const query = `query GetNationalRegistry {
@@ -37,7 +40,7 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
       {
         id: '1',
         name: 'Ólafur Helgi Eiríksson',
-        ssn: '123456-7890',
+        ssn: '1234567890',
         address: 'Vesturgata 22',
         postalCode: '101',
         city: 'Reykjavík',
@@ -45,7 +48,7 @@ export class ChildrenNationalRegistryProvider extends BasicDataProvider {
       {
         id: '2',
         name: 'Rósa Líf Eiríksdóttir',
-        ssn: '123456-7890',
+        ssn: '1234567890',
         address: 'Vesturgata 22',
         postalCode: '101',
         city: 'Reykjavík',

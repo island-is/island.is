@@ -48,7 +48,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
-import { Locale } from '../i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import {
   LinkType,
   useLinkResolver,
@@ -260,8 +260,13 @@ const Layout: NextComponentType<
             title={alertBannerContent.title}
             description={alertBannerContent.description}
             link={{
-              href: alertBannerContent.link.url,
-              title: alertBannerContent.link.text,
+              ...(!!alertBannerContent.link &&
+                !!alertBannerContent.linkTitle && {
+                  href: linkResolver(alertBannerContent.link.type as LinkType, [
+                    alertBannerContent.link.slug,
+                  ]).href,
+                  title: alertBannerContent.linkTitle,
+                }),
             }}
             variant={alertBannerContent.bannerVariant as AlertBannerVariants}
             dismissable={alertBannerContent.isDismissable}

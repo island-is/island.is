@@ -5,13 +5,13 @@ import { Menu, mapMenu } from './menu.model'
 @ObjectType()
 export class GroupedMenu {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field(() => [Menu])
-  menus: Menu[]
+  menus?: Menu[]
 }
 
 export const mapGroupedMenu = ({ sys, fields }: IGroupedMenu): GroupedMenu => ({

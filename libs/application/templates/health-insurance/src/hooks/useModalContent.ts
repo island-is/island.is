@@ -1,28 +1,32 @@
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { ExternalData } from '@island.is/application/core'
 import {
-  sortApplicationsByDateAscending,
+  ApplicationTypes,
+  ExternalData,
+  getSlugFromType,
+} from '@island.is/application/core'
+import {
   hasHealthInsurance,
   hasActiveDraftApplication,
   hasPendingApplications,
   hasIcelandicAddress,
+  getBaseUrl,
+  getOldestDraftApplicationId,
 } from '../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
 import { ContentType } from '../types'
 import { m } from '../forms/messages'
 import { Applications } from '../dataProviders/APIDataTypes'
 
-export const useModalContent = (externalData: ExternalData) => {
+export const useModalContent = (
+  externalData: ExternalData,
+  typeId: ApplicationTypes,
+) => {
   const [content, setContent] = useState<ContentType>()
   const history = useHistory()
+  const baseUrl = getBaseUrl()
   const { lang } = useLocale()
-
-  const getFirstCreatedApplicationId = () => {
-    const applications = externalData?.applications.data as Applications[]
-    const sortedApplications = sortApplicationsByDateAscending(applications)
-    return sortedApplications[0]?.id
-  }
+  const applicationSlug = getSlugFromType(typeId)
 
   const contentList = {
     hasHealthInsurance: {
@@ -56,8 +60,8 @@ export const useModalContent = (externalData: ExternalData) => {
       buttonAction: () =>
         (window.location.href =
           lang === 'is'
-            ? 'https://www.island.is/logheimili-upplysingar-innflytjendur'
-            : 'https://www.island.is/en/legal-domicile-immigrant'),
+            ? `${baseUrl}/logheimili-upplysingar-innflytjendur`
+            : `${baseUrl}/en/legal-domicile-immigrant`),
     },
   }
 
@@ -77,11 +81,12 @@ export const useModalContent = (externalData: ExternalData) => {
     } else if (hasIcelandicAddress(externalData)) {
       setContent(contentList.registerAddress)
     } else if (hasActiveDraftApplication(externalData)) {
-      const firstCreatedApplicationId = getFirstCreatedApplicationId()
+      const applications = externalData?.applications.data as Applications[]
+      const oldestDraftApplicationId = getOldestDraftApplicationId(applications)
       setContent({
         ...contentList.activeDraftApplication,
         buttonAction: () =>
-          history.push(`../umsokn/${firstCreatedApplicationId}`),
+          history.push(`../${applicationSlug}/${oldestDraftApplicationId}`),
       })
     }
   }, [externalData])

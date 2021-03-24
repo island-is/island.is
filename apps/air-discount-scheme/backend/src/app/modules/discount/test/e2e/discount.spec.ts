@@ -43,6 +43,7 @@ describe('Create DiscountCode', () => {
       .expect(201)
 
     expect(response.body).toEqual({
+      connectionDiscountCodes: [],
       discountCode: expect.any(String),
       expiresIn: 86400,
       nationalId,

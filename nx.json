@@ -103,6 +103,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-rsk": {
+      "tags": []
+    },
     "api-domains-syslumenn": {
       "tags": []
     },
@@ -198,6 +201,12 @@
     "cache": {
       "tags": []
     },
+    "clients-mms": {
+      "tags": []
+    },
+    "clients-zendesk": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
@@ -211,9 +220,6 @@
       "tags": []
     },
     "content-search-toolkit": {
-      "tags": []
-    },
-    "contentful-importer": {
       "tags": []
     },
     "contentful-translation-extension": {
@@ -350,6 +356,9 @@
     "reference-next-app": {
       "tags": []
     },
+    "rsk": {
+      "tags": []
+    },
     "service-portal": {
       "tags": []
     },
@@ -433,6 +442,9 @@
       "tags": []
     },
     "shared-connected": {
+      "tags": []
+    },
+    "shared-constants": {
       "tags": []
     },
     "shared-form-fields": {

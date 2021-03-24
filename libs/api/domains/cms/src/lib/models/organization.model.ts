@@ -7,25 +7,25 @@ import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
 @ObjectType()
 export class Organization {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  shortTitle: string
+  shortTitle?: string
 
   @Field({ nullable: true })
   description?: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
 
   @Field({ nullable: true })
-  logo?: Image
+  logo?: Image | null
 
   @Field({ nullable: true })
   link?: string

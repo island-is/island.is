@@ -4,7 +4,7 @@ import {
   Mutation,
   MutationCreateProfileArgs,
 } from '@island.is/api/schema'
-import { Locale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 import { CREATE_USER_PROFILE } from '../../lib/mutations/createUserProfile'
 import { USER_PROFILE } from '../../lib/queries/getUserProfile'
 
