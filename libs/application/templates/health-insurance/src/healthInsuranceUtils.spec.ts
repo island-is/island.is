@@ -171,13 +171,13 @@ describe('Health insurance utils', () => {
       // assert
       const currentApplicationId = faker.random.uuid()
 
-      window = Object.create(window)
-      Object.defineProperty(window, 'location', {
-        value: {
+      const windowSpy = jest.spyOn(window, "window", "get");
+
+      windowSpy.mockImplementation(() => (({
+        location: {
           pathname: `/umsoknir/sjukratryggingar/${currentApplicationId}`,
-        },
-        writable: true,
-      })
+        }
+      }) as any))
 
       const yesterday = new Date()
       yesterday.setDate(yesterday.getDate() - 1)
@@ -218,6 +218,8 @@ describe('Health insurance utils', () => {
       // arrange
       expect(hasActiveDraft).toEqual(false)
       expect(currentApplicationId).toBe(oldestDraftId)
+
+      windowSpy.mockRestore();
     })
   })
   describe('Getting oldest draft application id', () => {
