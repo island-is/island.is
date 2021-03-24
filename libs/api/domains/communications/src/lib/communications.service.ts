@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
+import { ZendeskService } from '@island.is/clients/zendesk'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
@@ -16,6 +17,7 @@ interface EmailTypeTemplateMap {
 export class CommunicationsService {
   constructor(
     private readonly emailService: EmailService,
+    private readonly zendeskService: ZendeskService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -43,5 +45,28 @@ export class CommunicationsService {
       // we dont want the client to see these errors since they might contain sensitive data
       throw new Error('Failed to send message')
     }
+  }
+
+  async sendZendeskTicket(input: ContactUsInput): Promise<boolean> {
+    const name = input.name.trim()
+    const email = input.email.trim().toLowerCase()
+    const subject = input.subject
+    const message = input.message
+    const phone = input.phone
+
+    let user = await this.zendeskService.getUserByEmail(email)
+
+    if (!user) {
+      user = await this.zendeskService.createUser(name, email, phone)
+    }
+
+    await this.zendeskService.submitTicket({
+      message,
+      requesterId: user.id,
+      subject,
+      tags: ['web'],
+    })
+
+    return true
   }
 }
