@@ -22,9 +22,8 @@ ALPHANUMERIC_DASH="^[a-zA-Z0-9\//_-]"
 ONE_OR_MORE="+$"
 # END="$"
 # Exclude whitespaces
-ILLEGAL_CHARS="\s"
+ILLEGAL_CHARS="*[[:space:]]*"
 HAS_SLASH_END="[^\/]"
-
 
 # Complete pattern
 # PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$HAS_SLASH_END$END
@@ -35,14 +34,14 @@ __error_exit () {
 }
 
 die () {
-    printf >&2 "$@"
-    exit 1
+  printf >&2 "$@"
+  exit 1
 }
+
 error_empty () {
   printf "%s No empty values %s\n" "$RED" "$RESET"
   exit 0
 }
-
 
 validate_empty () {
   [[ -d $1 ]] || { printf "%sNo empty values%s" "$RED" "$RESET" >&2; exit 1; }
@@ -51,7 +50,6 @@ validate_empty () {
 validate_slash () {
   [[ ! $1 =~ $HAS_SLASH_END ]]
   printf "%sNo ending slash: Ok!%s" "$GREEN" "$RESET"
-
 }
 
 validate_whitespace () {
@@ -60,13 +58,12 @@ validate_whitespace () {
     error_empty
   fi
   # No whitespace
-  if [[ $1 =~ $ILLEGAL_CHARS ]]
+  if [[ $1 = $ILLEGAL_CHARS ]]
   then
-    printf "%sWhitespaces are not allowed%s" "$RED" "$RESET"
+    printf "%sWhitespaces are not allowed%s\n" "$RED" "$RESET"
     exit 0
   fi
-}
-
+ }
 
 validate_chars () {
   if [ ! ${1+x} ]
