@@ -27,19 +27,21 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     <GridContainer>
       <CardsSlider
         title={title}
-        cards={lifeEvents.map((lifeEvent) => {
-          return {
-            title: lifeEvent.title,
-            description: lifeEvent.intro,
-            link: linkResolver('lifeeventpage', [lifeEvent.slug]),
-            image: lifeEvent.thumbnail
-              ? {
-                  title: lifeEvent.thumbnail.title,
-                  url: lifeEvent.thumbnail.url,
-                }
-              : { title: lifeEvent.image.title, url: lifeEvent.image.url },
-          }
-        })}
+        cards={lifeEvents
+          .filter((x) => x.slug && x.title)
+          .map((lifeEvent) => {
+            return {
+              title: lifeEvent.title,
+              description: lifeEvent.intro,
+              link: linkResolver('lifeeventpage', [lifeEvent.slug]),
+              image: lifeEvent.thumbnail
+                ? {
+                    title: lifeEvent.thumbnail.title,
+                    url: lifeEvent.thumbnail.url,
+                  }
+                : { title: lifeEvent.image.title, url: lifeEvent.image.url },
+            }
+          })}
       />
       <Box display={'flex'} justifyContent="flexEnd" marginTop={[3, 3, 4]}>
         <Link {...linkResolver('lifeevents')} skipTab>
