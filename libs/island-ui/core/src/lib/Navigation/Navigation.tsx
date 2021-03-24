@@ -363,6 +363,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 href={href}
                 borderRadius="large"
                 paddingLeft={isChildren ? 2 : 3}
+                paddingRight={2}
                 paddingY={isChildren ? 'smallGutter' : 1}
                 className={styles.link}
                 onClick={linkOnClick}
