@@ -13,21 +13,6 @@ export enum ApplicationTypes {
   PARTY_APPLICATION = 'PartyApplication',
 }
 
-<<<<<<< HEAD
-export const ApplicationTranslations = {
-  ExampleForm: 'example.application',
-  Passport: null,
-  DrivingLessons: 'dl.application',
-  DrivingLicense: 'dl.application',
-  ParentalLeave: 'pl.application',
-  MetaApplication: null,
-  DocumentProviderOnboarding: 'dpo.application',
-  HealthInsurance: 'hi.application',
-  ChildrenResidenceChange: 'crc.application',
-  DataProtectionAuthorityComplaint: 'dpac.application',
-  PartyLetter: 'ple.application',
-  PartyApplication: 'pa.application',
-=======
 export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE]: {
     slug: 'example',
@@ -73,5 +58,8 @@ export const ApplicationConfigurations = {
     slug: 'listabokstafur',
     translation: 'ple.application',
   },
->>>>>>> main
+  [ApplicationTypes.PARTY_APPLICATION]: {
+    slug: 'frambod',
+    translation: 'pa.application',
+  },
 }
