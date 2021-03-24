@@ -1,17 +1,134 @@
 import React from 'react'
-import { AppState, AppStateStatus, Text, View } from 'react-native';
-import { Navigation, LayoutRoot, NavigationFunctionComponent } from 'react-native-navigation'
-import { NavigationProvider } from 'react-native-navigation-hooks'
-import { Home } from './screens/home/home'
-import { Inbox } from './screens/inbox/inbox'
-import { Wallet } from './screens/wallet/wallet'
-import { User } from './screens/user/user'
-import { Login } from './screens/login/login'
+import { AppState, AppStateStatus, Linking } from 'react-native';
+import { Navigation, LayoutRoot } from 'react-native-navigation'
 import { theme } from '@island.is/island-ui/theme'
 import { authStore, checkIsAuthenticated } from './auth/auth'
 import { config } from './utils/config'
-import { LockScreen } from './screens/lockscreen/lockscreen';
 import { authenticateAsync } from 'expo-local-authentication';
+import { addRoute, addScheme, evaluateUrl } from './utils/deep-linking';
+import { ComponentRegistry } from './utils/navigation-registry';
+import { ButtonRegistry } from './utils/navigation-registry';
+import { registerAllComponents } from './screens';
+
+registerAllComponents();
+
+function registerEventListeners() {
+  // @todo create a shared store with navigation stack hierarcy
+
+  Navigation.events().registerCommandListener((...args) => {
+    console.log('registerCommandListener', args);
+  });
+  Navigation.events().registerScreenPoppedListener((...args) => {
+    console.log('registerScreenPoppedListener', args);
+  });
+  Navigation.events().registerCommandCompletedListener((...args) => {
+    console.log('registerCommandCompletedListener', args);
+  });
+  Navigation.events().registerComponentDidAppearListener((...args) => {
+    console.log('registerComponentDidAppearListener', args);
+  });
+  Navigation.events().registerModalDismissedListener((...args) => {
+    console.log('registerModalDismissedListener', args);
+  });
+  Navigation.events().registerModalAttemptedToDismissListener((...args) => {
+    console.log('registerModalAttemptedToDismissListener', args);
+  });
+
+  // deep linking
+  addScheme(`${config.bundleId}://`);
+  addRoute('/inbox', () => {
+    console.log('inbox');
+  });
+  addRoute('/', () => {
+    console.log('home')
+  });
+  addRoute('/wallet', (...x) => {
+    console.log('wallet', x);
+  });
+
+  addRoute('/wallet/:passId', ({ passId }: any) => {
+
+    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+      bottomTabs: {
+        currentTabIndex: 2,
+      },
+    });
+    // ensure WALLET_SCREEN doesn't already have same screen with same componentId etc.
+    Navigation.popToRoot('WALLET_SCREEN', {
+      animations: {
+        pop: {
+          enabled: false,
+        }
+      }
+    })
+    .then(() => {
+      Navigation.push('WALLET_TAB', {
+        component: {
+          name: ComponentRegistry.WalletPassScreen,
+          passProps: {
+            passId,
+          },
+        },
+      })
+    });
+  });
+  addRoute('/user', () => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.UserScreen,
+            },
+          },
+        ],
+      },
+    })
+  })
+  Linking.addEventListener('url', ({ url }) => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        evaluateUrl(url);
+      }
+    });
+  });
+  Linking.getInitialURL().then((url) => {
+    console.log('initial url', url);
+    if (url) {
+      Linking.openURL(url);
+    }
+  })
+  .catch(err => console.error('An error occurred', err));
+
+  // app change events
+  AppState.addEventListener("change", (status: AppStateStatus) => {
+    console.log(authStore.getState());
+    if (!authStore.getState().userInfo) {
+      return;
+    }
+
+    if (status === 'active' && isAuthenticating) {
+      isAuthenticating = false;
+      return;
+    }
+
+    if (status === 'background' || status === 'inactive') {
+      showLockScreen();
+    }
+
+    if (status === 'active') {
+      showFaceID();
+    }
+  });
+
+  // show user screen
+  Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => {
+    if (buttonId === 'userButton') {
+      Linking.openURL(`${config.bundleId}://user`);
+    }
+  })
+
+}
 
 // native navigation options
 Navigation.setDefaultOptions({
@@ -37,131 +154,69 @@ Navigation.setDefaultOptions({
   },
 })
 
-let lockScreenComponentId: string | undefined;
 let isAuthenticating: boolean = false;
 
-AppState.addEventListener("change", (status: AppStateStatus) => {
-  console.log('status', status);
-  if (!authStore.getState().userInfo) {
-    console.log('no auth, fail');
-    return;
+function showLockScreen() {
+  if (config.disableLockScreen) {
+    return Promise.resolve();
   }
-  if (isAuthenticating) {
-    console.log('authenticating, waiting');
-    return;
-  }
-  if (status === 'background' || status === 'inactive') {
-    if (!lockScreenComponentId) {
-      Navigation.showOverlay({
-        component: {
-          id: 'LOCK_SCREEN',
-          name: 'is.island.LockScreen'
-        }
-      }).then(componentId => {
-        lockScreenComponentId = componentId;
-      })
+
+  return Navigation.showOverlay({
+    component: {
+      id: 'LOCK_SCREEN',
+      name: ComponentRegistry.AppLockScreen
     }
+  });
+}
+
+function showFaceID() {
+  if (config.disableLockScreen) {
+    return Promise.resolve();
+  }
+
+  isAuthenticating = true;
+  return authenticateAsync()
+  .then((response) => {
+    if (response.success) {
+      Navigation.dismissAllOverlays()
+    } else {
+      isAuthenticating = false;
+    }
+  })
+  .catch(err => {
+    console.log('FaceID failure', err)
+  })
+}
+
+// register root
+Navigation.events().registerAppLaunchedListener(async () => {
+  registerEventListeners();
+  if (config.storybookMode) {
+    Navigation.setRoot({
+      root: { component: { name: ComponentRegistry.StorybookScreen } },
+    })
   } else {
-    if (lockScreenComponentId) {
-      isAuthenticating = true;
-      authenticateAsync()
-      .then((response) => {
-        if (response.success && lockScreenComponentId) {
-          Navigation.dismissOverlay(lockScreenComponentId).then(() => {
-            lockScreenComponentId = undefined;
-          });
-        }
-        isAuthenticating = false;
-      })
+    const isAuthenticated = await checkIsAuthenticated()
+    Navigation.setRoot(isAuthenticated ? mainRoot : loginRoot)
+    if (isAuthenticated) {
+      showLockScreen()
+      .then(() => showFaceID())
     }
   }
 });
-
-function registerScreen(name: string, Component: NavigationFunctionComponent) {
-  Navigation.registerComponent(
-    name,
-    () => (props) => {
-      return (
-        <NavigationProvider value={{ componentId: props.componentId }}>
-          <Component {...props} />
-        </NavigationProvider>
-      )
-    },
-    () => Component,
-  )
-}
-
-
-const TitleComponent = ({ title }: any) => (
-  <View style={{ flex: 1, justifyContent: 'center' }}>
-  <Text style={{
-    color: theme.color.blue600,
-    fontSize: 19,
-    fontWeight: '700',
-    paddingLeft: 16
-   }}>{title}</Text>
-   </View>
-);
-
-
-if (config.storybookMode) {
-  registerScreen(
-    'is.island.StorybookScreen',
-    require('./screens/storybook/storybook').Storybook,
-  )
-} else {
-  Navigation.registerComponent('is.island.TitleComponent', () => TitleComponent);
-  registerScreen('is.island.Login', Login)
-  registerScreen('is.island.HomeScreen', Home)
-  registerScreen('is.island.InboxScreen', Inbox)
-  registerScreen('is.island.WalletScreen', Wallet)
-  registerScreen('is.island.UserScreen', User)
-  registerScreen('is.island.LockScreen', LockScreen)
-}
 
 // login screen
 export const loginRoot = {
   root: {
     component: {
-      name: 'is.island.Login',
+      name: ComponentRegistry.LoginScreen,
     },
   },
 }
 
-// register root
-Navigation.events().registerAppLaunchedListener(async () => {
-  if (config.storybookMode) {
-    Navigation.setRoot({
-      root: { component: { name: 'is.island.StorybookScreen' } },
-    })
-  } else {
-    const isAuthenticated = await checkIsAuthenticated()
-    Navigation.setRoot(isAuthenticated ? mainRoot : loginRoot)
-    // Navigation.setRoot(loginRoot)
-  }
-})
-
-// show user screen
-Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => {
-  console.log('pressed', buttonId)
-  if (buttonId === 'userButton') {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: 'is.island.UserScreen',
-            },
-          },
-        ],
-      },
-    })
-  }
-})
-
 const rightButtons = [
   {
-    id: 'userButton',
+    id: ButtonRegistry.UserButton,
     text: 'User',
     icon: {
       system: 'person.crop.circle',
@@ -187,7 +242,7 @@ export const mainRoot: LayoutRoot = {
               {
                 component: {
                   id: 'INBOX_SCREEN',
-                  name: 'is.island.InboxScreen',
+                  name: ComponentRegistry.InboxScreen,
                 },
               },
             ],
@@ -213,7 +268,7 @@ export const mainRoot: LayoutRoot = {
               {
                 component: {
                   id: 'HOME_SCREEN',
-                  name: 'is.island.HomeScreen',
+                  name: ComponentRegistry.HomeScreen,
                 },
               },
             ],
@@ -235,7 +290,7 @@ export const mainRoot: LayoutRoot = {
               {
                 component: {
                   id: 'WALLET_SCREEN',
-                  name: 'is.island.WalletScreen',
+                  name: ComponentRegistry.WalletScreen,
                 },
               },
             ],
@@ -244,8 +299,6 @@ export const mainRoot: LayoutRoot = {
                 rightButtons,
               },
               bottomTab: {
-                testID: 'MAIN_TABS_WALLET_TAB',
-                text: 'Wallet',
                 selectedIconColor: theme.color.blue400,
                 icon: require('./assets/icons/tabbar-wallet.png'),
                 selectedIcon: require('./assets/icons/tabbar-wallet-selected.png'),

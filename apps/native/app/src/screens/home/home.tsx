@@ -6,6 +6,7 @@ import {
   ScrollView,
   View,
   Text,
+  Linking,
 } from 'react-native'
 import {
   Badge,
@@ -14,15 +15,17 @@ import {
   Heading,
   StatusCard,
 } from '@island.is/island-ui-native'
-import logo from '../../assets/logo-island.png'
+import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../auth/auth'
 import { useNavigation } from 'react-native-navigation-hooks'
 import { NavigationFunctionComponent, Options } from 'react-native-navigation'
 import { theme } from '@island.is/island-ui/theme'
 import { gql, useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
+import { config } from '../../utils/config'
+import { ComponentRegistry } from '../../utils/navigation-registry'
 
-export const Home: NavigationFunctionComponent = () => {
+export const HomeScreen: NavigationFunctionComponent = () => {
   const { push } = useNavigation()
   const authStore = useAuthStore()
   const res = useQuery(
@@ -41,6 +44,9 @@ export const Home: NavigationFunctionComponent = () => {
           address {
             code
           }
+        }
+        listDocuments {
+          id
         }
       }
     `,
@@ -116,6 +122,9 @@ export const Home: NavigationFunctionComponent = () => {
               badge={<Badge title="Vantar gögn" />}
               progress={90}
             />
+            <Button title="Drivers License" onPress={() => {
+              Linking.openURL(`${config.bundleId}://wallet/drivers-license`);
+            }} />
           </Container>
         </View>
       </ScrollView>
@@ -140,11 +149,11 @@ export const Home: NavigationFunctionComponent = () => {
   )
 }
 
-Home.options = {
+HomeScreen.options = {
   topBar: {
     title: {
       component: {
-        name: 'is.island.TitleComponent',
+        name: ComponentRegistry.NavigationBarTitle,
         alignment: 'fill',
         passProps: {
           title: 'Yfirlit',

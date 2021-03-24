@@ -9,6 +9,8 @@ import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
 import { config } from '../utils/config'
 import { authStore } from '../auth/auth'
+import { typeDefs } from './type-defs';
+import { typePolicies } from './type-policies';
 
 const uri = `${config.apiEndpoint.replace(/\/$/, '')}/graphql`;
 
@@ -41,5 +43,6 @@ const authLink = setContext((_, { headers }) => ({
 
 export const client = new ApolloClient({
   link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({ typePolicies }),
+  typeDefs,
 })

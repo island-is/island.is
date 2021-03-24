@@ -5,7 +5,8 @@ const Host = styled.Text<{ isCenter?: boolean }>`
   padding: 20px 0;
   margin-bottom: 20px;
 
-  font-size: 30px;
+  font-family: 'IBMPlexSans-SemiBold';
+  font-size: 27px;
   font-weight: bold;
   text-align: ${(props: any) => props.isCenter ? 'center' : 'left'};
 `;

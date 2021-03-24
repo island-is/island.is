@@ -1,12 +1,12 @@
 import { Container, Heading } from '@island.is/island-ui-native';
 import React, { useEffect } from 'react'
-import { Button, SafeAreaView, StatusBar, Text } from 'react-native'
+import { Button, SafeAreaView, TextInput, Text, TouchableOpacity } from 'react-native'
 import { Navigation, NavigationFunctionComponent } from 'react-native-navigation';
 import { useNavigation, showModal } from 'react-native-navigation-hooks';
 import { useAuthStore } from '../../auth/auth';
 import { loginRoot} from '../../main';
 
-export const User: NavigationFunctionComponent = () => {
+export const UserScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore();
   return (
     <SafeAreaView
@@ -18,6 +18,8 @@ export const User: NavigationFunctionComponent = () => {
       <Container>
         <Heading>{authStore.userInfo?.name}</Heading>
         <Text>Kt. {authStore.userInfo?.nationalId}</Text>
+        <Text>Authorization (Expires: {authStore.authorizeResult?.accessTokenExpirationDate}</Text>
+        <TextInput value={authStore.authorizeResult?.accessToken} />
         <Button title="Logout" onPress={() => {
           authStore.logout();
           Navigation.setRoot(loginRoot)
@@ -26,7 +28,8 @@ export const User: NavigationFunctionComponent = () => {
     </SafeAreaView>
   )
 }
-User.options = {
+
+UserScreen.options = {
   topBar: {
     visible: false
   }
