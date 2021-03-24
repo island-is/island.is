@@ -2,7 +2,11 @@ import React, { FC } from 'react'
 
 import { useLocale } from '@island.is/localization'
 
-import { FieldBaseProps, MessageFormatter } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  MessageFormatter,
+  coreMessages,
+} from '@island.is/application/core'
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
@@ -13,25 +17,13 @@ import { useMutation } from '@apollo/client'
 
 import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 import { MessageDescriptor } from '@formatjs/intl'
-
-function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(
-      {
-        id: 'application.system:submit.error',
-        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
-        description: 'Error message on submit',
-      },
-      { error },
-    ),
-  )
-}
+import { handleSubmitError } from '../../parentalLeaveUtils'
 
 const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleError(e.message, formatMessage),
+      onError: (e) => handleSubmitError(e.message, formatMessage),
     },
   )
 

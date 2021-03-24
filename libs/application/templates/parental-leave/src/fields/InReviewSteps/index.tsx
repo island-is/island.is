@@ -16,22 +16,12 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES } from '../../constants'
 
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import {
+  getExpectedDateOfBirth,
+  handleSubmitError,
+} from '../../parentalLeaveUtils'
 import { useMutation } from '@apollo/client'
 import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
-
-function handleError(error: string, formatMessage: MessageFormatter): void {
-  toast.error(
-    formatMessage(
-      {
-        id: 'application.system:submit.error',
-        defaultMessage: 'Eitthvað fór úrskeiðis: {error}',
-        description: 'Error message on submit',
-      },
-      { error },
-    ),
-  )
-}
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
@@ -65,7 +55,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleError(e.message, formatMessage),
+      onError: (e) => handleSubmitError(e.message, formatMessage),
     },
   )
 

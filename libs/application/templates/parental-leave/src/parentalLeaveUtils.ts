@@ -1,10 +1,13 @@
 import get from 'lodash/get'
 import {
   Application,
+  coreMessages,
   DataProviderResult,
   getValueViaPath,
+  MessageFormatter,
   Option,
 } from '@island.is/application/core'
+import { toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
@@ -176,4 +179,11 @@ export const getOtherParentOptions = (application: Application) => {
   }
 
   return options
+}
+
+export function handleSubmitError(
+  error: string,
+  formatMessage: MessageFormatter,
+): void {
+  toast.error(formatMessage(coreMessages.updateOrSubmitError, { error }))
 }
