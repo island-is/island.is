@@ -117,7 +117,7 @@ export const institutionApplicationMessages = {
     goalsPlaceholder: {
       id: 'ia.application:project.goals.placeholder',
       defaultMessage:
-        'Hvað á að leysa með verkefninu. Hver er ávinningurinn og fyrir hvern? Hér væri gott að nota tölfræði ef hún liggur fyrir.',
+        'Hvað á að leysa með verkefninu? Hver er ávinningurinn og fyrir hvern? Hér væri gott að nota tölfræði ef hún liggur fyrir.',
       description: 'Placeholder for project goals formfield',
     },
     scopeLabel: {
@@ -128,7 +128,7 @@ export const institutionApplicationMessages = {
     scopePlaceholder: {
       id: 'ia.application:project.scope.placeholder',
       defaultMessage:
-        'Hverjar eru grófar útlínur verkefnisins, hvað telst hluti af því og hvað ekki?',
+        'Hverjar eru grófar útlínur verkefnisins? Hvað telst hluti af því og hvað ekki?',
       description: 'Placeholder for project scope formfield',
     },
     financeLabel: {
