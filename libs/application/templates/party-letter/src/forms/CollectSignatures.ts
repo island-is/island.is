@@ -7,39 +7,26 @@ import {
   buildSection,
   buildSubmitField,
   buildTextField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   Form,
   FormModes,
   Application,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import { NationalRegistryUser } from '@island.is/api/schema'
+import { ExternalData } from '@island.is/application/core'
+
+const fullName = (externalData: ExternalData) => {
+  const fullName = (externalData?.nationalRegistry?.data as {
+    fullName?: NationalRegistryUser
+  })?.fullName
+  return fullName ?? ''
+}
 
 export const ReviewApplication: Form = buildForm({
   id: 'Collect signatures',
   title: m.collectSignatures.applicationTitle,
   mode: FormModes.REVIEW,
   children: [
-    /* todo: see if external data can be provided for signaturee
-     buildSection({
-      id: 'termsAndConditions',
-      title: m.externalDataSection.title,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveTermsAndConditions',
-          title: m.externalDataSection.title,
-          subTitle: m.externalDataSection.subTitle,
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: 'm.userProfileInformationTitle',
-              subTitle: 'm.userProfileInformationSubTitle',
-            }),
-          ],
-        }),
-      ],
-    }),*/
     buildSection({
       id: 'intro',
       title: m.collectSignatures.stepTitle,
@@ -60,7 +47,8 @@ export const ReviewApplication: Form = buildForm({
               placeholder: m.collectSignatures.nameInput,
               backgroundColor: 'blue',
               width: 'half',
-              // todo: default should be name of signaturee
+              defaultValue: (application: Application) =>
+                fullName(application.externalData),
             }),
             buildDescriptionField({
               id: 'firstDescription',
