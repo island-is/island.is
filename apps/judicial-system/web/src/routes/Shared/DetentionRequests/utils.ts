@@ -1,6 +1,5 @@
 import { TagVariant } from '@island.is/island-ui/core'
-import { SortConfig } from '@island.is/judicial-system-web/src/types'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import router from 'next/router'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -39,7 +38,7 @@ export const mapCaseStateToTagVariant = (
   }
 }
 
-export const handleClick = (
+export const openCase = (
   caseState: CaseState,
   caseId: string,
   role?: UserRole,

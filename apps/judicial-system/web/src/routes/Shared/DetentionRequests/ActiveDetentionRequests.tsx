@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
 import * as styles from './DetentionRequests.treat'
-import { handleClick, mapCaseStateToTagVariant } from './utils'
+import { openCase, mapCaseStateToTagVariant } from './utils'
 import {
   Case,
   CaseState,
@@ -163,7 +163,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
             role="button"
             aria-label="Opna kröfu"
             onClick={() => {
-              handleClick(c.state, c.id, user?.role, c.isCourtDateInThePast)
+              openCase(c.state, c.id, user?.role, c.isCourtDateInThePast)
             }}
           >
             <td className={styles.td}>

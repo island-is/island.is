@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 
 import * as styles from './DetentionRequests.treat'
-import { handleClick, mapCaseStateToTagVariant } from './utils'
+import { openCase, mapCaseStateToTagVariant } from './utils'
 import {
   Case,
   CaseState,
@@ -129,7 +129,7 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
     <Table
       columns={pastRequestsColumns}
       data={pastRequestsData || []}
-      handleRowClick={handleClick}
+      handleRowClick={openCase}
       className={styles.pastRequestsTable}
       sortableColumnIds={sortableColumnIds}
     />
