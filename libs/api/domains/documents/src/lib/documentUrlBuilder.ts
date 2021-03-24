@@ -44,6 +44,6 @@ export class DocumentBuilder {
 
   private static formatDownloadServiceUrl(document: DocumentInfoDTO): string {
     const base = 'localhost:3001'
-    return `https://${base}/documents/${document.id}`
+    return `https://${base}/documents`
   }
 }
