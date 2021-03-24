@@ -118,7 +118,7 @@ describe('Detention requests route', () => {
       await waitFor(
         () => screen.getAllByTestId('detention-requests-table-row').length,
       ),
-    ).toEqual(5)
+    ).toEqual(4)
   })
 
   test('should display the judge logo if you are a judge', async () => {
