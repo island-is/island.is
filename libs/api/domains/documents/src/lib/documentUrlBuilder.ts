@@ -43,7 +43,7 @@ export class DocumentBuilder {
   }
 
   private static formatDownloadServiceUrl(document: DocumentInfoDTO): string {
-    const base = 'localhost:1111' // dont know this yet
+    const base = 'localhost:3001'
     return `https://${base}/documents/${document.id}`
   }
 }

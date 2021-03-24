@@ -149,6 +149,7 @@
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/postholf": ["libs/clients/postholf/src/index.ts"],
       "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [

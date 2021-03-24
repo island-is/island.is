@@ -226,15 +226,21 @@ const DocumentLine: FC<Props> = ({ document }) => {
               paddingBottom={[1, 0]}
               overflow="hidden"
             >
-              {externalUrl ? (
-                <Link href={externalUrl}>
-                  <button className={styles.button}>{document.subject}</button>
-                </Link>
-              ) : (
-                <button className={styles.button} onClick={onClickHandler}>
-                  {document.subject}
-                </button>
-              )}
+              <form
+                action="http://localhost:3331/document"
+                method="post"
+                target="_blank"
+              >
+                <label>
+                  <input
+                    type="hidden"
+                    name="documentId"
+                    value="0dffea10-79d3-4c79-8cba-30af2d95bba7"
+                  />{' '}
+                  <input type="hidden" name="nationalId" value="2606862759" />
+                </label>
+                <input type="submit" value="Sækja skrá" />
+              </form>
             </Box>
           </GridColumn>
           <GridColumn
