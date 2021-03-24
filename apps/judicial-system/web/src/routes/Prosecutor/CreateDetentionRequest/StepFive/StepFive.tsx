@@ -4,6 +4,7 @@ import {
   Box,
   ContentBlock,
   InputFileUpload,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import {
@@ -25,6 +26,7 @@ import {
 import { useRouter } from 'next/router'
 import { forEach } from 'lodash'
 import { uploadFile } from '@island.is/judicial-system-web/src/services/api'
+import * as styles from './StepFive.treat'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -105,6 +107,33 @@ export const StepFive: React.FC = () => {
                 Rannsóknargögn
               </Text>
             </Box>
+            <Box marginBottom={5}>
+              <AlertMessage
+                title="Meðferð gagna"
+                message={
+                  <ul className={styles.ul}>
+                    <li>
+                      Hér er hægt að hlaða upp rannsóknargögnum til að sýna
+                      dómara.
+                    </li>
+                    <li>
+                      Skjölin eru eingöngu aðgengileg settum dómara í málinu og
+                      aðgengi að þeim lokast þegar dómari hefur úrskurðað.
+                    </li>
+                    <li>
+                      Skjölin verða ekki lögð fyrir eða flutt í málakerfi
+                      dómstóls nema annar hvor aðilinn kæri úrskurðinn.
+                    </li>
+                  </ul>
+                }
+                type="info"
+              />
+            </Box>
+            <Box marginBottom={3}>
+              <Text variant="h3" as="h3">
+                Rannsóknargögn
+              </Text>
+            </Box>
             <Box marginBottom={[2, 2, 3]}>
               <ContentBlock>
                 <InputFileUpload
@@ -116,7 +145,7 @@ export const StepFive: React.FC = () => {
                     setFiles(evt)
                   }}
                   onRemove={() => console.log('remove')}
-                  errorMessage={'Herro'}
+                  errorMessage=""
                 />
               </ContentBlock>
             </Box>
