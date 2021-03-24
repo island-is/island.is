@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import * as styles from './Table.treat'
 import { theme } from '@island.is/island-ui/theme'
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
 type column<T> = {
   Header: string
@@ -15,12 +15,7 @@ type column<T> = {
 interface TableProps<T extends object> {
   data: Array<T>
   columns: column<T>[]
-  handleRowClick: (
-    caseState: CaseState,
-    caseId: string,
-    role?: UserRole,
-    isCourtDateInThePast?: boolean,
-  ) => void
+  handleRowClick: (id: string) => void
   truncate?: boolean
   showMoreLabel?: string
   showLessLabel?: string
@@ -66,13 +61,7 @@ const Table = <T extends object>(
       <tr
         {...row.getRowProps()}
         className={styles.row}
-        onClick={() =>
-          handleRowClick(
-            row.original.state,
-            row.original.id,
-            row.original.isCourtDateInThePast,
-          )
-        }
+        onClick={() => handleRowClick(row.original.id)}
       >
         {row.cells.map((cell: any) => {
           return (

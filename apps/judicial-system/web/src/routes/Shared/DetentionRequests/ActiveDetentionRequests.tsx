@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 
 import * as styles from './DetentionRequests.treat'
-import { openCase, mapCaseStateToTagVariant } from './utils'
+import { mapCaseStateToTagVariant } from './utils'
 import {
   Case,
   CaseState,
@@ -22,11 +22,12 @@ import localeIS from 'date-fns/locale/is'
 
 interface Props {
   cases: Case[]
+  onRowClick: (id: string) => void
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
 const ActiveDetentionRequests: React.FC<Props> = (props) => {
-  const { cases, onDeleteCase } = props
+  const { cases, onRowClick, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
   const isProsecutor = user?.role === UserRole.PROSECUTOR
@@ -163,7 +164,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
             role="button"
             aria-label="Opna kröfu"
             onClick={() => {
-              openCase(c.state, c.id, user?.role, c.isCourtDateInThePast)
+              user?.role && onRowClick(c.id)
             }}
           >
             <td className={styles.td}>

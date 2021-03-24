@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 
 import * as styles from './DetentionRequests.treat'
-import { openCase, mapCaseStateToTagVariant } from './utils'
+import { mapCaseStateToTagVariant } from './utils'
 import {
   Case,
   CaseState,
@@ -16,10 +16,11 @@ import { Table } from '@island.is/judicial-system-web/src/shared-components'
 
 interface Props {
   cases: Case[]
+  onRowClick: (id: string) => void
 }
 
 const PastDetentionRequests: React.FC<Props> = (props) => {
-  const { cases } = props
+  const { cases, onRowClick } = props
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
   const { user } = useContext(UserContext)
@@ -129,7 +130,7 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
     <Table
       columns={pastRequestsColumns}
       data={pastRequestsData || []}
-      handleRowClick={openCase}
+      handleRowClick={onRowClick}
       className={styles.pastRequestsTable}
       sortableColumnIds={sortableColumnIds}
     />

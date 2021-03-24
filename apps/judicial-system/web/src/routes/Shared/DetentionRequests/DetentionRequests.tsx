@@ -24,6 +24,7 @@ import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import * as styles from './DetentionRequests.treat'
 import ActiveDetentionRequests from './ActiveDetentionRequests'
 import PastDetentionRequests from './PastDetentionRequests'
+import router from 'next/router'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const DetentionRequests: React.FC = () => {
@@ -140,6 +141,34 @@ export const DetentionRequests: React.FC = () => {
     }
   }
 
+  const handleRowClick = (id: string) => {
+    const caseToOpen = resCases.find((c: Case) => c.id === id)
+
+    if (user?.role) {
+      openCase(caseToOpen, user.role)
+    }
+  }
+
+  const openCase = (caseToOpen: Case, role: UserRole): void => {
+    if (
+      caseToOpen.state === CaseState.ACCEPTED ||
+      caseToOpen.state === CaseState.REJECTED
+    ) {
+      router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
+    } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
+      router.push(
+        `${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${caseToOpen.id}`,
+      )
+    } else if (
+      caseToOpen.state === CaseState.RECEIVED &&
+      caseToOpen.isCourtDateInThePast
+    ) {
+      router.push(`${Constants.STEP_FIVE_ROUTE}/${caseToOpen.id}`)
+    } else {
+      router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
+    }
+  }
+
   return (
     <div className={styles.detentionRequestsContainer}>
       {user && (
@@ -179,6 +208,7 @@ export const DetentionRequests: React.FC = () => {
           {activeCases && activeCases.length > 0 ? (
             <ActiveDetentionRequests
               cases={activeCases}
+              onRowClick={handleRowClick}
               onDeleteCase={deleteCase}
             />
           ) : (
@@ -201,7 +231,10 @@ export const DetentionRequests: React.FC = () => {
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
-            <PastDetentionRequests cases={pastCases} />
+            <PastDetentionRequests
+              cases={pastCases}
+              onRowClick={handleRowClick}
+            />
           ) : (
             <div className={styles.activeRequestsTableInfo}>
               <AlertMessage
