@@ -11,20 +11,25 @@ export type Ministry = {
   name: string
   /** Short, URL-friendly token to use for search filters, etc.  */
   slug: string
+  /** False if this ministry is not current */
+  current: boolean
+}
+
+export type MinistryFull = Ministry & {
   /** Custom sorting modifier – i.e. to push Forsætisráðuneytið to the top of a list. */
   order?: number
-  /** True if this ministry is not current */
-  legacy?: true
 }
-export const allMinistries: Array<Ministry> = [
+
+export const allMinistries: Array<MinistryFull> = [
   {
     name: 'Atvinnuvega- og nýsköpunarráðuneytið',
     slug: 'ANR',
+    current: true,
   },
-  { name: 'Dómsmálaráðuneytið', slug: 'DR' },
-  { name: 'Hjaðningavígaráðuneytið', slug: 'HVR', legacy: true },
-  { name: 'Heilbrigðisráðuneytið', slug: 'HR' },
-  { name: 'Innanríkisráðuneyti', slug: 'IR', legacy: true },
+  { name: 'Dómsmálaráðuneytið', slug: 'DR', current: true },
+  { name: 'Heilbrigðisráðuneytið', slug: 'HR', current: true },
+  { name: 'Danmerkurmálaráðuneytið', slug: 'HVR', current: false },
+  { name: 'Innanríkisráðuneyti', slug: 'IR', current: false },
 ]
 
 const _getMinistry = (slug: string): Ministry =>

@@ -67,7 +67,7 @@ const isLegacyMinistry = (
   slug: string,
 ) => {
   const ministry = ministries.find((m) => m.slug === slug)
-  return !!(ministry && ministry.legacy)
+  return !!(ministry && !ministry.current)
 }
 
 const yearToOption = (year: number | string): Option => {
@@ -143,20 +143,14 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
 
   const ministryOptions = useMemo(() => {
     return [emptyOption(txt('searchFieldMinistryEmptyOption'))].concat(
-      props.ministries
-        .slice(0)
-        // move
-        .sort((a, b) =>
-          a.legacy === b.legacy ? 0 : a.legacy && !b.legacy ? 1 : -1,
-        )
-        .map(
-          (m): Option => ({
-            value: m.slug,
-            label:
-              m.name +
-              (m.legacy ? ` ${txt('searchFieldLegacyMinistrySuffix')}` : ''),
-          }),
-        ),
+      props.ministries.map(
+        (m): Option => ({
+          value: m.slug,
+          label:
+            m.name +
+            (m.current ? ` ${txt('searchFieldLegacyMinistrySuffix')}` : ''),
+        }),
+      ),
     ) as ReadonlyArray<Option>
   }, [props.ministries])
 
@@ -245,7 +239,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             size="sm"
           />
           <Checkbox
-            id='regulations-search-amendments-checkbox'
+            id="regulations-search-amendments-checkbox"
             label={txt('searchFieldIncludeAmendingLabel')}
             checked={!!filters.all}
             onChange={() => doSearch('all', !filters.all ? 'y' : '')}
