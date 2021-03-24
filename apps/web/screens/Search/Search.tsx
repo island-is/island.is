@@ -338,6 +338,7 @@ const Search: Screen<CategoryProps> = ({
             id="search_input_search_page"
             ref={searchRef}
             size="large"
+            quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
             activeLocale={activeLocale}
             initialInputValue={q}
           />
