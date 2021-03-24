@@ -104,7 +104,7 @@ export const m: MessageDir = {
     partyLetterSubtitle: {
       id: 'ple.application:partyletter.subtitle',
       defaultMessage:
-        'Við  alþingiskosningarnar 28. október 2017 buðu eftirtalin stjórnmálasamtök fram lista og voru þeir merktir sem hér segir:',
+        'Við alþingiskosningarnar 28. október 2017 buðu eftirtalin stjórnmálasamtök fram lista og voru þeir merktir sem hér segir:',
       description: 'Description before listing upp unavailable party letters',
     },
   }),
@@ -229,7 +229,7 @@ export const m: MessageDir = {
     descriptionPt1: {
       id: 'ple.application:collect.descripton.pt.one',
       defaultMessage:
-        'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks  samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+        'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
       description: 'Disclaimer description, first paragraph',
     },
     descriptionPt2: {
