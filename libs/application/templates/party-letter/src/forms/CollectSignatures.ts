@@ -1,9 +1,11 @@
 import {
   buildForm,
-  buildDescriptionField,
+  buildCustomField,
   buildMultiField,
+  buildDescriptionField,
   buildSection,
   buildSubmitField,
+  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -15,19 +17,27 @@ export const ReviewApplication: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      title: 'Safna meðmælum',
+      title: 'Samþykkja',
       children: [
         buildMultiField({
           id: 'about',
-          title: '',
+          title: 'Listabókstafs meðmælendalisti (Q)',
           children: [
-            buildDescriptionField({
-              id: 'final',
-              title: 'Safna meðmælum',
-              description: 'Þú getur nú farið að taka á móti meðmælum',
+            buildCustomField({
+              id: 'disclaimer',
+              title: '',
+              component: 'SignatureDisclaimer',
             }),
+            buildTextField({
+              id: 'signature',
+              title: 'Nafn',
+              variant: 'text',
+              placeholder: 'Nafn',
+              backgroundColor: 'blue',
+            }),
+
             buildSubmitField({
-              id: 'approvedByReviewer',
+              id: 'sign',
               placement: 'footer',
               title: 'Senda inn umsókn',
               actions: [

@@ -20,9 +20,9 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getAllAvailableClaims = async () => {
-    const response = await ClaimService.findAll()
+    const response = await ResourcesService.findAllApiScopeUserClaims()
     if (response) {
-      setClaims(response.map((x) => x.type))
+      setClaims(response.map((x) => x.claimName))
     }
   }
 

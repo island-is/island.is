@@ -250,6 +250,28 @@ export class ResourcesController {
     return await this.resourcesService.deleteIdentityResource(name)
   }
 
+  /** Gets all Identity Resource User Claims */
+  @Get('identity-resource-user-claims')
+  async findAllIdentityResourceUserClaims(): Promise<
+    IdentityResourceUserClaim[] | undefined
+  > {
+    return await this.resourcesService.findAllIdentityResourceUserClaims()
+  }
+
+  /** Gets all Api Scope User Claims */
+  @Get('api-scope-user-claims')
+  async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[] | undefined> {
+    return await this.resourcesService.findAllApiScopeUserClaims()
+  }
+
+  /** Gets all Api Resource User Claims */
+  @Get('api-resource-user-claims')
+  async findAllApiResourceUserClaims(): Promise<
+    ApiResourceUserClaim[] | undefined
+  > {
+    return await this.resourcesService.findAllApiResourceUserClaims()
+  }
+
   /** Creates a new Api Scope */
   @Post('api-scope')
   @ApiCreatedResponse({ type: ApiScope })
