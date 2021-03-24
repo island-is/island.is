@@ -211,7 +211,7 @@ const Overview = ({
           })}
         </Text>
         <Text>{applicant?.fullName}</Text>
-        {/* <Text>{applicant?.legalResidence}</Text> */}
+        <Text>{constructParentAddressString(applicant?.address)}</Text>
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
@@ -219,7 +219,7 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{parent?.name}</Text>
+        <Text>{otherParent?.fullName}</Text>
         <Text fontWeight="light">{parentAddress}</Text>
       </Box>
       <Box marginTop={4}>

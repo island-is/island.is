@@ -26,10 +26,10 @@ const MockChildren = ({ application, field }: CRCFieldBaseProps) => {
   const handleRemovePerson = (index: number) => remove(index)
 
   return (
-    <Box>
+    <Box marginTop={4}>
       {fields.map((field, index) => {
         return (
-          <Box key={field.id} marginTop={3}>
+          <Box key={field.id} marginBottom={3}>
             <Box marginBottom={1}>
               <Button
                 variant="ghost"
