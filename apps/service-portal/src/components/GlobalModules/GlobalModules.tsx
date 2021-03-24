@@ -4,9 +4,10 @@ import {
 } from '@island.is/service-portal/core'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { User } from 'oidc-client'
-import React, { FC, Suspense, useEffect, useState } from 'react'
+import React, { FC, Suspense, useState } from 'react'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { useStore } from '../../store/stateProvider'
+import { useDeepCompareEffect } from 'react-use'
 
 const GlobalComponent: FC<{
   component: ServicePortalGlobalComponent
@@ -52,7 +53,7 @@ const ModuleLoader: FC<{
     )
   }
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     loadComponents(modules)
   }, [modules])
 
