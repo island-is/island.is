@@ -53,6 +53,7 @@ const ModuleLoader: FC<{
     )
   }
 
+  // Use a deep compare of all modules to determine whether to reload them
   useDeepCompareEffect(() => {
     loadComponents(modules)
   }, [modules])
