@@ -147,6 +147,7 @@ export interface TextField extends BaseField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
+  required?: boolean
 }
 
 export interface FileUploadField extends BaseField {

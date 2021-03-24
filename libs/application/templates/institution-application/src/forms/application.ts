@@ -41,6 +41,7 @@ export const application: Form = buildForm({
               id: 'applicant.institution',
               title: m.applicant.institutionLabel,
               backgroundColor: 'blue',
+              required: true,
             }),
             buildCustomField(
               {
@@ -56,6 +57,7 @@ export const application: Form = buildForm({
               id: 'contact.name',
               title: m.applicant.contactNameLabel,
               backgroundColor: 'blue',
+              required: true,
             }),
             buildTextField({
               id: 'contact.phoneNumber',
@@ -63,12 +65,14 @@ export const application: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
+              required: true,
             }),
             buildTextField({
               id: 'contact.email',
               title: m.applicant.contactEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
+              required: true,
             }),
             buildCustomField({
               id: 'secondaryContact',
@@ -128,6 +132,7 @@ export const application: Form = buildForm({
                   title: m.project.nameLabel,
                   variant: 'text',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'project.background',
@@ -135,6 +140,7 @@ export const application: Form = buildForm({
                   placeholder: m.project.backgroundPlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'project.goals',
@@ -142,6 +148,7 @@ export const application: Form = buildForm({
                   placeholder: m.project.goalsPlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'project.scope',
@@ -149,6 +156,7 @@ export const application: Form = buildForm({
                   placeholder: m.project.scopePlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'project.finance',
@@ -156,6 +164,7 @@ export const application: Form = buildForm({
                   placeholder: m.project.financePlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildCustomField(
                   {
@@ -214,6 +223,7 @@ export const application: Form = buildForm({
                   placeholder: m.stakeholders.stakeholdersPlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
                 buildTextField({
                   id: 'role',
@@ -221,6 +231,7 @@ export const application: Form = buildForm({
                   placeholder: m.stakeholders.rolePlaceholder,
                   variant: 'textarea',
                   backgroundColor: 'blue',
+                  required: true,
                 }),
               ],
             }),

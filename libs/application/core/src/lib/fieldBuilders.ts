@@ -285,6 +285,7 @@ export function buildTextField(data: {
   suffix?: string
   defaultValue?: MaybeWithApplication<unknown>
   rows?: number
+  required?: boolean
 }): TextField {
   const {
     condition,
@@ -300,6 +301,7 @@ export function buildTextField(data: {
     format,
     suffix,
     rows,
+    required,
   } = data
   return {
     children: undefined,
@@ -316,6 +318,7 @@ export function buildTextField(data: {
     format,
     suffix,
     rows,
+    required,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
