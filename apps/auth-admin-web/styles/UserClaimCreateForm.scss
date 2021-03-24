@@ -2,21 +2,31 @@
   position: relative;
   z-index: 2;
 
-  &__button__show {
+  .user-claim__button__show {
     display: block;
+    font-size: 1rem;
 
-    a {
-      cursor: pointer;
+    cursor: pointer;
+
+    span {
+      visibility: visible;
+      font-weight: $weight-semi-bold;
+      text-transform: capitalize;
     }
   }
 
   &__wrapper {
+    margin: 20px 0px;
     background: $color-bg-content;
     padding: 25px;
-    border: solid 1px $color-border;
+    border: solid 2px $color-border;
 
     h1 {
       font-size: 1.3rem;
     }
+  }
+
+  &__container__form {
+    padding: 10px !important;
   }
 }

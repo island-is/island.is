@@ -72,6 +72,11 @@ const Index: React.FC = () => {
     }
   }
 
+  const refreshClaims = async () => {
+    const decode = decodeURIComponent(resourceId as string)
+    await getResource(decode)
+  }
+
   switch (step) {
     case IdentityResourceStep.IdentityResource: {
       return (
@@ -104,6 +109,7 @@ const Index: React.FC = () => {
               handleNext={handleNext}
               claims={identityResource.userClaims?.map((x) => x.claimName)}
               handleChanges={changesMade}
+              handleNewClaimsAdded={refreshClaims}
             />
           </IdentityResourceStepNav>
         </ContentWrapper>

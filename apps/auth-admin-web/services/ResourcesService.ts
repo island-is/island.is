@@ -4,6 +4,7 @@ import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto'
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto'
 import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
 import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
+import { UserClaimDTO } from '../entities/dtos/user-claim-dto'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
 import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
@@ -39,6 +40,27 @@ export class ResourcesService extends BaseService {
     ApiResourceUserClaim[] | undefined
   > {
     return BaseService.GET('api-resource-user-claim')
+  }
+
+  /** Creates a new claim for ApiResource */
+  static async createApiResourceUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | undefined> {
+    return BaseService.POST('api-resource-user-claim', claim)
+  }
+
+  /** Creates a new claim for ApiScope */
+  static async createApiScopeUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | undefined> {
+    return BaseService.POST('api-scope-user-claim', claim)
+  }
+
+  /** Creates a new claim for Identity Resource */
+  static async createIdentityResourceUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | undefined> {
+    return BaseService.POST('identity-resource-user-claim', claim)
   }
 
   /** Gets API scope by name */

@@ -1,4 +1,3 @@
-import { ClaimService } from '../../../services/ClaimService'
 import React, { useEffect, useState } from 'react'
 import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
@@ -11,6 +10,7 @@ interface Props {
   handleNext?: () => void
   handleBack?: () => void
   handleChanges?: () => void
+  handleNewClaimsAdded: () => void
 }
 
 const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
@@ -18,7 +18,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     getAllAvailableClaims()
-  }, [])
+  }, [props.claims])
 
   const getAllAvailableClaims = async () => {
     const response = await ResourcesService.findAllApiScopeUserClaims()
@@ -59,8 +59,14 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
     }
   }
 
-  const saveNewUserClaim = (claim: string): void => {
-    console.log('claim ++' + claim)
+  const saveNewUserClaim = async (claim: string): Promise<void> => {
+    const response = await ResourcesService.createApiScopeUserClaim({
+      resourceName: props.apiScopeName,
+      claimName: claim,
+    })
+    if (response) {
+      props.handleNewClaimsAdded()
+    }
   }
 
   return (
@@ -76,6 +82,7 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
             <UserClaimCreateForm
               resourceName={props.apiScopeName}
               handleSave={saveNewUserClaim}
+              existingClaims={props.claims}
             />
             <div className="api-scope-user-claims__container__fields">
               {claims?.map((claim: string) => {

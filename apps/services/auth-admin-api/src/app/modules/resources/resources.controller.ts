@@ -276,7 +276,7 @@ export class ResourcesController {
   }
 
   /** Creates a new Api Resource User Claim */
-  @Post('api-scope-user-claim')
+  @Post('api-resource-user-claim')
   @ApiCreatedResponse({ type: ApiResourceUserClaim })
   async createApiResourceUserClaim(
     @Body() claim: UserClaimDTO,
@@ -293,7 +293,7 @@ export class ResourcesController {
     return await this.resourcesService.findAllApiResourceUserClaims()
   }
 
-  /** Creates a new Identity Resource User Claim */
+  /** Creates a new Api Scope User Claim */
   @Post('api-scope-user-claim')
   @ApiCreatedResponse({ type: ApiScopeUserClaim })
   async createApiScopeUserClaim(
