@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+export AWS_PAGER=""
+
 BLUE=$'\e[1;34m'
 RED=$'\e[1;31m'
 GREEN=$'\e[1;32m'
@@ -39,7 +41,7 @@ die () {
 }
 
 error_empty () {
-  printf "%s No empty values %s\n" "$RED" "$RESET"
+  printf "%sNo empty values %s\n" "$RED" "$RESET"
   exit 0
 }
 
@@ -72,9 +74,9 @@ validate_chars () {
   fi
   if [[ $1 =~ $ALPHANUMERIC_DASH$ONE_OR_MORE ]]
   then
-    printf "%s Name: Ok! %s\n" "$GREEN" "$RESET"
+    printf "%sName: Ok! %s\n" "$GREEN" "$RESET"
   else
-    printf "%s Secret name can only contain letters, numbers, hyphens and underscores %s\n" "$RED" "$RESET"
+    printf "%sSecret name can only contain letters, numbers, hyphens and underscores %s\n" "$RED" "$RESET"
     exit 0
   fi
 }
@@ -89,9 +91,9 @@ validate_length () {
   # Validate minimum length
   if [[ $1 =~ $ALPHANUMERIC_DASH$MIN_LENGTH ]]
   then
-    printf "%s Length: Ok! %s\n" "$GREEN" "$RESET"
+    printf "%sLength: Ok! %s\n" "$GREEN" "$RESET"
   else
-    printf "%s To short, should be 6-256 characters long.%s\n" "$RED" "$RESET"
+    printf "%sTo short, should be 6-256 characters long.%s\n" "$RED" "$RESET"
     exit 0
   fi
 }
@@ -99,31 +101,55 @@ validate_length () {
 #-------------------CREATE SECRET--------------------------#
 prepare_secret () {
   # Prompt user for secret name
-  read -r -p "$BLUE Secret name: $RESET$SSM_PREFIX" SECRET_NAME
+  read -erp "${BLUE}Secret name: ${RESET}${SSM_PREFIX}" SECRET_NAME
   validate_whitespace "$SECRET_NAME"
   validate_chars "$SECRET_NAME"
   validate_length "$SECRET_NAME"
 
   # Prompt user for secret value
-  read -r -p "$BLUE Secret value: $RESET" SECRET_VALUE
+  read -erp "${BLUE}Secret value: ${RESET}" SECRET_VALUE
   validate_whitespace "$SECRET_VALUE"
   validate_length "$SECRET_VALUE"
 
+  # Prompt user for secret type
+  read -erp "${BLUE}SecureString [Y/n]? ${RESET}"
+  if [[ $REPLY =~ ^[Nn]$ ]]
+  then
+    SECRET_TYPE="String"
+  else
+    SECRET_TYPE="SecureString"
+  fi
+  printf "%s$SECRET_TYPE selected%s\n" "$GREEN" "$RESET"
 
-  read -r -p "$YELLOW Are you sure [y/n]? $RESET"
+  # Prompt user for adding tags
+  TAGS=""
+  read -erp "${BLUE}Add tags? [y/N]? ${RESET}"
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
-    printf "%sCreating secret....%s\n" "$GREEN" "$RESET"
-    create_secret "$SECRET_NAME" "$SECRET_VALUE"
-  else
+    read -erp "${YELLOW}Example: Key=Foo,Value=Bar Key=Another,Value=Tag: ${RESET}" TAGS
+  fi
+  read -erp "${YELLOW}Are you sure [Y/n]? ${RESET}"
+  if [[ $REPLY =~ ^[Nn]$ ]]
+  then
     printf "%sAborting...%s" "$RED" "$RESET"
+  else
+    printf "%sCreating secret....%s\n" "$GREEN" "$RESET"
+    create_secret "$SECRET_NAME" "$SECRET_VALUE" "$SECRET_TYPE" "$TAGS"
   fi
 }
 
 create_secret () {
   SECRET_NAME=$1
   SECRET_VALUE=$2
-  aws ssm put-parameter --name "$SSM_PREFIX$SECRET_NAME" --value "$SECRET_VALUE" --type SecureString
+  SECRET_TYPE=$3
+  TAGS=$4
+  CMD="aws ssm put-parameter --name $SSM_PREFIX$SECRET_NAME --value $SECRET_VALUE --type $SECRET_TYPE"
+
+  if [ -n "$TAGS" ]
+  then
+    CMD="$CMD --tags $TAGS"
+  fi
+  eval "$CMD"
   printf "%sDone!%s" "$GREEN" "$RESET"
 }
 
