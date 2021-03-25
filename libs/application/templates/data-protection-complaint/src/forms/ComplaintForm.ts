@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildSection,
   Form,
   FormModes,
@@ -13,6 +12,8 @@ import {
   buildFileUploadField,
   buildRepeater,
   buildCheckboxField,
+  buildSubmitField,
+  DefaultEvents,
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
@@ -679,32 +680,39 @@ export const ComplaintForm: Form = buildForm({
       id: 'overview',
       title: section.overview,
       children: [
-        buildCustomField({
-          id: 'overview.termsAgreement',
+        buildMultiField({
+          id: 'overviewMultiField',
           title: overview.general.pageTitle,
-          component: 'ComplaintOverview',
+          children: [
+            buildCustomField({
+              id: 'overviewComplaintOverview',
+              title: overview.general.pageTitle,
+              component: 'ComplaintOverview',
+            }),
+            buildSubmitField({
+              id: 'overview.termsAgreement',
+              title: '',
+              placement: 'screen',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.labels.termsAgreement,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      title: 'Búið',
+      title: section.received,
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Vel gert!',
-          description: 'Þú ert komin/n út á enda',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'confirmation2',
-      title: 'Búið',
-      children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Vel gert!',
-          description: 'Þú ert komin/n út á enda',
+        buildCustomField({
+          id: 'confirmationCustomField',
+          title: overview.general.confirmationPageTitle,
+          component: 'ComplaintConfirmation',
         }),
       ],
     }),
