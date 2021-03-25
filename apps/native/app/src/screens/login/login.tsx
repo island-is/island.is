@@ -3,7 +3,7 @@ import React from 'react'
 import { SafeAreaView, Image, View } from 'react-native'
 import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
 import logo from '../../assets/logo/logo-64w.png'
-import { useAuthStore } from '../../auth/auth'
+import { useAuthStore } from '../../stores/auth-store'
 import { mainRoot } from '../../main'
 import { testIDs } from '../../utils/test-ids'
 

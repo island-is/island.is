@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { Button, SafeAreaView, TextInput, Text, TouchableOpacity } from 'react-native'
 import { Navigation, NavigationFunctionComponent } from 'react-native-navigation';
 import { useNavigation, showModal } from 'react-native-navigation-hooks';
-import { useAuthStore } from '../../auth/auth';
+import { useAuthStore } from '../../stores/auth-store'
 import { loginRoot} from '../../main';
 import { testIDs } from '../../utils/test-ids';
 

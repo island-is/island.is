@@ -29,12 +29,14 @@ target 'IslandApp' do
     :hermes_enabled => false
   )
 
-  pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
-  pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
-  pod 'ReactNativeNavigation', :podspec => '../../node_modules/react-native-navigation'
-  pod 'react-native-app-auth', :podspec => '../../node_modules/react-native-app-auth'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
+  pod 'RNLocalize', :podspec => '../../node_modules/react-native-localize'
+  pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
+  pod 'ReactNativeNavigation', :podspec => '../../node_modules/react-native-navigation'
+  pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
+  pod 'react-native-app-auth', :podspec => '../../node_modules/react-native-app-auth'
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
+
 
   use_flipper!
   post_install do |installer|

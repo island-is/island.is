@@ -1,7 +1,7 @@
 import { Alert, Appearance, AppState, AppStateStatus, StatusBar } from 'react-native'
 import { Navigation, LayoutRoot, Options, OptionsTopBarButton } from 'react-native-navigation'
 import { theme } from '@island.is/island-ui/theme'
-import { authStore, checkIsAuthenticated } from './auth/auth'
+import { authStore, checkIsAuthenticated } from './stores/auth-store'
 import { config } from './utils/config'
 import { authenticateAsync, AuthenticationType, supportedAuthenticationTypesAsync } from 'expo-local-authentication'
 import { addRoute, addScheme, navigateTo } from './utils/deep-linking'

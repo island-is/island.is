@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { Constants } from 'react-native-navigation';
+import { Constants } from 'react-native-unimodules';
 import env from 'react-native-ultimate-config';
 
 export interface Config {
@@ -28,7 +28,7 @@ export const config: Config = {
     android: env.BUNDLE_ID_ANDROID,
   }) || 'is.island.app',
   storybookMode: false,
-  disableLockScreen: true,
+  disableLockScreen: false,
   constants: Constants,
   env,
 };

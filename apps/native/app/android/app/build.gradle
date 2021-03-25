@@ -211,6 +211,7 @@ dependencies {
     implementation project(':react-native-ultimate-config')
     implementation project(':react-native-app-auth')
     implementation project(':react-native-web-view')
+    implementation project(':react-native-localize')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],
