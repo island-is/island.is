@@ -1,6 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
+import { Request } from 'express'
 import { passportJwtSecret } from 'jwks-rsa'
 import { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
@@ -21,14 +22,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       issuer: config.issuer,
       algorithms: ['RS256'],
       ignoreExpiration: false,
+      passReqToCallback: true,
     })
   }
 
-  async validate(payload: JwtPayload): Promise<User> {
+  async validate(request: Request, payload: JwtPayload): Promise<User> {
     return {
-      nationalId: payload.nationalId ?? payload.natreg,
+      nationalId: payload.nationalId,
       scope: payload.scope,
-      authorization: '',
+      authorization: request.headers.authorization ?? '',
+      actor: payload.act && {
+        nationalId: payload.act.nationalId,
+      },
     }
   }
 }

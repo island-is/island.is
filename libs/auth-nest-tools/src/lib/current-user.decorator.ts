@@ -1,26 +1,31 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import {
+  createParamDecorator,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { User } from './user'
 
+export const getCurrentUser = (context: ExecutionContext): User => {
+  const request = context.switchToHttp().getRequest()
+  if (request) {
+    return request.user
+  }
+  const ctx = GqlExecutionContext.create(context)
+  const user = ctx.getContext().req.user
+  if (!user) {
+    throw new UnauthorizedException('You are not authenticated')
+  }
+  return user
+}
+
 export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext): User => {
-    const ctx = GqlExecutionContext.create(context)
-    const request = ctx.getContext().req
-    const user = request.user
-    return {
-      ...user,
-      authorization: request.headers.authorization,
-    }
+    return getCurrentUser(context)
   },
 )
 
-export const CurrentRestUser = createParamDecorator(
-  (data: unknown, context: ExecutionContext): User => {
-    const request = context.switchToHttp().getRequest()
-    const user = request.user
-    return {
-      ...user,
-      authorization: request.headers.authorization,
-    }
-  },
-)
+/**
+ * @deprecated use CurrentUser decorator instead.
+ */
+export const CurrentRestUser = CurrentUser
