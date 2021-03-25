@@ -12,6 +12,11 @@ export const overview = {
       defaultMessage: `Farðu vel yfir efnið áður en þú sendir inn kvörtunina. Það flýtir fyrir afgreiðslu málsins hjá Persónuvernd ef kvörtunin er skýr og afmörkuð.`,
       description: 'overview page description',
     },
+    confirmationPageTitle: {
+      id: 'dpac.application:section.confirmation.pageTitle',
+      defaultMessage: 'Takk fyrir að senda inn kvörtun',
+      description: 'confirmation page title',
+    },
   }),
   labels: defineMessage({
     termsAgreement: {

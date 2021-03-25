@@ -10,11 +10,7 @@ import {
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages/application'
 
-type DataProtectionComplaintEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
+type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -35,7 +31,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
       draft: {
         meta: {
           name: application.name.defaultMessage,
-          progress: 0.25,
+          progress: 0.5,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -54,6 +50,22 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           SUBMIT: {
             target: 'inReview',
           },
+        },
+      },
+      inReview: {
+        meta: {
+          name: 'In Review',
+          progress: 1,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ComplaintFormInReview').then((module) =>
+                  Promise.resolve(module.ComplaintFormInReview),
+                ),
+              write: 'all',
+            },
+          ],
         },
       },
     },
