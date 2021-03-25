@@ -9,9 +9,10 @@ import {
   buildCustomField,
   buildSubmitField,
   buildFileUploadField,
+  Comparators,
 } from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../lib/messages'
-import { YES } from '../constants'
+import { YES, FILE_SIZE_LIMIT } from '../constants'
 
 export const application: Form = buildForm({
   id: 'InstitutionApplicationDraftForm',
@@ -42,6 +43,7 @@ export const application: Form = buildForm({
               title: m.applicant.institutionLabel,
               backgroundColor: 'blue',
               required: true,
+              defaultValue: '',
             }),
             buildCustomField(
               {
@@ -58,6 +60,7 @@ export const application: Form = buildForm({
               title: m.applicant.contactNameLabel,
               backgroundColor: 'blue',
               required: true,
+              defaultValue: '',
             }),
             buildTextField({
               id: 'contact.phoneNumber',
@@ -66,6 +69,7 @@ export const application: Form = buildForm({
               format: '###-####',
               backgroundColor: 'blue',
               required: true,
+              defaultValue: '',
             }),
             buildTextField({
               id: 'contact.email',
@@ -73,6 +77,7 @@ export const application: Form = buildForm({
               variant: 'email',
               backgroundColor: 'blue',
               required: true,
+              defaultValue: '',
             }),
             buildCustomField({
               id: 'secondaryContact',
@@ -83,7 +88,11 @@ export const application: Form = buildForm({
               id: 'secondaryContact.name',
               title: m.applicant.contactNameLabel,
               backgroundColor: 'blue',
-              condition: (formvalue) => formvalue.hasSecondaryContact === YES,
+              condition: {
+                questionId: 'hasSecondaryContact',
+                comparator: Comparators.EQUALS,
+                value: YES,
+              },
             }),
             buildTextField({
               id: 'secondaryContact.phoneNumber',
@@ -91,14 +100,22 @@ export const application: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               backgroundColor: 'blue',
-              condition: (formvalue) => formvalue.hasSecondaryContact === YES,
+              condition: {
+                questionId: 'hasSecondaryContact',
+                comparator: Comparators.EQUALS,
+                value: YES,
+              },
             }),
             buildTextField({
               id: 'secondaryContact.email',
               title: m.applicant.contactEmailLabel,
               variant: 'email',
               backgroundColor: 'blue',
-              condition: (formvalue) => formvalue.hasSecondaryContact === YES,
+              condition: {
+                questionId: 'hasSecondaryContact',
+                comparator: Comparators.EQUALS,
+                value: YES,
+              },
             }),
           ],
         }),
@@ -113,7 +130,7 @@ export const application: Form = buildForm({
           title: m.project.subSectionLabel,
           children: [
             buildMultiField({
-              id: 'project',
+              id: 'projectSection.project',
               title: m.project.sectionTitle,
               description: m.project.sectionDescription,
               children: [
@@ -133,6 +150,7 @@ export const application: Form = buildForm({
                   variant: 'text',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
                 buildTextField({
                   id: 'project.background',
@@ -141,6 +159,7 @@ export const application: Form = buildForm({
                   variant: 'textarea',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
                 buildTextField({
                   id: 'project.goals',
@@ -149,6 +168,7 @@ export const application: Form = buildForm({
                   variant: 'textarea',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
                 buildTextField({
                   id: 'project.scope',
@@ -157,6 +177,7 @@ export const application: Form = buildForm({
                   variant: 'textarea',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
                 buildTextField({
                   id: 'project.finance',
@@ -165,6 +186,7 @@ export const application: Form = buildForm({
                   variant: 'textarea',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
                 buildCustomField(
                   {
@@ -181,10 +203,11 @@ export const application: Form = buildForm({
                   id: 'attatchments',
                   title: '',
                   introduction: '',
-                  uploadHeader: 'Dragðu skjöl hingað til að hlaða upp',
-                  uploadDescription:
-                    'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
-                  uploadButtonLabel: 'Velja skjöl til að hlaða upp',
+
+                  maxSize: FILE_SIZE_LIMIT,
+                  uploadHeader: m.project.attatchmentsUploadHeader,
+                  uploadDescription: m.project.attatchmentsUploadDescription,
+                  uploadButtonLabel: m.project.attatchmentsUploadButtonLabel,
                 }),
               ],
             }),
@@ -213,7 +236,7 @@ export const application: Form = buildForm({
           title: m.stakeholders.subSectionLabel,
           children: [
             buildMultiField({
-              id: 'stakeholders',
+              id: 'stakholdersSection.stakeholders',
               title: m.stakeholders.sectionTitle,
               description: '',
               children: [
@@ -224,6 +247,7 @@ export const application: Form = buildForm({
                   variant: 'textarea',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
                 buildTextField({
                   id: 'role',
@@ -232,6 +256,7 @@ export const application: Form = buildForm({
                   variant: 'textarea',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
                 buildTextField({
                   id: 'otherRoles',
@@ -240,6 +265,7 @@ export const application: Form = buildForm({
                   variant: 'textarea',
                   backgroundColor: 'blue',
                   required: true,
+                  defaultValue: '',
                 }),
               ],
             }),
@@ -248,11 +274,11 @@ export const application: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicationReview',
+      id: 'applicationReviewSection',
       title: m.review.sectionLabel,
       children: [
         buildMultiField({
-          id: 'applicationReview',
+          id: 'applicationReviewSection.applicationReview',
           title: m.review.sectionTitle,
           description: m.review.sectionDescription,
           children: [
