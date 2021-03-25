@@ -11,12 +11,10 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { institutionApplicationMessages as m } from '../../lib/messages'
-import get from 'lodash/get'
 import * as styles from './reviewScreen.treat'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
-
   const secondaryContactName = getValueViaPath(
     application.answers,
     'secondaryContact.name',
@@ -72,9 +70,8 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const attatchments = getValueViaPath(
     application.answers,
     'attatchments',
-  ) as Array<any>
+  ) as Array<{ key: string; name: string }>
   const hasAttatchments = attatchments && attatchments?.length > 0
-
   return (
     <Box marginTop={4}>
       <Stack space={7}>
@@ -432,19 +429,20 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 </Text>
                 <Box marginTop={3}>
                   <Stack space={2}>
-                    {attatchments.map((attatchment) => (
+                    {attatchments.map(({ key = '', name = '' }) => (
                       <Link
                         className={styles.attatchmentLink}
                         color="blue400"
                         underlineVisibility="always"
                         underline="small"
-                        key={get(attatchment, 'key')}
-                        href={`${get(attatchment, 'url')}/${get(
-                          attatchment,
-                          'key',
-                        )}`}
+                        key={key}
+                        href={
+                          (application.attachments as {
+                            [key: string]: string
+                          })[key] || ''
+                        }
                       >
-                        {get(attatchment, 'name')}
+                        {name}
                         <Icon icon="attach" />
                       </Link>
                     ))}
