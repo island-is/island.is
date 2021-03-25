@@ -29,6 +29,11 @@ export const m = defineMessages({
     defaultMessage: 'Notendaskilmálar',
     description: 'Some description',
   },
+  termsUserAgreementUrl: {
+    id: 'dpo.application:terms.userAgreementUrl',
+    defaultMessage: 'https://island.is',
+    description: 'The url to the user agreements',
+  },
   termsUserAgreementMessage: {
     id: 'dpo.application:terms.userAgreementMessage',
     defaultMessage:
@@ -44,6 +49,11 @@ export const m = defineMessages({
     id: 'dpo.application:terms.safetyAgreementTitle',
     defaultMessage: 'Öryggisskilmálar',
     description: 'Some description',
+  },
+  termsSafetyAgreementUrl: {
+    id: 'dpo.application:terms.safetyAgreementUrl',
+    defaultMessage: 'https://island.is',
+    description: 'The url to the safty agreement',
   },
   termsSafetyAgreementMessage: {
     id: 'dpo.application:terms.safetyAgreementMessage',

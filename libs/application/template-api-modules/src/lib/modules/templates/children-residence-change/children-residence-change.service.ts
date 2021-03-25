@@ -9,8 +9,8 @@ import {
 import {
   CRCApplication,
   Override,
+  getSelectedChildrenFromExternalData,
 } from '@island.is/application/templates/children-residence-change'
-import { User } from '@island.is/api/domains/national-registry'
 import * as AWS from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmitted'
@@ -37,59 +37,63 @@ export class ChildrenResidenceChangeService {
 
   async submitApplication({ application }: props) {
     const { answers, externalData } = application
-    const { parentNationalRegistry } = externalData
-    const nationalRegistry = (externalData.nationalRegistry
-      .data as unknown) as User
+    const { nationalRegistry } = externalData
+    const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
     const file = await this.s3
       .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
       .promise()
     const fileContent = file.Body as Buffer
 
-    const selectedChildren = application.externalData.childrenNationalRegistry.data.filter(
-      (c) => application.answers.selectChild.includes(c.name),
+    const selectedChildren = getSelectedChildrenFromExternalData(
+      applicant.children,
+      answers.selectChild,
     )
+
+    const otherParent = selectedChildren[0].otherParent
 
     if (!fileContent) {
       throw new Error('File content was undefined')
     }
 
     const attachment: Attachment = {
-      name: `Lögheimilisbreyting-barns-${nationalRegistry.nationalId}.pdf`,
+      name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
       content: fileContent.toString('base64'),
     }
 
     const parentA: Person = {
-      name: nationalRegistry.fullName,
-      ssn: nationalRegistry.nationalId,
+      name: applicant.fullName,
+      ssn: applicant.nationalId,
       phoneNumber: answers.parentA.phoneNumber,
       email: answers.parentA.email,
-      homeAddress: nationalRegistry.address.streetAddress,
-      postalCode: nationalRegistry.address.postalCode,
-      city: nationalRegistry.address.city,
+      homeAddress: applicant.address.streetName,
+      postalCode: applicant.address.postalCode,
+      city: applicant.address.city,
       signed: true,
       type: PersonType.Plaintiff,
     }
 
     const parentB: Person = {
-      name: parentNationalRegistry.data.name,
-      ssn: parentNationalRegistry.data.ssn,
+      name: otherParent.fullName,
+      ssn: otherParent.nationalId,
       phoneNumber: answers.parentB.phoneNumber,
       email: answers.parentB.email,
-      homeAddress: parentNationalRegistry.data.address,
-      postalCode: parentNationalRegistry.data.postalCode,
-      city: parentNationalRegistry.data.city,
+      homeAddress: otherParent.address.streetName,
+      postalCode: otherParent.address.postalCode,
+      city: otherParent.address.city,
       signed: true,
       type: PersonType.CounterParty,
     }
 
     const participants: Array<Person> = selectedChildren.map((child) => {
       return {
-        name: child.name,
-        ssn: child.ssn,
-        homeAddress: child.address,
-        postalCode: child.postalCode,
-        city: child.city,
+        name: child.fullName,
+        ssn: child.nationalId,
+        // TODO: change address when we handle that both parents can
+        // apply for the change regardless of where the children currently live
+        homeAddress: parentA.homeAddress,
+        postalCode: parentA.postalCode,
+        city: parentA.city,
         signed: false,
         type: PersonType.Child,
       }
