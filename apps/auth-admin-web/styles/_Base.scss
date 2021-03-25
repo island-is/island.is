@@ -322,6 +322,11 @@ a {
   @extend .fa-file-excel-o;
 }
 
+.icon__translation {
+  @extend .fa;
+  @extend .fa-globe;
+}
+
 // Buttons
 .button__warning {
   background: $color-error;

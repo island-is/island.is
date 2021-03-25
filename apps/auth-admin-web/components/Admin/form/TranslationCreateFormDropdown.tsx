@@ -1,36 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { ErrorMessage } from '@hookform/error-message'
 import HelpBox from '../../common/HelpBox'
 import ValidationUtils from '../../../utils/validation.utils'
 import { Language } from '../../../entities/models/language.model'
 import { TranslationService } from '../../../services/TranslationService'
 import { TranslationDTO } from '../../../entities/dtos/translation.dto'
 import { Translation } from '../../../entities/models/translation.model'
-import { LanguageDTO } from './../../../entities/dtos/language.dto'
 
 interface Props {
   className: string
-  key: string
+  id: string
   property: string
-  handleSaveButtonClicked: (translation: TranslationDTO) => void
+  isEditing: boolean
 }
 
 const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<LanguageDTO>()
-  const { isSubmitting } = formState
   const [languages, setLanguages] = useState<Language[]>([])
   const [selectedLanguage, setSelectedLanguage] = useState<string>('is')
-  const [currentTranslation, setCurrentTranslation] = useState<Translation>(
-    new Translation(),
-  )
   const [visible, setVisible] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [translationValue, setTranslationValue] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [updateState, setUpdateState] = useState<boolean>(false)
 
   useEffect(() => {
     getLanguages()
-    getTranslation()
-  }, [])
+    getTranslation(selectedLanguage)
+  }, [props.id])
 
   const getLanguages = async () => {
     const response = await TranslationService.findAllLanguages()
@@ -39,53 +34,97 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
     }
   }
 
-  const getTranslation = async (): Promise<void> => {
+  const setTheTranslationValue = async (value: string) => {
+    await setTranslationValue(value)
+    await setUpdateState(!updateState)
+  }
+
+  const getTranslation = async (isoKey: string): Promise<void> => {
+    console.log('AM I FKN HERE')
     const response = await TranslationService.findTranslation(
-      selectedLanguage,
+      isoKey,
       props.className,
       props.property,
-      props.key,
+      props.id,
     )
     if (response) {
+      console.log('HAS RESPONSE')
+      console.log(isoKey)
+      console.log(response)
       setIsEditing(true)
-      setCurrentTranslation(response)
+      console.log(response.value)
+      setTheTranslationValue(response.value)
     } else {
+      console.log('HAS No RESPONSE')
+      console.log(isoKey)
+      console.log(response)
       setIsEditing(false)
-      setCurrentTranslation(new Translation())
+      setTheTranslationValue(null)
     }
+
+    // console.log(translationValue)
+    // setUpdateState(!updateState)
   }
 
-  const pushEvent = (response: Translation | null) => {
-    // if (response) {
-    //   if (props.handleSaveButtonClicked) {
-    //     props.handleSaveButtonClicked(response)
-    //   }
-    //   return response
-    // }
-  }
-
-  const create = async (data: TranslationDTO): Promise<void> => {
-    console.log(data)
+  const create = async (textValue: string): Promise<void> => {
+    const data = new TranslationDTO()
     data.className = props.className
-    data.key = props.key
+    data.key = props.id
     data.property = props.property
+    data.value = textValue
+    data.language = selectedLanguage
     console.log(data)
 
     if (isEditing) {
+      console.log('Updating translation')
       const response = await TranslationService.updateTranslation(data)
       if (response) {
-        pushEvent(response)
+        // Set info
       }
     } else {
+      console.log('Creating translation')
       const response = await TranslationService.createTranslation(data)
       if (response) {
-        pushEvent(response)
+        // set info
       }
     }
   }
 
-  const save = async (data: TranslationDTO) => {
-    await create(data)
+  const save = async (event) => {
+    // event.preventDefault()
+
+    if (ValidationUtils.validateDescription(translationValue)) {
+      setErrorMessage('')
+      create(translationValue)
+    } else {
+      setErrorMessage('Value is Required and need to be in the right format')
+    }
+
+    // await create(translationValue)
+  }
+
+  const setTheSelectedLanguge = async (isoKey) => {
+    await setSelectedLanguage(isoKey)
+    await setUpdateState(!updateState)
+  }
+
+  const switchLanguge = async (isoKey: string) => {
+    setTheSelectedLanguge(isoKey)
+    getTranslation(isoKey)
+  }
+
+  const validate = (value: string) => {
+    setTranslationValue(value)
+    if (ValidationUtils.validateDescription(translationValue)) {
+      setErrorMessage('')
+    } else {
+      setErrorMessage('Value is Required and need to be in the right format')
+    }
+  }
+
+  const handleTextValueChange = async (value: string) => {
+    setTheTranslationValue(value)
+    validate(value)
   }
 
   return (
@@ -96,7 +135,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
           onClick={() => setVisible(!visible)}
           title={`Create new Translation`}
         >
-          <i className="icon__new"></i>
+          <i className="icon__translation"></i>
           <span>Create new Translation</span>
         </a>
       </div>
@@ -105,98 +144,100 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
           visible ? 'show' : 'hidden'
         }`}
       >
+        {'KEY '}
+        {props.id}
         <div className="translation-create-form-dropdown__container">
           <h1>Create a Translation</h1>
-          <div className="translation-create-form-dropdown__container__form">
+          <div
+            className={`translation-create-form-dropdown__container__help-text ${
+              props.isEditing ? 'hidden' : 'show'
+            }`}
+          >
+            The item you are creating needs to be saved before creating
+            translations
+          </div>
+          <div
+            className={`translation-create-form-dropdown__container__form ${
+              props.isEditing ? 'show' : 'hidden'
+            }`}
+          >
             <div className="translation-create-form-dropdown__help">
               Add new translation by filling out the form
             </div>
-            <form onSubmit={handleSubmit(save)}>
-              <div className="translation-create-form-dropdown__container__fields">
-                <div className="translation-create-form-dropdown__container__field">
-                  <label
-                    className="translation-create-form-dropdown__label"
-                    htmlFor="language"
-                  >
-                    Language
-                  </label>
-                  <select
-                    id="language"
-                    className="translation-create-form-dropdown__select"
-                    name="translation.language"
-                    ref={register({
-                      required: true,
-                    })}
-                    defaultValue={selectedLanguage}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
-                  >
-                    {languages.map((language: Language) => {
-                      return (
-                        <option value={language.isoKey} key={language.isoKey}>
-                          {language.englishDescription}
-                        </option>
-                      )
-                    })}
-                  </select>
-                  <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="translation.language"
-                    message="Language is required"
-                  />
-                </div>
 
-                <div className="translation-create-form-dropdown__container__field">
-                  <label
-                    className="translation-create-form-dropdown__label"
-                    htmlFor="value"
-                  >
-                    Value
-                  </label>
-                  <input
-                    id="value"
-                    type="text"
-                    ref={register({
-                      required: true,
-                      validate: ValidationUtils.validateDescription,
-                    })}
-                    name="translation.value"
-                    defaultValue={currentTranslation.value ?? ''}
-                    className="translation-create-form-dropdown__input"
-                    title="The translated text in the selected language"
-                    placeholder="Some description"
-                  />
-                  <ErrorMessage
-                    as="span"
-                    errors={errors}
-                    name="translation.value"
-                    message="The value is required and needs to be in the right format"
-                  />
-                  <HelpBox helpText="The translated text in the selected language" />
-                </div>
+            <div className="translation-create-form-dropdown__container__fields">
+              <div className="translation-create-form-dropdown__container__field">
+                <label
+                  className="translation-create-form-dropdown__label"
+                  htmlFor="language"
+                >
+                  Language
+                </label>
+                <select
+                  id="language"
+                  className="translation-create-form-dropdown__select"
+                  name="translation.language"
+                  onChange={(e) => switchLanguge(e.target.value)}
+                >
+                  {languages.map((language: Language) => {
+                    return (
+                      <option
+                        value={language.isoKey}
+                        key={language.isoKey}
+                        selected={selectedLanguage === language.isoKey}
+                      >
+                        {language.englishDescription}
+                      </option>
+                    )
+                  })}
+                </select>
+                <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
+              </div>
 
-                <div className="translation-create-form-dropdown__buttons__container">
-                  <div className="translation-create-form-dropdown__button__container">
-                    <button
-                      className="translation-create-form-dropdown__button__cancel"
-                      type="button"
-                      onClick={(e) => setVisible(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                  <div className="translation-create-form-dropdown__button__container">
-                    <input
-                      type="submit"
-                      className="translation-create-form-dropdown__button__save"
-                      disabled={isSubmitting}
-                      value="Save"
-                    />
-                  </div>
+              <div className="translation-create-form-dropdown__container__field">
+                <label
+                  className="translation-create-form-dropdown__label"
+                  htmlFor="value"
+                >
+                  Value
+                </label>
+                <input
+                  id="value"
+                  type="text"
+                  name="translation.value"
+                  value={translationValue ?? ''}
+                  className="translation-create-form-dropdown__input"
+                  title="The translated text in the selected language"
+                  placeholder="Some description"
+                  onChange={(e) => handleTextValueChange(e.target.value)}
+                />
+
+                <HelpBox helpText="The translated text in the selected language" />
+                <div className="customErrorMessage">{errorMessage}</div>
+              </div>
+
+              <div className="translation-create-form-dropdown__buttons__container">
+                <div className="translation-create-form-dropdown__button__container">
+                  <button
+                    className="translation-create-form-dropdown__button__cancel"
+                    type="button"
+                    onClick={(e) => setVisible(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <div className="translation-create-form-dropdown__button__container">
+                  <button
+                    type="button"
+                    className="translation-create-form-dropdown__button__save"
+                    value="Save"
+                    onClick={save}
+                  >
+                    Save
+                  </button>
                 </div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
