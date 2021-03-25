@@ -1,17 +1,6 @@
-import {
-  Body,
-  Controller,
-  ForbiddenException,
-  Get,
-  Inject,
-  NotFoundException,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   NotificationType,
   User,
@@ -26,7 +15,7 @@ import {
   RulesType,
 } from '@island.is/judicial-system/auth'
 
-import { CaseService, isCaseBlockedFromUser } from '../case'
+import { CaseService } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'

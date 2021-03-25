@@ -62,8 +62,8 @@ describe('FileModule', () => {
     beforeEach(() => {
       jest
         .spyOn(caseService, 'findByIdAndUser')
-        .mockImplementation((id: string, user: User) =>
-          Promise.resolve({ id: caseId } as Case),
+        .mockImplementation((id: string, _: User) =>
+          Promise.resolve({ id } as Case),
         )
     })
 
