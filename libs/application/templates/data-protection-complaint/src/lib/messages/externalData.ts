@@ -20,7 +20,10 @@ export const externalData = {
     },
     description: {
       id: 'dpac.application:section.externalData.pageDescription',
-      defaultMessage: `Persónuvernd er nauðsynlegt að fá staðfestar upplýsingar um þig til þess að þú getir lagt fram eftirfarandi kvörtun. Eftirfarandi gagna verður því aflað með vísan til 2. tl. 9. gr. laga um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.`,
+      defaultMessage: `Persónuvernd er nauðsynlegt að fá réttar tengiliðaupplýsingar
+      um þig til þess að hægt sé að taka kvörtun þína til meðferðar og úrlausnar.
+      Upplýsinganna er aflað á grundvelli heimildar í 5. tölul. 9. gr. laga nr.
+      90/2018, um persónuvernd og vinnslu persónuupplýsinga.`,
       description: 'externalData page description',
     },
   }),
@@ -43,7 +46,8 @@ export const externalData = {
     },
     userProfileSubTitle: {
       id: 'dpac.application:section.externalData.labels.userProfileSubTitle',
-      defaultMessage: 'Símanúmer, netfang',
+      defaultMessage:
+        'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
       description: 'User Profile Subtitle',
     },
   }),

@@ -39,20 +39,10 @@ const buildComplaineeMultiField = (id: string) =>
     title: complaint.general.complaineePageTitle,
     description: complaint.general.complaineePageDescription,
     children: [
-      buildCustomField({
-        id: `${id}NameLabel`,
-        title: complaint.general.complaineePageTitle,
-        component: 'FieldLabel',
-      }),
       buildTextField({
         id: `${id === 'complainee' ? `${id}.` : ''}name`,
         title: complaint.labels.complaineeName,
         backgroundColor: 'blue',
-      }),
-      buildCustomField({
-        id: `${id}InfoLabel`,
-        title: complaint.labels.complaineeInfoLabel,
-        component: 'FieldLabel',
       }),
       buildTextField({
         id: `${id === 'complainee' ? `${id}.` : ''}address`,
@@ -143,7 +133,6 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'inCourtProceedingsFields',
               title: delimitation.labels.inCourtProceedings,
-              description: delimitation.general.description,
               children: [
                 buildRadioField({
                   id: 'inCourtProceedings',
@@ -158,9 +147,6 @@ export const ComplaintForm: Form = buildForm({
                     id: 'inCourtProceedingsAlert',
                     title: errorCards.inCourtProceedingsTitle,
                     description: errorCards.inCourtProceedingsDescription,
-                    // TODO: The application system is not passing props down to custom components
-                    // Use defaultValue as a workaround until that gets fixed
-                    defaultValue: 'https://example.com/',
                     condition: (formValue) =>
                       formValue.inCourtProceedings === YES,
                   },
@@ -179,7 +165,6 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'concernsMediaCoverageFields',
               title: delimitation.labels.concernsMediaCoverage,
-              description: delimitation.general.description,
               children: [
                 buildRadioField({
                   id: 'concernsMediaCoverage',
@@ -207,7 +192,6 @@ export const ComplaintForm: Form = buildForm({
             buildMultiField({
               id: 'concernsBanMarkingFields',
               title: delimitation.labels.concernsBanMarking,
-              description: delimitation.general.description,
               children: [
                 buildRadioField({
                   id: 'concernsBanMarking',
@@ -258,11 +242,11 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'info',
-      title: section.info.defaultMessage,
+      title: section.info,
       children: [
         buildSubSection({
           id: 'onBehalf',
-          title: section.onBehalf.defaultMessage,
+          title: section.onBehalf,
           children: [
             buildMultiField({
               id: 'onBehalfFields',
@@ -340,7 +324,7 @@ export const ComplaintForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
-                      .streetAddress,
+                      ?.streetAddress,
                 }),
                 buildTextField({
                   id: 'applicant.postalCode',
@@ -350,7 +334,7 @@ export const ComplaintForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
-                      .postalCode,
+                      ?.postalCode,
                 }),
                 buildTextField({
                   id: 'applicant.city',
@@ -360,7 +344,7 @@ export const ComplaintForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: DataProtectionComplaint) =>
                     application.externalData?.nationalRegistry?.data?.address
-                      .city,
+                      ?.city,
                 }),
                 buildTextField({
                   id: 'applicant.email',
@@ -513,8 +497,8 @@ export const ComplaintForm: Form = buildForm({
               space: 3,
               children: [
                 buildCheckboxField({
-                  id: 'subjectOfComplaint.authorities',
-                  title: complaint.labels.subjectPersonalInformation,
+                  id: 'subjectOfComplaint.values',
+                  title: '',
                   options: [
                     {
                       label: complaint.labels.subjectAuthorities,
@@ -536,13 +520,6 @@ export const ComplaintForm: Form = buildForm({
                       label: complaint.labels.subjectRightOfObjection,
                       value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
                     },
-                  ],
-                  large: true,
-                }),
-                buildCheckboxField({
-                  id: 'subjectOfComplaint.useOfPersonalInformation',
-                  title: complaint.labels.subjectUseOfPersonalInformation,
-                  options: [
                     {
                       label: complaint.labels.subjectEmail,
                       value: SubjectOfComplaint.EMAIL,
@@ -559,13 +536,6 @@ export const ComplaintForm: Form = buildForm({
                       label: complaint.labels.subjectUnauthorizedPublication,
                       value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
                     },
-                  ],
-                  large: true,
-                }),
-                buildCheckboxField({
-                  id: 'subjectOfComplaint.other',
-                  title: complaint.labels.subjectOther,
-                  options: [
                     {
                       label: complaint.labels.subjectVanskilaskra,
                       value: SubjectOfComplaint.VANSKILASKRA,

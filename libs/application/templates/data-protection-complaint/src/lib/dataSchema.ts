@@ -87,7 +87,7 @@ export const DataProtectionComplaintSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
-    documents: z.array(FileSchema).nonempty(),
+    documents: z.array(FileSchema),
     persons: z
       .array(
         z.object({
@@ -116,9 +116,7 @@ export const DataProtectionComplaintSchema = z.object({
     }),
   ),
   subjectOfComplaint: z.object({
-    authorities: z.array(z.string()).optional(),
-    useOfPersonalInformation: z.array(z.string()).optional(),
-    other: z.array(z.string()).optional(),
+    values: z.array(z.string()).optional(),
     somethingElse: z.string().optional(),
   }),
   complaint: z.object({
