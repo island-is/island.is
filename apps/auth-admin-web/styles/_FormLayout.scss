@@ -26,7 +26,9 @@
 .grant-type-create-form,
 .language-create-form,
 .translation-create-form,
-.user-claim-create-form {
+.user-claim-create-form,
+.translation-create-form,
+.translation-create-form-dropdown {
   position: relative;
 
   &__help {
@@ -36,6 +38,11 @@
       font-weight: $weight-semi-bold;
       margin-bottom: 30px;
     }
+  }
+
+  &__saved__message {
+    font-weight: $weight-semi-bold;
+    color: $color-ok;
   }
 
   &__wrapper {
