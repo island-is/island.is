@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   Box,
@@ -79,7 +79,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
       Object.keys(application.attachments).length === 0 &&
       refetch &&
       refetch()
-  }, [])
+  }, [application.attachments, hasAttatchments, refetch])
   return (
     <Box marginTop={4}>
       <Stack space={7}>

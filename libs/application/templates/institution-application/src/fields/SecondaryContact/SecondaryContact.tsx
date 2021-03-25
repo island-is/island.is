@@ -23,46 +23,39 @@ const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
     setValue(`${id}.email`, undefined)
   }
 
-  return (
-    <>
-      {isEnabled ? (
-        <Box marginTop={4}>
-          <Stack space={3}>
-            <Box display="flex" position="relative" alignItems="center">
-              <Box
-                className={styles.deleteIcon}
-                onClick={disableSecondaryContact}
-              >
-                <Icon
-                  color="dark200"
-                  icon="removeCircle"
-                  size="medium"
-                  type="outline"
-                />
-              </Box>
-              <Text variant="h4">
-                {formatText(title, application, formatMessage)}
-              </Text>
-            </Box>
-          </Stack>
+  return isEnabled ? (
+    <Box marginTop={4}>
+      <Stack space={3}>
+        <Box display="flex" position="relative" alignItems="center">
+          <Box className={styles.deleteIcon} onClick={disableSecondaryContact}>
+            <Icon
+              color="dark200"
+              icon="removeCircle"
+              size="medium"
+              type="outline"
+            />
+          </Box>
+          <Text variant="h4">
+            {formatText(title, application, formatMessage)}
+          </Text>
         </Box>
-      ) : (
-        <Box marginTop={4}>
-          <Button
-            icon="add"
-            variant="ghost"
-            size="small"
-            onClick={enableSecondaryContact}
-          >
-            {formatText(
-              m.applicant.contactAddButtonLabel,
-              application,
-              formatMessage,
-            )}
-          </Button>
-        </Box>
-      )}
-    </>
+      </Stack>
+    </Box>
+  ) : (
+    <Box marginTop={4}>
+      <Button
+        icon="add"
+        variant="ghost"
+        size="small"
+        onClick={enableSecondaryContact}
+      >
+        {formatText(
+          m.applicant.contactAddButtonLabel,
+          application,
+          formatMessage,
+        )}
+      </Button>
+    </Box>
   )
 }
 

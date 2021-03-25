@@ -134,7 +134,7 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
+  mapUserToRole(): ApplicationRole {
     return 'applicant'
   },
 }
