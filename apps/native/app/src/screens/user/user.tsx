@@ -19,8 +19,8 @@ export const UserScreen: NavigationFunctionComponent = () => {
     >
       <Container>
         <Heading>{authStore.userInfo?.name}</Heading>
-        <Text>Kt. {authStore.userInfo?.nationalId}</Text>
-        <Text>Authorization (Expires: {authStore.authorizeResult?.accessTokenExpirationDate}</Text>
+        <Text style={{ marginBottom: 30, marginTop: -30}}>Kt. {authStore.userInfo?.nationalId}</Text>
+        <Text>Authorization (Expires: {authStore.authorizeResult?.accessTokenExpirationDate})</Text>
         <TextInput value={authStore.authorizeResult?.accessToken} />
         <Button title="Logout" onPress={() => {
           authStore.logout();

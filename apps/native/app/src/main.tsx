@@ -69,8 +69,35 @@ function registerEventListeners() {
           },
         },
       })
-    })
+    });
   })
+
+  addRoute('/inbox/:docId', ({ docId }: any) => {
+    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+      bottomTabs: {
+        currentTabIndex: 0,
+      },
+    });
+    // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
+    Navigation.popToRoot('INBOX_SCREEN', {
+      animations: {
+        pop: {
+          enabled: false,
+        }
+      }
+    })
+    .then(() => {
+      Navigation.push('INBOX_TAB', {
+        component: {
+          name: ComponentRegistry.DocumentDetailScreen,
+          passProps: {
+            docId,
+          },
+        },
+      })
+    });
+  });
+
   addRoute('/user', () => {
     Navigation.showModal({
       stack: {

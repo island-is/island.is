@@ -6,9 +6,14 @@ export const typeDefs = gql`
     listLicenses: [License!]
   }
   type Document {
-    id: String
-    title: String
-    subtitle: String
+    id: Id
+    date: DateTime
+    subject: String
+    senderName: String
+    senderNatReg: String
+    opened: Boolean
+    fileType: String
+    url: String
   }
   type License {
     id: String

@@ -1,14 +1,17 @@
 import React from 'react'
-import { Text, Image } from 'react-native';
+import { theme } from '@island.is/island-ui/theme';
+import { TouchableHighlight, TouchableHighlightProps } from 'react-native';
 import styled from 'styled-components/native';
 
 const Host = styled.View`
+  border-bottom-width: ${props => props.theme.border.width.standard}px;
+  border-color: ${props => props.theme.shade.shade200};
+`;
+
+const Flex = styled.View`
   display: flex;
   flex-flow: row nowrap;
   padding: 20px 16px;
-
-  border-bottom-width: ${props => props.theme.border.width.standard}px;
-  border-color: ${props => props.theme.shade.shade200};
 `;
 
 const Col = styled.View`
@@ -24,7 +27,7 @@ const IconWrap = styled.View`
 `;
 
 const Title = styled.Text`
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 
   font-size: 12px;
   font-weight: bold;
@@ -36,34 +39,37 @@ const Subtitle = styled.Text`
   color: ${props => props.theme.shade.foreground};
 `;
 
-interface ListItemProps {
+interface ListItemProps extends TouchableHighlightProps {
   title: string;
   subtitle: string;
-  icon?: any;
+  icon?: React.ReactNode;
 }
 
-export function ListItem({ title, subtitle, icon }: ListItemProps) {
+export function ListItem({ title, subtitle, icon, ...rest }: ListItemProps) {
   return (
     <Host>
-      <Col>
-        <IconWrap>
-          {icon && (
-            <Image
-              source={icon}
-              resizeMode="contain"
-              style={{ width: 25, height: 25 }}
-            />
-          )}
-        </IconWrap>
-      </Col>
-      <Col>
-        <Title>
-          {title}
-        </Title>
-        <Subtitle>
-          {subtitle}
-        </Subtitle>
-      </Col>
+      <TouchableHighlight
+        underlayColor={theme.color.blue100}
+        {...rest}
+      >
+        <Flex>
+          <Col>
+            <IconWrap>
+              {icon && (
+                icon
+              )}
+            </IconWrap>
+          </Col>
+          <Col>
+            <Title>
+              {title}
+            </Title>
+            <Subtitle>
+              {subtitle}
+            </Subtitle>
+          </Col>
+        </Flex>
+      </TouchableHighlight>
     </Host>
   )
 }
