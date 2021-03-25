@@ -17,7 +17,7 @@ export class SidebarCard {
   content!: string
 
   @Field(() => Link, { nullable: true })
-  link?: Link | null
+  link!: Link | null
 }
 
 export const mapSidebarCard = ({ sys, fields }: ISidebarCard): SidebarCard => ({

@@ -34,10 +34,10 @@ export class OrganizationPage {
   @Field({ nullable: true })
   featuredImage?: Image | null
 
-  @Field(() => [FooterItem], { nullable: true })
+  @Field(() => [FooterItem])
   footerItems?: Array<FooterItem>
 
-  @Field(() => [SidebarCard], { nullable: true })
+  @Field(() => [SidebarCard])
   sidebarCards?: Array<SidebarCard>
 }
 
