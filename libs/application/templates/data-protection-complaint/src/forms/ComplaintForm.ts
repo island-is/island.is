@@ -643,6 +643,11 @@ export const ComplaintForm: Form = buildForm({
                   uploadButtonLabel:
                     complaint.labels.complaintDocumentsButtonLabel,
                 }),
+                buildCustomField({
+                  component: 'FieldAlertMessage',
+                  id: 'complaintDocumentsInfo',
+                  title: complaint.labels.complaintDocumentsInfoLabel,
+                }),
               ],
             }),
           ],

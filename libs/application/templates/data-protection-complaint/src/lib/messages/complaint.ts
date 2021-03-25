@@ -33,7 +33,9 @@ export const complaint = {
     },
     complaintPageDescription: {
       id: 'dpac.application:section.complaint.complaintPageDescription',
-      defaultMessage: `Vantar texta`,
+      defaultMessage: `Hér þarf að greina frá helstu málsatvikum og
+      hvernig þú telur að hafi verið brotið á þér.
+      Mikilvægt er að lýsingin sé skýr og hnitmiðuð.`,
       description: 'complaint page description',
     },
   }),
@@ -210,7 +212,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaintDocumentsIntroduction',
       defaultMessage:
-        'Vinsamlegast settu hér inn skjöl og önnur gögn sem eiga að fylgja kvörtun',
+        'Vinsamlegast settu hér inn skjöl og önnur gögn sem eiga að fylgja kvörtuninni.',
       description: 'Complaint Documents Intro',
     },
     complaintDocumentsHeader: {
@@ -222,7 +224,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaintDocumentsDescription',
       defaultMessage:
-        'Tekið er við skjölum með endingu: .pdf, .docx, .rtf, jpg, png, mov, mp4',
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, png.',
       description: 'Complaint Documents Description',
     },
     complaintDocumentsButtonLabel: {
@@ -230,6 +232,14 @@ export const complaint = {
         'dpac.application:section.complaint.labels.complaintDocumentsButtonLabel',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Complaint Documents Button Label',
+    },
+    complaintDocumentsInfoLabel: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDocumentsInfoLabel',
+      defaultMessage:
+        'Hafðu samband við Persónuvernd ef þú vilt senda inn myndbönd og/eða hljóðupptökur.',
+      description:
+        'Notifies the user that he should contact DPA if they want to send in images or videos',
     },
   }),
 }
