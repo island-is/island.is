@@ -1,12 +1,13 @@
 {
-  "extends": "../../../tsconfig.npm.base.json",
+  "extends": "../../tsconfig.npm.base.json",
   "compilerOptions": {
     "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "types": ["node"],
-    "outDir": "../../../dist"
+    "declaration": true,
+    "emitDeclarationOnly": true
   },
   "exclude": [
     "**/*.spec.ts",
@@ -18,7 +19,7 @@
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
   "files": [
-    "../../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
-    "../../../node_modules/@nrwl/react/typings/image.d.ts"
+    "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
+    "../../node_modules/@nrwl/react/typings/image.d.ts"
   ]
 }

@@ -2,18 +2,37 @@
 
 DIST_ROOT="dist"
 LIB_UI_ROOT="libs/island-ui"
+UI="ui"
+DIST_UI="$DIST_ROOT/$UI"
 
-rm -rf $DIST_ROOT
+# We want to use NX publishable builder, however Treat is making things hard.
+# Simply copy/pasting the UI library for the first alpha version.
+# Most likely use semantic-release to handle npm releases https://github.com/semantic-release/semantic-release
 
-tsc --project libs/island-ui/core/tsconfig.npm.json
+if [[ ! -d "$DIST_UI" ]]; then
+  mkdir -p "$DIST_UI"
+fi
 
-mv "$DIST_ROOT/$LIB_UI_ROOT/core" "$DIST_ROOT/ui"
+# Find something better than this in the future.
+perl -pi -e "s/interface SelectorMap {/export interface SelectorMap {/" "node_modules/treat/lib/types/types.d.ts"
 
-cp "$LIB_UI_ROOT/core/package.json" "$DIST_ROOT/ui"
-cp "$LIB_UI_ROOT/core/README.md" "$DIST_ROOT/ui"
+cp -R "$LIB_UI_ROOT/core/" "$DIST_UI"
 
-rm -rf "$DIST_ROOT/libs"
-rm "$DIST_ROOT/ui/jest.config.d.ts"
-rm "$DIST_ROOT/ui/jest.config.js"
-rm "$DIST_ROOT/ui/jest.setup.d.ts"
-rm "$DIST_ROOT/ui/jest.setup.js"
+rm "$DIST_UI/.babelrc"
+rm "$DIST_UI/.eslintrc"
+rm "$DIST_UI/jest.config.js"
+rm "$DIST_UI/jest.setup.ts"
+rm "$DIST_UI/tsconfig.json"
+rm "$DIST_UI/tsconfig.lib.json"
+rm "$DIST_UI/tsconfig.spec.json"
+
+find $DIST_UI -type f \(\
+  -name "*.stories.tsx" \
+  -o -name "*.stories.mdx" \
+\) -delete
+
+tsc --project "$DIST_UI/tsconfig.npm.json"
+
+# To publish to npm
+# cd dist/ui
+# npm publish

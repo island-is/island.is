@@ -40,7 +40,6 @@ module.exports = async ({ config }) => {
     ...config.resolve,
     alias: {
       ...config.resolve.alias,
-      '@island.is/island-ui/core': path.resolve(__dirname, '../../theme/src'),
     },
   }
 

@@ -24,7 +24,7 @@ export const label = {
       fontSize: labelFontSize,
     },
   }),
-}
+} as any
 
 export const labelSizes = {
   sm: {
@@ -88,7 +88,7 @@ export const input = {
       padding: inputPadding,
     },
   }),
-}
+} as any
 
 export const inputSizes = {
   sm: {
@@ -170,4 +170,4 @@ export const textarea = {
       fontSize: 18,
     },
   }),
-}
+} as any
