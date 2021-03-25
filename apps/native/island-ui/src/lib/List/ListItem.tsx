@@ -1,6 +1,6 @@
-import { theme } from 'libs/island-ui/theme/src';
 import React from 'react'
-import { Linking, TouchableHighlight } from 'react-native';
+import { theme } from '@island.is/island-ui/theme';
+import { TouchableHighlight, TouchableHighlightProps } from 'react-native';
 import styled from 'styled-components/native';
 
 const Host = styled.View`
@@ -39,49 +39,36 @@ const Subtitle = styled.Text`
   color: ${props => props.theme.shade.foreground};
 `;
 
-interface ListItemProps {
+interface ListItemProps extends TouchableHighlightProps {
   title: string;
   subtitle: string;
   icon?: React.ReactNode;
-  link?: string;
 }
 
-export function ListItem({ title, subtitle, icon, link }: ListItemProps) {
-  const content = (
-    <Flex>
-      <Col>
-        <IconWrap>
-          {icon && (
-            icon
-          )}
-        </IconWrap>
-      </Col>
-      <Col>
-        <Title>
-          {title}
-        </Title>
-        <Subtitle>
-          {subtitle}
-        </Subtitle>
-      </Col>
-    </Flex>
-  );
-
-  if (!link) {
-    return (
-      <Host>
-        {content}
-      </Host>
-    )
-  }
-
+export function ListItem({ title, subtitle, icon, ...rest }: ListItemProps) {
   return (
     <Host>
       <TouchableHighlight
         underlayColor={theme.color.blue100}
-        onPress={() => { Linking.openURL(link) }}
+        {...rest}
       >
-        {content}
+        <Flex>
+          <Col>
+            <IconWrap>
+              {icon && (
+                icon
+              )}
+            </IconWrap>
+          </Col>
+          <Col>
+            <Title>
+              {title}
+            </Title>
+            <Subtitle>
+              {subtitle}
+            </Subtitle>
+          </Col>
+        </Flex>
       </TouchableHighlight>
     </Host>
   )

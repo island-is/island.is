@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { RefreshControl, ScrollView } from 'react-native'
 import { ListItem } from '@island.is/island-ui-native'
+import { navigateTo } from '../../utils/deep-linking';
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
 import { config } from '../../utils/config';
@@ -66,7 +67,7 @@ export const InboxScreen: NavigationFunctionComponent = () => {
           title={senderName}
           subtitle={subject}
           icon={<Logo name={senderName} />}
-          link={`${config.bundleId}://inbox/${id}`}
+          onPress={() => navigateTo(`/inbox/${id}`)}
         />
       ))}
     </ScrollView>

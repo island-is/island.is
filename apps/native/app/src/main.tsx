@@ -70,7 +70,7 @@ function registerEventListeners() {
         },
       })
     });
-  });
+  })
 
   addRoute('/inbox/:docId', ({ docId }: any) => {
     Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
