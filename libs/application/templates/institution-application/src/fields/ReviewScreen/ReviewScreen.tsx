@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   Box,
@@ -13,7 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import * as styles from './reviewScreen.treat'
 
-const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
+const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
   const { formatMessage } = useLocale()
   const secondaryContactName = getValueViaPath(
     application.answers,
@@ -72,6 +72,14 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     'attatchments',
   ) as Array<{ key: string; name: string }>
   const hasAttatchments = attatchments && attatchments?.length > 0
+
+  useEffect(() => {
+    // Refetching to get application Attatchments
+    hasAttatchments &&
+      Object.keys(application.attachments).length === 0 &&
+      refetch &&
+      refetch()
+  }, [])
   return (
     <Box marginTop={4}>
       <Stack space={7}>
