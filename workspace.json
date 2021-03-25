@@ -2320,6 +2320,27 @@
         }
       }
     },
+    "clients-national-registry": {
+      "root": "libs/clients/national-registry",
+      "sourceRoot": "libs/clients/national-registry/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/national-registry/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/national-registry"],
+          "options": {
+            "jestConfig": "libs/clients/national-registry/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "clients-rsk": {
       "root": "libs/clients/rsk",
       "sourceRoot": "libs/clients/rsk/src",
