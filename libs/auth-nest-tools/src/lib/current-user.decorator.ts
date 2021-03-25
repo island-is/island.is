@@ -24,8 +24,3 @@ export const CurrentUser = createParamDecorator(
     return getCurrentUser(context)
   },
 )
-
-/**
- * @deprecated use CurrentUser decorator instead.
- */
-export const CurrentRestUser = CurrentUser
