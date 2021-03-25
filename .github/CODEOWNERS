@@ -82,6 +82,8 @@
 /libs/content-search-indexer/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/content-search/                                                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/syslumenn/                                                                  @island-is/stefna
+/apps/web/screens/Organization/                                                               @island-is/stefna
+/apps/web/components/Organization/                                                            @island-is/stefna
 
 /libs/island-ui/                                                                              @island-is/island-ui
 

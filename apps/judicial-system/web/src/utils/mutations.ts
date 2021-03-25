@@ -116,6 +116,8 @@ export const CasesQuery = gql`
       custodyEndDate
       decision
       isCustodyEndDateInThePast
+      courtCaseNumber
+      rulingDate
       parentCase {
         id
       }
