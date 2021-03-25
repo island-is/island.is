@@ -327,6 +327,14 @@ a {
   @extend .fa-globe;
 }
 
+.icon__close {
+  @extend .fa;
+  @extend .fa-times;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+}
+
 // Buttons
 .button__warning {
   background: $color-error;

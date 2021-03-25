@@ -34,7 +34,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
-  const [clientId, setClientId] = useState<string>('')
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
     obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime
@@ -78,7 +77,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
       } else {
         setRequireConsent(false)
       }
-      setClientId(props.client.clientId)
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
     }
@@ -370,7 +368,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.description"
                       message="Description can not include special characters"
                     />
-                    {client.clientId}
                     <TranslationCreateFormDropdown
                       className="client"
                       property="description"

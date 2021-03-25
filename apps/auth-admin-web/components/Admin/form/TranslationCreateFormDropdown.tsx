@@ -4,7 +4,6 @@ import ValidationUtils from '../../../utils/validation.utils'
 import { Language } from '../../../entities/models/language.model'
 import { TranslationService } from '../../../services/TranslationService'
 import { TranslationDTO } from '../../../entities/dtos/translation.dto'
-import { Translation } from '../../../entities/models/translation.model'
 
 interface Props {
   className: string
@@ -20,23 +19,20 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [translationValue, setTranslationValue] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const [updateState, setUpdateState] = useState<boolean>(false)
+  const [infoMessage, setInfoMessage] = useState<string>(null)
 
   useEffect(() => {
-    getLanguages()
-    getTranslation(selectedLanguage)
-  }, [props.id])
+    if (props.isEditing) {
+      getLanguages()
+      getTranslation(selectedLanguage)
+    }
+  }, [props.id, props.isEditing])
 
   const getLanguages = async () => {
     const response = await TranslationService.findAllLanguages()
     if (response) {
       setLanguages(response)
     }
-  }
-
-  const setTheTranslationValue = async (value: string) => {
-    await setTranslationValue(value)
-    await setUpdateState(!updateState)
   }
 
   const getTranslation = async (isoKey: string): Promise<void> => {
@@ -48,22 +44,12 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
       props.id,
     )
     if (response) {
-      console.log('HAS RESPONSE')
-      console.log(isoKey)
-      console.log(response)
       setIsEditing(true)
-      console.log(response.value)
-      setTheTranslationValue(response.value)
+      setTranslationValue(response.value)
     } else {
-      console.log('HAS No RESPONSE')
-      console.log(isoKey)
-      console.log(response)
       setIsEditing(false)
-      setTheTranslationValue(null)
+      setTranslationValue(null)
     }
-
-    // console.log(translationValue)
-    // setUpdateState(!updateState)
   }
 
   const create = async (textValue: string): Promise<void> => {
@@ -73,44 +59,41 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
     data.property = props.property
     data.value = textValue
     data.language = selectedLanguage
-    console.log(data)
 
     if (isEditing) {
-      console.log('Updating translation')
       const response = await TranslationService.updateTranslation(data)
       if (response) {
-        // Set info
+        setInfoMessage(
+          `Translation has been updated for ${
+            languages.find((x) => x.isoKey === data.language).englishDescription
+          }`,
+        )
       }
     } else {
-      console.log('Creating translation')
       const response = await TranslationService.createTranslation(data)
       if (response) {
-        // set info
+        setInfoMessage(
+          `Translation has been created for ${
+            languages.find((x) => x.isoKey === data.language).englishDescription
+          }`,
+        )
       }
     }
   }
 
   const save = async (event) => {
-    // event.preventDefault()
-
     if (ValidationUtils.validateDescription(translationValue)) {
       setErrorMessage('')
       create(translationValue)
     } else {
       setErrorMessage('Value is Required and need to be in the right format')
     }
-
-    // await create(translationValue)
   }
 
-  const setTheSelectedLanguge = async (isoKey) => {
-    await setSelectedLanguage(isoKey)
-    await setUpdateState(!updateState)
-  }
-
-  const switchLanguge = async (isoKey: string) => {
-    setTheSelectedLanguge(isoKey)
+  const switchLanguge = (isoKey: string) => {
+    setSelectedLanguage(isoKey)
     getTranslation(isoKey)
+    setInfoMessage(null)
   }
 
   const validate = (value: string) => {
@@ -118,13 +101,18 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
     if (ValidationUtils.validateDescription(translationValue)) {
       setErrorMessage('')
     } else {
-      setErrorMessage('Value is Required and need to be in the right format')
+      setErrorMessage('Value is required and need to be in the right format')
     }
   }
 
   const handleTextValueChange = async (value: string) => {
-    setTheTranslationValue(value)
+    setTranslationValue(value)
     validate(value)
+  }
+
+  const close = () => {
+    setInfoMessage(null)
+    setVisible(false)
   }
 
   return (
@@ -132,7 +120,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
       <div className="translation-create-form-dropdown__button__show">
         <a
           className="user-claim__button__show"
-          onClick={() => setVisible(!visible)}
+          onClick={() => (visible ? close() : setVisible(true))}
           title={`Create new Translation`}
         >
           <i className="icon__translation"></i>
@@ -144,10 +132,14 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
           visible ? 'show' : 'hidden'
         }`}
       >
-        {'KEY '}
-        {props.id}
+        <div className="translation-create-form-dropdown__button__close">
+          <a onClick={close}>
+            <i className="icon__close"></i>
+          </a>
+        </div>
         <div className="translation-create-form-dropdown__container">
           <h1>Create a Translation</h1>
+
           <div
             className={`translation-create-form-dropdown__container__help-text ${
               props.isEditing ? 'hidden' : 'show'
@@ -155,6 +147,14 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
           >
             The item you are creating needs to be saved before creating
             translations
+          </div>
+
+          <div
+            className={`translation-create-form-dropdown__saved__message ${
+              infoMessage ? 'show' : 'hidden'
+            }`}
+          >
+            {infoMessage}
           </div>
           <div
             className={`translation-create-form-dropdown__container__form ${
@@ -221,7 +221,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
                   <button
                     className="translation-create-form-dropdown__button__cancel"
                     type="button"
-                    onClick={(e) => setVisible(false)}
+                    onClick={close}
                   >
                     Cancel
                   </button>

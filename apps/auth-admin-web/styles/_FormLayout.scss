@@ -40,6 +40,11 @@
     }
   }
 
+  &__saved__message {
+    font-weight: $weight-semi-bold;
+    color: $color-ok;
+  }
+
   &__wrapper {
     max-width: $width-content;
   }
