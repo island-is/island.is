@@ -1,8 +1,8 @@
 import { dedent } from 'ts-dedent'
-import get from 'lodash/get'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
+import { getValueViaPath } from '@island.is/application/core'
 
 export interface NodemailAttachment {
   filename: string
@@ -27,17 +27,24 @@ export const generateApplicationEmail: ApplicationEmail = (
     options: { locale },
   } = props
 
-  const institutionName = get(application.answers, 'applicant.institution')
+  const institutionName = getValueViaPath(
+    application.answers,
+    'applicant.institution',
+  )
 
   const subject = `Umsókn frá ${institutionName}`
-  const attachments = get(application.answers, 'attatchments') as []
+  const attachments = getValueViaPath(application.answers, 'attatchments') as {
+    name: string
+    key: string
+    url: string
+  }[]
 
   const mailAttachments = attachments
     ? attachments.map(
         (attachment) =>
           ({
-            filename: get(attachment, 'name'),
-            href: `${get(attachment, 'url')}/${get(attachment, 'key')}`,
+            filename: attachment?.name || '',
+            href: `${attachment?.url || ''}/${attachment?.key || ''}`,
           } as NodemailAttachment),
       )
     : []

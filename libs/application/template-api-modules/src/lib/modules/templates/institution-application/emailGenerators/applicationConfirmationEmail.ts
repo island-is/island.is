@@ -1,8 +1,8 @@
 import { dedent } from 'ts-dedent'
-import get from 'lodash/get'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
+import { getValueViaPath } from '@island.is/application/core'
 interface ConfirmationEmail {
   (
     props: EmailTemplateGeneratorProps,
@@ -19,12 +19,15 @@ export const generateConfirmationEmail: ConfirmationEmail = (
     options: { locale },
   } = props
 
-  const institutionName = get(application.answers, 'applicant.institution')
+  const institutionName = getValueViaPath(
+    application.answers,
+    'applicant.institution',
+  )
 
-  const contactEmail = get(application.answers, 'contact.email')
+  const contactEmail = getValueViaPath(application.answers, 'contact.email')
 
   const secondaryContactEmail =
-    get(application.answers, 'secondaryContact.email') || ''
+    getValueViaPath(application.answers, 'secondaryContact.email') || ''
 
   const subject = `Umsókn þín fyrir ${institutionName} hefur verið móttekin.`
   const overview = applicationOverviewTemplate(application)

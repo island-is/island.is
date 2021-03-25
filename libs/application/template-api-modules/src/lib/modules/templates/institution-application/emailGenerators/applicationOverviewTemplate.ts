@@ -1,23 +1,31 @@
-import { Application } from '@island.is/application/core'
+import { Application, getValueViaPath } from '@island.is/application/core'
 import { messages } from '@island.is/application/templates/institution-application'
-import get from 'lodash/get'
 import { dedent } from 'ts-dedent'
 
 export const applicationOverviewTemplate = (
   application: Application,
 ): string => {
-  const institutionName = get(application.answers, 'applicant.institution')
+  const institutionName = getValueViaPath(
+    application.answers,
+    'applicant.institution',
+  )
 
-  const contactName = get(application.answers, 'contact.name')
-  const contactEmail = get(application.answers, 'contact.email')
-  const contactPhone = get(application.answers, 'contact.phoneNumber')
+  const contactName = getValueViaPath(application.answers, 'contact.name')
+  const contactEmail = getValueViaPath(application.answers, 'contact.email')
+  const contactPhone = getValueViaPath(
+    application.answers,
+    'contact.phoneNumber',
+  )
 
-  const secondaryContactName = get(application.answers, 'secondaryContact.name')
-  const secondaryContactEmail = get(
+  const secondaryContactName = getValueViaPath(
+    application.answers,
+    'secondaryContact.name',
+  )
+  const secondaryContactEmail = getValueViaPath(
     application.answers,
     'secondaryContact.email',
   )
-  const secondaryContactPhone = get(
+  const secondaryContactPhone = getValueViaPath(
     application.answers,
     'secondaryContact.phoneNumber',
   )
@@ -27,36 +35,42 @@ export const applicationOverviewTemplate = (
     secondaryContactPhone,
   ].some((x) => !!x)
 
-  const projectName = get(application.answers, 'project.name')
-  const projectGoal = get(application.answers, 'project.goals')
-  const projectScope = get(application.answers, 'project.scope')
-  const projectFinance = get(application.answers, 'project.finance')
-  const projectBackground = get(application.answers, 'project.background')
-  const projectStakeholders = get(application.answers, 'stakeholders')
-  const projectRole = get(application.answers, 'role')
-  const projectOtherRoles = get(application.answers, 'otherRoles')
+  const projectName = getValueViaPath(application.answers, 'project.name')
+  const projectGoal = getValueViaPath(application.answers, 'project.goals')
+  const projectScope = getValueViaPath(application.answers, 'project.scope')
+  const projectFinance = getValueViaPath(application.answers, 'project.finance')
+  const projectBackground = getValueViaPath(
+    application.answers,
+    'project.background',
+  )
+  const projectStakeholders = getValueViaPath(
+    application.answers,
+    'stakeholders',
+  )
+  const projectRole = getValueViaPath(application.answers, 'role')
+  const projectOtherRoles = getValueViaPath(application.answers, 'otherRoles')
 
-  const technicalConstraints = get(
+  const technicalConstraints = getValueViaPath(
     application.answers,
     'constraints.technical',
   ) as boolean
-  const financialConstraints = get(
+  const financialConstraints = getValueViaPath(
     application.answers,
     'constraints.financial',
   ) as boolean
-  const timeConstraints = get(
+  const timeConstraints = getValueViaPath(
     application.answers,
     'constraints.time',
   ) as boolean
-  const shoppingConstraints = get(
+  const shoppingConstraints = getValueViaPath(
     application.answers,
     'constraints.shopping',
   ) as boolean
-  const moralConstraints = get(
+  const moralConstraints = getValueViaPath(
     application.answers,
     'constraints.moral',
   ) as boolean
-  const otherConstraints = get(
+  const otherConstraints = getValueViaPath(
     application.answers,
     'constraints.other',
   ) as boolean
