@@ -22,6 +22,7 @@ import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { RSKModule } from '@island.is/api/domains/rsk'
+import { RegulationsModule } from '@island.is/api/domains/regulations'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -126,6 +127,9 @@ const autoSchemaFile = environment.production
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
+    }),
+    RegulationsModule.register({
+      url: environment.regulationsDomain.url,
     }),
   ],
 })

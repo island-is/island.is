@@ -34,6 +34,14 @@ import {
 } from './RegulationsSearchSection'
 import { shuffle } from 'lodash'
 import { getParams } from './regulationUtils'
+import {
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+  GetRegulationsNewestQuery,
+  QueryGetRegulationsNewestArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY, GET_REGULATIONS_NEWEST_QUERY } from '../queries'
+import { log } from 'xstate/lib/actions'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -258,6 +266,34 @@ RegulationsHome.getInitialProps = async ({ apolloClient, locale, query }) => {
   ] as const)
 /**/
 
+  const [namespace, regulationsNewest] = await Promise.all([
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Regulations',
+            lang: locale,
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content?.data?.getNamespace?.fields ?? '{}')
+      }),
+      apolloClient.query<GetRegulationsNewestQuery, QueryGetRegulationsNewestArgs>({
+        query: GET_REGULATIONS_NEWEST_QUERY,
+        variables: {
+          input: {
+            page: 1,
+          },
+        },
+      }),
+  ])
+
+  console.log({namespace, regulationsNewest});
+
+
   // FIXME: use apollo GQL api
 
   // make all result sets look new and exciting!
@@ -266,6 +302,7 @@ RegulationsHome.getInitialProps = async ({ apolloClient, locale, query }) => {
   )
 
   return {
+    namespace,
     searchResults,
     texts: homeTexts,
     searchQuery: getParams(query, ['q', 'rn', 'year', 'ch', 'all']),

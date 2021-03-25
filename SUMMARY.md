@@ -134,6 +134,7 @@
 - [Clients](libs/clients/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
   - [Clients National Registry](libs/clients/national-registry/README.md)
+  - [Regulations](libs/clients/regulations/README.md)
   - [Rsk](libs/clients/rsk/README.md)
   - [VMST](libs/clients/vmst/README.md)
   - [Zendesk Service](libs/clients/zendesk/README.md)
