@@ -204,6 +204,15 @@
     "clients-mms": {
       "tags": []
     },
+    "clients-national-registry": {
+      "tags": []
+    },
+    "clients-rsk": {
+      "tags": []
+    },
+    "clients-vmst": {
+      "tags": []
+    },
     "clients-zendesk": {
       "tags": []
     },
@@ -356,9 +365,6 @@
     "reference-next-app": {
       "tags": []
     },
-    "rsk": {
-      "tags": []
-    },
     "service-portal": {
       "tags": []
     },
@@ -479,9 +485,6 @@
       "tags": []
     },
     "utils-environment": {
-      "tags": []
-    },
-    "vmst-client": {
       "tags": []
     },
     "web": {

@@ -5,7 +5,7 @@ import {
   Union,
   PensionApi,
   PensionFund,
-} from '@island.is/vmst-client'
+} from '@island.is/clients/vmst'
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from './parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from './parentalLeavePaymentPlan.model'

@@ -1,8 +1,15 @@
-import { PersonResidenceChange } from '../types'
+import { Address, Child } from '../types'
 
-export const constructParentAddressString = (parent: PersonResidenceChange) => {
-  if (!parent) {
+export const formatAddress = (address: Address) => {
+  if (!address) {
     return null
   }
-  return `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
+  return `${address.streetName}, ${address.postalCode} ${address.city}`
+}
+
+export const getSelectedChildrenFromExternalData = (
+  children: Child[],
+  selectedChildren: string[],
+): Child[] => {
+  return children.filter((child) => selectedChildren.includes(child.nationalId))
 }

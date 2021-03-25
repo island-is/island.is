@@ -29,9 +29,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       id: 'mockData',
       title: 'Mock data',
       children: [
-        buildMultiField({
-          id: 'mockMulti',
-          title: '',
+        buildSubSection({
+          id: 'useMocks',
+          title: 'Nota gervigögn?',
           children: [
             buildRadioField({
               id: 'useMocks',
@@ -47,11 +47,29 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 },
               ],
             }),
+          ],
+        }),
+        buildSubSection({
+          id: 'parentMock',
+          title: 'Foreldrar',
+          condition: (answers) => answers.useMocks === 'yes',
+          children: [
             buildCustomField({
-              id: 'mockData',
-              title: 'Mock data',
-              component: 'MockData',
-              condition: (answers) => answers.useMocks === 'yes',
+              id: 'mockData.parents',
+              title: 'Mock Foreldrar',
+              component: 'ParentMock',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'childrenMock',
+          title: 'Börn',
+          condition: (answers) => answers.useMocks === 'yes',
+          children: [
+            buildCustomField({
+              id: 'mockData.children',
+              title: 'Mock Börn',
+              component: 'ChildrenMock',
             }),
           ],
         }),
@@ -84,21 +102,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'childrenNationalRegistry',
-                  type: DataProviderTypes.ChildrenNationalRegistry,
-                  title: m.externalData.children.title,
-                  subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'parentNationalRegistry',
-                  type: DataProviderTypes.ParentNationalRegistry,
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
-                }),
-                buildDataProviderItem({
                   id: 'userProfile',
                   type: DataProviderTypes.UserProfile,
-                  title: '',
+                  title: 'User profile',
                   subTitle: '',
                 }),
               ],
@@ -123,27 +129,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: DataProviderTypes.NationalRegistry,
+                  type: DataProviderTypes.MOCK_NationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'childrenNationalRegistry',
-                  type: DataProviderTypes.MOCK_ChildrenNationalRegistry,
-                  title: m.externalData.children.title,
-                  subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'parentNationalRegistry',
-                  type: DataProviderTypes.MOCK_ParentNationalRegistry,
-                  title: m.externalData.otherParents.title,
-                  subTitle: m.externalData.otherParents.subTitle,
-                }),
-                buildDataProviderItem({
-                  id: 'userProfile',
-                  type: DataProviderTypes.UserProfile,
-                  title: '',
-                  subTitle: '',
                 }),
               ],
             }),

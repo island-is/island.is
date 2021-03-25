@@ -4,7 +4,7 @@ import {
   formatText,
   DescriptionField,
 } from '@island.is/application/core'
-import { Text, Tooltip } from '@island.is/island-ui/core'
+import { Text, Tooltip, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import Markdown from 'markdown-to-jsx'
 
@@ -16,7 +16,7 @@ const DescriptionFormField: FC<{
   const { formatMessage } = useLocale()
 
   return (
-    <div>
+    <Box paddingTop={field.space}>
       {showFieldName && (
         <Text variant="h2">
           {formatText(field.title, application, formatMessage)}
@@ -36,7 +36,7 @@ const DescriptionFormField: FC<{
           </>
         )}
       </Text>
-    </div>
+    </Box>
   )
 }
 

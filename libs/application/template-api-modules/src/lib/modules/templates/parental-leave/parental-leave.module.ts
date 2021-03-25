@@ -1,5 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import { VMSTClientModule } from '@island.is/vmst-client'
+import { VMSTModule } from '@island.is/clients/vmst'
 import { createXRoadAPIPath, XRoadMemberClass } from '@island.is/utils/api'
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
@@ -16,7 +16,7 @@ export class ParentalLeaveModule {
     return {
       module: ParentalLeaveModule,
       imports: [
-        VMSTClientModule.register({
+        VMSTModule.register({
           xRoadPath: createXRoadAPIPath(
             config.xRoadBasePathWithEnv,
             XRoadMemberClass.GovernmentInstitution,

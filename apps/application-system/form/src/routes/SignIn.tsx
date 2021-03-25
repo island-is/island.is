@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import { setClientAuthToken } from '@island.is/application/graphql'
+
 import { ActionType, useAuthState } from '../context/AuthProvider'
 import { userManager } from '../utils/userManager'
 import AuthenticationLoading from '../components/AuthenticationLoading/AuthenticationLoading'
-import { setClientAuthToken } from '@island.is/application/graphql'
 
 export const Signin = () => {
   const history = useHistory()
@@ -12,7 +13,7 @@ export const Signin = () => {
   useEffect(() => {
     userManager
       .signinCallback(window.location.href)
-      .then(function (user) {
+      .then((user) => {
         dispatch({
           type: ActionType.SET_USER_FULFILLED,
           payload: user,
@@ -22,7 +23,7 @@ export const Signin = () => {
 
         history.push(user.state?.redirect ?? '/')
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.error(error)
         window.location.replace(window.location.origin)
       })

@@ -5,7 +5,8 @@ import is from 'date-fns/locale/is'
 
 import { Query, Mutation, License } from '@island.is/api/schema'
 import { Box, Button } from '@island.is/island-ui/core'
-import { EducationCard } from '@island.is/service-portal/core'
+import { EducationCard, EmptyState } from '@island.is/service-portal/core'
+import { defineMessage } from 'react-intl'
 
 const EducationLicenseQuery = gql`
   query EducationLicenseQuery {
@@ -87,6 +88,16 @@ const LicenseCards = () => {
         </Box>
       ))}
       <a target="__blank" style={{ display: 'none' }} ref={anchorRef} />
+      {educationLicense.length === 0 && (
+        <Box marginTop={8}>
+          <EmptyState
+            title={defineMessage({
+              id: 'service.portal:education-no-data',
+              defaultMessage: 'Engin gögn fundust',
+            })}
+          />
+        </Box>
+      )}
     </>
   )
 }
