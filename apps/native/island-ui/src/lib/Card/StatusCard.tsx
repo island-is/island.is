@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
-import { Button } from '../Button/Button';
 
 const Host = styled.View`
   position: relative;
@@ -11,9 +9,9 @@ const Host = styled.View`
   padding: 15px 15px;
   margin-bottom: 20px;
 
-  border-radius: ${theme.border.radius.large};
+  border-radius: ${props => props.theme.border.radius.large};
 
-  background-color: #fff;
+  background-color: ${props => props.theme.shade.background};
   overflow: hidden;
 `;
 
@@ -26,18 +24,16 @@ const Title = styled.Text`
 
   font-size: 12px;
   font-weight: bold;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const Description = styled.Text`
   margin-bottom: 16px;
   font-size: 16px;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.shade600};
 `;
 
-const Right = styled.View`
-
-`;
+const Right = styled.View``;
 
 const BottomBar = styled.View`
   position: absolute;
@@ -47,14 +43,13 @@ const BottomBar = styled.View`
 
   height: 15px;
 
-  background-color: ${theme.color.roseTinted100};
+  background-color: rgba(128, 128, 128, 0.2);
 `;
 
 const Bar = styled.View<{ width?: number}>`
   flex: 1;
   width: ${(props: any) => props.width ?? 0}%;
-
-  background-color: ${theme.color.roseTinted300};
+  background-color: ${props => props.theme.isDark ? props.theme.color.roseTinted600 : props.theme.color.roseTinted300};
 `;
 
 interface StatusCardProps {

@@ -83,7 +83,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
+apply from: '../../../node_modules/react-native-unimodules/gradle.groovy'
 apply from: "../../../node_modules/react-native-ultimate-config/android/rnuc.gradle"
 
 /**
@@ -132,13 +132,13 @@ android {
     }
 
     defaultConfig {
-        applicationId project.config.get("BUNDLE_ID")
+        applicationId "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [
-            appAuthRedirectScheme: project.config.get("BUNDLE_ID")
+            appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         ]
     }
     splits {
@@ -209,22 +209,20 @@ dependencies {
     implementation project(':react-native-navigation')
     implementation project(':react-native-keychain')
     implementation project(':react-native-ultimate-config')
-    implementation project(':rnWebView')
+    implementation project(':react-native-app-auth')
+    implementation project(':react-native-web-view')
 
     addUnimodulesDependencies([
-      modulesPath:['../../node_modules'],
+      modulesPaths: ['../../../node_modules'],
       exclude: [
         'expo-file-system',
         'expo-image-loader',
         'expo-permissions',
-        'unimodules-app-loader',
         'unimodules-file-system-interface',
         'unimodules-barcode-scanner-interface',
         'unimodules-camera-interface',
-        'unimodules-image-loader-interface',
         'unimodules-sensors-interface',
         'unimodules-face-detector-interface',
-        'unimodules-permissions-interface',
         'unimodules-task-manager-interface'
       ]
     ])

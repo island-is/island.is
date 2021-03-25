@@ -1,11 +1,10 @@
 import React from 'react'
 import styled from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
+import { ColorValue, StyleProp, TouchableHighlightProps, ViewStyle } from 'react-native';
 
-interface ButtonProps {
-  title: string,
-  onPress: () => void,
-  style?: any,
+interface ButtonProps extends TouchableHighlightProps {
+  title: string;
 }
 
 const Host = styled.TouchableHighlight`
@@ -23,9 +22,9 @@ const Text = styled.Text`
   line-height: 20px;
 `;
 
-export function Button({ title, onPress, style, ...rest }: ButtonProps) {
+export function Button({ title, ...rest }: ButtonProps) {
   return (
-    <Host onPress={onPress} style={style} {...rest}>
+    <Host {...rest} >
       <Text>{title}</Text>
     </Host>
   )

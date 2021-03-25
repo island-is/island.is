@@ -35,6 +35,25 @@ With the app running, open the storybook screen and then start storybook to navi
 yarn nx storybook native-island-ui
 ```
 
+
+### Testing with detox
+
+Build the testing apps
+
+```
+cd apps/native
+yarn detox:build:ios
+yarn detox:build:android
+```
+
+Run the e2e tests
+
+```
+cd apps/native
+yarn detox:test:ios
+yarn detox:test:android
+```
+
 ## Packages needed in root package json
 
 ### Dependencies

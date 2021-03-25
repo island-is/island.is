@@ -3,7 +3,7 @@ export const typePolicies = {
     fields: {
       listDocuments: {
         read() {
-          return [{ id: '123' }];
+          return [{ id: '123' }, { id: '321' }];
         }
       },
     }

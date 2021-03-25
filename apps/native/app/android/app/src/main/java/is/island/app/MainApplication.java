@@ -13,6 +13,7 @@ import com.reactnativeultimateconfig.UltimateConfigModule;
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
 import org.unimodules.adapters.react.ReactModuleRegistryProvider;
 import org.unimodules.core.interfaces.SingletonModule;
+import com.rnappauth.RNAppAuthPackage;
 
 // android and react native
 import android.app.Application;
@@ -47,6 +48,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNCWebViewPackage());
           packages.add(new UltimateConfigPackage());
           packages.add(new KeychainPackage());
+          packages.add(new RNAppAuthPackage());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(

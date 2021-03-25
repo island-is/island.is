@@ -5,6 +5,7 @@ import { Navigation, NavigationFunctionComponent } from 'react-native-navigation
 import { useNavigation, showModal } from 'react-native-navigation-hooks';
 import { useAuthStore } from '../../auth/auth';
 import { loginRoot} from '../../main';
+import { testIDs } from '../../utils/test-ids';
 
 export const UserScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore();
@@ -14,6 +15,7 @@ export const UserScreen: NavigationFunctionComponent = () => {
         width: '100%',
         height: '100%',
       }}
+      testID={testIDs.SCREEN_USER}
     >
       <Container>
         <Heading>{authStore.userInfo?.name}</Heading>
@@ -27,10 +29,4 @@ export const UserScreen: NavigationFunctionComponent = () => {
       </Container>
     </SafeAreaView>
   )
-}
-
-UserScreen.options = {
-  topBar: {
-    visible: false
-  }
 }

@@ -1,7 +1,20 @@
 rootProject.name = 'IslandApp'
 
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy';
-includeUnimodulesProjects()
+includeUnimodulesProjects([
+  modulesPaths: ['../../../node_modules'],
+  exclude: [
+    'expo-file-system',
+    'expo-image-loader',
+    'expo-permissions',
+    'unimodules-file-system-interface',
+    'unimodules-barcode-scanner-interface',
+    'unimodules-camera-interface',
+    'unimodules-sensors-interface',
+    'unimodules-face-detector-interface',
+    'unimodules-task-manager-interface'
+  ]
+])
 
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
 applyNativeModulesSettingsGradle(settings)
@@ -15,7 +28,10 @@ project(':react-native-keychain').projectDir = new File(rootProject.projectDir, 
 include ':react-native-ultimate-config'
 project(':react-native-ultimate-config').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-ultimate-config/android')
 
-include ':rnWebView'
-project(':rnWebView').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-webview/android')
+include ':react-native-app-auth'
+project(':react-native-app-auth').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-app-auth/android')
+
+include ':react-native-web-view'
+project(':react-native-web-view').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-webview/android')
 
 include ':app'

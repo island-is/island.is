@@ -2,6 +2,7 @@ import React from 'react'
 import { SafeAreaView,View,Text, Image } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import logo from '../../assets/logo/logo-64w.png'
+import { testIDs } from '../../utils/test-ids'
 
 export const AppLockScreen: NavigationFunctionComponent = () => {
   return (
@@ -12,6 +13,7 @@ export const AppLockScreen: NavigationFunctionComponent = () => {
         alignItems: 'center',
         backgroundColor: '#f2f7ff'
       }}
+      testID={testIDs.SCREEN_APP_LOCK}
     >
       <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
         <Image source={logo} />

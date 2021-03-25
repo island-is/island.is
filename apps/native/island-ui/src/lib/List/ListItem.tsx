@@ -1,4 +1,3 @@
-import { theme } from '@island.is/island-ui/theme';
 import React from 'react'
 import styled from 'styled-components/native';
 
@@ -6,8 +5,8 @@ const Host = styled.View`
   flex: 1;
   padding: 20px 30px;
 
-  border-bottom-width: ${theme.border.width.standard}px;
-  border-color: ${theme.color.blue200};
+  border-bottom-width: ${props => props.theme.border.width.standard}px;
+  border-color: ${props => props.theme.shade.shade200};
 `;
 
 const Title = styled.Text`
@@ -15,12 +14,12 @@ const Title = styled.Text`
 
   font-size: 12px;
   font-weight: bold;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const Description = styled.Text`
   font-size: 16px;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 interface ListItemProps {
