@@ -3,12 +3,8 @@ import React, { FC, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 
-import {
-  FieldBaseProps,
-  getValueViaPath,
-  MessageFormatter,
-} from '@island.is/application/core'
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import Review from '../Review'
 

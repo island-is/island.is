@@ -2,8 +2,8 @@ import React, { FC } from 'react'
 
 import { useLocale } from '@island.is/localization'
 
-import { FieldBaseProps, MessageFormatter } from '@island.is/application/core'
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
