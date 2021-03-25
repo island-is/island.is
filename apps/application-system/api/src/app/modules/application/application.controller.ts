@@ -24,6 +24,7 @@ import {
   ApiTags,
   ApiHeader,
   ApiQuery,
+  ApiOAuth2,
 } from '@nestjs/swagger'
 import {
   Application as BaseApplication,
@@ -38,7 +39,13 @@ import {
   ApplicationIdentityServerScope,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
-import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  IdsAuthGuard,
+  ScopesGuard,
+  Scopes,
+  CurrentUser,
+  User,
+} from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
@@ -77,8 +84,6 @@ import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
 import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
-import { NationalId } from './tools/nationalId.decorator'
-import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
 import {
   DecodedAssignmentToken,
@@ -88,10 +93,7 @@ import {
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
+@ApiOAuth2([ApplicationIdentityServerScope.read])
 @Controller()
 export class ApplicationController {
   constructor(
@@ -147,12 +149,12 @@ export class ApplicationController {
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   async findAll(
-    @NationalId() nationalId: string,
+    @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
     const applications = await this.applicationService.findAllByNationalIdAndFilters(
-      nationalId,
+      user.nationalId,
       typeId,
       status,
     )
@@ -192,8 +194,8 @@ export class ApplicationController {
   async create(
     @Body()
     application: CreateApplicationDto,
-    @NationalId()
-    nationalId: string,
+    @CurrentUser()
+    user: User,
   ): Promise<ApplicationResponseDto> {
     const { typeId } = application
 
@@ -229,7 +231,7 @@ export class ApplicationController {
       | 'typeId'
     > = {
       answers: {},
-      applicant: nationalId,
+      applicant: user.nationalId,
       assignees: [],
       attachments: {},
       state: initialState,
@@ -246,8 +248,7 @@ export class ApplicationController {
   @UseInterceptors(ApplicationSerializer)
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
-    @NationalId() nationalId: string,
-    @AuthorizationHeader() authorization: string,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const decodedToken = verifyToken<DecodedAssignmentToken>(
       assignApplicationDto.token,
@@ -285,7 +286,7 @@ export class ApplicationController {
 
     validateThatTemplateIsReady(template)
 
-    const assignees = [nationalId]
+    const assignees = [user.nationalId]
 
     const mergedApplication: BaseApplication = {
       ...(existingApplication.toJSON() as BaseApplication),
@@ -301,7 +302,7 @@ export class ApplicationController {
       mergedApplication,
       template,
       DefaultEvents.ASSIGN,
-      authorization,
+      user.authorization,
     )
 
     if (hasError) {
@@ -331,14 +332,14 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     application: UpdateApplicationDto,
-    @NationalId() nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const newAnswers = application.answers as FormValue
 
     await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
-      nationalId,
+      user.nationalId,
       true,
     )
 
@@ -375,13 +376,12 @@ export class ApplicationController {
     existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
-    @AuthorizationHeader() authorization: string,
-    @NationalId() nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     await validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
-      nationalId,
+      user.nationalId,
     )
     const templateDataProviders = await getApplicationDataProviders(
       (existingApplication as BaseApplication).typeId,
@@ -391,7 +391,7 @@ export class ApplicationController {
       buildDataProviders(
         externalDataDto,
         templateDataProviders,
-        authorization ?? '',
+        user.authorization,
       ),
       existingApplication as BaseApplication,
     )
@@ -426,8 +426,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
-    @NationalId() nationalId: string,
-    @AuthorizationHeader() authorization: string,
+    @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -443,7 +442,7 @@ export class ApplicationController {
     const permittedAnswers = await validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
-      nationalId,
+      user.nationalId,
       false,
     )
 
@@ -470,7 +469,7 @@ export class ApplicationController {
       mergedApplication,
       template,
       updateApplicationStateDto.event,
-      authorization,
+      user.authorization,
     )
 
     if (hasError) {

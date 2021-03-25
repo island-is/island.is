@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationResponseDto } from '../dto/application.response.dto'
-import { getNationalIdFromToken } from '../utils/tokenUtils'
+import { getCurrentUser } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ApplicationSerializer
@@ -25,22 +25,18 @@ export class ApplicationSerializer
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<Promise<unknown>> {
-    let nationalId: string
-    try {
-      nationalId = getNationalIdFromToken(context)
-    } catch (e) {
-      throw new UnauthorizedException('You are not authenticated')
-    }
+    const user = getCurrentUser(context)
+
     return next.handle().pipe(
       map(async (res: Application | Array<Application>) => {
         const isArray = Array.isArray(res)
         return isArray
           ? Promise.all(
               (res as Application[]).map((item) =>
-                this.serialize(item, nationalId),
+                this.serialize(item, user.nationalId),
               ),
             )
-          : this.serialize(res as Application, nationalId)
+          : this.serialize(res as Application, user.nationalId)
       }),
     )
   }
