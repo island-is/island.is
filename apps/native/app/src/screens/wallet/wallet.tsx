@@ -1,17 +1,22 @@
 import { Card, CardColor, ListItem } from '@island.is/island-ui-native';
 import React from 'react'
-import { Linking, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native'
+import { useQuery } from '@apollo/client'
+import { client } from '../../graphql/client'
 import { NavigationFunctionComponent } from 'react-native-navigation';
 import { useTheme } from 'styled-components';
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
 import { useScreenOptions } from '../../contexts/theme-provider';
-import { config } from '../../utils/config';
 import { navigateTo } from '../../utils/deep-linking';
-import { ComponentRegistry } from '../../utils/navigation-registry';
 import { testIDs } from '../../utils/test-ids';
+import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query';
+import logo from '../../assets/logo/logo-64w.png'
 
 export const WalletScreen: NavigationFunctionComponent = () => {
   const theme = useTheme();
+  const res = useQuery(LIST_LICENSES_QUERY, { client });
+  const licenseItems = res?.data?.listLicenses ?? [];
+
   useScreenOptions(() => ({
     topBar: {
       title: {
@@ -43,7 +48,7 @@ export const WalletScreen: NavigationFunctionComponent = () => {
           }}
           contentInsetAdjustmentBehavior="automatic"
           decelerationRate={0}
-          style={{ marginTop: 50, marginBottom: 50 }}
+          style={{ marginTop: 50, marginBottom: 10 }}
         >
           <TouchableOpacity onPress={() => navigateTo('/wallet/drivers-license')}>
             <Card title="Ökuskírteini" />
@@ -56,22 +61,9 @@ export const WalletScreen: NavigationFunctionComponent = () => {
           <Input placeholder="Finndu skírteini" />
         </Container> */}
 
-        <ListItem
-          title="Ríkislögreglustjóri"
-          description="Ökuskírteini"
-        />
-        <ListItem
-          title="Ríkislögreglustjóri"
-          description="Skotvopnaleyfi"
-        />
-        <ListItem
-          title="Rauði Krossinn"
-          description="Fyrsta hjálp"
-        />
-        <ListItem
-          title="Ríkislögreglustjóri"
-          description="Siglingaréttindi"
-        />
+        {licenseItems.map(({ id, title, subtitle }: { id: string, title: string, subtitle: string }) => (
+          <ListItem key={id} title={title} subtitle={subtitle} icon={logo} />
+        ))}
       </ScrollView>
       <BottomTabsIndicator index={2} total={3} />
     </>

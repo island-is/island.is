@@ -6,6 +6,7 @@ configure(() =>{
   require('../../../../island-ui/src/lib/Button/Button.stories');
   require('../../../../island-ui/src/lib/Badge/Badge.stories');
   require('../../../../island-ui/src/lib/Card/Card.stories');
+  require('../../../../island-ui/src/lib/Alert/Alert.stories');
 }, module);
 
 export const StorybookUI = getStorybookUI({
