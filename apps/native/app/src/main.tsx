@@ -139,6 +139,8 @@ function getDefaultOptions(colorScheme = overwriteColorScheme ?? Appearance.getC
         color: theme.color.blue400,
       },
       title: {
+        fontFamily: 'IBMPlexSans-SemiBold',
+        fontSize: 19,
         color: theme.color.blue400,
       },
       animate: true,
