@@ -8,6 +8,7 @@ import { config } from '../../utils/config';
 import { ComponentRegistry } from '../../utils/navigation-registry';
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query';
 import logo from '../../assets/logo/logo-64w.png'
+import { Logo } from '../../components/logo/logo';
 
 export const WalletScreen: NavigationFunctionComponent = () => {
   const res = useQuery(LIST_LICENSES_QUERY, { client });
@@ -43,7 +44,7 @@ export const WalletScreen: NavigationFunctionComponent = () => {
         </Container> */}
 
         {licenseItems.map(({ id, title, subtitle }: { id: string, title: string, subtitle: string }) => (
-          <ListItem key={id} title={title} subtitle={subtitle} icon={logo} />
+          <ListItem key={id} title={title} subtitle={subtitle} icon={<Logo name="Skatturinn" />} />
         ))}
       </ScrollView>
     </SafeAreaView>

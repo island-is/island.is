@@ -1,14 +1,14 @@
 import { ListItem } from '@island.is/island-ui-native'
-import { theme } from '@island.is/island-ui/theme'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
-import { RefreshControl, SafeAreaView, ScrollView } from 'react-native'
+import { RefreshControl, ScrollView } from 'react-native'
 import { NavigationFunctionComponent, Options, Navigation } from 'react-native-navigation'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { ComponentRegistry } from '../../utils/navigation-registry'
-import { LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
-import logo from '../../assets/logo/logo-64w.png'
+import { ListDocumentsResponse, LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
+import { config } from '../../utils/config';
+import { Logo } from '../../components/logo/logo'
+
 
 export const InboxScreen: NavigationFunctionComponent = () => {
   // const [idle, setIdle] = useState(true)
@@ -18,7 +18,7 @@ export const InboxScreen: NavigationFunctionComponent = () => {
     setTimeout(() => setLoading(false), 1000)
   }
 
-  const res = useQuery(LIST_DOCUMENTS_QUERY, { client });
+  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client });
   const inboxItems = res?.data?.listDocuments ?? [];
 
   // useNavigationComponentDidAppear(() => {
@@ -38,8 +38,14 @@ export const InboxScreen: NavigationFunctionComponent = () => {
         <RefreshControl refreshing={loading} onRefresh={onRefresh} />
       }
     >
-      {inboxItems.map(({ id, title, subtitle }: { id: string, title: string, subtitle: string }) => (
-        <ListItem key={id} title={title} subtitle={subtitle} icon={logo} />
+      {inboxItems.map(({ id, subject, senderName }) => (
+        <ListItem
+          key={id}
+          title={senderName}
+          subtitle={subject}
+          icon={<Logo name={senderName} />}
+          link={`${config.bundleId}://inbox/${id}`}
+        />
       ))}
     </ScrollView>
   )

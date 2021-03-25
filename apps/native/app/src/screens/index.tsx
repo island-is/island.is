@@ -10,6 +10,7 @@ import { registerComponent } from '../utils/register-component';
 import { Navigation } from 'react-native-navigation'
 import { NavigationBarTitle } from '../components/navigation-bar-title/navigation-bar-title';
 import { ComponentRegistry } from '../utils/navigation-registry';
+import { DocumentDetailScreen } from './document-detail/document-detail'
 
 export function registerAllComponents() {
   if (config.storybookMode) {
@@ -26,6 +27,7 @@ export function registerAllComponents() {
     registerComponent(ComponentRegistry.UserScreen, UserScreen)
     registerComponent(ComponentRegistry.AppLockScreen, AppLockScreen)
     registerComponent(ComponentRegistry.WalletPassScreen, WalletPassScreen);
+    registerComponent(ComponentRegistry.DocumentDetailScreen, DocumentDetailScreen);
     // ui components
     Navigation.registerComponent(ComponentRegistry.NavigationBarTitle, () => NavigationBarTitle);
   }

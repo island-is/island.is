@@ -1,15 +1,17 @@
 import { theme } from '@island.is/island-ui/theme';
 import React from 'react'
-import { Text, Image } from 'react-native';
+import { Linking, TouchableHighlight } from 'react-native';
 import styled from 'styled-components/native';
 
 const Host = styled.View`
+  border-bottom-width: ${theme.border.width.standard}px;
+  border-color: ${theme.color.blue200};
+`;
+
+const Flex = styled.View`
   display: flex;
   flex-flow: row nowrap;
   padding: 20px 16px;
-
-  border-bottom-width: ${theme.border.width.standard}px;
-  border-color: ${theme.color.blue200};
 `;
 
 const Col = styled.View`
@@ -25,7 +27,7 @@ const IconWrap = styled.View`
 `;
 
 const Title = styled.Text`
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 
   font-size: 12px;
   font-weight: bold;
@@ -40,20 +42,17 @@ const Subtitle = styled.Text`
 interface ListItemProps {
   title: string;
   subtitle: string;
-  icon?: any;
+  icon?: React.ReactNode;
+  link?: string;
 }
 
-export function ListItem({ title, subtitle, icon }: ListItemProps) {
-  return (
-    <Host>
+export function ListItem({ title, subtitle, icon, link }: ListItemProps) {
+  const content = (
+    <Flex>
       <Col>
         <IconWrap>
           {icon && (
-            <Image
-              source={icon}
-              resizeMode="contain"
-              style={{ width: 25, height: 25 }}
-            />
+            icon
           )}
         </IconWrap>
       </Col>
@@ -65,6 +64,25 @@ export function ListItem({ title, subtitle, icon }: ListItemProps) {
           {subtitle}
         </Subtitle>
       </Col>
+    </Flex>
+  );
+
+  if (!link) {
+    return (
+      <Host>
+        {content}
+      </Host>
+    )
+  }
+
+  return (
+    <Host>
+      <TouchableHighlight
+        underlayColor={theme.color.blue100}
+        onPress={() => { Linking.openURL(link) }}
+      >
+        {content}
+      </TouchableHighlight>
     </Host>
   )
 }

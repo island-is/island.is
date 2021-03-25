@@ -36,8 +36,8 @@ function registerEventListeners() {
 
   // deep linking
   addScheme(`${config.bundleId}://`);
-  addRoute('/inbox', () => {
-    console.log('inbox');
+  addRoute('/inbox', (...x) => {
+    console.log('inbox', x);
   });
   addRoute('/', () => {
     console.log('home')
@@ -47,7 +47,6 @@ function registerEventListeners() {
   });
 
   addRoute('/wallet/:passId', ({ passId }: any) => {
-
     Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
       bottomTabs: {
         currentTabIndex: 2,
@@ -72,6 +71,33 @@ function registerEventListeners() {
       })
     });
   });
+
+  addRoute('/inbox/:docId', ({ docId }: any) => {
+    Navigation.mergeOptions('BOTTOM_TABS_LAYOUT', {
+      bottomTabs: {
+        currentTabIndex: 0,
+      },
+    });
+    // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
+    Navigation.popToRoot('INBOX_SCREEN', {
+      animations: {
+        pop: {
+          enabled: false,
+        }
+      }
+    })
+    .then(() => {
+      Navigation.push('INBOX_TAB', {
+        component: {
+          name: ComponentRegistry.DocumentDetailScreen,
+          passProps: {
+            docId,
+          },
+        },
+      })
+    });
+  });
+
   addRoute('/user', () => {
     Navigation.showModal({
       stack: {
@@ -127,7 +153,6 @@ function registerEventListeners() {
       Linking.openURL(`${config.bundleId}://user`);
     }
   })
-
 }
 
 // native navigation options

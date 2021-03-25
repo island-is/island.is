@@ -11,6 +11,7 @@ export const ComponentRegistry = {
   LoginScreen: `${prefix}.screens.Login`,
   AppLockScreen: `${prefix}.screens.AppLock`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,
+  DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   StorybookScreen: `${prefix}.screens.Storybook`,
 
   // ui components
