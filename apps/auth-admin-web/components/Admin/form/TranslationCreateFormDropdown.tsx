@@ -85,7 +85,7 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
       setErrorMessage('')
       create(translationValue)
     } else {
-      setErrorMessage('Value is Required and need to be in the right format')
+      setErrorMessage('Value is required and need to be in the right format')
     }
   }
 
