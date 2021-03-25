@@ -105,16 +105,16 @@ You will be asked for a _secret name_ that will be added to the `/k8s/` secrets 
 ```bash
 ➜ yarn create-secret
 Secret name: /k8s/my-app/MY_APP_KEY
-_Name: Ok!_
-_Length: Ok!_
+# Name: Ok!
+# Length: Ok!
 Secret value: a-very-secure-secret
-_Length: Ok!_
+# Length: Ok!
 SecureString [Y/n]? # [enter] for SecureString
-_SecureString selected_
+# SecureString selected
 Add tags? [y/N]? # [enter] to skip creating tags
 Example: Key=Foo,Value=Bar Key=Another,Value=Tag: # note: Key and Value are case sensitive! Create multiple tags by separating with whitespace.
 Are you sure [Y/n]? # [enter] to confirm
-_Creating secret...._
+# Creating secret....
 ```
 
 {% hint style="info" %}
