@@ -101,6 +101,21 @@ yarn create-secret
 ```
 
 You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace, a _secret value_ and the _secret type_ (`SecureString` or `String`).
+### Example
+```bash
+➜ yarn create-secret
+Secret name: /k8s/my-app/MY_APP_KEY
+_Name: Ok!_
+_Length: Ok!_
+Secret value: a-very-secure-secret
+_Length: Ok!_
+SecureString [Y/n]? # [enter] for SecureString
+_SecureString selected_
+Add tags? [y/N]? # [enter] to skip creating tags
+Example: Key=Foo,Value=Bar Key=Another,Value=Tag: # note: Key and Value are case sensitive! Create multiple tags by separating with whitespace.
+Are you sure [Y/n]? # [enter] to confirm
+_Creating secret...._
+```
 
 {% hint style="info" %}
 It's recommended to use `SecureString` in most cases. However, if you need to add an email address, or an email sender's name to the secrets, you can just use a `String`.
