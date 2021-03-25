@@ -70,6 +70,11 @@ const Index: React.FC = () => {
     }
   }
 
+  const refreshClaims = async () => {
+    const decode = decodeURIComponent(resourceId as string)
+    await getResource(decode)
+  }
+
   switch (step) {
     case ApiResourceStep.ApiResourceBasics: {
       return (
@@ -140,6 +145,7 @@ const Index: React.FC = () => {
               handleChanges={changesMade}
               handleNext={handleNext}
               handleBack={handleBack}
+              handleNewClaimsAdded={refreshClaims}
             ></ApiResourceUserClaimForm>
           </ApiResourceStepNav>
         </ContentWrapper>

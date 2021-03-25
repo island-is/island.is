@@ -201,6 +201,15 @@
     "cache": {
       "tags": []
     },
+    "clients-mms": {
+      "tags": []
+    },
+    "clients-national-registry": {
+      "tags": []
+    },
+    "clients-zendesk": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
@@ -214,9 +223,6 @@
       "tags": []
     },
     "content-search-toolkit": {
-      "tags": []
-    },
-    "contentful-importer": {
       "tags": []
     },
     "contentful-translation-extension": {

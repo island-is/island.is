@@ -17,7 +17,7 @@ const settings: UserManagerSettings = {
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
   automaticSilentRenew: true,
-  scope: 'openid profile api_resource.scope',
+  scope: 'openid profile api_resource.scope @island.is/applications:read',
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 

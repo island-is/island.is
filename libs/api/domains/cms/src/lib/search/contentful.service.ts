@@ -35,7 +35,7 @@ type typeOfSync = { initial: boolean } | { nextSyncToken: string }
 @Injectable()
 export class ContentfulService {
   private limiter: Bottleneck
-  private defaultIncludeDepth = 10
+  private defaultIncludeDepth = 4
   private contentfulClient: ContentfulClientApi
   // TODO: Make the contentful locale reflect the api locale
   // contentful locale does not always reflect the api locale so we need this map

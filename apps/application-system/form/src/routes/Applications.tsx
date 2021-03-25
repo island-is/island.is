@@ -14,24 +14,27 @@ import {
   ActionCard,
   Page,
   Button,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import {
   Application,
   ApplicationStatus,
-  ApplicationTypes,
   coreMessages,
+  getTypeFromSlug,
 } from '@island.is/application/core'
 import { NotFound } from '@island.is/application/ui-shell'
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
+import { dateFormat } from '@island.is/shared/constants'
 
 import useAuth from '../hooks/useAuth'
 
 export const Applications: FC = () => {
-  const { type } = useParams<{ type: ApplicationTypes }>()
+  const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const nationalRegistryId = userInfo?.profile?.nationalId
+  const type = getTypeFromSlug(slug)
 
   useApplicationNamespaces(type)
 
@@ -41,6 +44,7 @@ export const Applications: FC = () => {
       variables: {
         input: { typeId: type },
       },
+      skip: !type,
     },
   )
 
@@ -48,34 +52,28 @@ export const Applications: FC = () => {
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        history.push(`../umsokn/${createApplication.id}`)
+        history.push(`../${slug}/${createApplication.id}`)
       },
     },
   )
 
-  function createApplication() {
+  const createApplication = () => {
     createApplicationMutation({
       variables: {
         input: {
-          applicant: nationalRegistryId,
-          state: 'draft',
-          attachments: {},
           typeId: type,
-          assignees: [nationalRegistryId],
-          answers: {},
-          status: ApplicationStatus.IN_PROGRESS,
         },
       },
     })
   }
 
   useEffect(() => {
-    if (data && isEmpty(data.applicationApplications)) {
+    if (type && data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
-  }, [data])
+  }, [type, data])
 
-  if (applicationsError)
+  if (!type || applicationsError) {
     return (
       <NotFound
         title={formatMessage(coreMessages.notFoundApplicationType)}
@@ -84,8 +82,9 @@ export const Applications: FC = () => {
         })}
       />
     )
+  }
 
-  if (createError)
+  if (createError) {
     return (
       <NotFound
         title={formatMessage(coreMessages.createErrorApplication)}
@@ -94,47 +93,73 @@ export const Applications: FC = () => {
         })}
       />
     )
+  }
 
   return (
     <Page>
-      {!loading && !isEmpty(data?.applicationApplications) && (
-        <Box padding="containerGutter">
-          <Box marginTop={5} marginBottom={5}>
-            <Text variant="h1">{formatMessage(coreMessages.applications)}</Text>
-          </Box>
+      <GridContainer>
+        {!loading && !isEmpty(data?.applicationApplications) && (
+          <Box>
+            <Box marginTop={5} marginBottom={5}>
+              <Text variant="h1">
+                {formatMessage(coreMessages.applications)}
+              </Text>
+            </Box>
 
-          <Stack space={2}>
-            {(data?.applicationApplications ?? []).map(
-              (application: Application) => (
-                <ActionCard
-                  key={application.id}
-                  heading={application.name || application.typeId}
-                  text={format(new Date(application.modified), 'do MMMM yyyy')}
-                  cta={{
-                    label: formatMessage(coreMessages.buttonNext),
-                    variant: 'text',
-                    onClick: () => history.push(`../umsokn/${application.id}`),
-                  }}
-                  progressMeter={{
-                    active: true,
-                    progress: application.progress,
-                  }}
-                />
-              ),
-            )}
-          </Stack>
-          <Box
-            marginTop={5}
-            marginBottom={5}
-            display="flex"
-            justifyContent="flexEnd"
-          >
-            <Button onClick={createApplication}>
-              {formatMessage(coreMessages.newApplication)}
-            </Button>
+            <Stack space={2}>
+              {(data?.applicationApplications ?? []).map(
+                (application: Application) => {
+                  const isComplete =
+                    application.status === ApplicationStatus.COMPLETED
+
+                  return (
+                    <ActionCard
+                      key={application.id}
+                      date={format(
+                        new Date(application.modified),
+                        dateFormat.is,
+                      )}
+                      tag={{
+                        label: isComplete
+                          ? formatMessage(coreMessages.tagsInCompleted)
+                          : formatMessage(coreMessages.tagsInProgress),
+                        variant: isComplete ? 'mint' : 'blue',
+                        outlined: false,
+                      }}
+                      heading={application.name || application.typeId}
+                      text={application.applicant}
+                      cta={{
+                        label: formatMessage(coreMessages.buttonNext),
+                        variant: 'ghost',
+                        size: 'small',
+                        icon: undefined,
+                        onClick: () =>
+                          history.push(`../${slug}/${application.id}`),
+                      }}
+                      progressMeter={{
+                        active: true,
+                        progress: application.progress,
+                        variant: isComplete ? 'mint' : 'blue',
+                      }}
+                    />
+                  )
+                },
+              )}
+            </Stack>
+
+            <Box
+              marginTop={5}
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button onClick={createApplication}>
+                {formatMessage(coreMessages.newApplication)}
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
+      </GridContainer>
     </Page>
   )
 }
