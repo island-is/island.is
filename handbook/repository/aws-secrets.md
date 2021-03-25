@@ -100,10 +100,14 @@ You can run the following command and will be prompted for input.
 yarn create-secret
 ```
 
-You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace and a _secret value_. The length of the _secret name_ should be from 6-128 characters long.
+You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace, a _secret value_ and the _secret type_ (`SecureString` or `String`).
+
+{% hint style="info" %}
+It's recommended to use `SecureString` in most cases. However, if you need to add an email address, or an email sender's name to the secrets, you can just use a `String`.
+{% endhint %}
 
 {% hint style="warning" %}
-Only alphanumeric characters, `/` and `-` are allowed.
+Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
 {% endhint %}
 
 ### Making dev secrets available locally
