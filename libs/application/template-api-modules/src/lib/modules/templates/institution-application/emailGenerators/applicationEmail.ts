@@ -26,7 +26,6 @@ export const generateApplicationEmail: ApplicationEmail = (
     application,
     options: { locale },
   } = props
-
   const institutionName = getValueViaPath(
     application.answers,
     'applicant.institution',
@@ -36,15 +35,14 @@ export const generateApplicationEmail: ApplicationEmail = (
   const attachments = getValueViaPath(application.answers, 'attatchments') as {
     name: string
     key: string
-    url: string
   }[]
-
   const mailAttachments = attachments
     ? attachments.map(
-        (attachment) =>
+        ({ key = '', name = '' }) =>
           ({
-            filename: attachment?.name || '',
-            href: `${attachment?.url || ''}/${attachment?.key || ''}`,
+            filename: name,
+            href:
+              (application.attachments as { [key: string]: string })[key] || '',
           } as NodemailAttachment),
       )
     : []
