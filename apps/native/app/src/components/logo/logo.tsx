@@ -14,6 +14,9 @@ function senderNameToIconType(str: string) {
   if (str === 'Skatturinn') {
     return IconType.TAX;
   }
+  if (str === 'Ríkislögreglustjóri') {
+    return IconType.GOVERNMENT
+  }
   if (str === 'Fjársýsla ríkisins') {
     return IconType.GOVERNMENT
   } else {

@@ -10,7 +10,6 @@ import { useScreenOptions } from '../../contexts/theme-provider';
 import { navigateTo } from '../../utils/deep-linking';
 import { testIDs } from '../../utils/test-ids';
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query';
-import logo from '../../assets/logo/logo-64w.png'
 import { Logo } from '../../components/logo/logo';
 
 export const WalletScreen: NavigationFunctionComponent = () => {
@@ -63,7 +62,7 @@ export const WalletScreen: NavigationFunctionComponent = () => {
         </Container> */}
 
         {licenseItems.map(({ id, title, subtitle }: { id: string, title: string, subtitle: string }) => (
-          <ListItem key={id} title={title} subtitle={subtitle} icon={<Logo name="Skatturinn" />} />
+          <ListItem key={id} title={title} subtitle={subtitle} icon={<Logo name={title} />} onPress={() => navigateTo(`/wallet/${id}`)} />
         ))}
       </ScrollView>
       <BottomTabsIndicator index={2} total={3} />

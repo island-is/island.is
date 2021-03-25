@@ -21,7 +21,7 @@ export const typePolicies = {
           return [
             { id: '1', title: 'Ríkislögreglustjóri', subtitle: 'Ökuskírteini' },
             { id: '2', title: 'Ríkislögreglustjóri', subtitle: 'Skotvopnaleyfi' },
-            { id: '3', title: 'Rauði Krossinn ríkisins', subtitle: 'Fyrsta hjálp' },
+            { id: '3', title: 'Ríkislögreglustjóri', subtitle: 'Fyrsta hjálp' },
             { id: '4', title: 'Ríkislögreglustjóri', subtitle: 'Siglingaréttindi' },
           ]
         }

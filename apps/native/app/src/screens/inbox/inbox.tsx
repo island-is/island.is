@@ -5,7 +5,6 @@ import { ListItem } from '@island.is/island-ui-native'
 import { navigateTo } from '../../utils/deep-linking';
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
-import { config } from '../../utils/config';
 import { Logo } from '../../components/logo/logo'
 import { useTheme } from 'styled-components'
 import { useScreenOptions } from '../../contexts/theme-provider'
