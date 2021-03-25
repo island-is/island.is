@@ -8,6 +8,7 @@ import {
   buildSelectField,
   buildSubmitField,
   Form,
+  FormModes,
 } from '@island.is/application/core'
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
@@ -16,7 +17,7 @@ export const EditOrAddPeriods: Form = buildForm({
   id: 'ParentalLeaveEditOrAddPeriods',
   title: 'Edit or add periods',
   logo: Logo,
-  // mode: FormModes.EDITING,
+  mode: FormModes.EDITING,
   children: [
     buildSection({
       id: 'editOrAddPeropds',
