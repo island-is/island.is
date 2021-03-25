@@ -12,6 +12,7 @@ import {
   UseInterceptors,
   Optional,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -33,9 +34,11 @@ import {
   ExternalData,
   ApplicationTemplateAPIAction,
   PdfTypes,
+  ApplicationStatus,
+  ApplicationIdentityServerScope,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
-// import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
@@ -63,6 +66,9 @@ import {
   validateApplicationSchema,
   validateIncomingAnswers,
   validateIncomingExternalDataProviders,
+  validateThatTemplateIsReady,
+  isTemplateReady,
+  validateThatApplicationIsReady,
 } from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -74,27 +80,13 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
+import {
+  DecodedAssignmentToken,
+  StateChangeResult,
+  TemplateAPIModuleActionResult,
+} from './types'
 
-interface DecodedAssignmentToken {
-  applicationId: string
-  state: string
-}
-
-interface StateChangeResult {
-  error?: string
-  hasError: boolean
-  hasChanged: boolean
-  application: BaseApplication
-}
-
-interface TemplateAPIModuleActionResult {
-  updatedApplication: BaseApplication
-  hasError: boolean
-  error?: string
-}
-
-// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
-
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -109,6 +101,7 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -123,9 +116,12 @@ export class ApplicationController {
       )
     }
 
+    await validateThatApplicationIsReady(application as BaseApplication)
+
     return application
   }
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Get('users/:nationalId/applications')
   @ApiParam({
     name: 'nationalId',
@@ -155,29 +151,96 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
-    return await this.applicationService.findAllByNationalIdAndFilters(
+    const applications = await this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
     )
+
+    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const filteredApplications = []
+
+    for (const application of applications) {
+      // We've already checked an application with this type and it is ready
+      if (templateTypeToIsReady[application.typeId]) {
+        filteredApplications.push(application)
+      } else if (templateTypeToIsReady[application.typeId] === false) {
+        // We've already checked an application with this type
+        // and it is NOT ready so we will skip it
+        continue
+      }
+
+      const applicationTemplate = await getApplicationTemplateByTypeId(
+        application.typeId,
+      )
+
+      if (isTemplateReady(applicationTemplate)) {
+        templateTypeToIsReady[application.typeId] = true
+        filteredApplications.push(application)
+      } else {
+        templateTypeToIsReady[application.typeId] = false
+      }
+    }
+
+    return filteredApplications
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async create(
     @Body()
     application: CreateApplicationDto,
+    @NationalId()
+    nationalId: string,
   ): Promise<ApplicationResponseDto> {
-    // TODO not post the state, it should follow the initialstate of the machine
-    await validateApplicationSchema(
-      application,
-      application.answers as FormValue,
-    )
+    const { typeId } = application
 
-    return this.applicationService.create(application)
+    const template = await getApplicationTemplateByTypeId(typeId)
+
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${typeId}`,
+      )
+    }
+
+    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
+
+    // TODO: initial state should be required
+    const initialState =
+      template.stateMachineConfig.initial ??
+      Object.keys(template.stateMachineConfig.states)[0]
+
+    if (typeof initialState !== 'string') {
+      throw new BadRequestException(
+        `No initial state found for type: ${typeId}`,
+      )
+    }
+
+    const applicationDto: Pick<
+      BaseApplication,
+      | 'answers'
+      | 'applicant'
+      | 'assignees'
+      | 'attachments'
+      | 'state'
+      | 'status'
+      | 'typeId'
+    > = {
+      answers: {},
+      applicant: nationalId,
+      assignees: [],
+      attachments: {},
+      state: initialState,
+      status: ApplicationStatus.IN_PROGRESS,
+      typeId: application.typeId,
+    }
+
+    return this.applicationService.create(applicationDto)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/assign')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -220,6 +283,8 @@ export class ApplicationController {
       )
     }
 
+    validateThatTemplateIsReady(template)
+
     const assignees = [nationalId]
 
     const mergedApplication: BaseApplication = {
@@ -250,6 +315,7 @@ export class ApplicationController {
     return existingApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id')
   @ApiParam({
     name: 'id',
@@ -293,6 +359,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
@@ -344,6 +411,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
@@ -592,6 +660,7 @@ export class ApplicationController {
     }
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -627,6 +696,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -654,6 +724,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/createPdf')
   @ApiParam({
     name: 'id',
@@ -673,6 +744,7 @@ export class ApplicationController {
     return { url }
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/requestFileSignature')
   @ApiParam({
     name: 'id',
@@ -696,6 +768,7 @@ export class ApplicationController {
     return { controlCode, documentToken }
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
@@ -721,6 +794,7 @@ export class ApplicationController {
     }
   }
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
     name: 'id',

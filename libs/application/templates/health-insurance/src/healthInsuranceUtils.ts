@@ -3,14 +3,22 @@ import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
 import { EFTA, EU, NordicCountries } from './constants'
 
-export const sortApplicationsByDateAscending = (
-  applications: Applications[],
-) => {
+const sortApplicationsByDateAscending = (applications: Applications[]) => {
   const sortedApplications = applications
     .slice()
     .sort((a, b) => (new Date(a.created) > new Date(b.created) ? 1 : -1))
 
   return sortedApplications
+}
+
+export const getDraftApplications = (applications: Applications[]) => {
+  return applications?.filter((application) => application.state === 'draft')
+}
+
+export const getOldestDraftApplicationId = (applications: Applications[]) => {
+  const draftApplications = getDraftApplications(applications)
+  const sortedApplications = sortApplicationsByDateAscending(draftApplications)
+  return sortedApplications[0]?.id
 }
 
 export const hasHealthInsurance = (externalData: ExternalData) => {
@@ -21,14 +29,11 @@ export const hasHealthInsurance = (externalData: ExternalData) => {
 export const hasActiveDraftApplication = (externalData: ExternalData) => {
   const applications = externalData?.applications?.data as Applications[]
   if (applications?.length) {
-    const draftApplications = applications?.filter(
-      (application) => application.state === 'draft',
-    )
-    const sortedApplications = sortApplicationsByDateAscending(applications)
-    const firstCreatedId = sortedApplications[0].id
+    const draftApplications = getDraftApplications(applications)
+    const firstCreatedDraftId = getOldestDraftApplicationId(draftApplications)
     const currentPathname = window.location.pathname
 
-    if (currentPathname.includes(firstCreatedId)) {
+    if (currentPathname.includes(firstCreatedDraftId)) {
       return false
     }
 
@@ -111,9 +116,8 @@ export const extractKeyFromStringObject = (
 }
 
 export const getBaseUrl = () => {
-  const isDev = window.location.origin === 'https://umsoknir.dev01.devland.is'
-  const isStaging =
-    window.location.origin === 'https://umsoknir.staging01.devland.is'
+  const isDev = window.location.origin.includes('dev01.devland.is')
+  const isStaging = window.location.origin.includes('staging01.devland.is')
 
   if (isStaging) {
     return 'https://beta.staging01.devland.is'

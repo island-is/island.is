@@ -13,6 +13,7 @@ import {
   ApiResourceScope,
   ApiResourceAllowedScopeDTO,
   ApiResourceUserClaim,
+  UserClaimDTO,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -156,7 +157,7 @@ export class ResourcesController {
   @Get('identity-resources/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: IdentityResource, isArray: true })
-  async FindIdentityResourcesByScopeName(
+  async findIdentityResourcesByScopeName(
     @Query('scopeNames') scopeNames: string,
   ): Promise<IdentityResource[]> {
     const identityResources = await this.resourcesService.findIdentityResourcesByScopeName(
@@ -170,7 +171,7 @@ export class ResourcesController {
   @Get('api-scopes/scopenames')
   @ApiQuery({ name: 'scopeNames', required: false })
   @ApiOkResponse({ type: ApiScope, isArray: true })
-  async FindApiScopesByNameAsync(
+  async findApiScopesByNameAsync(
     @Query('scopeNames') scopeNames: string,
   ): Promise<ApiScope[]> {
     const apiScopes = await this.resourcesService.findApiScopesByNameAsync(
@@ -185,7 +186,7 @@ export class ResourcesController {
   @ApiQuery({ name: 'apiResourceNames', required: false })
   @ApiQuery({ name: 'apiScopeNames', required: false })
   @ApiOkResponse({ type: ApiResource, isArray: true })
-  async FindApiResourcesByNameAsync(
+  async findApiResourcesByNameAsync(
     @Query('apiResourceNames') apiResourceNames: string,
     @Query('apiScopeNames') apiScopeNames: string,
   ): Promise<ApiResource[]> {
@@ -207,7 +208,7 @@ export class ResourcesController {
   }
 
   @Get('identity-resource/:id')
-  async GetIdentityResourceByName(
+  async getIdentityResourceByName(
     @Param('id') name: string,
   ): Promise<IdentityResource> {
     return await this.resourcesService.getIdentityResourceByName(name)
@@ -241,13 +242,64 @@ export class ResourcesController {
 
   /** Deletes an existing Identity Resource by it's name */
   @Delete('identity-resource/:name')
-  @ApiOkResponse()
   async deleteIdentityResource(@Param('name') name: string): Promise<number> {
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
     return await this.resourcesService.deleteIdentityResource(name)
+  }
+
+  /** Gets all Identity Resource User Claims */
+  @Get('identity-resource-user-claim')
+  @ApiOkResponse({ type: [IdentityResourceUserClaim] })
+  async findAllIdentityResourceUserClaims(): Promise<
+    IdentityResourceUserClaim[] | undefined
+  > {
+    return await this.resourcesService.findAllIdentityResourceUserClaims()
+  }
+
+  /** Creates a new Identity Resource User Claim */
+  @Post('identity-resource-user-claim')
+  @ApiCreatedResponse({ type: IdentityResourceUserClaim })
+  async createIdentityResourceUserClaim(
+    @Body() claim: UserClaimDTO,
+  ): Promise<IdentityResourceUserClaim | undefined> {
+    return await this.resourcesService.createIdentityResourceUserClaim(claim)
+  }
+
+  /** Gets all Api Scope User Claims */
+  @Get('api-scope-user-claim')
+  @ApiOkResponse({ type: [ApiScopeUserClaim] })
+  async findAllApiScopeUserClaims(): Promise<ApiScopeUserClaim[] | undefined> {
+    return await this.resourcesService.findAllApiScopeUserClaims()
+  }
+
+  /** Creates a new Api Resource User Claim */
+  @Post('api-resource-user-claim')
+  @ApiCreatedResponse({ type: ApiResourceUserClaim })
+  async createApiResourceUserClaim(
+    @Body() claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | undefined> {
+    return await this.resourcesService.createApiResourceUserClaim(claim)
+  }
+
+  /** Gets all Api Resource User Claims */
+  @Get('api-resource-user-claim')
+  @ApiOkResponse({ type: [ApiResourceUserClaim] })
+  async findAllApiResourceUserClaims(): Promise<
+    ApiResourceUserClaim[] | undefined
+  > {
+    return await this.resourcesService.findAllApiResourceUserClaims()
+  }
+
+  /** Creates a new Api Scope User Claim */
+  @Post('api-scope-user-claim')
+  @ApiCreatedResponse({ type: ApiScopeUserClaim })
+  async createApiScopeUserClaim(
+    @Body() claim: UserClaimDTO,
+  ): Promise<ApiScopeUserClaim | undefined> {
+    return await this.resourcesService.createApiScopeUserClaim(claim)
   }
 
   /** Creates a new Api Scope */

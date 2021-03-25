@@ -21,10 +21,9 @@ import useModalContent from '../../hooks/useModalContent'
 import { getBaseUrl } from '../../healthInsuranceUtils'
 
 const ErrorModal: FC<FieldBaseProps> = ({ application }) => {
-  const { externalData } = application
-
+  const { externalData, typeId } = application
   const { formatMessage, lang } = useLocale()
-  const content = useModalContent(externalData)
+  const content = useModalContent(externalData, typeId)
   const baseUrl = getBaseUrl()
   const backUrl =
     lang === 'is'
