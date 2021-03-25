@@ -8,14 +8,14 @@ import {
   UnionApi,
 } from '../../gen/fetch'
 
-export interface VMSTClientModuleConfig {
+export interface VMSTModuleConfig {
   apiKey: string
   xRoadPath: string
   xRoadClient: string
 }
 
-export class VMSTClientModule {
-  static register(config: VMSTClientModuleConfig): DynamicModule {
+export class VMSTModule {
+  static register(config: VMSTModuleConfig): DynamicModule {
     const headers = {
       'api-key': config.apiKey,
       'X-Road-Client': config.xRoadClient,
@@ -30,7 +30,7 @@ export class VMSTClientModule {
     const exportedApis = [ParentalLeaveApi, PensionApi, PregnancyApi, UnionApi]
 
     return {
-      module: VMSTClientModule,
+      module: VMSTModule,
       providers: exportedApis.map((Api) => ({
         provide: Api,
         useFactory: () => new Api(providerConfiguration),
