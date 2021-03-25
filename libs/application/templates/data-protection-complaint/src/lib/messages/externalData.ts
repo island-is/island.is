@@ -46,5 +46,10 @@ export const externalData = {
       defaultMessage: 'Símanúmer, netfang',
       description: 'User Profile Subtitle',
     },
+    printButtonLabel: {
+      id: 'dpac.application:section.overview.labels.userProfileSubTitle',
+      defaultMessage: 'Hlaða kvörtuninni niður í PDF-skjali',
+      description: 'The label of the print button on the overview screen',
+    },
   }),
 }

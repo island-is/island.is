@@ -1,8 +1,14 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { delimitation, info, overview, section } from '../../lib/messages'
+import {
+  delimitation,
+  info,
+  overview,
+  section,
+  externalData,
+} from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
 import {
   SectionHeading,
@@ -21,6 +27,8 @@ import {
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as DataProtectionComplaint
+
+  const onPrintClick = () => window.print()
 
   return (
     <Box>
@@ -55,6 +63,14 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       {answers.commissions && <Commissions answers={answers} />}
       <Complainees answers={answers} />
       <Complaint answers={answers} />
+      <Button
+        variant="ghost"
+        icon="open"
+        iconType="outline"
+        onClick={onPrintClick}
+      >
+        {formatMessage(externalData.labels.printButtonLabel)}
+      </Button>
     </Box>
   )
 }
