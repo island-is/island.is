@@ -21,6 +21,7 @@ import { YES, API_MODULE_ACTIONS } from '../constants'
 import {
   hasEmployer,
   needsOtherParentApproval,
+  isDev,
 } from './parentalLeaveTemplateUtils'
 
 type Events =
@@ -103,7 +104,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.OTHER_PARENT_APPROVAL,
               cond: needsOtherParentApproval,
             },
-            { target: States.EMPLOYER_WAITING_TO_ASSIGN },
+            { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
           ],
         },
       },
@@ -150,6 +155,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN,
               cond: hasEmployer,
             },
+            { target: States.APPROVED, cond: isDev },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
@@ -199,7 +205,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
-          [DefaultEvents.REJECT]: { target: States.DRAFT }, // TODO: This should go to the needs action screen, and then they can go to states.DRAFT.
+          [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -236,7 +242,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: { target: States.VINNUMALASTOFNUN_APPROVAL },
+          [DefaultEvents.APPROVE]: [
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+          ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
         },
       },
@@ -352,7 +363,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
             },
-            { target: States.VINNUMALASTOFNUN_APPROVE_EDITS },
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
           ],
           [DefaultEvents.ABORT]: [
             {
@@ -405,9 +419,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-          },
+          [DefaultEvents.APPROVE]: [
+            { target: States.APPROVED, cond: isDev },
+            {
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+          ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
         },
       },

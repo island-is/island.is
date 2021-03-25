@@ -16,3 +16,7 @@ export function needsOtherParentApproval(context: ApplicationContext) {
 
   return currentApplicationAnswers.requestRights.isRequestingRights === YES
 }
+
+export function isDev() {
+  return process.env.NODE_ENV === 'development'
+}
