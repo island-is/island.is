@@ -63,6 +63,7 @@ export const CaseQuery = gql`
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      rulingDate
       judge {
         id
         name
