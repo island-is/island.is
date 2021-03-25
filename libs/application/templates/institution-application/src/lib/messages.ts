@@ -263,13 +263,23 @@ export const institutionApplicationMessages = {
     },
     roleLabel: {
       id: 'ia.application:project.role.label',
-      defaultMessage: 'Skilgreind hlutverk',
+      defaultMessage: 'Hlutverk Stafræns Íslands',
       description: 'Form label for project role formfield',
     },
     rolePlaceholder: {
       id: 'ia.application:project.role.placeholder',
       defaultMessage:
-        'Hvaða hlutverki er Stafrænu Íslandi ætlað að gegna við vinnslu verkefninsins? Hvaða hlutverki gegnir umsækjandi?',
+        'Hvaða stuðningi er óskað eftir frá Stafrænu Íslandi? - Að hvaða verkhlutum er aðkomu Stafræns Íslands óskað?',
+      description: 'Placeholder for project role formfield',
+    },
+    otherRolesLabel: {
+      id: 'ia.application:project.otherRoles.label',
+      defaultMessage: 'Önnur skilgreind hlutverk',
+      description: 'Form label for project otherRoles formfield',
+    },
+    otherRolesPlaceholder: {
+      id: 'ia.application:project.otherRoles.placeholder',
+      defaultMessage: 'Hvaða hlutverki gegnir umsækjandi?',
       description: 'Placeholder for project role formfield',
     },
   }),

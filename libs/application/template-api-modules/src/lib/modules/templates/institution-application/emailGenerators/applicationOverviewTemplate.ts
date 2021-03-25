@@ -34,6 +34,7 @@ export const applicationOverviewTemplate = (
   const projectBackground = get(application.answers, 'project.background')
   const projectStakeholders = get(application.answers, 'stakeholders')
   const projectRole = get(application.answers, 'role')
+  const projectOtherRoles = get(application.answers, 'otherRoles')
 
   const technicalConstraints = get(
     application.answers,
@@ -216,6 +217,10 @@ export const applicationOverviewTemplate = (
   <p>
     <b>${messages.stakeholders.roleLabel.defaultMessage}</b> </br>
     ${projectRole}
+  </p>
+  <p>
+    <b>${messages.stakeholders.otherRolesLabel.defaultMessage}</b> </br>
+    ${projectOtherRoles}
   </p>
 
   `)

@@ -407,6 +407,19 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
             </Text>
           </Box>
           <Divider />
+          <Box>
+            <Text variant="h5">
+              {formatText(
+                m.stakeholders.otherRolesLabel,
+                application,
+                formatMessage,
+              )}
+            </Text>
+            <Text>
+              {getValueViaPath(application.answers, 'otherRoles') as string}
+            </Text>
+          </Box>
+          <Divider />
           {hasAttatchments && (
             <>
               <Box>
