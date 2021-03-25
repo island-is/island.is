@@ -10,6 +10,6 @@ module.exports = {
   },
   testEnvironment: 'jest-environment-node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/rsk',
+  coverageDirectory: '../../../coverage/libs/clients/rsk',
   displayName: 'rsk',
 }

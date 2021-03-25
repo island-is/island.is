@@ -2,7 +2,10 @@ import { DynamicModule } from '@nestjs/common'
 
 import { FamilyMemberResolver, UserResolver } from './graphql'
 import { NationalRegistryService } from './nationalRegistry.service'
-import { NationalRegistryApi, SoapClient } from './soap'
+import {
+  NationalRegistryApi,
+  SoapClient,
+} from '@island.is/clients/national-registry'
 
 export interface Config {
   baseSoapUrl: string

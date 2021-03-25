@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ParentalLeaveApi } from '@island.is/vmst-client'
+import { ParentalLeaveApi } from '@island.is/clients/vmst'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'

@@ -6,7 +6,7 @@ import {
   Employer,
   Union,
   PensionFund,
-} from '@island.is/vmst-client'
+} from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import { FamilyMember } from '@island.is/api/domains/national-registry'
 
