@@ -17,8 +17,10 @@ import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from '../application.configuration'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { User } from '@island.is/api/domains/national-registry'
+import {
+  CRCApplication,
+  getSelectedChildrenFromExternalData,
+} from '@island.is/application/templates/children-residence-change'
 
 @Injectable()
 export class FileService {
@@ -71,22 +73,31 @@ export class FileService {
   ): Promise<SigningServiceResponse> {
     this.validateApplicationType(application.typeId)
     const { answers, externalData, id, state } = application as CRCApplication
-    const { nationalRegistry, parentNationalRegistry } = externalData
+    const { nationalRegistry } = externalData
     const isParentA = state === 'draft'
-
-    const parentBName = parentNationalRegistry.data.name
+    const applicant = nationalRegistry?.data
+    const selectedChildren = getSelectedChildrenFromExternalData(
+      applicant.children,
+      answers.selectChild,
+    )
+    const parentB = selectedChildren[0].otherParent
 
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const name = isParentA ? nationalRegistry.data.fullName : parentBName
-        const phoneNumber = isParentA
-          ? answers.parentA.phoneNumber
-          : answers.parentB.phoneNumber
+        const { fullName, phoneNumber } = isParentA
+          ? {
+              fullName: applicant.fullName,
+              phoneNumber: answers.parentA.phoneNumber,
+            }
+          : {
+              fullName: parentB.fullName,
+              phoneNumber: answers.parentB.phoneNumber,
+            }
 
         return await this.handleChildrenResidenceChangeSignature(
           pdfType,
           id,
-          name,
+          fullName,
           phoneNumber,
         )
       }
@@ -105,17 +116,22 @@ export class FileService {
 
   private async createChildrenResidencePdf(application: CRCApplication) {
     const bucket = this.getBucketName()
+    const { answers, externalData } = application
+    const applicant = externalData.nationalRegistry.data
 
-    const selectedChildren = application.externalData.childrenNationalRegistry.data.filter(
-      (c) => application.answers.selectChild.includes(c.name),
+    const selectedChildren = getSelectedChildrenFromExternalData(
+      applicant.children,
+      answers.selectChild,
     )
+
+    const parentB = selectedChildren[0].otherParent
 
     const pdfBuffer = await generateResidenceChangePdf(
       selectedChildren,
-      (application.externalData.nationalRegistry.data as unknown) as User,
-      application.externalData.parentNationalRegistry.data,
-      application.answers.selectDuration,
-      application.answers.residenceChangeReason,
+      applicant,
+      parentB,
+      answers.selectDuration,
+      answers.residenceChangeReason,
     )
 
     const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${

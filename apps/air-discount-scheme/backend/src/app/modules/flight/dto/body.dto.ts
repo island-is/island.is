@@ -46,6 +46,19 @@ export class CreateFlightLegBody {
   @ApiProperty({ enum: [Airlines.norlandair] })
   readonly cooperation?: string
 }
+export class CheckFlightLegBody {
+  @IsString()
+  @ApiProperty()
+  readonly origin!: string
+
+  @IsString()
+  @ApiProperty()
+  readonly destination!: string
+
+  @IsISO8601()
+  @ApiProperty()
+  readonly date!: Date
+}
 
 export class CreateFlightBody {
   @IsISO8601()
@@ -58,7 +71,6 @@ export class CreateFlightBody {
   @ApiProperty({ type: [CreateFlightLegBody] })
   readonly flightLegs!: CreateFlightLegBody[]
 }
-
 export class GetFlightLegsBody implements FlightLegsInput {
   @IsOptional()
   @IsEnum(Object.keys(Airlines))
@@ -89,6 +101,14 @@ export class GetFlightLegsBody implements FlightLegsInput {
   @IsOptional()
   @IsNumber()
   postalCode?: number
+}
+
+export class CheckFlightBody {
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => CheckFlightLegBody)
+  @ApiProperty({ type: [CheckFlightLegBody] })
+  readonly flightLegs!: CheckFlightLegBody[]
 }
 
 export class ConfirmInvoiceBody extends GetFlightLegsBody {}

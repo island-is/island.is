@@ -1,5 +1,10 @@
 module.exports = {
   preset: '../../../../jest.preset.js',
+  globals: {
+    'ts-jest': {
+      babelConfig: true,
+    },
+  },
   transform: {
     '^.+\\.[tj]sx?$': [
       'babel-jest',

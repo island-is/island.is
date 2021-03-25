@@ -30,7 +30,6 @@ export class FlightLegViewModel {
   @ApiProperty()
   readonly date: Date
 }
-
 export class FlightViewModel {
   constructor(flight: Flight) {
     this.id = flight.id

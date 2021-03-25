@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildSection,
   Form,
   FormModes,
@@ -13,6 +12,8 @@ import {
   buildFileUploadField,
   buildRepeater,
   buildCheckboxField,
+  buildSubmitField,
+  DefaultEvents,
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
@@ -158,14 +159,17 @@ export const ComplaintForm: Form = buildForm({
                     id: 'inCourtProceedingsAlert',
                     title: errorCards.inCourtProceedingsTitle,
                     description: errorCards.inCourtProceedingsDescription,
-                    // TODO: The application system is not passing props down to custom components
-                    // Use defaultValue as a workaround until that gets fixed
-                    defaultValue: 'https://example.com/',
                     condition: (formValue) =>
                       formValue.inCourtProceedings === YES,
                   },
                   {
-                    url: 'https://example.com/',
+                    links: [
+                      {
+                        title: 'Frekari upplýsingar',
+                        url:
+                          'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+                      },
+                    ],
                   },
                 ),
               ],
@@ -188,14 +192,29 @@ export const ComplaintForm: Form = buildForm({
                   largeButtons: true,
                   width: 'half',
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'concernsMediaCoverageAlert',
-                  title: errorCards.concernsMediaCoverageTitle,
-                  description: errorCards.concernsMediaCoverageDescription,
-                  condition: (formValue) =>
-                    formValue.concernsMediaCoverage === YES,
-                }),
+                buildCustomField(
+                  {
+                    component: 'FieldAlertMessage',
+                    id: 'concernsMediaCoverageAlert',
+                    title: errorCards.concernsMediaCoverageTitle,
+                    description: errorCards.concernsMediaCoverageDescription,
+                    condition: (formValue) =>
+                      formValue.concernsMediaCoverage === YES,
+                  },
+                  {
+                    links: [
+                      {
+                        title: 'Fjölmiðlanefnd',
+                        url: 'https://fjolmidlanefnd.is/',
+                      },
+                      {
+                        title: 'Siðanefnd Blaðamannafélags Íslands',
+                        url:
+                          'https://www.press.is/is/faglegt/sidavefur/sidanefnd',
+                      },
+                    ],
+                  },
+                ),
               ],
             }),
           ],
@@ -216,14 +235,28 @@ export const ComplaintForm: Form = buildForm({
                   largeButtons: true,
                   width: 'half',
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'concernsBanMarkingAlert',
-                  title: errorCards.concernsBanMarkingTitle,
-                  description: errorCards.concernsBanMarkingDescription,
-                  condition: (formValue) =>
-                    formValue.concernsBanMarking === YES,
-                }),
+                buildCustomField(
+                  {
+                    component: 'FieldAlertMessage',
+                    id: 'concernsBanMarkingAlert',
+                    title: errorCards.concernsBanMarkingTitle,
+                    description: errorCards.concernsBanMarkingDescription,
+                    condition: (formValue) =>
+                      formValue.concernsBanMarking === YES,
+                  },
+                  {
+                    links: [
+                      {
+                        title: 'Póst- og fjarskiptastofnun',
+                        url: 'https://www.pfs.is/',
+                      },
+                      {
+                        title: 'Þjóðskrá Íslands',
+                        url: 'https://www.skra.is/',
+                      },
+                    ],
+                  },
+                ),
               ],
             }),
           ],
@@ -243,13 +276,24 @@ export const ComplaintForm: Form = buildForm({
                   largeButtons: true,
                   width: 'half',
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
-                  id: 'concernsLibelAlert',
-                  title: errorCards.concernsLibelTitle,
-                  description: errorCards.concernsLibelDescription,
-                  condition: (formValue) => formValue.concernsLibel === YES,
-                }),
+                buildCustomField(
+                  {
+                    component: 'FieldAlertMessage',
+                    id: 'concernsLibelAlert',
+                    title: errorCards.concernsLibelTitle,
+                    description: errorCards.concernsLibelDescription,
+                    condition: (formValue) => formValue.concernsLibel === YES,
+                  },
+                  {
+                    links: [
+                      {
+                        title: 'Nánari uppýsingar',
+                        url:
+                          'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+                      },
+                    ],
+                  },
+                ),
               ],
             }),
           ],
@@ -636,32 +680,39 @@ export const ComplaintForm: Form = buildForm({
       id: 'overview',
       title: section.overview,
       children: [
-        buildCustomField({
-          id: 'overview.termsAgreement',
+        buildMultiField({
+          id: 'overviewMultiField',
           title: overview.general.pageTitle,
-          component: 'ComplaintOverview',
+          children: [
+            buildCustomField({
+              id: 'overviewComplaintOverview',
+              title: overview.general.pageTitle,
+              component: 'ComplaintOverview',
+            }),
+            buildSubmitField({
+              id: 'overview.termsAgreement',
+              title: '',
+              placement: 'screen',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.labels.termsAgreement,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      title: 'Búið',
+      title: section.received,
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Vel gert!',
-          description: 'Þú ert komin/n út á enda',
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'confirmation2',
-      title: 'Búið',
-      children: [
-        buildDescriptionField({
-          id: 'field',
-          title: 'Vel gert!',
-          description: 'Þú ert komin/n út á enda',
+        buildCustomField({
+          id: 'confirmationCustomField',
+          title: overview.general.confirmationPageTitle,
+          component: 'ComplaintConfirmation',
         }),
       ],
     }),

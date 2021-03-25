@@ -76,7 +76,7 @@ export const RulingStepOne: React.FC = () => {
     setIsolationToDateErrorMessage,
   ] = useState('')
 
-  const [isolationToTime, setIsolationToTime] = useState<string>()
+  const [, setIsolationToTime] = useState<string>()
 
   const router = useRouter()
   const id = router.query.id

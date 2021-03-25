@@ -104,7 +104,7 @@ export const m: MessageDir = {
     partyLetterSubtitle: {
       id: 'ple.application:partyletter.subtitle',
       defaultMessage:
-        'Við  alþingiskosningarnar 28. október 2017 buðu eftirtalin stjórnmálasamtök fram lista og voru þeir merktir sem hér segir:',
+        'Við alþingiskosningarnar 28. október 2017 buðu eftirtalin stjórnmálasamtök fram lista og voru þeir merktir sem hér segir:',
       description: 'Description before listing upp unavailable party letters',
     },
   }),
@@ -117,8 +117,43 @@ export const m: MessageDir = {
     subtitle: {
       id: 'ple.application:overview.subtitle',
       defaultMessage:
-        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplisýngar hafi verið gefnar upp. ',
+        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplisýngar hafi verið gefnar upp.',
       description: 'Overview subtitle',
+    },
+    reviewTitle: {
+      id: 'ple.application:overview.review.title',
+      defaultMessage: 'Upplýsingar um listabókstaf',
+      description: 'Overview review title',
+    },
+    partyLetter: {
+      id: 'ple.application:overview.partyletter',
+      defaultMessage: 'Listabókstafur',
+      description: 'Overview label for party letter',
+    },
+    partyName: {
+      id: 'ple.application:overview.partyname',
+      defaultMessage: 'Nafn flokks',
+      description: 'Overview label for party name',
+    },
+    responsibleParty: {
+      id: 'ple.application:overview.responsible.party',
+      defaultMessage: 'Ábyrgðarmaður',
+      description: 'Overview label for responsible party',
+    },
+    signaturesCount: {
+      id: 'ple.application:overview.signatures.count',
+      defaultMessage: 'Fjöldi meðmælenda',
+      description: 'Overview label for signatures count',
+    },
+    warningCount: {
+      id: 'ple.application:overview.warning.count',
+      defaultMessage: 'Fjöldi meðmælenda í vafa',
+      description: 'Overview label for signatures count with warning',
+    },
+    includePapers: {
+      id: 'ple.application:overview.include.papers',
+      defaultMessage: 'Ég er líka með meðmælendur á pappír',
+      description: 'Overview label for include papers checkbox',
     },
     submitButton: {
       id: 'ple.application:overview.submit.button',
@@ -135,6 +170,95 @@ export const m: MessageDir = {
       defaultMessage:
         'Þú munt fá skilaboð í tölvupósti þegar umsókn er í vinnslu',
       description: 'Subtitle after submit',
+    },
+  }),
+  validationMessages: defineMessages({
+    approveTerms: {
+      id: 'ple.application:validationmessages.approveTerms',
+      defaultMessage: 'Vinsamlegast samþykktu skilmála',
+      description: 'Error message for terms and conditions',
+    },
+    ssd: {
+      id: 'ple.application:validationmessages.ssd',
+      defaultMessage: 'Vinsamlegast veldu kennitölu',
+      description: 'Error message for selection ssd',
+    },
+    partyLetterOccupied: {
+      id: 'ple.application:validationmessages.letter.occupied',
+      defaultMessage: 'Bókstafur þegar á skrá',
+      description: 'Error message if party letter is occupied',
+    },
+    partyLetterSingle: {
+      id: 'ple.application:validationmessages.letter.single',
+      defaultMessage: 'Bókstafur skal vera stakur',
+      description: 'Error message if party letter is empty or > 1',
+    },
+    partyName: {
+      id: 'ple.application:validationmessages.party.name',
+      defaultMessage: 'Vinsamlegast veldu nafn á flokkinn',
+      description: 'Error message if party name is empty',
+    },
+    signatureInvalid: {
+      id: 'ple.application:validationmessages.signature.invalid',
+      defaultMessage: 'Undirskrift ekki lengur gild',
+      description: 'Error message if signature has new address',
+    },
+  }),
+  collectSignatures: defineMessages({
+    applicationTitle: {
+      id: 'ple.application:collect.applicationtitle',
+      defaultMessage: 'Listabókstafur',
+      description: 'Title for collect signatures application',
+    },
+    stepTitle: {
+      id: 'ple.application:collect.steptitle',
+      defaultMessage: 'Samþykkja',
+      description: 'Title for section step',
+    },
+    sectionTitle: {
+      id: 'ple.application:collect.secitontitle',
+      defaultMessage: 'Listabókstafs meðmælendalisti',
+      description:
+        'Partial title for section, party letter will be added programmatically',
+    },
+    nameInput: {
+      id: 'ple.application:collect.name.input',
+      defaultMessage: 'Nafn',
+      description: 'Label and placeholder for name input field',
+    },
+    descriptionPt1: {
+      id: 'ple.application:collect.descripton.pt.one',
+      defaultMessage:
+        'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+      description: 'Disclaimer description, first paragraph',
+    },
+    descriptionPt2: {
+      id: 'ple.application:collect.descripton.pt.two',
+      defaultMessage:
+        'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+      description: 'Disclaimer description, second paragraph',
+    },
+    agreeTermsLabel: {
+      id: 'ple.application:collect.agree.label',
+      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      description: 'Label for terms and conditions',
+    },
+    submitButton: {
+      id: 'ple.application:collect.submit.button',
+      defaultMessage: 'Setja nafn mitt á lista',
+      description: 'Title for submit button',
+    },
+  }),
+  signatureDisclaimer: defineMessages({
+    part1: {
+      id: 'ple.application:signature.pt.1',
+      defaultMessage: 'Ég lýsi því hér með yfir að ég mæli með því að',
+      description: 'Part 1 of signature disclaimer',
+    },
+    part2: {
+      id: 'ple.application:signature.pt.2',
+      defaultMessage: 'fái úthlutað listabókstafnum',
+      description: 'Part 2 of signature disclaimer',
     },
   }),
 }

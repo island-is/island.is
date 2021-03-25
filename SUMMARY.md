@@ -134,7 +134,9 @@
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
+  - [Clients National Registry](libs/clients/national-registry/README.md)
   - [Rsk](libs/clients/rsk/README.md)
+  - [VMST](libs/clients/vmst/README.md)
   - [Zendesk Service](libs/clients/zendesk/README.md)
 - [Content Search Index Manager](libs/content-search-index-manager/README.md)
 - [Content Search Indexer](libs/content-search-indexer/README.md)
@@ -167,7 +169,6 @@
 - [Utils](libs/utils/README.md)
   - [API Utils](libs/utils/api/README.md)
   - [Utils Environment](libs/utils/environment/README.md)
-- [VMST Client](libs/vmst-client/README.md)
 
 ## Misc
 

@@ -33,7 +33,8 @@ describe('UserService', () => {
         {
           provide: FlightService,
           useClass: jest.fn(() => ({
-            countThisYearsFlightLegsByNationalId: () => ({}),
+            countThisYearsFlightLegsByNationalId: () => 0,
+            countThisYearsConnectedFlightsByNationalId: () => 0,
             isADSPostalCode: () => ({}),
           })),
         },

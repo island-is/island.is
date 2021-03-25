@@ -51,6 +51,7 @@ export * from './lib/entities/dto/idp-provider.dto'
 export * from './lib/entities/dto/grant-type.dto'
 export * from './lib/entities/dto/language.dto'
 export * from './lib/entities/dto/translation.dto'
+export * from './lib/entities/dto/user-claim.dto'
 
 // Services
 export * from './lib/services/clients.service'
