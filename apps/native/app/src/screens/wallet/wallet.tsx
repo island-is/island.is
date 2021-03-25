@@ -54,8 +54,8 @@ export const WalletScreen: NavigationFunctionComponent = () => {
             <Card title="Ökuskírteini" />
           </TouchableOpacity>
           <Card title="Skotvopnaleyfi" color={CardColor.YELLOW} />
-          <Card title="Fyrsta hjálp" />
-          <Card title="Siglinga réttindi" color={CardColor.YELLOW} />
+          <Card title="Vegabréf" />
+          <Card title="Sakavottorð" color={CardColor.YELLOW} />
         </ScrollView>
         {/* <Container>
           <Input placeholder="Finndu skírteini" />

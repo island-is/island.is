@@ -19,10 +19,15 @@ export const typePolicies = {
       listLicenses: {
         read() {
           return [
-            { id: '1', title: 'Ríkislögreglustjóri', subtitle: 'Ökuskírteini' },
-            { id: '2', title: 'Ríkislögreglustjóri', subtitle: 'Skotvopnaleyfi' },
-            { id: '3', title: 'Ríkislögreglustjóri', subtitle: 'Fyrsta hjálp' },
-            { id: '4', title: 'Ríkislögreglustjóri', subtitle: 'Siglingaréttindi' },
+            { id: '1', title: 'Þjóðskrá Íslands', subtitle: 'Nafnskírteini' },
+            { id: '2', title: 'Ríkislögreglustjóri', subtitle: 'Ökuskírteini' },
+            { id: '3', title: 'Þjóðskrá Íslands', subtitle: 'Vegabréf' },
+            { id: '4', title: 'Ríkislögreglustjóri', subtitle: 'Skotvopnaleyfi' },
+            { id: '5', title: 'Ríkissaksóknari', subtitle: 'Sakavottorð' },
+            { id: '6', title: 'Umhverfisstofnun', subtitle: 'Veiðikort' },
+            { id: '7', title: 'Vinnueftirlitið', subtitle: 'Vinnuvélaskírteini' },
+            { id: '8', title: 'Vinnueftirlitið', subtitle: 'ADR skírteini' },
+            { id: '9', title: 'Landlæknisembættið', subtitle: 'Bólusetningaskíreini' },
           ]
         }
       }
