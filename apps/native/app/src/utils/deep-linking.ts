@@ -1,5 +1,7 @@
 import create, { State } from 'zustand/vanilla';
 import createUse from 'zustand';
+import { Linking } from 'react-native';
+import { config } from './config';
 
 export type RouteCallbackArgs = boolean | ({ path: string; } & { scheme: string; match?: RegExpExecArray; [key: string]: string | RegExpExecArray | undefined; });
 
@@ -130,3 +132,32 @@ export const addScheme = (scheme: string) => {
 export const resetSchemes = () => {
   deepLinkingStore.setState(() => ({ schemes: [] }));
 };
+
+/**
+ * Navigate to a specific url within the app
+ * @param url Navigating url (ex. /inbox, /inbox/my-document-id, /wallet etc.)
+ * @returns
+ */
+export function navigateTo(url: string) {
+  const linkingUrl = `${config.bundleId}://${url.replace(/^\//, '')}`;
+  return evaluateUrl(linkingUrl);
+  // @todo when to use native linking system?
+  // return Linking.openURL(linkingUrl);
+}
+
+// Listen for url events through iOS and Android's Linking library
+Linking.addEventListener('url', ({ url }) => {
+  Linking.canOpenURL(url).then((supported) => {
+    if (supported) {
+      evaluateUrl(url);
+    }
+  });
+});
+
+// Get initial url and pass to the opener
+Linking.getInitialURL().then((url) => {
+  if (url) {
+    Linking.openURL(url);
+  }
+})
+.catch(err => console.error('An error occurred in getInitialURL: ', err));

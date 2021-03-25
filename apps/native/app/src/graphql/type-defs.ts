@@ -20,4 +20,5 @@ export const typeDefs = gql`
     title: String
     subtitle: String
   }
+
 `;

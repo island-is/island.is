@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+import { Constants } from 'react-native-navigation';
 import env from 'react-native-ultimate-config';
 
 export interface Config {
@@ -11,6 +13,7 @@ export interface Config {
   storybookMode: boolean;
   disableLockScreen: boolean;
   env: typeof env;
+  constants: typeof Constants,
 }
 
 export const config: Config = {
@@ -20,8 +23,14 @@ export const config: Config = {
     scopes: env.IDENTITYSERVER_SCOPES?.split(' ') || ['openid', 'profile', 'api_resource.scope', 'offline_access'],
   },
   apiEndpoint: 'https://beta.dev01.devland.is/api',
-  bundleId: env.BUNDLE_ID || 'is.island.app-dev',
+  bundleId: Platform.select({
+    ios: env.BUNDLE_ID_IOS,
+    android: env.BUNDLE_ID_ANDROID,
+  }) || 'is.island.app',
   storybookMode: false,
-  disableLockScreen: false,
+  disableLockScreen: true,
+  constants: Constants,
   env,
 };
+
+console.log({ config });

@@ -13,8 +13,7 @@ const Host = styled.View`
 
   border-radius: ${theme.border.radius.large};
 
-  background-color: #fff;
-  overflow: hidden;
+  background-color: ${props => props.theme.color.white};
 `;
 
 const Left = styled.View`
@@ -46,8 +45,11 @@ const BottomBar = styled.View`
   right: 0;
 
   height: 15px;
+  overflow: hidden;
 
   background-color: ${theme.color.roseTinted100};
+  border-bottom-left-radius: ${theme.border.radius.large};
+  border-bottom-right-radius: ${theme.border.radius.large};
 `;
 
 const Bar = styled.View<{ width?: number}>`
@@ -66,7 +68,15 @@ interface StatusCardProps {
 
 export function StatusCard({ title, description, badge, progress }: StatusCardProps) {
   return (
-    <Host>
+    <Host style={{
+      shadowColor: 'rgba(0, 97, 255, 1)',
+      shadowOffset: {
+        width: 0,
+        height: 8,
+      },
+      shadowOpacity: 0.04,
+      shadowRadius: 8.0,
+    }}>
       <Left>
         <Title>
           {title}

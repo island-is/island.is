@@ -5,7 +5,11 @@
   "license": "MIT",
   "scripts": {
     "nx": "cd .. && yarn nx",
-    "postinstall": "cd app && yarn build:env .env"
+    "postinstall": "cd app && yarn build:env .env",
+    "detox:build": "detox build -C app-e2e/.detoxrc.json -o app-e2e/config.json",
+    "detox:test": "detox test -C app-e2e/.detoxrc.json -o app-e2e/config.json",
+    "detox:build:ios": "yarn detox:build -c ios-debug",
+    "detox:test:ios": "yarn detox:test -c ios-debug"
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
@@ -20,8 +24,13 @@
     "zustand": "3.3.3"
   },
   "devDependencies": {
+    "@types/react-native": "0.64.0",
     "detox": "18.7.1",
+    "detox-recorder": "1.0.151",
     "jest": "26.6.3",
     "jest-circus": "26.6.3"
+  },
+  "resolutions": {
+    "@types/react-native": "0.64.0"
   }
 }

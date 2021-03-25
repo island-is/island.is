@@ -1,11 +1,11 @@
-import { theme } from '@island.is/island-ui/theme';
+import { theme } from 'libs/island-ui/theme/src';
 import React from 'react'
 import { Linking, TouchableHighlight } from 'react-native';
 import styled from 'styled-components/native';
 
 const Host = styled.View`
-  border-bottom-width: ${theme.border.width.standard}px;
-  border-color: ${theme.color.blue200};
+  border-bottom-width: ${props => props.theme.border.width.standard}px;
+  border-color: ${props => props.theme.shade.shade200};
 `;
 
 const Flex = styled.View`
@@ -31,12 +31,12 @@ const Title = styled.Text`
 
   font-size: 12px;
   font-weight: bold;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 const Subtitle = styled.Text`
   font-size: 16px;
-  color: ${theme.color.dark400};
+  color: ${props => props.theme.shade.foreground};
 `;
 
 interface ListItemProps {

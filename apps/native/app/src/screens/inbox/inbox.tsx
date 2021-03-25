@@ -1,33 +1,55 @@
-import { ListItem } from '@island.is/island-ui-native'
 import React, { useState } from 'react'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import { RefreshControl, ScrollView } from 'react-native'
+import { ListItem } from '@island.is/island-ui-native'
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
-import { RefreshControl, ScrollView } from 'react-native'
-import { NavigationFunctionComponent, Options, Navigation } from 'react-native-navigation'
-import { ComponentRegistry } from '../../utils/navigation-registry'
-import { ListDocumentsResponse, LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
 import { config } from '../../utils/config';
 import { Logo } from '../../components/logo/logo'
-
+import { useTheme } from 'styled-components'
+import { useScreenOptions } from '../../contexts/theme-provider'
+import { testIDs } from '../../utils/test-ids'
+import { ListDocumentsResponse, LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
 
 export const InboxScreen: NavigationFunctionComponent = () => {
-  // const [idle, setIdle] = useState(true)
+  const theme = useTheme()
   const [loading, setLoading] = useState(false)
-  const onRefresh = () => {
-    setLoading(true)
-    setTimeout(() => setLoading(false), 1000)
-  }
+
+  useScreenOptions(
+    () => ({
+      topBar: {
+        title: {
+          text: 'Rafræn skjöl',
+        },
+        searchBar: {
+          visible: true,
+          hideOnScroll: true,
+          hideTopBarOnFocus: true,
+          placeholder: 'Leita í rafrænum skjölum',
+        },
+      },
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_INBOX,
+        selectedIconColor: theme.color.blue400,
+        icon: require('../../assets/icons/tabbar-inbox.png'),
+        selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
+        iconColor: theme.isDark ? theme.color.white : theme.color.dark400,
+      },
+    }),
+    [theme],
+  )
 
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client });
   const inboxItems = res?.data?.listDocuments ?? [];
 
-  // useNavigationComponentDidAppear(() => {
-  //   setIdle(false)
-  // });
-
-  // if (idle) {
-  //   return null
-  // }
+  const onRefresh = () => {
+    setLoading(true)
+    Promise.all([
+      new Promise(r => setTimeout(r, 1000)),
+      res.fetchMore({})
+    ])
+    .then(() => setLoading(false));
+  }
 
   return (
     <ScrollView
@@ -50,34 +72,3 @@ export const InboxScreen: NavigationFunctionComponent = () => {
     </ScrollView>
   )
 }
-
-InboxScreen.options = {
-  topBar: {
-    title: {
-      // text: 'Rafræn skjöl',
-      // color: theme.color.blue600,
-      // fontSize: 19,
-      // fontWeight: '600',
-      component: {
-        name: ComponentRegistry.NavigationBarTitle,
-        alignment: 'fill',
-        passProps: {
-          title: 'Rafræn skjöl',
-        },
-      },
-    },
-    // largeTitle: {
-    //   visible: true,
-    //   color: theme.color.blue600,
-    //   fontSize: 24,
-    //   fontWeight: '700',
-    // },
-    searchBar: {
-      visible: true,
-      hideOnScroll: true,
-      hideTopBarOnFocus: true,
-      placeholder: 'Leita í rafrænum skjölum',
-      // obscuresBackgroundDuringPresentation: true
-    },
-  },
-} as Options

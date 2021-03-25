@@ -5,6 +5,7 @@ import { Navigation, NavigationFunctionComponent } from 'react-native-navigation
 import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../auth/auth'
 import { mainRoot } from '../../main'
+import { testIDs } from '../../utils/test-ids'
 
 export const LoginScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
@@ -16,6 +17,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
         alignItems: 'center',
         marginBottom: 100
       }}
+      testID={testIDs.SCREEN_LOGIN}
     >
       <Image
         source={logo}
@@ -29,6 +31,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
       </View>
       <Button
         title="Auðkenna"
+        testID={testIDs.LOGIN_BUTTON_AUTHENTICATE}
         onPress={async () => {
           try {
             const isAuth = await authStore.login();
@@ -40,6 +43,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
             }
           } catch (err) {
             // noop
+            console.error('err', err);
           }
         }}
       />

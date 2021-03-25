@@ -45,5 +45,10 @@ target 'IslandApp' do
     flipper_post_install(installer)
 
     nx_post_install(installer)
+
+    # Fixes iphonesimulator for detox builds
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
   end
 end
