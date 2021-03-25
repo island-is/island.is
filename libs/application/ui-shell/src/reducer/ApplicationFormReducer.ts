@@ -22,7 +22,7 @@ export function initializeReducer(
   const sections = getNavigableSectionsInForm(form, answers, externalData)
   const screens = convertFormToScreens(form, answers, externalData)
   const currentScreen =
-    form.mode === FormModes.REVIEW || FormModes.EDITING
+    form.mode === FormModes.REVIEW || form.mode === FormModes.EDITING
       ? 0
       : findCurrentScreen(screens, answers)
 
