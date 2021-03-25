@@ -36,7 +36,6 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
   }
 
   const getTranslation = async (isoKey: string): Promise<void> => {
-    console.log('AM I FKN HERE')
     const response = await TranslationService.findTranslation(
       isoKey,
       props.className,
