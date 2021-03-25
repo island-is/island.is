@@ -12,13 +12,10 @@ import {
   buildFileUploadField,
   buildRepeater,
   buildCheckboxField,
-<<<<<<< HEAD
   buildSubmitField,
   DefaultEvents,
-=======
   buildExternalDataProvider,
   buildDataProviderItem,
->>>>>>> 50cb7a85bf814a1a86a856a454f91bd7c93ba641
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
 import {
