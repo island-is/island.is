@@ -1,4 +1,5 @@
-import { Validation } from './utils/validate'
+import { Case } from '@island.is/judicial-system/types'
+import { Validation } from '../utils/validate'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -41,4 +42,10 @@ export enum LoginErrorCodes {
   UNAUTHORIZED = 'innskraning-ekki-notandi',
   UNAUTHENTICATED = 'innskraning-utrunnin',
   LOGIN_FAILED = 'innskraning-ogild',
+}
+
+export type directionType = 'ascending' | 'descending'
+export interface SortConfig {
+  key: keyof Case
+  direction: directionType
 }

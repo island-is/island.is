@@ -1,7 +1,15 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { Text, BulletList, Bullet } from '@island.is/island-ui/core'
+import { Box, Text, BulletList, Bullet } from '@island.is/island-ui/core'
+
+const BulletListBox = ({ children }: { children: ReactNode }) => {
+  return (
+    <Box marginBottom={3}>
+      <BulletList space={2}>{children}</BulletList>
+    </Box>
+  )
+}
 
 interface Props {
   text: MessageDescriptor
@@ -42,7 +50,7 @@ const DescriptionText = ({ text, format }: Props) => {
           h3: headingOverride,
           h4: headingOverride,
           ul: {
-            component: BulletList,
+            component: BulletListBox,
           },
           li: {
             component: Bullet,

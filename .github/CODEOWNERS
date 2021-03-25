@@ -62,6 +62,7 @@
 /apps/services/user-profile/                                                                  @island-is/sendiradid
 /libs/api/domains/documents/                                                                  @island-is/sendiradid
 /libs/api/domains/national-registry/                                                          @island-is/sendiradid @island-is/vice-versa
+/libs/clients/national-registry/                                                              @island-is/sendiradid @island-is/vice-versa
 /libs/service-portal/applications/                                                            @island-is/sendiradid
 /libs/service-portal/assets/                                                                  @island-is/sendiradid
 /libs/service-portal/constants/                                                               @island-is/sendiradid
