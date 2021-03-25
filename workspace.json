@@ -6309,6 +6309,77 @@
           }
         }
       }
+    },
+    "signature-system": {
+      "root": "apps/signature-system",
+      "sourceRoot": "apps/signature-system/src",
+      "projectType": "application",
+      "prefix": "signature-system",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/signature-system",
+            "main": "apps/signature-system/src/main.ts",
+            "tsConfig": "apps/signature-system/tsconfig.app.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/signature-system/src/environments/environment.ts",
+                  "with": "apps/signature-system/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "signature-system:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/signature-system/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/signature-system"],
+          "options": {
+            "jestConfig": "apps/signature-system/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
+            "cwd": "apps/signature-system"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/signature-system"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/signature-system"
+          }
+        }
+      }
     }
   }
 }
