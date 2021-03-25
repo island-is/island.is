@@ -2,6 +2,7 @@ import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Text, Box } from '@island.is/island-ui/core'
+import { EmptyImage } from './EmptyImage'
 
 interface Props {
   title: MessageDescriptor
@@ -16,13 +17,9 @@ export const EmptyState = ({ title, description }: Props) => {
         {formatMessage(title)}
       </Text>
       {description && <Text>{formatMessage(description)}</Text>}
-      <Box
-        component="img"
-        marginTop={4}
-        width="full"
-        src="/assets/images/emptyState.svg"
-        alt=""
-      />
+      <Box marginTop={4}>
+        <EmptyImage width="100%" />
+      </Box>
     </>
   )
 }
