@@ -192,41 +192,41 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Tæknilegar skorður',
       description: 'Form label for constraints technical formfield',
     },
-    constraintsTechicalTooltip: {
-      id: 'ia.application:applicant.constraints.technical.tooltip',
+    constraintsTechicalPlaceholder: {
+      id: 'ia.application:applicant.constraints.technical.placeholder',
       defaultMessage: 'Upplýsingatæknistefna ríkisins eða stofnunarinnar',
-      description: 'Form tooltip for constraints technical formfield',
+      description: 'Form placeholder for constraints technical formfield',
     },
     constraintsFinancialLabel: {
       id: 'ia.application:applicant.constraints.financial.label',
       defaultMessage: 'Fjárhagslegar skorður',
       description: 'Form label for constraints financial formfield',
     },
-    constraintsFinancialTooltip: {
-      id: 'ia.application:applicant.constraints.financial.tooltip',
+    constraintsFinancialPlaceholder: {
+      id: 'ia.application:applicant.constraints.financial.placeholder',
       defaultMessage:
         'Takmörkun á útlögðum kostnaði, takmörkun á heildar kostnaði við verkefnið',
-      description: 'Form tooltip for constraints financial formfield',
+      description: 'Form placeholder for constraints financial formfield',
     },
     constraintsTimeLabel: {
       id: 'ia.application:applicant.constraints.time.label',
       defaultMessage: 'Tímaskorður',
       description: 'Form label for constraints time formfield',
     },
-    constraintsTimeTooltip: {
-      id: 'ia.application:applicant.constraints.time.tooltip',
+    constraintsTimePlaceholder: {
+      id: 'ia.application:applicant.constraints.time.placeholder',
       defaultMessage: 'Innan hvaða tímabils þarf verkefnið að vinnast',
-      description: 'Form tooltip for constraints time formfield',
+      description: 'Form placeholder for constraints time formfield',
     },
     constraintsShoppingLabel: {
       id: 'ia.application:applicant.constraints.shopping.label',
       defaultMessage: 'Innkaupaskorður',
       description: 'Form label for constraints shopping formfield',
     },
-    constraintsShoppingTooltip: {
-      id: 'ia.application:applicant.constraints.shopping.tooltip',
+    constraintsShoppingPlaceholder: {
+      id: 'ia.application:applicant.constraints.shopping.placeholder',
       defaultMessage: 'Val á birgjum',
-      description: 'Form tooltip for constraints shopping formfield',
+      description: 'Form placeholder for constraints shopping formfield',
     },
     constraintsMoralLabel: {
       id: 'ia.application:applicant.constraints.moral.label',
@@ -279,7 +279,7 @@ export const institutionApplicationMessages = {
     },
     otherRolesPlaceholder: {
       id: 'ia.application:project.otherRoles.placeholder',
-      defaultMessage: 'Hvaða hlutverki gegnir umsækjandi?',
+      defaultMessage: 'Hvaða hlutverki gegnir umsækjandi eða þriðji aðili?',
       description: 'Placeholder for project role formfield',
     },
   }),

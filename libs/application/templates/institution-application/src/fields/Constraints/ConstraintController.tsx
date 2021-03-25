@@ -6,7 +6,7 @@ interface Props {
   id: string
   checkboxId: string
   label: string
-  tooltip?: string
+  placeholder?: string
   defaultValue: boolean
 }
 
@@ -14,7 +14,7 @@ const ConstraintController: FC<Props> = ({
   id,
   checkboxId,
   label,
-  tooltip,
+  placeholder,
   defaultValue,
 }) => {
   const { register, setValue } = useFormContext()
@@ -36,7 +36,6 @@ const ConstraintController: FC<Props> = ({
                 checked={value}
                 name={checkboxId}
                 label={label}
-                tooltip={tooltip}
                 large
               />
             )
@@ -45,6 +44,8 @@ const ConstraintController: FC<Props> = ({
       </Box>
       {isChecked && (
         <Input
+          placeholder={placeholder}
+          backgroundColor="blue"
           type="text"
           name={id}
           id={id}

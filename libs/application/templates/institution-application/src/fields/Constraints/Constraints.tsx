@@ -22,7 +22,7 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
     ) as boolean
 
   return (
-    <Box background="blue100" padding={4}>
+    <Box>
       <Stack space={2}>
         <ConstraintController
           id={`${id}.technical`}
@@ -32,8 +32,8 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
             application,
             formatMessage,
           )}
-          tooltip={formatText(
-            m.constraints.constraintsTechicalTooltip,
+          placeholder={formatText(
+            m.constraints.constraintsTechicalPlaceholder,
             application,
             formatMessage,
           )}
@@ -47,8 +47,8 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
             application,
             formatMessage,
           )}
-          tooltip={formatText(
-            m.constraints.constraintsFinancialTooltip,
+          placeholder={formatText(
+            m.constraints.constraintsFinancialPlaceholder,
             application,
             formatMessage,
           )}
@@ -62,8 +62,8 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
             application,
             formatMessage,
           )}
-          tooltip={formatText(
-            m.constraints.constraintsTimeTooltip,
+          placeholder={formatText(
+            m.constraints.constraintsTimePlaceholder,
             application,
             formatMessage,
           )}
@@ -77,8 +77,8 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
             application,
             formatMessage,
           )}
-          tooltip={formatText(
-            m.constraints.constraintsShoppingTooltip,
+          placeholder={formatText(
+            m.constraints.constraintsShoppingPlaceholder,
             application,
             formatMessage,
           )}
