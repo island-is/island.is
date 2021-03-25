@@ -5,7 +5,7 @@ export const detentionRequestsContainer = style({
   display: 'grid',
   gridColumnGap: 24,
   gridTemplateColumns: 'repeat(12, 1fr)',
-  gridTemplateRows: 'repeat(3, auto)',
+  gridTemplateRows: 'repeat(5, auto)',
   maxWidth: '1440px',
   margin: `${theme.spacing[12]}px auto`,
   padding: `0 ${theme.spacing[6]}px`,
@@ -17,9 +17,35 @@ export const logoContainer = style({
   gridColumn: '1 / -1',
   marginBottom: theme.spacing[9],
 })
+export const activeRequestsTableCaption = style({
+  gridRow: '2',
+  gridColumn: '1 / -1',
+})
 
-export const detentionRequestsTable = style({
+export const activeRequestsTable = style({
   gridRow: '3',
+  gridColumn: '1 / -1',
+  borderSpacing: 0,
+  borderCollapse: 'collapse',
+  overflow: 'hidden',
+  marginBottom: theme.spacing[15],
+
+  // Needed for Safari.
+  width: '100%',
+})
+
+export const activeRequestsTableInfo = style({
+  gridColumn: '1 / span 6',
+  marginBottom: theme.spacing[10],
+})
+
+export const pastRequestsTableCaption = style({
+  gridRow: '4',
+  gridColumn: '1 / -1',
+})
+
+export const pastRequestsTable = style({
+  gridRow: '5',
   gridColumn: '1 / -1',
   borderSpacing: 0,
   borderCollapse: 'collapse',
@@ -36,7 +62,6 @@ export const detentionRequestsError = style({
 
 export const thead = style({
   background: theme.color.blue100,
-  boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
   textAlign: 'left',
 })
 
@@ -45,6 +70,7 @@ export const deleteButtonContainer = style({
   height: '100%',
   visibility: 'hidden',
   transition: 'all .5s ease-in-out',
+  padding: 0,
 
   selectors: {
     '&.open': {

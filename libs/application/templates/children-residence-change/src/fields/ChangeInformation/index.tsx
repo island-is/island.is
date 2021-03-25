@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import { constructParentAddressString } from '../../lib/utils'
+import { formatAddress } from '../../lib/utils'
 import { newResidence } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
@@ -16,8 +16,7 @@ const ChangeInformation = ({
   const { externalData } = application
   const { formatMessage } = useIntl()
   const applicant = externalData.nationalRegistry.data
-  const parent = externalData.parentNationalRegistry.data
-  const parentAddress = constructParentAddressString(parent)
+  const parentB = applicant?.children?.[0].otherParent
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -30,16 +29,16 @@ const ChangeInformation = ({
         <Text variant="h4" color="blue400">
           {applicant?.fullName}
         </Text>
-        <Text fontWeight="light">{applicant?.legalResidence}</Text>
+        <Text fontWeight="light">{formatAddress(applicant?.address)}</Text>
       </Box>
       <Box marginBottom={5}>
         <Text variant="h4">
           {formatMessage(newResidence.information.newResidenceLabel)}
         </Text>
         <Text variant="h4" color="blue400">
-          {parent?.name}
+          {parentB?.fullName}
         </Text>
-        <Text fontWeight="light">{parentAddress}</Text>
+        <Text fontWeight="light">{formatAddress(parentB?.address)}</Text>
       </Box>
       <CheckboxController
         id={id}

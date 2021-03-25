@@ -133,6 +133,7 @@
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
+  - [Clients National Registry](libs/clients/national-registry/README.md)
   - [Rsk](libs/clients/rsk/README.md)
   - [Zendesk Service](libs/clients/zendesk/README.md)
 - [Content Search Index Manager](libs/content-search-index-manager/README.md)

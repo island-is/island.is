@@ -54,7 +54,7 @@ export class S3Service {
     return promise
       .then((result) => {
         const fiveSeconds = 5
-        return this.s3.getSignedUrl('getObject', {
+        return this.s3.getSignedUrlPromise('getObject', {
           Bucket: s3Location.bucket,
           Key: result.Key,
           Expires: fiveSeconds,
