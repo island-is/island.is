@@ -127,31 +127,6 @@ export const ServiceInformation: FC<ServiceInformationProps> = ({
       </Box>
 
       <GridRow>
-        {/* <GridColumn span={['6/12', '6/12', '6/12', '6/12', '4/12']}>
-          <Select
-            backgroundColor="blue"
-            size="sm"
-            label={n('XroadIdentifierInstance')}
-            name="Instance"
-            isSearchable={false}
-            defaultValue={selectedEnviromentOption}
-            options={enviromentOptions}
-            onChange={onSelectEnviroment}
-            disabled
-          />
-        </GridColumn>
-        <GridColumn span={['6/12', '6/12', '6/12', '6/12', '3/12']}>
-          <Select
-            backgroundColor="blue"
-            size="sm"
-            label={n('version')}
-            name="version"
-            isSearchable={false}
-            defaultValue={selectedVersionOption}
-            options={versionOptions}
-            onChange={onSelectVersion}
-          />
-        </GridColumn> */}
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '5/12']}>
           <Select
             backgroundColor="blue"

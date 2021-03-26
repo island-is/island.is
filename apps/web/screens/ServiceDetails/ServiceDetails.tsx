@@ -131,18 +131,6 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
                   href: linkResolver('developerspage').href,
                 }}
               />
-              {/* {service.owner && (
-                <InstitutionPanel
-                  institutionTitle={nfc('institution')}
-                  institution={service.owner}
-                  imgContainerDisplay={['block', 'block', 'none', 'block']}
-                  locale={activeLocale}
-                  linkProps={{
-                    href: selectedServiceDetail.links.responsibleParty,
-                  }}
-                  //logo = {}
-                ></InstitutionPanel>
-              )} */}
             </Stack>
           }
         >
