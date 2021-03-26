@@ -72,7 +72,7 @@ describe('FileService', () => {
       attachments: {},
       answers: answers ?? {
         useMocks: 'no',
-        selectChild: [child.nationalId],
+        selectedChildren: [child.nationalId],
         parentA: {
           phoneNumber: parentAWithContactInfo.phoneNumber,
           email: parentAWithContactInfo.email,
@@ -195,7 +195,7 @@ describe('FileService', () => {
   it('should throw error for request file signature since phone number is missing', async () => {
     const application = createApplication({
       useMocks: 'no',
-      selectChild: [child.nationalId],
+      selectedChildren: [child.nationalId],
       parentA: {},
       parentB: {
         email: parentBWithContactInfo.email,

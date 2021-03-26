@@ -368,12 +368,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.description"
                       message="Description can not include special characters"
                     />
-                    <TranslationCreateFormDropdown
-                      className="client"
-                      property="description"
-                      isEditing={isEditing}
-                      id={client.clientId}
-                    />
                   </div>
 
                   <div>
@@ -467,6 +461,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         errors={errors}
                         name="client.clientName"
                         message="Display name is required since the client requires consent"
+                      />
+                      <TranslationCreateFormDropdown
+                        className="client"
+                        property="clientName"
+                        isEditing={isEditing}
+                        id={client.clientId}
                       />
                     </div>
 
