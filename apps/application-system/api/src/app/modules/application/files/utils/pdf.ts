@@ -17,13 +17,13 @@ export async function generateResidenceChangePdf(
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
-  const { selectDuration, residenceChangeReason, selectChild } = answers
+  const { selectDuration, residenceChangeReason, selectedChildren } = answers
   const reason = residenceChangeReason
   const expiry = selectDuration
   const parentA = applicant
   const childrenAppliedFor = getSelectedChildrenFromExternalData(
     applicant.children,
-    selectChild,
+    selectedChildren,
   )
   const parentB = childrenAppliedFor[0].otherParent
   const childResidenceInfo = childrenResidenceInfo(applicant, answers)

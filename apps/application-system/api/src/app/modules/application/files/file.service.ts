@@ -78,7 +78,7 @@ export class FileService {
     const applicant = nationalRegistry?.data
     const selectedChildren = getSelectedChildrenFromExternalData(
       applicant.children,
-      answers.selectChild,
+      answers.selectedChildren,
     )
     const parentB = selectedChildren[0].otherParent
 

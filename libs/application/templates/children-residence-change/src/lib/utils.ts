@@ -50,7 +50,7 @@ export const childrenResidenceInfo = (
 } => {
   const children = getSelectedChildrenFromExternalData(
     applicant.children,
-    answers.selectChild,
+    answers.selectedChildren,
   )
   const parentB = children[0].otherParent
   const childrenLiveWithApplicant = children.some(

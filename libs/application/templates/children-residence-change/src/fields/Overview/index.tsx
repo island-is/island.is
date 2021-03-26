@@ -38,7 +38,7 @@ const Overview = ({
   const applicant = externalData.nationalRegistry.data
   const children = getSelectedChildrenFromExternalData(
     applicant.children,
-    answers.selectChild,
+    answers.selectedChildren,
   )
   const parentB = children[0].otherParent
   const childResidenceInfo = childrenResidenceInfo(applicant, answers)

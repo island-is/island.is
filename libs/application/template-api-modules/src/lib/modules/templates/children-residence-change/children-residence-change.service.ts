@@ -48,7 +48,7 @@ export class ChildrenResidenceChangeService {
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       applicant.children,
-      answers.selectChild,
+      answers.selectedChildren,
     )
 
     const otherParent = selectedChildren[0].otherParent
