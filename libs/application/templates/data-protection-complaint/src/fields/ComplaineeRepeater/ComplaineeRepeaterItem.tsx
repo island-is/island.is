@@ -43,14 +43,15 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
   const initialIsOpen = getValueViaPath(
     answers,
     `${id}[${index}].operatesWithinEurope`,
-  ) as boolean
+  ) as string
+
   const { formatMessage } = useLocale()
-  const [isOpen, setIsOpen] = useState(initialIsOpen || false)
+  const [isOpen, setIsOpen] = useState(initialIsOpen === YES || false)
 
   const handleOnSelect = (value: string) => setIsOpen(value === YES)
 
   return (
-    <Box position="relative" key={field.id} marginTop={3}>
+    <Box position="relative" marginTop={3}>
       {index > 0 && (
         <Box position="absolute" className={styles.removeFieldButton}>
           <Button

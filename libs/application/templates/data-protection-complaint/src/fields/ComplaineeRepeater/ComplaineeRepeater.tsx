@@ -56,6 +56,7 @@ export const ComplaineeRepeater: FC<FieldBaseProps> = ({
             answers={answers}
             field={field}
             index={index}
+            key={`${id}[${index}]`}
             handleRemoveComplainee={handleRemoveComplainee}
             errors={errors}
           />
