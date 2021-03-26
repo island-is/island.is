@@ -541,10 +541,10 @@ export const ComplaintForm: Form = buildForm({
                   placeholder: complaint.labels.subjectSomethingElsePlaceholder,
                   backgroundColor: 'blue',
                   condition: (formValue) => {
-                    const other =
+                    const values =
                       ((formValue.subjectOfComplaint as FormValue)
-                        ?.other as string[]) || []
-                    return other.includes('other')
+                        ?.values as string[]) || []
+                    return values.includes('other')
                   },
                 }),
               ],
