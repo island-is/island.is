@@ -1,1 +1,2 @@
-export * from './lib/clients-mms'
+export * from './lib/mms.api'
+export * from './lib/mms.type'
