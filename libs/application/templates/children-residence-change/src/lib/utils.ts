@@ -23,7 +23,7 @@ export const getSelectedChildrenFromExternalData = (
 interface ChildrenResidenceInfo {
   parent: {
     letter: 'A' | 'B'
-    name: string
+    fullName: string
   }
   address: Address
 }
@@ -35,7 +35,7 @@ const extractParentInfo = (
   return {
     address,
     parent: {
-      name: fullName,
+      fullName,
       letter,
     },
   }

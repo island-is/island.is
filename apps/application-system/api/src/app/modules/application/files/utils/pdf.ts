@@ -148,14 +148,14 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${childResidenceInfo.current.parent.name}, Foreldri ${childResidenceInfo.current.parent.letter}`,
+    `Fyrra lögheimili: ${childResidenceInfo.current.parent.fullName}, Foreldri ${childResidenceInfo.current.parent.letter}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Nýtt lögheimili: ${childResidenceInfo.future.parent.name}, Foreldri ${childResidenceInfo.future.parent.letter}`,
+    `Nýtt lögheimili: ${childResidenceInfo.future.parent.fullName}, Foreldri ${childResidenceInfo.future.parent.letter}`,
   )
 
   if (reason) {
