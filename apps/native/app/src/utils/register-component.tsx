@@ -9,7 +9,7 @@ import { I18nProvider } from '../contexts/i18n-provider'
 
 export function registerComponent(
   name: string,
-  Component: NavigationFunctionComponent,
+  Component: NavigationFunctionComponent<any>,
 ) {
   Navigation.registerComponent(
     name,

@@ -11,14 +11,12 @@ target 'IslandApp' do
     exclude: [
       'expo-file-system',
       'expo-image-loader',
-      'expo-permissions',
       'unimodules-file-system-interface',
       'unimodules-barcode-scanner-interface',
       'unimodules-camera-interface',
       'unimodules-image-loader-interface',
       'unimodules-sensors-interface',
       'unimodules-face-detector-interface',
-      'unimodules-permissions-interface',
       'unimodules-task-manager-interface'
     ]
   )

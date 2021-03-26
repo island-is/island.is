@@ -4,7 +4,7 @@ import { SafeAreaView, Image, View } from 'react-native'
 import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
 import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../stores/auth-store'
-import { mainRoot } from '../../main'
+import { getAppRoot, getMainRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 
 export const LoginScreen: NavigationFunctionComponent = () => {
@@ -38,7 +38,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
             if (isAuth) {
               const userInfo = await authStore.fetchUserInfo()
               if (userInfo) {
-                Navigation.setRoot(mainRoot)
+                Navigation.setRoot({ root: getMainRoot() })
               }
             }
           } catch (err) {

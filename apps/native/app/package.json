@@ -22,6 +22,7 @@
     "@storybook/addon-knobs": "*",
     "@apollo/client": "*",
     "styled-components": "*",
-    "graphql-tag": "*"
+    "graphql-tag": "*",
+    "react-intl": "*"
   }
 }

@@ -1,10 +1,11 @@
 import React from 'react'
 import { theme } from '@island.is/island-ui/theme';
-import { useColorScheme } from 'react-native';
+import { Appearance, useColorScheme } from 'react-native';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { useEffect } from 'react';
 import { Options } from 'react-native-navigation';
 import { useNavigation } from 'react-native-navigation-hooks/dist';
+import { userPreferencesStore, AppearanceMode } from '../stores/preferences-store';
 
 export const shades = {
   light: {
@@ -56,17 +57,22 @@ export function useScreenOptions(callback: () => Options, deps: any[] = []) {
   }, deps);
 }
 
-
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // @todo hard-coded light theme
-  const colorScheme = 'light'; // useColorScheme();
+export function getThemeWithPreferences({ appearanceMode }: { appearanceMode: AppearanceMode }) {
+  // get color scheme from system if "automatic"
+  const colorScheme = appearanceMode === 'automatic' ? Appearance.getColorScheme() : appearanceMode;
+  // find correct shades key ("light" | "dark")
   const shadesKey = typeof colorScheme === 'string' ? colorScheme : 'light';
-  const selectedTheme = {
+  return {
     ...theme,
     isDark: colorScheme !== 'light',
     colorScheme: shadesKey,
     shade: shades[shadesKey],
   };
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const preferences = userPreferencesStore();
+  const selectedTheme = getThemeWithPreferences(preferences)
 
   return (
     <StyledThemeProvider theme={selectedTheme}>

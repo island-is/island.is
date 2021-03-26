@@ -16,6 +16,9 @@ interface UserInfo {
 interface AuthStore extends State {
   authorizeResult: AuthorizeResult | RefreshResult | undefined;
   userInfo: UserInfo | undefined;
+  lockScreenActivatedAt: number | undefined;
+  lockScreenComponentId: string | undefined;
+  lockScreenType: 'root' | 'overlay';
   fetchUserInfo(): Promise<UserInfo>;
   refresh(): Promise<boolean>
   login(): Promise<boolean>;
@@ -32,6 +35,9 @@ const appAuthConfig = {
 export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
+  lockScreenActivatedAt: undefined,
+  lockScreenComponentId: undefined,
+  lockScreenType: 'root',
   async fetchUserInfo() {
     return fetch(`${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`, {
       headers: {

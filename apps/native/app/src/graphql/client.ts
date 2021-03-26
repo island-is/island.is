@@ -8,7 +8,7 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
 import { config } from '../utils/config'
-import { authStore } from '../auth/auth'
+import { authStore } from '../stores/auth-store'
 import { typeDefs } from './type-defs';
 import { typePolicies } from './type-policies';
 

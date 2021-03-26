@@ -5,7 +5,8 @@ export const LIST_LICENSES_QUERY = gql`
     listLicenses {
       id
       title
-      subtitle
+      type
+      serviceProvider
     }
   }
 `;

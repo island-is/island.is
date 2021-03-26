@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { RefreshControl, ScrollView } from 'react-native'
 import { ListItem } from '@island.is/island-ui-native'
-import { navigateTo } from '../../utils/deep-linking';
+import { navigateTo } from '../../utils/deep-linking'
 import { useQuery } from '@apollo/client'
 import { client } from '../../graphql/client'
 import { Logo } from '../../components/logo/logo'
 import { useTheme } from 'styled-components'
 import { useScreenOptions } from '../../contexts/theme-provider'
 import { testIDs } from '../../utils/test-ids'
-import { ListDocumentsResponse, LIST_DOCUMENTS_QUERY } from '../../graphql/queries/list-documents.query'
+import {
+  ListDocumentsResponse,
+  LIST_DOCUMENTS_QUERY,
+} from '../../graphql/queries/list-documents.query'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
 export const InboxScreen: NavigationFunctionComponent = () => {
   const theme = useTheme()
@@ -39,36 +43,38 @@ export const InboxScreen: NavigationFunctionComponent = () => {
     [theme],
   )
 
-  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client });
-  const inboxItems = res?.data?.listDocuments ?? [];
+  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client })
+  const inboxItems = res?.data?.listDocuments ?? []
 
   const onRefresh = () => {
     setLoading(true)
     Promise.all([
-      new Promise(r => setTimeout(r, 1000)),
-      res.fetchMore({})
-    ])
-    .then(() => setLoading(false));
+      new Promise((r) => setTimeout(r, 1000)),
+      res.fetchMore({}),
+    ]).then(() => setLoading(false))
   }
 
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      contentInset={{ top: 0 }}
-      contentInsetAdjustmentBehavior="always"
-      refreshControl={
-        <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-      }
-    >
-      {inboxItems.map(({ id, subject, senderName }) => (
-        <ListItem
-          key={id}
-          title={senderName}
-          subtitle={subject}
-          icon={<Logo name={senderName} />}
-          onPress={() => navigateTo(`/inbox/${id}`)}
-        />
-      ))}
-    </ScrollView>
+    <>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentInset={{ top: 0 }}
+        contentInsetAdjustmentBehavior="always"
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+      >
+        {inboxItems.map(({ id, subject, senderName }) => (
+          <ListItem
+            key={id}
+            title={senderName}
+            subtitle={subject}
+            icon={<Logo name={senderName} />}
+            onPress={() => navigateTo(`/inbox/${id}`)}
+          />
+        ))}
+      </ScrollView>
+      <BottomTabsIndicator index={0} total={3} />
+    </>
   )
 }

@@ -7,12 +7,20 @@ PODS:
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
-  - EXConstants (9.3.5):
+  - EXApplication (3.0.0):
+    - UMCore
+  - EXConstants (10.0.0):
     - UMConstantsInterface
     - UMCore
   - EXLocalAuthentication (10.0.0):
     - UMConstantsInterface
     - UMCore
+  - EXNotifications (0.9.0):
+    - UMCore
+    - UMPermissionsInterface
+  - EXPermissions (10.0.0):
+    - UMCore
+    - UMPermissionsInterface
   - FBLazyVector (0.64.0)
   - FBReactNativeSpec (0.64.0):
     - RCT-Folly (= 2020.01.13.00)
@@ -347,10 +355,14 @@ PODS:
     - React-Core
   - RNKeychain (6.2.0):
     - React
+  - RNLocalize (2.0.2):
+    - React-Core
   - UMAppLoader (1.4.0)
   - UMConstantsInterface (5.4.0)
   - UMCore (6.0.0)
   - UMFontInterface (5.4.0)
+  - UMPermissionsInterface (5.4.0):
+    - UMCore
   - UMReactNativeAdapter (5.7.0):
     - React-Core
     - UMCore
@@ -361,8 +373,11 @@ PODS:
 
 DEPENDENCIES:
   - DoubleConversion (from `../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - EXApplication (from `../../node_modules/expo-application/ios`)
   - EXConstants (from `../../node_modules/expo-constants/ios`)
   - EXLocalAuthentication (from `../../node_modules/expo-local-authentication/ios`)
+  - EXNotifications (from `../../node_modules/expo-notifications/ios`)
+  - EXPermissions (from `../../node_modules/expo-permissions/ios`)
   - FBLazyVector (from `../../../../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../../../../node_modules/react-native/React/FBReactNativeSpec`)
   - Flipper (~> 0.75.1)
@@ -416,10 +431,12 @@ DEPENDENCIES:
   - ReactNativeNavigation (from `../../node_modules/react-native-navigation`)
   - "RNCAsyncStorage (from `../../node_modules/@react-native-community/async-storage`)"
   - RNKeychain (from `../../node_modules/react-native-keychain`)
+  - RNLocalize (from `../../node_modules/react-native-localize`)
   - UMAppLoader (from `../../node_modules/unimodules-app-loader/ios`)
   - UMConstantsInterface (from `../../node_modules/unimodules-constants-interface/ios`)
   - "UMCore (from `../../node_modules/@unimodules/core/ios`)"
   - UMFontInterface (from `../../node_modules/unimodules-font-interface/ios`)
+  - UMPermissionsInterface (from `../../node_modules/unimodules-permissions-interface/ios`)
   - "UMReactNativeAdapter (from `../../node_modules/@unimodules/react-native-adapter/ios`)"
   - Yoga (from `../../../../node_modules/react-native/ReactCommon/yoga`)
 
@@ -442,10 +459,16 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   DoubleConversion:
     :podspec: "../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  EXApplication:
+    :path: "../../node_modules/expo-application/ios"
   EXConstants:
     :path: "../../node_modules/expo-constants/ios"
   EXLocalAuthentication:
     :path: "../../node_modules/expo-local-authentication/ios"
+  EXNotifications:
+    :path: "../../node_modules/expo-notifications/ios"
+  EXPermissions:
+    :path: "../../node_modules/expo-permissions/ios"
   FBLazyVector:
     :path: "../../../../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
@@ -510,6 +533,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@react-native-community/async-storage"
   RNKeychain:
     :path: "../../node_modules/react-native-keychain"
+  RNLocalize:
+    :podspec: "../../node_modules/react-native-localize"
   UMAppLoader:
     :path: "../../node_modules/unimodules-app-loader/ios"
   UMConstantsInterface:
@@ -518,6 +543,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@unimodules/core/ios"
   UMFontInterface:
     :path: "../../node_modules/unimodules-font-interface/ios"
+  UMPermissionsInterface:
+    :path: "../../node_modules/unimodules-permissions-interface/ios"
   UMReactNativeAdapter:
     :path: "../../node_modules/@unimodules/react-native-adapter/ios"
   Yoga:
@@ -528,10 +555,13 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
-  EXConstants: 54d0bf04319d1692c6c7bc03ca151ef7a71705a4
+  EXApplication: e3a06b6d81f94e526f029a57b2121d6cde044004
+  EXConstants: 07a3effb73d2f73b61079703f810bbdd5364a1c5
   EXLocalAuthentication: fee862d288cefd30480d2c0e8fa50a5721ce0dfd
+  EXNotifications: 3a88b7b898fa842cae3c5a895a255fab554bc0c8
+  EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
-  FBReactNativeSpec: 784140de5da942ddfa8925cc00e3f54e31e34167
+  FBReactNativeSpec: 8df7b65459958769f0081bcf6c0ce0006cbf6217
   Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: f7a3caafbd74bda4827954fd7a6e000e36355489
@@ -571,14 +601,16 @@ SPEC CHECKSUMS:
   ReactNativeNavigation: 906b631a6847c26cacf5cb3791566f1fe205c65c
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
+  RNLocalize: 43f6c30d8e19ad92282ae434d310fb463b31f419
   UMAppLoader: 92d044af52626af3d81a69796ad666fc7a9a7d78
   UMConstantsInterface: 6825ea3832d26ed392ca6eff2df84edd69968fd0
   UMCore: 97ba5041c9c92317ce61739f6d126a692c8ef4a8
   UMFontInterface: 85fe1b845fb7caab45e04d9ce47e1677a5ce90a5
+  UMPermissionsInterface: 807e5733b4c6607f35757b1dd128f370718d2f94
   UMReactNativeAdapter: 172def7895b2cb44a7dd021336e316d5fa8ea958
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 98095fb95c712ee221fd65ce4b13f8324018a576
+PODFILE CHECKSUM: c7a2407f5497414cc033c7ca6c3c48f808fb4052
 
 COCOAPODS: 1.10.1

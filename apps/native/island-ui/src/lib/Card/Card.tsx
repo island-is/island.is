@@ -2,15 +2,15 @@ import React from 'react'
 import styled from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
 
-const colorTheme = {
-  pink: '#f5e4ec',
-  yellow: '#fff7e7',
-}
+// const colorTheme = {
+//   pink: '#f5e4ec',
+//   yellow: '#fff7e7',
+// }
 
-export enum CardColor {
-  YELLOW = 'yellow',
-  PINK = 'pink'
-}
+// export enum CardColor {
+//   YELLOW = 'yellow',
+//   PINK = 'pink'
+// }
 
 const Host = styled.View<{ color: string }>`
   padding: 30px 30px;
@@ -19,7 +19,7 @@ const Host = styled.View<{ color: string }>`
   width: 260px;
   min-height: 350px;
 
-  background-color: ${(props) => props.color !== CardColor.YELLOW ? colorTheme.pink : colorTheme.yellow};
+  background-color: ${(props) => props.color};
   border-radius: ${theme.border.radius.large};
 `;
 
@@ -31,12 +31,12 @@ const Title = styled.Text`
 
 interface CardProps {
   title: string;
-  color?: CardColor;
+  backgroundColor: string;
 }
 
-export function Card({ title, color = CardColor.PINK }: CardProps) {
+export function Card({ title, backgroundColor = '#f5e4ec' }: CardProps) {
   return (
-    <Host color={color}>
+    <Host color={backgroundColor}>
       <Title>
         {title}
       </Title>

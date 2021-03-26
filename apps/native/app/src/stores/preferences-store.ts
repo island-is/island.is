@@ -4,8 +4,8 @@ import { persist } from "zustand/middleware"
 import createUse from 'zustand';
 import AsyncStorage from '@react-native-community/async-storage';
 
-type Locale = 'en-US' | 'is-IS';
-type AppearanceMode = 'light' | 'dark' | 'automatic';
+export type Locale = 'en-US' | 'is-IS';
+export type AppearanceMode = 'light' | 'dark' | 'automatic';
 
 interface PreferencesStore extends State {
   locale: Locale,

@@ -15,6 +15,7 @@ import org.unimodules.adapters.react.ReactModuleRegistryProvider;
 import org.unimodules.core.interfaces.SingletonModule;
 import com.rnappauth.RNAppAuthPackage;
 import com.zoontek.rnlocalize.RNLocalizePackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 
 // android and react native
 import android.app.Application;
@@ -51,6 +52,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new KeychainPackage());
           packages.add(new RNAppAuthPackage());
           packages.add(new RNLocalizePackage());
+          packages.add(new AsyncStoragePackage());
 
           // Unimodules
           List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(

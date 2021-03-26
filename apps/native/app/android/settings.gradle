@@ -6,7 +6,6 @@ includeUnimodulesProjects([
   exclude: [
     'expo-file-system',
     'expo-image-loader',
-    'expo-permissions',
     'unimodules-file-system-interface',
     'unimodules-barcode-scanner-interface',
     'unimodules-camera-interface',
@@ -18,6 +17,9 @@ includeUnimodulesProjects([
 
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
 applyNativeModulesSettingsGradle(settings)
+
+include ':react-native-async-storage'
+project(':react-native-async-storage').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/async-storage/android')
 
 include ':react-native-navigation'
 project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-navigation/lib/android/app')

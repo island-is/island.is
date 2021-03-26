@@ -87,7 +87,7 @@ function evaluateExpression(expression: string | RegExp, path: string, scheme: s
   return false;
 }
 
-export function evaluateUrl(url: string) {
+export function evaluateUrl(url: string, extraProps: any = {}) {
   let solved = false;
   const { schemes, routes } = deepLinkingStore.getState();
   schemes.forEach((scheme) => {
@@ -97,7 +97,7 @@ export function evaluateUrl(url: string) {
         const result = evaluateExpression(route.expression, path, scheme);
         if (result) {
           solved = true;
-          route.callback({ scheme, ...result });
+          route.callback({ scheme, ...result, ...extraProps });
         }
       });
     }
@@ -138,9 +138,9 @@ export const resetSchemes = () => {
  * @param url Navigating url (ex. /inbox, /inbox/my-document-id, /wallet etc.)
  * @returns
  */
-export function navigateTo(url: string) {
+export function navigateTo(url: string, extraProps: any = {}) {
   const linkingUrl = `${config.bundleId}://${url.replace(/^\//, '')}`;
-  return evaluateUrl(linkingUrl);
+  return evaluateUrl(linkingUrl, extraProps);
   // @todo when to use native linking system?
   // return Linking.openURL(linkingUrl);
 }

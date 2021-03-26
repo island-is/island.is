@@ -1,32 +1,71 @@
-import { Container, Heading } from '@island.is/island-ui-native';
-import React, { useEffect } from 'react'
-import { Button, SafeAreaView, TextInput, Text, TouchableOpacity } from 'react-native'
-import { Navigation, NavigationFunctionComponent } from 'react-native-navigation';
-import { useNavigation, showModal } from 'react-native-navigation-hooks';
+import { Heading } from '@island.is/island-ui-native'
+import React from 'react'
+import { Button, SafeAreaView, Text, View } from 'react-native'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import { useAuthStore } from '../../stores/auth-store'
-import { loginRoot} from '../../main';
-import { testIDs } from '../../utils/test-ids';
+import { testIDs } from '../../utils/test-ids'
+import { useScreenOptions } from '../../contexts/theme-provider'
+import { scheduleNotificationAsync } from 'expo-notifications'
+import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 
 export const UserScreen: NavigationFunctionComponent = () => {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
+
+  useScreenOptions(
+    () => ({
+      topBar: {
+        title: {
+          text: authStore.userInfo?.name,
+        },
+      },
+    }),
+    [authStore],
+  )
+
   return (
     <SafeAreaView
       style={{
-        width: '100%',
-        height: '100%',
+        flex: 1,
+        padding: 32,
       }}
       testID={testIDs.SCREEN_USER}
     >
-      <Container>
-        <Heading>{authStore.userInfo?.name}</Heading>
-        <Text style={{ marginBottom: 30, marginTop: -30}}>Kt. {authStore.userInfo?.nationalId}</Text>
-        <Text>Authorization (Expires: {authStore.authorizeResult?.accessTokenExpirationDate})</Text>
-        <TextInput value={authStore.authorizeResult?.accessToken} />
-        <Button title="Logout" onPress={() => {
-          authStore.logout();
-          Navigation.setRoot(loginRoot)
-        }} />
-      </Container>
+      <View style={{ flex: 1, padding: 32 }}>
+        <Heading>Stillingar etc</Heading>
+        <Text style={{ marginBottom: 10 }}>
+          Kennitala: {authStore.userInfo?.nationalId}
+        </Text>
+        <Text>
+          Authorization Expires:{' '}
+          {authStore.authorizeResult?.accessTokenExpirationDate}
+        </Text>
+        <Button
+          title="Push notification"
+          onPress={() => {
+            scheduleNotificationAsync({
+              content: {
+                title: "You've got mail! 📬",
+                body: 'Here is the notification body',
+                data: { data: 'goes here' },
+              },
+              trigger: { seconds: 5 },
+            })
+          }}
+        />
+        <View style={{ flex: 1 }} />
+        <Button
+          title="Logout"
+          onPress={async () => {
+            await authStore.logout()
+            Navigation.setRoot({
+              root: await getAppRoot(),
+            })
+          }}
+        />
+      </View>
     </SafeAreaView>
   )
 }

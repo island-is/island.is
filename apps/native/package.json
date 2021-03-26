@@ -14,6 +14,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
     "expo-local-authentication": "10.0.0",
+    "expo-notifications": "0.9.0",
     "react-native-app-auth": "6.2.0",
     "react-native-keychain": "6.2.0",
     "react-native-localize": "2.0.2",

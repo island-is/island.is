@@ -212,13 +212,13 @@ dependencies {
     implementation project(':react-native-app-auth')
     implementation project(':react-native-web-view')
     implementation project(':react-native-localize')
+    implementation project(':react-native-async-storage')
 
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],
       exclude: [
         'expo-file-system',
         'expo-image-loader',
-        'expo-permissions',
         'unimodules-file-system-interface',
         'unimodules-barcode-scanner-interface',
         'unimodules-camera-interface',
