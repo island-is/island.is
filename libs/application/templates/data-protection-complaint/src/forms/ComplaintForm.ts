@@ -34,63 +34,6 @@ import { externalData } from '../lib/messages/externalData'
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
 
-const buildComplaineeMultiField = (id: string) =>
-  buildMultiField({
-    id: `${id}MultiField`,
-    title: complaint.general.complaineePageTitle,
-    description: complaint.general.complaineePageDescription,
-    children: [
-      buildTextField({
-        id: `${id === 'complainee' ? `${id}.` : ''}name`,
-        title: complaint.labels.complaineeName,
-        backgroundColor: 'blue',
-      }),
-      buildTextField({
-        id: `${id === 'complainee' ? `${id}.` : ''}address`,
-        title: complaint.labels.complaineeAddress,
-        backgroundColor: 'blue',
-      }),
-      buildTextField({
-        id: `${id === 'complainee' ? `${id}.` : ''}nationalId`,
-        title: complaint.labels.complaineeNationalId,
-        format: '######-####',
-        backgroundColor: 'blue',
-      }),
-      buildCustomField({
-        id: `${id}operatesWithinEuropeSpacer`,
-        title: '',
-        component: 'FieldLabel',
-      }),
-      buildRadioField({
-        id: `${id === 'complainee' ? `${id}.` : ''}operatesWithinEurope`,
-        title: complaint.labels.complaineeOperatesWithinEurope,
-        options: [yesOption, noOption],
-        largeButtons: true,
-        width: 'half',
-      }),
-      buildTextField({
-        id: `${id === 'complainee' ? `${id}.` : ''}countryOfOperation`,
-        title: complaint.labels.complaineeCountryOfOperation,
-        backgroundColor: 'blue',
-        condition: (formValue) => {
-          const operatesWithinEurope = (formValue.complainee as FormValue)
-            ?.operatesWithinEurope
-          return operatesWithinEurope === 'yes'
-        },
-      }),
-      buildCustomField({
-        id: `${id}operatesWithinEuropeMessage`,
-        title: complaint.labels.complaineeOperatesWithinEuropeMessage,
-        component: 'FieldAlertMessage',
-        condition: (formValue) => {
-          const operatesWithinEurope = (formValue.complainee as FormValue)
-            ?.operatesWithinEurope
-          return operatesWithinEurope === 'yes'
-        },
-      }),
-    ],
-  })
-
 export const ComplaintForm: Form = buildForm({
   id: 'DataProtectionComplaintForm',
   title: application.name,
@@ -523,16 +466,10 @@ export const ComplaintForm: Form = buildForm({
       id: 'complaint',
       title: section.complaint.defaultMessage,
       children: [
-        buildSubSection({
-          id: 'complainee',
-          title: section.complainee.defaultMessage,
-          children: [buildComplaineeMultiField('complainee')],
-        }),
-        buildRepeater({
-          id: 'additionalComplainees',
+        buildCustomField({
+          id: 'complainees',
           title: complaint.general.complaineePageTitle,
           component: 'ComplaineeRepeater',
-          children: [buildComplaineeMultiField('additionalComplainees')],
         }),
         buildSubSection({
           id: 'subjectOfComplaint',

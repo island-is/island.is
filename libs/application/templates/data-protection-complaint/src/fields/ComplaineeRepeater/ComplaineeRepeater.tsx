@@ -1,13 +1,13 @@
-import { RepeaterProps } from '@island.is/application/core'
-import { Box, Button } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
-import React, { FC } from 'react'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { complaint } from '../../lib/messages'
 import { YES, NO } from '../../shared'
-import { ComplaineeTable } from './ComplaineeTable'
+import { useFieldArray } from 'react-hook-form'
+import { ComplaineeRepeaterItem } from './ComplaineeRepeaterItem'
 
-type Complainee = {
+export type ComplaineeField = {
   name: string
   address: string
   nationalId: string
@@ -15,42 +15,61 @@ type Complainee = {
   countryOfOperation: string
 }
 
-export const ComplaineeRepeater: FC<RepeaterProps> = ({
+export const ComplaineeRepeater: FC<FieldBaseProps> = ({
   application,
-  expandRepeater,
-  removeRepeaterItem,
+  field,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
-  const complainee = answers.complainee as Complainee | undefined
-  const additionalComplainees = answers.additionalComplainees as
-    | Complainee[]
-    | undefined
+  const { id } = field
+  const { fields, append, remove } = useFieldArray<ComplaineeField>({
+    name: id,
+  })
 
-  const handleRemoveComplaineeClick = (index: number) =>
-    removeRepeaterItem(index)
+  useEffect(() => {
+    // The repeater should include one line by default
+    if (fields.length === 0) handleAddComplainee()
+  }, [fields])
+
+  const handleAddComplainee = () =>
+    append({
+      name: '',
+      address: '',
+      nationalId: '',
+      operatesWithinEurope: undefined,
+      countryOfOperation: '',
+    })
+  const handleRemoveComplainee = (index: number) => remove(index)
 
   return (
     <Box>
+      {/* Removed for now because the message concerns asterisk fields which are not supported atm
       <FieldDescription
         description={formatMessage(complaint.general.complaineePageDescription)}
-      />
-      {complainee && <ComplaineeTable {...complainee} />}
-      {additionalComplainees?.map((complainee, index) => (
-        <ComplaineeTable
-          {...complainee}
-          onRemove={handleRemoveComplaineeClick.bind(null, index)}
-        />
-      ))}
-      <FieldDescription
-        description={formatMessage(complaint.labels.complaineeAddPerson)}
-      />
+      /> */}
+      {fields.map((field, index) => {
+        return (
+          <ComplaineeRepeaterItem
+            id={id}
+            application={application}
+            answers={answers}
+            field={field}
+            index={index}
+            handleRemoveComplainee={handleRemoveComplainee}
+            errors={errors}
+          />
+        )
+      })}
+      <Text marginY={3}>
+        {formatMessage(complaint.labels.complaineeAddPerson)}
+      </Text>
       <Button
         variant="ghost"
         icon="add"
         iconType="outline"
         size="small"
-        onClick={expandRepeater}
+        onClick={handleAddComplainee}
       >
         {formatMessage(complaint.labels.complaineeAdd)}
       </Button>

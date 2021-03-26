@@ -88,7 +88,7 @@ export const DataProtectionComplaintSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
-    documents: z.array(FileSchema).nonempty(),
+    documents: z.array(FileSchema),
     persons: z
       .array(
         z.object({
@@ -100,18 +100,14 @@ export const DataProtectionComplaintSchema = z.object({
       )
       .nonempty(),
   }),
-  complainee: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
-    address: z.string().nonempty(error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
-    operatesWithinEurope: z.enum([YES, NO]),
-    countryOfOperation: z.string().optional(),
-  }),
-  additionalComplainees: z.array(
+  complainees: z.array(
     z.object({
       name: z.string().nonempty(error.required.defaultMessage),
       address: z.string().nonempty(error.required.defaultMessage),
-      nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
+      nationalId: z
+        .string()
+        .refine((x) => (x ? kennitala.isValid(x) : false))
+        .optional(),
       operatesWithinEurope: z.enum([YES, NO]),
       countryOfOperation: z.string().optional(),
     }),
@@ -122,7 +118,7 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   complaint: z.object({
     description: z.string().nonempty(error.required.defaultMessage),
-    documents: z.array(FileSchema).nonempty(),
+    documents: z.array(FileSchema),
   }),
   overview: z.object({
     termsAgreement: z.string().refine((x) => x === DefaultEvents.SUBMIT),
