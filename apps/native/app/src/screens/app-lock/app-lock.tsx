@@ -18,6 +18,7 @@ function resetLockScreen() {
 
 function unlockApp() {
   const { lockScreenComponentId, lockScreenType } = authStore.getState();
+  console.log({ lockScreenComponentId, lockScreenType })
   if (lockScreenComponentId && lockScreenType === 'overlay') {
     Navigation.dismissOverlay(lockScreenComponentId);
   } else {
@@ -37,6 +38,7 @@ export const AppLockScreen: NavigationFunctionComponent<{ isRoot: boolean }> = (
     isBiometricsPrompt.current = true;
     const response = await authenticateAsync();
     isBiometricsPrompt.current = false;
+    console.log({ response });
     if (response.success) {
       unlockApp();
     }

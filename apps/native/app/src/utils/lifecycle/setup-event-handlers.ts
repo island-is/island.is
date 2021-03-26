@@ -14,21 +14,21 @@ export function setupEventHandlers() {
       return
     }
 
-    if (status === 'active') {
-      if (lockScreenActivatedAt !== undefined && lockScreenActivatedAt + LOCK_SCREEN_TIMEOUT > Date.now()) {
-        if (lockScreenComponentId) {
-          Navigation.dismissOverlay(lockScreenComponentId);
-        }
-      }
-    }
+    // if (status === 'active') {
+    //   if (lockScreenActivatedAt !== undefined && lockScreenActivatedAt + LOCK_SCREEN_TIMEOUT > Date.now()) {
+    //     if (lockScreenComponentId) {
+    //       Navigation.dismissOverlay(lockScreenComponentId);
+    //     }
+    //   }
+    // }
 
-    if (status === 'background' || status === 'inactive') {
-      if (!lockScreenComponentId) {
-        Navigation.showOverlay({
-          component: { name: ComponentRegistry.AppLockScreen, passProps: { isRoot: false } }
-        })
-      }
-    }
+    // if (status === 'background' || status === 'inactive') {
+    //   if (!lockScreenComponentId) {
+    //     Navigation.showOverlay({
+    //       component: { name: ComponentRegistry.AppLockScreen, passProps: { isRoot: false } }
+    //     })
+    //   }
+    // }
   })
 
   // show user screen
