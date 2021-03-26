@@ -46,10 +46,6 @@ describe('/domari-krafa/urskurdur', () => {
             } as UpdateCase,
             {
               id: 'test_id_3',
-              custodyEndDate: '2020-10-24T12:31:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
               decision: CaseDecision.ACCEPTING,
             } as UpdateCase,
           ]),
@@ -77,11 +73,6 @@ describe('/domari-krafa/urskurdur', () => {
       await screen.findByRole('radio', {
         name: 'Krafa um gæsluvarðhald samþykkt',
       }),
-    )
-
-    userEvent.type(
-      await screen.findByLabelText('Tímasetning (kk:mm) *'),
-      '12:31',
     )
 
     expect(
