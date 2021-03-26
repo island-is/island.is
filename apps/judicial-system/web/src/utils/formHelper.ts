@@ -149,9 +149,6 @@ export const newSetAndSendDateToServer = async (
   setIsValid: (value: React.SetStateAction<boolean>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  console.log("date", date);
-  console.log("isvalid", isValid);
-  
   setIsValid(isValid)
 
   if(!isValid) {

@@ -39,7 +39,7 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
-import NewDateTime from 'apps/judicial-system/web/src/shared-components/NewDateTime/NewDateTime'
+import NewDateTime from '@island.is/judicial-system-web/src/shared-components/NewDateTime/NewDateTime'
 
 interface CaseData {
   case?: Case
@@ -164,7 +164,7 @@ export const StepTwo: React.FC = () => {
 
   useEffect(() => {
     if (!workingCase && data) {
-      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== undefined)
+      setRequestedCourtDateIsValid(data.case?.requestedCourtDate !== null)
 
       setWorkingCase(data.case)
     }
@@ -317,8 +317,12 @@ export const StepTwo: React.FC = () => {
                 </Box>
                 <NewDateTime
                   name="arrestDate"
-                  selectedDate={workingCase.arrestDate}
-                  onChange={(date: Date | undefined, valid: boolean) =>
+                  selectedDate={
+                    workingCase.arrestDate
+                      ? new Date(workingCase.arrestDate)
+                      : undefined
+                  }
+                  onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
                       'arrestDate',
                       date,
@@ -328,7 +332,7 @@ export const StepTwo: React.FC = () => {
                       setArrestDateIsValid,
                       updateCase,
                     )
-                  }
+                  }}
                 />
               </Box>
             )}
@@ -346,7 +350,11 @@ export const StepTwo: React.FC = () => {
               </Box>
               <NewDateTime
                 name="reqCourtDate"
-                selectedDate={workingCase.requestedCourtDate}
+                selectedDate={
+                  workingCase.requestedCourtDate
+                    ? new Date(workingCase.requestedCourtDate)
+                    : undefined
+                }
                 onChange={(date: Date | undefined, valid: boolean) =>
                   newSetAndSendDateToServer(
                     'requestedCourtDate',
@@ -358,6 +366,7 @@ export const StepTwo: React.FC = () => {
                     updateCase,
                   )
                 }
+                timeLabel="Ósk um tíma (kk:mm)"
                 locked={workingCase.courtDate !== null}
                 required
               />

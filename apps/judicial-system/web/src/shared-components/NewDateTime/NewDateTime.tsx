@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DatePicker, DatePickerProps, Input } from '@island.is/island-ui/core'
 import { TimeInputField, BlueBox } from '../../shared-components'
 import * as styles from './NewDateTime.treat'
@@ -7,7 +7,6 @@ import {
   validate,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
-import { getTimeFromDate } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface Props {
   name: string
@@ -15,7 +14,7 @@ interface Props {
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
-  selectedDate?: string
+  selectedDate?: Date
   disabled?: boolean
   required?: boolean
   blueBox?: boolean
@@ -40,15 +39,32 @@ const NewDateTime: React.FC<Props> = (props) => {
     onChange,
   } = props
 
-  const [currentDate, setCurrentDate] = useState<Date | undefined>(
-    new Date(selectedDate || ''),
-  )
-  const [currentTime, setCurrentTime] = useState<string>(
-    getTimeFromDate(selectedDate) || '',
-  )
+  const getTimeFromDate = (date: Date | undefined): string =>
+    date ? `${date.getHours()}:${date.getMinutes()}` : ''
+
+  const [currentDate, setCurrentDate] = useState(selectedDate)
+  const [currentTime, setCurrentTime] = useState(getTimeFromDate(selectedDate))
 
   const [datepickerErrorMessage, setDatepickerErrorMessage] = useState<string>()
   const [timeErrorMessage, setTimeErrorMessage] = useState<string>()
+
+  const isValidDateTime = (
+    date: Date | undefined,
+    time: string | undefined,
+    required: boolean,
+  ) => {
+    const validations: Validation[] = ['empty', 'time-format']
+
+    const timeError = validations.find(
+      (v) => validate(time || '', v).isValid === false,
+    )
+
+    return (
+      (required && date !== undefined && timeError === undefined) ||
+      (required === false && date === undefined) ||
+      (date !== undefined && timeError === undefined)
+    )
+  }
 
   const onCalendarClose = (date: Date | null) => {
     if (date === null && required) {
@@ -98,20 +114,14 @@ const NewDateTime: React.FC<Props> = (props) => {
     if (error) {
       setTimeErrorMessage(error.errorMessage)
     }
+
+    sendToParent(currentDate, currentTime)
   }
 
-  const sendToParent = (date: Date | undefined, time: string) => {
-    const validations: Validation[] = ['empty', 'time-format']
+  const sendToParent = (date: Date | undefined, time: string | undefined) => {
+    const isValid = isValidDateTime(date, time, required)
 
-    const timeError = validations.find(
-      (v) => validate(time, v).isValid === false,
-    )
-
-    const isValid =
-      ((required && date !== undefined) || required === false) &&
-      timeError === undefined
-
-    if (isValid && date) {
+    if (isValid && date && time) {
       const dateToSend = new Date(date.getTime())
 
       const timeParts = time.split(':')
@@ -153,7 +163,7 @@ const NewDateTime: React.FC<Props> = (props) => {
         >
           <Input
             data-testid={`${name}-time`}
-            name={name}
+            name={`${name}-time`}
             label={timeLabel}
             placeholder="Veldu tíma"
             errorMessage={timeErrorMessage}
