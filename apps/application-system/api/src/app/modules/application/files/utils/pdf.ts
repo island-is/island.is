@@ -1,23 +1,32 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 import {
-  PersonResidenceChange,
-  Child,
+  NationalRegistry,
+  Answers,
   formatAddress,
+  getSelectedChildrenFromExternalData,
+  childrenResidenceInfo,
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
 export async function generateResidenceChangePdf(
-  childrenAppliedFor: Array<Child>,
-  parentA: PersonResidenceChange,
-  parentB: PersonResidenceChange,
-  expiry: Array<string>,
-  reason?: string,
+  applicant: NationalRegistry,
+  answers: Answers,
 ): Promise<Buffer> {
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
+  const { selectDuration, residenceChangeReason, selectChild } = answers
+  const reason = residenceChangeReason
+  const expiry = selectDuration
+  const parentA = applicant
+  const childrenAppliedFor = getSelectedChildrenFromExternalData(
+    applicant.children,
+    selectChild,
+  )
+  const parentB = childrenAppliedFor[0].otherParent
+  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
 
   const doc = new PDFDocument({
     size: PdfConstants.PAGE_SIZE,
@@ -139,14 +148,14 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${parentA.fullName}, Foreldri A`,
+    `Fyrra lögheimili: ${childResidenceInfo.current.parent.name}, Foreldri ${childResidenceInfo.current.parent.letter}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Nýtt lögheimili: ${parentB.fullName}, Foreldri B`,
+    `Nýtt lögheimili: ${childResidenceInfo.future.parent.name}, Foreldri ${childResidenceInfo.future.parent.letter}`,
   )
 
   if (reason) {

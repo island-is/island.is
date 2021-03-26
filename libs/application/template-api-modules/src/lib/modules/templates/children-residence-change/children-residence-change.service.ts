@@ -10,6 +10,7 @@ import {
   CRCApplication,
   Override,
   getSelectedChildrenFromExternalData,
+  childrenResidenceInfo,
 } from '@island.is/application/templates/children-residence-change'
 import * as AWS from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
@@ -52,6 +53,9 @@ export class ChildrenResidenceChangeService {
 
     const otherParent = selectedChildren[0].otherParent
 
+    const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+    const currentAddress = childResidenceInfo.current.address
+
     if (!fileContent) {
       throw new Error('File content was undefined')
     }
@@ -89,11 +93,9 @@ export class ChildrenResidenceChangeService {
       return {
         name: child.fullName,
         ssn: child.nationalId,
-        // TODO: change address when we handle that both parents can
-        // apply for the change regardless of where the children currently live
-        homeAddress: parentA.homeAddress,
-        postalCode: parentA.postalCode,
-        city: parentA.city,
+        homeAddress: currentAddress.streetName,
+        postalCode: currentAddress.postalCode,
+        city: currentAddress.city,
         signed: false,
         type: PersonType.Child,
       }
