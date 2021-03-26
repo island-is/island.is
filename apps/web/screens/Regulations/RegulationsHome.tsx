@@ -270,21 +270,14 @@ RegulationsHome.getInitialProps = async (ctx) => {
   ] as const)
 /**/
 
-  const [namespace, regulationsNewest] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'Regulations',
-            lang: locale,
-          },
-        },
-      })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content?.data?.getNamespace?.fields ?? '{}')
-      }),
+  const [texts, regulationsNewest] = await Promise.all([
+    await getUiTexts<RegulationHomeTexts>(
+      apolloClient,
+      locale,
+      'Regulations_Home',
+      homeTexts,
+    ),
+
     apolloClient.query<
       GetRegulationsNewestQuery,
       QueryGetRegulationsNewestArgs
@@ -298,7 +291,7 @@ RegulationsHome.getInitialProps = async (ctx) => {
     }),
   ])
 
-  console.log({ namespace, regulationsNewest })
+  console.log({ texts, regulationsNewest })
 
   // FIXME: use apollo GQL api
 
@@ -307,17 +300,9 @@ RegulationsHome.getInitialProps = async (ctx) => {
     shuffle(regulationsSearchResults).slice(Math.floor(5 * Math.random())),
   )
 
-  let texts = await getUiTexts<RegulationHomeTexts>(
-    apolloClient,
-    locale,
-    'Regulations_Home',
-    homeTexts,
-  )
-
   console.log(Object.keys(ctx))
 
   return {
-    namespace,
     searchResults,
     texts,
     searchQuery: getParams(query, ['q', 'rn', 'year', 'ch', 'all']),

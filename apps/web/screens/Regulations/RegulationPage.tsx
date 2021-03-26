@@ -137,21 +137,22 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     ? assertEarlierDate(p.earlierDate, date)
     : undefined
 
-  const [namespace, regulationOriginal] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'Regulations',
-            lang: locale,
-          },
-        },
-      })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content?.data?.getNamespace?.fields ?? '{}')
-      }),
+  console.log('FOOBAR', {
+    number,
+    viewType,
+    date,
+    isCustomDiff,
+    earlierDate,
+  })
+
+  const [texts, regulationOriginal] = await Promise.all([
+    await getUiTexts<RegulationPageTexts>(
+      apolloClient,
+      locale,
+      'Regulations_Viewer',
+      regulationPageTexts,
+    ),
+
     apolloClient.query<
       GetRegulationOriginalQuery,
       QueryGetRegulationOriginalArgs
@@ -165,22 +166,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
-  console.log({ namespace, regulationOriginal })
-
-  console.log('FOOBAR', {
-    number,
-    viewType,
-    date,
-    isCustomDiff,
-    earlierDate,
-  })
-
-  let texts = await getUiTexts<RegulationPageTexts>(
-    apolloClient,
-    locale,
-    'Regulations_Viewer',
-    regulationPageTexts,
-  )
+  console.log({ texts, regulationOriginal })
 
   // FIXME: use apollo GQL api
   const redirect = Math.random() < 0.2
