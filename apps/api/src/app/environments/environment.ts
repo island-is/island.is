@@ -75,4 +75,7 @@ export default {
     url: 'https://thjonusta-s.rsk.is/api',
     password: process.env.RSK_API_PASSWORD,
   },
+  regulationsDomain: {
+    url: 'https://reglugerdir-api.herokuapp.com/api/v1'
+  }
 }

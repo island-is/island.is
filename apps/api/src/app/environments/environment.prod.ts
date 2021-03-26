@@ -70,4 +70,7 @@ export default {
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
   },
+  regulationsDomain: {
+    url: process.env.REGULATIONS_API_URL,
+  }
 }

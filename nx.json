@@ -103,6 +103,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-regulations": {
+      "tags": []
+    },
     "api-domains-rsk": {
       "tags": []
     },
@@ -205,6 +208,9 @@
       "tags": []
     },
     "clients-national-registry": {
+      "tags": []
+    },
+    "clients-regulations": {
       "tags": []
     },
     "clients-rsk": {

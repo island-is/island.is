@@ -19,6 +19,13 @@ import { RegulationRedirectMessage } from './RegulationRedirectMessage'
 import { RegulationDisplay } from './RegulationDisplay'
 import { getParams } from './regulationUtils'
 import { getUiTexts } from './getUITexts'
+import {
+  GetNamespaceQuery,
+  GetRegulationOriginalQuery,
+  QueryGetNamespaceArgs,
+  QueryGetRegulationOriginalArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY, GET_REGULATION_ORIGINAL_QUERY } from '../queries'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -129,6 +136,36 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const earlierDate = isCustomDiff
     ? assertEarlierDate(p.earlierDate, date)
     : undefined
+
+  const [namespace, regulationOriginal] = await Promise.all([
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Regulations',
+            lang: locale,
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content?.data?.getNamespace?.fields ?? '{}')
+      }),
+    apolloClient.query<
+      GetRegulationOriginalQuery,
+      QueryGetRegulationOriginalArgs
+    >({
+      query: GET_REGULATION_ORIGINAL_QUERY,
+      variables: {
+        input: {
+          regulationName: number,
+        },
+      },
+    }),
+  ])
+
+  console.log({ namespace, regulationOriginal })
 
   console.log('FOOBAR', {
     number,
