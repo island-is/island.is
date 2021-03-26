@@ -35,7 +35,7 @@ type FilterMultiChoiceChangeEvent = {
 
 export interface FilterMultiChoiceProps {
   /** Array of different categories grouping different filter values */
-  categories: Array<FilterCategory>
+  categories: ReadonlyArray<FilterCategory>
   /** Label for clear button for localization */
   labelClear: string
   /** OnChange event handler when user checks/unchecks a value */

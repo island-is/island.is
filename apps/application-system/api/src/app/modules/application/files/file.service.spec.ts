@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
-import { SigningService, SIGNING_OPTIONS } from '@island.is/dokobit-signing'
+import { SigningModule, SigningService } from '@island.is/dokobit-signing'
 import { AwsService } from './aws.service'
 import * as pdf from './utils/pdf'
 import { Application } from './../application.model'
@@ -25,41 +25,46 @@ describe('FileService', () => {
 
   const applicationId = '1111-2222-3333-4444'
 
-  const parentA = {
-    nationalId: '0113215029',
-    ssn: '0113215029',
-    fullName: 'Test name',
-    phoneNumber: '111-2222',
-    email: 'email@email.is',
-  }
-
   const parentB = {
     id: 'id',
-    name: 'parent b',
-    ssn: '0022993322',
-    postalCode: '101',
-    address: 'Borgartún',
-    city: 'Reykjavík',
+    fullName: 'parent b',
+    nationalId: '0022993322',
+    address: {
+      postalCode: '101',
+      streetName: 'Borgartún',
+      city: 'Reykjavík',
+    },
+  }
+
+  const parentBWithContactInfo = {
+    ...parentB,
     phoneNumber: '222-1111',
     email: 'email2@email2.is',
   }
 
   const child = {
-    id: 'id',
-    name: 'child',
-    ssn: '123456-7890',
-    postalCode: '101',
-    address: 'Borgartún',
-    city: 'Reykjavík',
-    phoneNumber: '222-3333',
-    email: 'email3@email3.is',
+    fullName: 'child',
+    nationalId: '1234567890',
+    otherParent: parentB,
+  }
+
+  const parentA = {
+    nationalId: '0113215029',
+    fullName: 'Test name',
+    children: [child],
+  }
+
+  const parentAWithContactInfo = {
+    ...parentA,
+    phoneNumber: '111-2222',
+    email: 'email@email.is',
   }
 
   const createApplication = (answers?: object, typeId?: string) =>
     (({
       id: applicationId,
       state: 'draft',
-      applicant: parentA.ssn,
+      applicant: parentA.nationalId,
       assignees: [],
       typeId: typeId ?? ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
       modified: new Date(),
@@ -67,30 +72,20 @@ describe('FileService', () => {
       attachments: {},
       answers: answers ?? {
         useMocks: 'no',
-        selectChild: [child.name],
+        selectedChildren: [child.nationalId],
         parentA: {
-          phoneNumber: parentA.phoneNumber,
-          email: parentA.email,
+          phoneNumber: parentAWithContactInfo.phoneNumber,
+          email: parentAWithContactInfo.email,
         },
         parentB: {
-          email: parentB.email,
-          phoneNumber: parentB.phoneNumber,
+          email: parentBWithContactInfo.email,
+          phoneNumber: parentBWithContactInfo.phoneNumber,
         },
         expiry: 'permanent',
       },
       externalData: {
-        parentNationalRegistry: {
-          data: { ...parentB },
-          status: 'success',
-          date: new Date(),
-        },
         nationalRegistry: {
           data: { ...parentA },
-          status: 'success',
-          date: new Date(),
-        },
-        childrenNationalRegistry: {
-          data: [child],
           status: 'success',
           date: new Date(),
         },
@@ -100,17 +95,15 @@ describe('FileService', () => {
   beforeEach(async () => {
     const config: ApplicationConfig = { presignBucket: bucket }
     const module = await Test.createTestingModule({
-      imports: [LoggingModule],
+      imports: [
+        LoggingModule,
+        SigningModule.register({
+          url: 'Test Url',
+          accessToken: 'Test Access Token',
+        }),
+      ],
       providers: [
         FileService,
-        {
-          provide: SIGNING_OPTIONS,
-          useValue: {
-            url: 'Test Url',
-            accessToken: 'Test Access Token',
-          },
-        },
-        SigningService,
         AwsService,
         { provide: APPLICATION_CONFIG, useValue: config },
       ],
@@ -126,7 +119,9 @@ describe('FileService', () => {
       .spyOn(awsService, 'uploadFile')
       .mockImplementation(() => Promise.resolve())
 
-    jest.spyOn(awsService, 'getPresignedUrl').mockImplementation(() => 'url')
+    jest
+      .spyOn(awsService, 'getPresignedUrl')
+      .mockImplementation(() => Promise.resolve('url'))
 
     jest
       .spyOn(pdf, 'generateResidenceChangePdf')
@@ -181,7 +176,7 @@ describe('FileService', () => {
     )
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
-      parentA.phoneNumber,
+      parentAWithContactInfo.phoneNumber,
       'Lögheimilisbreyting barns',
       parentA.fullName,
       'Ísland',
@@ -198,7 +193,16 @@ describe('FileService', () => {
   })
 
   it('should throw error for request file signature since phone number is missing', async () => {
-    const application = createApplication({ useMocks: 'no', parentA: {} })
+    const application = createApplication({
+      useMocks: 'no',
+      selectedChildren: [child.nationalId],
+      parentA: {},
+      parentB: {
+        email: parentBWithContactInfo.email,
+        phoneNumber: parentBWithContactInfo.phoneNumber,
+      },
+      expiry: 'permanent',
+    })
 
     const act = async () =>
       await service.requestFileSignature(
@@ -260,7 +264,7 @@ describe('FileService', () => {
     const application = createApplication()
     const fileName = `children-residence-change/${application.id}.pdf`
 
-    const result = service.getPresignedUrl(
+    const result = await service.getPresignedUrl(
       application,
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
@@ -322,18 +326,24 @@ describe('FileService', () => {
   it('should throw error for getPresignedUrl since application type is not supported', async () => {
     const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
 
-    const act = () =>
-      service.getPresignedUrl(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
+    const act = async () =>
+      await service.getPresignedUrl(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
 
-    expect(act).toThrowError(BadRequestException)
+    expect(act).rejects.toEqual(BadRequestException)
   })
 
   it('should have an application type that is valid for getPresignedUrl', async () => {
     const application = createApplication()
 
-    const act = () =>
-      service.getPresignedUrl(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
+    const act = async () =>
+      await service.getPresignedUrl(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
 
-    expect(act).not.toThrow()
+    expect(act).rejects.toEqual(BadRequestException)
   })
 })

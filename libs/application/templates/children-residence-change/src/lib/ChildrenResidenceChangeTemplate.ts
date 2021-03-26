@@ -7,10 +7,10 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import { extractParentFromApplication } from './utils'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
+import { getSelectedChildrenFromExternalData } from './utils'
 
 type Events = { type: DefaultEvents.ASSIGN } | { type: DefaultEvents.SUBMIT }
 
@@ -126,15 +126,22 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     actions: {
       assignToOtherParent: assign((context) => {
         // TODO: fix this..
-        const otherParent = extractParentFromApplication(
-          (context.application as unknown) as CRCApplication,
+        const {
+          externalData,
+          answers,
+        } = (context.application as unknown) as CRCApplication
+        const applicant = externalData.nationalRegistry.data
+        const selectedChildren = getSelectedChildrenFromExternalData(
+          applicant.children,
+          answers.selectedChildren,
         )
+        const otherParent = selectedChildren[0].otherParent
 
         return {
           ...context,
           application: {
             ...context.application,
-            assignees: [otherParent.ssn],
+            assignees: [otherParent.nationalId],
           },
         }
       }),

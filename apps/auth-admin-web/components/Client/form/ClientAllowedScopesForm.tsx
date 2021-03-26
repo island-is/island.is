@@ -48,7 +48,7 @@ const ClientAllowedScopes: React.FC<Props> = (props: Props) => {
   }, [])
 
   const getAvailableScopes = async () => {
-    const response = await ClientService.FindAvailabeScopes()
+    const response = await ClientService.findAvailabeScopes()
     if (response) {
       setScopes(response)
     }

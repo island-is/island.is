@@ -5,6 +5,7 @@ import { ErrorMessage } from '@hookform/error-message'
 import { ApiScopeDTO } from '../../../entities/dtos/api-scope-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ValidationUtils from './../../../utils/validation.utils'
+import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 
 interface Props {
   handleSave?: (object: ApiScopeDTO) => void
@@ -124,6 +125,12 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     name="displayName"
                     message="Display name is required and can not contain special characters"
                   />
+                  <TranslationCreateFormDropdown
+                    className="apiscope"
+                    property="displayName"
+                    isEditing={isEditing}
+                    id={props.apiScope.name}
+                  />
                 </div>
                 <div className="api-scope-form__container__field">
                   <label
@@ -149,6 +156,12 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
                     errors={errors}
                     name="description"
                     message="Description can not contain special characters"
+                  />
+                  <TranslationCreateFormDropdown
+                    className="apiscope"
+                    property="description"
+                    isEditing={isEditing}
+                    id={props.apiScope.name}
                   />
                 </div>
 

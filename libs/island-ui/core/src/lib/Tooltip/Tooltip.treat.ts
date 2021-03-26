@@ -31,18 +31,6 @@ export const icon = style({
   position: 'relative',
 })
 
-export const iconSVG = style({
-  width: '100%',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-})
-
-export const iconPath = style({
-  fill: theme.color.dark200,
-  transition: 'fill .125s ease',
-})
-
 globalStyle(`${icon}:hover path`, {
   fill: theme.color.blue400,
 })

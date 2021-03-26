@@ -210,6 +210,7 @@ interface SearchInputProps {
   id?: string
   onRouting?: () => void
   skipContext?: boolean
+  quickContentLabel?: string
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -227,6 +228,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       id = 'downshift',
       onRouting,
       skipContext,
+      quickContentLabel,
     },
     ref,
   ) => {
@@ -325,6 +327,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             >
               {isOpen && !isEmpty(search) && (
                 <Results
+                  quickContentLabel={quickContentLabel}
                   search={search}
                   highlightedIndex={highlightedIndex}
                   getItemProps={getItemProps}
@@ -351,7 +354,15 @@ const Results: FC<{
   getItemProps: any
   autosuggest: boolean
   onRouting?: () => void
-}> = ({ search, highlightedIndex, getItemProps, autosuggest, onRouting }) => {
+  quickContentLabel?: string
+}> = ({
+  search,
+  highlightedIndex,
+  getItemProps,
+  autosuggest,
+  onRouting,
+  quickContentLabel = 'Beint að efninu',
+}) => {
   const { linkResolver } = useLinkResolver()
 
   if (!search.term) {
@@ -411,7 +422,7 @@ const Results: FC<{
           <div className={styles.menuRow}>
             <Stack space={2}>
               <Text variant="eyebrow" color="purple400">
-                Beint að efninu
+                {quickContentLabel}
               </Text>
               {(search.results.items as Article[] &
                 LifeEventPage[] &

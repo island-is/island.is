@@ -3,17 +3,16 @@ import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
-import {
-  extractParentFromApplication,
-  extractChildrenFromApplication,
-} from '../../lib/utils'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
 
 const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
-  const otherParent = extractParentFromApplication(application)
+  const {
+    externalData: { nationalRegistry },
+  } = application
+  const children = nationalRegistry.data.children
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -29,11 +28,11 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         defaultValue={[]}
         error={error}
         large={true}
-        options={extractChildrenFromApplication(application).map((c) => ({
-          value: c.name,
-          label: c.name,
+        options={children.map((c) => ({
+          value: c.nationalId,
+          label: c.fullName,
           subLabel: formatMessage(selectChildren.checkboxes.subLabel, {
-            parentName: otherParent.name,
+            parentName: c.otherParent.fullName,
           }),
         }))}
       />

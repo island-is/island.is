@@ -4,13 +4,13 @@ import { IArticleSubgroup } from '../generated/contentfulTypes'
 @ObjectType()
 export class ArticleSubgroup {
   @Field()
-  title: string
+  title!: string
 
   @Field({ nullable: true })
   importance?: number
 
   @Field()
-  slug: string
+  slug!: string
 }
 
 export const mapArticleSubgroup = ({
