@@ -25,5 +25,25 @@ export const overview = {
         'Ég samþykki að Persónuvernd hefur leyfi til þess að nota persónuupplýsingar til meðferðar á þessari umsókn.',
       description: 'Terms agreement label',
     },
+    delimitationAccordionTitle: {
+      id: 'dpac.application:section.overview.labels.delimitationAccordionTitle',
+      defaultMessage: 'Afmörkun kvörtunar',
+      description: 'delimitationAccordionTitle',
+    },
+    infoAccordionTitle: {
+      id: 'dpac.application:section.overview.labels.infoAccordionTitle',
+      defaultMessage: 'Upplýsingar',
+      description: 'Terms agreement label',
+    },
+    complaineeAccordionTitle: {
+      id: 'dpac.application:section.overview.labels.complaineeAccordionTitle',
+      defaultMessage: 'Yfir hverjum er kvartað',
+      description: 'Terms agreement label',
+    },
+    complaintAccordionTitle: {
+      id: 'dpac.application:section.overview.labels.complaintAccordionTitle',
+      defaultMessage: 'Efni kvörtunar',
+      description: 'Terms agreement label',
+    },
   }),
 }
