@@ -379,7 +379,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         ref={register({
                           required: !isEditing,
-                          validate: ValidationUtils.validateUrl,
+                          validate: isEditing
+                            ? () => {
+                                return true
+                              }
+                            : ValidationUtils.validateUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
