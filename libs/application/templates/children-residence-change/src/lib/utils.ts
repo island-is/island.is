@@ -28,7 +28,7 @@ interface ChildrenResidenceInfo {
   address: Address
 }
 
-const extract = (
+const extractParentInfo = (
   { address, fullName }: NationalRegistry | PersonResidenceChange,
   letter: 'A' | 'B',
 ): ChildrenResidenceInfo => {
@@ -59,10 +59,10 @@ export const childrenResidenceInfo = (
 
   return {
     current: childrenLiveWithApplicant
-      ? extract(applicant, 'A')
-      : extract(parentB, 'B'),
+      ? extractParentInfo(applicant, 'A')
+      : extractParentInfo(parentB, 'B'),
     future: childrenLiveWithApplicant
-      ? extract(parentB, 'B')
-      : extract(applicant, 'A'),
+      ? extractParentInfo(parentB, 'B')
+      : extractParentInfo(applicant, 'A'),
   }
 }
