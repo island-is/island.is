@@ -2,7 +2,6 @@ import {
   exampleRegulation,
   exampleRegulationOriginalBody,
   regulationPageTexts,
-  regulationHistory,
   Regulation,
   RegulationHistoryItem,
   RegulationRedirect,
@@ -28,12 +27,11 @@ import { getUiTexts } from './getUITexts'
 type RegulationPageProps = {
   regulation: Regulation | RegulationRedirect
   originalBody?: string
-  history: Array<RegulationHistoryItem>
   texts: RegulationPageTexts
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, originalBody, history, texts } = props
+  const { regulation, originalBody, texts } = props
 
   return 'redirectUrl' in regulation ? (
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
@@ -42,7 +40,6 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
       texts={texts}
       regulation={regulation}
       originalBody={originalBody}
-      history={history}
     />
   )
 }
@@ -154,7 +151,6 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     regulation: redirect ? exampleRegulationRedirect : exampleRegulation,
     originalBody: redirect ? undefined : exampleRegulationOriginalBody,
-    history: redirect ? [] : regulationHistory,
     texts,
   }
 }

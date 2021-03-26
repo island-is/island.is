@@ -1,8 +1,4 @@
-import {
-  RegulationPageTexts,
-  Regulation,
-  RegulationHistoryItem,
-} from './mockData'
+import { RegulationPageTexts, Regulation } from './mockData'
 
 import * as s from './RegulationDisplay.treat'
 
@@ -38,12 +34,12 @@ const Ball: React.FC<BallProps> = ({ type, children }) => (
 export type RegulationDisplayProps = {
   regulation: Regulation
   originalBody?: string
-  history: Array<RegulationHistoryItem>
   texts: RegulationPageTexts
 }
 
 export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
-  const { regulation, texts, originalBody, history } = props
+  const { regulation, texts, originalBody } = props
+  const { history, effects } = regulation
 
   const router = useRouter()
   const dateUtl = useDateUtils()
@@ -57,16 +53,15 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
 
   // TODO: move into getInitialProps triggered by route.
-  const regulationText = 'text' in regulation ? regulation.text : ''
   const regulationBody = useMemo(
     () =>
       originalBody && showDiff
         ? htmldiff
-            .execute(originalBody, regulationText)
+            .execute(originalBody, regulation.text)
             .replace(/<del [^>]+>\s+<\/del>/g, '')
             .replace(/<ins [^>]+>\s+<\/ins>/g, '')
-        : regulationText,
-    [showDiff, originalBody, regulationText],
+        : regulation.text,
+    [showDiff, originalBody, regulation.text],
   )
 
   return (
@@ -122,13 +117,13 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
         </>
       }
       sidebar={
-        history.length > 0 && (
-          <Stack space={2}>
+        <Stack space={2}>
+          {effects.length > 0 && (
             <RegulationsSidebarBox
               title="Stofnreglugerð"
               colorScheme="blueberry"
             >
-              {history.slice(0, 1).map((item) => (
+              {regulation.effects.slice(0, 1).map((item) => (
                 <Link href={linkToRegulation(item.name)}>
                   <FocusableBox flexDirection={'column'}>
                     {({
@@ -160,11 +155,14 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                 </Link>
               ))}
             </RegulationsSidebarBox>
+          )}
+
+          {history.length > 0 && (
             <RegulationsSidebarBox
               title={n('historyTitle') + ' ' + prettyName(regulation.name)}
               colorScheme="blueberry"
             >
-              {history.map((item) => (
+              {regulation.history.map((item) => (
                 <Link href={linkToRegulation(item.name)}>
                   <FocusableBox flexDirection={'column'}>
                     {({
@@ -192,11 +190,12 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                 </Link>
               ))}
             </RegulationsSidebarBox>
-            <RegulationsSidebarBox title="Tengt efni" colorScheme="blueberry">
-              <FocusableBox></FocusableBox>
-            </RegulationsSidebarBox>
-          </Stack>
-        )
+          )}
+
+          <RegulationsSidebarBox title="Tengt efni" colorScheme="blueberry">
+            <FocusableBox></FocusableBox>
+          </RegulationsSidebarBox>
+        </Stack>
       }
     />
   )

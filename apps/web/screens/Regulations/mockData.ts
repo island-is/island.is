@@ -178,6 +178,9 @@ export const homeTexts = {
   defaultRegulationListsLegend: 'Nýlegar reglugerðir',
   searchResultsLegend: 'Leitarniðurstöður',
 
+  regTypeBase: 'Stofnreglugerð',
+  regTypeAmending: 'Breytingareglugerð',
+
   searchTitleLabel: 'Leita að reglugerðum',
   searchClearLabel: 'Núllstilla leit',
   searchOpenLabel: 'Opna leit',
@@ -212,6 +215,9 @@ export const regulationPageTexts = {
   showDiff: 'Sýna breytingar',
   hideDiff: 'Fela breytingar',
 
+  regTypeBase: 'Stofnreglugerð',
+  regTypeAmending: 'Breytingareglugerð',
+
   effectsTitle: 'Áhrif %{name} á aðrar reglugerðir',
   effectsChange: 'breytir %{name}',
   effectsCancel: 'fellir brott %{name}',
@@ -238,6 +244,32 @@ export type RegName = string & { [_RegNameToken_]: true }
 
 declare const _ISODateToken_: unique symbol
 export type ISODate = string & { [_ISODateToken_]: true }
+
+// ---------------------------------------------------------------------------
+
+export type RegulationHistoryItem = {
+  /** The date this this history item took effect */
+  date: ISODate
+  /** Publication name of the affecting Regulation */
+  name: RegName
+  /** The title of the affecting Regulation */
+  title: string
+  /** Type of effect */
+  effect: 'amend' | 'repeal'
+}
+
+// ---------------------------------------------------------------------------
+
+export type RegulationEffect = {
+  /** effectiveDate for this impact */
+  date: ISODate
+  /** Publication name of the affected Regulation */
+  name: string
+  /** Publication name of the affected Regulation */
+  title: string
+  /** Type of effect */
+  effect: 'amend' | 'repeal'
+}
 
 // ---------------------------------------------------------------------------
 
@@ -280,6 +312,25 @@ export type Regulation = {
   lawChapters: ReadonlyArray<LawChapter>
   // TODO: add link to original DOC/PDF file in Stjórnartíðindi's data store.
 
+  /** Regulations are roughly classified based on whether they contain
+   * any original text/stipulations, or whether they **only**  prescribe
+   * changes to other regulations.
+   *
+   * `base` = Stofnreglugerð
+   * `amending` = Breytingareglugerð
+   */
+  type: 'base' | 'amending'
+
+  /** List of change events (Amendments, Repeals) over the life time of this
+   * regulation – **excluding** the original base/root regulation
+   */
+  history: ReadonlyArray<RegulationHistoryItem>
+
+  /** Date sorted list of effects this regulations has on other regulations
+   * text-changes or cacellations
+   */
+  effects: ReadonlyArray<RegulationEffect>
+
   /** Present if a NON-CURRENT version of the regulation is being served
    *
    * Is undefined by default (when the "current" version is served).
@@ -309,8 +360,50 @@ export const exampleRegulation: Regulation = {
   repealedDate: null,
   ministry: _getMinistry('IR'),
   lawChapters: [allLawChaptersTree[0].subChapters[2]],
+
+  type: 'base',
+  history: [
+    {
+      date: '2013-09-13' as ISODate,
+      name: '0904/2013' as RegName,
+      title:
+        'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+      effect: 'amend',
+    },
+    {
+      date: '2013-11-08' as ISODate,
+      name: '0904/2013' as RegName,
+      title:
+        'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+      effect: 'amend',
+    },
+    {
+      date: '2019-12-24' as ISODate,
+      name: '1197/2019' as RegName,
+      title:
+        'Reglugerð um (2.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+      effect: 'amend',
+    },
+    {
+      date: '2020-11-30' as ISODate,
+      name: '1198/2020' as RegName,
+      title:
+        'Reglugerð um (3.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
+      effect: 'amend',
+    },
+  ],
+
+  effects: [
+    {
+      date: '2001-03-20' as ISODate,
+      name: '0250/1998' as RegName,
+      title: 'Reglugerð um bólusetningar hryggleysingja í Surtsey',
+      effect: 'repeal',
+    },
+  ],
 }
 
+/** @deprecated this should be provided by the API as part of the Regulation */
 export const exampleRegulationOriginalBody = regulationHtmlOriginal
 
 // ---------------------------------------------------------------------------
@@ -323,71 +416,9 @@ export type RegulationRedirect = {
   /** The regulation data has not been fully migrated and should be viewed at this URL */
   redirectUrl: string
 }
+
 export const exampleRegulationRedirect: RegulationRedirect = {
   name: '0504/1975' as RegName,
   title: 'Reglugerð um gatnagerðargjöld í Hvolhreppi, Rangárvallasýslu.',
   redirectUrl: 'https://www.reglugerd.is/reglugerdir/allar/nr/0504-1975',
 }
-
-// ---------------------------------------------------------------------------
-
-export type RegulationHistoryItem = {
-  /** The date this this history item took effect */
-  date: ISODate
-  /** Publication name of the affecting Regulation */
-  name: RegName
-  /** The title of the affecting Regulation */
-  title: string
-  /** What type of history item is this.
-   *
-   * Staring with the regulation at the `root` of the timeline
-   * ...possibly ending with the final `repeal` of that regulation
-   */
-  reason: 'root' | 'amend' | 'repeal'
-}
-
-export const regulationHistory: ReadonlyArray<RegulationHistoryItem> = [
-  {
-    date: '2013-09-13' as ISODate,
-    name: '0904/2013' as RegName,
-    title:
-      'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
-    reason: 'amend',
-  },
-  {
-    date: '2013-11-08' as ISODate,
-    name: '0904/2013' as RegName,
-    title:
-      'Reglugerð um breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
-    reason: 'amend',
-  },
-  {
-    date: '2019-12-24' as ISODate,
-    name: '1197/2019' as RegName,
-    title:
-      'Reglugerð um (2.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
-    reason: 'amend',
-  },
-  {
-    date: '2020-11-30' as ISODate,
-    name: '1198/2020' as RegName,
-    title:
-      'Reglugerð um (3.) breytingu á reglugerð nr. 221/2001, um bólusetningar á Íslandi.',
-    reason: 'amend',
-  },
-]
-
-// ---------------------------------------------------------------------------
-
-export type Effect = {
-  /** effectiveDate for this impact */
-  date: ISODate
-  /** Publication name of the affected Regulation */
-  name: string
-  /** Publication name of the affected Regulation */
-  title: string
-  /** Type of effect */
-  type: 'amend' | 'repeal'
-}
-
-export type EffectList = Array<Effect>
