@@ -4,7 +4,7 @@ import {
   RegulationHistoryItem,
 } from './mockData'
 
-import * as s from './RegulationPage.treat'
+import * as s from './RegulationDisplay.treat'
 
 import React, { FC, useMemo, useState } from 'react'
 import {
