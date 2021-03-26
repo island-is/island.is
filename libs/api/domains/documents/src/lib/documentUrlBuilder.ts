@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
+import { DocumentInfoDTO } from '@island.is/clients/documents'
 import { Document } from './models/document.model'
-import { DocumentInfoDTO } from './client/models'
 import { DocumentTypeFilter } from './types/documentTypeFilterType'
 import { FileType } from './types/fileType.enum'
 
@@ -43,7 +43,7 @@ export class DocumentBuilder {
   }
 
   private static formatDownloadServiceUrl(document: DocumentInfoDTO): string {
-    const base = 'localhost:3001'
-    return `https://${base}/documents`
+    const base = 'http://localhost:3377' //Pending deployment urls from config
+    return `${base}/document`
   }
 }

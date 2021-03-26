@@ -1,4 +1,4 @@
-import { IsString, Length } from 'class-validator'
+import { IsString, IsJWT, Length } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class GetDocumentDto {
@@ -7,8 +7,7 @@ export class GetDocumentDto {
   @ApiProperty()
   readonly documentId!: string
 
-  @IsString()
-  @Length(10)
+  @IsJWT()
   @ApiProperty()
   readonly token!: string
 }

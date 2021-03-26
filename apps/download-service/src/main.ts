@@ -7,5 +7,5 @@ bootstrap({
   appModule: AppModule,
   name: 'download-service',
   openApi,
-  port: 3331,
+  port: 3377,
 })

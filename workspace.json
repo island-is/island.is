@@ -2299,6 +2299,27 @@
         }
       }
     },
+    "clients-documents": {
+      "root": "libs/clients/documents",
+      "sourceRoot": "libs/clients/documents/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/documents/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/documents"],
+          "options": {
+            "jestConfig": "libs/clients/documents/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "clients-mms": {
       "root": "libs/clients/mms",
       "sourceRoot": "libs/clients/mms/src",
@@ -2315,27 +2336,6 @@
           "outputs": ["coverage/libs/clients/mms"],
           "options": {
             "jestConfig": "libs/clients/mms/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "clients-postholf": {
-      "root": "libs/clients/postholf",
-      "sourceRoot": "libs/clients/postholf/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/clients/postholf/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/postholf"],
-          "options": {
-            "jestConfig": "libs/clients/postholf/jest.config.js",
             "passWithNoTests": true
           }
         }

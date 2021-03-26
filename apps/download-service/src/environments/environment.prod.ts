@@ -6,4 +6,9 @@ export default {
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
+  identityServer: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    audience: '',
+    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
+  },
 }

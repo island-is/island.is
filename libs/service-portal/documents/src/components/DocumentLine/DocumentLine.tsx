@@ -12,7 +12,6 @@ import {
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import * as styles from './DocumentLine.treat'
-import { formatText } from '@island.is/application/core'
 import { User } from 'oidc-client'
 
 interface Props {
@@ -25,16 +24,15 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo }) => {
     // Create form elements
     const form = document.createElement('form')
     const documentIdInput = document.createElement('input')
-    // TODO: Use JWT token instead of national id
-    const nationalIdInput = document.createElement('input')
+    const tokenInput = document.createElement('input')
 
     form.appendChild(documentIdInput)
-    form.appendChild(nationalIdInput)
+    form.appendChild(tokenInput)
 
     // Form values
     form.method = 'post'
     // TODO: Use correct url
-    form.action = 'http://localhost:3331/document'
+    form.action = documentLine.url
     form.target = '_blank'
 
     // Document Id values
@@ -43,9 +41,9 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo }) => {
     documentIdInput.value = documentLine.id
 
     // National Id values
-    nationalIdInput.type = 'hidden'
-    nationalIdInput.name = 'nationalId'
-    nationalIdInput.value = userInfo.profile.nationalId
+    tokenInput.type = 'hidden'
+    tokenInput.name = 'token'
+    tokenInput.value = userInfo.access_token
 
     document.body.appendChild(form)
     form.submit()
@@ -90,21 +88,6 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo }) => {
               paddingBottom={[1, 0]}
               overflow="hidden"
             >
-              {/* <form
-                action="http://localhost:3331/document"
-                method="post"
-                target="_blank"
-              >
-                <label>
-                  <input
-                    type="hidden"
-                    name="documentId"
-                    value="0dffea10-79d3-4c79-8cba-30af2d95bba7"
-                  />{' '}
-                  <input type="hidden" name="nationalId" value="2606862759" />
-                </label>
-                <input type="submit" value="Sækja skrá" />
-              </form> */}
               {documentLine.fileType === 'url' && documentLine.url ? (
                 <Link href={documentLine.url}>
                   <button className={styles.button}>

@@ -135,6 +135,6 @@ module.exports = {
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/zendesk',
     '<rootDir>/apps/download-service',
-    '<rootDir>/libs/clients/postholf',
+    '<rootDir>/libs/clients/documents',
   ],
 }
