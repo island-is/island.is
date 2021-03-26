@@ -5,19 +5,18 @@ import {
   ForeignKey,
   Model,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { NotificationType } from '@island.is/judicial-system/types'
-
 import { Case } from '../../case'
 
 @Table({
-  tableName: 'notification',
+  tableName: 'file',
   timestamps: false,
 })
-export class Notification extends Model<Notification> {
+export class File extends Model<File> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -31,6 +30,10 @@ export class Notification extends Model<Notification> {
   @ApiProperty()
   created: Date
 
+  @UpdatedAt
+  @ApiProperty()
+  modified: Date
+
   @ForeignKey(() => Case)
   @Column({
     type: DataType.UUID,
@@ -40,24 +43,23 @@ export class Notification extends Model<Notification> {
   caseId: string
 
   @Column({
-    type: DataType.ENUM,
+    type: DataType.STRING,
     allowNull: false,
-    values: Object.values(NotificationType),
   })
-  @ApiProperty({ enum: NotificationType })
-  type: NotificationType
+  @ApiProperty()
+  name: string
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
-  condition: string
+  key: string
 
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
+    type: DataType.INTEGER,
+    allowNull: false,
   })
   @ApiProperty()
-  recipients: string
+  size: number
 }

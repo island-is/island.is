@@ -1,16 +1,19 @@
 import { uuid } from 'uuidv4'
 
 import { Test } from '@nestjs/testing'
+import { getModelToken } from '@nestjs/sequelize'
 
 import { User } from '@island.is/judicial-system/types'
 import { LoggingModule } from '@island.is/logging'
 
 import { Case, CaseService } from '../case'
 import { AwsS3Service } from './awsS3.service'
+import { File } from './models'
 import { FileService } from './file.service'
 import { FileController } from './file.controller'
 
 describe('FileModule', () => {
+  let fileModel: { create: jest.Mock }
   let caseService: CaseService
   let fileController: FileController
 
@@ -30,11 +33,14 @@ describe('FileModule', () => {
   }))
 
   beforeEach(async () => {
+    fileModel = {
+      create: jest.fn(),
+    }
+
     const fileModule = await Test.createTestingModule({
       imports: [LoggingModule],
       controllers: [FileController],
       providers: [
-        FileService,
         {
           provide: CaseService,
           useClass: jest.fn(() => ({
@@ -47,6 +53,11 @@ describe('FileModule', () => {
             createPresignedPost: mockCreatePresignedPost,
           })),
         },
+        {
+          provide: getModelToken(File),
+          useValue: fileModel,
+        },
+        FileService,
       ],
     }).compile()
 
@@ -90,13 +101,49 @@ describe('FileModule', () => {
       })
 
       expect(presignedPost.fields.key).toMatch(
-        new RegExp(`${caseId}/.{36}_${fileName}`),
+        new RegExp(`^${caseId}/.{36}_${fileName}$`),
       )
 
       expect(mockCreatePresignedPost).toHaveBeenCalledTimes(1)
       expect(mockCreatePresignedPost).toHaveBeenCalledWith(
         presignedPost.fields.key,
       )
+    })
+
+    it('should create a file', async () => {
+      const id = uuid()
+      const timeStamp = new Date()
+      const size = 99999
+
+      fileModel.create.mockImplementation((values: object) =>
+        Promise.resolve({
+          ...values,
+          id,
+          created: timeStamp,
+          modified: timeStamp,
+        }),
+      )
+
+      const presignedPost = await fileController.createPresignedPost(
+        caseId,
+        user,
+        { fileName },
+      )
+
+      const file = await fileController.createFile(caseId, user, {
+        key: presignedPost.fields.key,
+        size,
+      })
+
+      expect(file).toStrictEqual({
+        id,
+        created: timeStamp,
+        modified: timeStamp,
+        caseId,
+        name: fileName,
+        key: presignedPost.fields.key,
+        size,
+      })
     })
   })
 })

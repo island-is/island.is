@@ -11,16 +11,15 @@ import {
 import { User, UserRole } from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
-import { CreatePresignedPostDto } from './dto'
-import { PresignedPost } from './models'
+import { CreateFileDto, CreatePresignedPostDto } from './dto'
+import { PresignedPost, File } from './models'
 import { FileService } from './file.service'
 
 // Allows prosecutors to perform any action
 const prosecutorRule = UserRole.PROSECUTOR as RolesRule
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@RolesRules(prosecutorRule)
-@Controller('api/case/:id')
+@Controller('api/case/:caseId')
 @ApiTags('files')
 export class FileController {
   constructor(
@@ -28,7 +27,6 @@ export class FileController {
     private readonly caseService: CaseService,
   ) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('file/url')
   @ApiCreatedResponse({
@@ -36,15 +34,31 @@ export class FileController {
     description: 'Creates a new presigned post',
   })
   async createPresignedPost(
-    @Param('id') id: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @Body() createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     return this.fileService.createPresignedPost(
       existingCase.id,
       createPresignedPost,
     )
+  }
+
+  @RolesRules(prosecutorRule)
+  @Post('file')
+  @ApiCreatedResponse({
+    type: File,
+    description: 'Creates a new file',
+  })
+  async createFile(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @Body() createFile: CreateFileDto,
+  ): Promise<File> {
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+
+    return this.fileService.createFile(caseId, createFile)
   }
 }
