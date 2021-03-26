@@ -142,7 +142,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           title: m.selectChildren.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'selectChild',
+              id: 'selectedChildren',
               title: m.selectChildren.general.pageTitle,
               component: 'SelectChildren',
             }),
