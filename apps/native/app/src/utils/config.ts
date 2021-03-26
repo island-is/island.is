@@ -28,7 +28,7 @@ export const config: Config = {
     android: env.BUNDLE_ID_ANDROID,
   }) || 'is.island.app',
   storybookMode: false,
-  disableLockScreen: false,
+  disableLockScreen: true,
   constants: Constants,
   env,
 };

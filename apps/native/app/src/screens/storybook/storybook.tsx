@@ -15,7 +15,9 @@ export const StorybookUI = getStorybookUI({
 });
 
 export const Storybook = () => {
-  return <StorybookUI />;
+  console.log('hello');
+  return null;
+  // return <StorybookUI />;
 }
 
 Storybook.options = {
