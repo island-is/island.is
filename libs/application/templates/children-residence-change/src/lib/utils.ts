@@ -20,9 +20,14 @@ export const getSelectedChildrenFromExternalData = (
   return children.filter((child) => selectedChildren.includes(child.nationalId))
 }
 
+enum ParentLetters {
+  A = 'A',
+  B = 'B',
+}
+
 interface ChildrenResidenceInfo {
   parent: {
-    letter: 'A' | 'B'
+    letter: ParentLetters
     fullName: string
   }
   address: Address
@@ -30,7 +35,7 @@ interface ChildrenResidenceInfo {
 
 const extractParentInfo = (
   { address, fullName }: NationalRegistry | PersonResidenceChange,
-  letter: 'A' | 'B',
+  letter: ParentLetters,
 ): ChildrenResidenceInfo => {
   return {
     address,
@@ -59,10 +64,10 @@ export const childrenResidenceInfo = (
 
   return {
     current: childrenLiveWithApplicant
-      ? extractParentInfo(applicant, 'A')
-      : extractParentInfo(parentB, 'B'),
+      ? extractParentInfo(applicant, ParentLetters.A)
+      : extractParentInfo(parentB, ParentLetters.B),
     future: childrenLiveWithApplicant
-      ? extractParentInfo(parentB, 'B')
-      : extractParentInfo(applicant, 'A'),
+      ? extractParentInfo(parentB, ParentLetters.A)
+      : extractParentInfo(applicant, ParentLetters.B),
   }
 }
