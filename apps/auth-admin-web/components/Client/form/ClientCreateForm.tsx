@@ -8,6 +8,7 @@ import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
+import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -366,6 +367,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       errors={errors}
                       name="client.description"
                       message="Description can not include special characters"
+                    />
+                    <TranslationCreateFormDropdown
+                      className="client"
+                      property="description"
+                      isEditing={isEditing}
+                      id={client.clientId}
                     />
                   </div>
 
