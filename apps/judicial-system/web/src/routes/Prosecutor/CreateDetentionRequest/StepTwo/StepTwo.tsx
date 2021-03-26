@@ -39,7 +39,7 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { useRouter } from 'next/router'
-import NewDateTime from '@island.is/judicial-system-web/src/shared-components/NewDateTime/NewDateTime'
+import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 
 interface CaseData {
   case?: Case
@@ -315,7 +315,7 @@ export const StepTwo: React.FC = () => {
                     Tími handtöku
                   </Text>
                 </Box>
-                <NewDateTime
+                <DateTime
                   name="arrestDate"
                   selectedDate={
                     workingCase.arrestDate
@@ -348,7 +348,7 @@ export const StepTwo: React.FC = () => {
                   </Box>
                 </Text>
               </Box>
-              <NewDateTime
+              <DateTime
                 name="reqCourtDate"
                 selectedDate={
                   workingCase.requestedCourtDate

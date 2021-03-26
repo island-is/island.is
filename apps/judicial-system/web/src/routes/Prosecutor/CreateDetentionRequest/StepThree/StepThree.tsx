@@ -6,7 +6,6 @@ import {
   FormFooter,
   PageLayout,
   BlueBox,
-  DateTime,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -23,12 +22,8 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
-  setAndSendDateToServer,
-  validateAndSetTime,
-  validateAndSendTimeToServer,
-  getTimeFromDate,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import parseISO from 'date-fns/parseISO'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
 import {
@@ -39,8 +34,8 @@ import {
   alternativeTravelBanRestrictions,
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
 import { useRouter } from 'next/router'
+import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 
 interface CaseData {
   case?: Case
@@ -56,19 +51,9 @@ export const StepThree: React.FC = () => {
   )
 
   const [
-    requestedCustodyEndTime,
-    setRequestedCustodyEndTime,
-  ] = useState<string>()
-
-  const [
-    requestedCustodyEndDateErrorMessage,
-    setRequestedCustodyEndDateErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    requestedCustodyEndTimeErrorMessage,
-    setRequestedCustodyEndTimeErrorMessage,
-  ] = useState<string>('')
+    requestedCustodyEndDateIsValid,
+    setRequestedCustodyEndDateIsValid,
+  ] = useState(false)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -77,23 +62,13 @@ export const StepThree: React.FC = () => {
 
   const resCase = data?.case
 
-  const { isValidDate: isValidRequestedCustodyEndDate } = useDateTime({
-    date: workingCase?.requestedCustodyEndDate,
-  })
-
-  const { isValidTime: isValidRequestedCustodyEndTime } = useDateTime({
-    time: requestedCustodyEndTime,
-  })
-
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
     if (!workingCase && resCase) {
-      setRequestedCustodyEndTime(
-        getTimeFromDate(resCase.requestedCustodyEndDate),
-      )
+      setRequestedCustodyEndDateIsValid(resCase.requestedCustodyEndDate != null)
 
       setWorkingCase(resCase)
     }
@@ -157,62 +132,33 @@ export const StepThree: React.FC = () => {
                   </Box>
                 )}
               </Box>
+              {/* rass */}
+
               <DateTime
-                datepickerId="reqCustodyEndDate"
+                name="reqCustodyEndDate"
                 datepickerLabel={`${
                   workingCase.type === CaseType.CUSTODY
                     ? 'Gæsluvarðhald'
                     : 'Farbann'
                 } til`}
+                minDate={new Date()}
                 selectedDate={
                   workingCase.requestedCustodyEndDate
-                    ? parseISO(workingCase.requestedCustodyEndDate?.toString())
-                    : null
+                    ? new Date(workingCase.requestedCustodyEndDate)
+                    : undefined
                 }
-                minDate={new Date()}
-                datepickerErrorMessage={requestedCustodyEndDateErrorMessage}
-                handleCloseCalander={(date) =>
-                  setAndSendDateToServer(
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  newSetAndSendDateToServer(
                     'requestedCustodyEndDate',
-                    workingCase.requestedCustodyEndDate,
                     date,
-                    workingCase,
-                    true,
-                    setWorkingCase,
-                    updateCase,
-                    setRequestedCustodyEndDateErrorMessage,
-                  )
-                }
-                dateIsRequired
-                disabledTime={!workingCase?.requestedCustodyEndDate}
-                timeOnChange={(evt) =>
-                  validateAndSetTime(
-                    'requestedCustodyEndDate',
-                    workingCase.requestedCustodyEndDate,
-                    evt.target.value,
-                    ['empty', 'time-format'],
+                    valid,
                     workingCase,
                     setWorkingCase,
-                    requestedCustodyEndTimeErrorMessage,
-                    setRequestedCustodyEndTimeErrorMessage,
-                    setRequestedCustodyEndTime,
-                  )
-                }
-                timeOnBlur={(evt) =>
-                  validateAndSendTimeToServer(
-                    'requestedCustodyEndDate',
-                    workingCase.requestedCustodyEndDate,
-                    evt.target.value,
-                    ['empty', 'time-format'],
-                    workingCase,
+                    setRequestedCustodyEndDateIsValid,
                     updateCase,
-                    setRequestedCustodyEndTimeErrorMessage,
                   )
-                }
-                timeName="requestedCustodyEndTime"
-                timeDefaultValue={requestedCustodyEndTime}
-                timeErrorMessage={requestedCustodyEndTimeErrorMessage}
-                timeIsRequired
+                }}
+                required
               />
             </Box>
             <Box component="section" marginBottom={7}>
@@ -372,8 +318,7 @@ export const StepThree: React.FC = () => {
               nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
               nextIsDisabled={
                 !validate(workingCase.lawsBroken || '', 'empty').isValid ||
-                !isValidRequestedCustodyEndDate?.isValid ||
-                !isValidRequestedCustodyEndTime?.isValid ||
+                !requestedCustodyEndDateIsValid ||
                 !workingCase.custodyProvisions ||
                 workingCase.custodyProvisions?.length === 0
               }
