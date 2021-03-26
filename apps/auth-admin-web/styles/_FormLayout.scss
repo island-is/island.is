@@ -25,7 +25,12 @@
 .idp-provider-create-form,
 .grant-type-create-form,
 .language-create-form,
-.translation-create-form {
+.translation-create-form,
+.user-claim-create-form,
+.translation-create-form,
+.translation-create-form-dropdown {
+  position: relative;
+
   &__help {
     padding: 0 10px 20px 10px;
 
@@ -33,6 +38,11 @@
       font-weight: $weight-semi-bold;
       margin-bottom: 30px;
     }
+  }
+
+  &__saved__message {
+    font-weight: $weight-semi-bold;
+    color: $color-ok;
   }
 
   &__wrapper {

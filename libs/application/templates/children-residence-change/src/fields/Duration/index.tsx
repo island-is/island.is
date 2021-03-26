@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useLocale } from '@island.is/localization'
 import { duration } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
@@ -16,6 +17,7 @@ const Duration = ({ field, application, error }: CRCFieldBaseProps) => {
     ? (application.answers.selectDuration[0] as ValidAnswers)
     : undefined
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
     currentAnswer,
@@ -54,6 +56,7 @@ const Duration = ({ field, application, error }: CRCFieldBaseProps) => {
             <DatePickerController
               id={`${field.id}[1]`}
               backgroundColor="blue"
+              locale={lang}
               label={formatMessage(duration.dateInput.label)}
               placeholder={formatMessage(duration.dateInput.placeholder)}
               error={error}

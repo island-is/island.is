@@ -1,8 +1,8 @@
-import { ClaimService } from '../../../services/ClaimService'
 import React, { useEffect, useState } from 'react'
 import HelpBox from '../../common/HelpBox'
 import NoActiveConnections from '../../common/NoActiveConnections'
 import { ResourcesService } from '../../../services/ResourcesService'
+import UserClaimCreateForm from './UserClaimCreateForm'
 
 interface Props {
   apiScopeName: string
@@ -10,6 +10,7 @@ interface Props {
   handleNext?: () => void
   handleBack?: () => void
   handleChanges?: () => void
+  handleNewClaimsAdded: () => void
 }
 
 const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
@@ -17,12 +18,12 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     getAllAvailableClaims()
-  }, [])
+  }, [props.claims])
 
   const getAllAvailableClaims = async () => {
-    const response = await ClaimService.findAll()
+    const response = await ResourcesService.findAllApiScopeUserClaims()
     if (response) {
-      setClaims(response.map((x) => x.type))
+      setClaims(response.map((x) => x.claimName))
     }
   }
 
@@ -58,6 +59,16 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
     }
   }
 
+  const saveNewUserClaim = async (claim: string): Promise<void> => {
+    const response = await ResourcesService.createApiScopeUserClaim({
+      resourceName: props.apiScopeName,
+      claimName: claim,
+    })
+    if (response) {
+      props.handleNewClaimsAdded()
+    }
+  }
+
   return (
     <div className="api-scope-user-claims">
       <div className="api-scope-user-claims__wrapper">
@@ -68,6 +79,11 @@ const ApiScopeUserClaimsForm: React.FC<Props> = (props: Props) => {
             <div className="api-scope-user-claims__help">
               If needed, select the user claims for this Api Scope
             </div>
+            <UserClaimCreateForm
+              resourceName={props.apiScopeName}
+              handleSave={saveNewUserClaim}
+              existingClaims={props.claims}
+            />
             <div className="api-scope-user-claims__container__fields">
               {claims?.map((claim: string) => {
                 return (

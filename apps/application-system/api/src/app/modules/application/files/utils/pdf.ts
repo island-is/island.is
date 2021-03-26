@@ -1,13 +1,16 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
-import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
+import {
+  PersonResidenceChange,
+  Child,
+  formatAddress,
+} from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
-import { User } from '@island.is/api/domains/national-registry'
 
 export async function generateResidenceChangePdf(
-  childrenAppliedFor: Array<PersonResidenceChange>,
-  parentA: User,
+  childrenAppliedFor: Array<Child>,
+  parentA: PersonResidenceChange,
   parentB: PersonResidenceChange,
   expiry: Array<string>,
   reason?: string,
@@ -79,7 +82,7 @@ export async function generateResidenceChangePdf(
       i === childrenAppliedFor.length - 1
         ? PdfConstants.LARGE_LINE_GAP
         : PdfConstants.NO_LINE_GAP,
-      `Nafn og kennitala barns: ${c.name}, ${formatSsn(c.ssn)}`,
+      `Nafn og kennitala barns: ${c.fullName}, ${formatSsn(c.nationalId)}`,
     ),
   )
 
@@ -101,7 +104,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${parentA.address?.streetAddress}, ${parentA.address?.postalCode} ${parentA.address?.city}`,
+    `Heimilisfang: ${formatAddress(parentA.address)}`,
   )
 
   addToDoc(
@@ -115,14 +118,14 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Nafn og kennitala: ${parentB.name}, ${formatSsn(parentB.ssn)}`,
+    `Nafn og kennitala: ${parentB.fullName}, ${formatSsn(parentB.nationalId)}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${parentB.address}, ${parentB.postalCode} ${parentB.city}`,
+    `Heimilisfang: ${formatAddress(parentB.address)}`,
   )
 
   addToDoc(
@@ -143,7 +146,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Nýtt lögheimili: ${parentB.name}, Foreldri B`,
+    `Nýtt lögheimili: ${parentB.fullName}, Foreldri B`,
   )
 
   if (reason) {

@@ -583,6 +583,7 @@ export const outline = styleMap({
 
 export const opacity = styleMap({
   0: { opacity: 0 },
+  0.5: { opacity: 0.5 },
   1: { opacity: 1 },
 })
 

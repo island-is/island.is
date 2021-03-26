@@ -13,5 +13,11 @@ module.exports = (config) => {
     config.devServer.noInfo = true
   }
 
-  return config
+  return {
+    ...config,
+    node: {
+      process: true,
+      global: true,
+    },
+  }
 }

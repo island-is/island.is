@@ -1,3 +1,5 @@
+import { getSlugFromType } from '@island.is/application/core'
+
 import { AttachmentEmailTemplateGenerator } from '../../../../types'
 
 export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator = (
@@ -9,8 +11,8 @@ export const generateApplicationSubmittedEmail: AttachmentEmailTemplateGenerator
     application,
     options: { clientLocationOrigin },
   } = props
-  const applicationLink = `${clientLocationOrigin}/umsokn/${application.id}`
-
+  const applicationSlug = getSlugFromType(application.typeId) as string
+  const applicationLink = `${clientLocationOrigin}/${applicationSlug}/${application.id}`
   const subject = 'Afrit af samning'
   const body = `
         Í viðhengi er afrit af undirrituðum samning um breytt lögheimili barns.

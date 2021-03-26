@@ -12,6 +12,7 @@ import {
   UseInterceptors,
   Optional,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -34,9 +35,10 @@ import {
   ApplicationTemplateAPIAction,
   PdfTypes,
   ApplicationStatus,
+  ApplicationIdentityServerScope,
 } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
-// import { IdsAuthGuard, ScopesGuard, User } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
@@ -78,27 +80,13 @@ import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { NationalId } from './tools/nationalId.decorator'
 import { AuthorizationHeader } from './tools/authorizationHeader.decorator'
 import { verifyToken } from './utils/tokenUtils'
+import {
+  DecodedAssignmentToken,
+  StateChangeResult,
+  TemplateAPIModuleActionResult,
+} from './types'
 
-interface DecodedAssignmentToken {
-  applicationId: string
-  state: string
-}
-
-interface StateChangeResult {
-  error?: string
-  hasError: boolean
-  hasChanged: boolean
-  application: BaseApplication
-}
-
-interface TemplateAPIModuleActionResult {
-  updatedApplication: BaseApplication
-  hasError: boolean
-  error?: string
-}
-
-// @UseGuards(IdsAuthGuard, ScopesGuard) TODO uncomment when IdsAuthGuard is fixes, always returns Unauthorized atm
-
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -113,6 +101,7 @@ export class ApplicationController {
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -132,6 +121,7 @@ export class ApplicationController {
     return application
   }
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Get('users/:nationalId/applications')
   @ApiParam({
     name: 'nationalId',
@@ -195,6 +185,7 @@ export class ApplicationController {
     return filteredApplications
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -249,6 +240,7 @@ export class ApplicationController {
     return this.applicationService.create(applicationDto)
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/assign')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -323,6 +315,7 @@ export class ApplicationController {
     return existingApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id')
   @ApiParam({
     name: 'id',
@@ -366,6 +359,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
@@ -417,6 +411,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
@@ -665,6 +660,7 @@ export class ApplicationController {
     }
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -700,6 +696,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -727,6 +724,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/createPdf')
   @ApiParam({
     name: 'id',
@@ -746,6 +744,7 @@ export class ApplicationController {
     return { url }
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/requestFileSignature')
   @ApiParam({
     name: 'id',
@@ -769,6 +768,7 @@ export class ApplicationController {
     return { controlCode, documentToken }
   }
 
+  @Scopes(ApplicationIdentityServerScope.write)
   @Put('applications/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
@@ -794,6 +794,7 @@ export class ApplicationController {
     }
   }
 
+  @Scopes(ApplicationIdentityServerScope.read)
   @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
     name: 'id',
