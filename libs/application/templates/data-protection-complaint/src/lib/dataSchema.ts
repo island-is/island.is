@@ -88,7 +88,7 @@ export const DataProtectionComplaintSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   commissions: z.object({
-    documents: z.array(FileSchema),
+    documents: z.array(FileSchema).nonempty(),
     persons: z
       .array(
         z.object({
@@ -118,7 +118,7 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   complaint: z.object({
     description: z.string().nonempty(error.required.defaultMessage),
-    documents: z.array(FileSchema),
+    documents: z.array(FileSchema).nonempty(),
   }),
   overview: z.object({
     termsAgreement: z.string().refine((x) => x === DefaultEvents.SUBMIT),
