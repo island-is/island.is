@@ -51,7 +51,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
   const handleOnSelect = (value: string) => setIsOpen(value === YES)
 
   return (
-    <Box position="relative" marginTop={3}>
+    <Box position="relative" key={field.id} marginTop={3}>
       {index > 0 && (
         <Box position="absolute" className={styles.removeFieldButton}>
           <Button
