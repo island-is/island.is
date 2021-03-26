@@ -1,4 +1,10 @@
-import { Address, Child } from '../types'
+import {
+  Address,
+  Answers,
+  Child,
+  NationalRegistry,
+  PersonResidenceChange,
+} from '../types'
 
 export const formatAddress = (address: Address) => {
   if (!address) {
@@ -12,4 +18,51 @@ export const getSelectedChildrenFromExternalData = (
   selectedChildren: string[],
 ): Child[] => {
   return children.filter((child) => selectedChildren.includes(child.nationalId))
+}
+
+interface childrenResidenceInfoType {
+  parent: {
+    letter: 'A' | 'B'
+    name: string
+  }
+  address: Address
+}
+
+const extract = (
+  { address, fullName }: NationalRegistry | PersonResidenceChange,
+  letter: 'A' | 'B',
+): childrenResidenceInfoType => {
+  return {
+    address,
+    parent: {
+      name: fullName,
+      letter,
+    },
+  }
+}
+
+export const childrenResidenceInfo = (
+  applicant: NationalRegistry,
+  answers: Answers,
+): {
+  current: childrenResidenceInfoType
+  future: childrenResidenceInfoType
+} => {
+  const children = getSelectedChildrenFromExternalData(
+    applicant.children,
+    answers.selectChild,
+  )
+  const parentB = children[0].otherParent
+  const childrenLiveWithApplicant = children.some(
+    (child) => child.livesWithApplicant,
+  )
+
+  return {
+    current: childrenLiveWithApplicant
+      ? extract(applicant, 'A')
+      : extract(parentB, 'B'),
+    future: childrenLiveWithApplicant
+      ? extract(parentB, 'B')
+      : extract(applicant, 'A'),
+  }
 }
