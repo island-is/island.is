@@ -35,7 +35,7 @@ import {
 } from './RegulationsSearchSection'
 import { shuffle } from 'lodash'
 import { getParams } from './regulationUtils'
-import { getUiTexts } from './getUITexts'
+import { getUiTexts } from './getUiTexts'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -198,7 +198,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
               lawcCapters={props.lawcCapters}
               ministries={props.ministries}
               years={props.years}
-              getText={n}
+              texts={props.texts}
             />
           }
         />

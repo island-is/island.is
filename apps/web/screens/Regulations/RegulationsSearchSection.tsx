@@ -14,7 +14,7 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { NamespaceGetter } from '@island.is/web/hooks'
+import { NamespaceGetter, useNamespace } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
 import { LawChapterTree, Ministry, RegulationHomeTexts } from './mockData'
 import { OptionTypeBase, ValueType } from 'react-select'
@@ -118,14 +118,14 @@ export type RegulationsSearchSectionProps = {
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
   lawcCapters: Readonly<LawChapterTree>
-  getText: NamespaceGetter<RegulationHomeTexts>
+  texts: RegulationHomeTexts
 } & NoChildren
 
 export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   props,
 ) => {
   const filters = props.searchFilters
-  const txt = props.getText
+  const txt = useNamespace(props.texts)
 
   const { linkToRegulation } = useRegulationLinkResolver()
   const router = useRouter()
