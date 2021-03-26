@@ -1,11 +1,13 @@
 // type Messages = { [key: string]: string }
 type Nully = undefined | null
-type ContentFulValues = any // FIXME: Figure out what type the actual values could be
-type Messages = Readonly<Record<string, ContentFulValues | undefined>>
+type NamespaceValues = string | ReadonlyArray<string>
+export type NamespaceMessages = Readonly<
+  Record<string, NamespaceValues | undefined>
+>
 
-export type NamespaceGetter<M extends Messages> = {
+export type NamespaceGetter<M extends NamespaceMessages> = {
   <K extends keyof M>(key: K, fallback?: Nully): M[K] extends Nully ? K : M[K]
-  <K extends keyof M, F extends ContentFulValues>(
+  <K extends keyof M, F extends NamespaceValues>(
     key: K,
     fallback: F,
   ): M[K] extends Nully ? F : M[K]
@@ -17,7 +19,7 @@ export type NamespaceGetter<M extends Messages> = {
 
 // NOTE: Typesafe/clever/strict signature to provide nice auto-complete for cases
 // where `namespace`'s type is fully described
-export function useNamespaceStrict<M extends Messages>(
+export function useNamespaceStrict<M extends NamespaceMessages>(
   namespace: M = {} as M,
 ): NamespaceGetter<M> {
   return (key: string, fallback?: any) => {
