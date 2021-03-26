@@ -86,6 +86,9 @@ export const CaseQuery = gql`
       notifications {
         type
       }
+      files {
+        name
+      }
     }
   }
 `

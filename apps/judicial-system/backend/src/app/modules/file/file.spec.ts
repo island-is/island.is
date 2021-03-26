@@ -13,11 +13,14 @@ import { FileService } from './file.service'
 import { FileController } from './file.controller'
 
 describe('FileModule', () => {
-  let fileModel: { create: jest.Mock }
+  let fileModel: {
+    create: jest.Mock
+    findAll: jest.Mock
+  }
   let caseService: CaseService
   let fileController: FileController
 
-  const mockCreatePresignedPost = jest.fn((key) => ({
+  const mockCreateCasePresignedPost = jest.fn((key) => ({
     url:
       'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
     fields: {
@@ -35,6 +38,7 @@ describe('FileModule', () => {
   beforeEach(async () => {
     fileModel = {
       create: jest.fn(),
+      findAll: jest.fn(),
     }
 
     const fileModule = await Test.createTestingModule({
@@ -50,7 +54,7 @@ describe('FileModule', () => {
         {
           provide: AwsS3Service,
           useClass: jest.fn(() => ({
-            createPresignedPost: mockCreatePresignedPost,
+            createPresignedPost: mockCreateCasePresignedPost,
           })),
         },
         {
@@ -79,7 +83,7 @@ describe('FileModule', () => {
     })
 
     it('should create a presigned post', async () => {
-      const presignedPost = await fileController.createPresignedPost(
+      const presignedPost = await fileController.createCasePresignedPost(
         caseId,
         user,
         { fileName },
@@ -104,8 +108,8 @@ describe('FileModule', () => {
         new RegExp(`^${caseId}/.{36}_${fileName}$`),
       )
 
-      expect(mockCreatePresignedPost).toHaveBeenCalledTimes(1)
-      expect(mockCreatePresignedPost).toHaveBeenCalledWith(
+      expect(mockCreateCasePresignedPost).toHaveBeenCalledTimes(1)
+      expect(mockCreateCasePresignedPost).toHaveBeenCalledWith(
         presignedPost.fields.key,
       )
     })
@@ -124,13 +128,21 @@ describe('FileModule', () => {
         }),
       )
 
-      const presignedPost = await fileController.createPresignedPost(
+      const presignedPost = await fileController.createCasePresignedPost(
         caseId,
         user,
         { fileName },
       )
 
-      const file = await fileController.createFile(caseId, user, {
+      const file = await fileController.createCaseFile(caseId, user, {
+        key: presignedPost.fields.key,
+        size,
+      })
+
+      expect(fileModel.create).toHaveBeenCalledTimes(1)
+      expect(fileModel.create).toHaveBeenCalledWith({
+        caseId,
+        name: fileName,
         key: presignedPost.fields.key,
         size,
       })
@@ -144,6 +156,24 @@ describe('FileModule', () => {
         key: presignedPost.fields.key,
         size,
       })
+    })
+
+    it('should get all files', async () => {
+      const mockFiles = [{ id: uuid() }, { id: uuid() }]
+
+      fileModel.findAll.mockImplementation((values: object) =>
+        Promise.resolve(mockFiles),
+      )
+
+      const files = await fileController.getAllCaseFiles(caseId, user)
+
+      expect(fileModel.findAll).toHaveBeenCalledTimes(1)
+      expect(fileModel.findAll).toHaveBeenCalledWith({
+        where: { caseId },
+        order: [['created', 'DESC']],
+      })
+
+      expect(files).toStrictEqual(mockFiles)
     })
   })
 })

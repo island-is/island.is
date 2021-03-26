@@ -20,6 +20,15 @@ import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
 
+// Allows prosecutors to perform any action
+const prosecutorRule = UserRole.PROSECUTOR as RolesRule
+
+// Allows judges to perform any action
+const judgeRule = UserRole.JUDGE as RolesRule
+
+// Allows registrars to perform any action
+const registrarRule = UserRole.REGISTRAR as RolesRule
+
 // Allows prosecutors to send heads-up and ready-for-court notifications
 const prosecutorNotificationRule = {
   role: UserRole.PROSECUTOR,
@@ -49,7 +58,7 @@ const registrarNotificationRule = {
 } as RolesRule
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/case/:id')
+@Controller('api/case/:caseId')
 @ApiTags('notifications')
 export class NotificationController {
   constructor(
@@ -67,12 +76,12 @@ export class NotificationController {
     type: SendNotificationResponse,
     description: 'Sends a new notification for an existing case',
   })
-  async sendNotificationByCaseId(
-    @Param('id') id: string,
+  async sendCaseNotification(
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     return this.notificationService.sendCaseNotification(
       notification,
@@ -80,17 +89,18 @@ export class NotificationController {
     )
   }
 
+  @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('notifications')
   @ApiOkResponse({
     type: Notification,
     isArray: true,
     description: 'Gets all existing notifications for an existing case',
   })
-  async getAllNotificationsById(
-    @Param('id') id: string,
+  async getAllCaseNotifications(
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
   ): Promise<Notification[]> {
-    const existingCase = await this.caseService.findByIdAndUser(id, user)
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     return this.notificationService.getAllCaseNotifications(existingCase)
   }

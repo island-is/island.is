@@ -13,13 +13,13 @@ import { PresignedPost, File } from './models'
 export class FileService {
   constructor(
     @InjectModel(File)
-    private readonly file: typeof File,
+    private readonly fileModel: typeof File,
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  createPresignedPost(
+  createCasePresignedPost(
     caseId: string,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
@@ -28,7 +28,7 @@ export class FileService {
     )
   }
 
-  createFile(caseId: string, createFile: CreateFileDto): Promise<File> {
+  createCaseFile(caseId: string, createFile: CreateFileDto): Promise<File> {
     const { key } = createFile
 
     const regExp = new RegExp(`^${caseId}/.{36}_(.*)$`)
@@ -37,10 +37,19 @@ export class FileService {
       throw new BadRequestException(`${key} is not a valid key`)
     }
 
-    return this.file.create({
+    return this.fileModel.create({
       ...createFile,
       caseId,
       name: createFile.key.slice(74), // prefixed by two uuids, a forward slash and an underscore
+    })
+  }
+
+  getAllCaseFiles(caseId: string): Promise<File[]> {
+    this.logger.debug(`Getting all files for case ${caseId}`)
+
+    return this.fileModel.findAll({
+      where: { caseId },
+      order: [['created', 'DESC']],
     })
   }
 }

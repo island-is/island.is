@@ -37,14 +37,14 @@ export class FileResolver {
     return this.auditService.audit(
       user.id,
       AuditedAction.CREATE_PRESIGNED_POST,
-      backendApi.createPresignedPost(caseId, createPresignedPost),
+      backendApi.createCasePresignedPost(caseId, createPresignedPost),
       caseId,
     )
   }
 
   @Mutation(() => File)
   createFile(
-    @Args('input', { type: () => })
+    @Args('input', { type: () => File })
     input: CreateFileInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
@@ -56,7 +56,7 @@ export class FileResolver {
     return this.auditService.audit(
       user.id,
       AuditedAction.CREATE_FILE,
-      backendApi.createFile(caseId, createFile),
+      backendApi.createCaseFile(caseId, createFile),
       (file) => file.id,
     )
   }
