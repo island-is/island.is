@@ -50,18 +50,18 @@ export class MainResolver {
     return this.educationService.getExamFamilyOverviews(user.nationalId)
   }
 
-  @Query(() => [ExamResult])
-  async educationExamResults(
+  @Query(() => ExamResult)
+  async educationExamResult(
     @CurrentUser() user: User,
     @Args('nationalId') nationalId: string,
-  ): Promise<ExamResult[]> {
+  ): Promise<ExamResult> {
     const family = await this.educationService.getFamily(user.nationalId)
-    const isFamily = family.some(
+    const familyMember = family.find(
       (familyMember) => familyMember.Kennitala === nationalId,
     )
-    if (!isFamily) {
+    if (!familyMember) {
       throw new ApolloError('The requested nationalId is not a part of family')
     }
-    return this.educationService.getExamResults(nationalId)
+    return this.educationService.getExamResult(familyMember)
   }
 }
