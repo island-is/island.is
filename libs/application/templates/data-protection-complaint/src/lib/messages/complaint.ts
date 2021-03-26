@@ -5,16 +5,12 @@ export const complaint = {
     complaineePageTitle: {
       id: 'dpac.application:section.complaint.complaineePageTitle',
       defaultMessage:
-        'Fyrirtæki, stofnun eða einstaklingur sem kvartað er yfir',
+        'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
       description: 'Complainee page title',
     },
     complaineePageDescription: {
       id: 'dpac.application:section.complaint.complaineePageDescription',
-      defaultMessage: `Vinsamlegast athugið að þegar kvörtun er tekin til
-      meðferðar er gagnaðila tilkynnt um að borist hafi kvörtun frá tilteknum
-      nafngreindum aðila og honum gefinn kostur á að koma áframfæri andmælum sínum.
-      Kvartanda er einnig gefið færi á að koma að athugasemdum við andmæli
-      þess sem kvartað er yfir. Svarfrestur málsaðila er að jafnaði þrjár vikur. `,
+      defaultMessage: `Stjörnumerkta reiti þarf að fylla út. Annað er valkvætt.`,
       description: 'Complainee page description',
     },
     subjectOfComplaintPageTitle: {
@@ -25,7 +21,9 @@ export const complaint = {
     subjectOfComplaintPageDescription: {
       id:
         'dpac.application:section.complaint.subjectOfComplaintPageDescription',
-      defaultMessage: `Vantar texta`,
+      defaultMessage: `Merktu við allt sem á við um kvörtunina þína.
+      Upplýsingar um efni kvörtunarinnar hjálpa Persónuvernd að setja
+      málið í réttan farveg hjá stofnuninni og geta flýtt fyrir afgreiðslu þess.`,
       description: 'Subject of complaint page description',
     },
     complaintPageTitle: {
@@ -35,7 +33,9 @@ export const complaint = {
     },
     complaintPageDescription: {
       id: 'dpac.application:section.complaint.complaintPageDescription',
-      defaultMessage: `Vantar texta`,
+      defaultMessage: `Hér þarf að greina frá helstu málsatvikum og
+      hvernig þú telur að hafi verið brotið á þér.
+      Mikilvægt er að lýsingin sé skýr og hnitmiðuð.`,
       description: 'complaint page description',
     },
   }),
@@ -71,15 +71,14 @@ export const complaint = {
     complaineeCountryOfOperation: {
       id:
         'dpac.application:section.complaint.labels.complaineeCountryOfOperation',
-      defaultMessage:
-        'Í hvaða öðru landi innan Evrópu er viðkomandi aðili með starfsemi',
+      defaultMessage: 'Í hvaða landi/löndum?',
       description: 'Complainee country of operation',
     },
     complaineeOperatesWithinEuropeMessage: {
       id:
         'dpac.application:section.complaint.labels.complaineeOperatesWithinEuropeMessage',
       defaultMessage:
-        'Ath. Ef viðkomandi aðili er með starfsemi í öðru landi getur úrvinnsla umsóknar dregist um 4-6 mánuði.',
+        'Ef viðkomandi aðili er með starfsemi í öðru landi getur afgreiðslutími kvörtunarinnar lengst um a.m.k. 4-6 mánuði.',
       description: 'Notifies the user that the response might take longer',
     },
     complaineeAddPerson: {
@@ -100,7 +99,7 @@ export const complaint = {
     },
     subjectAuthorities: {
       id: 'dpac.application:section.complaint.labels.subjectAuthorities',
-      defaultMessage: 'Hjá stjórnvöldum',
+      defaultMessage: 'Vinnsla persónuupplýsinga hjá stjórnvöldum',
       description: 'The subject of the complaint regards authorities',
     },
     subjectLackOfEducation: {
@@ -110,12 +109,13 @@ export const complaint = {
     },
     subjectSocialMedia: {
       id: 'dpac.application:section.complaint.labels.subjectSocialMedia',
-      defaultMessage: 'Á samfélagsmiðlum / smáforritum',
+      defaultMessage:
+        'Vinnsla persónuupplýsinga á samfélagsmiðlum eða í smáforritum (öppum)',
       description: 'The subject of the complaint regards social media',
     },
     subjectRequestForAccess: {
       id: 'dpac.application:section.complaint.labels.subjectRequestForAccess',
-      defaultMessage: 'Beiðni um aðgang / eyðingu',
+      defaultMessage: 'Afgreiðsla á beiðni um aðgang eða eyðingu',
       description: 'The subject of the complaint regards request for access',
     },
     subjectRightOfObjection: {
@@ -132,7 +132,7 @@ export const complaint = {
     },
     subjectEmail: {
       id: 'dpac.application:section.complaint.labels.subjectEmail',
-      defaultMessage: 'Skráning / notkun á netfangi',
+      defaultMessage: 'Skráning eða notkun á netfangi',
       description:
         'The subject of the complaint regards use of personal information',
     },
@@ -143,14 +143,14 @@ export const complaint = {
     },
     subjectEmailInWorkplace: {
       id: 'dpac.application:section.complaint.labels.subjectEmailInWorkplace',
-      defaultMessage: 'Notkun tölvupósthólf á vinnustað / skóla',
+      defaultMessage: 'Meðferð tölvupósts/pósthólfs á vinnustað eða í skóla',
       description:
         'The subject of the complaint regards use of email at workplace or school',
     },
     subjectUnauthorizedPublication: {
       id:
         'dpac.application:section.complaint.labels.subjectUnauthorizedPublication',
-      defaultMessage: 'Birting án heimildar',
+      defaultMessage: 'Birting persónuupplýsinga án heimildar',
       description:
         'The subject of the complaint regards unauthorized publication',
     },
@@ -161,7 +161,7 @@ export const complaint = {
     },
     subjectVanskilaskra: {
       id: 'dpac.application:section.complaint.labels.subjectVanskilaskra',
-      defaultMessage: 'Vanskilaskrá / lánshæfismat',
+      defaultMessage: 'Vanskilaskrá eða lánshæfismat',
       description:
         'The subject of the complaint regards vanskilaskra or lanshaefismat',
     },
@@ -212,7 +212,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaintDocumentsIntroduction',
       defaultMessage:
-        'Vinsamlegast settu hér inn skjöl og önnur gögn sem eiga að fylgja kvörtun',
+        'Vinsamlegast settu hér inn skjöl og önnur gögn sem eiga að fylgja kvörtuninni.',
       description: 'Complaint Documents Intro',
     },
     complaintDocumentsHeader: {
@@ -224,7 +224,7 @@ export const complaint = {
       id:
         'dpac.application:section.complaint.labels.complaintDocumentsDescription',
       defaultMessage:
-        'Tekið er við skjölum með endingu: .pdf, .docx, .rtf, jpg, png, mov, mp4',
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, png.',
       description: 'Complaint Documents Description',
     },
     complaintDocumentsButtonLabel: {
@@ -232,6 +232,14 @@ export const complaint = {
         'dpac.application:section.complaint.labels.complaintDocumentsButtonLabel',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Complaint Documents Button Label',
+    },
+    complaintDocumentsInfoLabel: {
+      id:
+        'dpac.application:section.complaint.labels.complaintDocumentsInfoLabel',
+      defaultMessage:
+        'Hafðu samband við Persónuvernd ef þú vilt senda inn myndbönd og/eða hljóðupptökur.',
+      description:
+        'Notifies the user that he should contact DPA if they want to send in images or videos',
     },
   }),
 }
