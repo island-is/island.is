@@ -133,7 +133,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         const applicant = externalData.nationalRegistry.data
         const selectedChildren = getSelectedChildrenFromExternalData(
           applicant.children,
-          answers.selectChild,
+          answers.selectedChildren,
         )
         const otherParent = selectedChildren[0].otherParent
 
