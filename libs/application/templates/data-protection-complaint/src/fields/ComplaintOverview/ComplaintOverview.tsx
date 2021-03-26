@@ -1,8 +1,14 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { delimitation, info, overview, section } from '../../lib/messages'
+import { delimitation, info, overview, externalData } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
 import {
   ValueLine,
@@ -20,6 +26,8 @@ import {
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const answers = (application as any).answers as DataProtectionComplaint
+
+  const onPrintClick = () => window.print()
 
   return (
     <Box>
@@ -91,6 +99,16 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
           </Box>
         </AccordionItem>
       </Accordion>
+      <Box marginTop={3}>
+        <Button
+          variant="ghost"
+          icon="open"
+          iconType="outline"
+          onClick={onPrintClick}
+        >
+          {formatMessage(externalData.labels.printButtonLabel)}
+        </Button>
+      </Box>
     </Box>
   )
 }

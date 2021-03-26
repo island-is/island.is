@@ -8,12 +8,6 @@ export const delimitation = {
         'Til að Persónuvernd geti fjallað um kvörtunina þína þarf fyrst að kanna hvort hún fellur undir verksvið stofnunarinnar',
       description: 'Delimitation page title',
     },
-    description: {
-      id: 'dpac.application:section.delimitation.description',
-      defaultMessage:
-        'Til að ganga úr skugga um það biðjum við þig um að svara eftirfarandi spurningum:',
-      description: 'Delimitation page description',
-    },
   }),
   labels: defineMessages({
     inCourtProceedings: {

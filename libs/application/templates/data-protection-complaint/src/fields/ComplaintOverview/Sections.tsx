@@ -113,19 +113,17 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
     <>
       <ValueLine
         label={complaint.general.subjectOfComplaintPageTitle}
-        value={[
-          ...(answers.subjectOfComplaint.authorities || []),
-          ...(answers.subjectOfComplaint.other || []),
-          ...(answers.subjectOfComplaint.useOfPersonalInformation || []),
-        ]
-          .map((x) =>
-            formatMessage(
-              subjectOfComplaintValueLabelMapper[
-                x as keyof typeof subjectOfComplaintValueLabelMapper
-              ],
-            ),
-          )
-          .join(', ')}
+        value={
+          answers.subjectOfComplaint.values
+            ?.map((x) =>
+              formatMessage(
+                subjectOfComplaintValueLabelMapper[
+                  x as keyof typeof subjectOfComplaintValueLabelMapper
+                ],
+              ),
+            )
+            .join(', ') || ''
+        }
       />
       {answers.subjectOfComplaint.somethingElse && (
         <ValueLine
