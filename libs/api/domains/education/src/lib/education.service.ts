@@ -15,7 +15,7 @@ import {
 import { NationalRegistryApi } from '@island.is/clients/national-registry'
 
 import { Config } from './education.module'
-import { License, ExamOverview, ExamResult } from './education.type'
+import { License, ExamFamilyOverview, ExamResult } from './education.type'
 import { S3Service } from './s3.service'
 import { getYearInterval } from './education.utils'
 
@@ -62,14 +62,16 @@ export class EducationService {
     return family.filter(
       (familyMember) =>
         nationalId === familyMember.Kennitala ||
-        (!['1', '2'].includes(familyMember.Kyn) &&
+        (!['1', '2', '7'].includes(familyMember.Kyn) &&
           kennitala.info(nationalId).age < ADULT_AGE_LIMIT),
     )
   }
 
-  async getExamOverviews(nationalId: string): Promise<ExamOverview[]> {
+  async getExamFamilyOverviews(
+    nationalId: string,
+  ): Promise<ExamFamilyOverview[]> {
     const family = await this.getFamily(nationalId)
-    const examOverviews = await Promise.all(
+    const examFamilyOverviews = await Promise.all(
       family.map(async (familyMember) => {
         const studentAssessment = await this.mmsApi.getStudentAssessment(
           familyMember.Kennitala,
@@ -84,7 +86,7 @@ export class EducationService {
             einkunn.enska?.dagsetning,
             einkunn.staerdfraedi?.dagsetning,
           ]),
-        ).filter(Boolean)
+        ).filter(Boolean) as string[]
 
         return {
           nationalId: familyMember.Kennitala,
@@ -96,17 +98,17 @@ export class EducationService {
         }
       }),
     )
-    return examOverviews.filter(Boolean)
+    return examFamilyOverviews.filter(Boolean) as ExamFamilyOverview[]
   }
 
-  mapGrade(grade: GradeResult) {
+  private mapGrade(grade: GradeResult) {
     return {
       grade: grade.radeinkunn,
       weight: grade.vaegi,
     }
   }
 
-  mapBaseGrade(grade: BaseGrade) {
+  private mapBaseGrade(grade: BaseGrade) {
     return {
       grade: grade.samtals.radeinkunn,
       competence: grade.haefnieinkunn,
@@ -115,7 +117,7 @@ export class EducationService {
     }
   }
 
-  mapLanguageGrade(grade: LanguageGrade) {
+  private mapLanguageGrade(grade: LanguageGrade) {
     return {
       ...this.mapBaseGrade(grade),
       readingGrade: this.mapGrade(grade.lesskilningur),
@@ -123,7 +125,7 @@ export class EducationService {
     }
   }
 
-  mapMathGrade(grade: MathGrade) {
+  private mapMathGrade(grade: MathGrade) {
     return {
       ...this.mapBaseGrade(grade),
       wordAndNumbers: grade.ordOgTalnadaemi,

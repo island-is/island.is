@@ -1,2 +1,2 @@
 export { ExamResult } from './examResult.model'
-export { ExamOverview } from './examOverview.model'
+export { ExamFamilyOverview } from './examFamilyOverview.model'

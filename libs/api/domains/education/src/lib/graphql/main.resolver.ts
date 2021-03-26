@@ -15,7 +15,7 @@ import {
   SignedLicense,
   FetchEducationSignedLicenseUrlInput,
 } from './license'
-import { ExamOverview, ExamResult } from './grade'
+import { ExamFamilyOverview, ExamResult } from './grade'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -43,9 +43,11 @@ export class MainResolver {
     return { url }
   }
 
-  @Query(() => [ExamOverview])
-  educationExamOverviews(@CurrentUser() user: User): Promise<ExamOverview[]> {
-    return this.educationService.getExamOverviews(user.nationalId)
+  @Query(() => [ExamFamilyOverview])
+  educationExamFamilyOverviews(
+    @CurrentUser() user: User,
+  ): Promise<ExamFamilyOverview[]> {
+    return this.educationService.getExamFamilyOverviews(user.nationalId)
   }
 
   @Query(() => [ExamResult])

@@ -5,7 +5,7 @@ export interface License {
   date: string
 }
 
-export interface ExamOverview {
+export interface ExamFamilyOverview {
   nationalId: string
   name: string
   isChild: boolean
@@ -16,7 +16,7 @@ export interface ExamOverview {
 
 interface Grade {
   grade: string
-  weight: string
+  weight?: string
 }
 
 interface BaseGrade {

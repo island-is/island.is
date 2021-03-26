@@ -5,6 +5,6 @@ export class Grade {
   @Field(() => String)
   grade!: string // 61
 
-  @Field(() => String)
-  weight!: string // 80%
+  @Field(() => String, { nullable: true })
+  weight?: string // 80%
 }
