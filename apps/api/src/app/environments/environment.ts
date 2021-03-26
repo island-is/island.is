@@ -12,6 +12,7 @@ export default {
   },
   education: {
     xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
+    xroadGradeServiceId: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1',
     fileDownloadBucket: 'island-is-dev-download-cache-api',
   },
   fileStorage: {
@@ -50,6 +51,7 @@ export default {
   },
   documentProviderService: {
     documentsServiceBasePath: 'http://localhost:3369',
+    documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS ?? '',
     test: {
       basePath:
         'https://test-documentprovidermanagement-island-is.azurewebsites.net',

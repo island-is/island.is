@@ -9,11 +9,27 @@ import {
   ISLFjolskyldan,
   ISLEinstaklingur,
 } from './dto'
+import { SoapClient } from './soapClient'
+
+export interface NationalRegistryConfig {
+  baseSoapUrl: string
+  host: string
+  user: string
+  password: string
+}
 
 export class NationalRegistryApi {
   private readonly client: Soap.Client | null
   private readonly clientUser: string
   private readonly clientPassword: string
+
+  static async instanciateClass(config: NationalRegistryConfig) {
+    return new NationalRegistryApi(
+      await SoapClient.generateClient(config.baseSoapUrl, config.host),
+      config.password,
+      config.user,
+    )
+  }
 
   constructor(
     private soapClient: Soap.Client | null,
