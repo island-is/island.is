@@ -20,7 +20,7 @@ export const getSelectedChildrenFromExternalData = (
   return children.filter((child) => selectedChildren.includes(child.nationalId))
 }
 
-interface childrenResidenceInfoType {
+interface ChildrenResidenceInfo {
   parent: {
     letter: 'A' | 'B'
     name: string
@@ -31,7 +31,7 @@ interface childrenResidenceInfoType {
 const extract = (
   { address, fullName }: NationalRegistry | PersonResidenceChange,
   letter: 'A' | 'B',
-): childrenResidenceInfoType => {
+): ChildrenResidenceInfo => {
   return {
     address,
     parent: {
@@ -45,8 +45,8 @@ export const childrenResidenceInfo = (
   applicant: NationalRegistry,
   answers: Answers,
 ): {
-  current: childrenResidenceInfoType
-  future: childrenResidenceInfoType
+  current: ChildrenResidenceInfo
+  future: ChildrenResidenceInfo
 } => {
   const children = getSelectedChildrenFromExternalData(
     applicant.children,
