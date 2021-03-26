@@ -14,7 +14,7 @@ import {
   Text,
   Typography,
 } from '@island.is/island-ui/core'
-import RegulationLayout from './RegulationLayout'
+import { RegulationLayout } from './RegulationLayout'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespace } from '@island.is/web/hooks'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
@@ -42,7 +42,7 @@ export type RegulationDisplayProps = {
   texts: RegulationPageTexts
 }
 
-const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
+export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   const { regulation, texts, originalBody, history } = props
 
   const router = useRouter()
@@ -201,5 +201,3 @@ const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
     />
   )
 }
-
-export default RegulationDisplay

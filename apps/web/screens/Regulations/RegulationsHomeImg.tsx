@@ -1,6 +1,8 @@
-import * as React from 'react'
+import React, { FC } from 'react'
 
-function SvgComponent(props: React.SVGProps<SVGSVGElement>) {
+export const RegulationsHomeImg: FC<React.SVGProps<SVGSVGElement>> = (
+  props,
+) => {
   return (
     <svg
       width="100%"
@@ -90,5 +92,3 @@ function SvgComponent(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
-
-export default SvgComponent

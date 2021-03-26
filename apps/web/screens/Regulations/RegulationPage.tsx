@@ -16,8 +16,8 @@ import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 // import getConfig from 'next/config'
 import { CustomNextError } from '@island.is/web/units/errors'
-import RegulationRedirectMessage from './RegulationRedirectMessage'
-import RegulationDisplay from './RegulationDisplay'
+import { RegulationRedirectMessage } from './RegulationRedirectMessage'
+import { RegulationDisplay } from './RegulationDisplay'
 import { getParams } from './regulationUtils'
 
 // const { publicRuntimeConfig } = getConfig()

@@ -15,7 +15,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 // import getConfig from 'next/config'
 // import { CustomNextError } from '@island.is/web/units/errors'
 import { SubpageDetailsContent } from '@island.is/web/components'
-import Img from './RegulationsHomeImg'
+import { RegulationsHomeImg } from './RegulationsHomeImg'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
@@ -180,7 +180,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
               paddingTop={paddingTop}
               paddingBottom={paddingBottom}
             >
-              <Img />
+              <RegulationsHomeImg />
             </GridColumn>
           </GridRow>
         </GridContainer>

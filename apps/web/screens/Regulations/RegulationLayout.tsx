@@ -18,7 +18,7 @@ export type RegulationLayoutProps = {
   sidebar?: JSX.Element | false
 }
 
-const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
+export const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
   const n = useNamespace(props.texts)
 
   const breadCrumbs = (
@@ -71,5 +71,3 @@ const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
     />
   )
 }
-
-export default RegulationLayout

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Text } from '@island.is/island-ui/core'
-import RegulationLayout from './RegulationLayout'
+import { RegulationLayout } from './RegulationLayout'
 import { prettyName } from './regulationUtils'
 
 import { RegulationPageTexts, RegulationRedirect } from './mockData'
@@ -11,7 +11,7 @@ export type RegulationRedirectMessageProps = {
   regulation: RegulationRedirect
 }
 
-const RegulationRedirectMessage: FC<RegulationRedirectMessageProps> = (
+export const RegulationRedirectMessage: FC<RegulationRedirectMessageProps> = (
   props,
 ) => {
   const { regulation, texts } = props
@@ -46,5 +46,3 @@ const RegulationRedirectMessage: FC<RegulationRedirectMessageProps> = (
     />
   )
 }
-
-export default RegulationRedirectMessage
