@@ -132,8 +132,6 @@ export const StepThree: React.FC = () => {
                   </Box>
                 )}
               </Box>
-              {/* rass */}
-
               <DateTime
                 name="reqCustodyEndDate"
                 datepickerLabel={`${

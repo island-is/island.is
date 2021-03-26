@@ -15,8 +15,7 @@ import { UserProvider } from '@island.is/judicial-system-web/src/shared-componen
 import StepTwo from './StepTwo'
 
 describe('Create detention request, step two', () => {
-  // test('should not allow users to continue unless every required field has been filled out', async () => {
-  test('rass', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({

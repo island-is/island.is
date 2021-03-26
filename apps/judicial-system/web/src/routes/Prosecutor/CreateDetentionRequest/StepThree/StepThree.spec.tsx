@@ -17,7 +17,7 @@ import StepThree from './StepThree'
 import formatISO from 'date-fns/formatISO'
 
 describe('Create detention request, step three', () => {
-  test('should not allow users to continue unless every required field has been filled out rass', async () => {
+  test('should not allow users to continue unless every required field has been filled out', async () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
