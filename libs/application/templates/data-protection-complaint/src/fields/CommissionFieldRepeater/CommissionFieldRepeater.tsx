@@ -94,13 +94,6 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
         )
       })}
       <Box marginTop={3}>
-        <Text marginBottom={3}>
-          {formatText(
-            info.labels.commissionsAddMoreDescription,
-            application,
-            formatMessage,
-          )}
-        </Text>
         <Button
           variant="ghost"
           icon="add"

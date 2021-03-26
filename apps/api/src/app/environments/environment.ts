@@ -51,6 +51,7 @@ export default {
   },
   documentProviderService: {
     documentsServiceBasePath: 'http://localhost:3369',
+    documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS ?? '',
     test: {
       basePath:
         'https://test-documentprovidermanagement-island-is.azurewebsites.net',

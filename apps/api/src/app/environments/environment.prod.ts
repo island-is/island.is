@@ -60,6 +60,7 @@ export default {
       tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
     },
     documentsServiceBasePath: process.env.SERVICE_DOCUMENTS_BASEPATH,
+    documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS,
   },
   syslumennService: {
     url: process.env.SYSLUMENN_HOST,

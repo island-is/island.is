@@ -10,20 +10,7 @@ export const CompanyDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Text variant="h5" fontWeight="regular">
       <b>ATH. </b>
-      {formatText(
-        info.labels.companyDisclaimer,
-        application,
-        formatMessage,
-      )}{' '}
-      <Link href="https://something.com">
-        <Button variant="text" size="small" icon="open" iconType="outline">
-          {formatText(
-            info.labels.companyDisclaimerButtonLabel,
-            application,
-            formatMessage,
-          )}
-        </Button>
-      </Link>
+      {formatText(info.labels.companyDisclaimer, application, formatMessage)}
     </Text>
   )
 }

@@ -100,6 +100,8 @@ const autoSchemaFile = environment.production
       },
       documentsServiceBasePath:
         environment.documentProviderService.documentsServiceBasePath,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins,
     }),
     TranslationsModule,
     TerminusModule,

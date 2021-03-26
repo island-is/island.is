@@ -17,7 +17,7 @@ const Header: FC = () => {
     // Fixes the island.is logo and other SVGs not appearing on
     // Mobile Safari, when a <base> tag exists in index.html.
     const url = window.location.origin + location.pathname
-    location.pathname.includes('application') && fixSvgUrls(url)
+    location.pathname.includes('umsoknir') && fixSvgUrls(url)
   }, [location])
 
   return (

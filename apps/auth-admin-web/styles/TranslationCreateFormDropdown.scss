@@ -1,0 +1,41 @@
+.translation-create-form-dropdown {
+  position: absolute;
+  z-index: 3;
+  left: -30px;
+  top: 25px;
+
+  &__container {
+    h1 {
+      font-size: 1rem;
+    }
+  }
+
+  &__button__show {
+    display: block;
+    font-size: 1rem;
+    cursor: pointer;
+
+    span {
+      visibility: hidden;
+    }
+  }
+
+  .customErrorMessage {
+    color: $color-error;
+  }
+
+  &__wrapper {
+    margin: 20px 0px;
+    background: $color-bg-content;
+    padding: 25px;
+    border: solid 2px $color-border;
+
+    h1 {
+      font-size: 1.3rem;
+    }
+  }
+
+  &__container__form {
+    padding: 10px !important;
+  }
+}
