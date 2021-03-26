@@ -6,7 +6,7 @@ import {
   InputFileUpload,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, CreateFile, UpdateCase } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
@@ -18,6 +18,7 @@ import {
   CaseQuery,
   UpdateCaseMutation,
   CreatePresignedPostMutation,
+  CreateFileMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
@@ -30,6 +31,8 @@ import * as styles from './StepFive.treat'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
+
+  // Todo: the case includes a list of files - we should probably use that list
   const [files, setFiles] = useState<File[]>([])
 
   const router = useRouter()
@@ -69,18 +72,38 @@ export const StepFive: React.FC = () => {
     return resCase
   }
 
+  const [createFileMutation] = useMutation(CreateFileMutation)
+
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
 
   const uploadFiles = (id: string, files: File[]) => {
-    forEach(files, async (file) => {
-      const { data } = await createPresignedPostMutation({
-        variables: { input: { caseId: id, fileName: file.name } },
+    forEach(files, async (aFile) => {
+      const { data: presignedPostData } = await createPresignedPostMutation({
+        variables: { input: { caseId: id, fileName: aFile.name } },
       })
 
-      const presignedPost = data?.createPresignedPost
+      const presignedPost = presignedPostData?.createPresignedPost
 
-      if (presignedPost) {
-        uploadFile(presignedPost, file)
+      if (!presignedPost) {
+        return
+      }
+
+      const uploaded = uploadFile(presignedPost, aFile)
+
+      if (!uploaded) {
+        return
+      }
+
+      const { data: fileData } = await createFileMutation({
+        variables: {
+          input: { caseId: id, key: presignedPost.fields.key, size: 999 },
+        },
+      })
+
+      const file = fileData?.createFileMutation
+
+      if (file) {
+        // do something
       }
     })
   }

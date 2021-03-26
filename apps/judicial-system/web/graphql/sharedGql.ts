@@ -136,3 +136,17 @@ export const CreatePresignedPostMutation = gql`
     }
   }
 `
+
+export const CreateFileMutation = gql`
+  mutation CreateFileMutation($input: CreateFileInput!) {
+    createFile(input: $input) {
+      id
+      created
+      updated
+      caseId
+      name
+      key
+      size
+    }
+  }
+`

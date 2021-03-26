@@ -17,11 +17,14 @@ export const logOut = (path = '') => {
   }
 }
 
-export const getFeature = async (name: string) => {
+export const getFeature = async (name: string): Promise<boolean> => {
   return await (await fetch(`/api/feature/${name}`)).json()
 }
 
-export const uploadFile = async (presignedPost: PresignedPost, file: File) => {
+export const uploadFile = async (
+  presignedPost: PresignedPost,
+  file: File,
+): Promise<boolean> => {
   const formData = new FormData()
   Object.keys(presignedPost.fields).forEach((key) =>
     formData.append(key, presignedPost.fields[key]),
@@ -32,4 +35,6 @@ export const uploadFile = async (presignedPost: PresignedPost, file: File) => {
     method: 'POST',
     body: formData,
   })
+
+  return res.ok
 }

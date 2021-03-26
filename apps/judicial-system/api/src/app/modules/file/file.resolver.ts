@@ -32,7 +32,7 @@ export class FileResolver {
   ): Promise<PresignedPost> {
     const { caseId, ...createPresignedPost } = input
 
-    this.logger.debug(`Creating a presign post for case ${caseId}`)
+    this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
     return this.auditService.audit(
       user.id,
@@ -44,7 +44,7 @@ export class FileResolver {
 
   @Mutation(() => File)
   createFile(
-    @Args('input', { type: () => File })
+    @Args('input', { type: () => CreateFileInput })
     input: CreateFileInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
