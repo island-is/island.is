@@ -49,7 +49,11 @@ Each `state` in the application template state machine must include a `meta` obj
 
 ### States and status
 
-Each applications define their own states. It can be as much as needed depending on the application flow. You can see a simple example from the meta-application [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/meta-application/src/lib/ApplicationTemplate.ts#L83-L171), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41). To define the _final_ state of your application, XState has a property called `type: 'final'`. It can be defined multiple times for your application states. For example, the Meta Application (link above) is either approved or rejected, and in both case the application is in its final state.
+Each applications define their own states. It can be as much as needed depending on the application flow.
+
+You can see a simple example from the meta-application [here](https://github.com/island-is/island.is/blob/287e1769d8fa3f0665ff767a9c82933d0c785fdc/libs/application/templates/meta-application/src/lib/ApplicationTemplate.ts#L83-L171), or a more complex example from the Parental Leave [here](https://github.com/island-is/island.is/blob/ed3ac581b75862cd5e45d5ee8a6811d40216ac46/libs/application/templates/parental-leave/src/lib/ParentalLeaveTemplate.ts#L30-L41).
+
+To define the _final_ state of your application, XState has a property called `type: 'final'`. It can be defined multiple times for your application states. For example, the Meta Application (link above) is either approved or rejected, and in both case the application is in its final state. A final state is final, and there are no events that lead out of it.
 
 This `type: 'final'` is important because, out of it, we define a `status` column in the application model. This `status` is the same for every application template and give us the general progress of the application. We have, at the moment, 3 different status as follow, and let us filters and list applications by status type.
 
@@ -60,6 +64,22 @@ export enum ApplicationStatus {
   REJECTED = 'rejected',
 }
 ```
+
+Inside `@island.is/application/core` there exists an enum called `DefaultState`, it currently has 3 values, application templates should use these default states where applicable.
+
+```typescript
+enum DefaultState {
+  prerequisites = 'prerequisites',
+  completed = 'completed',
+  rejected = 'rejected',
+}
+```
+
+- **prerequisites** is for applications that require some business logic before the application can be started, applications that are in this state will not be listed anywhere and will be automatically pruned out after they reach a certain age
+
+- **completed** is for applications that have reached a final `completed` state
+
+- **rejected** is for applications that have reached a final `rejected` state
 
 ### Roles
 

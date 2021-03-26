@@ -5,6 +5,7 @@ import {
   ExternalData,
   FormValue,
   ApplicationStatus,
+  DefaultState,
 } from '@island.is/application/core'
 
 import { Application } from './application.model'
@@ -38,6 +39,11 @@ export class ApplicationService {
           { applicant: nationalId },
           { assignees: { [Op.contains]: [nationalId] } },
         ],
+        // We filter out applications that are in the prerequisites state
+        // as they should not appear anywhere until they have advanced further
+        [Op.not]: {
+          state: DefaultState.prerequisites,
+        },
       },
       order: [['modified', 'DESC']],
     })

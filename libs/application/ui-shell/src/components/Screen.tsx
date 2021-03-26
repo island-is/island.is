@@ -187,6 +187,10 @@ const Screen: FC<ScreenProps> = ({
 
       if (response?.data) {
         addExternalData(response.data?.submitApplication.externalData)
+
+        if (submitField.refetchApplicationAfterSubmit) {
+          refetch()
+        }
       }
     } else {
       response = await updateApplication({
