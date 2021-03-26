@@ -9,7 +9,7 @@ import {
   DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
 } from './client/documentProviderClientConfig'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
-//import { AdminGuard, DOCUMENT_PROVIDER_ADMINS } from './admin.guard'
+import { DOCUMENT_PROVIDER_ADMINS } from './admin.guard'
 
 export interface Config extends DocumentProviderConfig {
   documentsServiceBasePath: string
@@ -59,7 +59,7 @@ export class DocumentProviderModule {
             ),
         },
         {
-          provide: 'DOCUMENT_PROVIDER_ADMINS',
+          provide: DOCUMENT_PROVIDER_ADMINS,
           useValue: config.documentProviderAdmins,
         },
       ],
