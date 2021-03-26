@@ -12,7 +12,10 @@ import {
   BaseGrade,
   GradeResult,
 } from '@island.is/clients/mms'
-import { NationalRegistryApi } from '@island.is/clients/national-registry'
+import {
+  NationalRegistryApi,
+  ISLFjolskyldan,
+} from '@island.is/clients/national-registry'
 
 import { Config } from './education.module'
 import { License, ExamFamilyOverview, ExamResult } from './education.type'
@@ -120,8 +123,8 @@ export class EducationService {
   private mapLanguageGrade(grade: LanguageGrade) {
     return {
       ...this.mapBaseGrade(grade),
-      readingGrade: this.mapGrade(grade.lesskilningur),
-      grammarGrade: this.mapGrade(grade.malnotkun),
+      reading: this.mapGrade(grade.lesskilningur),
+      grammar: this.mapGrade(grade.malnotkun),
     }
   }
 
@@ -136,16 +139,21 @@ export class EducationService {
     }
   }
 
-  async getExamResults(nationalId: string): Promise<ExamResult[]> {
-    const studentAssessment = await this.mmsApi.getStudentAssessment(nationalId)
-    return studentAssessment.einkunnir.map((einkunn) => ({
-      id: `EducationExamResults${nationalId}StudentYear${einkunn.bekkur}`,
-      studentYear: einkunn.bekkur,
-      icelandicGrade:
-        einkunn.islenska && this.mapLanguageGrade(einkunn.islenska),
-      englishGrade: einkunn.enska && this.mapLanguageGrade(einkunn.enska),
-      mathGrade:
-        einkunn.staerdfraedi && this.mapMathGrade(einkunn.staerdfraedi),
-    }))
+  async getExamResult(familyMember: ISLFjolskyldan): Promise<ExamResult> {
+    const studentAssessment = await this.mmsApi.getStudentAssessment(
+      familyMember.Kennitala,
+    )
+    return {
+      id: `EducationExamResult${familyMember.Kennitala}`,
+      fullName: familyMember.Nafn,
+      grades: studentAssessment.einkunnir.map((einkunn) => ({
+        studentYear: einkunn.bekkur,
+        icelandicGrade:
+          einkunn.islenska && this.mapLanguageGrade(einkunn.islenska),
+        englishGrade: einkunn.enska && this.mapLanguageGrade(einkunn.enska),
+        mathGrade:
+          einkunn.staerdfraedi && this.mapMathGrade(einkunn.staerdfraedi),
+      })),
+    }
   }
 }
