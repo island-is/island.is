@@ -649,8 +649,6 @@ export const mockCaseQueries = [
   },
 ]
 
-
-
 export const mockUpdateCaseMutation = (updateCases: UpdateCase[]) =>
   updateCases.map((updateCase) => {
     return {

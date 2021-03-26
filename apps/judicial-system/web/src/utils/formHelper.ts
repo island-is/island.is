@@ -151,7 +151,7 @@ export const newSetAndSendDateToServer = async (
 ) => {
   setIsValid(isValid)
 
-  if(!isValid) {
+  if (!isValid) {
     return
   }
 
