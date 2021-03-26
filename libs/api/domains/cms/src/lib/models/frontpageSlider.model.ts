@@ -5,16 +5,16 @@ import { IFrontpageSlider } from '../generated/contentfulTypes'
 @ObjectType()
 export class FrontpageSlider {
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  subtitle: string
+  subtitle!: string
 
   @Field(() => Html, { nullable: true })
-  intro: Html
+  intro?: Html | null
 
   @Field()
-  content: string
+  content!: string
 
   @Field({ nullable: true })
   link?: string

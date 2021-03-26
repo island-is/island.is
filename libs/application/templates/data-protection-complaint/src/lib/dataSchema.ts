@@ -2,6 +2,7 @@ import * as z from 'zod'
 import { YES, NO } from '../shared'
 import { error } from './messages/error'
 import * as kennitala from 'kennitala'
+import { DefaultEvents } from '@island.is/application/core'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -69,20 +70,20 @@ export const DataProtectionComplaintSchema = z.object({
     ]),
   }),
   applicant: z.object({
-    name: z.string().nonempty(),
+    name: z.string().nonempty(error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().nonempty(),
-    postalCode: z.string().nonempty(),
-    city: z.string().nonempty(),
+    address: z.string().nonempty(error.required.defaultMessage),
+    postalCode: z.string().nonempty(error.required.defaultMessage),
+    city: z.string().nonempty(error.required.defaultMessage),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
   }),
   organizationOrInstitution: z.object({
-    name: z.string().nonempty(),
+    name: z.string().nonempty(error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false)),
-    address: z.string().nonempty(),
-    postalCode: z.string().nonempty(),
-    city: z.string().nonempty(),
+    address: z.string().nonempty(error.required.defaultMessage),
+    postalCode: z.string().nonempty(error.required.defaultMessage),
+    city: z.string().nonempty(error.required.defaultMessage),
     email: z.string().email().optional(),
     phoneNumber: z.string().optional(),
   }),
@@ -91,7 +92,7 @@ export const DataProtectionComplaintSchema = z.object({
     persons: z
       .array(
         z.object({
-          name: z.string().nonempty(),
+          name: z.string().nonempty(error.required.defaultMessage),
           nationalId: z
             .string()
             .refine((x) => (x ? kennitala.isPerson(x) : false)),
@@ -100,33 +101,31 @@ export const DataProtectionComplaintSchema = z.object({
       .nonempty(),
   }),
   complainee: z.object({
-    name: z.string().nonempty(),
-    address: z.string().nonempty(),
+    name: z.string().nonempty(error.required.defaultMessage),
+    address: z.string().nonempty(error.required.defaultMessage),
     nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
     operatesWithinEurope: z.enum([YES, NO]),
     countryOfOperation: z.string().optional(),
   }),
   additionalComplainees: z.array(
     z.object({
-      name: z.string().nonempty(),
-      address: z.string().nonempty(),
+      name: z.string().nonempty(error.required.defaultMessage),
+      address: z.string().nonempty(error.required.defaultMessage),
       nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
       operatesWithinEurope: z.enum([YES, NO]),
       countryOfOperation: z.string().optional(),
     }),
   ),
   subjectOfComplaint: z.object({
-    authorities: z.array(z.string()).optional(),
-    useOfPersonalInformation: z.array(z.string()).optional(),
-    other: z.array(z.string()).optional(),
+    values: z.array(z.string()).optional(),
     somethingElse: z.string().optional(),
   }),
   complaint: z.object({
-    description: z.string().nonempty(),
+    description: z.string().nonempty(error.required.defaultMessage),
     documents: z.array(FileSchema).nonempty(),
   }),
   overview: z.object({
-    termsAgreement: z.array(z.string()).refine((x) => x?.includes('agreed')),
+    termsAgreement: z.string().refine((x) => x === DefaultEvents.SUBMIT),
   }),
 })
 

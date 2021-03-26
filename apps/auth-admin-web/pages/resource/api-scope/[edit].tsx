@@ -68,6 +68,11 @@ const Index: React.FC = () => {
     }
   }
 
+  const refreshClaims = async () => {
+    const decode = decodeURIComponent(apiScopeName as string)
+    await getApiScope(decode)
+  }
+
   switch (step) {
     case ApiScopeStep.ApiScope: {
       return (
@@ -101,6 +106,7 @@ const Index: React.FC = () => {
               handleChanges={changesMade}
               handleNext={handleNext}
               handleBack={handleBack}
+              handleNewClaimsAdded={refreshClaims}
             />
           </ApiScopeStepNav>
         </ContentWrapper>

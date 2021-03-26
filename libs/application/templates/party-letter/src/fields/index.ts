@@ -1,1 +1,5 @@
-export {}
+export { default as Recommendations } from './Recommendations'
+export { default as PartyLetter } from './PartyLetter'
+export { default as Review } from './Review'
+export { default as Conclusion } from './Conclusion'
+export { default as SignatureDisclaimer } from './SignatureDisclaimer'

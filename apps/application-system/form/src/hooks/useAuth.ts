@@ -1,11 +1,13 @@
 import { setClientAuthToken } from '@island.is/application/graphql'
 import { useLocation } from 'react-router-dom'
+
 import { ActionType, useAuthState } from '../context/AuthProvider'
 import { userManager } from '../utils/userManager'
 
 const useAuth = () => {
   const [{ userInfo, userInfoState }, dispatch] = useAuthState()
   const { pathname, search } = useLocation()
+
   async function signInUser() {
     dispatch({
       type: ActionType.SET_USER_PENDING,
@@ -13,8 +15,10 @@ const useAuth = () => {
 
     try {
       const user = await userManager.verifyAuthentication()
+
       if (user) {
         setClientAuthToken(user.access_token)
+
         dispatch({
           type: ActionType.SET_USER_FULFILLED,
           payload: user,

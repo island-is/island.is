@@ -3,7 +3,7 @@ import { IsString } from 'class-validator'
 
 @InputType()
 export class GetAboutPageInput {
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang = 'is-IS'
 }

@@ -17,8 +17,10 @@ import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from '../application.configuration'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { User } from '@island.is/api/domains/national-registry'
+import {
+  CRCApplication,
+  getSelectedChildrenFromExternalData,
+} from '@island.is/application/templates/children-residence-change'
 
 @Injectable()
 export class FileService {
@@ -71,63 +73,53 @@ export class FileService {
   ): Promise<SigningServiceResponse> {
     this.validateApplicationType(application.typeId)
     const { answers, externalData, id, state } = application as CRCApplication
-    const { nationalRegistry, parentNationalRegistry } = externalData
+    const { nationalRegistry } = externalData
     const isParentA = state === 'draft'
-
-    const parentBName =
-      answers.useMocks === 'yes'
-        ? answers.mockData.parentNationalRegistry.data.name
-        : parentNationalRegistry.data.name
+    const applicant = nationalRegistry?.data
+    const selectedChildren = getSelectedChildrenFromExternalData(
+      applicant.children,
+      answers.selectedChildren,
+    )
+    const parentB = selectedChildren[0].otherParent
 
     switch (pdfType) {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
-        const name = isParentA ? nationalRegistry.data.fullName : parentBName
-        const phoneNumber = isParentA
-          ? answers.parentA.phoneNumber
-          : answers.parentB.phoneNumber
+        const { fullName, phoneNumber } = isParentA
+          ? {
+              fullName: applicant.fullName,
+              phoneNumber: answers.parentA.phoneNumber,
+            }
+          : {
+              fullName: parentB.fullName,
+              phoneNumber: answers.parentB.phoneNumber,
+            }
 
         return await this.handleChildrenResidenceChangeSignature(
           pdfType,
           id,
-          name,
+          fullName,
           phoneNumber,
         )
       }
     }
   }
 
-  getPresignedUrl(application: Application, pdfType: PdfTypes) {
+  async getPresignedUrl(application: Application, pdfType: PdfTypes) {
     this.validateApplicationType(application.typeId)
 
     const bucket = this.getBucketName()
 
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
 
-    return this.awsService.getPresignedUrl(bucket, fileName)
+    return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   private async createChildrenResidencePdf(application: CRCApplication) {
     const bucket = this.getBucketName()
+    const { answers, externalData } = application
+    const applicant = externalData.nationalRegistry.data
 
-    // TODO: Remove ternary for usemocks once we move mock data to externalData
-    const selectedChildren =
-      application.answers.useMocks === 'no'
-        ? application.externalData.childrenNationalRegistry.data.filter((c) =>
-            application.answers.selectChild.includes(c.name),
-          )
-        : application.answers.mockData.childrenNationalRegistry.data.filter(
-            (c) => application.answers.selectChild.includes(c.name),
-          )
-
-    const pdfBuffer = await generateResidenceChangePdf(
-      selectedChildren,
-      (application.externalData.nationalRegistry.data as unknown) as User,
-      application.answers.useMocks === 'no'
-        ? application.externalData.parentNationalRegistry.data
-        : application.answers.mockData.parentNationalRegistry.data,
-      application.answers.selectDuration,
-      application.answers.residenceChangeReason,
-    )
+    const pdfBuffer = await generateResidenceChangePdf(applicant, answers)
 
     const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
       application.id
@@ -135,7 +127,7 @@ export class FileService {
 
     await this.awsService.uploadFile(pdfBuffer, bucket, fileName)
 
-    return this.awsService.getPresignedUrl(bucket, fileName)
+    return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   private async handleChildrenResidenceChangeSignature(

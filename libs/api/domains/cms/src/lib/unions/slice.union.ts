@@ -248,7 +248,7 @@ export const mapDocument = (
         // either merge into previous html slice or create a new one
         const prev = slices[slices.length - 1]
         if (prev instanceof Html) {
-          prev.document.content.push(block)
+          prev.document?.content.push(block)
         } else {
           slices.push(mapHtml(block, `${idPrefix}:${index}`))
         }

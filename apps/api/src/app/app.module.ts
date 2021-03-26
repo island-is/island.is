@@ -21,6 +21,7 @@ import { environment } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { RSKModule } from '@island.is/api/domains/rsk'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -57,10 +58,21 @@ const autoSchemaFile = environment.production
       secret: environment.drivingLicense.secret,
     }),
     EducationModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      xroadLicenseServiceId: environment.education.xroadLicenseServiceId,
-      emailOptions: environment.education.emailOptions,
+      xroad: {
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        services: {
+          license: environment.education.xroadLicenseServiceId,
+          grade: environment.education.xroadGradeServiceId,
+        },
+      },
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
+      fileDownloadBucket: environment.education.fileDownloadBucket,
     }),
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl,
@@ -88,14 +100,18 @@ const autoSchemaFile = environment.production
       },
       documentsServiceBasePath:
         environment.documentProviderService.documentsServiceBasePath,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins,
     }),
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
-      baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-      user: environment.nationalRegistry.user,
-      password: environment.nationalRegistry.password,
-      host: environment.nationalRegistry.host,
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
     }),
     HealthInsuranceModule.register({
       wsdlUrl: environment.healthInsurance.wsdlUrl,
@@ -120,6 +136,11 @@ const autoSchemaFile = environment.production
       url: environment.syslumennService.url,
       username: environment.syslumennService.username,
       password: environment.syslumennService.password,
+    }),
+    RSKModule.register({
+      password: environment.rskDomain.password,
+      url: environment.rskDomain.url,
+      username: environment.rskDomain.username,
     }),
   ],
 })

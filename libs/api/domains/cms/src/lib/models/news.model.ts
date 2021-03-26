@@ -8,34 +8,34 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class News {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  subtitle: string
+  subtitle!: string
 
   @Field(() => Author, { nullable: true })
-  author: Author
+  author?: Author | null
 
   @Field({ nullable: true })
-  intro: string
+  intro!: string
 
   @Field(() => Image, { nullable: true })
-  image?: Image
+  image!: Image
 
   @Field()
-  date: string
+  date!: string
 
   @Field(() => [SliceUnion], { nullable: true })
-  content: Array<typeof SliceUnion>
+  content: Array<typeof SliceUnion> = []
 
   @Field(() => [GenericTag])
-  genericTags: GenericTag[]
+  genericTags: GenericTag[] = []
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
@@ -43,7 +43,7 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   slug: fields.slug ?? '',
   title: fields.title ?? '',
   subtitle: fields.subtitle ?? '',
-  author: fields.author && mapAuthor(fields.author),
+  author: fields.author ? mapAuthor(fields.author) : null,
   intro: fields.intro ?? '',
   image: mapImage(fields.image),
   date: fields.date ?? '',
