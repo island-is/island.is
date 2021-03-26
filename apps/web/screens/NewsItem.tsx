@@ -36,6 +36,7 @@ import {
   Sticky,
   HeadWithSocialSharing,
   Main,
+  Webreader,
 } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
@@ -98,6 +99,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
                     offset={['0', '0', '0', '0', '1/9']}
                     span={['9/9', '9/9', '9/9', '9/9', '7/9']}
                   >
+                    <Webreader />
                     <Breadcrumbs
                       items={
                         breadCrumbTags

@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
-import { TellUsAStory } from '@island.is/web/components'
+import { TellUsAStory, Webreader } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useI18n } from '@island.is/web/i18n'
 import {
@@ -34,6 +34,7 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
         <GridRow>
           <GridColumn>
             <Box paddingX={[3, 3, 8]}>
+              <Webreader />
               <Breadcrumbs
                 items={[
                   {

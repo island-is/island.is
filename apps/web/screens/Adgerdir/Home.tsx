@@ -20,6 +20,7 @@ import {
   ChatPanel,
   Header,
   Main,
+  Webreader,
 } from '@island.is/web/components'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import GroupedPages from './components/GroupedPages/GroupedPages'
@@ -109,6 +110,7 @@ const Home: Screen<HomeProps> = ({
                         offset={['0', '0', '0', '1/8']}
                         span={['8/8', '8/8', '8/8', '7/8']}
                       >
+                        <Webreader />
                         <Stack space={2}>
                           <span className={covidStyles.white}>
                             <Breadcrumbs

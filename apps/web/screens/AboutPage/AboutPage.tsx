@@ -15,6 +15,7 @@ import {
   AboutLatestNews,
   LogoList,
   BulletList,
+  Webreader,
 } from '@island.is/web/components'
 import {
   Text,
@@ -209,6 +210,7 @@ const PageHeader: FC<PageHeaderProps> = ({
               span={['12/12', '12/12', '12/12', '8/9']}
             >
               <Stack space={2}>
+                <Webreader />
                 <Breadcrumbs
                   color="white"
                   items={[

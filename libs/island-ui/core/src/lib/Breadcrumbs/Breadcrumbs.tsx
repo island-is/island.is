@@ -32,7 +32,12 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
   renderLink = (link) => link,
 }) => {
   return (
-    <Box aria-label={label} display={'inlineFlex'} alignItems={'center'}>
+    <Box
+      aria-label={label}
+      display={'inlineFlex'}
+      alignItems={'center'}
+      className="rs_skip"
+    >
       {items.map((item, index) => {
         const isLink: boolean = !!item.href || !!item.slug
         const renderCrumb = item.isTag ? (

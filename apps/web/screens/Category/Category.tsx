@@ -16,7 +16,7 @@ import {
   LinkContext,
   Button,
 } from '@island.is/island-ui/core'
-import { Card, Sticky } from '@island.is/web/components'
+import { Card, Sticky, Webreader } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import {
@@ -312,6 +312,7 @@ const Category: Screen<CategoryProps> = ({
           </Sticky>
         }
       >
+        <Webreader />
         <Box
           paddingBottom={[2, 2, 4]}
           display={['none', 'none', 'block']}

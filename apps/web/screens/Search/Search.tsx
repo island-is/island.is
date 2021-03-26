@@ -16,6 +16,7 @@ import {
   SearchInput,
   Card,
   CardTagsProps,
+  Webreader,
 } from '@island.is/web/components'
 import {
   Box,
@@ -329,6 +330,7 @@ const Search: Screen<CategoryProps> = ({
         }
       >
         <Stack space={[3, 3, 4]}>
+          <Webreader />
           <Breadcrumbs
             items={[
               {
