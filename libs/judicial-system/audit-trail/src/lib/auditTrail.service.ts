@@ -26,6 +26,7 @@ export enum AuditedAction {
   GET_RULING_PDF = 'GET_RULING_PDF',
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',
   CREATE_PRESIGNED_POST = 'CREATE_PRESIGNED_POST',
+  CREATE_FILE = 'CREATE_FILE',
 }
 
 export interface AuditTrailOptions {

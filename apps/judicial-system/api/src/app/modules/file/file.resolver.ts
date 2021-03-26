@@ -11,8 +11,8 @@ import { User } from '@island.is/judicial-system/types'
 
 import { BackendAPI } from '../../../services'
 import { AuditService } from '../audit'
-import { CreatePresignedPostInput } from './dto'
-import { PresignedPost } from './models'
+import { CreateFileInput, CreatePresignedPostInput } from './dto'
+import { PresignedPost, File } from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -39,6 +39,25 @@ export class FileResolver {
       AuditedAction.CREATE_PRESIGNED_POST,
       backendApi.createPresignedPost(caseId, createPresignedPost),
       caseId,
+    )
+  }
+
+  @Mutation(() => File)
+  createFile(
+    @Args('input', { type: () => })
+    input: CreateFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<File> {
+    const { caseId, ...createFile } = input
+
+    this.logger.debug(`Creating a file for case ${caseId}`)
+
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.CREATE_FILE,
+      backendApi.createFile(caseId, createFile),
+      (file) => file.id,
     )
   }
 }
