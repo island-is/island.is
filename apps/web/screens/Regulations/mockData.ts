@@ -166,61 +166,68 @@ export const regulationYears = range(1999, 2021).filter(
 
 // ---------------------------------------------------------------------------
 
-const _searchTexts = {
+export const homeTexts = {
+  // navigationTitle: 'Upplýsingasvæði',
+  homeIntoLegend: 'Reglugerðir',
+  homeIntro:
+    'Eitthvað hressandi um reglugerðir og fleira skemmtilegt og fræðandi.',
+
+  homeIntroImageUrl: 'https://placekitten.com/400/400',
+  homeIntroImageThumbnailUrl: 'https://placekitten.com/50/50',
+
+  defaultRegulationListsLegend: 'Nýlegar reglugerðir',
+  searchResultsLegend: 'Leitarniðurstöður',
+
   searchTitleLabel: 'Leita að reglugerðum',
   searchClearLabel: 'Núllstilla leit',
   searchOpenLabel: 'Opna leit',
   searchCloseLabel: 'Loka leit',
   searchResultLabel: 'Sýna niðurstöður',
 
-  defaultRegulationsLegend: 'Nýútgefnar reglugerðir',
-  searchResultsLegend: 'Leitarniðurstöður',
-
-  searchFieldQueryLabel: 'Útgáfunúmer eða leitarorð',
-  searchFieldYearLabel: 'Útgáfuár',
-  searchFieldYearPlaceholder: 'Veldu útgáfuár',
-  searchFieldYearEmptyOption: 'Öll ár',
-  searchFieldChapterLabel: 'Lagasafn',
-  searchFieldChapterPlaceholder: 'Kafli í Lagasafni',
-  searchFieldChapterEmptyOption: 'Allir kaflar',
-  searchFieldMinistryLabel: 'Ráðuneyti',
-  searchFieldMinistryPlaceholder: 'Veldu ráðuneyti',
-  searchFieldMinistryEmptyOption: 'Öll ráðuneyti',
-  searchFieldLegacyMinistrySuffix: '(fyrrverandi ráðuneyti)',
-  searchFieldIncludeAmendingLabel: 'Leita líka í breytingareglugerðum',
-} as const
-
-export type SearchTexts = typeof _searchTexts
-
-export const homeTexts = {
-  // navigationTitle: 'Upplýsingasvæði',
-  regulationsLegend: 'Reglugerðir',
-  regulationsIntro:
-    'Eitthvað hressandi um reglugerðir og fleira skemmtilegt og fræðandi.',
-
-  regulationsImageUrl: 'https://placekitten.com/400/400',
-  regulationsImageThumbnailUrl: 'https://placekitten.com/50/50',
+  searchQueryLabel: 'Útgáfunúmer eða leitarorð',
+  searchYearLabel: 'Útgáfuár',
+  searchYearPlaceholder: 'Veldu útgáfuár',
+  searchYearEmptyOption: 'Öll ár',
+  searchChapterLabel: 'Lagasafn',
+  searchChapterPlaceholder: 'Kafli í Lagasafni',
+  searchChapterEmptyOption: 'Allir kaflar',
+  searchMinistryLabel: 'Ráðuneyti',
+  searchMinistryPlaceholder: 'Veldu ráðuneyti',
+  searchMinistryEmptyOption: 'Öll ráðuneyti',
+  searchLegacyMinistrySuffix: '(fyrrverandi ráðuneyti)',
+  searchIncludeAmendingLabel: 'Leita líka í breytingareglugerðum',
 
   crumbs_1: 'Ísland.is',
   crumbs_2: 'Upplýsingasvæði',
+}
 
-  ..._searchTexts,
-} as const
+export type RegulationHomeTexts = typeof homeTexts
 
 // ===========================================================================
 // ===========================================================================
 
 export const regulationPageTexts = {
   redirectText: 'Þessi reglugerð er enn sem komið er hýst á eldri vefslóð:',
-  historyTitle: 'Breytingasaga reglugerðar ',
 
   showDiff: 'Sýna breytingar',
   hideDiff: 'Fela breytingar',
 
+  effectsTitle: 'Áhrif %{name} á aðrar reglugerðir',
+  effectsChange: 'breytir %{name}',
+  effectsCancel: 'fellir brott %{name}',
+
+  historyTitle: 'Breytingasaga reglugerðar %{name}',
+  historyChange: 'breytt af %{name}',
+  historyCancel: 'brottfelld af %{name}',
+
+  viewAffectingRegulation: 'Skoða %{title}',
+
+  comments: 'Athugsemdir vefstjóra',
+
   crumbs_1: 'Ísland.is',
   crumbs_2: 'Upplýsingasvæði',
   crumbs_3: 'Reglugerðir',
-} as const
+}
 
 export type RegulationPageTexts = typeof regulationPageTexts
 
@@ -339,7 +346,7 @@ export type RegulationHistoryItem = {
   reason: 'root' | 'amend' | 'repeal'
 }
 
-export const regulationHistory: Array<RegulationHistoryItem> = [
+export const regulationHistory: ReadonlyArray<RegulationHistoryItem> = [
   {
     date: '2013-09-13' as ISODate,
     name: '0904/2013' as RegName,

@@ -19,6 +19,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { RegulationRedirectMessage } from './RegulationRedirectMessage'
 import { RegulationDisplay } from './RegulationDisplay'
 import { getParams } from './regulationUtils'
+import { getUiTexts } from './getUITexts'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -140,6 +141,13 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     earlierDate,
   })
 
+  let texts = await getUiTexts<RegulationPageTexts>(
+    apolloClient,
+    locale,
+    'Regulations_Viewer',
+    regulationPageTexts,
+  )
+
   // FIXME: use apollo GQL api
   const redirect = Math.random() < 0.2
 
@@ -147,7 +155,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     regulation: redirect ? exampleRegulationRedirect : exampleRegulation,
     originalBody: redirect ? undefined : exampleRegulationOriginalBody,
     history: redirect ? [] : regulationHistory,
-    texts: regulationPageTexts,
+    texts,
   }
 }
 

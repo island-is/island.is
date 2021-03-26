@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { NamespaceGetter } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
-import { LawChapterTree, Ministry, SearchTexts } from './mockData'
+import { LawChapterTree, Ministry, RegulationHomeTexts } from './mockData'
 import { OptionTypeBase, ValueType } from 'react-select'
 import { useRegulationLinkResolver } from './regulationUtils'
 
@@ -118,7 +118,7 @@ export type RegulationsSearchSectionProps = {
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
   lawcCapters: Readonly<LawChapterTree>
-  getText: NamespaceGetter<SearchTexts>
+  getText: NamespaceGetter<RegulationHomeTexts>
 } & NoChildren
 
 export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
@@ -136,19 +136,18 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   )
 
   const yearOptions = useMemo(() => {
-    return [emptyOption(txt('searchFieldYearEmptyOption'))].concat(
+    return [emptyOption(txt('searchYearEmptyOption'))].concat(
       props.years.map(yearToOption),
     ) as ReadonlyArray<Option>
   }, [props.years])
 
   const ministryOptions = useMemo(() => {
-    return [emptyOption(txt('searchFieldMinistryEmptyOption'))].concat(
+    return [emptyOption(txt('searchMinistryEmptyOption'))].concat(
       props.ministries.map(
         (m): Option => ({
           value: m.slug,
           label:
-            m.name +
-            (m.current ? ` ${txt('searchFieldLegacyMinistrySuffix')}` : ''),
+            m.name + (m.current ? ` ${txt('searchLegacyMinistrySuffix')}` : ''),
         }),
       ),
     ) as ReadonlyArray<Option>
@@ -170,7 +169,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
           )
           return opts
         },
-        [emptyOption(txt('searchFieldChapterEmptyOption'))],
+        [emptyOption(txt('searchChapterEmptyOption'))],
       ) as ReadonlyArray<Option>,
     [props.lawcCapters],
   )
@@ -204,15 +203,15 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
         >
           <FilterInput
             name="q"
-            placeholder={txt('searchFieldQueryLabel')}
+            placeholder={txt('searchQueryLabel')}
             value={filters.q}
             onChange={(value) => doSearch('q', value)}
           />
           <Select
             name="year"
             isSearchable
-            label={txt('searchFieldYearLabel')}
-            placeholder={txt('searchFieldYearPlaceholder')}
+            label={txt('searchYearLabel')}
+            placeholder={txt('searchYearPlaceholder')}
             value={findValueOption(yearOptions, filters.year)}
             options={yearOptions}
             onChange={(option) => doSearch('year', getRSValue(option) || '')}
@@ -221,8 +220,8 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
           <Select
             name="ch"
             isSearchable
-            label={txt('searchFieldChapterLabel')}
-            placeholder={txt('searchFieldChapterPlaceholder')}
+            label={txt('searchChapterLabel')}
+            placeholder={txt('searchChapterPlaceholder')}
             value={findValueOption(lawChapterOptions, filters.ch)}
             options={lawChapterOptions}
             onChange={(option) => doSearch('ch', getRSValue(option) || '')}
@@ -231,8 +230,8 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
           <Select
             name="rn"
             isSearchable
-            label={txt('searchFieldMinistryLabel')}
-            placeholder={txt('searchFieldMinistryPlaceholder')}
+            label={txt('searchMinistryLabel')}
+            placeholder={txt('searchMinistryPlaceholder')}
             value={findValueOption(ministryOptions, filters.rn)}
             options={ministryOptions}
             onChange={(option) => doSearch('rn', getRSValue(option) || '')}
@@ -240,7 +239,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
           />
           <Checkbox
             id="regulations-search-amendments-checkbox"
-            label={txt('searchFieldIncludeAmendingLabel')}
+            label={txt('searchIncludeAmendingLabel')}
             checked={!!filters.all}
             onChange={() => doSearch('all', !filters.all ? 'y' : '')}
           />
@@ -253,7 +252,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
             <Text variant="h2" as="h2" marginBottom={3}>
               {activeFilters
                 ? txt('searchResultsLegend')
-                : txt('defaultRegulationsLegend')}
+                : txt('defaultRegulationListsLegend')}
             </Text>
 
             <GridContainer>

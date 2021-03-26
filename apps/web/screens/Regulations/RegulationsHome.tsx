@@ -6,6 +6,7 @@ import {
   allLawChaptersTree,
   Ministry,
   LawChapterTree,
+  RegulationHomeTexts,
 } from './mockData'
 
 import React from 'react'
@@ -34,6 +35,7 @@ import {
 } from './RegulationsSearchSection'
 import { shuffle } from 'lodash'
 import { getParams } from './regulationUtils'
+import { getUiTexts } from './getUITexts'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -41,7 +43,7 @@ import { getParams } from './regulationUtils'
 
 type RegulationsHomeProps = {
   searchResults: typeof regulationsSearchResults
-  texts: typeof homeTexts
+  texts: RegulationHomeTexts
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
@@ -61,7 +63,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   // const navigationItems = useMemo(
   //   () => [
   //     {
-  //       title: n('regulationsLegend'),
+  //       title: n('homeIntroLegend'),
   //       href: '/reglugerðir',
   //       active: true,
   //       items: [
@@ -97,6 +99,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   // )
 
   // Values nicked from apps/web/screens/Layouts/SidebarLayout.tsx
+
   const paddingTop = [0, 0, 8] as const
   const paddingBottom = 8
 
@@ -138,7 +141,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
         //       <>
         //         {breadCrumbs}
         //         <Text as="h1" variant="h1" marginTop={2}>
-        //           {n('regulationsLegend')}
+        //           {n('homeIntroLegend')}
         //         </Text>
         //         <Text variant="intro" as="p">
         //           {n('regulationsIntro')}
@@ -148,8 +151,8 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
         //     image={
         //       <Image
         //         type="custom"
-        //         src="https://placekitten.com/400/400"
-        //         thumbnail="https://placekitten.com/50/50"
+        //         src={n('homeIntroImageUrl')}
+        //         thumbnail={n('homeIntroImageThumbnailUrl')}
         //         originalWidth={400}
         //         originalHeight={400}
         //         alt=""
@@ -167,10 +170,10 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             >
               {breadCrumbs}
               <Text as="h1" variant="h1" marginTop={2}>
-                {n('regulationsLegend')}
+                {n('homeIntroLegend')}
               </Text>
               <Text variant="intro" as="p">
-                {n('regulationsIntro')}
+                {n('homeIntro')}
               </Text>
             </GridColumn>
 
@@ -204,12 +207,13 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   )
 }
 
-RegulationsHome.getInitialProps = async ({ apolloClient, locale, query }) => {
+RegulationsHome.getInitialProps = async (ctx) => {
+  const { apolloClient, locale, query } = ctx
   const serviceId = String(query.slug)
 
   /** /
   const [
-    linkStrings,
+    texts,
     filterContent,
     openApiContent,
     { data },
@@ -265,9 +269,18 @@ RegulationsHome.getInitialProps = async ({ apolloClient, locale, query }) => {
     shuffle(regulationsSearchResults).slice(Math.floor(5 * Math.random())),
   )
 
+  let texts = await getUiTexts<RegulationHomeTexts>(
+    apolloClient,
+    locale,
+    'Regulations_Home',
+    homeTexts,
+  )
+
+  console.log(Object.keys(ctx))
+
   return {
     searchResults,
-    texts: homeTexts,
+    texts,
     searchQuery: getParams(query, ['q', 'rn', 'year', 'ch', 'all']),
     years: regulationYears,
     ministries: allMinistries,
