@@ -55,6 +55,21 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
           defaultValue={getConstraintVal('hasFinancial')}
         />
         <ConstraintController
+          id={`${id}.moral`}
+          checkboxId={`${id}.hasMoral`}
+          label={formatText(
+            m.constraints.constraintsMoralLabel,
+            application,
+            formatMessage,
+          )}
+          placeholder={formatText(
+            m.constraints.constraintsMoralPlaceholder,
+            application,
+            formatMessage,
+          )}
+          defaultValue={getConstraintVal('hasMoral')}
+        />
+        <ConstraintController
           id={`${id}.time`}
           checkboxId={`${id}.hasTime`}
           label={formatText(
@@ -70,35 +85,15 @@ const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
           defaultValue={getConstraintVal('hasTime')}
         />
         <ConstraintController
-          id={`${id}.shopping`}
-          checkboxId={`${id}.hasShopping`}
-          label={formatText(
-            m.constraints.constraintsShoppingLabel,
-            application,
-            formatMessage,
-          )}
-          placeholder={formatText(
-            m.constraints.constraintsShoppingPlaceholder,
-            application,
-            formatMessage,
-          )}
-          defaultValue={getConstraintVal('hasShopping')}
-        />
-        <ConstraintController
-          id={`${id}.moral`}
-          checkboxId={`${id}.hasMoral`}
-          label={formatText(
-            m.constraints.constraintsMoralLabel,
-            application,
-            formatMessage,
-          )}
-          defaultValue={getConstraintVal('hasMoral')}
-        />
-        <ConstraintController
           id={`${id}.other`}
           checkboxId={`${id}.hasOther`}
           label={formatText(
             m.constraints.constraintsOtherLabel,
+            application,
+            formatMessage,
+          )}
+          placeholder={formatText(
+            m.constraints.constraintsOtherPlaceholder,
             application,
             formatMessage,
           )}

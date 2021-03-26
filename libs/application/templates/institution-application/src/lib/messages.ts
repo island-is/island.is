@@ -171,72 +171,75 @@ export const institutionApplicationMessages = {
   constraints: defineMessages({
     subSectionLabel: {
       id: 'ia.application:constraints.subSection.label',
-      defaultMessage: 'Áskoranir og úrlausnarefni',
+      defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
       description: 'Sub section label',
     },
     sectionTitle: {
       id: 'ia.application:constraints.section.title',
-      defaultMessage: 'Áskoranir og úrlausnarefni',
+      defaultMessage: 'Áskoranir, skorður og úrlausnarefni',
       description: 'Section title',
     },
 
     sectionDescription: {
       id: 'ia.application:constraints.section.description',
       defaultMessage:
-        'Vinsamlegast veldu þær skorður sem eiga við. Ath. þess er ekki krafist að fylla út þær skorður sem eru ekki fyrir hendi.',
+        'Vinsamlegast veljið og útskýrið þau atriði sem taka þarf tillit til við framkvæmd og skipulag verkefnisins. Eru verkefninu einhverjar skorður settar? Þarf að yfirstíga einhverjar áskoranir og finna þeim úrlausn?',
       description: 'Section description',
     },
 
     constraintsTechicalLabel: {
       id: 'ia.application:applicant.constraints.technical.label',
-      defaultMessage: 'Tæknilegar skorður',
+      defaultMessage: 'Tæknileg umgjörð',
       description: 'Form label for constraints technical formfield',
     },
     constraintsTechicalPlaceholder: {
       id: 'ia.application:applicant.constraints.technical.placeholder',
-      defaultMessage: 'Upplýsingatæknistefna ríkisins eða stofnunarinnar',
+      defaultMessage: 's.s. upplýsingatæknistefna ríkisins eða stofnunarinnar',
       description: 'Form placeholder for constraints technical formfield',
     },
     constraintsFinancialLabel: {
       id: 'ia.application:applicant.constraints.financial.label',
-      defaultMessage: 'Fjárhagslegar skorður',
+      defaultMessage: 'Fjárhagslegar takmarkanir',
       description: 'Form label for constraints financial formfield',
     },
     constraintsFinancialPlaceholder: {
       id: 'ia.application:applicant.constraints.financial.placeholder',
       defaultMessage:
-        'Takmörkun á útlögðum kostnaði, takmörkun á heildar kostnaði við verkefnið',
+        's.s. takmörkun á útlögðum kostnaði, heildarkostnaði verkefnisins eða skorður um val á byrgjum.',
       description: 'Form placeholder for constraints financial formfield',
     },
     constraintsTimeLabel: {
       id: 'ia.application:applicant.constraints.time.label',
-      defaultMessage: 'Tímaskorður',
+      defaultMessage: 'Tímarammi',
       description: 'Form label for constraints time formfield',
     },
     constraintsTimePlaceholder: {
       id: 'ia.application:applicant.constraints.time.placeholder',
-      defaultMessage: 'Innan hvaða tímabils þarf verkefnið að vinnast',
+      defaultMessage:
+        's.s. þörf á því að vinna verkefni innan ákveðins tímabils eða dagsetningar sem þarf að taka tillit til.',
       description: 'Form placeholder for constraints time formfield',
-    },
-    constraintsShoppingLabel: {
-      id: 'ia.application:applicant.constraints.shopping.label',
-      defaultMessage: 'Innkaupaskorður',
-      description: 'Form label for constraints shopping formfield',
-    },
-    constraintsShoppingPlaceholder: {
-      id: 'ia.application:applicant.constraints.shopping.placeholder',
-      defaultMessage: 'Val á birgjum',
-      description: 'Form placeholder for constraints shopping formfield',
     },
     constraintsMoralLabel: {
       id: 'ia.application:applicant.constraints.moral.label',
-      defaultMessage: 'Siðferðilegar skorður',
+      defaultMessage: 'Lagalegar- og siðferðilegar skorður',
       description: 'Form label for constraints moral formfield',
+    },
+    constraintsMoralPlaceholder: {
+      id: 'ia.application:applicant.constraints.moral.placeholder',
+      defaultMessage:
+        's.s lög og reglur sem stofnunin starfar eftir sem taka þarf tillit til eða siðferðileg atriði um meðhöndlun og vinnslu upplýsinga.',
+      description: 'Form placeholder for constraints moral formfield',
     },
     constraintsOtherLabel: {
       id: 'ia.application:applicant.constraints.other.label',
-      defaultMessage: 'Annað sem við á...',
+      defaultMessage: 'Önnur atriði',
       description: 'Form label for constraints other formfield',
+    },
+    constraintsOtherPlaceholder: {
+      id: 'ia.application:applicant.constraints.other.placeholder',
+      defaultMessage:
+        'Eru önnur atriði sem munu hafa áhrif á framkvæmd eða skipulag verkefnisins?',
+      description: 'Form placeholder for constraints other formfield',
     },
   }),
   stakeholders: defineMessages({
@@ -279,7 +282,8 @@ export const institutionApplicationMessages = {
     },
     otherRolesPlaceholder: {
       id: 'ia.application:project.otherRoles.placeholder',
-      defaultMessage: 'Hvaða hlutverki gegnir umsækjandi eða þriðji aðili?',
+      defaultMessage:
+        'Hvernig er eignarhaldi og ábyrgð á framkvæmd verkefnisins háttað hjá viðkomandi ráðuneyti eða stofnun? Hvaða hlutverki gegnir innsendandi umsóknar?',
       description: 'Placeholder for project role formfield',
     },
   }),

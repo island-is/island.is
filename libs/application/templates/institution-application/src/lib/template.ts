@@ -4,7 +4,6 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
 } from '@island.is/application/core'
 import * as z from 'zod'

@@ -62,10 +62,7 @@ export const applicationOverviewTemplate = (
     application.answers,
     'constraints.time',
   ) as boolean
-  const shoppingConstraints = getValueViaPath(
-    application.answers,
-    'constraints.shopping',
-  ) as boolean
+
   const moralConstraints = getValueViaPath(
     application.answers,
     'constraints.moral',
@@ -79,7 +76,6 @@ export const applicationOverviewTemplate = (
     technicalConstraints,
     financialConstraints,
     timeConstraints,
-    shoppingConstraints,
     moralConstraints,
     otherConstraints,
   ].some((x) => !!x)
@@ -186,29 +182,21 @@ export const applicationOverviewTemplate = (
       : ''
   }
 
-  ${
-    timeConstraints
-      ? `<p>
-  <b>${messages.constraints.constraintsTimeLabel.defaultMessage}</b> </br>
-  ${timeConstraints}
-  </p>`
-      : ''
-  }
-
-  ${
-    shoppingConstraints
-      ? `<p>
-  <b>${messages.constraints.constraintsShoppingLabel.defaultMessage}</b> </br>
-  ${shoppingConstraints}
-  </p>`
-      : ''
-  }
-
+  
   ${
     moralConstraints
       ? `<p>
   <b>${messages.constraints.constraintsMoralLabel.defaultMessage}</b> </br>
   ${moralConstraints}
+  </p>`
+      : ''
+  }
+
+  ${
+    timeConstraints
+      ? `<p>
+  <b>${messages.constraints.constraintsTimeLabel.defaultMessage}</b> </br>
+  ${timeConstraints}
   </p>`
       : ''
   }

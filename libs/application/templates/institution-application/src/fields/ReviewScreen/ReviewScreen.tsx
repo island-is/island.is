@@ -319,36 +319,6 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
                 <Divider />
               </>
             )}
-            {timeConstraints && (
-              <>
-                <Box>
-                  <Text variant="h5">
-                    {formatText(
-                      m.constraints.constraintsTimeLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{timeConstraints}</Text>
-                </Box>
-                <Divider />
-              </>
-            )}
-            {shoppingConstraints && (
-              <>
-                <Box>
-                  <Text variant="h5">
-                    {formatText(
-                      m.constraints.constraintsShoppingLabel,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                  <Text>{shoppingConstraints}</Text>
-                </Box>
-                <Divider />
-              </>
-            )}
             {moralConstraints && (
               <>
                 <Box>
@@ -360,6 +330,21 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
                     )}
                   </Text>
                   <Text>{moralConstraints}</Text>
+                </Box>
+                <Divider />
+              </>
+            )}
+            {timeConstraints && (
+              <>
+                <Box>
+                  <Text variant="h5">
+                    {formatText(
+                      m.constraints.constraintsTimeLabel,
+                      application,
+                      formatMessage,
+                    )}
+                  </Text>
+                  <Text>{timeConstraints}</Text>
                 </Box>
                 <Divider />
               </>
