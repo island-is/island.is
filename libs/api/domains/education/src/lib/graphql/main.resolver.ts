@@ -10,10 +10,12 @@ import {
 } from '@island.is/auth-nest-tools'
 
 import { EducationService } from '../education.service'
-import { License } from './license.model'
-import { SignedLicense } from './signedLicense.model'
-import { FetchEducationSignedLicenseUrlInput } from './license.input'
-import { StudentAssessmentGrades } from './grade'
+import {
+  License,
+  SignedLicense,
+  FetchEducationSignedLicenseUrlInput,
+} from './license'
+import { ExamOverview, ExamResult } from './grade'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -23,13 +25,6 @@ export class MainResolver {
   @Query(() => [License])
   educationLicense(@CurrentUser() user: User): Promise<License[]> {
     return this.educationService.getLicenses(user.nationalId)
-  }
-
-  @Query(() => StudentAssessmentGrades)
-  educationStudentAssessmentGrades(
-    @CurrentUser() user: User,
-  ): Promise<StudentAssessmentGrades[]> {
-    return this.educationService.getStudentAssessmentGrades(user.nationalId)
   }
 
   @Mutation(() => SignedLicense, { nullable: true })
@@ -46,5 +41,25 @@ export class MainResolver {
       throw new ApolloError('Could not create a download link')
     }
     return { url }
+  }
+
+  @Query(() => [ExamOverview])
+  educationExamOverviews(@CurrentUser() user: User): Promise<ExamOverview[]> {
+    return this.educationService.getExamOverviews(user.nationalId)
+  }
+
+  @Query(() => [ExamResult])
+  async educationExamResults(
+    @CurrentUser() user: User,
+    @Args('nationalId') nationalId: string,
+  ): Promise<ExamResult[]> {
+    const family = await this.educationService.getFamily(user.nationalId)
+    const isFamily = family.some(
+      (familyMember) => familyMember.Kennitala === nationalId,
+    )
+    if (!isFamily) {
+      throw new ApolloError('The requested nationalId is not a part of family')
+    }
+    return this.educationService.getExamResults(nationalId)
   }
 }

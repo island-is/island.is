@@ -2,7 +2,7 @@ import fetch, { Response } from 'node-fetch'
 
 import { User } from '@island.is/auth-nest-tools'
 
-import { LicenseResponse } from './mms.type'
+import { LicenseResponse, StudentAssessmentResponse } from './mms.type'
 
 export interface XRoadConfig {
   baseUrl: string
@@ -53,20 +53,20 @@ export class MMSApi {
     return response.json()
   }
 
-  async getStudentAssessmentGrades(
-    nationalId: User['nationalId'],
-  ): Promise<LicenseResponse[]> {
-    const response = await this.requestApi(
-      `api/public/users/${nationalId}/licenses`,
-      'grade',
-    )
-    return response.json()
-  }
-
   downloadLicensePDF(nationalId: string, licenseId: string): Promise<Response> {
     return this.requestApi(
       `api/public/users/${nationalId}/licenses/${licenseId}/pdf`,
       'license',
     )
+  }
+
+  async getStudentAssessment(
+    nationalId: User['nationalId'],
+  ): Promise<StudentAssessmentResponse> {
+    const response = await this.requestApi(
+      `api/public/studentAssessments/${nationalId}`,
+      'grade',
+    )
+    return response.json()
   }
 }

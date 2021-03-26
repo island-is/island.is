@@ -1,1 +1,2 @@
-export { StudentAssessmentGrades } from './studentAssessmentGrades.model'
+export { ExamResult } from './examResult.model'
+export { ExamOverview } from './examOverview.model'

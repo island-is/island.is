@@ -10,3 +10,40 @@ export interface LicenseResponse {
   created: string
   modified: string
 }
+
+export interface GradeResult {
+  radeinkunn: string
+  vaegi?: string
+}
+
+export interface BaseGrade {
+  dagsetning: string
+  haefnieinkunn: string
+  haefnieinkunnStada: string
+  framfaraTexti: string
+  samtals: GradeResult
+}
+
+export interface MathGrade extends BaseGrade {
+  reikningurOgAdgerdir: GradeResult
+  rumfraedi: GradeResult
+  algebra: GradeResult
+  hlutfollOgProsentur: GradeResult
+  ordOgTalnadaemi: string
+}
+
+export interface LanguageGrade extends BaseGrade {
+  lesskilningur: GradeResult
+  malnotkun: GradeResult
+}
+
+interface Grade {
+  bekkur: string
+  enska?: LanguageGrade
+  islenska?: LanguageGrade
+  staerdfraedi?: MathGrade
+}
+
+export interface StudentAssessmentResponse {
+  einkunnir: Grade[]
+}

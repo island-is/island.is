@@ -1,21 +1,24 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 import { Grade } from './grade.model'
 
 @ObjectType('EducationEnglishGrade')
 export class EnglishGrade {
-  @Field(() => ID)
-  id!: number
+  @Field(() => String)
+  grade!: string
+
+  @Field(() => String)
+  competence!: string
+
+  @Field(() => String)
+  competenceStatus!: string
 
   @Field(() => Grade)
-  readingGrade!: typeof Grade
+  readingGrade!: Grade
 
   @Field(() => Grade)
-  grammarGrade!: typeof Grade
+  grammarGrade!: Grade
 
-  @Field(() => Grade)
-  writingGrade?: typeof Grade
-
-  @Field(() => Grade)
-  grade!: typeof Grade
+  @Field(() => String)
+  progressText!: string
 }
