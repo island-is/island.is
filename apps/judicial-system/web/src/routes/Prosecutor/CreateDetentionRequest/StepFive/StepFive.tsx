@@ -5,40 +5,26 @@ import {
   ContentBlock,
   InputFileUpload,
   AlertMessage,
-  UploadFile,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
-import {
-  Case,
-  CreateFile,
-  PresignedPost,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useMutation, useQuery } from '@apollo/client'
-import {
-  CaseQuery,
-  UpdateCaseMutation,
-  CreatePresignedPostMutation,
-  CreateFileMutation,
-} from '@island.is/judicial-system-web/graphql'
+import { useQuery } from '@apollo/client'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
-import { forEach } from 'lodash'
 import * as styles from './StepFive.treat'
-import { createFormData } from '@island.is/judicial-system-web/src/services/api'
+import { useS3Upload } from '@island.is/judicial-system-web/src/utils/useS3Upload'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [files, setFiles] = useState<UploadFile[]>([])
 
   const router = useRouter()
   const id = router.query.id
@@ -60,125 +46,7 @@ export const StepFive: React.FC = () => {
     }
   }, [id, workingCase, setWorkingCase, resCase])
 
-  const [updateCaseMutation] = useMutation(UpdateCaseMutation)
-
-  const updateCase = async (id: string, updateCase: UpdateCase) => {
-    const { data } = await updateCaseMutation({
-      variables: { input: { id, ...updateCase } },
-    })
-
-    const resCase = data?.updateCase
-
-    if (resCase) {
-      // Do smoething with the result. In particular, we want th modified timestamp passed between
-      // the client and the backend so that we can handle multiple simultanious updates.
-    }
-
-    return resCase
-  }
-
-  const [createFileMutation] = useMutation(CreateFileMutation)
-
-  const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
-
-  const getFileIndexInFiles = (file: UploadFile, files: UploadFile[]) => {
-    return files.findIndex((fileInFiles) => fileInFiles.name === file.name)
-  }
-
-  const onUpdate = (
-    file: UploadFile,
-    files: UploadFile[],
-    loaded: number,
-    total: number,
-  ) => {
-    const newFiles = [...files]
-    file.percent = (loaded / total) * 100
-    file.status = 'uploading'
-
-    newFiles[getFileIndexInFiles(file, files)].percent = (loaded / total) * 100
-    newFiles[getFileIndexInFiles(file, files)].status = 'uploading'
-
-    setFiles(newFiles)
-  }
-
-  const setFileStatus = (
-    file: UploadFile,
-    files: UploadFile[],
-    status: UploadFileStatus,
-  ) => {
-    const newFiles = [...files]
-    file.status = status
-    newFiles[getFileIndexInFiles(file, files)].status = status
-
-    setFiles(newFiles)
-  }
-
-  const createS3UploadRequest = (file: UploadFile, files: UploadFile[]) => {
-    const request = new XMLHttpRequest()
-    request.withCredentials = true
-    request.responseType = 'json'
-
-    request.upload.addEventListener('progress', (evt) => {
-      if (evt.lengthComputable) {
-        onUpdate(file, files, evt.loaded, evt.total)
-      }
-    })
-
-    request.addEventListener('load', (progress) => {
-      if (request.status >= 200 && request.status < 300) {
-        setFileStatus(file, files, 'done')
-
-        if (file.size && file.key) {
-          createFile(file.size, file.key)
-        }
-      } else {
-        setFileStatus(file, files, 'error')
-      }
-    })
-
-    return request
-  }
-
-  const uploadToS3 = (
-    file: UploadFile,
-    files: UploadFile[],
-    presignedPost: PresignedPost,
-  ) => {
-    const s3UploadRequest = createS3UploadRequest(file, files)
-    s3UploadRequest.open('POST', presignedPost.url)
-    s3UploadRequest.send(createFormData(presignedPost, file))
-  }
-
-  const uploadFiles = (id: string, files: UploadFile[]) => {
-    forEach(files, async (aFile) => {
-      const { data: presignedPostData } = await createPresignedPostMutation({
-        variables: { input: { caseId: id, fileName: aFile.name } },
-      })
-      const presignedPost = presignedPostData?.createPresignedPost
-
-      if (!presignedPost) {
-        return
-      }
-
-      aFile.key = presignedPost.fields.key
-
-      uploadToS3(aFile, files, presignedPost)
-    })
-  }
-
-  const createFile = async (size: number, key: string) => {
-    if (workingCase) {
-      await createFileMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            key,
-            size,
-          },
-        },
-      })
-    }
-  }
+  const { files, onChange, onRemove } = useS3Upload(workingCase)
 
   return (
     <PageLayout
@@ -245,14 +113,11 @@ export const StepFive: React.FC = () => {
             <Box marginBottom={[2, 2, 3]}>
               <ContentBlock>
                 <InputFileUpload
-                  fileList={files || []}
+                  fileList={files}
                   header="Dragðu skjöl hingað til að hlaða upp"
                   buttonLabel="Velja skjöl til að hlaða upp"
-                  onChange={(evt) => {
-                    setFiles(evt)
-                    uploadFiles(workingCase.id, evt)
-                  }}
-                  onRemove={() => console.log('remove')}
+                  onChange={onChange}
+                  onRemove={onRemove}
                   errorMessage=""
                   showFileSize
                 />
