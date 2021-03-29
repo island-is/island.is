@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
-import { Regulation, Regulations } from './regulations.types'
+import { Regulation, RegulationSearchResults } from './regulations.types'
 
 export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
@@ -38,8 +38,8 @@ export class RegulationsService extends RESTDataSource {
 
   async getRegulationsNewest(
     page: number,
-  ): Promise<Regulations | null> {
-    const response = await this.get<Regulations | null>(
+  ): Promise<RegulationSearchResults | null> {
+    const response = await this.get<RegulationSearchResults | null>(
       `regulations/newest`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes

@@ -1,7 +1,11 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
-import { RegulationsService, Regulations, Regulation } from '@island.is/clients/regulations'
+import {
+  RegulationsService,
+  RegulationSearchResults,
+  Regulation,
+} from '@island.is/clients/regulations'
 import { GetRegulationsNewestInput } from './dto/getRegulationsNewestInput'
 import { GetRegulationOriginalInput } from './dto/getRegulationOriginalInput'
 
@@ -21,7 +25,7 @@ export class RegulationsResolver {
   @Query(() => graphqlTypeJson, { nullable: true })
   getRegulationsNewest(
     @Args('input') input: GetRegulationsNewestInput,
-  ): Promise<Regulations | null> {
+  ): Promise<RegulationSearchResults | null> {
     return this.regulationsService.getRegulationsNewest(validPage(input.page))
   }
 }
