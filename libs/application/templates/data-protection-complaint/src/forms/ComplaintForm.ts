@@ -624,13 +624,10 @@ export const ComplaintForm: Form = buildForm({
               description: complaint.general.complaintPageDescription,
               space: 3,
               children: [
-                buildTextField({
+                buildCustomField({
                   id: 'complaint.description',
                   title: complaint.labels.complaintDescription,
-                  placeholder: complaint.labels.complaintDescriptionPlaceholder,
-                  description: complaint.labels.complaintDescriptionLabel,
-                  variant: 'textarea',
-                  backgroundColor: 'blue',
+                  component: 'ComplaintDescription',
                 }),
                 buildFileUploadField({
                   id: 'complaint.documents',
