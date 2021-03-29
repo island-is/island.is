@@ -5,8 +5,11 @@ import {
   FILE_STORAGE_CONFIG,
   FileStorageConfig,
 } from './file-storage.configuration'
-
+import AmazonS3URI from 'amazon-s3-uri'
 const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
+
+// Todo: modify the expire time
+const SIGNED_GET_EXPIRES = 10 * 60
 
 @Injectable()
 export class FileStorageService {
@@ -43,6 +46,13 @@ export class FileStorageService {
         }
       })
     })
+  }
+
+  public generateSignedUrl(url: string): string {
+    const { bucket, key } = AmazonS3URI(url)
+    const params = { Bucket: bucket, Expires: SIGNED_GET_EXPIRES, Key: key }
+
+    return this.s3.getSignedUrl('getObject', params)
   }
 
   async copyObjectFromUploadBucket(
