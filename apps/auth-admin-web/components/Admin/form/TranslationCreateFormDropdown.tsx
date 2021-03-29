@@ -115,10 +115,10 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
   }
 
   return (
-    <div className="translation-create-form-dropdown">
-      <div className="translation-create-form-dropdown__button__show">
+    <div>
+      <div className="toggle-button">
         <a
-          className="user-claim__button__show"
+          className="toggle-button__button__show"
           onClick={() => (visible ? close() : setVisible(true))}
           title={`Create new Translation`}
         >
@@ -126,114 +126,116 @@ const TranslationCreateFormDropdown: React.FC<Props> = (props: Props) => {
           <span>Create new Translation</span>
         </a>
       </div>
-      <div
-        className={`translation-create-form-dropdown__wrapper ${
-          visible ? 'show' : 'hidden'
-        }`}
-      >
-        <div className="translation-create-form-dropdown__button__close">
-          <a onClick={close}>
-            <i className="icon__close"></i>
-          </a>
-        </div>
-        <div className="translation-create-form-dropdown__container">
-          <h1>Create a Translation</h1>
-
-          <div
-            className={`translation-create-form-dropdown__container__help-text ${
-              props.isEditing ? 'hidden' : 'show'
-            }`}
-          >
-            The item you are creating needs to be saved before creating
-            translations
+      <div className="translation-create-form-dropdown">
+        <div
+          className={`translation-create-form-dropdown__wrapper ${
+            visible ? 'show' : 'hidden'
+          }`}
+        >
+          <div className="translation-create-form-dropdown__button__close">
+            <a onClick={close}>
+              <i className="icon__close"></i>
+            </a>
           </div>
+          <div className="translation-create-form-dropdown__container">
+            <h1>Create a Translation</h1>
 
-          <div
-            className={`translation-create-form-dropdown__saved__message ${
-              infoMessage ? 'show' : 'hidden'
-            }`}
-          >
-            {infoMessage}
-          </div>
-          <div
-            className={`translation-create-form-dropdown__container__form ${
-              props.isEditing ? 'show' : 'hidden'
-            }`}
-          >
-            <div className="translation-create-form-dropdown__help">
-              Add new translation by filling out the form
+            <div
+              className={`translation-create-form-dropdown__container__help-text ${
+                props.isEditing ? 'hidden' : 'show'
+              }`}
+            >
+              The item you are creating needs to be saved before creating
+              translations
             </div>
 
-            <div className="translation-create-form-dropdown__container__fields">
-              <div className="translation-create-form-dropdown__container__field">
-                <label
-                  className="translation-create-form-dropdown__label"
-                  htmlFor="language"
-                >
-                  Language
-                </label>
-                <select
-                  id="language"
-                  className="translation-create-form-dropdown__select"
-                  name="translation.language"
-                  onChange={(e) => switchLanguge(e.target.value)}
-                >
-                  {languages.map((language: Language) => {
-                    return (
-                      <option
-                        value={language.isoKey}
-                        key={language.isoKey}
-                        selected={selectedLanguage === language.isoKey}
-                      >
-                        {language.englishDescription}
-                      </option>
-                    )
-                  })}
-                </select>
-                <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
+            <div
+              className={`translation-create-form-dropdown__saved__message ${
+                infoMessage ? 'show' : 'hidden'
+              }`}
+            >
+              {infoMessage}
+            </div>
+            <div
+              className={`translation-create-form-dropdown__container__form ${
+                props.isEditing ? 'show' : 'hidden'
+              }`}
+            >
+              <div className="translation-create-form-dropdown__help">
+                Add new translation by filling out the form
               </div>
 
-              <div className="translation-create-form-dropdown__container__field">
-                <label
-                  className="translation-create-form-dropdown__label"
-                  htmlFor="value"
-                >
-                  Value
-                </label>
-                <input
-                  id="value"
-                  type="text"
-                  name="translation.value"
-                  value={translationValue ?? ''}
-                  className="translation-create-form-dropdown__input"
-                  title="The translated text in the selected language"
-                  placeholder="Some description"
-                  onChange={(e) => handleTextValueChange(e.target.value)}
-                />
-
-                <HelpBox helpText="The translated text in the selected language" />
-                <div className="customErrorMessage">{errorMessage}</div>
-              </div>
-
-              <div className="translation-create-form-dropdown__buttons__container">
-                <div className="translation-create-form-dropdown__button__container">
-                  <button
-                    className="translation-create-form-dropdown__button__cancel"
-                    type="button"
-                    onClick={close}
+              <div className="translation-create-form-dropdown__container__fields">
+                <div className="translation-create-form-dropdown__container__field">
+                  <label
+                    className="translation-create-form-dropdown__label"
+                    htmlFor="language"
                   >
-                    Cancel
-                  </button>
+                    Language
+                  </label>
+                  <select
+                    id="language"
+                    className="translation-create-form-dropdown__select"
+                    name="translation.language"
+                    onChange={(e) => switchLanguge(e.target.value)}
+                  >
+                    {languages.map((language: Language) => {
+                      return (
+                        <option
+                          value={language.isoKey}
+                          key={language.isoKey}
+                          selected={selectedLanguage === language.isoKey}
+                        >
+                          {language.englishDescription}
+                        </option>
+                      )
+                    })}
+                  </select>
+                  <HelpBox helpText="The language for this translation (iso key in the select box for this language)" />
                 </div>
-                <div className="translation-create-form-dropdown__button__container">
-                  <button
-                    type="button"
-                    className="translation-create-form-dropdown__button__save"
-                    value="Save"
-                    onClick={save}
+
+                <div className="translation-create-form-dropdown__container__field">
+                  <label
+                    className="translation-create-form-dropdown__label"
+                    htmlFor="value"
                   >
-                    Save
-                  </button>
+                    Value
+                  </label>
+                  <input
+                    id="value"
+                    type="text"
+                    name="translation.value"
+                    value={translationValue ?? ''}
+                    className="translation-create-form-dropdown__input"
+                    title="The translated text in the selected language"
+                    placeholder="Some description"
+                    onChange={(e) => handleTextValueChange(e.target.value)}
+                  />
+
+                  <HelpBox helpText="The translated text in the selected language" />
+                  <div className="customErrorMessage">{errorMessage}</div>
+                </div>
+
+                <div className="translation-create-form-dropdown__buttons__container">
+                  <div className="translation-create-form-dropdown__button__container">
+                    <button
+                      className="translation-create-form-dropdown__button__cancel"
+                      type="button"
+                      onClick={close}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <div className="translation-create-form-dropdown__button__container">
+                    <button
+                      type="button"
+                      className="translation-create-form-dropdown__button__save"
+                      value="Save"
+                      onClick={save}
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
