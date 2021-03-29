@@ -30,7 +30,6 @@ import {
   SendNotificationResponse,
 } from '../src/app/modules/notification/models'
 import { setup } from './setup'
-import { response } from 'express'
 
 jest.setTimeout(20000)
 

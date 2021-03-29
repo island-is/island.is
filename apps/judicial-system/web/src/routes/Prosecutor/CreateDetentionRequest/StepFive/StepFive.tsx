@@ -8,7 +8,7 @@ import {
   UploadFile,
   UploadFileStatus,
 } from '@island.is/island-ui/core'
-import { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { Case, CreateFile, UpdateCase } from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
@@ -20,6 +20,7 @@ import {
   CaseQuery,
   UpdateCaseMutation,
   CreatePresignedPostMutation,
+  CreateFileMutation,
 } from '@island.is/judicial-system-web/graphql'
 import {
   ProsecutorSubsections,
@@ -27,8 +28,8 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
 import { forEach } from 'lodash'
-import { createUploadFile } from '@island.is/judicial-system-web/src/services/api'
 import * as styles from './StepFive.treat'
+import { createUploadFile } from '@island.is/judicial-system-web/src/services/api'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
@@ -70,6 +71,8 @@ export const StepFive: React.FC = () => {
 
     return resCase
   }
+
+  const [createFileMutation] = useMutation(CreateFileMutation)
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
 
@@ -125,13 +128,28 @@ export const StepFive: React.FC = () => {
   }
 
   const uploadFiles = (id: string, files: UploadFile[]) => {
-    forEach(files, async (file) => {
-      const request = createRequest(file, files)
-      const { data } = await createPresignedPostMutation({
-        variables: { input: { caseId: id, fileName: file.name } },
+    forEach(files, async (aFile) => {
+      const request = createRequest(aFile, files)
+      const { data: presignedPostData } = await createPresignedPostMutation({
+        variables: { input: { caseId: id, fileName: aFile.name } },
+      })
+      const presignedPost = presignedPostData?.createPresignedPost
+
+      if (!presignedPost) {
+        return
+      }
+
+      const { data: fileData } = await createFileMutation({
+        variables: {
+          input: { caseId: id, key: presignedPost.fields.key, size: 999 },
+        },
       })
 
-      const presignedPost = data?.createPresignedPost
+      const file = fileData?.createFileMutation
+
+      if (file) {
+        // do something
+      }
 
       if (presignedPost) {
         const fileToUpload = createUploadFile(presignedPost, file)

@@ -294,3 +294,18 @@ export interface PresignedPost {
 export interface CreatePresignedPost {
   fileName: string
 }
+
+export interface File {
+  id: string
+  created: string
+  modified: string
+  caseId: string
+  name: string
+  key: string
+  size: number
+}
+
+export interface CreateFile {
+  key: string
+  size: number
+}

@@ -86,6 +86,9 @@ export const CaseQuery = gql`
       notifications {
         type
       }
+      files {
+        name
+      }
     }
   }
 `
@@ -130,6 +133,19 @@ export const CreatePresignedPostMutation = gql`
     createPresignedPost(input: $input) {
       url
       fields
+    }
+  }
+`
+
+export const CreateFileMutation = gql`
+  mutation CreateFileMutation($input: CreateFileInput!) {
+    createFile(input: $input) {
+      id
+      created
+      caseId
+      name
+      key
+      size
     }
   }
 `

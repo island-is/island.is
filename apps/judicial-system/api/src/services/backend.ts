@@ -5,8 +5,10 @@ import { Injectable } from '@nestjs/common'
 import {
   Case,
   CreateCase,
+  CreateFile,
   CreatePresignedPost,
   CreateUser,
+  File,
   Institution,
   Notification,
   PresignedPost,
@@ -97,11 +99,19 @@ class BackendAPI extends RESTDataSource {
     return this.get(`case/${id}/notifications`)
   }
 
-  createPresignedPost(
+  createCasePresignedPost(
     id: string,
     createPresignedPost: CreatePresignedPost,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
+  }
+
+  createCaseFile(id: string, createFile: CreateFile): Promise<File> {
+    return this.post(`case/${id}/file`, createFile)
+  }
+
+  getCaseFiles(id: string): Promise<File[]> {
+    return this.get(`case/${id}/files`)
   }
 }
 
