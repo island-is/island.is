@@ -357,6 +357,7 @@ export const exampleRegulation: Regulation = {
   title: 'Reglugerð um bólusetningar á Íslandi.',
   text: regulationHtml,
   appendixes: [],
+  comments: '',
   signatureDate: '2001-03-09' as ISODate,
   publishedDate: '2001-03-20' as ISODate,
   effectiveDate: '2001-03-20' as ISODate,

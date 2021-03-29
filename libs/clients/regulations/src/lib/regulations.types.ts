@@ -228,6 +228,7 @@ export const demoRegulation: Regulation = {
   text: '<p>Lorem ipsum dolor</p>',
   appendixes: [],
   // comments: '<p>Þessi reglugerð er bara prufureglugerð.</p>',
+  comments: '',
 
   effectiveDate: '2021-03-06' as ISODate,
   publishedDate: '2021-03-05' as ISODate,

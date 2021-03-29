@@ -3,13 +3,7 @@ import { RegulationPageTexts, Regulation } from './mockData'
 import * as s from './RegulationDisplay.treat'
 
 import React, { FC, useMemo, useState } from 'react'
-import {
-  FocusableBox,
-  Link,
-  Stack,
-  Text,
-  Typography,
-} from '@island.is/island-ui/core'
+import { FocusableBox, Link, Stack, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
@@ -17,7 +11,6 @@ import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { dateFormat } from '@island.is/shared/constants'
-import htmldiff from 'htmldiff-js'
 import cn from 'classnames'
 
 // ---------------------------------------------------------------------------
@@ -38,7 +31,7 @@ export type RegulationDisplayProps = {
 }
 
 export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
-  const { regulation, texts, originalBody } = props
+  const { regulation, texts } = props
   const { history, effects } = regulation
 
   const router = useRouter()
@@ -52,24 +45,16 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   const n = useNamespace(texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
 
-  // TODO: move into getInitialProps triggered by route.
-  const regulationBody = useMemo(
-    () =>
-      originalBody && showDiff
-        ? htmldiff
-            .execute(originalBody, regulation.text)
-            .replace(/<del [^>]+>\s+<\/del>/g, '')
-            .replace(/<ins [^>]+>\s+<\/ins>/g, '')
-        : regulation.text,
-    [showDiff, originalBody, regulation.text],
-  )
+  const regulationBody = regulation.text
+
+  console.log({ regulation })
 
   return (
     <RegulationLayout
       texts={props.texts}
       main={
         <>
-          {originalBody && (
+          {history.length > 0 && (
             <button
               className={s.diffToggler}
               onClick={() => setShowDiff(!showDiff)}
@@ -80,7 +65,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
           {!regulation.repealedDate ? (
             <Text>
-              {!regulation.timelineDate ||
+              {!history.length ||
               regulation.timelineDate === regulation.lastAmendDate ? (
                 <>
                   <Ball type="green" />
@@ -158,16 +143,16 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
                       return (
                         <>
-                          <Typography color={textColor} variant="h5" as="h3">
+                          <Text color={textColor} variant="h5" as="h3">
                             {prettyName(item.name)}
-                          </Typography>
-                          <Typography color={textColor} variant="p">
+                          </Text>
+                          <Text color={textColor}>
                             <span
                               dangerouslySetInnerHTML={{
                                 __html: item.title,
                               }}
                             />
-                          </Typography>
+                          </Text>
                         </>
                       )
                     }}
@@ -197,19 +182,13 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
                       return (
                         <>
-                          <Typography color={textColor} variant="h5" as="h4">
+                          <Text color={textColor} variant="h5" as="h4">
                             {prettyName(item.name)}
-                          </Typography>
-                          <Typography
-                            color={textColor}
-                            variant="p"
-                            fontWeight="medium"
-                          >
+                          </Text>
+                          <Text color={textColor} fontWeight="medium">
                             {item.date}
-                          </Typography>
-                          <Typography color={textColor} variant="p">
-                            {item.title}
-                          </Typography>
+                          </Text>
+                          <Text color={textColor}>{item.title}</Text>
                         </>
                       )
                     }}

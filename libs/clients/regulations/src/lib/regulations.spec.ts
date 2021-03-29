@@ -2,11 +2,7 @@ import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
 import { RegulationsService, REGULATIONS_OPTIONS } from './regulations'
-import {
-  demoRegulation,
-  Regulation,
-  demoRegulationName,
-} from './regulations.types'
+import { demoRegulation, Regulation, demoRegName } from './regulations.types'
 
 // MOCK START
 enum expectedResult {
@@ -85,7 +81,7 @@ const getNestModule = async (condition: expectedResult) => {
   return moduleRef.get<RegulationsService>(RegulationsService)
 }
 
-describe('getRegulationOriginal', () => {
+describe('getRegulation', () => {
   let regulationsService: RegulationsService
 
   beforeEach(async () => {
@@ -93,23 +89,24 @@ describe('getRegulationOriginal', () => {
   })
 
   it('should return success in the correct format', async () => {
-    const results = await regulationsService.getRegulationOriginal(
-      demoRegulationName,
+    const results = await regulationsService.getRegulation(
+      'original',
+      demoRegName,
     )
     expect(results).toStrictEqual(demoRegulation)
   })
 
   it('should return empty array when use has no company', async () => {
-    const results = await regulationsService.getRegulationOriginal('')
+    const results = await regulationsService.getRegulation('original', '')
     expect(results).toEqual([])
   })
 
   it('should throw on error', async () => {
     await expect(
-      regulationsService.getRegulationOriginal('NNNN-NNNN'),
+      regulationsService.getRegulation('original', 'NNNN-NNNN'),
     ).rejects.toThrow()
     await expect(
-      regulationsService.getRegulationOriginal(expectedResult.SERVER_ERROR),
+      regulationsService.getRegulation('original', expectedResult.SERVER_ERROR),
     ).rejects.toThrow()
   })
 })

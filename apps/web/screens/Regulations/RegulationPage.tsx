@@ -1,11 +1,7 @@
 import {
-  exampleRegulation,
-  exampleRegulationOriginalBody,
   regulationPageTexts,
   Regulation,
-  RegulationHistoryItem,
   RegulationRedirect,
-  exampleRegulationRedirect,
   RegulationPageTexts,
   ISODate,
 } from './mockData'
@@ -20,18 +16,10 @@ import { RegulationDisplay } from './RegulationDisplay'
 import { getParams } from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
-  GetRegulationByDateQuery,
-  GetRegulationCurrentQuery,
-  GetRegulationOriginalQuery,
-  QueryGetRegulationByDateArgs,
-  QueryGetRegulationCurrentArgs,
-  QueryGetRegulationOriginalArgs,
+  GetRegulationQuery,
+  QueryGetRegulationArgs,
 } from '@island.is/web/graphql/schema'
-import {
-  GET_REGULATION_BY_DATE_QUERY,
-  GET_REGULATION_CURRENT_QUERY,
-  GET_REGULATION_ORIGINAL_QUERY,
-} from '../queries'
+import { GET_REGULATION_QUERY } from '../queries'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -157,51 +145,22 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       regulationPageTexts,
     ),
 
-    viewType === 'original'
-      ? apolloClient.query<
-          GetRegulationOriginalQuery,
-          QueryGetRegulationOriginalArgs
-        >({
-          query: GET_REGULATION_ORIGINAL_QUERY,
-          variables: {
-            input: {
-              name: number,
-            },
-          },
-        })
-      : viewType === 'current'
-      ? apolloClient.query<
-          GetRegulationCurrentQuery,
-          QueryGetRegulationCurrentArgs
-        >({
-          query: GET_REGULATION_CURRENT_QUERY,
-          variables: {
-            input: {
-              name: number,
-            },
-          },
-        })
-      : viewType === 'd'
-      ? apolloClient.query<
-          GetRegulationByDateQuery,
-          QueryGetRegulationByDateArgs
-        >({
-          query: GET_REGULATION_BY_DATE_QUERY,
-          variables: {
-            input: {
-              name: number,
-              date: String(date),
-            },
-          },
-        })
-      : undefined,
+    apolloClient.query<GetRegulationQuery, QueryGetRegulationArgs>({
+      query: GET_REGULATION_QUERY,
+      variables: {
+        input: {
+          viewType,
+          name: number,
+          date: String(date),
+        },
+      },
+    }),
   ])
 
   const regulation = Object.values(regulationData?.data ?? {})[0] as
     | Regulation
     | RegulationRedirect
 
-  // we assume 404 if no Organization is found
   if (!regulation) {
     throw new CustomNextError(404, 'Þessi síða fannst ekki!')
   }

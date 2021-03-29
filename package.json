@@ -149,7 +149,6 @@
     "graphql-middleware-sentry": "3.2.1",
     "graphql-tag": "2.10.3",
     "graphql-type-json": "0.3.2",
-    "htmldiff-js": "1.0.5",
     "http-proxy-middleware": "0.19.1",
     "hypher": "0.2.5",
     "intl": "1.2.5",
