@@ -7,6 +7,7 @@ import {
   Ministry,
   LawChapterTree,
   RegulationHomeTexts,
+  RegulationListItem,
 } from './mockData'
 
 import React from 'react'
@@ -50,7 +51,7 @@ import { log } from 'xstate/lib/actions'
 // ---------------------------------------------------------------------------
 
 type RegulationsHomeProps = {
-  searchResults: typeof regulationsSearchResults
+  regulations: RegulationListItem[]
   texts: RegulationHomeTexts
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
@@ -201,7 +202,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
           header=""
           content={
             <RegulationsSearchSection
-              searchResults={props.searchResults}
+              searchResults={props.regulations}
               searchFilters={props.searchQuery}
               lawcCapters={props.lawcCapters}
               ministries={props.ministries}
@@ -218,57 +219,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
 RegulationsHome.getInitialProps = async (ctx) => {
   const { apolloClient, locale, query } = ctx
   const serviceId = String(query.slug)
-
-  /** /
-  const [
-    texts,
-    filterContent,
-    openApiContent,
-    { data },
-  ] = await Promise.all([
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ApiCatalogueLinks',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'ApiCatalogFilter',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'OpenApiView',
-            lang: locale,
-          },
-        },
-      })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
-    apolloClient.query<Query, QueryGetApiServiceByIdArgs>({
-      query: GET_API_SERVICE_QUERY,
-      variables: {
-        input: {
-          id: serviceId,
-        },
-      },
-    }),
-  ] as const)
-/**/
+  const searchQuery = getParams(query, ['q', 'rn', 'year', 'ch', 'all'])
 
   const [texts, regulationsNewest] = await Promise.all([
     await getUiTexts<RegulationHomeTexts>(
@@ -291,21 +242,19 @@ RegulationsHome.getInitialProps = async (ctx) => {
     }),
   ])
 
-  console.log({ texts, regulationsNewest })
-
-  // FIXME: use apollo GQL api
-
-  // make all result sets look new and exciting!
+  // TODO: Handle search - make all result sets look new and exciting!
   const searchResults = [regulationsSearchResults[0]].concat(
     shuffle(regulationsSearchResults).slice(Math.floor(5 * Math.random())),
   )
 
-  console.log(Object.keys(ctx))
+  const regulations =
+    (regulationsNewest?.data?.getRegulationsNewest
+      ?.data as RegulationListItem[]) ?? []
 
   return {
-    searchResults,
+    regulations: regulations || searchResults,
     texts,
-    searchQuery: getParams(query, ['q', 'rn', 'year', 'ch', 'all']),
+    searchQuery,
     years: regulationYears,
     ministries: allMinistries,
     lawcCapters: allLawChaptersTree,

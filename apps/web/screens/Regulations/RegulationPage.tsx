@@ -21,11 +21,17 @@ import { getParams } from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
   GetNamespaceQuery,
+  GetRegulationCurrentQuery,
   GetRegulationOriginalQuery,
   QueryGetNamespaceArgs,
+  QueryGetRegulationCurrentArgs,
   QueryGetRegulationOriginalArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_REGULATION_ORIGINAL_QUERY } from '../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_REGULATION_CURRENT_QUERY,
+  GET_REGULATION_ORIGINAL_QUERY,
+} from '../queries'
 
 // const { publicRuntimeConfig } = getConfig()
 
@@ -33,21 +39,16 @@ import { GET_NAMESPACE_QUERY, GET_REGULATION_ORIGINAL_QUERY } from '../queries'
 
 type RegulationPageProps = {
   regulation: Regulation | RegulationRedirect
-  originalBody?: string
   texts: RegulationPageTexts
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, originalBody, texts } = props
+  const { regulation, texts } = props
 
   return 'redirectUrl' in regulation ? (
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
   ) : (
-    <RegulationDisplay
-      texts={texts}
-      regulation={regulation}
-      originalBody={originalBody}
-    />
+    <RegulationDisplay texts={texts} regulation={regulation} />
   )
 }
 
@@ -71,7 +72,7 @@ const assertNumber = (slug: string): string => {
 
 const assertViewType = (viewType: string): ViewType => {
   if (!viewType || viewType in viewTypes) {
-    return (viewType || 'curernt') as ViewType
+    return (viewType || 'current') as ViewType
   }
   throw new CustomNextError(404)
 }
@@ -130,6 +131,8 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     'earlierDate',
   ])
   const number = assertNumber(p.number)
+  console.log({ number })
+  /*
   const viewType = assertViewType(p.viewType)
   const date = assertDate(p.date, viewType)
   const isCustomDiff = date ? assertDiff(p.diff) : undefined
@@ -144,8 +147,8 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     isCustomDiff,
     earlierDate,
   })
-
-  const [texts, regulationOriginal] = await Promise.all([
+*/
+  const [texts, regulationData] = await Promise.all([
     await getUiTexts<RegulationPageTexts>(
       apolloClient,
       locale,
@@ -154,10 +157,10 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     ),
 
     apolloClient.query<
-      GetRegulationOriginalQuery,
-      QueryGetRegulationOriginalArgs
+      GetRegulationCurrentQuery,
+      QueryGetRegulationCurrentArgs
     >({
-      query: GET_REGULATION_ORIGINAL_QUERY,
+      query: GET_REGULATION_CURRENT_QUERY,
       variables: {
         input: {
           regulationName: number,
@@ -166,14 +169,11 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }),
   ])
 
-  console.log({ texts, regulationOriginal })
-
-  // FIXME: use apollo GQL api
-  const redirect = Math.random() < 0.2
+  console.log({ texts, regulationData })
+  const redirect = false
 
   return {
-    regulation: redirect ? exampleRegulationRedirect : exampleRegulation,
-    originalBody: redirect ? undefined : exampleRegulationOriginalBody,
+    regulation: (regulationData as unknown) as Regulation | RegulationRedirect,
     texts,
   }
 }

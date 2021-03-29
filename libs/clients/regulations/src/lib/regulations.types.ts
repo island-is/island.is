@@ -1,19 +1,16 @@
 declare const _RegNameToken_: unique symbol
-export type RegulationName = string & { [_RegNameToken_]: true }
+export type RegName = string & { [_RegNameToken_]: true }
 
 declare const _RegNameQueryToken_: unique symbol
 export type RegulationQueryName = string & { [_RegNameQueryToken_]: true }
 
 declare const _ISODateToken_: unique symbol
-export type ISODateTime = string & { [_ISODateToken_]: true }
+export type ISODate = string & { [_ISODateToken_]: true }
 
 // ---------------------------------------------------------------------------
 
 // Regulation name, need to replace / with - before sending to the api
-export const demoRegulationName = '0244/2021'.replace(
-  '/',
-  '-',
-) as RegulationQueryName
+export const demoRegName = '0244/2021'.replace('/', '-') as RegulationQueryName
 
 // ---------------------------------------------------------------------------
 
@@ -77,9 +74,9 @@ export const demoRegulationsMinistries: RegulationMinistries = [
 
 export type RegulationHistoryItem = {
   /** The date this this history item took effect */
-  date: ISODateTime
+  date: ISODate
   /** Publication name of the affecting Regulation */
-  name: RegulationName
+  name: RegName
   /** The title of the affecting Regulation */
   title: string
   /** Type of effect */
@@ -90,9 +87,9 @@ export type RegulationHistoryItem = {
 
 export type RegulationEffect = {
   /** effectiveDate for this impact */
-  date: ISODateTime
+  date: ISODate
   /** Publication name of the affected Regulation */
-  name: RegulationName
+  name: RegName
   /** Publication name of the affected Regulation */
   title: string
   /** Type of effect */
@@ -104,18 +101,20 @@ export type RegulationEffect = {
 // Regulations list
 export type RegulationListItem = {
   /** Publication name */
-  name: RegulationName
+  name: RegName
   /** The title of the Regulation */
   title: string
   /** The ministry that the regulation is linked to */
   ministry?: RegulationMinistry
   /** Publication date of this regulation */
-  publishedDate: ISODateTime
+  publishedDate: ISODate
 }
 
 export type RegulationSearchResults = {
   /** The number of the current page, 1-based  */
   page: number
+  /** Total number of pages available for this query */
+  perPage: number
   /** Total number of pages available for this query */
   totalPages: number
   /** ReguationListItems for this page */
@@ -124,17 +123,18 @@ export type RegulationSearchResults = {
 
 export const demoRegulations: RegulationSearchResults = {
   page: 1,
+  perPage: 14,
   totalPages: 121,
   data: [
     {
-      name: '0244/2021' as RegulationName,
+      name: '0244/2021' as RegName,
       title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
-      publishedDate: '2021-03-05T00:00:00.000Z' as ISODateTime,
+      publishedDate: '2021-03-05' as ISODate,
     },
     {
-      name: '0245/2021' as RegulationName,
+      name: '0245/2021' as RegName,
       title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
-      publishedDate: '2021-03-04T00:00:00.000Z' as ISODateTime,
+      publishedDate: '2021-03-04' as ISODate,
     },
   ],
 }
@@ -152,7 +152,7 @@ export type RegulationAppendix = {
 // Single Regulation
 export type Regulation = {
   /** Publication name (NNNN/YYYY) of the regulation */
-  name: RegulationName
+  name: RegName
   /** The title of the regulation in HTML format */
   title: string
   /* The regulation text in HTML format */
@@ -163,21 +163,21 @@ export type Regulation = {
   comments?: string
 
   /** Date signed in the ministry */
-  signatureDate: ISODateTime
+  signatureDate: ISODate
   /** Date officially published in Stjórnartíðindi */
-  publishedDate: ISODateTime
+  publishedDate: ISODate
   /** Date when the regulation took effect for the first time */
-  effectiveDate: ISODateTime
+  effectiveDate: ISODate
   /** Date of last amendment of this regulation
    *
    * This date is always a past date – UNLESS a future timeline Date is being
    */
-  lastAmendDate?: ISODateTime | null
+  lastAmendDate?: ISODate | null
   /** Date when (if) this regulation was repealed and became a thing of the past.
    *
    * NOTE: This date is **NEVER** set in the future
    */
-  repealedDate?: ISODateTime | null
+  repealedDate?: ISODate | null
   /** The ministry this regulation is published by/linked to */
   ministry?: RegulationMinistry
   /** Law chapters that this regulation is linked to */
@@ -207,31 +207,31 @@ export type Regulation = {
    *
    * Is undefined by default (when the "current" version is served).
    */
-  timelineDate?: ISODateTime
+  timelineDate?: ISODate
 
   /** Present if the regulation contains inlined change-markers (via htmldiff-js) */
   showingDiff?: {
     /** The date of the base version being compared against */
-    from: ISODateTime
+    from: ISODate
     /** The date of the version being viewed
      *
      * Generally the same as `timelineDate` defaulting to `lastAmendDate` */
-    to: ISODateTime
+    to: ISODate
   }
 }
 
 export const demoRegulation: Regulation = {
-  name: '0244/2021' as RegulationName,
+  name: '0244/2021' as RegName,
   title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
   text: '<p>Lorem ipsum dolor</p>',
   appendixes: [],
   // comments: '<p>Þessi reglugerð er bara prufureglugerð.</p>',
 
-  effectiveDate: '2021-03-06T00:00:00.000Z' as ISODateTime,
-  publishedDate: '2021-03-05T00:00:00.000Z' as ISODateTime,
-  signatureDate: '2021-02-18T00:00:00.000Z' as ISODateTime,
-  lastAmendDate: '2021-02-18T00:00:00.000Z' as ISODateTime,
-  // repealedDate: '2021-09-30T00:00:00.000Z' as ISODateTime,
+  effectiveDate: '2021-03-06' as ISODate,
+  publishedDate: '2021-03-05' as ISODate,
+  signatureDate: '2021-02-18' as ISODate,
+  lastAmendDate: '2021-02-18' as ISODate,
+  // repealedDate: '2021-09-30' as ISODate,
 
   type: 'base',
   history: [],
@@ -244,10 +244,10 @@ export const demoRegulation: Regulation = {
   },
   lawChapters: [],
 
-  // timelineDate: '2021-03-05T00:00:00.000Z' as ISODateTime,
+  // timelineDate: '2021-03-05' as ISODate,
   // showingDiff: {
-  //   from: '2021-03-05T00:00:00.000Z' as ISODateTime,
-  //   to: '2021-02-18T00:00:00.000Z' as ISODateTime,
+  //   from: '2021-03-05' as ISODate,
+  //   to: '2021-02-18' as ISODate,
   // },
 }
 
@@ -255,7 +255,7 @@ export const demoRegulation: Regulation = {
 
 export type RegulationRedirect = {
   /** Publication name (NNNN/YYYY) of the regulation */
-  name: RegulationName
+  name: RegName
   /** The title of the regulation in HTML format */
   title: string
   /** The regulation data has not been fully migrated and should be viewed at this URL */
@@ -263,7 +263,7 @@ export type RegulationRedirect = {
 }
 
 export const demoRegulationRedirect: RegulationRedirect = {
-  name: '0504/1975' as RegulationName,
+  name: '0504/1975' as RegName,
   title: 'Reglugerð um gatnagerðargjöld í Hvolhreppi, Rangárvallasýslu.',
   redirectUrl: 'https://www.reglugerd.is/reglugerdir/allar/nr/0504-1975',
 }

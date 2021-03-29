@@ -3,6 +3,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class Regulation {
   @Field()
+  type!: string
+  @Field()
   name!: string
   @Field()
   title!: string
@@ -14,4 +16,20 @@ export class Regulation {
   signatureDate!: string
   @Field(() => Date)
   effectiveDate!: string
+  @Field()
+  appendixes?: []
+  @Field(() => Date)
+  lastAmendDate!: string
+  @Field()
+  ministry!: {}
+  @Field()
+  lawChapters!: []
+  @Field()
+  history?: []
+  @Field()
+  effects?: []
+  @Field(() => Date)
+  timelineDate?: string
+  @Field()
+  showingDiff?: {}
 }
