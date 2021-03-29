@@ -2701,7 +2701,8 @@
             "jestConfig": "apps/download-service/jest.config.js",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "email-service": {
