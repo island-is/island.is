@@ -1,5 +1,6 @@
 import { style, styleMap } from 'treat'
 import omit from 'lodash/omit'
+
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 import { theme, themeUtils } from '../../utils/theme'
 
@@ -7,8 +8,8 @@ import { theme, themeUtils } from '../../utils/theme'
 const spacing = omit(theme.spacing, 'auto')
 const preventCollapse = 1
 
-const negativeMarginTop = (spacing: number, rows: number) => ({
-  ':before': { marginTop: -(spacing * rows) - preventCollapse },
+const negativeMarginTop = (spacing: number, rows: string | number) => ({
+  ':before': { marginTop: -(spacing * Number(rows)) - preventCollapse },
 })
 
 export const base = style({

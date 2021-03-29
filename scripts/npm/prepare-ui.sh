@@ -9,9 +9,8 @@ DIST_UI="$DIST_ROOT/$UI"
 # Simply copy/pasting the UI library for the first alpha version.
 # Most likely use semantic-release to handle npm releases https://github.com/semantic-release/semantic-release
 
-if [[ ! -d "$DIST_UI" ]]; then
-  mkdir -p "$DIST_UI"
-fi
+rm -rf $DIST_UI
+mkdir -p "$DIST_UI"
 
 # Find something better than this in the future.
 perl -pi -e "s/interface SelectorMap {/export interface SelectorMap {/" "node_modules/treat/lib/types/types.d.ts"

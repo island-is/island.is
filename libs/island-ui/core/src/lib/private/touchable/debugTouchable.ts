@@ -1,4 +1,4 @@
-import { SelectorMap } from 'treat/lib/types/types'
+type SelectorMap = any
 
 export const debugTouchable = ({ after = false } = {}): SelectorMap =>
   process.env.NODE_ENV === 'production'

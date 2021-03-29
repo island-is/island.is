@@ -1,13 +1,14 @@
 import { styleMap } from 'treat'
 import omit from 'lodash/omit'
+
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 import { theme, themeUtils } from '../../utils/theme'
 
 // Omitted because 'auto' negative margin doesn't make sense
 const spacing = omit(theme.spacing, 'auto')
 
-const negativeMarginLeft = (grid: number, rows: number) => ({
-  marginLeft: -(grid * rows),
+const negativeMarginLeft = (grid: number, rows: string | number) => ({
+  marginLeft: -(grid * Number(rows)),
 })
 
 export const xs = styleMap({
