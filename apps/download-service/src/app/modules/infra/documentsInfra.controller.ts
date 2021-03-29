@@ -21,7 +21,6 @@ export class DocumentsInfraController extends InfraController {
 
     const result = await new Promise<boolean>((resolve, reject) => {
       dns.lookup(url, (err) => {
-        console.log(err)
         if (err) reject(false)
         resolve(true)
       })
