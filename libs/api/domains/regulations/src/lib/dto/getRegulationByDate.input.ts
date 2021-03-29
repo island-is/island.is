@@ -1,10 +1,12 @@
-import { ISODate } from '@island.is/clients/regulations'
 import { Field, InputType } from '@nestjs/graphql'
+import { IsString } from 'class-validator'
 
 @InputType()
 export class GetRegulationByDateInput {
   @Field()
-  regulationName!: string
+  @IsString()
+  name!: string
   @Field()
+  @IsString()
   date!: string
 }

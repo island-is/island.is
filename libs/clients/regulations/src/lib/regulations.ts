@@ -4,6 +4,7 @@ import { DataSourceConfig } from 'apollo-datasource'
 import {
   ISODate,
   Regulation,
+  RegulationLawChapterTree,
   RegulationMinistries,
   RegulationSearchResults,
   RegulationYears,
@@ -30,13 +31,9 @@ export class RegulationsService extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getRegulationOriginal(
-    regulationName: string,
-  ): Promise<Regulation | null> {
-    console.log(`regulation/nr/${regulationName}/original`)
-
+  async getRegulationOriginal(name: string): Promise<Regulation | null> {
     const response = await this.get<Regulation | null>(
-      `regulation/nr/${regulationName}/original`,
+      `regulation/nr/${name}/original`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
@@ -44,11 +41,9 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationCurrent(
-    regulationName: string,
-  ): Promise<Regulation | null> {
+  async getRegulationCurrent(name: string): Promise<Regulation | null> {
     const response = await this.get<Regulation | null>(
-      `regulation/nr/0244-2021/current`,
+      `regulation/nr/${name}/current`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
@@ -57,11 +52,11 @@ export class RegulationsService extends RESTDataSource {
   }
 
   async getRegulationByDate(
-    regulationName: string,
+    name: string,
     date: ISODate,
   ): Promise<Regulation | null> {
     const response = await this.get<Regulation | null>(
-      `regulation/nr/${regulationName}/d/${date}`,
+      `regulation/nr/${name}/d/${date}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
@@ -73,7 +68,7 @@ export class RegulationsService extends RESTDataSource {
     page: number,
   ): Promise<RegulationSearchResults | null> {
     const response = await this.get<RegulationSearchResults | null>(
-      `regulations/newest`,
+      `regulations/newest${page ? '?page=' + page : ''}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
@@ -89,9 +84,19 @@ export class RegulationsService extends RESTDataSource {
   }
 
   async getRegulationsMinistries(): Promise<RegulationMinistries | null> {
-    const response = await this.get<RegulationMinistries | null>(`years`, {
+    const response = await this.get<RegulationMinistries | null>(`ministries`, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
     })
+    return response
+  }
+
+  async getRegulationsLawChapters(): Promise<RegulationLawChapterTree | null> {
+    const response = await this.get<RegulationLawChapterTree | null>(
+      `lawchapters/tree`,
+      {
+        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
+      },
+    )
     return response
   }
 }

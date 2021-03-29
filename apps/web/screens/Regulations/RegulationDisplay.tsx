@@ -80,17 +80,37 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
           {!regulation.repealedDate ? (
             <Text>
-              <Ball type="green" />
-              Núgildandi reglugerð
-              {regulation.lastAmendDate ? (
+              {!regulation.timelineDate ||
+              regulation.timelineDate === regulation.lastAmendDate ? (
                 <>
-                  {' – '}
-                  <span className={s.metaDate}>
-                    uppfærð {formatDate(regulation.lastAmendDate)}
-                  </span>
+                  <Ball type="green" />
+                  Núgildandi reglugerð
+                  {regulation.lastAmendDate ? (
+                    <>
+                      {' – '}
+                      <span className={s.metaDate}>
+                        uppfærð {formatDate(regulation.lastAmendDate)}
+                      </span>
+                    </>
+                  ) : (
+                    ''
+                  )}
                 </>
               ) : (
-                ''
+                <>
+                  <Ball type="red" />
+                  Úrelt útgáfa reglugerðar
+                  {regulation.lastAmendDate ? (
+                    <>
+                      {' – '}
+                      <span className={s.metaDate}>
+                        síðast uppfærð {formatDate(regulation.lastAmendDate)}
+                      </span>
+                    </>
+                  ) : (
+                    ''
+                  )}
+                </>
               )}
             </Text>
           ) : (
@@ -163,7 +183,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               colorScheme="blueberry"
             >
               {regulation.history.map((item) => (
-                <Link href={linkToRegulation(item.name)}>
+                <Link href={linkToRegulation(item.name) + '/d/' + item.date}>
                   <FocusableBox flexDirection={'column'}>
                     {({
                       isFocused,
@@ -177,8 +197,15 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
                       return (
                         <>
-                          <Typography color={textColor} variant="h5" as="h3">
+                          <Typography color={textColor} variant="h5" as="h4">
                             {prettyName(item.name)}
+                          </Typography>
+                          <Typography
+                            color={textColor}
+                            variant="p"
+                            fontWeight="medium"
+                          >
+                            {item.date}
                           </Typography>
                           <Typography color={textColor} variant="p">
                             {item.title}

@@ -20,15 +20,15 @@ import { RegulationDisplay } from './RegulationDisplay'
 import { getParams } from './regulationUtils'
 import { getUiTexts } from './getUiTexts'
 import {
-  GetNamespaceQuery,
+  GetRegulationByDateQuery,
   GetRegulationCurrentQuery,
   GetRegulationOriginalQuery,
-  QueryGetNamespaceArgs,
+  QueryGetRegulationByDateArgs,
   QueryGetRegulationCurrentArgs,
   QueryGetRegulationOriginalArgs,
 } from '@island.is/web/graphql/schema'
 import {
-  GET_NAMESPACE_QUERY,
+  GET_REGULATION_BY_DATE_QUERY,
   GET_REGULATION_CURRENT_QUERY,
   GET_REGULATION_ORIGINAL_QUERY,
 } from '../queries'
@@ -53,11 +53,12 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
 }
 
 const viewTypes = {
+  current: 1,
   original: 1,
   diff: 1,
   d: 1,
 }
-type ViewType = 'current' | keyof typeof viewTypes
+type ViewType = keyof typeof viewTypes
 
 /** Throws if the slug doesn't roughly look like a valid regulation number
  *
@@ -130,9 +131,9 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     'diff',
     'earlierDate',
   ])
+  console.log({ p })
+
   const number = assertNumber(p.number)
-  console.log({ number })
-  /*
   const viewType = assertViewType(p.viewType)
   const date = assertDate(p.date, viewType)
   const isCustomDiff = date ? assertDiff(p.diff) : undefined
@@ -147,7 +148,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     isCustomDiff,
     earlierDate,
   })
-*/
+
   const [texts, regulationData] = await Promise.all([
     await getUiTexts<RegulationPageTexts>(
       apolloClient,
@@ -156,24 +157,57 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       regulationPageTexts,
     ),
 
-    apolloClient.query<
-      GetRegulationCurrentQuery,
-      QueryGetRegulationCurrentArgs
-    >({
-      query: GET_REGULATION_CURRENT_QUERY,
-      variables: {
-        input: {
-          regulationName: number,
-        },
-      },
-    }),
+    viewType === 'original'
+      ? apolloClient.query<
+          GetRegulationOriginalQuery,
+          QueryGetRegulationOriginalArgs
+        >({
+          query: GET_REGULATION_ORIGINAL_QUERY,
+          variables: {
+            input: {
+              name: number,
+            },
+          },
+        })
+      : viewType === 'current'
+      ? apolloClient.query<
+          GetRegulationCurrentQuery,
+          QueryGetRegulationCurrentArgs
+        >({
+          query: GET_REGULATION_CURRENT_QUERY,
+          variables: {
+            input: {
+              name: number,
+            },
+          },
+        })
+      : viewType === 'd'
+      ? apolloClient.query<
+          GetRegulationByDateQuery,
+          QueryGetRegulationByDateArgs
+        >({
+          query: GET_REGULATION_BY_DATE_QUERY,
+          variables: {
+            input: {
+              name: number,
+              date: String(date),
+            },
+          },
+        })
+      : undefined,
   ])
 
-  console.log({ texts, regulationData })
-  const redirect = false
+  const regulation = Object.values(regulationData?.data ?? {})[0] as
+    | Regulation
+    | RegulationRedirect
+
+  // we assume 404 if no Organization is found
+  if (!regulation) {
+    throw new CustomNextError(404, 'Þessi síða fannst ekki!')
+  }
 
   return {
-    regulation: (regulationData as unknown) as Regulation | RegulationRedirect,
+    regulation,
     texts,
   }
 }
