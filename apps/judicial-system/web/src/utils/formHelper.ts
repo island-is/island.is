@@ -140,6 +140,41 @@ export const setAndSendDateToServer = async (
   }
 }
 
+export const newSetAndSendDateToServer = async (
+  field: string,
+  date: Date | undefined,
+  isValid: boolean,
+  theCase: Case,
+  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setIsValid: (value: React.SetStateAction<boolean>) => void,
+  updateCase: (id: string, updateCase: UpdateCase) => void,
+) => {
+  setIsValid(isValid)
+
+  if (!isValid) {
+    return
+  }
+
+  let formattedDate = null
+
+  if (date !== undefined) {
+    formattedDate = formatISO(date, {
+      representation: 'complete',
+    })
+  }
+
+  setCase({
+    ...theCase,
+    [field]: formattedDate,
+  })
+
+  if (theCase.id !== '') {
+    updateCase(theCase.id, {
+      [field]: formattedDate,
+    })
+  }
+}
+
 export const validateAndSendToServer = async (
   field: string,
   value: string,
