@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
 import { CRCFieldBaseProps, Child } from '../../types'
 import { DescriptionText } from '../components'
@@ -69,13 +69,6 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         }))}
         onSelect={(newAnswer) => setSelectedChildrenState(newAnswer)}
       />
-      <Box marginTop={3}>
-        <AlertMessage
-          type="info"
-          title="Val á börnum"
-          message="Aðeins er hægt að velja börn sem eru skráð með sama lögheimili og sömu foreldra í hverri umsókn."
-        />
-      </Box>
     </>
   )
 }
