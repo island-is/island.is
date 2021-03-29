@@ -180,6 +180,7 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
+  files?: File[]
 }
 
 export enum NotificationType {

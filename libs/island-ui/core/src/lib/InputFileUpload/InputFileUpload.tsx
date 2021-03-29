@@ -115,7 +115,9 @@ const UploadedFile = ({
     >
       <Text truncate fontWeight="semiBold">
         {file.name}
-        {showFileSize && <Text as="span">{` (${kb(file.size)}KB)`}</Text>}
+        {showFileSize && file.size && (
+          <Text as="span">{` (${kb(file.size)}KB)`}</Text>
+        )}
       </Text>
       {isUploading ? (
         <div

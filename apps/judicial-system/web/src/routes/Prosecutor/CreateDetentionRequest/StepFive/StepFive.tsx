@@ -8,7 +8,12 @@ import {
   UploadFile,
   UploadFileStatus,
 } from '@island.is/island-ui/core'
-import { Case, CreateFile, UpdateCase } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CreateFile,
+  PresignedPost,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
 import {
   FormContentContainer,
   FormFooter,
@@ -29,11 +34,11 @@ import {
 import { useRouter } from 'next/router'
 import { forEach } from 'lodash'
 import * as styles from './StepFive.treat'
-import { createUploadFile } from '@island.is/judicial-system-web/src/services/api'
+import { createFormData } from '@island.is/judicial-system-web/src/services/api'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [files, setFiles] = useState<UploadFile[]>()
+  const [files, setFiles] = useState<UploadFile[]>([])
 
   const router = useRouter()
   const id = router.query.id
@@ -86,12 +91,14 @@ export const StepFive: React.FC = () => {
     loaded: number,
     total: number,
   ) => {
+    const newFiles = [...files]
     file.percent = (loaded / total) * 100
     file.status = 'uploading'
-    files[getFileIndexInFiles(file, files)].percent = (loaded / total) * 100
-    files[getFileIndexInFiles(file, files)].status = 'uploading'
 
-    setFiles(files)
+    newFiles[getFileIndexInFiles(file, files)].percent = (loaded / total) * 100
+    newFiles[getFileIndexInFiles(file, files)].status = 'uploading'
+
+    setFiles(newFiles)
   }
 
   const setFileStatus = (
@@ -99,13 +106,14 @@ export const StepFive: React.FC = () => {
     files: UploadFile[],
     status: UploadFileStatus,
   ) => {
+    const newFiles = [...files]
     file.status = status
-    files[getFileIndexInFiles(file, files)].status = status
+    newFiles[getFileIndexInFiles(file, files)].status = status
 
-    setFiles(files)
+    setFiles(newFiles)
   }
 
-  const createRequest = (file: UploadFile, files: UploadFile[]) => {
+  const createS3UploadRequest = (file: UploadFile, files: UploadFile[]) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
     request.responseType = 'json'
@@ -127,9 +135,18 @@ export const StepFive: React.FC = () => {
     return request
   }
 
+  const uploadToS3 = (
+    file: UploadFile,
+    files: UploadFile[],
+    presignedPost: PresignedPost,
+  ) => {
+    const s3UploadRequest = createS3UploadRequest(file, files)
+    s3UploadRequest.open('POST', presignedPost.url)
+    s3UploadRequest.send(createFormData(presignedPost, file))
+  }
+
   const uploadFiles = (id: string, files: UploadFile[]) => {
     forEach(files, async (aFile) => {
-      const request = createRequest(aFile, files)
       const { data: presignedPostData } = await createPresignedPostMutation({
         variables: { input: { caseId: id, fileName: aFile.name } },
       })
@@ -139,23 +156,17 @@ export const StepFive: React.FC = () => {
         return
       }
 
-      const { data: fileData } = await createFileMutation({
+      uploadToS3(aFile, files, presignedPost)
+
+      await createFileMutation({
         variables: {
-          input: { caseId: id, key: presignedPost.fields.key, size: 999 },
+          input: {
+            caseId: id,
+            key: presignedPost.fields.key,
+            size: aFile.size,
+          },
         },
       })
-
-      const file = fileData?.createFileMutation
-
-      if (file) {
-        // do something
-      }
-
-      if (presignedPost) {
-        const fileToUpload = createUploadFile(presignedPost, file)
-        request.open('POST', presignedPost.url)
-        request.send(fileToUpload)
-      }
     })
   }
 

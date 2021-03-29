@@ -22,7 +22,7 @@ export const getFeature = async (name: string): Promise<boolean> => {
   return await (await fetch(`/api/feature/${name}`)).json()
 }
 
-export const createUploadFile = (
+export const createFormData = (
   presignedPost: PresignedPost,
   file: UploadFile,
 ): FormData => {
