@@ -64,7 +64,6 @@ export const Data = ({
 }: DataField &
   Omit<AllHTMLAttributes<HTMLTableDataCellElement>, 'className'>) => {
   const classNames = cn(
-    styles.cell,
     getTextStyles({
       variant: 'small',
       ...text,
@@ -79,6 +78,8 @@ export const Data = ({
       borderColor: 'blue200',
       ...box,
     }),
+    styles.cell,
+
   )
   return (
     <td className={classNames} {...props}>
@@ -94,7 +95,6 @@ export const HeadData = ({
 }: DataField &
   Omit<AllHTMLAttributes<HTMLTableHeaderCellElement>, 'className'>) => {
   const classNames = cn(
-    styles.cell,
     getTextStyles({
       variant: 'h5',
       ...text,
@@ -108,9 +108,10 @@ export const HeadData = ({
       borderBottomWidth: 'standard',
       borderColor: 'blue200',
       background: 'blue100',
-      textAlign: 'left',
       ...box,
     }),
+    styles.cell,
+
   )
   return (
     <th className={classNames} {...props}>

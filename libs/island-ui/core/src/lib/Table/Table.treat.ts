@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style, globalStyle } from 'treat'
 
 export const table = style({
   borderCollapse: 'collapse',

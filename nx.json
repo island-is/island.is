@@ -179,6 +179,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-ui-components": {
+      "tags": []
+    },
     "application-ui-fields": {
       "tags": []
     },
