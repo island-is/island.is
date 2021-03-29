@@ -1,18 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
-import { CRCFieldBaseProps } from '../../types'
+import { CRCFieldBaseProps, Child } from '../../types'
 import { DescriptionText } from '../components'
+
+const shouldBeDisabled = (
+  children: Child[],
+  selectedChildren: string[],
+  childOption: Child,
+) => {
+  if (!selectedChildren || selectedChildren?.length === 0) {
+    return false
+  }
+  const firstSelectedChild = children.find(
+    (child) => selectedChildren[0] === child.nationalId,
+  )
+  if (
+    firstSelectedChild?.livesWithApplicant !== childOption.livesWithApplicant ||
+    firstSelectedChild?.otherParent.nationalId !==
+      childOption.otherParent.nationalId
+  ) {
+    return true
+  }
+  return false
+}
 
 const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
   const {
     externalData: { nationalRegistry },
+    answers,
   } = application
   const children = nationalRegistry.data.children
+  const currentAnswer = answers.selectedChildren
+  const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
+    currentAnswer,
+  )
+
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -25,17 +52,30 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         id={id}
         disabled={disabled}
         name={`${id}`}
-        defaultValue={[]}
+        defaultValue={
+          selectedChildrenState !== undefined
+            ? selectedChildrenState
+            : undefined
+        }
         error={error}
         large={true}
-        options={children.map((c) => ({
-          value: c.nationalId,
-          label: c.fullName,
+        options={children.map((child) => ({
+          value: child.nationalId,
+          label: child.fullName,
+          disabled: shouldBeDisabled(children, selectedChildrenState, child),
           subLabel: formatMessage(selectChildren.checkboxes.subLabel, {
-            parentName: c.otherParent.fullName,
+            parentName: child.otherParent.fullName,
           }),
         }))}
+        onSelect={(newAnswer) => setSelectedChildrenState(newAnswer)}
       />
+      <Box marginTop={3}>
+        <AlertMessage
+          type="info"
+          title="Val á börnum"
+          message="Aðeins er hægt að velja börn sem eru skráð með sama lögheimili og sömu foreldra í hverri umsókn."
+        />
+      </Box>
     </>
   )
 }
