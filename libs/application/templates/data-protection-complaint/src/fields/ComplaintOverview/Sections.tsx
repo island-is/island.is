@@ -98,8 +98,7 @@ export const Complainees: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
 }) => (
   <>
-    <ComplaineeTable {...answers.complainee} />
-    {answers.additionalComplainees?.map((complainee, index) => (
+    {answers.complainees?.map((complainee, index) => (
       <ComplaineeTable {...complainee} key={index} />
     ))}
   </>
