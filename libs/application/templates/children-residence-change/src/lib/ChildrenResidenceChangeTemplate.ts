@@ -61,7 +61,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          ASSIGN: {
+          [DefaultEvents.ASSIGN]: {
             target: ApplicationStates.IN_REVIEW,
           },
         },
@@ -97,7 +97,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
+          [DefaultEvents.SUBMIT]: {
             target: ApplicationStates.SUBMITTED,
           },
         },
