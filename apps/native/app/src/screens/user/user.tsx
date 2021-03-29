@@ -60,6 +60,7 @@ export const UserScreen: NavigationFunctionComponent = () => {
           title="Logout"
           onPress={async () => {
             await authStore.logout()
+            await Navigation.dismissAllModals();
             Navigation.setRoot({
               root: await getAppRoot(),
             })

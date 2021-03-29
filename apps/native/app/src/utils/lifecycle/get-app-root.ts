@@ -24,8 +24,12 @@ export async function getAppRoot(): Promise<Layout> {
     return { component: { name: ComponentRegistry.LoginScreen } }
   }
 
+  if (config.disableLockScreen) {
+    return getMainRoot();
+  }
+
   // Show app lock screen if authenticated
-  return { component: { name: ComponentRegistry.AppLockScreen, passProps: { isRoot: true } } }
+  return { component: { name: ComponentRegistry.AppLockScreen, passProps: { isRoot: true, status: 'active' } } }
 }
 
 /**

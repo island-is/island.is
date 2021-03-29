@@ -27,7 +27,7 @@ function unlockApp() {
   resetLockScreen();
 }
 
-export const AppLockScreen: NavigationFunctionComponent<{ isRoot: boolean }> = ({ componentId, isRoot = false }) => {
+export const AppLockScreen: NavigationFunctionComponent<{ isRoot: boolean; status: string }> = ({ componentId, status, isRoot = false }) => {
 
   const isBiometricsPrompt = useRef(false);
 
@@ -52,6 +52,15 @@ export const AppLockScreen: NavigationFunctionComponent<{ isRoot: boolean }> = (
   }, []);
 
   useEffect(() => {
+    console.log({ status });
+    if (status === 'active') {
+      authenticateWithBiometrics();
+    }
+  }, [status]);
+
+  useEffect(() => {
+    // authenticateWithBiometrics();
+
     AppState.addEventListener('change', onAppStateChange);
     return () => {
       AppState.removeEventListener('change', onAppStateChange);
