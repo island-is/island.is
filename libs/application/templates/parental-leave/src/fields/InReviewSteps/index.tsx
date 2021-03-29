@@ -12,10 +12,8 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { YES } from '../../constants'
 
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import {
-  getExpectedDateOfBirth,
-  handleSubmitError,
-} from '../../parentalLeaveUtils'
+import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import { handleSubmitError } from '../../parentalLeaveClientUtils'
 import { useMutation } from '@apollo/client'
 import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 

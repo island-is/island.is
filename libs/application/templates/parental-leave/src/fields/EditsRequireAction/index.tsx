@@ -11,7 +11,7 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
-import { handleSubmitError } from '../../parentalLeaveUtils'
+import { handleSubmitError } from '../../parentalLeaveClientUtils'
 
 const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(

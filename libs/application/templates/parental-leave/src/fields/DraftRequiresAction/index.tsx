@@ -13,7 +13,7 @@ import { useMutation } from '@apollo/client'
 
 import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 import { MessageDescriptor } from '@formatjs/intl'
-import { handleSubmitError } from '../../parentalLeaveUtils'
+import { handleSubmitError } from '../../parentalLeaveClientUtils'
 
 const DraftRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
