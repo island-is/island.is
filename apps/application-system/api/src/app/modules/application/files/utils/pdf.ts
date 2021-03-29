@@ -4,6 +4,7 @@ import {
   NationalRegistry,
   Answers,
   formatAddress,
+  formatDate,
   getSelectedChildrenFromExternalData,
   childrenResidenceInfo,
 } from '@island.is/application/templates/children-residence-change'
@@ -187,7 +188,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.LARGE_LINE_GAP,
     expiry[0] === PdfConstants.PERMANENT
       ? 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.'
-      : `Samningurinn gildir til ${expiry[1]}`,
+      : `Samningurinn gildir til ${formatDate(expiry[1])}`,
   )
 
   addToDoc(

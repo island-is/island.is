@@ -1,3 +1,5 @@
+import parse from 'date-fns/parse'
+import format from 'date-fns/format'
 import {
   Address,
   Answers,
@@ -69,5 +71,14 @@ export const childrenResidenceInfo = (
     future: childrenLiveWithApplicant
       ? extractParentInfo(parentB, ParentLetters.A)
       : extractParentInfo(applicant, ParentLetters.B),
+  }
+}
+
+export const formatDate = (date: string) => {
+  try {
+    const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
+    return format(parsedDate, 'dd.MM.yyyy')
+  } catch {
+    return date
   }
 }
