@@ -10,9 +10,12 @@ declare global {
 
 declare var ReadSpeaker: any;
 
-Router.events.on('routeChangeStart', () => {
+Router.events.on('routeChangeStart', (url) => {
   if (typeof ReadSpeaker !== "undefined" ) {
     ReadSpeaker.PlayerAPI.stop()
+    if (ReadSpeaker.PlayerAPI.audio.state.current) {
+      window.location.href = url
+    }
   }
 })
 
