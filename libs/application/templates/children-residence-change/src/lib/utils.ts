@@ -1,4 +1,5 @@
-import { parse, format } from 'date-fns'
+import parse from 'date-fns/parse'
+import format from 'date-fns/format'
 import {
   Address,
   Answers,
