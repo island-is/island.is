@@ -41,6 +41,11 @@ export const error = defineMessages({
     defaultMessage: 'Skylda er að fylla út reitinn',
     description: 'Error message when a required field has not been filled out',
   },
+  wordCountReached: {
+    id: 'dpac.application:error.wordCountReached',
+    defaultMessage: 'Lýsingin má vera 500 orð að hámarki',
+    description: 'Error message when a word count has been reached',
+  },
 })
 
 export const errorCards = defineMessages({

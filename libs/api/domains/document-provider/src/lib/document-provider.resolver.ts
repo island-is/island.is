@@ -29,12 +29,14 @@ import {
 } from './dto'
 import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
+import { AdminGuard } from './admin.guard'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
 
+  @UseGuards(AdminGuard)
   @Query(() => [Organisation])
   async getProviderOrganisations(
     @CurrentUser() user: User,
@@ -42,6 +44,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.getOrganisations(user.authorization)
   }
 
+  @UseGuards(AdminGuard)
   @Query(() => Organisation)
   async getProviderOrganisation(
     @Args('nationalId') nationalId: string,
@@ -69,6 +72,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Organisation)
   async updateOrganisation(
     @Args('id') id: string,
@@ -86,6 +90,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact, { nullable: true })
   async createAdministrativeContact(
     @Args('organisationId') organisationId: string,
@@ -101,6 +106,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact)
   async updateAdministrativeContact(
     @Args('organisationId') organisationId: string,
@@ -120,6 +126,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact, { nullable: true })
   async createTechnicalContact(
     @Args('organisationId') organisationId: string,
@@ -135,6 +142,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact)
   async updateTechnicalContact(
     @Args('organisationId') organisationId: string,
@@ -154,6 +162,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Helpdesk, { nullable: true })
   async createHelpdesk(
     @Args('organisationId') organisationId: string,
@@ -169,6 +178,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Helpdesk)
   async updateHelpdesk(
     @Args('organisationId') organisationId: string,

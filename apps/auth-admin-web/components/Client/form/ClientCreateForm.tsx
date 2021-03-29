@@ -368,12 +368,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.description"
                       message="Description can not include special characters"
                     />
-                    <TranslationCreateFormDropdown
-                      className="client"
-                      property="description"
-                      isEditing={isEditing}
-                      id={client.clientId}
-                    />
                   </div>
 
                   <div>
@@ -385,7 +379,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         ref={register({
                           required: !isEditing,
-                          validate: ValidationUtils.validateUrl,
+                          validate: isEditing
+                            ? () => {
+                                return true
+                              }
+                            : ValidationUtils.validateUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
@@ -467,6 +465,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         errors={errors}
                         name="client.clientName"
                         message="Display name is required since the client requires consent"
+                      />
+                      <TranslationCreateFormDropdown
+                        className="client"
+                        property="clientName"
+                        isEditing={isEditing}
+                        id={client.clientId}
                       />
                     </div>
 

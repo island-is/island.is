@@ -21,7 +21,7 @@ describe('/domari-krafa/thingbok', () => {
     // Arrange
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_2' },
+      query: { id: 'test_id_9' },
     }))
 
     render(
@@ -31,31 +31,39 @@ describe('/domari-krafa/thingbok', () => {
           ...mockJudgeQuery,
           ...mockUpdateCaseMutation([
             {
+              id: 'test_id_9',
               courtStartTime: parseTime(formatISO(new Date()), '12:31'),
             } as UpdateCase,
             {
+              id: 'test_id_9',
               courtEndTime: parseTime(formatISO(new Date()), '12:32'),
             } as UpdateCase,
             {
+              id: 'test_id_9',
               courtAttendees:
                 'Ruth Bader Ginsburg saksóknari\nJon Harring kærði\nSaul Goodman skipaður verjandi kærða',
             } as UpdateCase,
             {
+              id: 'test_id_9',
               policeDemands:
                 'Þess er krafist að Jon Harring, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {
+              id: 'test_id_9',
               policeDemands:
                 'Þess er krafist að Jon Harring, kt. 111111-1110, sæti gæsluvarðhaldi með úrskurði string, til miðvikudagsins 16. september 2020, kl. 00:00.',
             } as UpdateCase,
             {
+              id: 'test_id_9',
               accusedPleaDecision: AccusedPleaDecision.ACCEPT,
             } as UpdateCase,
             {
+              id: 'test_id_9',
               accusedPleaAnnouncement:
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Iam id ipsum absurdum, maximum malum neglegi. Sed ne, dum huic obsequor, vobis molestus sim. Quae dici eadem de ceteris virtutibus possunt, quarum omnium fundamenta vos in voluptate tamquam in aqua ponitis. Hanc ergo intuens debet institutum illud quasi signum absolvere. Duo Reges: constructio interrete. Quorum sine causa fieri nihil putandum est. Antiquorum autem sententiam Antiochus noster mihi videtur persequi diligentissime, quam eandem Aristoteli fuisse et Polemonis docet. Atque ab his initiis profecti omnium virtutum et originem et progressionem persecuti sunt. Nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; Cur deinde Metrodori liberos commendas?',
             } as UpdateCase,
             {
+              id: 'test_id_9',
               litigationPresentations:
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nihilne est in his rebus, quod dignum libero aut indignum esse ducamus? Haec quo modo conveniant, non sane intellego. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Etenim semper illud extra est, quod arte comprehenditur. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Nunc haec primum fortasse audientis servire debemus. Duo Reges: constructio interrete. Quare hoc videndum est, possitne nobis hoc ratio philosophorum dare.',
             } as UpdateCase,

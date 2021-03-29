@@ -119,4 +119,9 @@ export const sharedFields = defineMessages({
     defaultMessage: 'Eyða',
     description: 'Remove',
   },
+  word: {
+    id: 'dpac.application:sharedFields.word',
+    defaultMessage: 'orð',
+    description: 'Words',
+  },
 })
