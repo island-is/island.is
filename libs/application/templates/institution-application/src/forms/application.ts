@@ -190,24 +190,24 @@ export const application: Form = buildForm({
                 }),
                 buildCustomField(
                   {
-                    id: 'attatchments.description',
+                    id: 'attachments.description',
                     component: 'FieldDescription',
                     title: '',
                   },
                   {
-                    subTitle: m.project.attatchmentsSubtitle,
-                    description: m.project.attatchmentsDescription,
+                    subTitle: m.project.attachmentsSubtitle,
+                    description: m.project.attachmentsDescription,
                   },
                 ),
                 buildFileUploadField({
-                  id: 'attatchments',
+                  id: 'attachments',
                   title: '',
                   introduction: '',
 
                   maxSize: FILE_SIZE_LIMIT,
-                  uploadHeader: m.project.attatchmentsUploadHeader,
-                  uploadDescription: m.project.attatchmentsUploadDescription,
-                  uploadButtonLabel: m.project.attatchmentsUploadButtonLabel,
+                  uploadHeader: m.project.attachmentsUploadHeader,
+                  uploadDescription: m.project.attachmentsUploadDescription,
+                  uploadButtonLabel: m.project.attachmentsUploadButtonLabel,
                 }),
               ],
             }),

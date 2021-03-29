@@ -141,31 +141,31 @@ export const institutionApplicationMessages = {
       defaultMessage: 'Hvert er framlag stofnunarinnar?',
       description: 'Placeholder for project finance formfield',
     },
-    attatchmentsSubtitle: {
-      id: 'ia.application:project.attatchment.subTitle',
+    attachmentsSubtitle: {
+      id: 'ia.application:project.attachment.subTitle',
       defaultMessage: 'Fylgiskjöl',
-      description: 'Subtitle for project attatchment formfields',
+      description: 'Subtitle for project attachment formfields',
     },
-    attatchmentsDescription: {
-      id: 'ia.application:project.attatchment.description',
+    attachmentsDescription: {
+      id: 'ia.application:project.attachment.description',
       defaultMessage:
         'Ef búið er að útbúa þarfagreiningu fyrir verkefnið eða önnur skjöl sem þú vilt koma á framfæri. ',
-      description: 'Description for project attatchment formfields',
+      description: 'Description for project attachment formfields',
     },
-    attatchmentsUploadHeader: {
-      id: 'ia.application:project.attatchment.uploadHeader',
+    attachmentsUploadHeader: {
+      id: 'ia.application:project.attachment.uploadHeader',
       defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-      description: 'Upload header for project attatchment formfields',
+      description: 'Upload header for project attachment formfields',
     },
-    attatchmentsUploadDescription: {
-      id: 'ia.application:project.attatchment.uploadDescription',
+    attachmentsUploadDescription: {
+      id: 'ia.application:project.attachment.uploadDescription',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
-      description: 'Upload description for project attatchment formfields',
+      description: 'Upload description for project attachment formfields',
     },
-    attatchmentsUploadButtonLabel: {
-      id: 'ia.application:project.attatchment.uploadButtonLabel',
+    attachmentsUploadButtonLabel: {
+      id: 'ia.application:project.attachment.uploadButtonLabel',
       defaultMessage: 'Velja skjöl til að hlaða upp',
-      description: 'Button label for uploading project attatchment',
+      description: 'Button label for uploading project attachment',
     },
   }),
   constraints: defineMessages({

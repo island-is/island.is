@@ -51,7 +51,6 @@ const dataSchema = z.object({
   stakeholders: z.string().nonempty(),
   role: z.string().nonempty(),
   otherRoles: z.string().nonempty(),
-  attachments: z.array(FileSchema).optional(),
   constraints: z.object({
     hasTechnical: z.boolean().optional(),
     technical: z.string().optional(),
