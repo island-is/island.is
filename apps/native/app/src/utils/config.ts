@@ -10,11 +10,12 @@ export interface Config {
   };
   apiEndpoint: string;
   bundleId: string;
-  storybookMode: boolean;
   disableLockScreen: boolean;
   env: typeof env;
   constants: typeof Constants,
 }
+
+const { WebManifest, ...ConstantsRest } = Constants;
 
 export const config: Config = {
   identityServer: {
@@ -27,9 +28,8 @@ export const config: Config = {
     ios: env.BUNDLE_ID_IOS,
     android: env.BUNDLE_ID_ANDROID,
   }) || 'is.island.app',
-  storybookMode: false,
-  disableLockScreen: true,
-  constants: Constants,
+  disableLockScreen: false,
+  constants: ConstantsRest,
   env,
 };
 

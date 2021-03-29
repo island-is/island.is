@@ -3,7 +3,7 @@ const { createMatchPath, loadConfig } = require('tsconfig-paths')
 const { fileExistsSync } = require('tsconfig-paths/lib/filesystem')
 const chalk = require('chalk')
 const path = require('path')
-const DEBUG = false
+const DEBUG = true
 
 /*
  * Use tsconfig to resolve additional workspace libs.

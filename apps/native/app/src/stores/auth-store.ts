@@ -29,7 +29,7 @@ const appAuthConfig = {
   issuer: config.identityServer.issuer,
   clientId: config.identityServer.clientId,
   redirectUrl: `${config.bundleId}://oauth`,
-  scopes: config.identityServer.scopes,
+  scopes: ['openid', 'profile', 'api_resource.scope', 'offline_access', 'api','swagger_api.read', '@island.is/applications:read', '@identityserver.api/read'], //config.identityServer.scopes,
 };
 
 export const authStore = create<AuthStore>((set, get) => ({
@@ -74,6 +74,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
   async login() {
     const authorizeResult = await authorize(appAuthConfig);
+    console.log({authorizeResult});
     if (authorizeResult) {
       await Keychain.setGenericPassword(KEYCHAIN_AUTH_KEY, JSON.stringify(authorizeResult));
       set({ authorizeResult });

@@ -5,6 +5,7 @@ import { setupDeepLinkingRouter } from './utils/lifecycle/setup-deep-linking-rou
 import { setupNotifications } from './utils/lifecycle/setup-notifications'
 import { getAppRoot }from './utils/lifecycle/get-app-root';
 import { getDefaultOptions } from './utils/get-default-options'
+import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 
 function startApp() {
   // Register all components (screens, UI elements)
@@ -12,6 +13,9 @@ function startApp() {
 
   // Register all event handlers
   setupEventHandlers();
+
+  // setup development menu
+  setupDevMenu();
 
   // Setup app routing layer
   setupDeepLinkingRouter();

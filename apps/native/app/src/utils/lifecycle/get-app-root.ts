@@ -11,11 +11,6 @@ import { testIDs } from '../test-ids'
  * @returns Layout
  */
 export async function getAppRoot(): Promise<Layout> {
-  // Show storybook
-  if (config.storybookMode) {
-    return { component: { name: ComponentRegistry.StorybookScreen } }
-  }
-
   // Check if user is authenticated
   const isAuthenticated = await checkIsAuthenticated()
 
