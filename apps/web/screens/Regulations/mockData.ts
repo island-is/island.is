@@ -290,6 +290,10 @@ export type Regulation = {
   text: string
   /** List of the regulation's appendixes */
   appendixes: ReadonlyArray<Appendix>
+  /** Optional HTML formatted comments from the editor pointing out
+   * known errors or ambiguities in the text.
+   */
+  comments: string
   /** Date signed in the ministry */
   signatureDate: ISODate
   /** Date officially published in Stjórnartíðindi */
