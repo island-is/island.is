@@ -14,7 +14,7 @@ export const overview = {
     },
     confirmationPageTitle: {
       id: 'dpac.application:section.confirmation.pageTitle',
-      defaultMessage: 'Takk fyrir að senda inn kvörtun',
+      defaultMessage: 'Kvörtunin hefur verið send til Persónuverndar. ',
       description: 'confirmation page title',
     },
   }),
