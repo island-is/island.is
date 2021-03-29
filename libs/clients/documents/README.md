@@ -1,4 +1,4 @@
-# clients-documents
+# Clients Documents
 
 This library was generated with [Nx](https://nx.dev).
 
