@@ -103,17 +103,11 @@ export const Table = <T extends object>(
   }
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore - 'CSSProperties | undefined' is not assignable to type 'React.CSSProperties | undefined' ?
     <T.Table {...getTableProps()}>
       <T.Head>
         {headerGroups.map((headerGroup) => (
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore - Same as above
           <T.Row {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore - Same as above
               <T.HeadData {...column.getHeaderProps()}>
                 <Text variant="h5">{column.render('Header')}</Text>
               </T.HeadData>
@@ -121,8 +115,6 @@ export const Table = <T extends object>(
           </T.Row>
         ))}
       </T.Head>
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore - Same as above */}
       <T.Body {...getTableBodyProps()}>
         {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
           rows.map((row) => renderRow(row))}
