@@ -5,6 +5,8 @@ import { RegulationsService, Regulations, Regulation } from '@island.is/clients/
 import { GetRegulationsNewestInput } from './dto/getRegulationsNewestInput'
 import { GetRegulationOriginalInput } from './dto/getRegulationOriginalInput'
 
+const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
+
 @Resolver()
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
@@ -13,14 +15,13 @@ export class RegulationsResolver {
   getRegulationOriginal(
     @Args('input') input: GetRegulationOriginalInput,
   ): Promise<Regulation | null> {
-    return this.regulationsService.getRegulationOriginal(input?.regulationName ?? '')
+    return this.regulationsService.getRegulationOriginal(input.regulationName)
   }
 
   @Query(() => graphqlTypeJson, { nullable: true })
   getRegulationsNewest(
     @Args('input') input: GetRegulationsNewestInput,
   ): Promise<Regulations | null> {
-    return this.regulationsService.getRegulationsNewest(input?.page ?? 1)
+    return this.regulationsService.getRegulationsNewest(validPage(input.page))
   }
-
 }

@@ -1,12 +1,11 @@
 import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
 import { startMocking } from '@island.is/shared/mocking'
+import { RegulationsService, REGULATIONS_OPTIONS } from './regulations'
 import {
-  RegulationsService,
-  REGULATIONS_OPTIONS,
-} from './regulations'
-import {
-  demoRegulation, Regulation, demoRegulationName,
+  demoRegulation,
+  Regulation,
+  demoRegulationName,
 } from './regulations.types'
 
 // MOCK START
@@ -16,7 +15,7 @@ enum expectedResult {
   EMPTY = 'empty',
   SERVER_ERROR = 'serverError',
 }
-interface RegulationRestResponse {
+type RegulationRestResponse = {
   status: 200 | 400 | 404 | 500
   body?: Regulation | {}
 }
