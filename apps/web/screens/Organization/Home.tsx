@@ -27,6 +27,7 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
   LatestNewsSection,
+  lightThemes,
   OrganizationSlice,
   OrganizationWrapper,
   Section,
@@ -170,15 +171,15 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization not found')
   }
 
+  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+
   return {
     news,
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
+    ...(lightTheme ? {} : { darkTheme: true }),
   }
 }
 
-export default withMainLayout(Home, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(Home)
