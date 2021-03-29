@@ -37,12 +37,12 @@ export class DocumentBuilder {
     )
     if (found) return found
     return {
-      url: this.formatDownloadServiceUrl(document),
+      url: this.formatDownloadServiceUrl(),
       fileType: FileType.PDF,
     }
   }
 
-  private static formatDownloadServiceUrl(document: DocumentInfoDTO): string {
+  private static formatDownloadServiceUrl(): string {
     const base = 'http://localhost:3377' //Pending deployment urls from config
     return `${base}/document`
   }

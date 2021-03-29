@@ -44,7 +44,7 @@ export class DocumentController {
       authenticationType: 'HIGH',
     })
 
-    let pdf = rawDocumentDTO.content ?? ''
+    const pdf = rawDocumentDTO.content ?? ''
 
     const stream = new ReadableStreamBuffer({
       frequency: 10,
