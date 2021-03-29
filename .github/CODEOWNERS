@@ -45,7 +45,7 @@
 /libs/contentful-translation-extension/                                                       @island-is/aranja
 /libs/localization/                                                                           @island-is/aranja
 /libs/utils/api/                                                                              @island-is/aranja
-/libs/vmst-client/                                                                            @island-is/aranja
+/libs/clients/vmst/                                                                           @island-is/aranja
 /libs/shared/form-fields/                                                                     @island-is/aranja
 
 /libs/application/templates/children-residence-change/                                        @island-is/kolibri-modern-family
@@ -62,6 +62,7 @@
 /apps/services/user-profile/                                                                  @island-is/sendiradid
 /libs/api/domains/documents/                                                                  @island-is/sendiradid
 /libs/api/domains/national-registry/                                                          @island-is/sendiradid @island-is/vice-versa
+/libs/clients/national-registry/                                                              @island-is/sendiradid @island-is/vice-versa
 /libs/service-portal/applications/                                                            @island-is/sendiradid
 /libs/service-portal/assets/                                                                  @island-is/sendiradid
 /libs/service-portal/constants/                                                               @island-is/sendiradid
@@ -83,6 +84,8 @@
 /libs/content-search-indexer/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/content-search/                                                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/syslumenn/                                                                  @island-is/stefna
+/apps/web/screens/Organization/                                                               @island-is/stefna
+/apps/web/components/Organization/                                                            @island-is/stefna
 
 /libs/island-ui/                                                                              @island-is/island-ui
 

@@ -3,6 +3,8 @@ import cn from 'classnames'
 import { Text } from '../Text/Text'
 import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
+import { Box } from '../Box/Box'
+import { InputBackgroundColor } from '../Input/Input'
 import * as styles from './Checkbox.treat'
 
 export interface CheckboxProps {
@@ -18,6 +20,7 @@ export interface CheckboxProps {
   value?: string
   filled?: boolean
   large?: boolean
+  backgroundColor?: InputBackgroundColor
   /** subLabel can only be used if the 'large' prop set to true */
   subLabel?: string
 }
@@ -35,6 +38,7 @@ export const Checkbox = ({
   errorMessage,
   value,
   large,
+  backgroundColor,
   filled = false,
 }: CheckboxProps) => {
   const ariaError = hasError
@@ -43,12 +47,17 @@ export const Checkbox = ({
         'aria-describedby': id,
       }
     : {}
+
+  const background =
+    backgroundColor && backgroundColor === 'blue' ? 'blue100' : undefined
+
   return (
-    <div
+    <Box
       className={cn(styles.container, large, {
         [styles.large]: large,
         [styles.filled]: filled,
       })}
+      background={background}
     >
       <input
         className={styles.input}
@@ -110,6 +119,6 @@ export const Checkbox = ({
           </div>
         )}
       </label>
-    </div>
+    </Box>
   )
 }

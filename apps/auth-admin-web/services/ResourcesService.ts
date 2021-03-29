@@ -4,10 +4,12 @@ import { ApiResourceSecretDTO } from '../entities/dtos/api-resource-secret.dto'
 import { ApiResourcesDTO } from '../entities/dtos/api-resources-dto'
 import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
 import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
+import { UserClaimDTO } from '../entities/dtos/user-claim-dto'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
 import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
 import { ApiResource } from '../entities/models/api-resource.model'
+import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
@@ -17,6 +19,48 @@ export class ResourcesService extends BaseService {
   /** Gets API scope by name */
   static async getApiResourceByName(name: string): Promise<ApiResource | null> {
     return BaseService.GET(`api-resource/${encodeURIComponent(name)}`)
+  }
+
+  /** Gets all identity resource user claims */
+  static async findAllIdentityResourceUserClaims(): Promise<
+    IdentityResourceUserClaim[] | undefined
+  > {
+    return BaseService.GET('identity-resource-user-claim')
+  }
+
+  /** Gets all identity resource user claims */
+  static async findAllApiScopeUserClaims(): Promise<
+    ApiScopeUserClaim[] | undefined
+  > {
+    return BaseService.GET('api-scope-user-claim')
+  }
+
+  /** Gets all Api resource user claims */
+  static async findAllApiResourceUserClaims(): Promise<
+    ApiResourceUserClaim[] | undefined
+  > {
+    return BaseService.GET('api-resource-user-claim')
+  }
+
+  /** Creates a new claim for ApiResource */
+  static async createApiResourceUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | undefined> {
+    return BaseService.POST('api-resource-user-claim', claim)
+  }
+
+  /** Creates a new claim for ApiScope */
+  static async createApiScopeUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | undefined> {
+    return BaseService.POST('api-scope-user-claim', claim)
+  }
+
+  /** Creates a new claim for Identity Resource */
+  static async createIdentityResourceUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | undefined> {
+    return BaseService.POST('identity-resource-user-claim', claim)
   }
 
   /** Gets API scope by name */

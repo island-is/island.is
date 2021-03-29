@@ -9,7 +9,11 @@ import {
   UPLOAD_SIGNED_FILE,
   GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
-import { constructParentAddressString } from '../../lib/utils'
+import {
+  childrenResidenceInfo,
+  formatAddress,
+  getSelectedChildrenFromExternalData,
+} from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
 import { DescriptionText } from '../components'
@@ -32,9 +36,12 @@ const Overview = ({
     initialFileSignatureState,
   )
   const applicant = externalData.nationalRegistry.data
-  const parent = externalData.parentNationalRegistry.data
-  const parentAddress = constructParentAddressString(parent)
-  const children = answers.selectChild
+  const children = getSelectedChildrenFromExternalData(
+    applicant.children,
+    answers.selectedChildren,
+  )
+  const parentB = children[0].otherParent
+  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
@@ -163,7 +170,9 @@ const Overview = ({
           text={m.contract.general.description}
           format={{
             otherParent:
-              application.state === 'draft' ? parent.name : applicant.fullName,
+              application.state === 'draft'
+                ? parentB.fullName
+                : applicant.fullName,
           }}
         />
       </Box>
@@ -174,7 +183,7 @@ const Overview = ({
           })}
         </Text>
         {children.map((child) => (
-          <Text key={child}>{child}</Text>
+          <Text key={child.nationalId}>{child.fullName}</Text>
         ))}
       </Box>
       <Box marginTop={4}>
@@ -202,8 +211,8 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{applicant?.fullName}</Text>
-        <Text>{applicant?.legalResidence}</Text>
+        <Text>{childResidenceInfo.current.parent.fullName}</Text>
+        <Text>{formatAddress(childResidenceInfo.current.address)}</Text>
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
@@ -211,8 +220,10 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{parent?.name}</Text>
-        <Text fontWeight="light">{parentAddress}</Text>
+        <Text>{childResidenceInfo.future.parent.fullName}</Text>
+        <Text fontWeight="light">
+          {formatAddress(childResidenceInfo.future.address)}
+        </Text>
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
