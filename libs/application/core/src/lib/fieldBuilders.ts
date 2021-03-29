@@ -3,6 +3,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
+  BoxProps,
 } from '@island.is/island-ui/core'
 
 import { Application } from '../types/Application'
@@ -46,6 +47,7 @@ export function buildCheckboxField(data: {
   disabled?: boolean
   width?: FieldWidth
   large?: boolean
+  backgroundColor?: InputBackgroundColor
   defaultValue?: MaybeWithApplication<unknown>
 }): CheckboxField {
   const {
@@ -57,6 +59,7 @@ export function buildCheckboxField(data: {
     disabled = false,
     width = 'full',
     large,
+    backgroundColor,
     defaultValue,
   } = data
   return {
@@ -65,6 +68,7 @@ export function buildCheckboxField(data: {
     disabled,
     width,
     large,
+    backgroundColor,
     condition,
     id,
     title,
@@ -124,14 +128,16 @@ export function buildDescriptionField(data: {
   id: string
   title: FormText
   description: FormText
+  space?: BoxProps['paddingTop']
   tooltip?: FormText
 }): DescriptionField {
-  const { condition, id, title, description, tooltip } = data
+  const { condition, id, title, description, tooltip, space } = data
   return {
     children: undefined,
     condition,
     description,
     tooltip,
+    space,
     id,
     title,
     type: FieldTypes.DESCRIPTION,
@@ -284,6 +290,7 @@ export function buildTextField(data: {
   backgroundColor?: InputBackgroundColor
   suffix?: string
   defaultValue?: MaybeWithApplication<unknown>
+  rows?: number
 }): TextField {
   const {
     condition,
@@ -298,6 +305,7 @@ export function buildTextField(data: {
     variant = 'text',
     format,
     suffix,
+    rows,
   } = data
   return {
     children: undefined,
@@ -313,6 +321,7 @@ export function buildTextField(data: {
     variant,
     format,
     suffix,
+    rows,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

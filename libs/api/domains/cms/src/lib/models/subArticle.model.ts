@@ -5,16 +5,16 @@ import { mapDocument, SliceUnion } from '../unions/slice.union'
 @ObjectType()
 export class SubArticle {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field(() => [SliceUnion])
-  body: Array<typeof SliceUnion>
+  body: Array<typeof SliceUnion> = []
 
   @Field({ nullable: true })
   showTableOfContents?: boolean

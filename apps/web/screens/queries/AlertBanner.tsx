@@ -7,9 +7,10 @@ export const GET_ALERT_BANNER_QUERY = gql`
       bannerVariant
       title
       description
+      linkTitle
       link {
-        text
-        url
+        slug
+        type
       }
       isDismissable
       dismissedForDays

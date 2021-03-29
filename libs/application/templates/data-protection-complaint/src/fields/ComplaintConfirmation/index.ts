@@ -1,0 +1,1 @@
+export { ComplaintConfirmation } from './ComplaintConfirmation'

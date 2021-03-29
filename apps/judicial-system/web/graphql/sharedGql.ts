@@ -58,10 +58,12 @@ export const CaseQuery = gql`
       isCustodyEndDateInThePast
       custodyRestrictions
       otherRestrictions
+      isolationTo
       accusedAppealDecision
       accusedAppealAnnouncement
       prosecutorAppealDecision
       prosecutorAppealAnnouncement
+      rulingDate
       judge {
         id
         name
@@ -77,6 +79,7 @@ export const CaseQuery = gql`
         custodyEndDate
         decision
         courtCaseNumber
+        ruling
       }
       childCase {
         id

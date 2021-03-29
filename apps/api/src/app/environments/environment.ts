@@ -11,11 +11,9 @@ export default {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   education: {
-    secret: process.env.EDUCATION_SECRET,
-    emailOptions: {
-      sendFromEmail: 'development@island.is',
-      useTestAccount: true,
-    },
+    xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
+    xroadGradeServiceId: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1',
+    fileDownloadBucket: 'island-is-dev-download-cache-api',
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
@@ -53,6 +51,7 @@ export default {
   },
   documentProviderService: {
     documentsServiceBasePath: 'http://localhost:3369',
+    documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS ?? '',
     test: {
       basePath:
         'https://test-documentprovidermanagement-island-is.azurewebsites.net',
@@ -72,5 +71,10 @@ export default {
     url: process.env.SYSLUMENN_HOST ?? '',
     username: process.env.SYSLUMENN_USERNAME ?? '',
     password: process.env.SYSLUMENN_PASSWORD ?? '',
+  },
+  rskDomain: {
+    username: 'rf_api_island.is',
+    url: 'https://thjonusta-s.rsk.is/api',
+    password: process.env.RSK_API_PASSWORD,
   },
 }

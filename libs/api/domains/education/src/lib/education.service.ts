@@ -1,23 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
+import { Response } from 'node-fetch'
+import { uuid } from 'uuidv4'
+import * as kennitala from 'kennitala'
+import flatten from 'lodash/flatten'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
-import { EmailService } from '@island.is/email-service'
+import {
+  MMSApi,
+  LanguageGrade,
+  MathGrade,
+  BaseGrade,
+  GradeResult,
+} from '@island.is/clients/mms'
+import {
+  NationalRegistryApi,
+  ISLFjolskyldan,
+} from '@island.is/clients/national-registry'
 
 import { Config } from './education.module'
-import { License, SendLicense } from './education.type'
-import { MMSApi } from './client'
+import { License, ExamFamilyOverview, ExamResult } from './education.type'
+import { S3Service } from './s3.service'
+import { getYearInterval } from './education.utils'
+
+const ADULT_AGE_LIMIT = 18
 
 @Injectable()
 export class EducationService {
   constructor(
     private readonly mmsApi: MMSApi,
-    @Inject(EmailService)
-    private readonly emailService: EmailService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private readonly s3Service: S3Service,
     @Inject('CONFIG')
     private readonly config: Config,
+    private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
   async getLicenses(nationalId: User['nationalId']): Promise<License[]> {
@@ -26,46 +40,120 @@ export class EducationService {
     return licenses.map((license) => ({
       id: license.id,
       school: license.school,
-      programme: license.programme,
-      date: license.date,
+      programme: license.type,
+      date: license.issued,
     }))
   }
 
-  async sendLicense(
+  async downloadPdfLicense(
     nationalId: string,
-    email: string,
     licenseId: string,
-  ): Promise<SendLicense> {
-    const pdf = await this.mmsApi.getLicensePDF(licenseId)
-    const text = `Leyfisbréf hefur verið deilt af mínum síðum frá notanda ${nationalId}, sjá viðhengi.`
+  ): Promise<string | null> {
+    const responseStream = await this.mmsApi.downloadLicensePDF(
+      nationalId,
+      licenseId,
+    )
 
-    try {
-      await this.emailService.sendEmail({
-        from: {
-          name: 'Stafrænt Ísland',
-          address: this.config.emailOptions.sendFromEmail,
-        },
-        to: [
-          {
-            name: '',
-            address: email,
-          },
-        ],
-        subject: `Leyfisbréf deilt frá notanda ${nationalId}`,
-        text,
-        html: text,
-        attachments: [
-          {
-            filename: pdf.filename,
-            content: pdf.content,
-            encoding: 'binary',
-          },
-        ],
-      })
-    } catch (error) {
-      this.logger.error(`Failed to send email to ${email}`, error)
-      return null
+    return this.s3Service.uploadFileFromStream(responseStream, {
+      fileName: uuid(),
+      bucket: this.config.fileDownloadBucket,
+    })
+  }
+
+  async getFamily(nationalId: string) {
+    const family = await this.nationalRegistryApi.getMyFamily(nationalId)
+    return family.filter(
+      (familyMember) =>
+        nationalId === familyMember.Kennitala ||
+        (!['1', '2', '7'].includes(familyMember.Kyn) &&
+          kennitala.info(nationalId).age < ADULT_AGE_LIMIT),
+    )
+  }
+
+  async getExamFamilyOverviews(
+    nationalId: string,
+  ): Promise<ExamFamilyOverview[]> {
+    const family = await this.getFamily(nationalId)
+    const examFamilyOverviews = await Promise.all(
+      family.map(async (familyMember) => {
+        const studentAssessment = await this.mmsApi.getStudentAssessment(
+          familyMember.Kennitala,
+        )
+        if (studentAssessment.einkunnir.length <= 0) {
+          return undefined
+        }
+
+        const examDates = flatten(
+          studentAssessment.einkunnir.map((einkunn) => [
+            einkunn.islenska?.dagsetning,
+            einkunn.enska?.dagsetning,
+            einkunn.staerdfraedi?.dagsetning,
+          ]),
+        ).filter(Boolean) as string[]
+
+        return {
+          nationalId: familyMember.Kennitala,
+          name: familyMember.Nafn,
+          isChild: nationalId !== familyMember.Kennitala,
+          organizationType: 'Menntamálastofnun',
+          organizationName: 'Samræmd Könnunarpróf',
+          yearInterval: getYearInterval(examDates),
+        }
+      }),
+    )
+    return examFamilyOverviews.filter(Boolean) as ExamFamilyOverview[]
+  }
+
+  private mapGrade(grade: GradeResult) {
+    return {
+      grade: grade.radeinkunn,
+      weight: grade.vaegi,
     }
-    return { email }
+  }
+
+  private mapBaseGrade(grade: BaseGrade) {
+    return {
+      grade: grade.samtals.radeinkunn,
+      competence: grade.haefnieinkunn,
+      competenceStatus: grade.haefnieinkunnStada,
+      progressText: grade.framfaraTexti,
+    }
+  }
+
+  private mapLanguageGrade(grade: LanguageGrade) {
+    return {
+      ...this.mapBaseGrade(grade),
+      reading: this.mapGrade(grade.lesskilningur),
+      grammar: this.mapGrade(grade.malnotkun),
+    }
+  }
+
+  private mapMathGrade(grade: MathGrade) {
+    return {
+      ...this.mapBaseGrade(grade),
+      wordAndNumbers: grade.ordOgTalnadaemi,
+      calculation: this.mapGrade(grade.reikningurOgAdgerdir),
+      geometry: this.mapGrade(grade.rumfraedi),
+      ratiosAndPercentages: this.mapGrade(grade.hlutfollOgProsentur),
+      algebra: this.mapGrade(grade.algebra),
+    }
+  }
+
+  async getExamResult(familyMember: ISLFjolskyldan): Promise<ExamResult> {
+    const studentAssessment = await this.mmsApi.getStudentAssessment(
+      familyMember.Kennitala,
+    )
+    return {
+      id: `EducationExamResult${familyMember.Kennitala}`,
+      fullName: familyMember.Nafn,
+      grades: studentAssessment.einkunnir.map((einkunn) => ({
+        studentYear: einkunn.bekkur,
+        icelandicGrade:
+          einkunn.islenska && this.mapLanguageGrade(einkunn.islenska),
+        englishGrade: einkunn.enska && this.mapLanguageGrade(einkunn.enska),
+        mathGrade:
+          einkunn.staerdfraedi && this.mapMathGrade(einkunn.staerdfraedi),
+      })),
+    }
   }
 }

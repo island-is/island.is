@@ -23,6 +23,7 @@ import {
   InfoCard,
   PageLayout,
   PdfButton,
+  FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
@@ -152,222 +153,232 @@ export const Overview: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
-            <Text as="h1" variant="h1">
-              {`Yfirlit kröfu um ${
-                workingCase.parentCase ? 'framlengingu á' : ''
-              } ${
-                workingCase.type === CaseType.CUSTODY
-                  ? `gæsluvarðhald${workingCase.parentCase ? 'i' : ''}`
-                  : `farbann${workingCase.parentCase ? 'i' : ''}`
-              }`}
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <InfoCard
-              data={[
-                {
-                  title: 'LÖKE málsnúmer',
-                  value: workingCase.policeCaseNumber,
-                },
-                {
-                  title: 'Dómstóll',
-                  value: workingCase.court,
-                },
-                {
-                  title: 'Embætti',
-                  value: `${
-                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
-                  }`,
-                },
-                {
-                  title: 'Ósk um fyrirtökudag og tíma',
-                  value: `${capitalize(
-                    formatDate(workingCase.requestedCourtDate, 'PPPP', true) ||
-                      '',
-                  )} eftir kl. ${formatDate(
-                    workingCase.requestedCourtDate,
-                    TIME_FORMAT,
-                  )}`,
-                },
-                { title: 'Ákærandi', value: workingCase.prosecutor?.name },
-                {
-                  title: workingCase.parentCase
-                    ? 'Fyrri gæsla'
-                    : 'Tími handtöku',
-                  value: workingCase.parentCase
-                    ? `${capitalize(
-                        formatDate(
-                          workingCase.parentCase.custodyEndDate,
-                          'PPPP',
-                          true,
-                        ) || '',
-                      )} kl. ${formatDate(
-                        workingCase.parentCase.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`
-                    : workingCase.arrestDate
-                    ? `${capitalize(
-                        formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                      )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
-                    : 'Var ekki skráður',
-                },
-              ]}
-              accusedName={workingCase.accusedName}
-              accusedNationalId={workingCase.accusedNationalId}
-              accusedAddress={workingCase.accusedAddress}
-              defender={{
-                name: workingCase.defenderName || '',
-                email: workingCase.defenderEmail,
-              }}
-            />
-          </Box>
-          <Box
-            component="section"
-            marginBottom={5}
-            data-testid="prosecutorDemands"
-          >
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Dómkröfur
+          <FormContentContainer>
+            <Box marginBottom={10}>
+              <Text as="h1" variant="h1">
+                {`Yfirlit kröfu um ${
+                  workingCase.parentCase ? 'framlengingu á' : ''
+                } ${
+                  workingCase.type === CaseType.CUSTODY
+                    ? `gæsluvarðhald${workingCase.parentCase ? 'i' : ''}`
+                    : `farbann${workingCase.parentCase ? 'i' : ''}`
+                }`}
               </Text>
             </Box>
-            {constructProsecutorDemands(workingCase)}
-          </Box>
-          <Box component="section" marginBottom={10}>
-            <Accordion>
-              <AccordionItem
-                labelVariant="h3"
-                id="id_2"
-                label="Lagaákvæði sem brot varða við"
-              >
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.lawsBroken}
-                  </span>
+            <Box component="section" marginBottom={5}>
+              <InfoCard
+                data={[
+                  {
+                    title: 'LÖKE málsnúmer',
+                    value: workingCase.policeCaseNumber,
+                  },
+                  {
+                    title: 'Dómstóll',
+                    value: workingCase.court,
+                  },
+                  {
+                    title: 'Embætti',
+                    value: `${
+                      workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                    }`,
+                  },
+                  {
+                    title: 'Ósk um fyrirtökudag og tíma',
+                    value: `${capitalize(
+                      formatDate(
+                        workingCase.requestedCourtDate,
+                        'PPPP',
+                        true,
+                      ) || '',
+                    )} eftir kl. ${formatDate(
+                      workingCase.requestedCourtDate,
+                      TIME_FORMAT,
+                    )}`,
+                  },
+                  { title: 'Ákærandi', value: workingCase.prosecutor?.name },
+                  {
+                    title: workingCase.parentCase
+                      ? 'Fyrri gæsla'
+                      : 'Tími handtöku',
+                    value: workingCase.parentCase
+                      ? `${capitalize(
+                          formatDate(
+                            workingCase.parentCase.custodyEndDate,
+                            'PPPP',
+                            true,
+                          ) || '',
+                        )} kl. ${formatDate(
+                          workingCase.parentCase.custodyEndDate,
+                          TIME_FORMAT,
+                        )}`
+                      : workingCase.arrestDate
+                      ? `${capitalize(
+                          formatDate(workingCase.arrestDate, 'PPPP', true) ||
+                            '',
+                        )} kl. ${formatDate(
+                          workingCase.arrestDate,
+                          TIME_FORMAT,
+                        )}`
+                      : 'Var ekki skráður',
+                  },
+                ]}
+                accusedName={workingCase.accusedName}
+                accusedNationalId={workingCase.accusedNationalId}
+                accusedAddress={workingCase.accusedAddress}
+                defender={{
+                  name: workingCase.defenderName || '',
+                  email: workingCase.defenderEmail,
+                }}
+              />
+            </Box>
+            <Box
+              component="section"
+              marginBottom={5}
+              data-testid="prosecutorDemands"
+            >
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Dómkröfur
                 </Text>
-              </AccordionItem>
-              <AccordionItem
-                labelVariant="h3"
-                id="id_2"
-                label="Lagaákvæði sem krafan er byggð á"
-              >
-                {workingCase.custodyProvisions &&
-                  workingCase.custodyProvisions.map(
-                    (custodyProvision: CaseCustodyProvisions, index) => {
+              </Box>
+              {constructProsecutorDemands(workingCase)}
+            </Box>
+            <Box component="section" marginBottom={10}>
+              <Accordion>
+                <AccordionItem
+                  labelVariant="h3"
+                  id="id_2"
+                  label="Lagaákvæði sem brot varða við"
+                >
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.lawsBroken}
+                    </span>
+                  </Text>
+                </AccordionItem>
+                <AccordionItem
+                  labelVariant="h3"
+                  id="id_2"
+                  label="Lagaákvæði sem krafan er byggð á"
+                >
+                  {workingCase.custodyProvisions &&
+                    workingCase.custodyProvisions.map(
+                      (custodyProvision: CaseCustodyProvisions, index) => {
+                        return (
+                          <div key={index}>
+                            <Text>{laws[custodyProvision]}</Text>
+                          </div>
+                        )
+                      },
+                    )}
+                </AccordionItem>
+                <AccordionItem
+                  labelVariant="h3"
+                  id="id_3"
+                  label={`Takmarkanir og tilhögun ${
+                    workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+                  }`}
+                >
+                  {formatRequestedCustodyRestrictions(
+                    workingCase.type,
+                    workingCase.requestedCustodyRestrictions,
+                    workingCase.requestedOtherRestrictions,
+                  )
+                    .split('\n')
+                    .map((requestedCustodyRestriction, index) => {
                       return (
                         <div key={index}>
-                          <Text>{laws[custodyProvision]}</Text>
+                          <Text>{requestedCustodyRestriction}</Text>
                         </div>
                       )
-                    },
+                    })}
+                </AccordionItem>
+                <AccordionItem
+                  labelVariant="h3"
+                  id="id_4"
+                  label="Greinargerð um málsatvik og lagarök"
+                >
+                  {workingCase.caseFacts && (
+                    <Box marginBottom={2}>
+                      <Box marginBottom={2}>
+                        <Text variant="h5">Málsatvik</Text>
+                      </Box>
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.caseFacts}
+                        </span>
+                      </Text>
+                    </Box>
                   )}
-              </AccordionItem>
-              <AccordionItem
-                labelVariant="h3"
-                id="id_3"
-                label={`Takmarkanir og tilhögun ${
-                  workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-                }`}
-              >
-                {formatRequestedCustodyRestrictions(
-                  workingCase.type,
-                  workingCase.requestedCustodyRestrictions,
-                  workingCase.requestedOtherRestrictions,
-                )
-                  .split('\n')
-                  .map((requestedCustodyRestriction, index) => {
-                    return (
-                      <div key={index}>
-                        <Text>{requestedCustodyRestriction}</Text>
-                      </div>
-                    )
-                  })}
-              </AccordionItem>
-              <AccordionItem
-                labelVariant="h3"
-                id="id_4"
-                label="Greinargerð um málsatvik og lagarök"
-              >
-                {workingCase.caseFacts && (
-                  <Box marginBottom={2}>
+                  {workingCase.legalArguments && (
                     <Box marginBottom={2}>
-                      <Text variant="h5">Málsatvik</Text>
+                      <Box marginBottom={2}>
+                        <Text variant="h5">Lagarök</Text>
+                      </Box>
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.legalArguments}
+                        </span>
+                      </Text>
                     </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFacts}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-                {workingCase.legalArguments && (
-                  <Box marginBottom={2}>
-                    <Box marginBottom={2}>
-                      <Text variant="h5">Lagarök</Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.legalArguments}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-              </AccordionItem>
-              <AccordionItem
-                id="id_5"
-                label="Athugasemdir vegna málsmeðferðar"
-                labelVariant="h3"
-              >
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.comments}
-                  </span>
-                </Text>
-              </AccordionItem>
-            </Accordion>
-          </Box>
-          <Box className={styles.prosecutorContainer}>
-            <Text variant="h3">
-              {workingCase.prosecutor
-                ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`
-                : `${user?.name} ${user?.title}`}
-            </Text>
-          </Box>
-          <Box marginBottom={10}>
-            <PdfButton
-              caseId={workingCase.id}
-              title="Opna PDF kröfu"
-              pdfType="request"
-            />
-          </Box>
-          <FormFooter
-            previousUrl={
-              workingCase.state === CaseState.RECEIVED &&
-              workingCase.isCourtDateInThePast
-                ? Constants.REQUEST_LIST_ROUTE
-                : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
-            }
-            nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
-            nextIsLoading={isSendingNotification}
-            onNextButtonClick={async () => {
-              const notificationSent = await handleNextButtonClick()
-
-              if (notificationSent) {
-                setModalVisible(true)
-              } else {
-                // TODO: Handle error
+                  )}
+                </AccordionItem>
+                <AccordionItem
+                  id="id_5"
+                  label="Athugasemdir vegna málsmeðferðar"
+                  labelVariant="h3"
+                >
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.comments}
+                    </span>
+                  </Text>
+                </AccordionItem>
+              </Accordion>
+            </Box>
+            <Box className={styles.prosecutorContainer}>
+              <Text variant="h3">
+                {workingCase.prosecutor
+                  ? `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`
+                  : `${user?.name} ${user?.title}`}
+              </Text>
+            </Box>
+            <Box marginBottom={10}>
+              <PdfButton
+                caseId={workingCase.id}
+                title="Opna PDF kröfu"
+                pdfType="request"
+              />
+            </Box>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={
+                workingCase.state === CaseState.RECEIVED &&
+                workingCase.isCourtDateInThePast
+                  ? Constants.REQUEST_LIST_ROUTE
+                  : `${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`
               }
-            }}
-          />
+              nextButtonText="Senda kröfu á héraðsdóm"
+              nextIsLoading={isSendingNotification}
+              onNextButtonClick={async () => {
+                const notificationSent = await handleNextButtonClick()
 
+                if (notificationSent) {
+                  setModalVisible(true)
+                } else {
+                  // TODO: Handle error
+                }
+              }}
+            />
+          </FormContentContainer>
           {modalVisible && (
             <Modal
               title={`Krafa um ${
                 workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhald'
                   : 'farbann'
-              }  hefur verið staðfest`}
+              }  hefur verið send til dómstóls`}
               text="Tilkynning hefur verið send á dómara og dómritara á vakt."
               handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
               handlePrimaryButtonClick={() => {

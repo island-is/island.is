@@ -20,6 +20,7 @@ interface Props {
   currency?: boolean
   type?: 'text' | 'email' | 'number' | 'tel'
   suffix?: string
+  rows?: number
   format?: string | FormatInputValueFunction
 }
 
@@ -46,6 +47,7 @@ export const InputController: FC<Props> = ({
   format,
   onChange: onInputChange,
   suffix,
+  rows,
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -132,6 +134,7 @@ export const InputController: FC<Props> = ({
               onInputChange(e)
             }
           }}
+          rows={rows}
           {...props}
         />
       )

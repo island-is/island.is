@@ -36,13 +36,13 @@ import {
   RolesGuard,
   RolesRule,
   RulesType,
+  TokenGuaard,
 } from '@island.is/judicial-system/auth'
 
 import { UserService } from '../user'
 import { CreateCaseDto, TransitionCaseDto, UpdateCaseDto } from './dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
-import { CaseValidationPipe } from './pipes'
 import { isCaseBlockedFromUser } from './filters'
 import { CaseService } from './case.service'
 
@@ -109,6 +109,7 @@ const judgeUpdateRule = {
     'custodyEndDate',
     'custodyRestrictions',
     'otherRestrictions',
+    'isolationTo',
     'accusedAppealDecision',
     'accusedAppealAnnouncement',
     'prosecutorAppealDecision',
@@ -182,15 +183,11 @@ const registrarTransitionRule = {
   dtoFieldValues: [CaseTransition.RECEIVE],
 } as RolesRule
 
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {
   constructor(
-    @Inject(UserService)
     private readonly userService: UserService,
-    @Inject(CaseService)
     private readonly caseService: CaseService,
   ) {}
 
@@ -214,27 +211,66 @@ export class CaseController {
     const user = await this.userService.findById(prosecutorId)
 
     if (!user) {
-      throw new NotFoundException(`Prosecutor ${prosecutorId} does not exist`)
+      throw new NotFoundException(`User ${prosecutorId} does not exist`)
     }
 
-    if (user.institutionId !== existingCase.prosecutor.institutionId) {
+    if (user.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(`User ${prosecutorId} is not a prosecutor}`)
+    }
+
+    if (
+      existingCase.prosecutor &&
+      user.institutionId !== existingCase.prosecutor.institutionId
+    ) {
       throw new ForbiddenException(
-        `Prosecutor ${prosecutorId} cannot be assigned to case ${existingCase.id}`,
+        `User ${prosecutorId} belongs to the wrong institution`,
       )
     }
   }
 
+  private async validateJudge(judgeId: string, existingCase: Case) {
+    const user = await this.userService.findById(judgeId)
+
+    if (!user) {
+      throw new NotFoundException(`User ${judgeId} does not exist`)
+    }
+
+    if (user.role !== UserRole.JUDGE) {
+      throw new ForbiddenException(`User ${judgeId} is not a judge}`)
+    }
+  }
+
+  private async validateRegistrar(registratId: string, existingCase: Case) {
+    const user = await this.userService.findById(registratId)
+
+    if (!user) {
+      throw new NotFoundException(`User ${registratId} does not exist`)
+    }
+
+    if (user.role !== UserRole.REGISTRAR) {
+      throw new ForbiddenException(`User ${registratId} is not a registrar}`)
+    }
+  }
+
+  @UseGuards(TokenGuaard)
+  @Post('internal/case')
+  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
+  internalCreate(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
+    return this.caseService.create(caseToCreate)
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   create(
     @CurrentHttpUser() user: User,
-    @Body(new CaseValidationPipe())
-    caseToCreate: CreateCaseDto,
+    @Body() caseToCreate: CreateCaseDto,
   ): Promise<Case> {
     return this.caseService.create(caseToCreate, user)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
   @Put('case/:id')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -246,9 +282,16 @@ export class CaseController {
     // Make sure the user has access to this case
     const existingCase = await this.findCaseById(id, user)
 
-    // Make sure a valid prosecutor is assigned to the case
-    if (caseToUpdate.prosecutorId && existingCase.prosecutorId) {
+    // Make sure a valid users are assigned to the case's roles
+    // TODO: move user role verification to an interceptor
+    if (caseToUpdate.prosecutorId) {
       await this.validateProsecutor(caseToUpdate.prosecutorId, existingCase)
+    }
+    if (caseToUpdate.judgeId) {
+      await this.validateJudge(caseToUpdate.judgeId, existingCase)
+    }
+    if (caseToUpdate.registrarId) {
+      await this.validateRegistrar(caseToUpdate.registrarId, existingCase)
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
@@ -264,6 +307,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(
     prosecutorTransitionRule,
     judgeTransitionRule,
@@ -285,6 +329,7 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, existingCase.state)
 
+    // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
     const update = { state }
 
     if (state === CaseState.DELETED) {
@@ -305,6 +350,7 @@ export class CaseController {
     return updatedCase
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('cases')
   @ApiOkResponse({
@@ -316,6 +362,7 @@ export class CaseController {
     return this.caseService.getAll(user)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
@@ -328,6 +375,7 @@ export class CaseController {
     return existingCase
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/ruling')
   @Header('Content-Type', 'application/pdf')
@@ -355,6 +403,7 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:id/request')
   @Header('Content-Type', 'application/pdf')
@@ -382,6 +431,7 @@ export class CaseController {
     return stream.pipe(res)
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(judgeRule)
   @Post('case/:id/signature')
   @ApiCreatedResponse({
@@ -416,6 +466,7 @@ export class CaseController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(judgeRule)
   @Get('case/:id/signature')
   @ApiOkResponse({
@@ -442,6 +493,7 @@ export class CaseController {
     )
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case/:id/extend')
   @ApiCreatedResponse({

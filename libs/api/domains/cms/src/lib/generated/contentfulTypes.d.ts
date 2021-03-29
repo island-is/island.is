@@ -91,8 +91,22 @@ export interface IAlertBannerFields {
   /** description */
   description?: string | undefined
 
-  /** link */
-  link?: ILink | undefined
+  /** Link title */
+  linkTitle?: string | undefined
+
+  /** Link */
+  link?:
+    | IAboutSubPage
+    | IArticle
+    | IArticleCategory
+    | ISubArticle
+    | ILifeEventPage
+    | ILinkUrl
+    | INews
+    | IPage
+    | IVidspyrnaFrontpage
+    | IVidspyrnaPage
+    | undefined
 
   /** Is dismissable */
   isDismissable: boolean
@@ -343,9 +357,6 @@ export interface IAuctionFields {
 
   /** Content */
   content?: Document | undefined
-
-  /** Content Old */
-  contentOld?: string | undefined
 
   /** Organization */
   organization: IOrganization
@@ -687,6 +698,9 @@ export interface IFeaturedArticlesFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Application Label */
+  applicationLabel: string
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -715,9 +729,6 @@ export interface IFooterItemFields {
 
   /** Content */
   content?: Document | undefined
-
-  /** Content Old */
-  contentOld?: string | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -739,7 +750,7 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
 
 export interface IFrontpageFields {
   /** Title */
-  title?: string | undefined
+  title: string
 
   /** Featured */
   featured?: IFeatured[] | undefined
@@ -747,11 +758,14 @@ export interface IFrontpageFields {
   /** Slides */
   slides?: IFrontpageSlider[] | undefined
 
-  /** Namespace */
-  namespace?: IUiConfiguration | undefined
-
   /** Life Events */
   lifeEvents?: ILifeEventPage[] | undefined
+
+  /** Namespace */
+  namespace: IUiConfiguration
+
+  /** Page Identifier */
+  pageIdentifier: string
 }
 
 /** This is the frontpage for Island.is.
@@ -1738,9 +1752,6 @@ export interface IOneColumnTextFields {
   /** Title */
   title: string
 
-  /** Content Old */
-  contentOld?: string | undefined
-
   /** Content */
   content?: Document | undefined
 
@@ -1855,8 +1866,23 @@ export interface IOrganizationPageFields {
   /** Description */
   description?: string | undefined
 
+  /** Theme */
+  theme: 'default' | 'syslumenn' | 'digital_iceland'
+
   /** Slices */
-  slices?: (IDistricts | IFeaturedArticles)[] | undefined
+  slices?:
+    | (
+        | IBigBulletList
+        | IDistricts
+        | IMailingListSignup
+        | IFeaturedArticles
+        | ISectionHeading
+        | ILogoListSlice
+        | IStorySection
+        | ITabSection
+        | ITimeline
+      )[]
+    | undefined
 
   /** Menu Links */
   menuLinks?: ILinkGroup[] | undefined
@@ -1867,8 +1893,14 @@ export interface IOrganizationPageFields {
   /** Featured Image */
   featuredImage?: Asset | undefined
 
+  /** Sidebar Cards */
+  sidebarCards?: ISidebarCard[] | undefined
+
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -1895,9 +1927,6 @@ export interface IOrganizationSubpageFields {
   /** Slug */
   slug: string
 
-  /** Description Old */
-  descriptionOld?: string | undefined
-
   /** Description */
   description?: Document | undefined
 
@@ -1906,7 +1935,16 @@ export interface IOrganizationSubpageFields {
 
   /** Slices */
   slices?:
-    | (IDistricts | IOffices | IOneColumnText | ITwoColumnText)[]
+    | (
+        | IAccordionSlice
+        | IContactUs
+        | IDistricts
+        | IOffices
+        | IOneColumnText
+        | ITeamList
+        | ITellUsAStory
+        | ITwoColumnText
+      )[]
     | undefined
 
   /** Slice Custom Renderer */
@@ -2318,6 +2356,37 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISidebarCardFields {
+  /** Type */
+  type?: 'info' | 'warning' | undefined
+
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+}
+
+export interface ISidebarCard extends Entry<ISidebarCardFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sidebarCard'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ISideMenuFields {
   /** Internal links */
   internalLinks: (
@@ -2377,40 +2446,6 @@ export interface ISliceConnectedComponent
     contentType: {
       sys: {
         id: 'sliceConnectedComponent'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IStaffCardFields {
-  /** Name */
-  name: string
-
-  /** Intro */
-  intro?: string | undefined
-
-  /** Email */
-  email?: string | undefined
-
-  /** Phone */
-  phone?: string | undefined
-
-  /** Logo */
-  logo?: Asset | undefined
-}
-
-export interface IStaffCard extends Entry<IStaffCardFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'staffCard'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2952,9 +2987,6 @@ export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
 
-  /** Left Content Old */
-  leftContentOld?: string | undefined
-
   /** Left Content */
   leftContent?: Document | undefined
 
@@ -2963,9 +2995,6 @@ export interface ITwoColumnTextFields {
 
   /** Right Title */
   rightTitle?: string | undefined
-
-  /** Right Content Old */
-  rightContentOld?: string | undefined
 
   /** Right Content */
   rightContent?: Document | undefined
@@ -3371,9 +3400,9 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sidebarCard'
   | 'sideMenu'
   | 'sliceConnectedComponent'
-  | 'staffCard'
   | 'statistic'
   | 'statistics'
   | 'story'

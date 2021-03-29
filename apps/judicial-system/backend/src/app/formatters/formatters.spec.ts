@@ -182,6 +182,38 @@ describe('formatConclusion', () => {
     )
   })
 
+  test('should format conclusion for an accepted case with isolation and the isolation ends before the custody does', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const accusedNationalId = '0101010000'
+    const accusedName = 'Glanni Glæpur'
+    const accusedGender = CaseGender.MALE
+    const decision = CaseDecision.ACCEPTING
+    const custodyEndDate = new Date('2020-12-22T11:23')
+    const isolation = true
+    const isExtension = false
+    const isolationTo = new Date('2020-12-20T15:39')
+
+    // Act
+    const res = formatConclusion(
+      type,
+      accusedNationalId,
+      accusedName,
+      accusedGender,
+      decision,
+      custodyEndDate,
+      isolation,
+      isExtension,
+      undefined,
+      isolationTo,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Kærði, Glanni Glæpur, kt. 010101-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 22. desember 2020, kl. 11:23. Kærði skal sæta einangrun ekki lengur en til sunnudagsins 20. desember 2020, kl. 15:39.',
+    )
+  })
+
   test('should format conclusion for a case where custody is rejected, but alternative travel ban accepted', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -1092,6 +1124,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       CaseCustodyRestrictions.ISOLATION,
       CaseCustodyRestrictions.MEDIA,
     ]
+    const isolationTo = new Date('2021-04-06T12:30')
     const accusedAppealDecision = CaseAppealDecision.APPEAL
     const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
     const judgeName = 'Dalli Dómari'
@@ -1119,6 +1152,7 @@ describe('formatPrisonRulingEmailNotification', () => {
       isExtension,
       undefined,
       additionToConclusion,
+      isolationTo,
     )
 
     // Assert

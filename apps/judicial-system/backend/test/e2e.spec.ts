@@ -24,6 +24,7 @@ import { SharedAuthService } from '@island.is/judicial-system/auth'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case/models'
+import { environment } from '../src/environments'
 import {
   Notification,
   SendNotificationResponse,
@@ -65,27 +66,29 @@ beforeAll(async () => {
   const sharedAuthService = await app.resolve(SharedAuthService)
 
   prosecutor = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${prosecutorNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${prosecutorNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   prosecutorAuthCookie = sharedAuthService.signJwt(prosecutor)
 
   judge = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${judgeNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${judgeNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   judgeAuthCookie = sharedAuthService.signJwt(judge)
 
   registrar = (
-    await request(app.getHttpServer()).get(`/api/user/${registrarNationalId}`)
+    await request(app.getHttpServer())
+      .get(`/api/user/${registrarNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
 
   admin = (
-    await request(app.getHttpServer()).get(
-      `/api/user/?nationalId=${adminNationalId}`,
-    )
+    await request(app.getHttpServer())
+      .get(`/api/user/?nationalId=${adminNationalId}`)
+      .set('authorization', `Bearer ${environment.auth.secretToken}`)
   ).body
   adminAuthCookie = sharedAuthService.signJwt(admin)
 })
@@ -130,6 +133,7 @@ function remainingProsecutorCaseData() {
 
 function remainingJudgeCaseData() {
   return {
+    setCourtCaseNumberManually: true,
     courtCaseNumber: 'Court Case Number',
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
@@ -146,6 +150,8 @@ function remainingJudgeCaseData() {
     custodyEndDate: '2020-09-28T12:00:00.000Z',
     custodyRestrictions: [CaseCustodyRestrictions.MEDIA],
     otherRestrictions: 'Other Restrictions',
+    isolationTo: '2020-09-28T12:00:00.000Z',
+    additionToConclusion: 'Addition to Conclusion',
     accusedAppealDecision: CaseAppealDecision.APPEAL,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -224,8 +230,10 @@ function caseToCCase(dbCase: Case) {
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
+    rulingDate: theCase.rulingDate && theCase.rulingDate.toISOString(),
     judge: theCase.judge && userToCUser(theCase.judge),
     registrar: theCase.registrar && userToCUser(theCase.registrar),
+    isolationTo: theCase.isolationTo && theCase.isolationTo.toISOString(),
   } as unknown) as CCase
 }
 
@@ -294,6 +302,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.comments || null).toBe(caseTwo.comments || null)
   expect(caseOne.prosecutorId || null).toBe(caseTwo.prosecutorId || null)
   expectUsersToMatch(caseOne.prosecutor, caseTwo.prosecutor)
+  expect(caseOne.setCourtCaseNumberManually || null).toBe(
+    caseTwo.setCourtCaseNumberManually || null,
+  )
   expect(caseOne.courtCaseNumber || null).toBe(caseTwo.courtCaseNumber || null)
   expect(caseOne.courtDate || null).toBe(caseTwo.courtDate || null)
   expect(caseOne.courtRoom || null).toBe(caseTwo.courtRoom || null)
@@ -322,11 +333,10 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.otherRestrictions || null).toBe(
     caseTwo.otherRestrictions || null,
   )
-
+  expect(caseOne.isolationTo || null).toBe(caseTwo.isolationTo || null)
   expect(caseOne.additionToConclusion || null).toBe(
     caseTwo.additionToConclusion || null,
   )
-
   expect(caseOne.accusedAppealDecision || null).toBe(
     caseTwo.accusedAppealDecision || null,
   )
@@ -339,6 +349,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.prosecutorAppealAnnouncement || null).toBe(
     caseTwo.prosecutorAppealAnnouncement || null,
   )
+  expect(caseOne.rulingDate || null).toBe(caseTwo.rulingDate || null)
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
   expectUsersToMatch(caseOne.judge, caseTwo.judge)
   expect(caseOne.registrarId || null).toBe(caseTwo.registrarId || null)
@@ -386,6 +397,7 @@ describe('User', () => {
 
         return request(app.getHttpServer())
           .get(`/api/user/?nationalId=${judgeNationalId}`)
+          .set('authorization', `Bearer ${environment.auth.secretToken}`)
           .send()
           .expect(200)
       })
@@ -780,23 +792,62 @@ describe('Case', () => {
   })
 
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
+    let dbCase: CCase
+
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.ACCEPTED,
     })
-      .then((value) =>
-        request(app.getHttpServer())
-          .get(`/api/case/${value.id}/signature`)
+      .then((value) => {
+        dbCase = caseToCCase(value)
+
+        return request(app.getHttpServer())
+          .get(`/api/case/${dbCase.id}/signature`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .query({ documentToken: 'DEVELOPMENT' })
-          .expect(200),
-      )
+          .expect(200)
+      })
       .then(async (response) => {
         // Check the response
         expect(response.body).not.toBeNull()
         expect(response.body.documentSigned).toBe(true)
         expect(response.body.code).toBeUndefined()
         expect(response.body.message).toBeUndefined()
+
+        // Check the data in the database
+        return Case.findOne({
+          where: { id: dbCase.id },
+          include: [
+            {
+              model: User,
+              as: 'prosecutor',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'judge',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'registrar',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+          ],
+        })
+      })
+      .then((value) => {
+        const updatedDbCase = caseToCCase(value)
+
+        expect(updatedDbCase.rulingDate).not.toBeNull()
+        expectCasesToMatch(updatedDbCase, {
+          ...dbCase,
+          modified: updatedDbCase.modified,
+          rulingDate: updatedDbCase.rulingDate,
+          prosecutor,
+          judge,
+          registrar,
+        })
       })
   })
 

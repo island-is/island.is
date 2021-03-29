@@ -1,53 +1,84 @@
-import { NationalRegistryUser } from '@island.is/api/schema'
-import { PersonResidenceChange, UserInfo, CRCApplication } from '../types'
+import parse from 'date-fns/parse'
+import format from 'date-fns/format'
+import {
+  Address,
+  Answers,
+  Child,
+  NationalRegistry,
+  PersonResidenceChange,
+} from '../types'
 
-export const extractApplicantFromApplication = (
-  application: CRCApplication,
-) => {
-  return (application.externalData.nationalRegistry?.data as {
-    parent?: unknown
-  }) as NationalRegistryUser
-}
-
-// TODO: remove all these helpers when we implement the new way of mocking data
-type ValidKeys =
-  | 'nationalRegistry'
-  | 'childrenNationalRegistry'
-  | 'parentNationalRegistry'
-  | 'userProfile'
-
-const dataToUse = (
-  { answers, externalData }: CRCApplication,
-  key: ValidKeys,
-) => {
-  const mockData = answers.mockData?.[key]?.data
-  const data = externalData[key]?.data
-  if (answers.useMocks === 'no') {
-    return data
-  }
-  return mockData || data
-}
-
-export const extractParentFromApplication = (application: CRCApplication) => {
-  return dataToUse(
-    application,
-    'parentNationalRegistry',
-  ) as PersonResidenceChange
-}
-
-export const extractUserInfoFromApplication = (application: CRCApplication) => {
-  return dataToUse(application, 'userProfile') as UserInfo
-}
-
-export const extractChildrenFromApplication = (application: CRCApplication) => {
-  const data = dataToUse(application, 'childrenNationalRegistry')
-  return (data as unknown) as PersonResidenceChange[]
-}
-// END TODO
-
-export const constructParentAddressString = (parent: PersonResidenceChange) => {
-  if (!parent) {
+export const formatAddress = (address: Address) => {
+  if (!address) {
     return null
   }
-  return `${parent?.address}, ${parent?.postalCode} ${parent?.city}`
+  return `${address.streetName}, ${address.postalCode} ${address.city}`
+}
+
+export const getSelectedChildrenFromExternalData = (
+  children: Child[],
+  selectedChildren: string[],
+): Child[] => {
+  return children.filter((child) => selectedChildren.includes(child.nationalId))
+}
+
+enum ParentLetters {
+  A = 'A',
+  B = 'B',
+}
+
+interface ChildrenResidenceInfo {
+  parent: {
+    letter: ParentLetters
+    fullName: string
+  }
+  address: Address
+}
+
+const extractParentInfo = (
+  { address, fullName }: NationalRegistry | PersonResidenceChange,
+  letter: ParentLetters,
+): ChildrenResidenceInfo => {
+  return {
+    address,
+    parent: {
+      fullName,
+      letter,
+    },
+  }
+}
+
+export const childrenResidenceInfo = (
+  applicant: NationalRegistry,
+  answers: Answers,
+): {
+  current: ChildrenResidenceInfo
+  future: ChildrenResidenceInfo
+} => {
+  const children = getSelectedChildrenFromExternalData(
+    applicant.children,
+    answers.selectedChildren,
+  )
+  const parentB = children[0].otherParent
+  const childrenLiveWithApplicant = children.some(
+    (child) => child.livesWithApplicant,
+  )
+
+  return {
+    current: childrenLiveWithApplicant
+      ? extractParentInfo(applicant, ParentLetters.A)
+      : extractParentInfo(parentB, ParentLetters.B),
+    future: childrenLiveWithApplicant
+      ? extractParentInfo(parentB, ParentLetters.A)
+      : extractParentInfo(applicant, ParentLetters.B),
+  }
+}
+
+export const formatDate = (date: string) => {
+  try {
+    const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
+    return format(parsedDate, 'dd.MM.yyyy')
+  } catch {
+    return date
+  }
 }

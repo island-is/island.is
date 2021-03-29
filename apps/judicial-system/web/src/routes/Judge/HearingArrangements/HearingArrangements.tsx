@@ -14,13 +14,11 @@ import {
   Modal,
   CaseNumbers,
   BlueBox,
-  DateTime,
+  FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   Case,
@@ -36,24 +34,21 @@ import {
   SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
-import parseISO from 'date-fns/parseISO'
 import {
   JudgeSubsections,
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
-  validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
   setAndSendToServer,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
-import useDateTime from '../../../utils/hooks/useDateTime'
+import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 
 interface CaseData {
   case?: Case
@@ -67,22 +62,13 @@ export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
-  const [courtTimeErrorMessage, setCourtTimeErrorMessage] = useState('')
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
-
-  const courtTimeRef = useRef<HTMLInputElement>(null)
 
   const router = useRouter()
   const id = router.query.id
 
-  const { isValidDate: isValidCourtDate } = useDateTime({
-    date: workingCase?.courtDate,
-  })
-  const { isValidTime: isValidCourtTime } = useDateTime({
-    time: courtTimeRef.current?.value,
-  })
+  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -233,249 +219,218 @@ export const HearingArrangements: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
-            <Text as="h1" variant="h1">
-              Fyrirtaka
-            </Text>
-          </Box>
-          {workingCase.state === CaseState.DRAFT && (
-            <Box marginBottom={8}>
-              <AlertMessage
-                type="info"
-                title="Krafa hefur ekki verið staðfest af ákæranda"
-                message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
+          <FormContentContainer>
+            <Box marginBottom={10}>
+              <Text as="h1" variant="h1">
+                Fyrirtaka
+              </Text>
+            </Box>
+            {workingCase.state === CaseState.DRAFT && (
+              <Box marginBottom={8}>
+                <AlertMessage
+                  type="info"
+                  title="Krafa hefur ekki verið staðfest af ákæranda"
+                  message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
+                />
+              </Box>
+            )}
+            <Box component="section" marginBottom={7}>
+              <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
+              <CaseNumbers workingCase={workingCase} />
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Dómari{' '}
+                  <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
+                </Text>
+              </Box>
+              <Select
+                name="judge"
+                label="Veldu dómara"
+                placeholder="Velja héraðsdómara"
+                defaultValue={defaultJudge}
+                options={judges}
+                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  setJudge(
+                    (selectedOption as ReactSelectOption).value.toString(),
+                  )
+                }
+                required
               />
             </Box>
-          )}
-          <Box component="section" marginBottom={7}>
-            <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-            <CaseNumbers workingCase={workingCase} />
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Dómari{' '}
-                <Tooltip text="Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð." />
-              </Text>
+            <Box component="section" marginBottom={5}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  Dómritari{' '}
+                  <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
+                </Text>
+              </Box>
+              <Select
+                name="registrar"
+                label="Veldu dómritara"
+                placeholder="Velja dómritara"
+                defaultValue={defaultRegistrar}
+                options={registrars}
+                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  setRegistrar(
+                    (selectedOption as ReactSelectOption).value.toString(),
+                  )
+                }
+                required
+              />
             </Box>
-            <Select
-              name="judge"
-              label="Veldu dómara"
-              placeholder="Velja héraðsdómara"
-              defaultValue={defaultJudge}
-              options={judges}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                setJudge((selectedOption as ReactSelectOption).value.toString())
-              }
-              required
-            />
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                Dómritari{' '}
-                <Tooltip text="Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti." />
-              </Text>
-            </Box>
-            <Select
-              name="registrar"
-              label="Veldu dómritara"
-              placeholder="Velja dómritara"
-              defaultValue={defaultRegistrar}
-              options={registrars}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                setRegistrar(
-                  (selectedOption as ReactSelectOption).value.toString(),
-                )
-              }
-              required
-            />
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Skrá fyrirtökutíma
-              </Text>
-            </Box>
-            <Box marginBottom={3}>
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <DateTime
-                    datepickerId="courtDate"
-                    datepickerErrorMessage={courtDateErrorMessage}
-                    minDate={new Date()}
-                    selectedDate={
-                      workingCase.courtDate
-                        ? parseISO(workingCase.courtDate.toString())
-                        : null
-                    }
-                    handleCloseCalander={(date: Date | null) => {
-                      setAndSendDateToServer(
-                        'courtDate',
-                        workingCase.courtDate,
-                        date,
-                        workingCase,
-                        true,
-                        setWorkingCase,
-                        updateCase,
-                        setCourtDateErrorMessage,
-                      )
-                    }}
-                    dateIsRequired
-                    disabledTime={!workingCase.courtDate}
-                    timeOnChange={(evt) =>
-                      validateAndSetTime(
-                        'courtDate',
-                        workingCase.courtDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Skrá fyrirtökutíma
+                </Text>
+              </Box>
+              <Box marginBottom={3}>
+                <BlueBox>
+                  <Box marginBottom={2}>
+                    <DateTime
+                      name="courtDate"
+                      selectedDate={
+                        workingCase.courtDate
+                          ? new Date(workingCase.courtDate)
+                          : undefined
+                      }
+                      minDate={new Date()}
+                      onChange={(date: Date | undefined, valid: boolean) => {
+                        newSetAndSendDateToServer(
+                          'courtDate',
+                          date,
+                          valid,
+                          workingCase,
+                          setWorkingCase,
+                          setCourtDateIsValid,
+                          updateCase,
+                        )
+                      }}
+                      blueBox={false}
+                      required
+                    />
+                  </Box>
+                  <Input
+                    data-testid="courtroom"
+                    name="courtroom"
+                    label="Dómsalur"
+                    defaultValue={workingCase.courtRoom}
+                    placeholder="Skráðu inn dómsal"
+                    onChange={(event) =>
+                      removeTabsValidateAndSet(
+                        'courtRoom',
+                        event,
+                        ['empty'],
                         workingCase,
                         setWorkingCase,
-                        courtTimeErrorMessage,
-                        setCourtTimeErrorMessage,
+                        courtroomErrorMessage,
+                        setCourtroomErrorMessage,
                       )
                     }
-                    timeOnBlur={(evt) =>
-                      validateAndSendTimeToServer(
-                        'courtDate',
-                        workingCase.courtDate,
-                        evt.target.value,
-                        ['empty', 'time-format'],
+                    onBlur={(event) =>
+                      validateAndSendToServer(
+                        'courtRoom',
+                        event.target.value,
+                        ['empty'],
                         workingCase,
                         updateCase,
-                        setCourtTimeErrorMessage,
+                        setCourtroomErrorMessage,
                       )
                     }
-                    timeName="courtTime"
-                    timeErrorMessage={courtTimeErrorMessage}
-                    timeDefaultValue={
-                      workingCase.courtDate?.includes('T')
-                        ? formatDate(workingCase.courtDate, TIME_FORMAT)
-                        : undefined
-                    }
-                    timeRef={courtTimeRef}
-                    timeIsRequired
-                    blueBox={false}
+                    errorMessage={courtroomErrorMessage}
+                    hasError={courtroomErrorMessage !== ''}
+                    required
                   />
-                </Box>
+                </BlueBox>
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={8}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Skipaður verjandi
+                </Text>
+              </Box>
+              <Box marginBottom={3}>
                 <Input
-                  data-testid="courtroom"
-                  name="courtroom"
-                  label="Dómsalur"
-                  defaultValue={workingCase.courtRoom}
-                  placeholder="Skráðu inn dómsal"
+                  name="defenderName"
+                  label="Nafn verjanda"
+                  defaultValue={workingCase.defenderName}
+                  placeholder="Fullt nafn"
                   onChange={(event) =>
                     removeTabsValidateAndSet(
-                      'courtRoom',
+                      'defenderName',
                       event,
-                      ['empty'],
+                      [],
                       workingCase,
                       setWorkingCase,
-                      courtroomErrorMessage,
-                      setCourtroomErrorMessage,
                     )
                   }
                   onBlur={(event) =>
                     validateAndSendToServer(
-                      'courtRoom',
+                      'defenderName',
                       event.target.value,
-                      ['empty'],
+                      [],
                       workingCase,
                       updateCase,
-                      setCourtroomErrorMessage,
                     )
                   }
-                  errorMessage={courtroomErrorMessage}
-                  hasError={courtroomErrorMessage !== ''}
-                  required
                 />
-              </BlueBox>
-            </Box>
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Skipaður verjandi
-              </Text>
-            </Box>
-            <Box marginBottom={3}>
+              </Box>
               <Input
-                name="defenderName"
-                label="Nafn verjanda"
-                defaultValue={workingCase.defenderName}
-                placeholder="Fullt nafn"
+                name="defenderEmail"
+                label="Netfang verjanda"
+                defaultValue={workingCase.defenderEmail}
+                placeholder="Netfang"
+                errorMessage={defenderEmailErrorMessage}
+                hasError={defenderEmailErrorMessage !== ''}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
-                    'defenderName',
+                    'defenderEmail',
                     event,
-                    [],
+                    ['email-format'],
                     workingCase,
                     setWorkingCase,
+                    defenderEmailErrorMessage,
+                    setDefenderEmailErrorMessage,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
-                    'defenderName',
+                    'defenderEmail',
                     event.target.value,
-                    [],
+                    ['email-format'],
                     workingCase,
                     updateCase,
+                    setDefenderEmailErrorMessage,
                   )
                 }
               />
             </Box>
-            <Input
-              name="defenderEmail"
-              label="Netfang verjanda"
-              defaultValue={workingCase.defenderEmail}
-              placeholder="Netfang"
-              errorMessage={defenderEmailErrorMessage}
-              hasError={defenderEmailErrorMessage !== ''}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'defenderEmail',
-                  event,
-                  ['email-format'],
-                  workingCase,
-                  setWorkingCase,
-                  defenderEmailErrorMessage,
-                  setDefenderEmailErrorMessage,
-                )
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
+              nextIsDisabled={
+                workingCase.state === CaseState.DRAFT ||
+                isStepIllegal ||
+                !courtDateIsValid
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'defenderEmail',
-                  event.target.value,
-                  ['email-format'],
-                  workingCase,
-                  updateCase,
-                  setDefenderEmailErrorMessage,
-                )
-              }
+              nextIsLoading={isSendingNotification}
+              onNextButtonClick={async () => {
+                const notificationSent = await sendNotification(workingCase.id)
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                if (notificationSent && !window.Cypress) {
+                  setModalVisible(true)
+                } else {
+                  router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+                }
+              }}
             />
-          </Box>
-          <FormFooter
-            previousUrl={`${Constants.JUDGE_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
-            nextIsDisabled={
-              workingCase.state === CaseState.DRAFT ||
-              isStepIllegal ||
-              !isValidCourtDate?.isValid ||
-              !isValidCourtTime?.isValid
-            }
-            nextIsLoading={isSendingNotification}
-            onNextButtonClick={async () => {
-              const notificationSent = await sendNotification(workingCase.id)
-
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              if (notificationSent && !window.Cypress) {
-                setModalVisible(true)
-              } else {
-                router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
-              }
-            }}
-          />
-
+          </FormContentContainer>
           {modalVisible && (
             <Modal
               title="Tilkynning um fyrirtökutíma hefur verið send"

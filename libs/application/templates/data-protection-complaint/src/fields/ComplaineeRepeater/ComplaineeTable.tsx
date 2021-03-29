@@ -7,9 +7,9 @@ import { YES, NO } from '../../shared'
 interface Props {
   name: string
   address: string
-  nationalId: string
+  nationalId?: string
   operatesWithinEurope: typeof YES | typeof NO
-  countryOfOperation: string | undefined
+  countryOfOperation?: string
   onEdit?: () => void
   onRemove?: () => void
 }
@@ -32,10 +32,14 @@ export const ComplaineeTable: FC<Props> = ({
           {formatMessage(complaint.labels.complaineeName)}
         </Text>
         <Text marginBottom={3}>{name}</Text>
-        <Text variant="h5">
-          {formatMessage(complaint.labels.complaineeNationalId)}
-        </Text>
-        <Text marginBottom={3}>{nationalId}</Text>
+        {nationalId && (
+          <>
+            <Text variant="h5">
+              {formatMessage(complaint.labels.complaineeNationalId)}
+            </Text>
+            <Text marginBottom={3}>{nationalId}</Text>
+          </>
+        )}
         <Text variant="h5">
           {formatMessage(complaint.labels.complaineeAddress)}
         </Text>

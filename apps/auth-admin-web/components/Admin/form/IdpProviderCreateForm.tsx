@@ -5,6 +5,7 @@ import HelpBox from '../../common/HelpBox'
 import { IdpProviderDTO } from './../../../entities/dtos/idp-provider.dto'
 import { IdpProviderService } from './../../../services/IdpProviderService'
 import { IdpProvider } from './../../../entities/models/IdpProvider.model'
+import ValidationUtils from './../../../utils/validation.utils'
 interface Props {
   idpProvider: IdpProviderDTO
   handleSaveButtonClicked?: (response: IdpProvider) => void
@@ -76,6 +77,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     name="idp.name"
                     ref={register({
                       required: true,
+                      validate: ValidationUtils.validateIdentifier,
                     })}
                     defaultValue={idp.name}
                     className="idp-provider-create-form__input"
@@ -88,7 +90,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="idp.name"
-                    message="Name is required"
+                    message="Name is required and needs to be in the right format"
                   />
                 </div>
 
@@ -100,6 +102,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     ref={register({
                       required: true,
+                      validate: ValidationUtils.validateDescription,
                     })}
                     name="idp.description"
                     defaultValue={idp.description ?? ''}
@@ -111,7 +114,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="idp.description"
-                    message="Description is required"
+                    message="Description is required and needs to be in the right format"
                   />
                   <HelpBox helpText="Short description about this Identity Provider. This will be used as an label in the IDP Restriction form" />
                 </div>
@@ -124,7 +127,10 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     type="text"
                     className="idp-provider-create-form__input"
                     name="idp.helptext"
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     defaultValue={idp.helptext}
                     title="This text will be shown in the form where users to the Admin UI select this Identity Provider"
                     placeholder="Add this provider to be able to connect with an App from Example Firm"
@@ -135,7 +141,7 @@ const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
                     as="span"
                     errors={errors}
                     name="idp.helptext"
-                    message="Help text is required"
+                    message="Help text is required and needs to be in the right format"
                   />
                 </div>
 

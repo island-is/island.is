@@ -20,6 +20,8 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 import { validate } from './validate'
+import compareAsc from 'date-fns/compareAsc'
+import parseISO from 'date-fns/parseISO'
 
 export const getAppealDecisionText = (
   role: AppealDecisionRole,
@@ -120,9 +122,18 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
     ?.replace('dagur,', 'dagsins')
     ?.replace(' kl.', ', kl.')}`
 
+  const formattedIsolationToDateAndTime = `${formatDate(wc.isolationTo, 'PPPPp')
+    ?.replace('dagur,', 'dagsins')
+    ?.replace(' kl.', ', kl.')}`
+
   const accusedShouldBeInIsolation =
     wc.type === CaseType.CUSTODY &&
     wc.custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
+
+  const isolationIsSameAsCustodyEndDate =
+    wc.custodyEndDate &&
+    wc.isolationTo &&
+    compareAsc(parseISO(wc.custodyEndDate), parseISO(wc.isolationTo)) === 0
 
   return (
     <Text variant={large ? 'intro' : 'default'}>
@@ -162,10 +173,24 @@ const getAcceptingConclusion = (wc: Case, large?: boolean) => {
           >
             sæta einangrun
           </Text>
-          <Text as="span" variant={large ? 'intro' : 'default'}>
-            {' '}
-            á meðan á gæsluvarðhaldinu stendur.
-          </Text>
+          {isolationIsSameAsCustodyEndDate ? (
+            <Text
+              as="span"
+              variant={large ? 'intro' : 'default'}
+            >{` á meðan á gæsluvarðhaldinu stendur.`}</Text>
+          ) : (
+            <Text as="span" variant={large ? 'intro' : 'default'}>
+              {` ekki lengur en til`}
+              <Text
+                as="span"
+                variant={large ? 'intro' : 'default'}
+                color={large ? 'blue400' : 'dark400'}
+                fontWeight="semiBold"
+              >
+                {` ${formattedIsolationToDateAndTime}.`}
+              </Text>
+            </Text>
+          )}
         </>
       )}
     </Text>

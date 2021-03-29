@@ -8,7 +8,7 @@ import {
   DialogPrompt,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import { Locale } from '@island.is/web/i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import { ContentLanguage } from '@island.is/web/graphql/schema'

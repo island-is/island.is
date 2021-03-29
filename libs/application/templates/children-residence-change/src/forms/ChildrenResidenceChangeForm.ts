@@ -13,7 +13,9 @@ import {
   buildRadioField,
   buildTextField,
   Application,
+  Comparators,
 } from '@island.is/application/core'
+import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
 import * as m from '../lib/messages'
 
@@ -27,9 +29,9 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
       id: 'mockData',
       title: 'Mock data',
       children: [
-        buildMultiField({
-          id: 'mockMulti',
-          title: '',
+        buildSubSection({
+          id: 'useMocks',
+          title: 'Nota gervigögn?',
           children: [
             buildRadioField({
               id: 'useMocks',
@@ -45,11 +47,29 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 },
               ],
             }),
+          ],
+        }),
+        buildSubSection({
+          id: 'parentMock',
+          title: 'Foreldrar',
+          condition: (answers) => answers.useMocks === 'yes',
+          children: [
             buildCustomField({
-              id: 'mockData',
-              title: 'Mock data',
-              component: 'MockData',
-              condition: (answers) => answers.useMocks === 'yes',
+              id: 'mockData.parents',
+              title: 'Mock Foreldrar',
+              component: 'ParentMock',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'childrenMock',
+          title: 'Börn',
+          condition: (answers) => answers.useMocks === 'yes',
+          children: [
+            buildCustomField({
+              id: 'mockData.children',
+              title: 'Mock Börn',
+              component: 'ChildrenMock',
             }),
           ],
         }),
@@ -62,6 +82,11 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
         buildSubSection({
           id: 'externalData',
           title: m.externalData.general.sectionTitle,
+          condition: {
+            questionId: 'useMocks',
+            value: 'no',
+            comparator: Comparators.EQUALS,
+          },
           children: [
             buildExternalDataProvider({
               title: m.externalData.general.pageTitle,
@@ -72,27 +97,65 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   id: 'nationalRegistry',
-                  type: 'NationalRegistryProvider',
+                  type: DataProviderTypes.NationalRegistry,
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'childrenNationalRegistry',
-                  type: 'ChildrenNationalRegistryProvider',
+                  id: '',
+                  type: '',
                   title: m.externalData.children.title,
                   subTitle: m.externalData.children.subTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'parentNationalRegistry',
-                  type: 'ParentNationalRegistryProvider',
+                  id: '',
+                  type: '',
                   title: m.externalData.otherParents.title,
                   subTitle: m.externalData.otherParents.subTitle,
                 }),
                 buildDataProviderItem({
                   id: 'userProfile',
-                  type: 'UserProfileProvider',
+                  type: DataProviderTypes.UserProfile,
                   title: '',
                   subTitle: '',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'externalData',
+          title: m.externalData.general.sectionTitle,
+          condition: {
+            questionId: 'useMocks',
+            value: 'yes',
+            comparator: Comparators.EQUALS,
+          },
+          children: [
+            buildExternalDataProvider({
+              title: m.externalData.general.pageTitle,
+              id: 'approveExternalData',
+              subTitle: m.externalData.general.subTitle,
+              description: m.externalData.general.description,
+              checkboxLabel: m.externalData.general.checkboxLabel,
+              dataProviders: [
+                buildDataProviderItem({
+                  id: 'nationalRegistry',
+                  type: DataProviderTypes.MOCK_NationalRegistry,
+                  title: m.externalData.applicant.title,
+                  subTitle: m.externalData.applicant.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: '',
+                  type: '',
+                  title: m.externalData.children.title,
+                  subTitle: m.externalData.children.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: '',
+                  type: '',
+                  title: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.subTitle,
                 }),
               ],
             }),
@@ -103,7 +166,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           title: m.selectChildren.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'selectChild',
+              id: 'selectedChildren',
               title: m.selectChildren.general.pageTitle,
               component: 'SelectChildren',
             }),

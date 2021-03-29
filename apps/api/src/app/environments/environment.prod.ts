@@ -11,14 +11,9 @@ export default {
     secret: process.env.DRIVING_LICENSE_SECRET,
   },
   education: {
-    secret: process.env.EDUCATION_SECRET,
-    emailOptions: {
-      sendFromEmail: process.env.SEND_FROM_EMAIL,
-      useTestAccount: false,
-      options: {
-        region: process.env.EMAIL_REGION,
-      },
-    },
+    xroadLicenseServiceId: process.env.XROAD_MMS_LICENSE_SERVICE_ID,
+    xroadGradeServiceId: process.env.XROAD_MMS_GRADE_SERVICE_ID,
+    fileDownloadBucket: process.env.FILE_DOWNLOAD_BUCKET,
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
@@ -65,10 +60,16 @@ export default {
       tokenUrl: process.env.DOCUMENT_PROVIDER_TOKEN_URL ?? '',
     },
     documentsServiceBasePath: process.env.SERVICE_DOCUMENTS_BASEPATH,
+    documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS,
   },
   syslumennService: {
     url: process.env.SYSLUMENN_HOST,
     username: process.env.SYSLUMENN_USERNAME,
     password: process.env.SYSLUMENN_PASSWORD,
+  },
+  rskDomain: {
+    username: process.env.RSK_API_USERNAME,
+    password: process.env.RSK_API_PASSWORD,
+    url: process.env.RSK_API_URL,
   },
 }

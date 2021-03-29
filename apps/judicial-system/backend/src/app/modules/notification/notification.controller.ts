@@ -26,7 +26,6 @@ import {
   RulesType,
 } from '@island.is/judicial-system/auth'
 
-import { UserService } from '../user'
 import { CaseService, isCaseBlockedFromUser } from '../case'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
@@ -60,17 +59,12 @@ const registrarNotificationRule = {
   dtoFieldValues: [NotificationType.COURT_DATE],
 } as RolesRule
 
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:id')
 @ApiTags('cases')
 export class NotificationController {
   constructor(
-    @Inject(NotificationService)
     private readonly notificationService: NotificationService,
-    @Inject(UserService)
-    private readonly userService: UserService,
-    @Inject(CaseService)
     private readonly caseService: CaseService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,

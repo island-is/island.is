@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class GetLifeEventPageInput {
   @Field()
   @IsString()
-  slug: string
+  slug!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
-  lang: string
+  lang = 'is-IS'
 }

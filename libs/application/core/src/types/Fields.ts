@@ -2,6 +2,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import {
   DatePickerBackgroundColor,
   InputBackgroundColor,
+  BoxProps,
 } from '@island.is/island-ui/core'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormTextArray, FormItem } from './Form'
@@ -90,6 +91,7 @@ export interface CheckboxField extends BaseField {
   component: FieldComponents.CHECKBOX
   options: MaybeWithApplication<Option[]>
   large?: boolean
+  backgroundColor?: InputBackgroundColor
 }
 
 export interface DateField extends BaseField {
@@ -106,6 +108,7 @@ export interface DescriptionField extends BaseField {
   component: FieldComponents.DESCRIPTION
   readonly description: FormText
   tooltip?: FormText
+  space?: BoxProps['paddingTop']
 }
 
 export interface RadioField extends BaseField {
@@ -146,6 +149,7 @@ export interface TextField extends BaseField {
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
   suffix?: string
+  rows?: number
 }
 
 export interface FileUploadField extends BaseField {

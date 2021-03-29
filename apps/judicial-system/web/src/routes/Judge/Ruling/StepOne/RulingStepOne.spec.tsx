@@ -46,10 +46,6 @@ describe('/domari-krafa/urskurdur', () => {
             } as UpdateCase,
             {
               id: 'test_id_3',
-              custodyEndDate: '2020-10-24T12:31:00Z',
-            } as UpdateCase,
-            {
-              id: 'test_id_3',
               decision: CaseDecision.ACCEPTING,
             } as UpdateCase,
           ]),
@@ -63,7 +59,7 @@ describe('/domari-krafa/urskurdur', () => {
     )
 
     userEvent.type(
-      await screen.findByLabelText('Niðurstaða úrskurðar *'),
+      await screen.findByLabelText('Efni úrskurðar *'),
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non igitur bene. Idem fecisset Epicurus, si sententiam hanc, quae nunc Hieronymi est, coniunxisset cum Aristippi vetere sententia. Respondent extrema primis, media utrisque, omnia omnibus. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. Duo Reges: constructio interrete. Sed quae tandem ista ratio est?',
     )
 
@@ -77,11 +73,6 @@ describe('/domari-krafa/urskurdur', () => {
       await screen.findByRole('radio', {
         name: 'Krafa um gæsluvarðhald samþykkt',
       }),
-    )
-
-    userEvent.type(
-      await screen.findByLabelText('Tímasetning (kk:mm) *'),
-      '12:31',
     )
 
     expect(

@@ -2,11 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import {
-  extractApplicantFromApplication,
-  extractParentFromApplication,
-  constructParentAddressString,
-} from '../../lib/utils'
+import { formatAddress, childrenResidenceInfo } from '../../lib/utils'
 import { newResidence } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
@@ -17,10 +13,10 @@ const ChangeInformation = ({
   error,
 }: CRCFieldBaseProps) => {
   const { id, disabled } = field
+  const { externalData, answers } = application
   const { formatMessage } = useIntl()
-  const applicant = extractApplicantFromApplication(application)
-  const parent = extractParentFromApplication(application)
-  const parentAddress = constructParentAddressString(parent)
+  const applicant = externalData.nationalRegistry.data
+  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -31,18 +27,22 @@ const ChangeInformation = ({
           {formatMessage(newResidence.information.currentResidenceLabel)}
         </Text>
         <Text variant="h4" color="blue400">
-          {applicant?.fullName}
+          {childResidenceInfo.current.parent.fullName}
         </Text>
-        <Text fontWeight="light">{applicant?.legalResidence}</Text>
+        <Text fontWeight="light">
+          {formatAddress(childResidenceInfo.current.address)}
+        </Text>
       </Box>
       <Box marginBottom={5}>
         <Text variant="h4">
           {formatMessage(newResidence.information.newResidenceLabel)}
         </Text>
         <Text variant="h4" color="blue400">
-          {parent?.name}
+          {childResidenceInfo.future.parent.fullName}
         </Text>
-        <Text fontWeight="light">{parentAddress}</Text>
+        <Text fontWeight="light">
+          {formatAddress(childResidenceInfo.future.address)}
+        </Text>
       </Box>
       <CheckboxController
         id={id}

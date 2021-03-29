@@ -22,6 +22,8 @@ export * from './lib/entities/models/identity-resource-user-claim.model'
 export * from './lib/entities/models/identity-resource.model'
 export * from './lib/entities/models/admin-access.model'
 export * from './lib/entities/models/idp-provider.model'
+export * from './lib/entities/models/translation.model'
+export * from './lib/entities/models/language.model'
 
 // DTO's
 export * from './lib/entities/dto/api-scopes.dto'
@@ -47,6 +49,9 @@ export * from './lib/entities/dto/admin-access.dto'
 export * from './lib/entities/dto/admin-access-update.dto'
 export * from './lib/entities/dto/idp-provider.dto'
 export * from './lib/entities/dto/grant-type.dto'
+export * from './lib/entities/dto/language.dto'
+export * from './lib/entities/dto/translation.dto'
+export * from './lib/entities/dto/user-claim.dto'
 
 // Services
 export * from './lib/services/clients.service'
@@ -58,6 +63,7 @@ export * from './lib/services/claims.service'
 export * from './lib/services/access.service'
 export * from './lib/services/sequelizeConfig.service'
 export * from './lib/services/idp-provider.service'
+export * from './lib/services/translation.service'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'

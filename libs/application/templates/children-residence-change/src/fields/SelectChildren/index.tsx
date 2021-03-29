@@ -1,19 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { Box, Text } from '@island.is/island-ui/core'
 import { selectChildren } from '../../lib/messages'
-import {
-  extractParentFromApplication,
-  extractChildrenFromApplication,
-} from '../../lib/utils'
-import { CRCFieldBaseProps } from '../../types'
+import { CRCFieldBaseProps, Child } from '../../types'
 import { DescriptionText } from '../components'
+
+const shouldBeDisabled = (
+  children: Child[],
+  childOption: Child,
+  selectedChildren?: string[],
+) => {
+  if (!selectedChildren || selectedChildren?.length === 0) {
+    return false
+  }
+  const firstSelectedChild = children.find(
+    (child) => selectedChildren[0] === child.nationalId,
+  )
+  if (
+    firstSelectedChild?.livesWithApplicant !== childOption.livesWithApplicant ||
+    firstSelectedChild?.otherParent.nationalId !==
+      childOption.otherParent.nationalId
+  ) {
+    return true
+  }
+  return false
+}
 
 const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
   const { id, disabled } = field
   const { formatMessage } = useIntl()
-  const otherParent = extractParentFromApplication(application)
+  const {
+    externalData: { nationalRegistry },
+    answers,
+  } = application
+  const children = nationalRegistry.data.children
+  const currentAnswer = answers.selectedChildren
+  const [selectedChildrenState, setSelectedChildrenState] = useState<
+    string[] | undefined
+  >(currentAnswer)
+
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -26,16 +52,18 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         id={id}
         disabled={disabled}
         name={`${id}`}
-        defaultValue={[]}
+        defaultValue={selectedChildrenState}
         error={error}
         large={true}
-        options={extractChildrenFromApplication(application).map((c) => ({
-          value: c.name,
-          label: c.name,
+        options={children.map((child) => ({
+          value: child.nationalId,
+          label: child.fullName,
+          disabled: shouldBeDisabled(children, child, selectedChildrenState),
           subLabel: formatMessage(selectChildren.checkboxes.subLabel, {
-            parentName: otherParent.name,
+            parentName: child.otherParent.fullName,
           }),
         }))}
+        onSelect={(newAnswer) => setSelectedChildrenState(newAnswer)}
       />
     </>
   )
