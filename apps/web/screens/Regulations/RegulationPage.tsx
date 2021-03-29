@@ -18,7 +18,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { RegulationRedirectMessage } from './RegulationRedirectMessage'
 import { RegulationDisplay } from './RegulationDisplay'
 import { getParams } from './regulationUtils'
-import { getUiTexts } from './getUITexts'
+import { getUiTexts } from './getUiTexts'
 import {
   GetNamespaceQuery,
   GetRegulationOriginalQuery,
