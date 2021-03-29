@@ -8,6 +8,7 @@ import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
+import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -378,7 +379,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         ref={register({
                           required: !isEditing,
-                          validate: ValidationUtils.validateUrl,
+                          validate: isEditing
+                            ? () => {
+                                return true
+                              }
+                            : ValidationUtils.validateUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
@@ -460,6 +465,12 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         errors={errors}
                         name="client.clientName"
                         message="Display name is required since the client requires consent"
+                      />
+                      <TranslationCreateFormDropdown
+                        className="client"
+                        property="clientName"
+                        isEditing={isEditing}
+                        id={client.clientId}
                       />
                     </div>
 
