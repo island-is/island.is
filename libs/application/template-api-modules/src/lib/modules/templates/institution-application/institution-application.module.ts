@@ -3,6 +3,7 @@ import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { InstitutionApplicationService } from './institution-application.service'
 import { INSTITUTION_APPLICATION_CONFIG } from './config/institutionApplicationServiceConfig'
+import { FileStorageModule } from '@island.is/file-storage'
 
 const recipientEmailAddress =
   process.env.INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS ??
@@ -15,7 +16,10 @@ export class InstitutionApplicationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: InstitutionApplicationModule,
-      imports: [SharedTemplateAPIModule.register(config)],
+      imports: [
+        SharedTemplateAPIModule.register(config),
+        FileStorageModule.register({}),
+      ],
       providers: [
         {
           provide: INSTITUTION_APPLICATION_CONFIG,

@@ -1,6 +1,6 @@
 import { style } from 'treat'
 
-export const attatchmentLink = style({
+export const attachmentLink = style({
   display: 'flex',
   width: 'fit-content',
 })

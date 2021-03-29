@@ -11,6 +11,9 @@ import {
   INSTITUTION_APPLICATION_CONFIG,
   InstitutionApplicationConfig,
 } from './config/institutionApplicationServiceConfig'
+import { FileStorageService } from '@island.is/file-storage'
+import { Application, getValueViaPath } from '@island.is/application/core'
+import { InstitutionAttachment } from './types'
 
 @Injectable()
 export class InstitutionApplicationService {
@@ -18,15 +21,18 @@ export class InstitutionApplicationService {
     @Inject(INSTITUTION_APPLICATION_CONFIG)
     private institutionConfig: InstitutionApplicationConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
+    const attachments = this.prepareAttachments(application)
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
         generateApplicationEmail(
           props,
           this.institutionConfig.senderEmailAddress,
           this.institutionConfig.recipientEmailAddress,
+          attachments,
         ),
       application,
     )
@@ -39,5 +45,27 @@ export class InstitutionApplicationService {
         ),
       application,
     )
+  }
+
+  // Generating signedUrls for mail attachments
+  private prepareAttachments(
+    application: Application,
+  ): InstitutionAttachment[] {
+    const attachments = getValueViaPath(
+      application.answers,
+      'attachments',
+    ) as Array<{ key: string; name: string }>
+    const hasattachments = attachments && attachments?.length > 0
+    if (!hasattachments) {
+      return []
+    }
+    return attachments.map(({ key, name }) => {
+      const url = (application.attachments as {
+        [key: string]: string
+      })[key]
+      console.log(url)
+
+      return { name, url: this.fileStorageService.generateSignedUrl(url) }
+    })
   }
 }

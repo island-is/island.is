@@ -3,6 +3,7 @@ import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
 import { getValueViaPath } from '@island.is/application/core'
+import { InstitutionAttachment } from '../types'
 
 export interface NodemailAttachment {
   filename: string
@@ -14,6 +15,7 @@ interface ApplicationEmail {
     props: EmailTemplateGeneratorProps,
     applicationSender: string,
     applicationRecipient: string,
+    attachments: InstitutionAttachment[],
   ): SendMailOptions
 }
 
@@ -21,6 +23,7 @@ export const generateApplicationEmail: ApplicationEmail = (
   props,
   applicationSender,
   applicationRecipient,
+  attachments,
 ): SendMailOptions => {
   const {
     application,
@@ -32,17 +35,12 @@ export const generateApplicationEmail: ApplicationEmail = (
   )
 
   const subject = `Umsókn frá ${institutionName}`
-  const attachments = getValueViaPath(application.answers, 'attatchments') as {
-    name: string
-    key: string
-  }[]
   const mailAttachments = attachments
     ? attachments.map(
-        ({ key = '', name = '' }) =>
+        ({ url, name }) =>
           ({
             filename: name,
-            href:
-              (application.attachments as { [key: string]: string })[key] || '',
+            href: url,
           } as NodemailAttachment),
       )
     : []

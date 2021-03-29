@@ -1,17 +1,10 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import {
-  Box,
-  Stack,
-  Text,
-  Divider,
-  Link,
-  Icon,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text, Divider } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { institutionApplicationMessages as m } from '../../lib/messages'
-import * as styles from './reviewScreen.treat'
+import { Attachments } from './attachments'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
   const { formatMessage } = useLocale()
@@ -67,19 +60,6 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
     otherConstraints,
   ].some((x) => !!x)
 
-  const attatchments = getValueViaPath(
-    application.answers,
-    'attatchments',
-  ) as Array<{ key: string; name: string }>
-  const hasAttatchments = attatchments && attatchments?.length > 0
-
-  useEffect(() => {
-    // Refetching to get application Attatchments
-    hasAttatchments &&
-      Object.keys(application.attachments).length === 0 &&
-      refetch &&
-      refetch()
-  }, [application.attachments, hasAttatchments, refetch])
   return (
     <Box marginTop={4}>
       <Stack space={7}>
@@ -410,41 +390,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
             </Text>
           </Box>
           <Divider />
-          {hasAttatchments && (
-            <>
-              <Box>
-                <Text variant="h5">
-                  {formatText(
-                    m.project.attatchmentsSubtitle,
-                    application,
-                    formatMessage,
-                  )}
-                </Text>
-                <Box marginTop={3}>
-                  <Stack space={2}>
-                    {attatchments.map(({ key = '', name = '' }) => (
-                      <Link
-                        className={styles.attatchmentLink}
-                        color="blue400"
-                        underlineVisibility="always"
-                        underline="small"
-                        key={key}
-                        href={
-                          (application.attachments as {
-                            [key: string]: string
-                          })[key] || ''
-                        }
-                      >
-                        {name}
-                        <Icon icon="attach" />
-                      </Link>
-                    ))}
-                  </Stack>
-                </Box>
-              </Box>
-              <Divider />
-            </>
-          )}
+          <Attachments application={application} refetch={refetch} />
         </Stack>
       </Stack>
     </Box>
