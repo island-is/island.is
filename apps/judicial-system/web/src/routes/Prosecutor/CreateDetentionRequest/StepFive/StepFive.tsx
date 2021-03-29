@@ -5,6 +5,8 @@ import {
   ContentBlock,
   InputFileUpload,
   AlertMessage,
+  UploadFile,
+  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import { Case, UpdateCase } from '@island.is/judicial-system/types'
 import {
@@ -25,12 +27,12 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useRouter } from 'next/router'
 import { forEach } from 'lodash'
-import { uploadFile } from '@island.is/judicial-system-web/src/services/api'
+import { createUploadFile } from '@island.is/judicial-system-web/src/services/api'
 import * as styles from './StepFive.treat'
 
 export const StepFive: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<Case>()
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<UploadFile[]>()
 
   const router = useRouter()
   const id = router.query.id
@@ -71,8 +73,60 @@ export const StepFive: React.FC = () => {
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
 
-  const uploadFiles = (id: string, files: File[]) => {
+  const getFileIndexInFiles = (file: UploadFile, files: UploadFile[]) => {
+    return files.findIndex((fileInFiles) => fileInFiles.name === file.name)
+  }
+
+  const onUpdate = (
+    file: UploadFile,
+    files: UploadFile[],
+    loaded: number,
+    total: number,
+  ) => {
+    file.percent = (loaded / total) * 100
+    file.status = 'uploading'
+    files[getFileIndexInFiles(file, files)].percent = (loaded / total) * 100
+    files[getFileIndexInFiles(file, files)].status = 'uploading'
+
+    setFiles(files)
+  }
+
+  const setFileStatus = (
+    file: UploadFile,
+    files: UploadFile[],
+    status: UploadFileStatus,
+  ) => {
+    file.status = status
+    files[getFileIndexInFiles(file, files)].status = status
+
+    setFiles(files)
+  }
+
+  const createRequest = (file: UploadFile, files: UploadFile[]) => {
+    const request = new XMLHttpRequest()
+    request.withCredentials = true
+    request.responseType = 'json'
+
+    request.upload.addEventListener('progress', (evt) => {
+      if (evt.lengthComputable) {
+        onUpdate(file, files, evt.loaded, evt.total)
+      }
+    })
+
+    request.addEventListener('load', () => {
+      if (request.status >= 200 && request.status < 300) {
+        setFileStatus(file, files, 'done')
+      } else {
+        setFileStatus(file, files, 'error')
+      }
+    })
+
+    return request
+  }
+
+  const uploadFiles = (id: string, files: UploadFile[]) => {
     forEach(files, async (file) => {
+      const request = createRequest(file, files)
       const { data } = await createPresignedPostMutation({
         variables: { input: { caseId: id, fileName: file.name } },
       })
@@ -80,7 +134,9 @@ export const StepFive: React.FC = () => {
       const presignedPost = data?.createPresignedPost
 
       if (presignedPost) {
-        uploadFile(presignedPost, file)
+        const fileToUpload = createUploadFile(presignedPost, file)
+        request.open('POST', presignedPost.url)
+        request.send(fileToUpload)
       }
     })
   }
@@ -113,16 +169,29 @@ export const StepFive: React.FC = () => {
                 message={
                   <ul className={styles.ul}>
                     <li>
-                      Hér er hægt að hlaða upp rannsóknargögnum til að sýna
-                      dómara.
+                      <Box marginLeft={1}>
+                        <Text>
+                          Hér er hægt að hlaða upp rannsóknargögnum til að sýna
+                          dómara.
+                        </Text>
+                      </Box>
                     </li>
                     <li>
-                      Skjölin eru eingöngu aðgengileg settum dómara í málinu og
-                      aðgengi að þeim lokast þegar dómari hefur úrskurðað.
+                      <Box marginLeft={1}>
+                        <Text>
+                          Skjölin eru eingöngu aðgengileg settum dómara í málinu
+                          og aðgengi að þeim lokast þegar dómari hefur
+                          úrskurðað.
+                        </Text>
+                      </Box>
                     </li>
                     <li>
-                      Skjölin verða ekki lögð fyrir eða flutt í málakerfi
-                      dómstóls nema annar hvor aðilinn kæri úrskurðinn.
+                      <Box marginLeft={1}>
+                        <Text>
+                          Skjölin verða ekki lögð fyrir eða flutt í málakerfi
+                          dómstóls nema annar hvor aðilinn kæri úrskurðinn.
+                        </Text>
+                      </Box>
                     </li>
                   </ul>
                 }
@@ -137,15 +206,16 @@ export const StepFive: React.FC = () => {
             <Box marginBottom={[2, 2, 3]}>
               <ContentBlock>
                 <InputFileUpload
-                  fileList={files}
+                  fileList={files || []}
                   header="Dragðu skjöl hingað til að hlaða upp"
                   buttonLabel="Velja skjöl til að hlaða upp"
                   onChange={(evt) => {
-                    uploadFiles(workingCase.id, evt)
                     setFiles(evt)
+                    uploadFiles(workingCase.id, evt)
                   }}
                   onRemove={() => console.log('remove')}
                   errorMessage=""
+                  showFileSize
                 />
               </ContentBlock>
             </Box>

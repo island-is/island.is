@@ -2,6 +2,7 @@ import 'isomorphic-fetch'
 
 import { deleteCookie } from '@island.is/judicial-system-web/src/utils/cookies'
 import { PresignedPost } from '@island.is/judicial-system/types'
+import { UploadFile } from '@island.is/island-ui/core'
 
 const { API_URL = '' } = process.env
 export const apiUrl = API_URL
@@ -21,15 +22,15 @@ export const getFeature = async (name: string) => {
   return await (await fetch(`/api/feature/${name}`)).json()
 }
 
-export const uploadFile = async (presignedPost: PresignedPost, file: File) => {
+export const createUploadFile = (
+  presignedPost: PresignedPost,
+  file: UploadFile,
+) => {
   const formData = new FormData()
   Object.keys(presignedPost.fields).forEach((key) =>
     formData.append(key, presignedPost.fields[key]),
   )
-  formData.append('file', file)
+  formData.append('file', file as File)
 
-  const res = await fetch(presignedPost.url, {
-    method: 'POST',
-    body: formData,
-  })
+  return formData
 }
