@@ -18,5 +18,5 @@ export function needsOtherParentApproval(context: ApplicationContext) {
 }
 
 export function isDev() {
-  return process.env.NODE_ENV === 'development'
+  return process.env.NODE_ENV === 'development' || process.env.name === 'dev'
 }
