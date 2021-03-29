@@ -35,7 +35,7 @@
 /libs/application/core/                                                                       @island-is/aranja
 /libs/application/data-providers/                                                             @island-is/aranja
 /libs/application/graphql/                                                                    @island-is/aranja
-/libs/application/ui-components/                                                                  @island-is/aranja
+/libs/application/ui-components/                                                              @island-is/aranja
 /libs/application/ui-fields/                                                                  @island-is/aranja
 /libs/application/ui-shell/                                                                   @island-is/aranja
 /libs/application/template-api-modules/                                                       @island-is/aranja
