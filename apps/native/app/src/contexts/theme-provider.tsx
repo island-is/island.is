@@ -50,10 +50,13 @@ export const shades = {
   },
 }
 
-export function useScreenOptions(callback: () => Options, deps: any[] = []) {
+export function useScreenOptions(callback: () => Options | null | void, deps: any[] = []) {
   const { mergeOptions } = useNavigation()
   useEffect(() => {
-    mergeOptions(callback());
+    const optionsToUpdate = callback();
+    if (optionsToUpdate) {
+      mergeOptions(optionsToUpdate);
+    }
   }, deps);
 }
 

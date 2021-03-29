@@ -23,6 +23,7 @@
     "@apollo/client": "*",
     "styled-components": "*",
     "graphql-tag": "*",
-    "react-intl": "*"
+    "react-intl": "*",
+    "configcat-js": "*"
   }
 }

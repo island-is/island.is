@@ -3,7 +3,9 @@ const { createMatchPath, loadConfig } = require('tsconfig-paths')
 const { fileExistsSync } = require('tsconfig-paths/lib/filesystem')
 const chalk = require('chalk')
 const path = require('path')
-const DEBUG = true
+const { createConsoleLogger } = require('configcat-js')
+const { attempt } = require('lodash')
+const DEBUG = false
 
 /*
  * Use tsconfig to resolve additional workspace libs.
@@ -32,9 +34,11 @@ function resolveRequest(_context, realModuleName, platform, moduleName) {
       )
     }
   }
+
   const matcher = getMatcher()
   const match = matcher(realModuleName)
   if (match) {
+    console.log(realModuleName);
     return {
       type: 'sourceFile',
       filePath: match,
@@ -57,11 +61,15 @@ function resolveRequest(_context, realModuleName, platform, moduleName) {
     )
 
     const extensions = ['.ts', '.tsx', '.js', 'jsx', '.json', '.png', '.jpg']
-    extensions.forEach((extension) => {
-      if (fileExistsSync(attemptedFilePath + extension)) {
-        return { type: 'sourceFile', filePath: attemptedFilePath + extension }
-      }
-    })
+    try {
+      extensions.forEach((extension) => {
+        if (fileExistsSync(attemptedFilePath + extension)) {
+          return { type: 'sourceFile', filePath: attemptedFilePath + extension }
+        }
+      })
+    } catch (err) {
+      console.error('noop', attemptedFilePath);
+    }
 
     throw new Error(`Cannot resolve ${chalk.bold(moduleName)}`)
   }

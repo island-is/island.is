@@ -15,6 +15,7 @@ export interface Config {
   constants: typeof Constants,
 }
 
+// Remove WebManifest, it throws a warning in React Native
 const { WebManifest, ...ConstantsRest } = Constants;
 
 export const config: Config = {

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "1",
+    "serviceProvider": "Þjóðskrá Íslands",
+    "title": "Nafnskírteini",
+    "type": "IDENTIDY_CARD"
+  },
+  {
+    "id": "2",
+    "serviceProvider": "Ríkislögreglustjóri",
+    "title": "Ökuskírteini",
+    "type": "DRIVERS_LICENSE"
+  },
+  {
+    "id": "3",
+    "serviceProvider": "Þjóðskrá Íslands",
+    "title": "Vegabréf",
+    "type": "PASSPORT"
+  },
+  {
+    "id": "4",
+    "serviceProvider": "Ríkislögreglustjóri",
+    "title": "Skotvopnaleyfi",
+    "type": "WEAPON_LICENSE"
+  },
+  {
+    "id": "5",
+    "serviceProvider": "Ríkissaksóknari",
+    "title": "Sakavottorð",
+    "type": "CRIMINAL_RECORD_CERTIFICATE"
+  },
+  {
+    "id": "6",
+    "serviceProvider": "Umhverfisstofnun",
+    "title": "Veiðikort",
+    "type": "FISHING_CARD"
+  },
+  {
+    "id": "7",
+    "serviceProvider": "Vinnueftirlitið",
+    "title": "Vinnuvélaskírteini",
+    "type": "MACHINE_CERTIFICATE"
+  },
+  {
+    "id": "8",
+    "serviceProvider": "Vinnueftirlitið",
+    "title": "ADR skírteini",
+    "type": "ADR_LICENSE"
+  },
+  {
+    "id": "9",
+    "serviceProvider": "Landlæknisembættið",
+    "title": "Bólusetningaskíreini",
+    "type": "VACCINE_CERTIFICATE"
+  }
+]

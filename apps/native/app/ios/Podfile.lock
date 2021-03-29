@@ -12,6 +12,9 @@ PODS:
   - EXConstants (10.0.0):
     - UMConstantsInterface
     - UMCore
+  - EXFileSystem (9.3.0):
+    - UMCore
+    - UMFileSystemInterface
   - EXLocalAuthentication (10.0.0):
     - UMConstantsInterface
     - UMCore
@@ -360,6 +363,7 @@ PODS:
   - UMAppLoader (1.4.0)
   - UMConstantsInterface (5.4.0)
   - UMCore (6.0.0)
+  - UMFileSystemInterface (5.4.0)
   - UMFontInterface (5.4.0)
   - UMPermissionsInterface (5.4.0):
     - UMCore
@@ -375,6 +379,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXApplication (from `../../node_modules/expo-application/ios`)
   - EXConstants (from `../../node_modules/expo-constants/ios`)
+  - EXFileSystem (from `../../node_modules/expo-file-system/ios`)
   - EXLocalAuthentication (from `../../node_modules/expo-local-authentication/ios`)
   - EXNotifications (from `../../node_modules/expo-notifications/ios`)
   - EXPermissions (from `../../node_modules/expo-permissions/ios`)
@@ -435,6 +440,7 @@ DEPENDENCIES:
   - UMAppLoader (from `../../node_modules/unimodules-app-loader/ios`)
   - UMConstantsInterface (from `../../node_modules/unimodules-constants-interface/ios`)
   - "UMCore (from `../../node_modules/@unimodules/core/ios`)"
+  - UMFileSystemInterface (from `../../node_modules/unimodules-file-system-interface/ios`)
   - UMFontInterface (from `../../node_modules/unimodules-font-interface/ios`)
   - UMPermissionsInterface (from `../../node_modules/unimodules-permissions-interface/ios`)
   - "UMReactNativeAdapter (from `../../node_modules/@unimodules/react-native-adapter/ios`)"
@@ -463,6 +469,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/expo-application/ios"
   EXConstants:
     :path: "../../node_modules/expo-constants/ios"
+  EXFileSystem:
+    :path: "../../node_modules/expo-file-system/ios"
   EXLocalAuthentication:
     :path: "../../node_modules/expo-local-authentication/ios"
   EXNotifications:
@@ -541,6 +549,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/unimodules-constants-interface/ios"
   UMCore:
     :path: "../../node_modules/@unimodules/core/ios"
+  UMFileSystemInterface:
+    :path: "../../node_modules/unimodules-file-system-interface/ios"
   UMFontInterface:
     :path: "../../node_modules/unimodules-font-interface/ios"
   UMPermissionsInterface:
@@ -557,6 +567,7 @@ SPEC CHECKSUMS:
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   EXApplication: e3a06b6d81f94e526f029a57b2121d6cde044004
   EXConstants: 07a3effb73d2f73b61079703f810bbdd5364a1c5
+  EXFileSystem: 0e4974ab77bff04cda68d2886d070cbe64b93a6b
   EXLocalAuthentication: fee862d288cefd30480d2c0e8fa50a5721ce0dfd
   EXNotifications: 3a88b7b898fa842cae3c5a895a255fab554bc0c8
   EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
@@ -605,12 +616,13 @@ SPEC CHECKSUMS:
   UMAppLoader: 92d044af52626af3d81a69796ad666fc7a9a7d78
   UMConstantsInterface: 6825ea3832d26ed392ca6eff2df84edd69968fd0
   UMCore: 97ba5041c9c92317ce61739f6d126a692c8ef4a8
+  UMFileSystemInterface: ab01294ce58a3c773aefb4a5b131ce589c199559
   UMFontInterface: 85fe1b845fb7caab45e04d9ce47e1677a5ce90a5
   UMPermissionsInterface: 807e5733b4c6607f35757b1dd128f370718d2f94
   UMReactNativeAdapter: 172def7895b2cb44a7dd021336e316d5fa8ea958
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: c7a2407f5497414cc033c7ca6c3c48f808fb4052
+PODFILE CHECKSUM: 1aa71b21215d6828b7f27d15288ff5dad56873fe
 
 COCOAPODS: 1.10.1
