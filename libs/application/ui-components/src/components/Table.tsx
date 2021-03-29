@@ -126,18 +126,6 @@ export const Table = <T extends object>(
       <T.Body {...getTableBodyProps()}>
         {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
           rows.map((row) => renderRow(row))}
-        {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
-          rows.map((row) => renderRow(row))}
-        {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
-          rows.map((row) => renderRow(row))}
-        {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
-          rows.map((row) => renderRow(row))}
-        {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
-          rows.map((row) => renderRow(row))}
-        {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
-          rows.map((row) => renderRow(row))}
-        {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
-          rows.map((row) => renderRow(row))}
       </T.Body>
     </T.Table>
   )
