@@ -124,14 +124,13 @@ export const StepFive: React.FC = () => {
       }
     })
 
-    request.addEventListener('load', () => {
+    request.addEventListener('load', (progress) => {
       if (request.status >= 200 && request.status < 300) {
         setFileStatus(file, files, 'done')
-        console.log(file)
+
         if (file.size && file.key) {
           createFile(file.size, file.key)
         }
-        console.log('done')
       } else {
         setFileStatus(file, files, 'error')
       }
@@ -145,7 +144,6 @@ export const StepFive: React.FC = () => {
     files: UploadFile[],
     presignedPost: PresignedPost,
   ) => {
-    console.log('uploading')
     const s3UploadRequest = createS3UploadRequest(file, files)
     s3UploadRequest.open('POST', presignedPost.url)
     s3UploadRequest.send(createFormData(presignedPost, file))
@@ -162,8 +160,9 @@ export const StepFive: React.FC = () => {
         return
       }
 
+      aFile.key = presignedPost.fields.key
+
       uploadToS3(aFile, files, presignedPost)
-      console.log('asdas')
     })
   }
 
