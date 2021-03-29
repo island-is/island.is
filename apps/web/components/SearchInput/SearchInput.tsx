@@ -32,6 +32,7 @@ import {
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
   Article,
+  SubArticle,
   SearchableContentTypes,
   LifeEventPage,
   AboutPage,
@@ -120,11 +121,13 @@ const useSearch = (
                 SearchableContentTypes['WebLifeEventPage'],
                 SearchableContentTypes['WebAboutPage'],
                 SearchableContentTypes['WebNews'],
+                SearchableContentTypes['WebSubArticle'],
               ],
             },
           },
         })
         .then(({ data: { searchResults: results } }) => {
+          console.log(results)
           dispatch({
             type: 'searchResults',
             results,
@@ -427,7 +430,8 @@ const Results: FC<{
               {(search.results.items as Article[] &
                 LifeEventPage[] &
                 AboutPage[] &
-                News[])
+                News[] &
+                SubArticle[])
                 .slice(0, 5)
                 .map(({ id, title, slug, __typename }) => {
                   const { onClick, ...itemProps } = getItemProps({

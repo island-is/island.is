@@ -2592,6 +2592,12 @@ export interface ISubArticleFields {
 
   /** Show Table Of Contents */
   showTableOfContents?: boolean | undefined
+
+  /** parent */
+  parent: IArticle
+
+  /** Parent Slug */
+  parentSlug: string
 }
 
 /** A sub article that's a part of another main article */

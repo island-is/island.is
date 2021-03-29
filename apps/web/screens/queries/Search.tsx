@@ -78,6 +78,15 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           seoDescription
           slug
         }
+
+        ... on SubArticle {
+          id
+          title
+          parentSlug
+          parent {
+            title
+          }
+        }
       }
     }
   }
@@ -208,6 +217,15 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           description
           slug
+        }
+
+        ... on SubArticle {
+          id
+          title
+          parentSlug
+          parent {
+            title
+          }
         }
       }
       tagCounts {
