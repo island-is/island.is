@@ -5,6 +5,7 @@ import { ErrorMessage } from '@hookform/error-message'
 import { ResourcesService } from '../../../services/ResourcesService'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ValidationUtils from './../../../utils/validation.utils'
+import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -134,6 +135,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     name="displayName"
                     message="Display name is required and needs to be in the right format"
                   />
+                  <TranslationCreateFormDropdown
+                    className="identityresource"
+                    property="displayName"
+                    isEditing={isEditing}
+                    id={props.identityResource.name}
+                  />
                 </div>
                 <div className="identity-resource-form__container__field">
                   <label
@@ -159,6 +166,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     errors={errors}
                     name="description"
                     message="Description needs to be in the right format"
+                  />
+                  <TranslationCreateFormDropdown
+                    className="identityresource"
+                    property="description"
+                    isEditing={isEditing}
+                    id={props.identityResource.name}
                   />
                 </div>
 

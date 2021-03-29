@@ -1,3 +1,5 @@
 export { ISLFjolskyldan } from './lib/dto'
-export { NationalRegistryApi } from './lib/nationalRegistryApi'
-export { SoapClient } from './lib/soapClient'
+export {
+  NationalRegistryApi,
+  NationalRegistryConfig,
+} from './lib/nationalRegistryApi'

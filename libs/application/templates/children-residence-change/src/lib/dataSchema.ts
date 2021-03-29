@@ -17,7 +17,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
     message: error.validation.approveChildrenResidenceChange.defaultMessage,
   }),
-  selectChild: z
+  selectedChildren: z
     .array(z.string())
     .min(1, { message: error.validation.selectChild.defaultMessage }),
   residenceChangeReason: z.string().optional(),
