@@ -22,6 +22,7 @@ interface CheckboxControllerProps {
   id: string
   name?: string
   large?: boolean
+  strong?: boolean
   options?: Option[]
   backgroundColor?: InputBackgroundColor
 }
@@ -32,6 +33,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
   id,
   name = id,
   large,
+  strong,
   options = [],
   backgroundColor,
 }) => {
@@ -77,6 +79,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   checked={value && value.includes(option.value)}
                   name={`${id}[${index}]`}
                   label={option.label}
+                  strong={strong}
                   subLabel={option.subLabel}
                   value={option.value}
                   hasError={error !== undefined}

@@ -18,6 +18,7 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
+  strong?: boolean
   filled?: boolean
   large?: boolean
   backgroundColor?: InputBackgroundColor
@@ -38,6 +39,7 @@ export const Checkbox = ({
   errorMessage,
   value,
   large,
+  strong,
   backgroundColor,
   filled = false,
 }: CheckboxProps) => {
@@ -92,7 +94,7 @@ export const Checkbox = ({
           />
         </div>
         <span className={styles.labelText}>
-          <Text>{label}</Text>
+          <Text variant={strong ? 'h5' : 'default'}>{label}</Text>
           {subLabel && large && (
             <Text
               as="span"
