@@ -63,8 +63,6 @@ export class InstitutionApplicationService {
       const url = (application.attachments as {
         [key: string]: string
       })[key]
-      console.log(url)
-
       return { name, url: this.fileStorageService.generateSignedUrl(url) }
     })
   }
