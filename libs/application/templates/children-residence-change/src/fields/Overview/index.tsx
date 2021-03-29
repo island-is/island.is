@@ -12,6 +12,7 @@ import {
 import {
   formatAddress,
   getSelectedChildrenFromExternalData,
+  formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
@@ -228,7 +229,7 @@ const Overview = ({
         </Text>
         <Text>
           {answers.selectDuration.length > 1
-            ? answers.selectDuration[1]
+            ? formatDate(answers.selectDuration[1])
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>

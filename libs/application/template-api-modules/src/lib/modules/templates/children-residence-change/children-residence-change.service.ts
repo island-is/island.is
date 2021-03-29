@@ -10,6 +10,7 @@ import {
   CRCApplication,
   Override,
   getSelectedChildrenFromExternalData,
+  formatDate,
 } from '@island.is/application/templates/children-residence-change'
 import * as AWS from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
@@ -107,7 +108,7 @@ export class ChildrenResidenceChangeService {
       transferExpirationDate:
         answers.selectDuration[0] === 'permanent'
           ? answers.selectDuration[0]
-          : answers.selectDuration[1],
+          : formatDate(answers.selectDuration[1]),
     }
 
     const response = await this.syslumennService.uploadData(

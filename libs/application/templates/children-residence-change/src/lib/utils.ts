@@ -1,4 +1,5 @@
 import { Address, Child } from '../types'
+import { parse, format } from 'date-fns'
 
 export const formatAddress = (address: Address) => {
   if (!address) {
@@ -12,4 +13,13 @@ export const getSelectedChildrenFromExternalData = (
   selectedChildren: string[],
 ): Child[] => {
   return children.filter((child) => selectedChildren.includes(child.nationalId))
+}
+
+export const formatDate = (date: string) => {
+  try {
+    const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
+    return format(parsedDate, 'dd.MM.yyyy')
+  } catch {
+    return date
+  }
 }
