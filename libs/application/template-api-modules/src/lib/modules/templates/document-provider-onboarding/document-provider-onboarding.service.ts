@@ -10,6 +10,7 @@ import {
   generateApplicationApprovedEmail,
   generateApplicationRejectedEmail,
 } from './emailGenerators'
+import { OrganisationsApi } from '@island.is/clients/document-provider'
 
 interface Contact {
   name: string
@@ -31,6 +32,7 @@ interface Helpdesk {
 export class DocumentProviderOnboardingService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private organisationsApi: OrganisationsApi,
   ) {}
 
   async assignReviewer({ application }: TemplateApiModuleActionProps) {
@@ -61,24 +63,17 @@ export class DocumentProviderOnboardingService {
         'helpDesk',
       ) as unknown) as Helpdesk
 
-      const query = `mutation {
-      createOrganisation(
-        input: {
-          nationalId: "${applicant.nationalId}"
-          name: "${applicant.name}"
-          address: "${applicant.address}"
-          email: "${applicant.email}"
-          phoneNumber: "${applicant.phoneNumber}"
-          administrativeContact: {name:"${adminContact.name}", email:"${adminContact.email}", phoneNumber:"${adminContact.phoneNumber}"}
-          technicalContact:{name:"${techContact.name}", email:"${techContact.email}", phoneNumber:"${techContact.phoneNumber}"}
-          helpdesk:{email:"${helpdesk.email}", phoneNumber:"${helpdesk.phoneNumber}"}
-        }
-      ) {
-        id
+      const dto = {
+        createOrganisationDto: {
+          ...applicant,
+          administrativeContact: { ...adminContact },
+          technicalContact: { ...techContact },
+          helpdesk: { ...helpdesk },
+        },
+        authorization,
       }
-    }`
 
-      await this.sharedTemplateAPIService.makeGraphqlQuery(authorization, query)
+      await this.organisationsApi.organisationControllerCreateOrganisation(dto)
     } catch (error) {
       logger.error('Failed to create organisation', error)
       throw error

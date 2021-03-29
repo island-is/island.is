@@ -2299,6 +2299,34 @@
         }
       }
     },
+    "clients-document-provider": {
+      "root": "libs/clients/document-provider",
+      "sourceRoot": "libs/clients/document-provider/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/document-provider/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/document-provider"],
+          "options": {
+            "jestConfig": "libs/clients/document-provider/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "libs/clients/document-provider/gen/fetch",
+            "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i apps/services/documents/src/openapi.yaml"
+          }
+        }
+      }
+    },
     "clients-mms": {
       "root": "libs/clients/mms",
       "sourceRoot": "libs/clients/mms/src",

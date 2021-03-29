@@ -135,5 +135,6 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
+    '<rootDir>/libs/clients/document-provider',
   ],
 }
