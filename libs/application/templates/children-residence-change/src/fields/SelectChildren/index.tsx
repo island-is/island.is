@@ -8,8 +8,8 @@ import { DescriptionText } from '../components'
 
 const shouldBeDisabled = (
   children: Child[],
-  selectedChildren: string[],
   childOption: Child,
+  selectedChildren?: string[],
 ) => {
   if (!selectedChildren || selectedChildren?.length === 0) {
     return false
@@ -36,9 +36,9 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
   } = application
   const children = nationalRegistry.data.children
   const currentAnswer = answers.selectedChildren
-  const [selectedChildrenState, setSelectedChildrenState] = useState<string[]>(
-    currentAnswer,
-  )
+  const [selectedChildrenState, setSelectedChildrenState] = useState<
+    string[] | undefined
+  >(currentAnswer)
 
   return (
     <>
@@ -52,17 +52,13 @@ const SelectChildren = ({ field, application, error }: CRCFieldBaseProps) => {
         id={id}
         disabled={disabled}
         name={`${id}`}
-        defaultValue={
-          selectedChildrenState !== undefined
-            ? selectedChildrenState
-            : undefined
-        }
+        defaultValue={selectedChildrenState}
         error={error}
         large={true}
         options={children.map((child) => ({
           value: child.nationalId,
           label: child.fullName,
-          disabled: shouldBeDisabled(children, selectedChildrenState, child),
+          disabled: shouldBeDisabled(children, child, selectedChildrenState),
           subLabel: formatMessage(selectChildren.checkboxes.subLabel, {
             parentName: child.otherParent.fullName,
           }),
