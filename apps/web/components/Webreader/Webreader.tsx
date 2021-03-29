@@ -1,6 +1,20 @@
 import React, { FC, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import Router from 'next/router'
 import { Box } from '@island.is/island-ui/core'
+
+declare global {
+  interface Window {
+    rsConf: any
+  }
+}
+
+declare var ReadSpeaker: any;
+
+Router.events.on('routeChangeStart', () => {
+  if (typeof ReadSpeaker !== "undefined" ) {
+    ReadSpeaker.PlayerAPI.stop()
+  }
+})
 
 interface WebReaderProps {
   readid?: string
@@ -12,7 +26,6 @@ export const Webreader: FC<WebReaderProps> = ({
   customerid = 11963,
 }) => {
   const [href, setHref] = useState('')
-  const history = useHistory()
 
   useEffect(() => {
     const lang = 'is_is'
@@ -32,16 +45,6 @@ export const Webreader: FC<WebReaderProps> = ({
 
     window.rsConf = { general: { usePost: true } }
   }, [href])
-
-  useEffect(() => {
-    console.log(history)
-    /*
-    return history.listen((location) => {
-      console.log(`You changed the page to: ${location.pathname}`)
-    })
-
-     */
-  }, [history])
 
   return (
     <>
