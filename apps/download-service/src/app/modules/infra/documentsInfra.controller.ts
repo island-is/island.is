@@ -18,7 +18,7 @@ export class DocumentsInfraController extends InfraController {
       'https://',
       '',
     )
-    console.log(url)
+
     const result = await new Promise<boolean>((resolve, reject) => {
       dns.lookup(url, (err) => {
         console.log(err)

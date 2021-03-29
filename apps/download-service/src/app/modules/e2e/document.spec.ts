@@ -1,21 +1,14 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 import { setup } from '../../../../test/setup'
 
 let app: INestApplication
-
-
-const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
   app = await setup({
     override: (builder) => {
-      builder
-        .overrideGuard(IdsAuthGuard)
-        .useValue(() => ({}))
-        .compile()
+      builder.compile()
     },
   })
 
@@ -28,15 +21,24 @@ describe('Download Service', () => {
     [import('@nestjs/common').ExecutionContext]
   >
   beforeEach(() => {
-
+    spy = jest.fn()
   })
   afterAll(() => {
-
+    spy.mockRestore()
   })
 
-  it('emtpy test', async () => {
+  it('should fail when trying to POST when not logged in', async () => {
+    const invalidToken =
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJpc2xhbmQuaXMiLCJpYXQiOjE2MTY4NjQ0MTQsImV4cCI6MTY0ODQwMDQxNCwiYXVkIjoiaXNsYW5kLmlzIiwic3ViIjoiZG9lc25vdHdvcmtAaXNsYW5kLmlzIn0.8FKiBz0wj9bfEZ1JpHKHZxlIJ8huBfXgegXolcWT21s'
 
-    expect(true).toBe(true)
+    const failedResponse = await server
+      .post('/document')
+      .send({
+        documentId: '26123456789010686',
+        token: invalidToken,
+      })
+      .expect(401)
+
+    expect(failedResponse.body.message).toBe('Unauthorized')
   })
-
 })
