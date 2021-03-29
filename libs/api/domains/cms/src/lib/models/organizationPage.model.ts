@@ -20,25 +20,25 @@ export class OrganizationPage {
   slug!: string
 
   @Field()
-  description?: string
+  description!: string
 
   @Field(() => [SliceUnion])
-  slices?: Array<typeof SliceUnion | null>
+  slices!: Array<typeof SliceUnion | null>
 
   @Field(() => [LinkGroup])
-  menuLinks?: Array<LinkGroup>
+  menuLinks!: Array<LinkGroup>
 
   @Field(() => Organization)
   organization!: Organization | null
 
   @Field({ nullable: true })
-  featuredImage?: Image | null
+  featuredImage!: Image | null
 
   @Field(() => [FooterItem])
-  footerItems?: Array<FooterItem>
+  footerItems!: Array<FooterItem>
 
   @Field(() => [SidebarCard])
-  sidebarCards?: Array<SidebarCard>
+  sidebarCards!: Array<SidebarCard>
 }
 
 export const mapOrganizationPage = ({
