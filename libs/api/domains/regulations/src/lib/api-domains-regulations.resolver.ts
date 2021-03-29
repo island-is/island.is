@@ -8,14 +8,16 @@ import {
   ISODate,
   RegulationMinistries,
   RegulationYears,
+  RegulationLawChapter,
+  RegulationLawChapterTree,
 } from '@island.is/clients/regulations'
-import { GetRegulationsNewestInput } from './dto/getRegulationsNewest.input'
-import { GetRegulationOriginalInput } from './dto/getRegulationOriginal.input'
-import { GetRegulationCurrentInput } from './dto/getRegulationCurrent.input'
-import { GetRegulationByDateInput } from './dto/getRegulationByDate.input'
+import { GetRegulationsInput } from './dto/getRegulations.input'
+import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsYearsInput } from './dto/GetRegulationsYears.input'
 import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistries.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
+import { RegulationModel } from './model/regulation'
+import { RegulationsModel } from './model/regulations'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
@@ -23,55 +25,45 @@ const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
 
-  @Query(() => graphqlTypeJson, { nullable: true })
-  getRegulationOriginal(
-    @Args('input') input: GetRegulationOriginalInput,
+  @Query(() => RegulationModel)
+  getRegulation(
+    @Args('input') input: GetRegulationInput,
   ): Promise<Regulation | null> {
-    return this.regulationsService.getRegulationOriginal(input.name)
-  }
-
-  @Query(() => graphqlTypeJson, { nullable: true })
-  getRegulationCurrent(
-    @Args('input') input: GetRegulationCurrentInput,
-  ): Promise<Regulation | null> {
-    return this.regulationsService.getRegulationCurrent(input.name)
-  }
-
-  @Query(() => graphqlTypeJson, { nullable: true })
-  getRegulationByDate(
-    @Args('input') input: GetRegulationByDateInput,
-  ): Promise<Regulation | null> {
-    return this.regulationsService.getRegulationByDate(
+    return this.regulationsService.getRegulation(
+      input.viewType,
       input.name,
-      input.date as ISODate,
+      input.date,
     )
   }
 
-  @Query(() => graphqlTypeJson, { nullable: true })
-  getRegulationsNewest(
-    @Args('input') input: GetRegulationsNewestInput,
+  @Query(() => RegulationsModel)
+  getRegulations(
+    @Args('input') input: GetRegulationsInput,
   ): Promise<RegulationSearchResults | null> {
-    return this.regulationsService.getRegulationsNewest(validPage(input.page))
+    return this.regulationsService.getRegulations(
+      input.type,
+      validPage(input.page),
+    )
   }
 
-  @Query(() => graphqlTypeJson, { nullable: true })
+  @Query(() => graphqlTypeJson)
   getRegulationsYears(
     @Args('input') input: GetRegulationsYearsInput,
   ): Promise<RegulationYears | null> {
-    return this.regulationsService.getRegulationsYears()
+    return this.regulationsService.getRegulationsYears(input.year)
   }
 
-  @Query(() => graphqlTypeJson, { nullable: true })
+  @Query(() => graphqlTypeJson)
   getRegulationsMinistries(
     @Args('input') input: GetRegulationsMinistriesInput,
   ): Promise<RegulationMinistries | null> {
-    return this.regulationsService.getRegulationsMinistries()
+    return this.regulationsService.getRegulationsMinistries(input.slug)
   }
 
-  @Query(() => graphqlTypeJson, { nullable: true })
+  @Query(() => graphqlTypeJson)
   getRegulationsLawChapters(
     @Args('input') input: GetRegulationsLawChaptersInput,
-  ): Promise<RegulationMinistries | null> {
-    return this.regulationsService.getRegulationsLawChapters()
+  ): Promise<RegulationLawChapterTree | Array<RegulationLawChapter> | null> {
+    return this.regulationsService.getRegulationsLawChapters(input.tree ?? true)
   }
 }

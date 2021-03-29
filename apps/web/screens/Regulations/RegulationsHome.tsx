@@ -1,13 +1,11 @@
 import {
   regulationsSearchResults,
-  regulationYears,
   homeTexts,
-  allMinistries,
-  allLawChaptersTree,
   Ministry,
   LawChapterTree,
   RegulationHomeTexts,
   RegulationListItem,
+  MinistryFull,
 } from './mockData'
 
 import React from 'react'
@@ -40,10 +38,22 @@ import { getUiTexts } from './getUiTexts'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  GetRegulationsNewestQuery,
-  QueryGetRegulationsNewestArgs,
+  GetRegulationsQuery,
+  QueryGetRegulationsArgs,
+  GetRegulationsYearsQuery,
+  QueryGetRegulationsYearsArgs,
+  GetRegulationsMinistriesQuery,
+  QueryGetRegulationsMinistriesArgs,
+  GetRegulationsLawChaptersQuery,
+  QueryGetRegulationsLawChaptersArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY, GET_REGULATIONS_NEWEST_QUERY } from '../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_REGULATIONS_LAWCHAPTERS_QUERY,
+  GET_REGULATIONS_MINISTRIES_QUERY,
+  GET_REGULATIONS_QUERY,
+  GET_REGULATIONS_YEARS_QUERY,
+} from '../queries'
 import { log } from 'xstate/lib/actions'
 
 // const { publicRuntimeConfig } = getConfig()
@@ -221,7 +231,13 @@ RegulationsHome.getInitialProps = async (ctx) => {
   const serviceId = String(query.slug)
   const searchQuery = getParams(query, ['q', 'rn', 'year', 'ch', 'all'])
 
-  const [texts, regulationsNewest] = await Promise.all([
+  const [
+    texts,
+    regulationsData,
+    regulationYears,
+    allMinistries,
+    allLawChaptersTree,
+  ] = await Promise.all([
     await getUiTexts<RegulationHomeTexts>(
       apolloClient,
       locale,
@@ -229,14 +245,42 @@ RegulationsHome.getInitialProps = async (ctx) => {
       homeTexts,
     ),
 
-    apolloClient.query<
-      GetRegulationsNewestQuery,
-      QueryGetRegulationsNewestArgs
-    >({
-      query: GET_REGULATIONS_NEWEST_QUERY,
+    apolloClient.query<GetRegulationsQuery, QueryGetRegulationsArgs>({
+      query: GET_REGULATIONS_QUERY,
       variables: {
         input: {
+          type: 'newest',
           page: 1,
+        },
+      },
+    }),
+    apolloClient.query<GetRegulationsYearsQuery, QueryGetRegulationsYearsArgs>({
+      query: GET_REGULATIONS_YEARS_QUERY,
+      variables: {
+        input: {
+          year: 0, // TODO: remove this
+        },
+      },
+    }),
+    apolloClient.query<
+      GetRegulationsMinistriesQuery,
+      QueryGetRegulationsMinistriesArgs
+    >({
+      query: GET_REGULATIONS_MINISTRIES_QUERY,
+      variables: {
+        input: {
+          slug: '', // TODO: remove this
+        },
+      },
+    }),
+    apolloClient.query<
+      GetRegulationsLawChaptersQuery,
+      QueryGetRegulationsLawChaptersArgs
+    >({
+      query: GET_REGULATIONS_LAWCHAPTERS_QUERY,
+      variables: {
+        input: {
+          tree: true,
         },
       },
     }),
@@ -248,16 +292,17 @@ RegulationsHome.getInitialProps = async (ctx) => {
   )
 
   const regulations =
-    (regulationsNewest?.data?.getRegulationsNewest
-      ?.data as RegulationListItem[]) ?? []
+    (regulationsData?.data?.getRegulations?.data as RegulationListItem[]) ?? []
 
   return {
     regulations: regulations || searchResults,
     texts,
     searchQuery,
-    years: regulationYears,
-    ministries: allMinistries,
-    lawcCapters: allLawChaptersTree,
+    years: regulationYears?.data?.getRegulationsYears as Array<number>,
+    ministries: allMinistries?.data
+      ?.getRegulationsMinistries as Array<MinistryFull>,
+    lawcCapters: allLawChaptersTree?.data
+      ?.getRegulationsLawChapters as LawChapterTree,
   }
 }
 

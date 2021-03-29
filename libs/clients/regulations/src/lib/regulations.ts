@@ -31,32 +31,15 @@ export class RegulationsService extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getRegulationOriginal(name: string): Promise<Regulation | null> {
-    const response = await this.get<Regulation | null>(
-      `regulation/nr/${name}/original`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
-    )
-    return response
-  }
-
-  async getRegulationCurrent(name: string): Promise<Regulation | null> {
-    const response = await this.get<Regulation | null>(
-      `regulation/nr/${name}/current`,
-      {
-        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-      },
-    )
-    return response
-  }
-
-  async getRegulationByDate(
+  async getRegulation(
+    viewType: 'original' | 'current' | 'd',
     name: string,
-    date: ISODate,
+    date?: string,
   ): Promise<Regulation | null> {
     const response = await this.get<Regulation | null>(
-      `regulation/nr/${name}/d/${date}`,
+      `regulation/nr/${name}/${viewType}${
+        viewType === 'd' && date ? '/' + date : ''
+      }`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
@@ -64,11 +47,12 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsNewest(
+  async getRegulations(
+    type: 'newest',
     page: number,
   ): Promise<RegulationSearchResults | null> {
     const response = await this.get<RegulationSearchResults | null>(
-      `regulations/newest${page ? '?page=' + page : ''}`,
+      `regulations/${type}${page ? '?page=' + page : ''}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
@@ -76,23 +60,27 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsYears(): Promise<RegulationYears | null> {
+  async getRegulationsYears(year?: number): Promise<RegulationYears | null> {
     const response = await this.get<RegulationYears | null>(`years`, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
     })
     return response
   }
 
-  async getRegulationsMinistries(): Promise<RegulationMinistries | null> {
+  async getRegulationsMinistries(
+    slug?: string,
+  ): Promise<RegulationMinistries | null> {
     const response = await this.get<RegulationMinistries | null>(`ministries`, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
     })
     return response
   }
 
-  async getRegulationsLawChapters(): Promise<RegulationLawChapterTree | null> {
+  async getRegulationsLawChapters(
+    tree: boolean,
+  ): Promise<RegulationLawChapterTree | null> {
     const response = await this.get<RegulationLawChapterTree | null>(
-      `lawchapters/tree`,
+      `lawchapters${tree ? '/tree' : ''}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
