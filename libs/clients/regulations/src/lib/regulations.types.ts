@@ -159,8 +159,10 @@ export type Regulation = {
   text: string
   /** List of the regulation's appendixes */
   appendixes: ReadonlyArray<RegulationAppendix>
-  /** Optional comments from the editor pointing out known errors or ambiguities in the text. */
-  comments?: string
+  /** Optional HTML formatted comments from the editor pointing out
+   * known errors or ambiguities in the text.
+   */
+  comments: string
 
   /** Date signed in the ministry */
   signatureDate: ISODateTime
