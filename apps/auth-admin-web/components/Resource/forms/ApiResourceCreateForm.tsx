@@ -4,6 +4,8 @@ import HelpBox from '../../common/HelpBox'
 import { ErrorMessage } from '@hookform/error-message'
 import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
+import ValidationUtils from './../../../utils/validation.utils'
+import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 
 interface Props {
   handleSave?: (object: ApiResourcesDTO) => void
@@ -80,7 +82,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                       required: true,
                       maxLength: 10,
                       minLength: 10,
-                      pattern: /\d+/,
+                      validate: ValidationUtils.validateNationalId,
                     })}
                     defaultValue={props.apiResource.nationalId}
                     className="api-resource-form__input"
@@ -102,7 +104,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     ref={register({
                       required: true,
-                      pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                      validate: ValidationUtils.validateEmail,
                     })}
                     name="contactEmail"
                     defaultValue={props.apiResource.contactEmail ?? ''}
@@ -123,7 +125,10 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateIdentifier,
+                    })}
                     id="name"
                     name="name"
                     type="text"
@@ -144,7 +149,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     as="span"
                     errors={errors}
                     name="name"
-                    message="Name is required"
+                    message="Name is required and needs to be in the right format"
                   />
                 </div>
                 <div className="api-resource-form__container__field">
@@ -155,7 +160,10 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     Display Name
                   </label>
                   <input
-                    ref={register({ required: true })}
+                    ref={register({
+                      required: true,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="displayName"
                     name="displayName"
                     type="text"
@@ -169,6 +177,12 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     name="displayName"
                     message="Display name is required"
                   />
+                  <TranslationCreateFormDropdown
+                    className="apiresource"
+                    property="displayName"
+                    isEditing={isEditing}
+                    id={props.apiResource.name}
+                  />
                 </div>
                 <div className="api-resource-form__container__field">
                   <label
@@ -178,7 +192,10 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     Description
                   </label>
                   <input
-                    ref={register({ required: false })}
+                    ref={register({
+                      required: false,
+                      validate: ValidationUtils.validateDescription,
+                    })}
                     id="description"
                     name="description"
                     type="text"
@@ -186,6 +203,18 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     className="api-resource-form__input"
                   />
                   <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
+                  <ErrorMessage
+                    as="span"
+                    errors={errors}
+                    name="description"
+                    message="Description can not contain special characters"
+                  />
+                  <TranslationCreateFormDropdown
+                    className="apiresource"
+                    property="description"
+                    isEditing={isEditing}
+                    id={props.apiResource.name}
+                  />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">

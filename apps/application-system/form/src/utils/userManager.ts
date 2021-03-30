@@ -6,18 +6,21 @@ import {
   User,
 } from 'oidc-client'
 
+import { ApplicationIdentityServerScope } from '@island.is/application/core'
+
 import { environment } from '../environments'
 
 export const settings: UserManagerSettings = {
   authority: environment.identityServer.authority,
   client_id: 'island-is-1',
-  silent_redirect_uri: `${window.location.origin}/silent/signin-oidc`,
-  redirect_uri: `${window.location.origin}/signin-oidc`,
+  silent_redirect_uri: `${window.location.origin}/umsoknir/silent/signin-oidc`,
+  redirect_uri: `${window.location.origin}/umsoknir/signin-oidc`,
+  post_logout_redirect_uri: `${window.location.origin}`,
   response_type: 'code',
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
   automaticSilentRenew: true,
-  scope: 'openid profile api_resource.scope',
+  scope: `openid profile api_resource.scope ${ApplicationIdentityServerScope.read} ${ApplicationIdentityServerScope.write}`,
   userStore: new WebStorageStateStore({ store: window.sessionStorage }),
 }
 

@@ -11,19 +11,19 @@ import { testIDs } from '../test-ids'
  * @returns Layout
  */
 export async function getAppRoot(): Promise<Layout> {
-  // Show storybook
-  if (config.storybookMode) {
-    return { component: { name: ComponentRegistry.StorybookScreen } }
-  }
-
-  return { component: { name: ComponentRegistry.SetPinScreen } }
-
   // Check if user is authenticated
   const isAuthenticated = await checkIsAuthenticated()
 
   // Show login screen if not authenticated
   if (!isAuthenticated) {
-    return { component: { name: ComponentRegistry.LoginScreen } }
+    return {
+      stack: {
+        id: 'LOGIN_STACK',
+        children: [{
+          component: { name: ComponentRegistry.LoginScreen, id: 'LOGIN_SCREEN' },
+        }]
+      }
+    };
   }
 
   if (config.disableLockScreen) {

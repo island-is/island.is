@@ -1,15 +1,38 @@
-import { AppState, AppStateStatus } from "react-native"
-import { Navigation } from "react-native-navigation"
-import { authStore } from "../../stores/auth-store"
-import { config } from "../config"
-import { navigateTo } from "../deep-linking"
-import { ButtonRegistry, ComponentRegistry } from "../navigation-registry"
+import { AppState, AppStateStatus } from 'react-native'
+import { Navigation } from 'react-native-navigation'
+import { Linking } from 'react-native'
+import { authStore } from '../../stores/auth-store'
+import { config } from '../config'
+import { evaluateUrl, navigateTo } from '../deep-linking'
+import { ButtonRegistry, ComponentRegistry } from '../navigation-registry'
 
-const LOCK_SCREEN_TIMEOUT = 5000;
+const LOCK_SCREEN_TIMEOUT = 5000
 
 export function setupEventHandlers() {
+  // Listen for url events through iOS and Android's Linking library
+  Linking.addEventListener('url', ({ url }) => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        evaluateUrl(url)
+      }
+    })
+  })
+
+  // Get initial url and pass to the opener
+  Linking.getInitialURL()
+    .then((url) => {
+      if (url) {
+        Linking.openURL(url)
+      }
+    })
+    .catch((err) => console.error('An error occurred in getInitialURL: ', err))
+
   AppState.addEventListener('change', (status: AppStateStatus) => {
-    const { lockScreenComponentId, lockScreenActivatedAt, userInfo } = authStore.getState();
+    const {
+      lockScreenComponentId,
+      lockScreenActivatedAt,
+      userInfo,
+    } = authStore.getState()
 
     if (!userInfo) {
       return
@@ -19,8 +42,11 @@ export function setupEventHandlers() {
     if (!config.disableLockScreen) {
       if (status === 'active') {
         if (lockScreenComponentId) {
-          if (lockScreenActivatedAt !== undefined && lockScreenActivatedAt + LOCK_SCREEN_TIMEOUT > Date.now()) {
-            Navigation.dismissOverlay(lockScreenComponentId);
+          if (
+            lockScreenActivatedAt !== undefined &&
+            lockScreenActivatedAt + LOCK_SCREEN_TIMEOUT > Date.now()
+          ) {
+            Navigation.dismissOverlay(lockScreenComponentId)
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
@@ -30,7 +56,10 @@ export function setupEventHandlers() {
       if (status === 'background' || status === 'inactive') {
         if (!lockScreenComponentId) {
           Navigation.showOverlay({
-            component: { name: ComponentRegistry.AppLockScreen, passProps: { isRoot: false, status } }
+            component: {
+              name: ComponentRegistry.AppLockScreen,
+              passProps: { isRoot: false, status },
+            },
           })
         } else {
           Navigation.updateProps(lockScreenComponentId, { status })

@@ -8,3 +8,11 @@ export const progressMeter = style({
     },
   }),
 })
+
+export const progressMeterWithDate = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      marginTop: -18,
+    },
+  }),
+})

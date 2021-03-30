@@ -11,6 +11,11 @@ export const application = defineMessages({
 
 // All sections in the application
 export const section = defineMessages({
+  externalData: {
+    id: 'dpac.application:section.externalData',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Approval of external data gathering',
+  },
   delimitation: {
     id: 'dpac.application:section.delimitation',
     defaultMessage: 'Afmörkun kvörtunar',
@@ -113,5 +118,10 @@ export const sharedFields = defineMessages({
     id: 'dpac.application:sharedFields.remove',
     defaultMessage: 'Eyða',
     description: 'Remove',
+  },
+  word: {
+    id: 'dpac.application:sharedFields.word',
+    defaultMessage: 'orð',
+    description: 'Words',
   },
 })

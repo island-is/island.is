@@ -217,9 +217,7 @@ dependencies {
     addUnimodulesDependencies([
       modulesPaths: ['../../../node_modules'],
       exclude: [
-        'expo-file-system',
         'expo-image-loader',
-        'unimodules-file-system-interface',
         'unimodules-barcode-scanner-interface',
         'unimodules-camera-interface',
         'unimodules-sensors-interface',

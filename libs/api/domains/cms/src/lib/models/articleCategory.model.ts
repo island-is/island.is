@@ -4,16 +4,16 @@ import { IArticleCategory } from '../generated/contentfulTypes'
 @ObjectType()
 export class ArticleCategory {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field()
-  title: string
+  title!: string
 
   @Field()
-  slug: string
+  slug!: string
 
   @Field({ nullable: true })
-  description: string
+  description?: string
 }
 
 export const mapArticleCategory = ({

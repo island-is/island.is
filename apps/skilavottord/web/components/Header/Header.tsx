@@ -1,13 +1,11 @@
 import React, { FC, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
-
 import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
-
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { api } from '@island.is/skilavottord-web/services'
-import { Locale } from '@island.is/skilavottord-web/i18n/I18n'
+import { Locale } from '@island.is/shared/types'
 import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
 import { Role } from '@island.is/skilavottord-web/auth/utils'

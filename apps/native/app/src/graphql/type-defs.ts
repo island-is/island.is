@@ -1,10 +1,11 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag'
 
 export const typeDefs = gql`
   extend type Query {
     listDocuments: [Document!]
     listLicenses: [License!]
     License(id: ID!): License
+    Document(id: ID!): Document
   }
 
   type Document {
@@ -16,6 +17,7 @@ export const typeDefs = gql`
     opened: Boolean
     fileType: String
     url: String
+    content: String
   }
 
   enum LicenseType {
@@ -36,4 +38,4 @@ export const typeDefs = gql`
     serviceProvider: String
     title: String
   }
-`;
+`

@@ -7,6 +7,7 @@ import * as styles from './Icon.treat'
 
 const colors = theme.color
 
+export type Size = 'small' | 'medium' | 'large'
 export type IconMapType = Type
 export type IconMapIcon = IconType
 
@@ -16,7 +17,7 @@ export interface IconProps {
   title?: string
   titleId?: string
   color?: keyof typeof colors
-  size?: 'small' | 'medium' | 'large'
+  size?: Size
   className?: string
   skipPlaceholderSize?: boolean
 }

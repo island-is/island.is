@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { Box } from '../Box/Box'
 import * as styles from './ProgressMeter.treat'
 
-export type ProgressMeterVariant = 'blue' | 'red' | 'rose'
+export type ProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'
 
 type ProgressMeterProps = {
   /**
@@ -26,6 +26,10 @@ const colorSchemes = {
   rose: {
     outer: 'roseTinted100',
     inner: 'roseTinted400',
+  },
+  mint: {
+    outer: 'mint100',
+    inner: 'mint600',
   },
 } as const
 

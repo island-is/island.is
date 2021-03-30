@@ -1,11 +1,7 @@
 import React, { Fragment } from 'react'
-import {
-  AlertMessage,
-  Box,
-  Table as T,
-  Text,
-  TextProps,
-} from '@island.is/island-ui/core'
+import { Box, Table as T, Text, TextProps } from '@island.is/island-ui/core'
+import { EmptyState } from '@island.is/service-portal/core'
+import { defineMessage } from 'react-intl'
 
 type DataField = Pick<
   TextProps,
@@ -211,11 +207,12 @@ const StudentAssessmentTable = () => {
       ))}
 
       {studentAssessmentData.length === 0 && (
-        <Box marginTop={2}>
-          <AlertMessage
-            type="info"
-            title="Engin samræmd könnunarpróf fundust"
-            message="Ef eitthvað er í ólagi hér er gott að hafa samband"
+        <Box marginTop={8}>
+          <EmptyState
+            title={defineMessage({
+              id: 'service.portal:education-no-data',
+              defaultMessage: 'Engin gögn fundust',
+            })}
           />
         </Box>
       )}

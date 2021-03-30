@@ -103,6 +103,9 @@
     "api-domains-national-registry": {
       "tags": []
     },
+    "api-domains-rsk": {
+      "tags": []
+    },
     "api-domains-syslumenn": {
       "tags": []
     },
@@ -198,6 +201,21 @@
     "cache": {
       "tags": []
     },
+    "clients-mms": {
+      "tags": []
+    },
+    "clients-national-registry": {
+      "tags": []
+    },
+    "clients-rsk": {
+      "tags": []
+    },
+    "clients-vmst": {
+      "tags": []
+    },
+    "clients-zendesk": {
+      "tags": []
+    },
     "content-search-index-manager": {
       "tags": []
     },
@@ -211,9 +229,6 @@
       "tags": []
     },
     "content-search-toolkit": {
-      "tags": []
-    },
-    "contentful-importer": {
       "tags": []
     },
     "contentful-translation-extension": {
@@ -441,6 +456,9 @@
     "shared-connected": {
       "tags": []
     },
+    "shared-constants": {
+      "tags": []
+    },
     "shared-form-fields": {
       "tags": []
     },
@@ -473,9 +491,6 @@
       "tags": []
     },
     "utils-environment": {
-      "tags": []
-    },
-    "vmst-client": {
       "tags": []
     },
     "web": {

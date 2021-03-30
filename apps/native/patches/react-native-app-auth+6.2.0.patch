@@ -1,0 +1,309 @@
+diff --git a/node_modules/react-native-app-auth/ios/OIDExternalUserAgentIOSSafariViewController.h b/node_modules/react-native-app-auth/ios/OIDExternalUserAgentIOSSafariViewController.h
+new file mode 100644
+index 0000000..b25002d
+--- /dev/null
++++ b/node_modules/react-native-app-auth/ios/OIDExternalUserAgentIOSSafariViewController.h
+@@ -0,0 +1,70 @@
++/*! @file OIDExternalUserAgentIOSSafariViewController.h
++    @brief AppAuth iOS SDK
++    @copyright
++        Copyright 2018 Google Inc. All Rights Reserved.
++    @copydetails
++        Licensed under the Apache License, Version 2.0 (the "License");
++        you may not use this file except in compliance with the License.
++        You may obtain a copy of the License at
++
++        http://www.apache.org/licenses/LICENSE-2.0
++
++        Unless required by applicable law or agreed to in writing, software
++        distributed under the License is distributed on an "AS IS" BASIS,
++        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++        See the License for the specific language governing permissions and
++        limitations under the License.
++ */
++
++#import <UIKit/UIKit.h>
++
++#import "OIDExternalUserAgentIOSSafariViewController.h"
++#import "OIDExternalUserAgent.h"
++#import "OIDExternalUserAgentIOS.h"
++
++NS_ASSUME_NONNULL_BEGIN
++
++/*! @brief Allows library consumers to bootstrap an @c SFSafariViewController as they see fit.
++    @remarks Useful for customizing tint colors and presentation styles.
++ */
++@protocol OIDSafariViewControllerFactory
++
++/*! @brief Creates and returns a new @c SFSafariViewController.
++    @param URL The URL which the @c SFSafariViewController should load initially.
++ */
++- (SFSafariViewController *)safariViewControllerWithURL:(NSURL *)URL;
++
++@end
++
++/*! @brief A special-case iOS external user-agent that always uses 
++        \SFSafariViewController (on iOS 9+). Most applications should use
++        the more generic @c OIDExternalUserAgentIOS to get the default
++        AppAuth user-agent handling with the benefits of Single Sign-on (SSO)
++        for all supported versions of iOS.
++ */
++@interface OIDExternalUserAgentIOSSafariViewController : NSObject<OIDExternalUserAgent>
++
++/*! @brief Allows library consumers to change the @c OIDSafariViewControllerFactory used to create
++        new instances of @c SFSafariViewController.
++    @remarks Useful for customizing tint colors and presentation styles.
++    @param factory The @c OIDSafariViewControllerFactory to use for creating new instances of
++        @c SFSafariViewController.
++ */
+++ (void)setSafariViewControllerFactory:(id<OIDSafariViewControllerFactory>)factory;
++
++/*! @internal
++    @brief Unavailable. Please use @c initWithPresentingViewController:
++ */
++- (nonnull instancetype)init NS_UNAVAILABLE;
++
++/*! @brief The designated initializer.
++    @param presentingViewController The view controller from which to present the
++        \SFSafariViewController.
++ */
++- (nullable instancetype)initWithPresentingViewController:
++    (UIViewController *)presentingViewController
++    NS_DESIGNATED_INITIALIZER;
++
++@end
++
++NS_ASSUME_NONNULL_END
+\ No newline at end of file
+diff --git a/node_modules/react-native-app-auth/ios/OIDExternalUserAgentIOSSafariViewController.m b/node_modules/react-native-app-auth/ios/OIDExternalUserAgentIOSSafariViewController.m
+new file mode 100644
+index 0000000..a12ab39
+--- /dev/null
++++ b/node_modules/react-native-app-auth/ios/OIDExternalUserAgentIOSSafariViewController.m
+@@ -0,0 +1,177 @@
++/*! @file OIDExternalUserAgentIOSSafariViewController.m
++    @brief AppAuth iOS SDK
++    @copyright
++        Copyright 2018 Google Inc. All Rights Reserved.
++    @copydetails
++        Licensed under the Apache License, Version 2.0 (the "License");
++        you may not use this file except in compliance with the License.
++        You may obtain a copy of the License at
++
++        http://www.apache.org/licenses/LICENSE-2.0
++
++        Unless required by applicable law or agreed to in writing, software
++        distributed under the License is distributed on an "AS IS" BASIS,
++        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++        See the License for the specific language governing permissions and
++        limitations under the License.
++ */
++
++#import "OIDExternalUserAgentIOSSafariViewController.h"
++
++#import <SafariServices/SafariServices.h>
++
++#import "OIDErrorUtilities.h"
++#import "OIDExternalUserAgentSession.h"
++#import "OIDExternalUserAgentRequest.h"
++
++NS_ASSUME_NONNULL_BEGIN
++
++/** @brief The global/shared Safari view controller factory. Responsible for creating all new
++ instances of @c SFSafariViewController.
++ */
++static id<OIDSafariViewControllerFactory> __nullable gSafariViewControllerFactory;
++
++/** @brief The default @c OIDSafariViewControllerFactory which creates new instances of
++        @c SFSafariViewController using known best practices.
++ */
++@interface OIDDefaultSafariViewControllerFactory : NSObject<OIDSafariViewControllerFactory>
++@end
++
++@interface OIDExternalUserAgentIOSSafariViewController ()<SFSafariViewControllerDelegate>
++@end
++
++@implementation OIDExternalUserAgentIOSSafariViewController {
++  UIViewController *_presentingViewController;
++
++  BOOL _externalUserAgentFlowInProgress;
++  __weak id<OIDExternalUserAgentSession> _session;
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wpartial-availability"
++  __weak SFSafariViewController *_safariVC;
++#pragma clang diagnostic pop
++}
++
++/** @brief Obtains the current @c OIDSafariViewControllerFactory; creating a new default instance if
++        required.
++ */
+++ (id<OIDSafariViewControllerFactory>)safariViewControllerFactory {
++  if (!gSafariViewControllerFactory) {
++    gSafariViewControllerFactory = [[OIDDefaultSafariViewControllerFactory alloc] init];
++  }
++  return gSafariViewControllerFactory;
++}
++
++ + (void)setSafariViewControllerFactory:(id<OIDSafariViewControllerFactory>)factory {
++  NSAssert(factory, @"Parameter: |factory| must be non-nil.");
++  gSafariViewControllerFactory = factory;
++}
++
++- (nullable instancetype)initWithPresentingViewController:
++        (UIViewController *)presentingViewController {
++  self = [super init];
++  if (self) {
++    _presentingViewController = presentingViewController;
++  }
++  return self;
++}
++
++- (BOOL)presentExternalUserAgentRequest:(id<OIDExternalUserAgentRequest>)request
++                                session:(id<OIDExternalUserAgentSession>)session {
++  if (_externalUserAgentFlowInProgress) {
++    // TODO: Handle errors as authorization is already in progress.
++    return NO;
++  }
++
++  _externalUserAgentFlowInProgress = YES;
++  _session = session;
++  BOOL openedSafari = NO;
++  NSURL *requestURL = [request externalUserAgentRequestURL];
++
++  if (@available(iOS 9.0, *)) {
++    SFSafariViewController *safariVC =
++        [[[self class] safariViewControllerFactory] safariViewControllerWithURL:requestURL];
++      safariVC.delegate = self;
++      _safariVC = safariVC;
++      if (@available(iOS 13.0, *)) {
++          _safariVC.modalPresentationStyle = UIModalPresentationAutomatic;
++      }
++      [_presentingViewController presentViewController:safariVC animated:YES completion:nil];
++      openedSafari = YES;
++  } else {
++    openedSafari = [[UIApplication sharedApplication] openURL:requestURL];
++  }
++
++  if (!openedSafari) {
++    [self cleanUp];
++    NSError *safariError = [OIDErrorUtilities errorWithCode:OIDErrorCodeSafariOpenError
++                                            underlyingError:nil
++                                                description:@"Unable to open Safari."];
++    [session failExternalUserAgentFlowWithError:safariError];
++  }
++  return openedSafari;
++}
++
++- (void)dismissExternalUserAgentAnimated:(BOOL)animated completion:(void (^)(void))completion {
++  if (!_externalUserAgentFlowInProgress) {
++    // Ignore this call if there is no authorization flow in progress.
++    return;
++  }
++
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wpartial-availability"
++  SFSafariViewController *safariVC = _safariVC;
++#pragma clang diagnostic pop
++
++  [self cleanUp];
++
++  if (@available(iOS 9.0, *)) {
++    if (safariVC) {
++      [safariVC dismissViewControllerAnimated:YES completion:completion];
++    } else {
++      if (completion) completion();
++    }
++  } else {
++    if (completion) completion();
++  }
++}
++
++- (void)cleanUp {
++  // The weak references to |_safariVC| and |_session| are set to nil to avoid accidentally using
++  // them while not in an authorization flow.
++  _safariVC = nil;
++  _session = nil;
++  _externalUserAgentFlowInProgress = NO;
++}
++
++#pragma mark - SFSafariViewControllerDelegate
++
++- (void)safariViewControllerDidFinish:(SFSafariViewController *)controller NS_AVAILABLE_IOS(9.0) {
++  if (controller != _safariVC) {
++    // Ignore this call if the safari view controller do not match.
++    return;
++  }
++  if (!_externalUserAgentFlowInProgress) {
++    // Ignore this call if there is no authorization flow in progress.
++    return;
++  }
++  id<OIDExternalUserAgentSession> session = _session;
++  [self cleanUp];
++  NSError *error = [OIDErrorUtilities errorWithCode:OIDErrorCodeProgramCanceledAuthorizationFlow
++                                    underlyingError:nil
++                                        description:nil];
++  [session failExternalUserAgentFlowWithError:error];
++}
++
++@end
++
++@implementation OIDDefaultSafariViewControllerFactory
++
++- (SFSafariViewController *)safariViewControllerWithURL:(NSURL *)URL NS_AVAILABLE_IOS(9.0) {
++  SFSafariViewController *safariViewController =
++      [[SFSafariViewController alloc] initWithURL:URL entersReaderIfAvailable:NO];
++  return safariViewController;
++}
++
++@end
++
++NS_ASSUME_NONNULL_END
+diff --git a/node_modules/react-native-app-auth/ios/RNAppAuth.m b/node_modules/react-native-app-auth/ios/RNAppAuth.m
+index 6a72e1c..235163d 100644
+--- a/node_modules/react-native-app-auth/ios/RNAppAuth.m
++++ b/node_modules/react-native-app-auth/ios/RNAppAuth.m
+@@ -7,6 +7,7 @@
+ #import <React/RCTLog.h>
+ #import <React/RCTConvert.h>
+ #import "RNAppAuthAuthorizationFlowManager.h"
++#import "OIDExternalUserAgentIOSSafariViewController.h"
+ 
+ @interface RNAppAuth()<RNAppAuthAuthorizationFlowManagerDelegate> {
+     id<OIDExternalUserAgentSession> _currentSession;
+@@ -328,21 +329,22 @@ RCT_REMAP_METHOD(refresh,
+                                                        }
+                                                    }]; // end [OIDAuthState presentAuthorizationRequest:request
+     } else {
++        OIDExternalUserAgentIOSSafariViewController *externalUserAgent = [[OIDExternalUserAgentIOSSafariViewController alloc] initWithPresentingViewController:presentingViewController];
+         _currentSession = [OIDAuthState authStateByPresentingAuthorizationRequest:request
+-                                presentingViewController:presentingViewController
+-                                                callback:^(OIDAuthState *_Nullable authState,
+-                                                            NSError *_Nullable error) {
+-                                                    typeof(self) strongSelf = weakSelf;
+-                                                    strongSelf->_currentSession = nil;
+-                                                    [UIApplication.sharedApplication endBackgroundTask:taskId];
+-                                                    taskId = UIBackgroundTaskInvalid;
+-                                                    if (authState) {
+-                                                        resolve([self formatResponse:authState.lastTokenResponse
+-                                                            withAuthResponse:authState.lastAuthorizationResponse]);
+-                                                    } else {
+-                                                        reject(@"authentication_failed", [error localizedDescription], error);
+-                                                    }
+-                                                }]; // end [OIDAuthState authStateByPresentingAuthorizationRequest:request
++                                   externalUserAgent:externalUserAgent
++                                                    callback:^(OIDAuthState *_Nullable authState,
++                                                                NSError *_Nullable error) {
++                                                        typeof(self) strongSelf = weakSelf;
++                                                        strongSelf->_currentSession = nil;
++                                                        [UIApplication.sharedApplication endBackgroundTask:taskId];
++                                                        taskId = UIBackgroundTaskInvalid;
++                                                        if (authState) {
++                                                            resolve([self formatResponse:authState.lastTokenResponse
++                                                                withAuthResponse:authState.lastAuthorizationResponse]);
++                                                        } else {
++                                                            reject(@"authentication_failed", [error localizedDescription], error);
++                                                        }
++                                                    }]; // end [OIDAuthState authStateByPresentingAuthorizationRequest:request
+     }
+ }
+ 

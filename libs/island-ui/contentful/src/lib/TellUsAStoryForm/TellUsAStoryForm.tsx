@@ -18,14 +18,13 @@ import {
   ToastContainer,
   toast,
 } from '@island.is/island-ui/core'
-import BackgroundImage from '../BackgroundImage/BackgroundImage'
-import { Slice as SliceType, richText } from '../..'
 import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { Locale } from '@island.is/shared/types'
 
+import BackgroundImage from '../BackgroundImage/BackgroundImage'
+import { Slice as SliceType, richText } from '../..'
 import * as styles from './TellUsAStoryFrom.treat'
-
-type Locale = 'is' | 'pl'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {

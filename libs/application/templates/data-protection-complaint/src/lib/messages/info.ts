@@ -9,7 +9,12 @@ export const info = {
     },
     description: {
       id: 'dpac.application:section.info.description',
-      defaultMessage: 'Vantar textaupplýsingar',
+      defaultMessage: `Hægt er að senda inn kvörtun í eigin nafni eða fyrir aðra
+      einstaklinga sem þú ert með skriflegt umboð frá. Foreldrar og forráðamenn geta
+      líka sent inn kvörtun fyrir hönd barna sem þeir fara með forsjá yfir.<br/><br/>
+      Stofnanir, samtök og félög sem eru virk á sviði persónuverndar geta
+      einnig sent inn kvörtun án umboðs að uppfylltum skilyrðum 80. gr. reglugerðar
+      (ESB) 2016/679 (almennu persónuverndarreglugerðarinnar).`,
       description: 'Info page description',
     },
     applicantPageTitle: {
@@ -19,28 +24,35 @@ export const info = {
     },
     applicantPageDescription: {
       id: 'dpac.application:section.info.applicantPageDescription',
-      defaultMessage: 'Vinsamlegast fylltu út þínar persónuupplýsingar',
+      defaultMessage: `Persónuvernd þarf þessar upplýsingar til þess
+      að hægt sé að hafa samband við þig á meðan málið er til meðferðar
+      og upplýsa þig um niðurstöðu þess, og til þess að tryggja örugga persónugreiningu.<br/><br/>
+      Þær upplýsingar sem eru stjörnumerktar þarf alltaf að gefa upp. Annað er valkvætt.`,
       description: 'Applicant page description',
     },
     organizationOrInstitutionPageTitle: {
       id: 'dpac.application:section.info.organizationOrInstitutionPageTitle',
-      defaultMessage: 'Fylltu út upplýsingar um Félagssamtök / stofnun',
+      defaultMessage:
+        'Upplýsingar um stofnun, samtök eða félag sem stendur að baki kvörtuninni',
       description: 'Organization or Institution page title',
     },
     organizationOrInstitutionPageDescription: {
       id:
         'dpac.application:section.info.organizationOrInstitutionPageDescription',
-      defaultMessage: 'Vinsamlegast fylltu út uppýsingar',
+      defaultMessage:
+        'Persónuvernd þarf þessar upplýsingar til þess að hægt sé að hafa samband á meðan málið er til meðferðar og upplýsa þig um niðurstöðu þess. ',
       description: 'Organization or Institution page description',
     },
     commissionsPageTitle: {
       id: 'dpac.application:section.info.commissionsPageTitle',
-      defaultMessage: 'Umboð og upplýsingar fyrir annan en sjálfan þig',
+      defaultMessage: 'Upplýsingar um umboð',
       description: 'Commissions page title',
     },
     commissionsPageDescription: {
       id: 'dpac.application:section.info.commissionsPageDescriptions',
-      defaultMessage: `Til þess að senda inn kvörtun fyrir annan en þig sjálfan þarft þú skila inn umboðskjali. Þegar þú hefur fyllt út umboðsskjalið þá þarftu að hlaða því upp hér.
+      defaultMessage: `Ef kvörtunin er sett fram fyrir hönd einhvers annars
+      þarftu að skila inn skriflegu og undirrituðu umboði frá viðkomandi
+      aðila og skila því inn sem fylgiskjali með kvörtuninni.<br/><br/>
       Þú getur sótt umboðsskjal hér til útfyllingar.`,
       description: 'Commissions page description',
     },
@@ -53,7 +65,7 @@ export const info = {
     },
     myselfAndOrOthers: {
       id: 'dpac.application:section.info.myselfAndOrOthers',
-      defaultMessage: 'Mig ásamt í umboði fyrir aðra',
+      defaultMessage: 'Mig og aðra (með umboð)',
       description: 'Myself and others',
     },
     others: {
@@ -63,7 +75,7 @@ export const info = {
     },
     organizationInstitution: {
       id: 'dpac.application:section.info.organizationInstitution',
-      defaultMessage: 'Félagasamtök / stofnun',
+      defaultMessage: 'Stofnun, samtök eða félag',
       description: 'Organization or institution',
     },
     name: {
@@ -103,12 +115,17 @@ export const info = {
     },
     organizationOrInstitutionName: {
       id: 'dpac.application:section.info.organizationOrInstitutionName',
-      defaultMessage: 'Nafn félagssamtaka',
+      defaultMessage: 'Nafn stofnunar/samtaka/félags',
       description: 'Organization or institution name',
+    },
+    commissionDocuments: {
+      id: 'dpac.application:section.info.commissionDocuments',
+      defaultMessage: 'Umboðsskjöl',
+      description: 'Commission Documents',
     },
     commissionsDocumentsHeader: {
       id: 'dpac.application:section.info.commissionsDocumentsHeader',
-      defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+      defaultMessage: 'Dragðu umboðsskjöl hingað til að hlaða upp',
       description: 'Header of the commissions file upload field',
     },
     commissionsDocumentsDescription: {
@@ -118,12 +135,12 @@ export const info = {
     },
     commissionsDocumentsButtonLabel: {
       id: 'dpac.application:section.info.commissionsDocumentsButtonLabel',
-      defaultMessage: 'Velja skjöl til að hlaða upp',
+      defaultMessage: 'Velja umboðsskjöl til að hlaða upp',
       description: 'Label of the commissions file upload field button',
     },
     commissionsPerson: {
       id: 'dpac.application:section.info.commissionsPerson',
-      defaultMessage: 'Upplýsingar um umbjóðanda',
+      defaultMessage: 'Upplýsingar um umbjóðanda (þann sem veitti þér umboð)',
       description: 'Commission person repeater field',
     },
     commissionsAddMoreDescription: {
@@ -138,7 +155,8 @@ export const info = {
     },
     companyDisclaimer: {
       id: 'dpac.application:section.info.companyDisclaimer',
-      defaultMessage: 'Ekki er hægt að leggja inn kvörtun fyrir fyrirtæki',
+      defaultMessage:
+        'Ekki er hægt að leggja inn kvörtun fyrir hönd fyrirtækis eða annars lögaðila',
       description:
         'Informs people that a complaint can not be registered on behalf of companies',
     },

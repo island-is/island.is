@@ -42,7 +42,6 @@ import {
 @Resolver(() => Case)
 export class CaseResolver {
   constructor(
-    @Inject(AuditService)
     private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,

@@ -10,5 +10,18 @@ export const DocumentFragment = gql`
     opened
     fileType
     url
+    content
   }
 `;
+
+export interface IDocument {
+  id: string
+  date: string
+  subject: string
+  senderName: string
+  senderNatReg: string
+  opened: boolean
+  fileType: string
+  url: string
+  content?: string;
+}

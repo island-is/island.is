@@ -17,6 +17,7 @@ import {
   PdfButton,
   BlueBox,
   Modal,
+  FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -220,308 +221,320 @@ export const JudgeOverview: React.FC = () => {
     >
       {workingCase ? (
         <>
-          <Box marginBottom={10}>
-            <Text as="h1" variant="h1">
-              {`Yfirlit ${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldskröfu'
-                  : 'farbannskröfu'
-              }`}
-            </Text>
-          </Box>
-          <Box component="section" marginBottom={6}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                Málsnúmer héraðsdóms
+          <FormContentContainer>
+            <Box marginBottom={10}>
+              <Text as="h1" variant="h1">
+                {`Yfirlit ${
+                  workingCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhaldskröfu'
+                    : 'farbannskröfu'
+                }`}
               </Text>
             </Box>
-            <BlueBox>
-              <div className={styles.createCourtCaseContainer}>
-                <Box display="flex">
-                  {showCreateCustodyCourtCase &&
+            <Box component="section" marginBottom={6}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Málsnúmer héraðsdóms
+                </Text>
+              </Box>
+              <BlueBox>
+                <div className={styles.createCourtCaseContainer}>
+                  <Box display="flex">
+                    {showCreateCustodyCourtCase &&
+                      !workingCase.setCourtCaseNumberManually && (
+                        <div className={styles.createCourtCaseButton}>
+                          <Button
+                            size="small"
+                            onClick={createCase}
+                            loading={creatingCustodyCourtCase}
+                            disabled={!!workingCase.courtCaseNumber}
+                            fluid
+                          >
+                            Stofna mál
+                          </Button>
+                        </div>
+                      )}
+                    <div className={styles.createCourtCaseInput}>
+                      <Input
+                        data-testid="courtCaseNumber"
+                        name="courtCaseNumber"
+                        label="Mál nr."
+                        placeholder={
+                          !showCreateCustodyCourtCase ||
+                          workingCase.setCourtCaseNumberManually
+                            ? 'R-X/ÁÁÁÁ'
+                            : 'Málsnúmer birtist hér með því að smella á stofna mál'
+                        }
+                        size="sm"
+                        backgroundColor={
+                          !showCreateCustodyCourtCase ||
+                          workingCase.setCourtCaseNumberManually
+                            ? 'white'
+                            : 'blue'
+                        }
+                        value={workingCase.courtCaseNumber || ''}
+                        icon={
+                          workingCase.courtCaseNumber &&
+                          showCreateCustodyCourtCase &&
+                          !workingCase.setCourtCaseNumberManually
+                            ? 'checkmark'
+                            : undefined
+                        }
+                        disabled={
+                          showCreateCustodyCourtCase &&
+                          !workingCase.setCourtCaseNumberManually
+                        }
+                        errorMessage={courtCaseNumberErrorMessage}
+                        hasError={
+                          !creatingCustodyCourtCase &&
+                          courtCaseNumberErrorMessage !== ''
+                        }
+                        onChange={(event) =>
+                          removeTabsValidateAndSet(
+                            'courtCaseNumber',
+                            event,
+                            ['empty'],
+                            workingCase,
+                            setWorkingCase,
+                            courtCaseNumberErrorMessage,
+                            setCourtCaseNumberErrorMessage,
+                          )
+                        }
+                        onBlur={(event) => {
+                          validateAndSendToServer(
+                            'courtCaseNumber',
+                            event.target.value,
+                            ['empty'],
+                            workingCase,
+                            updateCase,
+                            setCourtCaseNumberErrorMessage,
+                          )
+                        }}
+                        required
+                      />
+                      {showCreateCustodyCourtCase &&
+                        workingCase.setCourtCaseNumberManually && (
+                          <Box marginTop={1}>
+                            <Text variant="eyebrow" color="blue400">
+                              Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
+                              málsnúmer sem slegið er inn
+                            </Text>
+                          </Box>
+                        )}
+                    </div>
+                  </Box>
+                  {courtCaseNumberErrorMessage &&
+                    showCreateCustodyCourtCase &&
                     !workingCase.setCourtCaseNumberManually && (
-                      <div className={styles.createCourtCaseButton}>
+                      <div className={styles.enterCaseNrManuallyButton}>
                         <Button
-                          size="small"
-                          onClick={createCase}
-                          loading={creatingCustodyCourtCase}
-                          disabled={!!workingCase.courtCaseNumber}
-                          fluid
+                          variant="text"
+                          type="button"
+                          onClick={handleSetCaseNrManuallyClick}
                         >
-                          Stofna mál
+                          Slá inn málsnúmer
                         </Button>
                       </div>
                     )}
-                  <div className={styles.createCourtCaseInput}>
-                    <Input
-                      data-testid="courtCaseNumber"
-                      name="courtCaseNumber"
-                      label="Mál nr."
-                      placeholder={
-                        !showCreateCustodyCourtCase ||
-                        workingCase.setCourtCaseNumberManually
-                          ? 'R-X/ÁÁÁÁ'
-                          : 'Málsnúmer birtist hér með því að smella á stofna mál'
-                      }
-                      size="sm"
-                      backgroundColor={
-                        !showCreateCustodyCourtCase ||
-                        workingCase.setCourtCaseNumberManually
-                          ? 'white'
-                          : 'blue'
-                      }
-                      value={workingCase.courtCaseNumber || ''}
-                      icon={
-                        workingCase.courtCaseNumber &&
-                        showCreateCustodyCourtCase &&
-                        !workingCase.setCourtCaseNumberManually
-                          ? 'checkmark'
-                          : undefined
-                      }
-                      disabled={
-                        showCreateCustodyCourtCase &&
-                        !workingCase.setCourtCaseNumberManually
-                      }
-                      errorMessage={courtCaseNumberErrorMessage}
-                      hasError={
-                        !creatingCustodyCourtCase &&
-                        courtCaseNumberErrorMessage !== ''
-                      }
-                      onChange={(event) =>
-                        removeTabsValidateAndSet(
-                          'courtCaseNumber',
-                          event,
-                          ['empty'],
-                          workingCase,
-                          setWorkingCase,
-                          courtCaseNumberErrorMessage,
-                          setCourtCaseNumberErrorMessage,
-                        )
-                      }
-                      onBlur={(event) => {
-                        validateAndSendToServer(
-                          'courtCaseNumber',
-                          event.target.value,
-                          ['empty'],
-                          workingCase,
-                          updateCase,
-                          setCourtCaseNumberErrorMessage,
-                        )
-                      }}
-                      required
-                    />
-                    {(!showCreateCustodyCourtCase ||
-                      workingCase.setCourtCaseNumberManually) && (
-                      <Box marginTop={1}>
+                </div>
+              </BlueBox>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <InfoCard
+                data={[
+                  {
+                    title: 'Embætti',
+                    value: `${
+                      workingCase.prosecutor?.institution?.name || 'Ekki skráð'
+                    }`,
+                  },
+                  {
+                    title: 'Ósk um fyrirtökudag og tíma',
+                    value: `${capitalize(
+                      formatDate(
+                        workingCase.requestedCourtDate,
+                        'PPPP',
+                        true,
+                      ) || '',
+                    )} eftir kl. ${formatDate(
+                      workingCase.requestedCourtDate,
+                      TIME_FORMAT,
+                    )}`,
+                  },
+                  { title: 'Ákærandi', value: workingCase.prosecutor?.name },
+                  {
+                    title: workingCase.parentCase
+                      ? 'Fyrri gæsla'
+                      : 'Tími handtöku',
+                    value: workingCase.parentCase
+                      ? `${capitalize(
+                          formatDate(
+                            workingCase.parentCase.custodyEndDate,
+                            'PPPP',
+                            true,
+                          ) || '',
+                        )} kl. ${formatDate(
+                          workingCase.parentCase.custodyEndDate,
+                          TIME_FORMAT,
+                        )}`
+                      : workingCase.arrestDate
+                      ? `${capitalize(
+                          formatDate(workingCase.arrestDate, 'PPPP', true) ||
+                            '',
+                        )} kl. ${formatDate(
+                          workingCase.arrestDate,
+                          TIME_FORMAT,
+                        )}`
+                      : 'Var ekki skráður',
+                  },
+                ]}
+                accusedName={workingCase.accusedName}
+                accusedNationalId={workingCase.accusedNationalId}
+                accusedAddress={workingCase.accusedAddress}
+                defender={{
+                  name: workingCase.defenderName || '',
+                  email: workingCase.defenderEmail,
+                }}
+              />
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={9}>
+                <Box marginBottom={2}>
+                  <Text variant="h3" as="h3">
+                    Dómkröfur
+                  </Text>
+                </Box>
+                {constructProsecutorDemands(workingCase)}
+              </Box>
+              <div className={styles.infoSection}>
+                <Box marginBottom={6} data-testid="lawsBroken">
+                  <Box marginBottom={1}>
+                    <Text as="h3" variant="h3">
+                      Lagaákvæði sem brot varða við
+                    </Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.lawsBroken}
+                    </span>
+                  </Text>
+                </Box>
+                <Box data-testid="custodyProvisions">
+                  <Box marginBottom={1}>
+                    <Text as="h3" variant="h3">
+                      Lagaákvæði sem krafan er byggð á
+                    </Text>
+                  </Box>
+                  {workingCase.custodyProvisions?.map(
+                    (custodyProvision: CaseCustodyProvisions, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{laws[custodyProvision]}</Text>
+                        </div>
+                      )
+                    },
+                  )}
+                </Box>
+              </div>
+              <div
+                className={styles.infoSection}
+                data-testid="custodyRestrictions"
+              >
+                <Box marginBottom={1}>
+                  <Text variant="h3" as="h3">
+                    {`Takmarkanir og tilhögun ${
+                      workingCase.type === CaseType.CUSTODY
+                        ? 'gæslu'
+                        : 'farbanns'
+                    }`}
+                  </Text>
+                </Box>
+                <Text>
+                  {formatRequestedCustodyRestrictions(
+                    workingCase.type,
+                    workingCase.requestedCustodyRestrictions,
+                    workingCase.requestedOtherRestrictions,
+                  )
+                    .split('\n')
+                    .map((requestedCustodyRestriction, index) => {
+                      return (
+                        <div key={index}>
+                          <Text>{requestedCustodyRestriction}</Text>
+                        </div>
+                      )
+                    })}
+                </Text>
+              </div>
+              {(workingCase.caseFacts || workingCase.legalArguments) && (
+                <div className={styles.infoSection}>
+                  <Box marginBottom={1}>
+                    <Text variant="h3" as="h3">
+                      Greinargerð um málsatvik og lagarök
+                    </Text>
+                  </Box>
+                  {workingCase.caseFacts && (
+                    <Box marginBottom={2}>
+                      <Box marginBottom={2}>
                         <Text variant="eyebrow" color="blue400">
-                          Ath. Gögn verða sjálfkrafa vistuð og uppfærð á það
-                          málsnúmer sem slegið er inn
+                          Málsatvik
                         </Text>
                       </Box>
-                    )}
-                  </div>
-                </Box>
-                {courtCaseNumberErrorMessage &&
-                  showCreateCustodyCourtCase &&
-                  !workingCase.setCourtCaseNumberManually && (
-                    <div className={styles.enterCaseNrManuallyButton}>
-                      <Button
-                        variant="text"
-                        type="button"
-                        onClick={handleSetCaseNrManuallyClick}
-                      >
-                        Slá inn málsnúmer
-                      </Button>
-                    </div>
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.caseFacts}
+                        </span>
+                      </Text>
+                    </Box>
                   )}
-              </div>
-            </BlueBox>
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <InfoCard
-              data={[
-                {
-                  title: 'Embætti',
-                  value: `${
-                    workingCase.prosecutor?.institution?.name || 'Ekki skráð'
-                  }`,
-                },
-                {
-                  title: 'Ósk um fyrirtökudag og tíma',
-                  value: `${capitalize(
-                    formatDate(workingCase.requestedCourtDate, 'PPPP', true) ||
-                      '',
-                  )} eftir kl. ${formatDate(
-                    workingCase.requestedCourtDate,
-                    TIME_FORMAT,
-                  )}`,
-                },
-                { title: 'Ákærandi', value: workingCase.prosecutor?.name },
-                {
-                  title: workingCase.parentCase
-                    ? 'Fyrri gæsla'
-                    : 'Tími handtöku',
-                  value: workingCase.parentCase
-                    ? `${capitalize(
-                        formatDate(
-                          workingCase.parentCase.custodyEndDate,
-                          'PPPP',
-                          true,
-                        ) || '',
-                      )} kl. ${formatDate(
-                        workingCase.parentCase.custodyEndDate,
-                        TIME_FORMAT,
-                      )}`
-                    : `${capitalize(
-                        formatDate(workingCase.arrestDate, 'PPPP', true) || '',
-                      )} kl. ${formatDate(
-                        workingCase.arrestDate,
-                        TIME_FORMAT,
-                      )}`,
-                },
-              ]}
-              accusedName={workingCase.accusedName}
-              accusedNationalId={workingCase.accusedNationalId}
-              accusedAddress={workingCase.accusedAddress}
-              defender={{
-                name: workingCase.defenderName || '',
-                email: workingCase.defenderEmail,
-              }}
-            />
-          </Box>
-          <Box marginBottom={5}>
-            <Box marginBottom={9}>
-              <Box marginBottom={2}>
-                <Text variant="h3" as="h3">
-                  Dómkröfur
-                </Text>
-              </Box>
-              {constructProsecutorDemands(workingCase)}
+                  {workingCase.legalArguments && (
+                    <Box marginBottom={2}>
+                      <Box marginBottom={2}>
+                        <Text variant="eyebrow" color="blue400">
+                          Lagarök
+                        </Text>
+                      </Box>
+                      <Text>
+                        <span className={styles.breakSpaces}>
+                          {workingCase.legalArguments}
+                        </span>
+                      </Text>
+                    </Box>
+                  )}
+                </div>
+              )}
+              {workingCase.comments && (
+                <div className={styles.infoSection}>
+                  <Box marginBottom={1}>
+                    <Text variant="h3" as="h3">
+                      Athugasemdir vegna málsmeðferðar
+                    </Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.comments}
+                    </span>
+                  </Text>
+                </div>
+              )}
+              <PdfButton
+                caseId={workingCase.id}
+                title="Opna PDF kröfu"
+                pdfType="request"
+              />
             </Box>
-            <div className={styles.infoSection}>
-              <Box marginBottom={6} data-testid="lawsBroken">
-                <Box marginBottom={1}>
-                  <Text as="h3" variant="h3">
-                    Lagaákvæði sem brot varða við
-                  </Text>
-                </Box>
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.lawsBroken}
-                  </span>
-                </Text>
-              </Box>
-              <Box data-testid="custodyProvisions">
-                <Box marginBottom={1}>
-                  <Text as="h3" variant="h3">
-                    Lagaákvæði sem krafan er byggð á
-                  </Text>
-                </Box>
-                {workingCase.custodyProvisions?.map(
-                  (custodyProvision: CaseCustodyProvisions, index) => {
-                    return (
-                      <div key={index}>
-                        <Text>{laws[custodyProvision]}</Text>
-                      </div>
-                    )
-                  },
-                )}
-              </Box>
-            </div>
-            <div
-              className={styles.infoSection}
-              data-testid="custodyRestrictions"
-            >
-              <Box marginBottom={1}>
-                <Text variant="h3" as="h3">
-                  {`Takmarkanir og tilhögun ${
-                    workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-                  }`}
-                </Text>
-              </Box>
-              <Text>
-                {formatRequestedCustodyRestrictions(
-                  workingCase.type,
-                  workingCase.requestedCustodyRestrictions,
-                  workingCase.requestedOtherRestrictions,
-                )
-                  .split('\n')
-                  .map((requestedCustodyRestriction, index) => {
-                    return (
-                      <div key={index}>
-                        <Text>{requestedCustodyRestriction}</Text>
-                      </div>
-                    )
-                  })}
-              </Text>
-            </div>
-            {(workingCase.caseFacts || workingCase.legalArguments) && (
-              <div className={styles.infoSection}>
-                <Box marginBottom={1}>
-                  <Text variant="h3" as="h3">
-                    Greinargerð um málsatvik og lagarök
-                  </Text>
-                </Box>
-                {workingCase.caseFacts && (
-                  <Box marginBottom={2}>
-                    <Box marginBottom={2}>
-                      <Text variant="eyebrow" color="blue400">
-                        Málsatvik
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFacts}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-                {workingCase.legalArguments && (
-                  <Box marginBottom={2}>
-                    <Box marginBottom={2}>
-                      <Text variant="eyebrow" color="blue400">
-                        Lagarök
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.legalArguments}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-              </div>
-            )}
-            {workingCase.comments && (
-              <div className={styles.infoSection}>
-                <Box marginBottom={1}>
-                  <Text variant="h3" as="h3">
-                    Athugasemdir vegna málsmeðferðar
-                  </Text>
-                </Box>
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.comments}
-                  </span>
-                </Text>
-              </div>
-            )}
-            <PdfButton
-              caseId={workingCase.id}
-              title="Opna PDF kröfu"
-              pdfType="request"
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={Constants.REQUEST_LIST_ROUTE}
+              nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+              nextIsDisabled={isNextDisabled([
+                {
+                  value: workingCase.courtCaseNumber || '',
+                  validations: ['empty'],
+                },
+              ])}
             />
-          </Box>
-          <FormFooter
-            previousUrl={Constants.REQUEST_LIST_ROUTE}
-            nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
-            nextIsDisabled={isNextDisabled([
-              {
-                value: workingCase.courtCaseNumber || '',
-                validations: ['empty'],
-              },
-            ])}
-          />
+          </FormContentContainer>
           {modalVisible && (
             <Modal
               title="Slá inn málsnúmer"

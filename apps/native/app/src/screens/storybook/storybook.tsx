@@ -11,16 +11,15 @@ configure(() =>{
 
 export const StorybookUI = getStorybookUI({
     host: Platform.OS === 'android' ? '10.0.2.2' : '0.0.0.0',
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     asyncStorage: require('@react-native-community/async-storage').default
 });
 
-export const Storybook = () => {
-  console.log('hello');
-  return null;
-  // return <StorybookUI />;
+export const StorybookScreen = () => {
+  return <StorybookUI />;
 }
 
-Storybook.options = {
+StorybookScreen.options = {
   topBar: {
     title: {
       text: 'Storybook'

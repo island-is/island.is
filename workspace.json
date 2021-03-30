@@ -726,7 +726,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/api/domains/application/gen/fetch",
-            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
+            "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
           }
         }
       }
@@ -1063,6 +1063,33 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/national-registry"]
+        }
+      }
+    },
+    "api-domains-rsk": {
+      "root": "libs/api/domains/rsk",
+      "sourceRoot": "libs/api/domains/rsk/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/rsk/tsconfig.lib.json",
+              "libs/api/domains/rsk/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/rsk/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/rsk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/rsk"]
         }
       }
     },
@@ -1407,10 +1434,17 @@
             "cwd": "apps/application-system/api"
           }
         },
+        "migrate/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:migrate:undo --name {args.name}",
+            "cwd": "apps/application-system/api"
+          }
+        },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "sequelize-cli migration:generate --name $(whoami)",
+            "command": "sequelize-cli migration:generate --name {args.name}",
             "cwd": "apps/application-system/api"
           }
         },
@@ -1426,6 +1460,7 @@
         "build": {
           "builder": "@nrwl/web:build",
           "options": {
+            "baseHref": "/umsoknir/",
             "outputPath": "dist/apps/application-system/form",
             "index": "apps/application-system/form/src/index.html",
             "main": "apps/application-system/form/src/main.tsx",
@@ -1470,6 +1505,7 @@
         "serve": {
           "builder": "@nrwl/web:dev-server",
           "options": {
+            "port": 4242,
             "buildTarget": "application-system-form:build"
           },
           "configurations": {
@@ -1911,6 +1947,14 @@
             ]
           }
         },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/templates/party-letter/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/application/templates/party-letter"]
+        },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2255,6 +2299,129 @@
         }
       }
     },
+    "clients-mms": {
+      "root": "libs/clients/mms",
+      "sourceRoot": "libs/clients/mms/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/mms/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/mms"],
+          "options": {
+            "jestConfig": "libs/clients/mms/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-national-registry": {
+      "root": "libs/clients/national-registry",
+      "sourceRoot": "libs/clients/national-registry/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/national-registry/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/national-registry"],
+          "options": {
+            "jestConfig": "libs/clients/national-registry/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-rsk": {
+      "root": "libs/clients/rsk",
+      "sourceRoot": "libs/clients/rsk/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/rsk/tsconfig.lib.json",
+              "libs/clients/rsk/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/rsk/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/rsk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/rsk"]
+        }
+      }
+    },
+    "clients-vmst": {
+      "root": "libs/clients/vmst",
+      "sourceRoot": "libs/clients/vmst/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/vmst/tsconfig.lib.json",
+              "libs/clients/vmst/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/vmst/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/vmst/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/vmst"]
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/vmst/gen/fetch -i libs/clients/vmst/src/clientConfig.yaml"
+          }
+        }
+      }
+    },
+    "clients-zendesk": {
+      "root": "libs/clients/zendesk",
+      "sourceRoot": "libs/clients/zendesk/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/zendesk/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/zendesk"],
+          "options": {
+            "jestConfig": "libs/clients/zendesk/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "content-search-index-manager": {
       "root": "libs/content-search-index-manager",
       "sourceRoot": "libs/content-search-index-manager/src",
@@ -2402,33 +2569,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/content-search-toolkit"]
-        }
-      }
-    },
-    "contentful-importer": {
-      "root": "libs/contentful-importer",
-      "sourceRoot": "libs/contentful-importer/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/contentful-importer/tsconfig.lib.json",
-              "libs/contentful-importer/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/contentful-importer/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/contentful-importer/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/contentful-importer"]
         }
       }
     },
@@ -4347,7 +4487,7 @@
               "apps/service-portal/src/mockServiceWorker.js",
               "apps/service-portal/src/assets"
             ],
-            "styles": [],
+            "styles": ["apps/service-portal/src/styles.css"],
             "scripts": [],
             "webpackConfig": "apps/service-portal/webpack.config.js",
             "maxWorkers": 2
@@ -4449,11 +4589,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "parallel": false,
-            "commands": [
-              {
-                "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/applications/src/{lib,components,screens}/**/*.{js,ts,tsx}"
-              }
-            ]
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/service-portal/applications/src/lib/messages.ts"
           }
         }
       }
@@ -5651,6 +5787,27 @@
         }
       }
     },
+    "shared-constants": {
+      "root": "libs/shared/constants",
+      "sourceRoot": "libs/shared/constants/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/constants/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/constants"],
+          "options": {
+            "jestConfig": "libs/shared/constants/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "shared-form-fields": {
       "root": "libs/shared/form-fields",
       "sourceRoot": "libs/shared/form-fields/src",
@@ -6098,39 +6255,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/utils/environment"]
-        }
-      }
-    },
-    "vmst-client": {
-      "root": "libs/vmst-client",
-      "sourceRoot": "libs/vmst-client/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/vmst-client/tsconfig.lib.json",
-              "libs/vmst-client/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/vmst-client/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/vmst-client/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/vmst-client"]
-        },
-        "schemas/external-openapi-generator": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn openapi-generator -o libs/vmst-client/gen/fetch -i libs/vmst-client/src/clientConfig.yaml"
-          }
         }
       }
     },

@@ -26,6 +26,8 @@ describe('Create detention request, step two', () => {
       todaysDate.getFullYear(),
       todaysDate.getMonth() + 1,
       0,
+      13,
+      37,
     )
 
     render(

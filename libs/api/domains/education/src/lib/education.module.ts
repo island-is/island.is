@@ -1,21 +1,19 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
+import { XRoadConfig, MMSApi } from '@island.is/clients/mms'
+import {
+  NationalRegistryApi,
+  NationalRegistryConfig,
+} from '@island.is/clients/national-registry'
+
 import { MainResolver } from './graphql'
 import { EducationService } from './education.service'
-import { EmailService, EMAIL_OPTIONS } from '@island.is/email-service'
-import { MMSApi } from './client'
+import { S3Service } from './s3.service'
 
 export interface Config {
-  xroadBaseUrl: string
-  xroadClientId: string
-  secret: string
-  emailOptions: {
-    sendFromEmail: string
-    useTestAccount: boolean
-    options?: {
-      region: string
-    }
-  }
+  fileDownloadBucket: string
+  xroad: XRoadConfig
+  nationalRegistry: NationalRegistryConfig
 }
 
 @Module({})
@@ -25,6 +23,7 @@ export class EducationModule {
       module: EducationModule,
       providers: [
         MainResolver,
+        S3Service,
         EducationService,
         {
           provide: 'CONFIG',
@@ -32,18 +31,13 @@ export class EducationModule {
         },
         {
           provide: MMSApi,
-          useFactory: async () =>
-            new MMSApi(
-              config.xroadBaseUrl,
-              config.xroadClientId,
-              config.secret,
-            ),
+          useFactory: async () => new MMSApi(config.xroad),
         },
         {
-          provide: EMAIL_OPTIONS,
-          useValue: config.emailOptions,
+          provide: NationalRegistryApi,
+          useFactory: async () =>
+            NationalRegistryApi.instanciateClass(config.nationalRegistry),
         },
-        EmailService,
       ],
       exports: [],
     }

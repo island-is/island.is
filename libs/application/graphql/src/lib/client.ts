@@ -30,14 +30,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })
 
-const authLink = setContext(async (_, { headers }) => {
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  }
-})
+const authLink = setContext(async (_, { headers }) => ({
+  headers: {
+    ...headers,
+    authorization: token ? `Bearer ${token}` : '',
+  },
+}))
 
 export const initializeClient = (baseApiUrl: string) => {
   const httpLink = new HttpLink({

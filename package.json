@@ -122,6 +122,7 @@
     "contentful-management": "6.0.5",
     "contentful-ui-extensions-sdk": "3.32.0",
     "cookie-parser": "1.4.5",
+    "copy-to-clipboard": "3.3.1",
     "core-js": "3.6.5",
     "crypto-js": "4.0.0",
     "csv-stringify": "5.5.1",
@@ -238,7 +239,7 @@
     "swagger-ui-express": "4.1.4",
     "timeout-signal": "1.0.0",
     "to-querystring": "1.1.1",
-    "treat": "1.6.0",
+    "treat": "1.6.1",
     "tslib": "1.14.1",
     "turndown": "6.0.0",
     "unified": "9.2.0",
@@ -264,10 +265,10 @@
     "@graphql-codegen/fragment-matcher": "1.17.8",
     "@graphql-codegen/schema-ast": "1.17.8",
     "@graphql-codegen/typescript": "1.17.8",
-    "@graphql-codegen/typescript-operations": "1.17.8",
+    "@graphql-codegen/typescript-operations": "1.17.15",
     "@graphql-codegen/typescript-react-apollo": "1.17.7",
     "@graphql-codegen/typescript-resolvers": "1.17.9",
-    "@jeremybarbet/contentful-extension-scripts": "0.22.6",
+    "@jeremybarbet/contentful-extension-scripts": "0.22.7",
     "@nestjs/schematics": "7.1.2",
     "@nestjs/testing": "7.4.4",
     "@nrwl/cli": "11.4.0",
@@ -311,6 +312,7 @@
     "@testing-library/react-native": "7.2.0",
     "@testing-library/user-event": "12.1.5",
     "@types/animejs": "3.1.2",
+    "@types/aws-sdk": "2.7.0",
     "@types/bull": "3.14.2",
     "@types/cache-manager-ioredis": "2.0.1",
     "@types/classnames": "2.2.10",
@@ -398,6 +400,7 @@
     "xml-crypto": "2.0.0",
     "prismjs": "1.23.0",
     "urijs": "1.19.6",
-    "elliptic": "6.5.4"
+    "elliptic": "6.5.4",
+    "serialize-to-js": "3.1.1"
   }
 }

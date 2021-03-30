@@ -82,6 +82,7 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
                     application,
                     formatMessage,
                   )}
+                  format="######-####"
                   error={
                     errors && (errors[`${id}[${index}].nationalId`] as string)
                   }
@@ -93,13 +94,6 @@ export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
         )
       })}
       <Box marginTop={3}>
-        <Text marginBottom={3}>
-          {formatText(
-            info.labels.commissionsAddMoreDescription,
-            application,
-            formatMessage,
-          )}
-        </Text>
         <Button
           variant="ghost"
           icon="add"

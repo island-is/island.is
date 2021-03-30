@@ -77,6 +77,7 @@ export enum CaseCustodyProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
+  _98_2 = '_98_2', // 2. mgr. 98. gr.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
@@ -164,10 +165,12 @@ export interface Case {
   isCustodyEndDateInThePast?: boolean
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
+  isolationTo?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  rulingDate?: string
   judge?: User
   registrar?: User
   parentCase?: Case
@@ -243,10 +246,12 @@ export interface UpdateCase {
   custodyEndDate?: string
   custodyRestrictions?: CaseCustodyRestrictions[]
   otherRestrictions?: string
+  isolationTo?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  registrarId?: string
   judgeId?: string
 }
 
