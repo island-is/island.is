@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  RequestTimeoutException,
 } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import { PdfTypes } from '@island.is/application/core'
@@ -11,7 +12,11 @@ import {
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { BucketTypePrefix, DokobitFileName } from './utils/constants'
+import {
+  BucketTypePrefix,
+  DokobitFileName,
+  DokobitErrorCodes,
+} from './utils/constants'
 import { AwsService } from './aws.service'
 import {
   APPLICATION_CONFIG,
@@ -64,6 +69,24 @@ export class FileService {
           bucket,
           s3FileName,
         )
+      })
+      .catch((error) => {
+        if (error.code === DokobitErrorCodes.NoMobileSignature) {
+          throw new NotFoundException(error.message)
+        }
+
+        if (error.code === DokobitErrorCodes.UserCancelled) {
+          throw new BadRequestException(error.message)
+        }
+
+        if (
+          error.code === DokobitErrorCodes.TimeOut ||
+          error.code === DokobitErrorCodes.SessionExpired
+        ) {
+          throw new RequestTimeoutException(error.message)
+        }
+
+        throw new Error(error.message)
       })
   }
 
