@@ -19,13 +19,12 @@ const formatDays = (date: string): string => {
 }
 
 export async function generateResidenceChangePdf(
-  externalData: ExternalData,
+  nationalRegistry: ExternalData['nationalRegistry'],
   answers: Answers,
 ): Promise<Buffer> {
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
-  const { nationalRegistry } = externalData
   const applicant = nationalRegistry.data
   const nationalRegistryLookupDate = format(
     parseISO(nationalRegistry.date),

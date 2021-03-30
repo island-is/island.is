@@ -118,7 +118,10 @@ export class FileService {
     const bucket = this.getBucketName()
     const { answers, externalData } = application
 
-    const pdfBuffer = await generateResidenceChangePdf(externalData, answers)
+    const pdfBuffer = await generateResidenceChangePdf(
+      externalData.nationalRegistry,
+      answers,
+    )
 
     const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
       application.id
