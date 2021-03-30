@@ -5,12 +5,13 @@ const path = require('path')
 const newNames = {
   IcelandicNameID: 'id',
   IcelandicName: 'icelandic_name',
-  Afgreitt: 'afgreitt',
-  Birta: 'birta',
-  Tegund: 'tegund',
-  Skyring: 'skyring',
-  Urskurdur: 'urskurdur',
+  Afgreitt: 'status',
+  Birta: 'visible',
+  Tegund: 'type',
+  Skyring: 'description',
+  Urskurdur: 'verdict',
 }
+
 const file = path.join(__dirname, 'IcelandicName.csv')
 const csv = fs.readFileSync(file, 'utf8', (_, data) => data)
 const data = parse(csv, {
