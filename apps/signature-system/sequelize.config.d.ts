@@ -1,4 +1,6 @@
-interface sequlizeConfig {
+import { Dialect } from 'sequelize/types'
+
+interface SequelizeConfig {
   username: string
   password: string
   database: string
@@ -7,8 +9,8 @@ interface sequlizeConfig {
 }
 
 declare namespace SequelizeConfig {
-  const production: sequlizeConfig
-  const development: sequlizeConfig
+  const production: SequelizeConfig
+  const development: SequelizeConfig
 }
 
 export = SequelizeConfig
