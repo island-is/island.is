@@ -6,8 +6,11 @@ import { setupNotifications } from './utils/lifecycle/setup-notifications'
 import { getAppRoot }from './utils/lifecycle/get-app-root';
 import { getDefaultOptions } from './utils/get-default-options'
 import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
+import { setupGlobals } from './utils/lifecycle/setup-globals'
 
 function startApp() {
+  setupGlobals();
+
   // Register all components (screens, UI elements)
   registerAllComponents();
 

@@ -16,7 +16,14 @@ export async function getAppRoot(): Promise<Layout> {
 
   // Show login screen if not authenticated
   if (!isAuthenticated) {
-    return { component: { name: ComponentRegistry.LoginScreen } }
+    return {
+      stack: {
+        id: 'LOGIN_STACK',
+        children: [{
+          component: { name: ComponentRegistry.LoginScreen, id: 'LOGIN_SCREEN' },
+        }]
+      }
+    };
   }
 
   if (config.disableLockScreen) {

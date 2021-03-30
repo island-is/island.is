@@ -24,6 +24,7 @@
     "styled-components": "*",
     "graphql-tag": "*",
     "react-intl": "*",
-    "configcat-js": "*"
+    "configcat-js": "*",
+    "intl": "*"
   }
 }
