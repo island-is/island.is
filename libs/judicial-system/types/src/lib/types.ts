@@ -302,6 +302,10 @@ export interface DeleteFile {
   id: string
 }
 
+export interface DeleteFileResponse {
+  success: boolean
+}
+
 export interface File {
   id: string
   created: string
