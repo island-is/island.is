@@ -124,7 +124,7 @@
     - [Application Templates Data Protection Complaint](libs/application/templates/data-protection-complaint/README.md)
     - [Document Provider Onboarding](libs/application/templates/document-provider-onboarding/README.md)
     - [Health Insurance](libs/application/templates/health-insurance/README.md)
-    - [Application Templates Institution Application](libs/application/templates/institution-collaboration/README.md)
+    - [Institution Collaboration](libs/application/templates/institution-collaboration/README.md)
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
     - [Party Letter](libs/application/templates/party-letter/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
