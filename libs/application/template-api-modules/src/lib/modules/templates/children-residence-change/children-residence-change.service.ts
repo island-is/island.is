@@ -119,19 +119,19 @@ export class ChildrenResidenceChangeService {
       extraData,
     )
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
-      (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentA.email,
-    )
+    // await this.sharedTemplateAPIService.sendEmailWithAttachment(
+    //   generateApplicationSubmittedEmail,
+    //   (application as unknown) as Application,
+    //   fileContent.toString('binary'),
+    //   answers.parentA.email,
+    // )
 
-    await this.sharedTemplateAPIService.sendEmailWithAttachment(
-      generateApplicationSubmittedEmail,
-      (application as unknown) as Application,
-      fileContent.toString('binary'),
-      answers.parentB.email,
-    )
+    // await this.sharedTemplateAPIService.sendEmailWithAttachment(
+    //   generateApplicationSubmittedEmail,
+    //   (application as unknown) as Application,
+    //   fileContent.toString('binary'),
+    //   answers.parentB.email,
+    // )
 
     return response
   }
