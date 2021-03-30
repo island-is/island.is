@@ -298,6 +298,10 @@ export interface CreatePresignedPost {
   fileName: string
 }
 
+export interface DeleteFile {
+  id: string
+}
+
 export interface File {
   id: string
   created: string
