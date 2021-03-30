@@ -20,14 +20,6 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-const FileSchema = z
-  .object({
-    name: z.string(),
-    key: z.string(),
-    url: z.string(),
-  })
-  .optional()
-
 const contactSchema = z.object({
   name: z.string().nonempty(),
   email: z.string().email().nonempty(),

@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { Attachments } from './attachments'
 
-const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
+const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const secondaryContactName = getValueViaPath(
     application.answers,
