@@ -30,11 +30,9 @@ describe('Download Service', () => {
   it('should fail when trying to POST when not logged in', async () => {
     const invalidToken =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJpc2xhbmQuaXMiLCJpYXQiOjE2MTY4NjQ0MTQsImV4cCI6MTY0ODQwMDQxNCwiYXVkIjoiaXNsYW5kLmlzIiwic3ViIjoiZG9lc25vdHdvcmtAaXNsYW5kLmlzIn0.8FKiBz0wj9bfEZ1JpHKHZxlIJ8huBfXgegXolcWT21s'
-
     const failedResponse = await server
-      .post('/document')
+      .post('/electronic-documents/12312312312')
       .send({
-        documentId: '26123456789010686',
         token: invalidToken,
       })
       .expect(401)
