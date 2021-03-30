@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/client'
 import { useRouter } from 'next/router'
 import { isLoggedIn, login, logout } from '../../utils/auth.utils'
 import { SessionInfo } from './../../entities/common/SessionInfo'
+import { LOCALE_KEY } from './../../i18n/locales'
 
 const Header: React.FC = () => {
   const [session, loading] = useSession()
@@ -12,6 +13,10 @@ const Header: React.FC = () => {
     if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
       if (router) {
         router.push('/')
+      }
+    } else {
+      if (!localStorage.getItem(LOCALE_KEY)) {
+        localStorage.setItem(LOCALE_KEY, 'en')
       }
     }
   }, [session, loading])

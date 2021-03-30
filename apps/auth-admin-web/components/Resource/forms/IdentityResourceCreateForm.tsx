@@ -6,6 +6,8 @@ import { ResourcesService } from '../../../services/ResourcesService'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
+import { FormPage } from './../../../entities/common/Translation'
+import TranslationUtils from './../../../utils/translation.utils'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -24,12 +26,14 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
+  const [translation, setTranslation] = useState<FormPage>(new FormPage())
 
   useEffect(() => {
     if (props.identityResource && props.identityResource.name) {
       setIsEditing(true)
       setAvailable(true)
     }
+    setTranslation(TranslationUtils.getFormPage('IdentityResourceCreateForm'))
   }, [props.identityResource])
 
   const checkAvailability = async (name: string) => {
@@ -62,16 +66,10 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
     <div className="identity-resource-form">
       <div className="identity-resource-form__wrapper">
         <div className="identity-resource-form__container">
-          <h1>
-            {isEditing ? 'Edit Identity Resource' : 'Create Identity Resource'}
-          </h1>
+          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
           <div className="identity-resource-form__container__form">
             <div className="identity-resource-form__help">
-              Identity resources are data like user ID, name, or email address
-              of a user. An identity resource has a unique name, and you can
-              assign arbitrary claim types to it. These claims will then be
-              included in the identity token for the user. The client will use
-              the scope parameter to request access to an identity resource.
+              {translation.help}
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="identity-resource-form__container__fields">
@@ -80,7 +78,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="name"
                     className="identity-resource-form__label"
                   >
-                    Name
+                    {translation.getField('name').label}
                   </label>
                   <input
                     ref={register({
@@ -94,20 +92,23 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.identityResource.name}
                     readOnly={isEditing}
                     onChange={(e) => checkAvailability(e.target.value)}
+                    placeholder={translation.getField('name').placeholder}
                   />
                   <div
                     className={`identity-resource-form__container__field__available ${
                       available ? 'ok ' : 'taken '
                     } ${nameLength > 0 ? 'show' : 'hidden'}`}
                   >
-                    {available ? 'Available' : 'Unavailable'}
+                    {available
+                      ? translation.getField('name').available
+                      : translation.getField('name').unAvailable}
                   </div>
-                  <HelpBox helpText="The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request." />
+                  <HelpBox helpText={translation.getField('name').helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="name"
-                    message="Name is required and needs to be in the right format"
+                    message={translation.getField('name').errorMessage}
                   />
                 </div>
                 <div className="identity-resource-form__container__field">
