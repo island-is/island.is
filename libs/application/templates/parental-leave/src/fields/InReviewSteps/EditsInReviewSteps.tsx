@@ -10,6 +10,7 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
 import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
+import { dateFormat } from '@island.is/shared/constants'
 
 import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
 type StateMapEntry = { [key: string]: ReviewSectionState }
@@ -68,7 +69,7 @@ const EditInReviewSteps: FC<FieldBaseProps> = ({ application }) => {
               parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
             )}
             <br />
-            {format(dobDate, 'dd.MM.yyyy')}
+            {format(dobDate, dateFormat.is)}
           </Text>
         )}
       </Box>

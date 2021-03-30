@@ -21,6 +21,23 @@ const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
     },
   )
 
+  const onSubmit = async (eventName: string) => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: eventName,
+          answers: application.answers,
+        },
+      },
+    })
+
+    if (res?.data) {
+      // Takes them to the next state (which loads the relevant form)
+      refetch?.()
+    }
+  }
+
   const { formatMessage } = useLocale()
 
   const descKey =
@@ -48,22 +65,7 @@ const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
             variant="text"
             loading={loadingSubmit}
             disabled={loadingSubmit}
-            onClick={async () => {
-              const res = await submitApplication({
-                variables: {
-                  input: {
-                    id: application.id,
-                    event: 'ABORT',
-                    answers: application.answers,
-                  },
-                },
-              })
-
-              if (res?.data) {
-                // Takes them to the next state (which loads the relevant form)
-                refetch?.()
-              }
-            }}
+            onClick={() => onSubmit('ABORT')}
           >
             {formatMessage(
               parentalLeaveFormMessages.editFlow.editsNotApprovedDiscardButton,
@@ -78,22 +80,7 @@ const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
               variant="primary"
               loading={loadingSubmit}
               disabled={loadingSubmit}
-              onClick={async () => {
-                const res = await submitApplication({
-                  variables: {
-                    input: {
-                      id: application.id,
-                      event: 'MODIFY',
-                      answers: application.answers,
-                    },
-                  },
-                })
-
-                if (res?.data) {
-                  // Takes them to the next state (which loads the relevant form)
-                  refetch?.()
-                }
-              }}
+              onClick={() => onSubmit('MODIFY')}
             >
               {formatMessage(
                 parentalLeaveFormMessages.editFlow.editsNotApprovedEditButton,

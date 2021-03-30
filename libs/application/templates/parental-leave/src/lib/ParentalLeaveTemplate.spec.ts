@@ -7,7 +7,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
-import { States as ApplctionStates } from './ParentalLeaveTemplate'
+import { States as ApplicationStates } from './ParentalLeaveTemplate'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -175,7 +175,7 @@ describe('Parental Leave Application Template', () => {
           answers: {
             periods,
           },
-          state: ApplctionStates.APPROVED,
+          state: ApplicationStates.APPROVED,
         }),
         ParentalLeaveTemplate,
       )
@@ -183,7 +183,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.EDIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplctionStates.EDIT_OR_ADD_PERIODS)
+      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_PERIODS)
       expect(newApplication.answers.tempPeriods).toEqual(periods)
     })
 
@@ -206,7 +206,7 @@ describe('Parental Leave Application Template', () => {
             periods,
             tempPeriods: periods,
           },
-          state: ApplctionStates.EDIT_OR_ADD_PERIODS,
+          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
@@ -214,7 +214,7 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplctionStates.APPROVED)
+      expect(newState).toBe(ApplicationStates.APPROVED)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
@@ -226,7 +226,7 @@ describe('Parental Leave Application Template', () => {
               isSelfEmployed: 'no',
             },
           },
-          state: ApplctionStates.EDIT_OR_ADD_PERIODS,
+          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
@@ -236,7 +236,7 @@ describe('Parental Leave Application Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe(
-        ApplctionStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+        ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
       )
       expect(newApplication.assignees).toEqual([])
     })

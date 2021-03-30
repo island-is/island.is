@@ -16,6 +16,7 @@ import { getExpectedDateOfBirth } from '../../parentalLeaveUtils'
 import { handleSubmitError } from '../../parentalLeaveClientUtils'
 import { useMutation } from '@apollo/client'
 import { States as ApplicationStates } from '../../lib/ParentalLeaveTemplate'
+import { dateFormat } from '@island.is/shared/constants'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
@@ -109,7 +110,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({ application, refetch }) => {
               parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
             )}
             <br />
-            {format(dobDate, 'dd.MM.yyyy')}
+            {format(dobDate, dateFormat.is)}
           </Text>
         )}
         <Box>

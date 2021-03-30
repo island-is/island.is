@@ -25,6 +25,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Almennar upplýsingar',
       description: 'Applicant information',
     },
+    dateOfBirthNotAvailable: {
+      id: 'pl.application:externalData.dobNotAvailable',
+      defaultMessage:
+        'Gat ekki sótt fæðingardaginn. Vinsamlegast reyndu aftur síðar.',
+      description:
+        'Could not retrieve the date of birth. Please try again later.',
+    },
     externalDataSubSection: {
       id: 'pl.application:externalData.subSection',
       defaultMessage: 'Sækja gögn',

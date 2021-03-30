@@ -46,17 +46,6 @@ export const EditOrAddPeriods: Form = buildForm({
                 }),
               ],
             }),
-            // buildCustomField(
-            //   {
-            //     id: 'endDate',
-            //     name: m.duration,
-            //     description: parentalLeaveFormMessages.duration.description,
-            //     component: 'ParentalLeaveDuration',
-            //   },
-            //   {
-            //     showTimeline: true,
-            //   },
-            // ),
             buildMultiField({
               id: 'ratio',
               title: parentalLeaveFormMessages.ratio.title,
