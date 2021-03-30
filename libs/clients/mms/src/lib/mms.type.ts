@@ -5,7 +5,7 @@ export interface LicenseResponse {
   type: string
   fullName: string
   dokobitToken: string | null
-  school: string
+  issuer: string
   country: string
   created: string
   modified: string
