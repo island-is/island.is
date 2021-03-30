@@ -139,6 +139,7 @@ export class EducationService {
       geometry: this.mapGrade(grade.rumfraedi),
       ratiosAndPercentages: this.mapGrade(grade.hlutfollOgProsentur),
       algebra: this.mapGrade(grade.algebra),
+      numberComprehension: this.mapGrade(grade.tolurOgTalnaskilningur),
     }
   }
 
