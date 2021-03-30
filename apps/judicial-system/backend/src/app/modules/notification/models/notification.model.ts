@@ -28,6 +28,9 @@ export class Notification extends Model<Notification> {
   id: string
 
   @CreatedAt
+  @Column({
+    type: DataType.DATE,
+  })
   @ApiProperty()
   created: Date
 
