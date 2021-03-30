@@ -6,7 +6,6 @@ import {
   CreatePresignedPostMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { Case, PresignedPost } from '@island.is/judicial-system/types'
-import { createFormData } from '@island.is/judicial-system-web/src/services/api'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
@@ -55,6 +54,19 @@ export const useS3Upload = (workingCase?: Case) => {
         },
       })
     }
+  }
+
+  const createFormData = (
+    presignedPost: PresignedPost,
+    file: UploadFile,
+  ): FormData => {
+    const formData = new FormData()
+    Object.keys(presignedPost.fields).forEach((key) =>
+      formData.append(key, presignedPost.fields[key]),
+    )
+    formData.append('file', file as File)
+
+    return formData
   }
 
   const uploadToS3 = (file: UploadFile, presignedPost: PresignedPost) => {
