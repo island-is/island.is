@@ -31,7 +31,7 @@ const FetchEducationSignedLicenseUrlMutation = gql`
 
 const LicenseCards = () => {
   const { data } = useQuery<Query>(EducationLicenseQuery)
-  const [fetchEducationSignedLicenseUrl] = useMutation<Mutation>(
+  const [fetchEducationSignedLicenseUrl, { loading }] = useMutation<Mutation>(
     FetchEducationSignedLicenseUrlMutation,
   )
 
@@ -80,6 +80,7 @@ const LicenseCards = () => {
                 iconType="outline"
                 nowrap
                 onClick={() => handleDownload(license)}
+                disabled={loading}
               >
                 Sækja skjal
               </Button>
