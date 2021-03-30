@@ -14,10 +14,10 @@ export class EnglishGrade {
   competenceStatus!: string
 
   @Field(() => Grade)
-  readingGrade!: Grade
+  reading!: Grade
 
   @Field(() => Grade)
-  grammarGrade!: Grade
+  grammar!: Grade
 
   @Field(() => String)
   progressText!: string

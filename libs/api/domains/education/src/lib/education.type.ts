@@ -35,14 +35,19 @@ interface MathGrade extends BaseGrade {
 }
 
 interface LanguageGrade extends BaseGrade {
-  readingGrade: Grade
-  grammarGrade: Grade
+  reading: Grade
+  grammar: Grade
 }
 
-export interface ExamResult {
-  id: string
+interface GradeResult {
   studentYear: string
   englishGrade?: LanguageGrade
   icelandicGrade?: LanguageGrade
   mathGrade?: MathGrade
+}
+
+export interface ExamResult {
+  id: string
+  fullName: string
+  grades: GradeResult[]
 }

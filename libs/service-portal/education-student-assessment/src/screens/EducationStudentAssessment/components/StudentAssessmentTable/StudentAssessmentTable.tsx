@@ -1,127 +1,190 @@
 import React, { Fragment } from 'react'
-import { Box, Table as T, Text, TextProps } from '@island.is/island-ui/core'
+import { useParams } from 'react-router-dom'
+import {
+  Box,
+  SkeletonLoader,
+  Table as T,
+  Text,
+  TextProps,
+} from '@island.is/island-ui/core'
 import { EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
+import { gql, useQuery } from '@apollo/client'
+import { Query, EducationExamResult } from '@island.is/api/schema'
+
+const EducationExamResultQuery = gql`
+  query EducationExamResultQuery($nationalId: String!) {
+    educationExamResult(nationalId: $nationalId) {
+      id
+      fullName
+      grades {
+        studentYear
+        icelandicGrade {
+          grade
+          competence
+          competenceStatus
+          reading {
+            grade
+            weight
+          }
+          grammar {
+            grade
+            weight
+          }
+          progressText
+        }
+        mathGrade {
+          grade
+          competence
+          competenceStatus
+          calculation {
+            grade
+            weight
+          }
+          geometry {
+            grade
+            weight
+          }
+          ratiosAndPercentages {
+            grade
+            weight
+          }
+          algebra {
+            grade
+            weight
+          }
+          wordAndNumbers
+          progressText
+        }
+        englishGrade {
+          grade
+          competence
+          competenceStatus
+          reading {
+            grade
+            weight
+          }
+          grammar {
+            grade
+            weight
+          }
+          progressText
+        }
+      }
+    }
+  }
+`
 
 type DataField = Pick<
   TextProps,
   'variant' | 'color' | 'truncate' | 'fontWeight' | 'lineHeight'
 >
 
-const gradeMock = [
-  {
-    subject: 'Enska',
-    rate: '',
-    serialRating: '61',
-    abilityRating: 'A+',
-    status: 'A1',
-    breakdown: [
-      {
-        subject: 'Lesskilningur',
-        rate: '(70%)',
-        serialRating: '49',
-        abilityRating: '',
-        status: '',
-      },
-      {
-        subject: 'Málnotkun',
-        rate: '(30%)',
-        serialRating: '85',
-        abilityRating: '',
-        status: '',
-      },
-    ],
-  },
-  {
-    subject: 'Íslenska',
-    rate: '',
-    serialRating: '84',
-    abilityRating: 'B+',
-    status: '',
-    breakdown: [
-      {
-        subject: 'Lestur og bókmenntir',
-        rate: '(70%)',
-        serialRating: '69',
-        abilityRating: '',
-        status: '',
-      },
-      {
-        subject: 'Málnotkun',
-        rate: '(30%)',
-        serialRating: '94',
-        abilityRating: '',
-        status: '',
-      },
-      {
-        subject: 'Framfaraeinkunn',
-        progressRating:
-          'Framfarir í íslensku eru svipaðar og almennt gerist á landsvísu.',
-      },
-    ],
-  },
-  {
-    subject: 'Stærðfræði',
-    rate: '',
-    serialRating: '79',
-    abilityRating: 'B',
-    status: '',
-    breakdown: [
-      {
-        subject: 'Reikningur og aðgerðir',
-        rate: '(25%)',
-        serialRating: '79',
-        abilityRating: '',
-        status: '',
-      },
-      {
-        subject: 'Rúmfræði og mælingar',
-        rate: '(25%)',
-        serialRating: '72',
-        abilityRating: '',
-        status: '',
-      },
-      {
-        subject: 'Algebra',
-        rate: '(25%)',
-        serialRating: '60',
-        abilityRating: '',
-        status: '',
-      },
-      {
-        subject: 'Hlutföll og prósentur',
-        rate: '(25%)',
-        serialRating: '62',
-        abilityRating: '',
-        status: '',
-      },
-      {
-        subject: 'Framfaraeinkunn',
-        progressRating:
-          'Framfarir í stærðfræði eru svipaðar og almennt gerist á landsvísu.',
-      },
-    ],
-  },
-]
-const studentAssessmentData = [
-  {
-    title: 'Samræmd könnunarpróf 4. bekkur',
-    data: gradeMock,
-  },
-  {
-    title: 'Samræmd könnunarpróf 7. bekkur',
-    data: gradeMock,
-  },
-  {
-    title: 'Samræmd könnunarpróf 9. bekkur',
-    data: gradeMock,
-  },
-]
-
 const StudentAssessmentTable = () => {
+  const { nationalId } = useParams<{ nationalId: string }>()
+  const { data, loading: queryLoading, error } = useQuery<Query>(
+    EducationExamResultQuery,
+    {
+      variables: {
+        nationalId,
+      },
+    },
+  )
+  const educationExamResult =
+    data?.educationExamResult?.grades.map((res) => ({
+      title: `Samræmd könnunarpróf ${res.studentYear}. bekkur`,
+      data: [
+        {
+          subject: 'Enska',
+          serialRating: res.englishGrade?.grade,
+          abilityRating: res.englishGrade?.competence,
+          status: res.englishGrade?.competenceStatus,
+          breakdown: [
+            {
+              subject: 'Lesskilningur',
+              rate: `(${res.englishGrade?.grammar.weight}%)`,
+              serialRating: res.englishGrade?.grammar.grade,
+            },
+            {
+              subject: 'Málnotkun',
+              rate: `(${res.englishGrade?.reading.weight}%)`,
+              serialRating: res.englishGrade?.reading.grade,
+            },
+            {
+              subject: 'Framfaraeinkunn',
+              progressRating: res?.englishGrade?.progressText,
+            },
+          ],
+        },
+        {
+          subject: 'Íslenska',
+          serialRating: res.icelandicGrade?.grade,
+          abilityRating: res.icelandicGrade?.competence,
+          status: res.icelandicGrade?.competenceStatus,
+          breakdown: [
+            {
+              subject: 'Lesskilningur',
+              rate: `(${res.icelandicGrade?.grammar.weight}%)`,
+              serialRating: res.icelandicGrade?.grammar.grade,
+            },
+            {
+              subject: 'Málnotkun',
+              rate: `(${res.icelandicGrade?.reading.weight}%)`,
+              serialRating: res.icelandicGrade?.reading.grade,
+            },
+            {
+              subject: 'Framfaraeinkunn',
+              progressRating: res?.icelandicGrade?.progressText,
+            },
+          ],
+        },
+        {
+          subject: 'Stærðfræði',
+          serialRating: res.mathGrade?.grade,
+          abilityRating: res.mathGrade?.competence,
+          status: res.mathGrade?.competenceStatus,
+          breakdown: [
+            {
+              subject: 'Reikningur og aðgerðir',
+              rate: `(${res.mathGrade?.calculation.weight}%)`,
+              serialRating: res.mathGrade?.calculation.grade,
+            },
+            {
+              subject: 'Rúmfræði og mælingar',
+              rate: `(${res.mathGrade?.geometry.weight}%)`,
+              serialRating: res.mathGrade?.geometry.grade,
+            },
+            {
+              subject: 'Algebra',
+              rate: `(${res.mathGrade?.algebra.weight}%)`,
+              serialRating: res.mathGrade?.algebra.grade,
+            },
+            {
+              subject: 'Hlutföll og prósentur',
+              rate: `(${res.mathGrade?.ratiosAndPercentages.weight}%)`,
+              serialRating: res.mathGrade?.ratiosAndPercentages.grade,
+            },
+            {
+              subject: 'Framfaraeinkunn',
+              progressRating: res?.mathGrade?.progressText,
+            },
+          ],
+        },
+      ],
+    })) || []
+
+  if (queryLoading) {
+    return <LoadingTemplate />
+  }
+
   return (
     <>
-      {studentAssessmentData.map((studentAssessment, index) => (
+      {data?.educationExamResult && (
+        <Text variant="h2" marginBottom={4}>
+          {data?.educationExamResult.fullName}
+        </Text>
+      )}
+      {educationExamResult.map((studentAssessment, index) => (
         <Box key={index} marginBottom={7}>
           <Text variant="h3" marginBottom={3}>
             {studentAssessment.title}
@@ -154,9 +217,7 @@ const StudentAssessmentTable = () => {
                       <T.Data text={dataText} box={dataBox}>
                         {studentAssessment.subject}
                       </T.Data>
-                      <T.Data text={dataText} box={dataBox}>
-                        {studentAssessment.rate}
-                      </T.Data>
+                      <T.Data text={dataText} box={dataBox}></T.Data>
                       <T.Data text={dataText} box={dataBox}>
                         {studentAssessment.serialRating}
                       </T.Data>
@@ -191,10 +252,8 @@ const StudentAssessmentTable = () => {
                           <T.Data box={dataBox}>
                             {breakdown.serialRating}
                           </T.Data>
-                          <T.Data box={dataBox}>
-                            {breakdown.abilityRating}
-                          </T.Data>
-                          <T.Data box={dataBox}>{breakdown.status}</T.Data>
+                          <T.Data box={dataBox}></T.Data>
+                          <T.Data box={dataBox}></T.Data>
                         </T.Row>
                       )
                     })}
@@ -206,7 +265,7 @@ const StudentAssessmentTable = () => {
         </Box>
       ))}
 
-      {studentAssessmentData.length === 0 && (
+      {educationExamResult.length === 0 && (
         <Box marginTop={8}>
           <EmptyState
             title={defineMessage({
@@ -219,5 +278,73 @@ const StudentAssessmentTable = () => {
     </>
   )
 }
+
+const LoadingTemplate = () => (
+  <>
+    <Text variant="h2" marginBottom={4}>
+      <SkeletonLoader width={300} />
+    </Text>
+    <Text variant="h3" marginBottom={3}>
+      <SkeletonLoader width={350} />
+    </Text>
+    <T.Table>
+      <T.Head>
+        <T.Row>
+          <T.HeadData>
+            <SkeletonLoader />
+          </T.HeadData>
+          <T.HeadData>
+            <SkeletonLoader />
+          </T.HeadData>
+          <T.HeadData>
+            <SkeletonLoader />
+          </T.HeadData>
+          <T.HeadData>
+            <SkeletonLoader />
+          </T.HeadData>
+          <T.HeadData>
+            <SkeletonLoader />
+          </T.HeadData>
+        </T.Row>
+      </T.Head>
+      <T.Body>
+        <T.Row>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+        </T.Row>
+        <T.Row>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+          <T.Data>
+            <SkeletonLoader />
+          </T.Data>
+        </T.Row>
+      </T.Body>
+    </T.Table>
+  </>
+)
 
 export default StudentAssessmentTable

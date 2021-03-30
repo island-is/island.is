@@ -36,6 +36,17 @@ export const SkeletonLoader = ({
   space = 0,
   borderRadius,
 }: SkeletonLoaderProps) => {
+  if (repeat === 1) {
+    return (
+      <span
+        className={cn(styles.loader, styles.borderRadius[borderRadius!])}
+        style={{
+          ...(height && { height }),
+          ...(width && { width }),
+        }}
+      />
+    )
+  }
   return (
     <Stack space={space}>
       {[...Array(repeat)].map((_key, index) => (
