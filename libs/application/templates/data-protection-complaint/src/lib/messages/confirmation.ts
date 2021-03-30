@@ -12,11 +12,11 @@ export const confirmation = {
     bulletOne: {
       id: 'dpac.application:section.overview.labels.bulletOne',
       defaultMessage: `
-      Vinsamlegast athugið að þegar kvörtun er tekin til meðferðar
-      er gagnaðila tilkynnt um aðborist hafi kvörtun frá tilteknum
-      nafngreindum aðila og honum gefinn kostur á að koma áframfæri andmælum sínum.
-      Kvartanda er einnig gefið færi á að koma að athugasemdumvið andmæli þess
-      sem kvartað er yfir. Svarfrestur málsaðila er að jafnaði þrjár vikur.`,
+      Almennt er áætlað að afgreiðsla kvartana geti tekið um 9-15
+      mánuði en afgreiðslutími getur þó lengst enn frekar ef mál
+      eru sérstaklega flókin eða umfangsmikil. Forgangsmál geta
+      tekið skemmri tíma. Öll mál eru afgreidd eins hratt og mögulegt
+      er og er þeim forgangsraðað eftir tilefni og getu hverju sinni. `,
       description: 'The first bullet',
     },
     bulletTwo: {
