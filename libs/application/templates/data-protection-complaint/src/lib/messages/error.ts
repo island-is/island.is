@@ -36,6 +36,16 @@ export const error = defineMessages({
     defaultMessage: 'Hér er ekki hægt að senda inn kvörtun á vegum fyrirtækis',
     description: 'Error message when onBehalf has been answered as company',
   },
+  required: {
+    id: 'dpac.application:error.required',
+    defaultMessage: 'Skylda er að fylla út reitinn',
+    description: 'Error message when a required field has not been filled out',
+  },
+  wordCountReached: {
+    id: 'dpac.application:error.wordCountReached',
+    defaultMessage: 'Lýsingin má vera 500 orð að hámarki',
+    description: 'Error message when a word count has been reached',
+  },
 })
 
 export const errorCards = defineMessages({
