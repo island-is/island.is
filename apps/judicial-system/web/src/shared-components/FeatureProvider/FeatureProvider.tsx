@@ -20,7 +20,7 @@ const FeatureProvider: React.FC = ({ children }) => {
     const tryToProvideFeatures = async () => {
       let providedFeatures: Feature[] = []
 
-      for (var i = 0; i < availableFeatures.length; i++) {
+      for (let i = 0; i < availableFeatures.length; i++) {
         const shouldProvide = await getFeature(availableFeatures[i])
         if (shouldProvide) {
           providedFeatures = [...providedFeatures, availableFeatures[i]]
