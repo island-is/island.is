@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 import * as styles from './InputFileUpload.treat'
@@ -177,7 +177,6 @@ export const InputFileUpload = ({
   onRemove,
   errorMessage,
 }: InputFileUploadProps) => {
-  const a = useRef<HTMLDivElement>(null)
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || !onChange) return
 
@@ -220,7 +219,6 @@ export const InputFileUpload = ({
       textAlign="center"
       padding={4}
       className={styles.container}
-      ref={a}
       {...getRootProps({ style })}
     >
       <Text variant="h4">{header}</Text>
