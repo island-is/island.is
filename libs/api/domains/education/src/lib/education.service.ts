@@ -79,7 +79,10 @@ export class EducationService {
         const studentAssessment = await this.mmsApi.getStudentAssessment(
           familyMember.Kennitala,
         )
-        if (studentAssessment.einkunnir.length <= 0) {
+        if (
+          studentAssessment.einkunnir &&
+          studentAssessment.einkunnir.length <= 0
+        ) {
           return undefined
         }
 
