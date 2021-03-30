@@ -11,8 +11,12 @@ import { User } from '@island.is/judicial-system/types'
 
 import { BackendAPI } from '../../../services'
 import { AuditService } from '../audit'
-import { CreateFileInput, CreatePresignedPostInput } from './dto'
-import { PresignedPost, File } from './models'
+import {
+  CreateFileInput,
+  CreatePresignedPostInput,
+  DeleteFileInput,
+} from './dto'
+import { PresignedPost, File, DeleteFile } from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -40,6 +44,29 @@ export class FileResolver {
       backendApi.createCasePresignedPost(caseId, createPresignedPost),
       caseId,
     )
+  }
+
+  @Mutation(() => DeleteFile)
+  deleteFile(
+    @Args('input', { type: () => DeleteFileInput })
+    input: DeleteFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<DeleteFile> {
+    const { id } = input
+
+    console.log('IN DELETE FILE API', id)
+    // TODO: This is temporary. Iterate on this.
+    return new Promise((resolve, reject) => {
+      resolve({ success: true })
+    })
+
+    // return this.auditService.audit(
+    //   user.id,
+    //   AuditedAction.DELETE_FILE,
+    //   backendApi.deleteFile(id),
+    //   id,
+    // )
   }
 
   @Mutation(() => File)

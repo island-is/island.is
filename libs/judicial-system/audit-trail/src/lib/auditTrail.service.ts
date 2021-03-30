@@ -27,6 +27,7 @@ export enum AuditedAction {
   GET_INSTITUTIONS = 'GET_INSTITUTIONS',
   CREATE_PRESIGNED_POST = 'CREATE_PRESIGNED_POST',
   CREATE_FILE = 'CREATE_FILE',
+  DELETE_FILE = 'DELETE_FILE',
 }
 
 export interface AuditTrailOptions {
