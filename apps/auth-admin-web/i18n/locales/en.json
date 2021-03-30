@@ -1,4 +1,5 @@
 { 
+    "version": "1",
     "formPages": [{
         "id": "IdentityResourceCreateForm",
         "title": "Create Identity Resource",
@@ -6,15 +7,21 @@
         "help": "Identity resources are data like user ID, name, or email address of a user. An identity resource has a unique name, and you can assign arbitrary claim types to it. These claims will then be included in the identity token for the user. The client will use the scope parameter to request access to an identity resource.",
         "saveButton": "Next",
         "cancelButton": "Back",
-        "fields": [{
-            "id": "name",
+        "fields": { 
+            "name": {
             "label": "Name",
             "placeholder": "Unique identifier",
             "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
             "errorMessage": "Name is required and needs to be in the right format",
             "available": "Available",
             "unAvailable": "Unavailable"
-        }]
-    }],
-    "version": "1"
-}
+            }, 
+            "displayName": {
+            "label": "Display Name",
+            "placeholder": "Default Display Name",
+            "helpText": "The display name value will be used e.g. on the consent screen.",
+            "errorMessage": "Display name is required and needs to be in the right format",
+            "available": "",
+            "unAvailable": ""
+            }
+        }}]}

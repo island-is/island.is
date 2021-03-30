@@ -6,8 +6,9 @@ import { ResourcesService } from '../../../services/ResourcesService'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
-import { FormPage } from './../../../entities/common/Translation'
+import { FormItem, FormPage } from './../../../entities/common/Translation'
 import TranslationUtils from './../../../utils/translation.utils'
+import { TranslationService } from 'apps/auth-admin-web/services/TranslationService'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -78,7 +79,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="name"
                     className="identity-resource-form__label"
                   >
-                    {translation.getField('name').label}
+                    {translation.fields['name'].label}
                   </label>
                   <input
                     ref={register({
@@ -92,7 +93,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.identityResource.name}
                     readOnly={isEditing}
                     onChange={(e) => checkAvailability(e.target.value)}
-                    placeholder={translation.getField('name').placeholder}
+                    placeholder={translation.fields['name'].placeholder}
                   />
                   <div
                     className={`identity-resource-form__container__field__available ${
@@ -100,15 +101,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     } ${nameLength > 0 ? 'show' : 'hidden'}`}
                   >
                     {available
-                      ? translation.getField('name').available
-                      : translation.getField('name').unAvailable}
+                      ? translation.fields['name'].available
+                      : translation.fields['name'].unAvailable}
                   </div>
-                  <HelpBox helpText={translation.getField('name').helpText} />
+                  <HelpBox helpText={translation.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="name"
-                    message={translation.getField('name').errorMessage}
+                    message={translation.fields['name'].errorMessage}
                   />
                 </div>
                 <div className="identity-resource-form__container__field">
@@ -116,7 +117,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="displayName"
                     className="identity-resource-form__label"
                   >
-                    Display Name
+                    {translation.fields['displayName'].label}
                   </label>
                   <input
                     ref={register({
@@ -128,13 +129,17 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     className="identity-resource-form__input"
                     defaultValue={props.identityResource.displayName}
+                    placeholder={translation.fields['displayName'].placeholder}
+                    title={translation.fields['displayName'].helpText}
                   />
-                  <HelpBox helpText="The display name value will be used e.g. on the consent screen." />
+                  <HelpBox
+                    helpText={translation.fields['displayName'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="displayName"
-                    message="Display name is required and needs to be in the right format"
+                    message={translation.fields['displayName'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="identityresource"
