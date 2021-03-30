@@ -5,6 +5,8 @@ import {
   Inject,
   Post,
   Res,
+  Param,
+  ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -20,27 +22,28 @@ import {
 
 @UseGuards(IdsAuthFromBodyGuard)
 @ApiTags('documents')
-@Controller('document')
+@Controller('electronic-documents')
 export class DocumentController {
   constructor(
     @Inject(DocumentClient)
     private readonly documentClient: DocumentClient,
   ) {}
 
-  @Post()
+  @Post('/:pdfId')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description: 'Get a pdf document from the Documents service',
   })
-  async create(
+  async getPdf(
+    @Param('pdfId') pdfId: string,
     @CurrentRestUser() user: User,
     @Body() resource: GetDocumentDto,
     @Res() res: Response,
   ) {
     const rawDocumentDTO = await this.documentClient.customersDocument({
       kennitala: user.nationalId,
-      messageId: resource.documentId,
+      messageId: pdfId,
       authenticationType: 'HIGH',
     })
 

@@ -8,4 +8,5 @@ bootstrap({
   name: 'download-service',
   openApi,
   port: 3377,
+  globalPrefix: 'download/v1',
 })

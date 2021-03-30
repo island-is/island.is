@@ -9,11 +9,14 @@ import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'
 import { DocumentClient } from '@island.is/clients/documents'
-import { DocumentBuilder } from './documentUrlBuilder'
+import { DocumentBuilder } from './documentBuilder'
 
 @Injectable()
 export class DocumentService {
-  constructor(private documentClient: DocumentClient) {}
+  constructor(
+    private documentClient: DocumentClient,
+    private documentBuilder: DocumentBuilder,
+  ) {}
 
   async findByDocumentId(
     nationalId: string,
@@ -45,15 +48,14 @@ export class DocumentService {
     try {
       const body = await this.documentClient.getDocumentList(nationalId)
 
-      return (body?.messages || []).reduce(function (
-        result: Document[],
-        documentMessage: DocumentInfoDTO,
-      ) {
-        if (documentMessage)
-          result.push(DocumentBuilder.buildDocument(documentMessage))
-        return result
-      },
-      [])
+      return (body?.messages || []).reduce(
+        (result: Document[], documentMessage: DocumentInfoDTO) => {
+          if (documentMessage)
+            result.push(this.documentBuilder.buildDocument(documentMessage))
+          return result
+        },
+        [],
+      )
     } catch (exception) {
       logger.error(exception)
       return []

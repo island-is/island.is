@@ -49,6 +49,9 @@ export default {
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
+  downloadService: {
+    baseUrl: 'http://localhost:3377',
+  },
   documentProviderService: {
     documentsServiceBasePath: 'http://localhost:3369',
     documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS ?? '',

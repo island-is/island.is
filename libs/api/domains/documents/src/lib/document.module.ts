@@ -1,24 +1,27 @@
 import { DynamicModule } from '@nestjs/common'
 import { DocumentResolver } from './document.resolver'
 import { DocumentService } from './document.service'
+import { DocumentsClientModule } from '@island.is/clients/documents'
 import {
-  DocumentClientConfig,
-  DocumentsClientModule,
-} from '@island.is/clients/documents'
+  DocumentsConfig,
+  DOWNLOAD_SERVICE_CONFIG,
+} from './types/documents.config'
+import { DocumentBuilder } from './documentBuilder'
 
 export class DocumentModule {
-  static register(config: DocumentClientConfig): DynamicModule {
+  static register(config: DocumentsConfig): DynamicModule {
     return {
       module: DocumentModule,
-      imports: [
-        DocumentsClientModule.register({
-          basePath: config.basePath,
-          clientId: config.clientId,
-          clientSecret: config.clientSecret,
-          tokenUrl: config.tokenUrl,
-        }),
+      imports: [DocumentsClientModule.register(config.documentClientConfig)],
+      providers: [
+        DocumentBuilder,
+        {
+          provide: DOWNLOAD_SERVICE_CONFIG,
+          useValue: config.downloadServiceConfig,
+        },
+        DocumentResolver,
+        DocumentService,
       ],
-      providers: [DocumentResolver, DocumentService],
     }
   }
 }
