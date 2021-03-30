@@ -90,7 +90,10 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       theme
-      themeProperties
+      themeProperties {
+        gradientStartColor
+        gradientEndColor
+      }
     }
   }
   ${slices}

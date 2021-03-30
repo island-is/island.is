@@ -9,20 +9,11 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-interface ThemeProperties {
-  gradientStartColor?: string
-  gradientEndColor?: string
-}
-
 export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
-  const themeProperties: ThemeProperties = JSON.parse(
-    organizationPage.themeProperties,
-  )
-
-  const backgroundStyle = `linear-gradient(99.09deg, ${themeProperties.gradientStartColor} 23.68%,
-        ${themeProperties.gradientEndColor} 123.07%),
+  const backgroundStyle = `linear-gradient(99.09deg, ${organizationPage.themeProperties.gradientStartColor} 23.68%,
+        ${organizationPage.themeProperties.gradientEndColor} 123.07%),
         linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
 
   return (

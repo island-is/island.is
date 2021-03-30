@@ -7,6 +7,10 @@ import { Image, mapImage } from './image.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
+import {
+  mapOrganizationTheme,
+  OrganizationTheme,
+} from './organizationTheme.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -26,7 +30,7 @@ export class OrganizationPage {
   theme!: string
 
   @Field()
-  themeProperties!: string
+  themeProperties!: OrganizationTheme
 
   @Field(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
@@ -56,9 +60,7 @@ export const mapOrganizationPage = ({
   slug: fields.slug ?? '',
   description: fields.description ?? '',
   theme: fields.theme ?? 'default',
-  themeProperties: fields.themeProperties
-    ? JSON.stringify(fields.themeProperties)
-    : '',
+  themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   organization: fields.organization
