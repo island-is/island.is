@@ -39,7 +39,13 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
       <Box marginBottom={3}>
         <Box>
           <Box background="blue100" padding={3} borderRadius="large">
-            <Link href={'https://island.is'}>
+            <Link
+              href={formatText(
+                m.termsUserAgreementUrl,
+                application,
+                formatMessage,
+              )}
+            >
               <Button icon="open" iconType="outline" variant="text">
                 {formatText(
                   m.termsUserAgreementTitle,
@@ -55,7 +61,13 @@ const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {
             padding={3}
             borderRadius="large"
           >
-            <Link href={'https://island.is'}>
+            <Link
+              href={formatText(
+                m.termsSafetyAgreementUrl,
+                application,
+                formatMessage,
+              )}
+            >
               <Button icon="open" iconType="outline" variant="text">
                 {formatText(
                   m.termsSafetyAgreementTitle,

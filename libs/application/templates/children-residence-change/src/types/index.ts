@@ -1,16 +1,29 @@
-import { NationalRegistryUser } from '@island.is/api/schema'
 import { Application, FieldBaseProps } from '@island.is/application/core'
 import { answersSchema } from '../lib/dataSchema'
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
-export interface PersonResidenceChange {
-  id: string
-  name: string
-  ssn: string
+export interface Address {
+  streetName: string
   postalCode: string
-  address: string
   city: string
+}
+
+export interface PersonResidenceChange {
+  nationalId: string
+  fullName: string
+  address: Address
+}
+
+export interface Child {
+  nationalId: string
+  livesWithApplicant: boolean
+  fullName: string
+  otherParent: PersonResidenceChange
+}
+
+export interface NationalRegistry extends PersonResidenceChange {
+  children: Child[]
 }
 
 export interface UserInfo {
@@ -22,22 +35,25 @@ export interface UserInfo {
 
 export interface ExternalData {
   nationalRegistry: {
-    data: NationalRegistryUser
-  }
-  parentNationalRegistry: {
-    data: PersonResidenceChange
-  }
-  childrenNationalRegistry: {
-    data: PersonResidenceChange[]
+    data: NationalRegistry
   }
   userProfile: {
     data: UserInfo
   }
 }
 
+interface MockChildren extends PersonResidenceChange {
+  livesWithApplicant: 'yes' | undefined
+  otherParent: number
+}
+interface MockData {
+  parents: PersonResidenceChange[]
+  children: MockChildren[]
+}
+
 // We are using mockData that is not defined in the zod schema
 export interface Answers extends answersSchema {
-  mockData: ExternalData
+  mockData: MockData
 }
 
 export type CRCApplication = Override<
@@ -51,10 +67,7 @@ export type CRCFieldBaseProps = Override<
 >
 
 export enum DataProviderTypes {
-  MOCK_ChildrenNationalRegistry = 'MockChildrenNationalRegistryProvider',
-  ChildrenNationalRegistry = 'ChildrenNationalRegistryProvider',
-  MOCK_ParentNationalRegistry = 'MockParentNationalRegistryProvider',
-  ParentNationalRegistry = 'ParentNationalRegistryProvider',
+  MOCK_NationalRegistry = 'MockNationalRegistryProvider',
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
 }
