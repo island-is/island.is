@@ -30,7 +30,9 @@ export const useS3Upload = (workingCase?: Case) => {
   }
 
   const getFileIndexInFiles = (file: UploadFile) => {
-    return files.findIndex((fileInFiles) => fileInFiles.name === file.name)
+    return files.includes(file)
+      ? files.findIndex((fileInFiles) => fileInFiles.name === file.name)
+      : files.length
   }
 
   const updateFile = (file: UploadFile) => {

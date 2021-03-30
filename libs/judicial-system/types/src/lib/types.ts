@@ -175,6 +175,7 @@ export interface Case {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  rulingDate?: string
   judge?: User
   registrar?: User
   parentCase?: Case
@@ -256,6 +257,7 @@ export interface UpdateCase {
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
   prosecutorAppealAnnouncement?: string
+  registrarId?: string
   judgeId?: string
 }
 

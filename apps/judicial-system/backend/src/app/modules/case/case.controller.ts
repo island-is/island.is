@@ -193,13 +193,44 @@ export class CaseController {
     const user = await this.userService.findById(prosecutorId)
 
     if (!user) {
-      throw new NotFoundException(`Prosecutor ${prosecutorId} does not exist`)
+      throw new NotFoundException(`User ${prosecutorId} does not exist`)
     }
 
-    if (user.institutionId !== existingCase.prosecutor.institutionId) {
+    if (user.role !== UserRole.PROSECUTOR) {
+      throw new ForbiddenException(`User ${prosecutorId} is not a prosecutor}`)
+    }
+
+    if (
+      existingCase.prosecutor &&
+      user.institutionId !== existingCase.prosecutor.institutionId
+    ) {
       throw new ForbiddenException(
-        `Prosecutor ${prosecutorId} cannot be assigned to case ${existingCase.id}`,
+        `User ${prosecutorId} belongs to the wrong institution`,
       )
+    }
+  }
+
+  private async validateJudge(judgeId: string, existingCase: Case) {
+    const user = await this.userService.findById(judgeId)
+
+    if (!user) {
+      throw new NotFoundException(`User ${judgeId} does not exist`)
+    }
+
+    if (user.role !== UserRole.JUDGE) {
+      throw new ForbiddenException(`User ${judgeId} is not a judge}`)
+    }
+  }
+
+  private async validateRegistrar(registratId: string, existingCase: Case) {
+    const user = await this.userService.findById(registratId)
+
+    if (!user) {
+      throw new NotFoundException(`User ${registratId} does not exist`)
+    }
+
+    if (user.role !== UserRole.REGISTRAR) {
+      throw new ForbiddenException(`User ${registratId} is not a registrar}`)
     }
   }
 
@@ -233,9 +264,16 @@ export class CaseController {
     // Make sure the user has access to this case
     const existingCase = await this.caseService.findByIdAndUser(id, user)
 
-    // Make sure a valid prosecutor is assigned to the case
-    if (caseToUpdate.prosecutorId && existingCase.prosecutorId) {
+    // Make sure a valid users are assigned to the case's roles
+    // TODO: move user role verification to an interceptor
+    if (caseToUpdate.prosecutorId) {
       await this.validateProsecutor(caseToUpdate.prosecutorId, existingCase)
+    }
+    if (caseToUpdate.judgeId) {
+      await this.validateJudge(caseToUpdate.judgeId, existingCase)
+    }
+    if (caseToUpdate.registrarId) {
+      await this.validateRegistrar(caseToUpdate.registrarId, existingCase)
     }
 
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
@@ -273,6 +311,7 @@ export class CaseController {
 
     const state = transitionCase(transition.transition, existingCase.state)
 
+    // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
     const update = { state }
 
     if (state === CaseState.DELETED) {

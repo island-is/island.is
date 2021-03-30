@@ -134,7 +134,6 @@ export class TranslationService {
     translation: TranslationDTO,
   ): Promise<Translation | undefined> {
     this.logger.debug(`Creating translation for id - ${translation.key}`)
-
     try {
       return this.sequelize.transaction((t) => {
         return this.translationModel.create(translation)

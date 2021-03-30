@@ -1,20 +1,33 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
-import { PersonResidenceChange } from '@island.is/application/templates/children-residence-change'
+import {
+  NationalRegistry,
+  Answers,
+  formatAddress,
+  formatDate,
+  getSelectedChildrenFromExternalData,
+  childrenResidenceInfo,
+} from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
-import { User } from '@island.is/api/domains/national-registry'
 
 export async function generateResidenceChangePdf(
-  childrenAppliedFor: Array<PersonResidenceChange>,
-  parentA: User,
-  parentB: PersonResidenceChange,
-  expiry: Array<string>,
-  reason?: string,
+  applicant: NationalRegistry,
+  answers: Answers,
 ): Promise<Buffer> {
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
+  const { selectDuration, residenceChangeReason, selectedChildren } = answers
+  const reason = residenceChangeReason
+  const expiry = selectDuration
+  const parentA = applicant
+  const childrenAppliedFor = getSelectedChildrenFromExternalData(
+    applicant.children,
+    selectedChildren,
+  )
+  const parentB = childrenAppliedFor[0].otherParent
+  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
 
   const doc = new PDFDocument({
     size: PdfConstants.PAGE_SIZE,
@@ -79,7 +92,7 @@ export async function generateResidenceChangePdf(
       i === childrenAppliedFor.length - 1
         ? PdfConstants.LARGE_LINE_GAP
         : PdfConstants.NO_LINE_GAP,
-      `Nafn og kennitala barns: ${c.name}, ${formatSsn(c.ssn)}`,
+      `Nafn og kennitala barns: ${c.fullName}, ${formatSsn(c.nationalId)}`,
     ),
   )
 
@@ -101,7 +114,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${parentA.address?.streetAddress}, ${parentA.address?.postalCode} ${parentA.address?.city}`,
+    `Heimilisfang: ${formatAddress(parentA.address)}`,
   )
 
   addToDoc(
@@ -115,14 +128,14 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Nafn og kennitala: ${parentB.name}, ${formatSsn(parentB.ssn)}`,
+    `Nafn og kennitala: ${parentB.fullName}, ${formatSsn(parentB.nationalId)}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${parentB.address}, ${parentB.postalCode} ${parentB.city}`,
+    `Heimilisfang: ${formatAddress(parentB.address)}`,
   )
 
   addToDoc(
@@ -136,14 +149,14 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${parentA.fullName}, Foreldri A`,
+    `Fyrra lögheimili: ${childResidenceInfo.current.parent.fullName}, Foreldri ${childResidenceInfo.current.parent.letter}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Nýtt lögheimili: ${parentB.name}, Foreldri B`,
+    `Nýtt lögheimili: ${childResidenceInfo.future.parent.fullName}, Foreldri ${childResidenceInfo.future.parent.letter}`,
   )
 
   if (reason) {
@@ -175,7 +188,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.LARGE_LINE_GAP,
     expiry[0] === PdfConstants.PERMANENT
       ? 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.'
-      : `Samningurinn gildir til ${expiry[1]}`,
+      : `Samningurinn gildir til ${formatDate(expiry[1])}`,
   )
 
   addToDoc(
