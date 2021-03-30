@@ -10,6 +10,7 @@ export class MockAuthGuard implements CanActivate {
     this.user = {
       nationalId: '1234567890',
       authorization: '',
+      client: 'mock',
       scope: [],
       ...user,
     }

@@ -103,6 +103,7 @@ module.exports = {
     '<rootDir>/libs/localization',
     '<rootDir>/libs/logging',
     '<rootDir>/libs/message-queue',
+    '<rootDir>/libs/nest/audit',
     '<rootDir>/libs/nova-sms',
     '<rootDir>/libs/plausible',
     '<rootDir>/libs/rsk',

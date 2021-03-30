@@ -1,2 +1,2 @@
-export * from './lib/auditTrail.module'
-export * from './lib/auditTrail.service'
+export * from './lib/audit.module'
+export * from './lib/audit.service'

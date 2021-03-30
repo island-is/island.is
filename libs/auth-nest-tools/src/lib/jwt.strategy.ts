@@ -30,10 +30,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       nationalId: payload.nationalId,
       scope: payload.scope,
+      client: payload.client_id,
       authorization: request.headers.authorization ?? '',
       actor: payload.act && {
         nationalId: payload.act.nationalId,
       },
+      ip: request.ip,
+      userAgent: request.headers['user-agent'],
     }
   }
 }
