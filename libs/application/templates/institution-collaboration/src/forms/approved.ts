@@ -9,7 +9,7 @@ import {
 import { institutionApplicationMessages as m } from '../lib/messages'
 
 export const approved: Form = buildForm({
-  id: 'InstitutionApplicationApprovedForm',
+  id: 'InstitutionCollaborationApprovedForm',
   title: '',
   mode: FormModes.APPLYING,
   children: [

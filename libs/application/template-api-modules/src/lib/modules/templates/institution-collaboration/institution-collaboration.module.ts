@@ -1,33 +1,33 @@
 import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { InstitutionApplicationService } from './institution-application.service'
-import { INSTITUTION_APPLICATION_CONFIG } from './config/institutionApplicationServiceConfig'
+import { InstitutionCollaborationService } from './institution-collaboration.service'
+import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
 import { FileStorageModule } from '@island.is/file-storage'
 
 const recipientEmailAddress =
-  process.env.INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS ??
+  process.env.INSTITUTION_COLLABORATION_RECIPIENT_EMAIL_ADDRESS ??
   'development@island.is'
 const senderEmailAddress =
-  process.env.INSTITUTION_APPLICATION_SENDER_EMAIL_ADDRESS ??
+  process.env.INSTITUTION_COLLABORATION_SENDER_EMAIL_ADDRESS ??
   'development@island.is'
 
-export class InstitutionApplicationModule {
+export class InstitutionCollaborationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: InstitutionApplicationModule,
+      module: InstitutionCollaborationModule,
       imports: [
         SharedTemplateAPIModule.register(config),
         FileStorageModule.register({}),
       ],
       providers: [
         {
-          provide: INSTITUTION_APPLICATION_CONFIG,
+          provide: INSTITUTION_COLLABORATION_CONFIG,
           useValue: { recipientEmailAddress, senderEmailAddress },
         },
-        InstitutionApplicationService,
+        InstitutionCollaborationService,
       ],
-      exports: [InstitutionApplicationService],
+      exports: [InstitutionCollaborationService],
     }
   }
 }

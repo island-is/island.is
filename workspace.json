@@ -1855,9 +1855,9 @@
         }
       }
     },
-    "application-templates-institution-application": {
-      "root": "libs/application/templates/institution-application",
-      "sourceRoot": "libs/application/templates/institution-application/src",
+    "application-templates-institution-collaboration": {
+      "root": "libs/application/templates/institution-collaboration",
+      "sourceRoot": "libs/application/templates/institution-collaboration/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1866,26 +1866,26 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/institution-application/tsconfig.lib.json",
-              "libs/application/templates/institution-application/tsconfig.spec.json"
+              "libs/application/templates/institution-collaboration/tsconfig.lib.json",
+              "libs/application/templates/institution-collaboration/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/institution-application/**/*"
+              "!libs/application/templates/institution-collaboration/**/*"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/application/templates/institution-application/jest.config.js",
+            "jestConfig": "libs/application/templates/institution-collaboration/jest.config.js",
             "passWithNoTests": true
           }
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/institution-application/src/lib/messages.ts"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/institution-collaboration/src/lib/messages.ts"
           }
         }
       }

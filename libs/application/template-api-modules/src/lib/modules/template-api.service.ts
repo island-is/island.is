@@ -9,7 +9,7 @@ import {
   ReferenceTemplateService,
   DocumentProviderOnboardingService,
   HealthInsuranceService,
-  InstitutionApplicationService,
+  InstitutionCollaborationService,
   ChildrenResidenceChangeService,
 } from './templates'
 
@@ -36,7 +36,7 @@ export class TemplateAPIService {
     private readonly referenceTemplateService: ReferenceTemplateService,
     private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
     private readonly healthInsuranceService: HealthInsuranceService,
-    private readonly institutionApplicationService: InstitutionApplicationService,
+    private readonly institutionApplicationService: InstitutionCollaborationService,
     private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
   ) {}
 
@@ -46,7 +46,7 @@ export class TemplateAPIService {
       | ParentalLeaveService
       | DocumentProviderOnboardingService
       | HealthInsuranceService
-      | InstitutionApplicationService
+      | InstitutionCollaborationService
       | ChildrenResidenceChangeService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
@@ -89,7 +89,7 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.PARENTAL_LEAVE:
         return this.tryRunningActionOnService(this.parentalLeaveService, action)
-      case ApplicationTypes.INSTITUTION_APPLICATION:
+      case ApplicationTypes.INSTITUTION_COLLABORATION:
         return this.tryRunningActionOnService(
           this.institutionApplicationService,
           action,

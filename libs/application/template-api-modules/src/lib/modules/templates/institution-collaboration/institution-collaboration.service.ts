@@ -8,18 +8,18 @@ import {
   generateConfirmationEmail,
 } from './emailGenerators'
 import {
-  INSTITUTION_APPLICATION_CONFIG,
-  InstitutionApplicationConfig,
+  INSTITUTION_COLLABORATION_CONFIG,
+  InstitutionCollaborationConfig,
 } from './config/institutionApplicationServiceConfig'
 import { FileStorageService } from '@island.is/file-storage'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { InstitutionAttachment } from './types'
 
 @Injectable()
-export class InstitutionApplicationService {
+export class InstitutionCollaborationService {
   constructor(
-    @Inject(INSTITUTION_APPLICATION_CONFIG)
-    private institutionConfig: InstitutionApplicationConfig,
+    @Inject(INSTITUTION_COLLABORATION_CONFIG)
+    private institutionConfig: InstitutionCollaborationConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly fileStorageService: FileStorageService,
   ) {}

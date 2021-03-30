@@ -10,7 +10,7 @@ export enum ApplicationTypes {
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   PARTY_LETTER = 'PartyLetter',
-  INSTITUTION_APPLICATION = 'InstitutionApplication',
+  INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
 }
 
 export const ApplicationConfigurations = {
@@ -58,7 +58,7 @@ export const ApplicationConfigurations = {
     slug: 'listabokstafur',
     translation: 'ple.application',
   },
-  [ApplicationTypes.INSTITUTION_APPLICATION]: {
+  [ApplicationTypes.INSTITUTION_COLLABORATION]: {
     slug: 'samstarf',
     translation: 'ia.application',
   },

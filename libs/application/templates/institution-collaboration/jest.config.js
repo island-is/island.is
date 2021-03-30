@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'application-templates-institution-application',
+  name: 'application-templates-institution-collaboration',
   preset: '../../../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -9,5 +9,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/institution-application',
+    '../../../../coverage/libs/application/templates/institution-collaboration',
 }

@@ -76,7 +76,7 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.INSTITUTION_APPLICATION,
+  type: ApplicationTypes.INSTITUTION_COLLABORATION,
   name: 'Application Application',
   dataSchema,
   stateMachineConfig: {
