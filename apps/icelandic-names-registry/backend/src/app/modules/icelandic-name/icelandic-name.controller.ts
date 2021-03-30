@@ -6,7 +6,7 @@ import {
   Get,
   NotFoundException,
   Param,
-  Post,
+  Put,
 } from '@nestjs/common'
 import { ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -19,7 +19,7 @@ import { UpdateIcelandicNameBody, CreateIcelandicNameBody } from './dto'
 export class IcelandicNameController {
   constructor(private readonly icelandicNameService: IcelandicNameService) {}
 
-  @Get('icelandic-names-registry/all')
+  @Get('all')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -29,7 +29,7 @@ export class IcelandicNameController {
     return this.icelandicNameService.getAll()
   }
 
-  @Get('icelandic-names-registry/:initialLetter')
+  @Get(':initialLetter')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -41,7 +41,7 @@ export class IcelandicNameController {
     return this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
-  @Post('icelandic-names-registry/:id/update')
+  @Put(':id')
   @ApiOkResponse()
   async updateNameById(
     @Param('id') id: number,
@@ -57,13 +57,13 @@ export class IcelandicNameController {
     }
   }
 
-  @Post('icelandic-names-registry/create')
+  @Put('create')
   @ApiOkResponse()
   async createName(@Body() body: CreateIcelandicNameBody): Promise<void> {
     const result = await this.icelandicNameService.createName(body)
   }
 
-  @Delete('icelandic-names-registry/:id/delete')
+  @Delete(':id')
   @ApiNoContentResponse()
   async deleteById(@Param('id') id: number): Promise<void> {
     const icelandicName = await this.icelandicNameService.getById(id)

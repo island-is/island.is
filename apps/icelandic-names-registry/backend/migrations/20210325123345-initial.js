@@ -12,7 +12,10 @@ module.exports = {
           visible BOOLEAN DEFAULT FALSE,
           type VARCHAR DEFAULT NULL,
           description VARCHAR DEFAULT NULL,
-          verdict VARCHAR DEFAULT NULL
+          verdict VARCHAR DEFAULT NULL,
+          url VARCHAR DEFAULT NULL,
+          created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          modified TIMESTAMP WITH TIME ZONE
         );
 
       COMMIT;

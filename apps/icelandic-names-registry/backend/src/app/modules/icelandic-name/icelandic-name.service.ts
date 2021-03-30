@@ -19,7 +19,7 @@ export class IcelandicNameService {
     this.logger.debug('Getting all icelandic names')
 
     return this.icelandicNameModel.findAll({
-      order: ['name'],
+      order: ['icelandic_name'],
     })
   }
 
@@ -30,14 +30,14 @@ export class IcelandicNameService {
 
     return this.icelandicNameModel.findAll({
       where: {
-        name: {
+        icelandic_name: {
           [Op.or]: {
             [Op.startsWith]: initialLetter.toLowerCase(),
             [Op.startsWith]: initialLetter.toUpperCase(),
           },
         },
       },
-      order: ['name'],
+      order: ['icelandic_name'],
     })
   }
 
@@ -51,13 +51,13 @@ export class IcelandicNameService {
     })
   }
 
-  async updateNameById(
+  updateNameById(
     id: number,
     body: UpdateIcelandicNameBody,
   ): Promise<[number, IcelandicName[]]> {
     this.logger.debug(`Updating name by id: ${id}`)
 
-    return await this.icelandicNameModel.update(body, {
+    return this.icelandicNameModel.update(body, {
       where: { id },
       returning: true,
     })
@@ -66,9 +66,7 @@ export class IcelandicNameService {
   async createName(body: CreateIcelandicNameBody): Promise<IcelandicName> {
     this.logger.debug(`Creating new name`)
 
-    return this.icelandicNameModel.create({
-      ...body,
-    })
+    return this.icelandicNameModel.create(body)
   }
 
   async deleteById(id: number): Promise<void> {

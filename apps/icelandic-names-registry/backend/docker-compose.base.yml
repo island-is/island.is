@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db_icelandic_names:
+  db_icelandic_names_registry:
     image: postgres:11.6
-    container_name: db_icelandic_names
+    container_name: db_icelandic_names_registry
     networks:
       - local
     environment:
