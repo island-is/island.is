@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
 import { PresignedPost } from './models'
+import { DeleteFileResponse } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class AwsS3Service {
@@ -26,6 +27,22 @@ export class AwsS3Service {
             reject(err)
           } else {
             resolve(data)
+          }
+        },
+      )
+    })
+  }
+
+  async deleteFile(key: string): Promise<DeleteFileResponse> {
+    return new Promise((resolve, reject) => {
+      this.s3.deleteObject(
+        { Bucket: environment.files.bucket, Key: key },
+        (err, data) => {
+          if (err) {
+            reject(err)
+          } else {
+            // TODO: Fix
+            // resolve(data)
           }
         },
       )
