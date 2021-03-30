@@ -53,9 +53,9 @@ export class FileResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<DeleteFile> {
-    const { id } = input
+    const { caseId, id } = input
 
-    console.log('IN DELETE FILE API', id)
+    console.log('IN DELETE FILE API', caseId)
     // TODO: This is temporary. Iterate on this.
     return new Promise((resolve, reject) => {
       resolve({ success: true })

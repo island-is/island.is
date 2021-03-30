@@ -8,5 +8,9 @@ import { DeleteFile } from '@island.is/judicial-system/types'
 export class DeleteFileInput implements DeleteFile {
   @Allow()
   @Field()
+  readonly caseId!: string
+
+  @Allow()
+  @Field()
   readonly id!: string
 }
