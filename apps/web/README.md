@@ -16,7 +16,7 @@ First off: Configure which API to fetch data from.
 
 ### Mock API (no server)
 
-Add `API_MOCKS=true` to your .env or .env.secret file.
+Add `API_MOCKS=true` to your `.env`, or `export API_MOCKS=true` to your `.env.secret` file.
 
 You can tweak the mock data in `libs/api/mocks`.
 
