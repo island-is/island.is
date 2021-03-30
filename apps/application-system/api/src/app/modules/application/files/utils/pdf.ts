@@ -1,7 +1,9 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import {
-  NationalRegistry,
+  ExternalData,
   Answers,
   formatAddress,
   formatDate,
@@ -10,14 +12,31 @@ import {
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
+import { parseISO } from 'date-fns'
+
+const formatDays = (date: string): string => {
+  return date.replace('dagur', 'daginn')
+}
 
 export async function generateResidenceChangePdf(
-  applicant: NationalRegistry,
+  externalData: ExternalData,
   answers: Answers,
 ): Promise<Buffer> {
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
+  const { nationalRegistry } = externalData
+  const applicant = nationalRegistry.data
+  const nationalRegistryLookupDate = format(
+    parseISO(nationalRegistry.date),
+    'EEEE d. MMMM y',
+    { locale: is },
+  )
+  const nationalRegistryLookupTime = format(
+    parseISO(nationalRegistry.date),
+    'p',
+    { locale: is },
+  )
   const { selectDuration, residenceChangeReason, selectedChildren } = answers
   const reason = residenceChangeReason
   const expiry = selectDuration
@@ -280,6 +299,17 @@ export async function generateResidenceChangePdf(
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
     `Undirritaður/uð, ${parentA.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
+  )
+
+  doc.moveDown()
+
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    PdfConstants.NO_LINE_GAP,
+    `Fyrirspurn og uppfletting í gögnum Þjóðskrár fór fram ${formatDays(
+      nationalRegistryLookupDate,
+    )} kl. ${nationalRegistryLookupTime}.`,
   )
 
   doc.end()
