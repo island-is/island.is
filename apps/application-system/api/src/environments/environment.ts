@@ -17,6 +17,12 @@ export default {
       'localhost:7005',
     ],
   },
+  audit: {
+    useGenericLogger: false,
+    groupName: 'test-audit-log',
+    serviceName: 'application-system-api',
+    defaultNamespace: '@island.is/applications',
+  },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',

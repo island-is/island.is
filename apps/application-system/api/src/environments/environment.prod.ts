@@ -10,6 +10,12 @@ export default {
   redis: {
     urls: [process.env.REDIS_URL_NODE_01],
   },
+  audit: {
+    useGenericLogger: false,
+    defaultNamespace: '@island.is/applications',
+    groupName: process.env.AUDIT_GROUP_NAME,
+    serviceName: 'application-system-api',
+  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',

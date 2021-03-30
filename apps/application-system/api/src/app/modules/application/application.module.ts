@@ -18,6 +18,7 @@ import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
+import { AuditModule } from '@island.is/nest/audit'
 
 let BullModule: DynamicModule
 
@@ -42,6 +43,7 @@ if (process.env.INIT_SCHEMA === 'true') {
 
 @Module({
   imports: [
+    AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     TemplateAPIModule.register(environment.templateApi),
     SequelizeModule.forFeature([Application]),

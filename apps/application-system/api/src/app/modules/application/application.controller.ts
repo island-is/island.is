@@ -90,6 +90,7 @@ import {
   StateChangeResult,
   TemplateAPIModuleActionResult,
 } from './types'
+import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
@@ -107,6 +108,9 @@ export class ApplicationController {
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto>({
+    resources: (app) => app.id,
+  })
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<ApplicationResponseDto> {
@@ -148,6 +152,9 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto[]>({
+    resources: (apps) => apps.map((app) => app.id),
+  })
   async findAll(
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
@@ -160,7 +167,7 @@ export class ApplicationController {
     )
 
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
-    const filteredApplications = []
+    const filteredApplications: Application[] = []
 
     for (const application of applications) {
       // We've already checked an application with this type and it is ready
@@ -191,6 +198,9 @@ export class ApplicationController {
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto>({
+    resources: (app) => app.id,
+  })
   async create(
     @Body()
     application: CreateApplicationDto,
@@ -246,6 +256,9 @@ export class ApplicationController {
   @Put('applications/assign')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto>({
+    resources: (app) => app.id,
+  })
   async assignApplication(
     @Body() assignApplicationDto: AssignApplicationDto,
     @CurrentUser() user: User,
@@ -327,6 +340,9 @@ export class ApplicationController {
   })
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
+  @Audit<ApplicationResponseDto>({
+    resources: (app) => app.id,
+  })
   async update(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,

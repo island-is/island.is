@@ -4,6 +4,7 @@ import { ApplicationConfig } from '../app/modules/application/application.config
 import { FileStorageConfig } from '@island.is/file-storage'
 import { SigningServiceOptions } from '@island.is/dokobit-signing'
 import { SyslumennClientConfig } from '@island.is/api/domains/syslumenn'
+import { AuditOptions } from '@island.is/nest/audit'
 
 export interface Environment {
   production: boolean
@@ -13,6 +14,7 @@ export interface Environment {
   redis: {
     urls: string[]
   }
+  audit: AuditOptions
   auth: AuthConfig
   templateApi: TemplateAPIConfig
   application: ApplicationConfig
