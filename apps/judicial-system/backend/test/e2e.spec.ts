@@ -950,9 +950,6 @@ describe('Notification', () => {
       })
       .then((value) => {
         expect(value.id).toBe(apiSendNotificationResponse.notification.id)
-        expect(value.created.toISOString()).toBe(
-          apiSendNotificationResponse.notification.created,
-        )
         expect(value.type).toBe(apiSendNotificationResponse.notification.type)
         expect(value.condition).toBe(
           apiSendNotificationResponse.notification.condition,
