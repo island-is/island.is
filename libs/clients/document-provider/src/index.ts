@@ -1,2 +1,3 @@
 export { ClientsDocumentProviderModule } from './lib/clients-document-provider.module'
-export * from '../gen/fetch'
+export { ClientsDocumentProviderService } from './lib/clients-document-provider.service'
+export * from '../src/lib/types'

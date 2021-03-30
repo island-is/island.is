@@ -10,29 +10,26 @@ import {
   generateApplicationApprovedEmail,
   generateApplicationRejectedEmail,
 } from './emailGenerators'
-import { OrganisationsApi } from '@island.is/clients/document-provider'
+import {
+  ClientsDocumentProviderService,
+  CreateContactInput,
+  CreateHelpdeskInput,
+  CreateOrganisationInput,
+} from '@island.is/clients/document-provider'
 
-interface Contact {
+interface Applicant {
+  nationalId: string
   name: string
   email: string
   phoneNumber: string
-}
-
-interface Applicant extends Contact {
-  nationalId: string
   address: string
-}
-
-interface Helpdesk {
-  email: string
-  phoneNumber: string
 }
 
 @Injectable()
 export class DocumentProviderOnboardingService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private organisationsApi: OrganisationsApi,
+    private service: ClientsDocumentProviderService,
   ) {}
 
   async assignReviewer({ application }: TemplateApiModuleActionProps) {
@@ -53,27 +50,24 @@ export class DocumentProviderOnboardingService {
       const adminContact = (get(
         application.answers,
         'administrativeContact',
-      ) as unknown) as Contact
+      ) as unknown) as CreateContactInput
       const techContact = (get(
         application.answers,
         'technicalContact',
-      ) as unknown) as Contact
+      ) as unknown) as CreateContactInput
       const helpdesk = (get(
         application.answers,
         'helpDesk',
-      ) as unknown) as Helpdesk
+      ) as unknown) as CreateHelpdeskInput
 
-      const dto = {
-        createOrganisationDto: {
-          ...applicant,
-          administrativeContact: { ...adminContact },
-          technicalContact: { ...techContact },
-          helpdesk: { ...helpdesk },
-        },
-        authorization,
-      }
+      const createOrganisationDto = {
+        ...applicant,
+        administrativeContact: { ...adminContact },
+        technicalContact: { ...techContact },
+        helpdesk: { ...helpdesk },
+      } as CreateOrganisationInput
 
-      await this.organisationsApi.organisationControllerCreateOrganisation(dto)
+      this.service.createOrganisation(createOrganisationDto, authorization)
     } catch (error) {
       logger.error('Failed to create organisation', error)
       throw error
