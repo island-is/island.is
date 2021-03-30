@@ -6,12 +6,12 @@ services:
       context: .
       dockerfile: ../../../scripts/ci/Dockerfile.test
       args:
-        DB_NAME: db_icelandic_names
+        DB_NAME: db_icelandic_names_registry
         APP: icelandic-names-registry-backend
     networks:
       - local
     depends_on:
-      - db_icelandic_names
+      - db_icelandic_names_registry
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
@@ -20,5 +20,5 @@ services:
     volumes:
       - ../../..:/code
 
-  db_icelandic_names:
+  db_icelandic_names_registry:
     ports: []

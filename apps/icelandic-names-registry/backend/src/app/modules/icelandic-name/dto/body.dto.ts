@@ -1,24 +1,38 @@
-import { IsString, IsDate, IsNumber, IsOptional, IsEnum } from 'class-validator'
+import { IsString, IsNumber, IsOptional, IsEnum } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
+
+enum NameType {
+  ST = 'ST',
+  DR = 'DR',
+  MI = 'MI',
+  RST = 'RST',
+  RDR = 'RDR',
+}
+
+enum StatusType {
+  ST = 'Haf',
+  DR = 'Sam',
+  OAF = 'Óaf',
+}
 
 export class UpdateIcelandicNameBody {
   @IsString()
   @IsOptional()
   @ApiProperty()
-  readonly name?: string
+  readonly icelandic_name?: string
 
   @IsString()
   @IsOptional()
   @ApiProperty()
-  @IsEnum(['ST', 'DR', 'MI', 'RST', 'RDR'])
-  readonly type?: 'ST' | 'DR' | 'MI' | 'RST' | 'RDR'
+  @IsEnum(NameType)
+  readonly type?: NameType
 
   @IsString()
   @IsOptional()
   @ApiProperty()
-  @IsEnum(['Haf', 'Sam'])
-  readonly status?: 'Haf' | 'Sam'
+  @IsEnum(StatusType)
+  readonly status?: StatusType
 
   @IsString()
   @IsOptional()
@@ -30,28 +44,34 @@ export class UpdateIcelandicNameBody {
   @ApiProperty()
   readonly visible?: number
 
-  @IsDate()
+  @IsString()
   @IsOptional()
-  @Type(() => Date)
+  @Type(() => String)
   @ApiProperty()
-  readonly verdictDate?: Date
+  readonly verdict?: string
+
+  @IsString()
+  @IsOptional()
+  @Type(() => String)
+  @ApiProperty()
+  readonly url?: string
 }
 
 export class CreateIcelandicNameBody {
   @IsString()
   @ApiProperty()
-  readonly name!: string
+  readonly icelandic_name!: string
 
   @IsString()
   @ApiProperty()
-  @IsEnum(['ST', 'DR', 'MI', 'RST', 'RDR'])
-  readonly type!: 'ST' | 'DR' | 'MI' | 'RST' | 'RDR'
+  @IsEnum(NameType)
+  readonly type?: NameType
 
   @IsString()
   @IsOptional()
   @ApiProperty()
-  @IsEnum(['Haf', 'Sam'])
-  readonly status?: 'Haf' | 'Sam'
+  @IsEnum(StatusType)
+  readonly status?: StatusType
 
   @IsString()
   @IsOptional()
@@ -63,9 +83,15 @@ export class CreateIcelandicNameBody {
   @ApiProperty()
   readonly visible?: number
 
-  @IsDate()
+  @IsString()
   @IsOptional()
-  @Type(() => Date)
+  @Type(() => String)
   @ApiProperty()
-  readonly verdictDate?: Date
+  readonly verdict?: string
+
+  @IsString()
+  @IsOptional()
+  @Type(() => String)
+  @ApiProperty()
+  readonly url?: string
 }

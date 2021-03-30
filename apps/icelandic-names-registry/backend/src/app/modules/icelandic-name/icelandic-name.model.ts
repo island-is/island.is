@@ -10,7 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
-  tableName: 'IcelandicNames',
+  tableName: 'icelandic_names',
   timestamps: true,
 })
 export class IcelandicName extends Model<IcelandicName> {
@@ -25,10 +25,9 @@ export class IcelandicName extends Model<IcelandicName> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true,
   })
   @ApiProperty()
-  name!: string
+  icelandic_name!: string
 
   @Column({
     type: DataType.STRING,
@@ -46,22 +45,28 @@ export class IcelandicName extends Model<IcelandicName> {
 
   @Column({
     type: DataType.STRING,
-    defaultValue: '',
+    allowNull: true,
   })
   description?: string
 
   @Column({
-    type: DataType.DATE,
+    type: DataType.STRING,
     allowNull: true,
   })
-  verdictDate?: Date | null
+  verdict?: string
 
   @Column({
-    type: DataType.NUMBER,
-    defaultValue: 1,
+    type: DataType.BOOLEAN,
+    allowNull: true,
   })
   @ApiProperty()
-  visible?: number
+  visible?: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  url?: string
 
   @CreatedAt
   readonly created!: Date

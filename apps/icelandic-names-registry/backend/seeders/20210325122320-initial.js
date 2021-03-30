@@ -7,6 +7,14 @@ const remapped = data.map((x) => {
     x.visible = true
   }
 
+  Object.keys(x).map((k) => {
+    if (x[k] === 'NULL') {
+      // clear any values that are the string 'NULL'
+      x[k] = null
+    }
+  })
+
+  // make db create id for record
   delete x.id
   return x
 })
