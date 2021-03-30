@@ -39,7 +39,7 @@ export class EducationService {
 
     return licenses.map((license) => ({
       id: license.id,
-      school: license.school,
+      school: license.issuer,
       programme: license.type,
       date: license.issued,
     }))
