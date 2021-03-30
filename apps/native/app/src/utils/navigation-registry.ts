@@ -13,6 +13,8 @@ export const ComponentRegistry = {
   WalletPassScreen: `${prefix}.screens.WalletPass`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   StorybookScreen: `${prefix}.screens.Storybook`,
+  SetPinScreen: `${prefix}.screens.SetPin`,
+  SetNotifications: `${prefix}.screens.SetNotifications`,
 
   // ui components
   NavigationBarTitle: `${prefix}.ui.NavigationBarTitle`,

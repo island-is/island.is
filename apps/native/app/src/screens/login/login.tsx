@@ -26,7 +26,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
       />
       <View style={{ maxWidth: 300 }}>
         <Heading isCenterAligned>
-          Skráðu þig inn í appið með rafrænum skilríkjum
+          Velkomin í Stafrænt Ísland
         </Heading>
       </View>
       <Button

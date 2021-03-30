@@ -11,6 +11,8 @@ import { Navigation } from 'react-native-navigation'
 import { NavigationBarTitle } from '../components/navigation-bar-title/navigation-bar-title';
 import { ComponentRegistry } from '../utils/navigation-registry';
 import { DocumentDetailScreen } from './document-detail/document-detail'
+import { SetPinScreen } from './onboarding/set-pin'
+import { SetNotificationScreen } from './onboarding/set-notifications'
 
 export function registerAllComponents() {
   if (config.storybookMode) {
@@ -28,6 +30,8 @@ export function registerAllComponents() {
     registerComponent(ComponentRegistry.AppLockScreen, AppLockScreen)
     registerComponent(ComponentRegistry.WalletPassScreen, WalletPassScreen);
     registerComponent(ComponentRegistry.DocumentDetailScreen, DocumentDetailScreen);
+    registerComponent(ComponentRegistry.SetPinScreen, SetPinScreen);
+    registerComponent(ComponentRegistry.SetNotifications, SetNotificationScreen);
     // ui components
     Navigation.registerComponent(ComponentRegistry.NavigationBarTitle, () => NavigationBarTitle);
   }
