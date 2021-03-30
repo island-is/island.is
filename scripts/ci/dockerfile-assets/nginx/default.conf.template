@@ -12,6 +12,14 @@ server {
         absolute_redirect off;
     }
 
+    location ~ "^$BASEPATH(.+\.[0-9a-f]{20}\..+)$" {
+        alias   /usr/share/nginx/html/$1;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        access_log off;        
+        # We don't want to redirect to localhost:3333
+        absolute_redirect off;
+    }
+
     error_page   500 502 503 504  /50x.html;
 
     location = /50x.html {
