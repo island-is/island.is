@@ -41,6 +41,14 @@ A couple of dependencies are required to use the UI library. The following are t
 }
 ```
 
+### Treat files
+
+If you need to import theme or utils from `@island.is/ui`, you will need to use the following import.
+
+```typescript
+import { theme } from '@island.is/ui/treat'
+```
+
 ### Usage with `Next.js`
 
 The alpha version of the library is shipped as Typescript. You will need to transpile it and add the Treat plugin to handle `.treat.ts` files. An example repository is available [here](https://github.com/island-is/island-ui-next-example).

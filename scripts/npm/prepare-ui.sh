@@ -31,7 +31,8 @@ find $DIST_UI -type f \(\
 \) -delete
 
 tsc --project "$DIST_UI/tsconfig.npm.json"
+rm "$DIST_UI/tsconfig.npm.json"
 
 # To publish to npm
 # cd dist/ui
-# npm publish
+# npm publish --scope=@island.is --access public
