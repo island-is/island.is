@@ -371,11 +371,7 @@ export const RulingStepOne: React.FC = () => {
                       setCustodyEndDateErrorMessage,
                     )
                   }
-                  minDate={
-                    workingCase.isolationTo
-                      ? parseISO(workingCase.isolationTo?.toString())
-                      : undefined
-                  }
+                  minDate={new Date()}
                   dateIsRequired
                   timeName="custodyEndTime"
                   timeRef={custodyEndTimeRef}
