@@ -104,13 +104,14 @@ export class ChildrenResidenceChangeService {
 
     participants.push(parentA, parentB)
 
+    const durationType = answers.durationType as string
     const extraData = {
       interviewRequested: answers.interview,
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
-        answers.selectDuration[0] === 'permanent'
-          ? answers.selectDuration[0]
-          : formatDate(answers.selectDuration[1]),
+        durationType === 'temporary' && answers.durationDate
+          ? formatDate(answers.durationDate)
+          : durationType,
     }
 
     const response = await this.syslumennService.uploadData(

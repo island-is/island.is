@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import addMonths from 'date-fns/addMonths'
 import { useLocale } from '@island.is/localization'
 import { duration } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
@@ -10,18 +11,23 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 
+const typeInput = 'durationType'
+const dateInput = 'durationDate'
+
+export const selectDurationInputs = [typeInput, dateInput]
+
 export type ValidAnswers = 'permanent' | 'temporary' | undefined
-const Duration = ({ field, application, error }: CRCFieldBaseProps) => {
-  // TODO: Fix when we fix the schema validation for this field
-  const currentAnswer = application.answers.selectDuration
-    ? (application.answers.selectDuration[0] as ValidAnswers)
-    : undefined
+const Duration = ({ application, errors }: CRCFieldBaseProps) => {
+  const currentAnswer = application.answers?.durationType || undefined
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
-  )
+  const durationTypeError = errors?.[typeInput] as string
+  const durationDateError = errors?.[dateInput] as string
+
+  const [statefulAnswer, setStatefulAnswer] = useState<
+    ValidAnswers | undefined
+  >(currentAnswer)
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
@@ -29,7 +35,7 @@ const Duration = ({ field, application, error }: CRCFieldBaseProps) => {
       </Box>
       <Box marginTop={3} marginBottom={2}>
         <RadioController
-          id={`${field.id}[0]`}
+          id={`${typeInput}`}
           defaultValue={
             statefulAnswer !== undefined ? [statefulAnswer] : undefined
           }
@@ -49,17 +55,19 @@ const Duration = ({ field, application, error }: CRCFieldBaseProps) => {
           ]}
           onSelect={(newAnswer) => setStatefulAnswer(newAnswer as ValidAnswers)}
           largeButtons
+          error={durationTypeError}
         />
 
         {statefulAnswer === 'temporary' && (
           <Box>
             <DatePickerController
-              id={`${field.id}[1]`}
+              id={`${dateInput}`}
               backgroundColor="blue"
               locale={lang}
               label={formatMessage(duration.dateInput.label)}
               placeholder={formatMessage(duration.dateInput.placeholder)}
-              error={error}
+              error={durationDateError}
+              minDate={addMonths(new Date(), 6)}
             />
           </Box>
         )}
