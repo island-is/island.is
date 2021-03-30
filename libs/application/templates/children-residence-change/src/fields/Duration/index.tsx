@@ -18,7 +18,6 @@ export const selectDurationInputs = [typeInput, dateInput]
 
 export type ValidAnswers = 'permanent' | 'temporary' | undefined
 const Duration = ({ application, errors }: CRCFieldBaseProps) => {
-  const currentAnswer = application.answers?.durationType || undefined
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
@@ -27,7 +26,7 @@ const Duration = ({ application, errors }: CRCFieldBaseProps) => {
 
   const [statefulAnswer, setStatefulAnswer] = useState<
     ValidAnswers | undefined
-  >(currentAnswer)
+  >(application.answers?.durationType)
   return (
     <>
       <Box marginTop={3} marginBottom={5}>
