@@ -390,7 +390,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application, refetch }) => {
             </Text>
           </Box>
           <Divider />
-          <Attachments application={application} refetch={refetch} />
+          <Attachments application={application} />
         </Stack>
       </Stack>
     </Box>
