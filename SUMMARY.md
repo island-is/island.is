@@ -127,6 +127,7 @@
     - [Application Templates Parental Leave](libs/application/templates/parental-leave/README.md)
     - [Party Letter](libs/application/templates/party-letter/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
+  - [UI Components](libs/application/ui-components/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)
 - [Auth API Lib](libs/auth-api-lib/README.md)

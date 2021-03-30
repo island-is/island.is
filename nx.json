@@ -179,6 +179,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-ui-components": {
+      "tags": []
+    },
     "application-ui-fields": {
       "tags": []
     },
@@ -463,9 +466,6 @@
       "tags": []
     },
     "shared-mocking": {
-      "tags": []
-    },
-    "shared-table": {
       "tags": []
     },
     "shared-types": {
