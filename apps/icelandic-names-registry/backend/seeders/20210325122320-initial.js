@@ -10,7 +10,7 @@ const shared = {
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'IcelandicNames',
+      'names',
       [
         {
           name: 'Jón',
@@ -66,6 +66,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('IcelandicNames', null, {})
+    return queryInterface.bulkDelete('names', null, {})
   },
 }

@@ -15,11 +15,11 @@ import { IcelandicName } from './icelandic-name.model'
 import { UpdateIcelandicNameBody, CreateIcelandicNameBody } from './dto'
 
 @Controller('api')
-@ApiTags('icelandic-names')
+@ApiTags('icelandic-names-registry')
 export class IcelandicNameController {
   constructor(private readonly icelandicNameService: IcelandicNameService) {}
 
-  @Get('icelandic-names/all')
+  @Get('icelandic-names-registry/all')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -29,7 +29,7 @@ export class IcelandicNameController {
     return this.icelandicNameService.getAll()
   }
 
-  @Get('icelandic-names/:initialLetter')
+  @Get('icelandic-names-registry/:initialLetter')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
@@ -41,7 +41,7 @@ export class IcelandicNameController {
     return this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
-  @Post('icelandic-names/:id/update')
+  @Post('icelandic-names-registry/:id/update')
   @ApiOkResponse()
   async updateNameById(
     @Param('id') id: number,
@@ -57,13 +57,13 @@ export class IcelandicNameController {
     }
   }
 
-  @Post('icelandic-names/create')
+  @Post('icelandic-names-registry/create')
   @ApiOkResponse()
   async createName(@Body() body: CreateIcelandicNameBody): Promise<void> {
     const result = await this.icelandicNameService.createName(body)
   }
 
-  @Delete('icelandic-names/:id/delete')
+  @Delete('icelandic-names-registry/:id/delete')
   @ApiNoContentResponse()
   async deleteById(@Param('id') id: number): Promise<void> {
     const icelandicName = await this.icelandicNameService.getById(id)
