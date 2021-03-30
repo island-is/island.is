@@ -4,11 +4,13 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Link,
   Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
 import { SidebarCard as Card } from '@island.is/web/graphql/schema'
+import * as styles from './SidebarCard.treat'
 
 interface SidebarCardProps {
   sidebarCard: Card
@@ -23,13 +25,9 @@ export const SidebarCard: React.FC<SidebarCardProps> = ({ sidebarCard }) => (
             display="flex"
             justifyContent={'center'}
             alignItems={'center'}
-            paddingBottom={3}
+            paddingBottom={2}
           >
-            <img
-              src={
-                'https://images.ctfassets.net/8k0h54kbe6bj/2c9RXjtApgqkUWeKh0s1xP/820afa7b351e638473bff013277929ea/Vector.svg'
-              }
-            ></img>
+            <Icon icon="warning" color="red400" className={styles.iconStyle} />
           </Box>
         </GridColumn>
         <GridColumn
