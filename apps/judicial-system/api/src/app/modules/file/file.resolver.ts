@@ -55,8 +55,9 @@ export class FileResolver {
   ): Promise<DeleteFile> {
     const { caseId, id } = input
 
-    console.log('IN DELETE FILE API', caseId)
-    // TODO: This is temporary. Iterate on this.
+    this.logger.debug(`Deleting file on case ${caseId} with id ${id}`)
+
+    // // TODO: This is temporary. Iterate on this.
     return new Promise((resolve, reject) => {
       resolve({ success: true })
     })
@@ -64,7 +65,7 @@ export class FileResolver {
     // return this.auditService.audit(
     //   user.id,
     //   AuditedAction.DELETE_FILE,
-    //   backendApi.deleteFile(id),
+    //   backendApi.deleteFile(caseId, id),
     //   id,
     // )
   }
