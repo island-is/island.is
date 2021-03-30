@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import {
   ExternalData,
@@ -12,7 +13,6 @@ import {
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
-import { parseISO } from 'date-fns'
 
 const formatDays = (date: string): string => {
   return date.replace('dagur', 'daginn')
