@@ -39,7 +39,7 @@ export class EducationService {
 
     return licenses.map((license) => ({
       id: license.id,
-      school: license.school,
+      school: license.issuer,
       programme: license.type,
       date: license.issued,
     }))
@@ -79,7 +79,10 @@ export class EducationService {
         const studentAssessment = await this.mmsApi.getStudentAssessment(
           familyMember.Kennitala,
         )
-        if (studentAssessment.einkunnir.length <= 0) {
+        if (
+          studentAssessment.einkunnir &&
+          studentAssessment.einkunnir.length <= 0
+        ) {
           return undefined
         }
 
