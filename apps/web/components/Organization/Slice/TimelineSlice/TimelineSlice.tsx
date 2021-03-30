@@ -27,10 +27,7 @@ import * as eventStyles from './Event.treat'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
-import {
-  renderSlices,
-  SliceType,
-} from '@island.is/island-ui/contentful'
+import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
 import { flatten } from '@nestjs/common'
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
