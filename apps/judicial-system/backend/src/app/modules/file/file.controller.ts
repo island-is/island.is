@@ -72,7 +72,7 @@ export class FileController {
   ): Promise<DeleteFileResponse> {
     const file = await this.fileService.getCaseFileById(id)
 
-    return this.fileService.deleteFile(file.getDataValue('key'))
+    return this.fileService.deleteFile(file)
   }
 
   @RolesRules(prosecutorRule)

@@ -28,10 +28,6 @@ export class FileService {
     )
   }
 
-  deleteFile(key: string): Promise<DeleteFileResponse> {
-    return this.awsS3Service.deleteFile(key)
-  }
-
   createCaseFile(caseId: string, createFile: CreateFileDto): Promise<File> {
     const { key } = createFile
 
@@ -63,7 +59,12 @@ export class FileService {
     return this.fileModel.findByPk(id)
   }
 
-  deleteFileById(id: string): Promise<boolean> {
+  async deleteFile(file: File): Promise<DeleteFileResponse> {
+    await this.deleteFileFromDatabase(file.id)
+    return this.awsS3Service.deleteFile(file.key)
+  }
+
+  deleteFileFromDatabase(id: string): Promise<boolean> {
     this.logger.debug(`Delete case file by id ${id}`)
 
     const success = this.fileModel
@@ -77,5 +78,9 @@ export class FileService {
       })
 
     return success
+  }
+
+  deleteFileFromS3(key: string): Promise<DeleteFileResponse> {
+    return this.awsS3Service.deleteFile(key)
   }
 }
