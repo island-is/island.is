@@ -13,6 +13,7 @@ import {
   childrenResidenceInfo,
   formatAddress,
   getSelectedChildrenFromExternalData,
+  formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
@@ -211,7 +212,7 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{childResidenceInfo.current.parent.fullName}</Text>
+        <Text>{childResidenceInfo.current.parentName}</Text>
         <Text>{formatAddress(childResidenceInfo.current.address)}</Text>
       </Box>
       <Box marginTop={4}>
@@ -220,7 +221,7 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{childResidenceInfo.future.parent.fullName}</Text>
+        <Text>{childResidenceInfo.future.parentName}</Text>
         <Text fontWeight="light">
           {formatAddress(childResidenceInfo.future.address)}
         </Text>
@@ -231,7 +232,7 @@ const Overview = ({
         </Text>
         <Text>
           {answers.selectDuration.length > 1
-            ? answers.selectDuration[1]
+            ? formatDate(answers.selectDuration[1])
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>
