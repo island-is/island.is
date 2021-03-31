@@ -20,7 +20,7 @@ function EducationStudentAssessment(): JSX.Element {
           id: 'service.portal:education-student-assessment-intro',
           defaultMessage: 'Hér getur þú skoðað námsmat.',
         })}
-        img="/assets/images/educationGrades.svg"
+        img="./assets/images/educationGrades.svg"
       />
       <StudentAssessmentTable />
     </Box>
