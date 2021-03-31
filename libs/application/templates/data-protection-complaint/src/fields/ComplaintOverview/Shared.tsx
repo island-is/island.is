@@ -58,11 +58,11 @@ export const ValueLine: FC<{
 
   return (
     <>
+      <Text variant="h5">{formatMessage(label)}</Text>
+      <Text>{formatMessage(value)}</Text>
       <Box paddingY={3}>
         <Divider />
       </Box>
-      <Text variant="h5">{formatMessage(label)}</Text>
-      <Text>{formatMessage(value)}</Text>
     </>
   )
 }
