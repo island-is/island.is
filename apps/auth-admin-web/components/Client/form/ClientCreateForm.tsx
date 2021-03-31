@@ -379,11 +379,7 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         type="text"
                         ref={register({
                           required: !isEditing,
-                          validate: isEditing
-                            ? () => {
-                                return true
-                              }
-                            : ValidationUtils.validateUrl,
+                          validate: ValidationUtils.validateUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
@@ -417,6 +413,54 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                     </div>
                   </div>
 
+                  <div className="client__container__field">
+                    <label className="client__label">Display Name</label>
+                    <input
+                      type="text"
+                      name="client.clientName"
+                      ref={register({
+                        validate: ValidationUtils.validateDescription,
+                      })}
+                      defaultValue={client.clientName ?? ''}
+                      className="client__input"
+                      title="Application name that will be seen on consent screens"
+                      placeholder="Example name"
+                    />
+                    <HelpBox helpText="Application name that will be seen on consent screens" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.clientName"
+                      message="Display name is required since the client requires consent"
+                    />
+                    <TranslationCreateFormDropdown
+                      className="client"
+                      property="clientName"
+                      isEditing={isEditing}
+                      id={client.clientId}
+                    />
+                  </div>
+
+                  <div className="client__container__field">
+                    <label className="client__label">Display URL</label>
+                    <input
+                      name="client.clientUri"
+                      ref={register({ validate: ValidationUtils.validateUrl })}
+                      type="text"
+                      defaultValue={client.clientUri ?? ''}
+                      className="client__input"
+                      placeholder="https://example.com"
+                      title="Application URL that will be seen on consent screens"
+                    />
+                    <HelpBox helpText="URI to further information about client (used on consent screen)" />
+                    <ErrorMessage
+                      as="span"
+                      errors={errors}
+                      name="client.clientUri"
+                      message="Display url needs to be in the right format"
+                    />
+                  </div>
+
                   <div className="client__container__checkbox__field">
                     <label className="client__label">Enabled</label>
                     <input
@@ -441,58 +485,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       onChange={(e) => setRequireConsent(e.target.checked)}
                     />
                     <HelpBox helpText="Specifies whether a consent screen is required" />
-                  </div>
-
-                  <div
-                    className={`toggleable-fields${
-                      requireConsent ? ' show' : ' hidden'
-                    }`}
-                  >
-                    <div className="client__container__field">
-                      <label className="client__label">Display Name</label>
-                      <input
-                        type="text"
-                        name="client.clientName"
-                        ref={register({ required: requireConsent })}
-                        defaultValue={client.clientName ?? ''}
-                        className="client__input"
-                        title="Application name that will be seen on consent screens"
-                        placeholder="Example name"
-                      />
-                      <HelpBox helpText="Application name that will be seen on consent screens" />
-                      <ErrorMessage
-                        as="span"
-                        errors={errors}
-                        name="client.clientName"
-                        message="Display name is required since the client requires consent"
-                      />
-                      <TranslationCreateFormDropdown
-                        className="client"
-                        property="clientName"
-                        isEditing={isEditing}
-                        id={client.clientId}
-                      />
-                    </div>
-
-                    <div className="client__container__field">
-                      <label className="client__label">Display URL</label>
-                      <input
-                        name="client.clientUri"
-                        ref={register({ required: requireConsent })}
-                        type="text"
-                        defaultValue={client.clientUri ?? ''}
-                        className="client__input"
-                        placeholder="https://example.com"
-                        title="Application URL that will be seen on consent screens"
-                      />
-                      <HelpBox helpText="URI to further information about client (used on consent screen)" />
-                      <ErrorMessage
-                        as="span"
-                        errors={errors}
-                        name="client.clientUri"
-                        message="Display url is required since the client requires consent"
-                      />
-                    </div>
                   </div>
 
                   <div className="client__container__button" id="advanced">

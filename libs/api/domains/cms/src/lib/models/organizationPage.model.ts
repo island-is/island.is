@@ -6,6 +6,7 @@ import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { Image, mapImage } from './image.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
 import { FooterItem, mapFooterItem } from './footerItem.model'
+import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -19,22 +20,25 @@ export class OrganizationPage {
   slug!: string
 
   @Field()
-  description?: string
+  description!: string
 
   @Field(() => [SliceUnion])
-  slices?: Array<typeof SliceUnion | null>
+  slices!: Array<typeof SliceUnion | null>
 
   @Field(() => [LinkGroup])
-  menuLinks?: Array<LinkGroup>
+  menuLinks!: Array<LinkGroup>
 
   @Field(() => Organization)
   organization!: Organization | null
 
   @Field({ nullable: true })
-  featuredImage?: Image | null
+  featuredImage!: Image | null
 
-  @Field(() => [FooterItem], { nullable: true })
-  footerItems?: Array<FooterItem>
+  @Field(() => [FooterItem])
+  footerItems!: Array<FooterItem>
+
+  @Field(() => [SidebarCard])
+  sidebarCards!: Array<SidebarCard>
 }
 
 export const mapOrganizationPage = ({
@@ -52,4 +56,5 @@ export const mapOrganizationPage = ({
     : null,
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
+  sidebarCards: (fields.sidebarCards ?? []).map(mapSidebarCard),
 })

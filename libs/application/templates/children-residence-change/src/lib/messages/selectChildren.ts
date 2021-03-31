@@ -19,7 +19,7 @@ export const selectChildren = {
       id:
         'crc.application:section.backgroundInformation.selectChildren.description#markdown',
       defaultMessage:
-        'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.',
+        'Hér sérðu lista yfir börn sem eru skráð í þinni forsjá. Þú getur valið fyrir hvaða barn/börn á að flytja lögheimili.\\n\\nAðeins er hægt að velja börn sem eru skráð með sama lögheimili og eiga sömu foreldra.',
       description: 'Select children subtitle',
     },
   }),
