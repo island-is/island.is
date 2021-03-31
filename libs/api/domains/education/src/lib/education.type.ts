@@ -31,6 +31,7 @@ interface MathGrade extends BaseGrade {
   geometry: Grade
   ratiosAndPercentages: Grade
   algebra: Grade
+  numberComprehension: Grade
   wordAndNumbers: string
 }
 

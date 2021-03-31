@@ -80,6 +80,15 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           url
         }
       }
+      sidebarCards {
+        title
+        content
+        type
+        link {
+          text
+          url
+        }
+      }
     }
   }
   ${slices}
