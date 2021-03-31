@@ -70,7 +70,6 @@ export class FileController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<DeleteFileResponse> {
-    // TODO get key and call file service
     const file = await this.fileService.getCaseFileById(id)
 
     return this.fileService.deleteFile(file.getDataValue('key'))
