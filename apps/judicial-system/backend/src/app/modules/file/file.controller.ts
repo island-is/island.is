@@ -19,7 +19,7 @@ import {
 import { User, UserRole } from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
-import { CreateFileDto, CreatePresignedPostDto, DeleteFileDto } from './dto'
+import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import { PresignedPost, File, DeleteFileResponse } from './models'
 import { FileService } from './file.service'
 
@@ -66,8 +66,13 @@ export class FileController {
     type: DeleteFileResponse,
     description: 'Deletes a file from an AWS S3 bucket',
   })
-  async deleteFile(@CurrentHttpUser() user: User): Promise<DeleteFileResponse> {
+  async deleteFile(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<DeleteFileResponse> {
     // TODO get key and call file service
+    const file = this.fileService.getCaseFileById(id)
+
     return new Promise((resolve, reject) => {
       resolve({ success: true })
     })
