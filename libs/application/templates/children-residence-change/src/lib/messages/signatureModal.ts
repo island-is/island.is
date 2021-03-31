@@ -40,4 +40,21 @@ export const signatureModal = {
       description: 'Signature default error message',
     },
   }),
+  error: defineMessages({
+    userCancelled: {
+      id: 'crc.application:signatureModal.error.userCancelled',
+      defaultMessage: 'Auðkenning ekki kláruð.',
+      description: 'User cancelled request error message',
+    },
+    timeOut: {
+      id: 'crc.application:signatureModal.error.timeOut',
+      defaultMessage: 'Auðkenning rann út á tíma',
+      description: 'Request timed out error message',
+    },
+    noElectronicId: {
+      id: 'crc.application:signatureModal.error.noElectronicId',
+      defaultMessage: 'Símanúmer fannst ekki.',
+      description: 'No electronic id connected to phone number error message',
+    },
+  }),
 }

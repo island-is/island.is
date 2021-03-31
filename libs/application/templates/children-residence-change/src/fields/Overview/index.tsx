@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation, useLazyQuery } from '@apollo/client'
+import { useMutation, useLazyQuery, ApolloError } from '@apollo/client'
 import { PdfTypes } from '@island.is/application/core'
 import { Box, Text, AlertMessage, Button } from '@island.is/island-ui/core'
 import {
@@ -23,6 +23,7 @@ import {
   initialFileSignatureState,
   FileSignatureActionTypes,
   FileSignatureStatus,
+  ErrorStatus,
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
@@ -105,11 +106,11 @@ const Overview = ({
         .then((response) => {
           return response.data?.requestFileSignature?.documentToken
         })
-        .catch((error) => {
+        .catch((error: ApolloError) => {
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
-            error: '500',
+            error: error.graphQLErrors[0].extensions?.code,
           })
           throw new Error(`Request signature error ${JSON.stringify(error)}`)
         })
@@ -127,11 +128,11 @@ const Overview = ({
           .then(() => {
             return true
           })
-          .catch((error) => {
+          .catch((error: ApolloError) => {
             dispatchFileSignature({
               type: FileSignatureActionTypes.ERROR,
               status: FileSignatureStatus.UPLOAD_ERROR,
-              error: '500',
+              error: error.graphQLErrors[0].extensions?.code,
             })
             throw new Error(`Upload signed pdf error ${JSON.stringify(error)}`)
           })
@@ -160,6 +161,12 @@ const Overview = ({
         }
         modalOpen={fileSignatureState.modalOpen}
         signatureStatus={fileSignatureState.status}
+        errorCode={
+          fileSignatureState.status === FileSignatureStatus.UPLOAD_ERROR ||
+          fileSignatureState.status === FileSignatureStatus.REQUEST_ERROR
+            ? fileSignatureState.errorCode
+            : undefined
+        }
       />
       <AlertMessage
         type="info"

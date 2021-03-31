@@ -4,6 +4,7 @@ import {
   NotFoundException,
   BadRequestException,
   RequestTimeoutException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 import { generateResidenceChangePdf } from './utils/pdf'
 import { PdfTypes } from '@island.is/application/core'
@@ -86,7 +87,7 @@ export class FileService {
           throw new RequestTimeoutException(error.message)
         }
 
-        throw new Error(error.message)
+        throw new InternalServerErrorException(error.message)
       })
   }
 

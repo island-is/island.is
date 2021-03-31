@@ -8,12 +8,14 @@ interface SignatureModalProps {
   signatureStatus: FileSignatureStatus
   onClose: () => void
   controlCode: string
+  errorCode?: number
 }
 
 const ModalCondidionalContent = ({
   controlCode,
   signatureStatus,
   onClose,
+  errorCode,
 }: SignatureModalProps) => {
   switch (signatureStatus) {
     case FileSignatureStatus.REQUEST:
@@ -22,7 +24,7 @@ const ModalCondidionalContent = ({
       return <ControlCode controlCode={controlCode} />
     case FileSignatureStatus.REQUEST_ERROR:
     case FileSignatureStatus.UPLOAD_ERROR:
-      return <ErrorMessage onClose={onClose} />
+      return <ErrorMessage errorCode={errorCode} onClose={onClose} />
     default:
       return null
   }
