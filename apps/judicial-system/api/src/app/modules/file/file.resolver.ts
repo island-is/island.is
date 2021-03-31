@@ -57,17 +57,12 @@ export class FileResolver {
 
     this.logger.debug(`Deleting file on case ${caseId} with id ${id}`)
 
-    // // TODO: This is temporary. Iterate on this.
-    return new Promise((resolve, reject) => {
-      resolve({ success: true })
-    })
-
-    // return this.auditService.audit(
-    //   user.id,
-    //   AuditedAction.DELETE_FILE,
-    //   backendApi.deleteFile(caseId, id),
-    //   id,
-    // )
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.DELETE_FILE,
+      backendApi.deleteFile(caseId, id),
+      id,
+    )
   }
 
   @Mutation(() => File)

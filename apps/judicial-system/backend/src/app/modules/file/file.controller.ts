@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -11,8 +19,8 @@ import {
 import { User, UserRole } from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
-import { CreateFileDto, CreatePresignedPostDto } from './dto'
-import { PresignedPost, File } from './models'
+import { CreateFileDto, CreatePresignedPostDto, DeleteFileDto } from './dto'
+import { PresignedPost, File, DeleteFileResponse } from './models'
 import { FileService } from './file.service'
 
 // Allows prosecutors to perform any action
@@ -50,6 +58,23 @@ export class FileController {
       existingCase.id,
       createPresignedPost,
     )
+  }
+
+  @RolesRules(prosecutorRule)
+  @Delete('file/delete/:id')
+  @ApiCreatedResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a file from an AWS S3 bucket',
+  })
+  async deleteFile(
+    @Param('caseId') caseId: string,
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<DeleteFileResponse> {
+    // TODO: Call fileService to actually delete the file
+    return new Promise((resolve, reject) => {
+      resolve({ success: true })
+    })
   }
 
   @RolesRules(prosecutorRule)
