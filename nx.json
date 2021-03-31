@@ -179,6 +179,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-ui-components": {
+      "tags": []
+    },
     "application-ui-fields": {
       "tags": []
     },
@@ -205,6 +208,12 @@
       "tags": []
     },
     "clients-national-registry": {
+      "tags": []
+    },
+    "clients-rsk": {
+      "tags": []
+    },
+    "clients-vmst": {
       "tags": []
     },
     "clients-zendesk": {
@@ -359,9 +368,6 @@
     "reference-next-app": {
       "tags": []
     },
-    "rsk": {
-      "tags": []
-    },
     "service-portal": {
       "tags": []
     },
@@ -456,9 +462,6 @@
     "shared-mocking": {
       "tags": []
     },
-    "shared-table": {
-      "tags": []
-    },
     "shared-types": {
       "tags": []
     },
@@ -482,9 +485,6 @@
       "tags": []
     },
     "utils-environment": {
-      "tags": []
-    },
-    "vmst-client": {
       "tags": []
     },
     "web": {

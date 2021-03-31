@@ -139,6 +139,9 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/ui-components": [
+        "libs/application/ui-components/src/index.ts"
+      ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"
       ],
@@ -153,6 +156,7 @@
         "libs/clients/national-registry/src/index.ts"
       ],
       "@island.is/clients/rsk": ["libs/clients/rsk/src/index.ts"],
+      "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
@@ -288,7 +292,6 @@
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
       "@island.is/utils/api": ["libs/utils/api/src/index.ts"],
       "@island.is/utils/environment": ["libs/utils/environment/src/index.ts"],
-      "@island.is/vmst-client": ["libs/vmst-client/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }

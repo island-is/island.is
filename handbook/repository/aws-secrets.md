@@ -135,7 +135,7 @@ Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret
 
 ### Making dev secrets available locally
 
-Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
+Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file. _(**NOTE:** Each variable must be prefixed with `export ` for direnv to pick them up.)_
 
 Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
 

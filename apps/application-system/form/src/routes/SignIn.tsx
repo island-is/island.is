@@ -21,12 +21,7 @@ export const Signin = () => {
 
         setClientAuthToken(user.access_token)
 
-        const url =
-          typeof user.state === 'string'
-            ? user.state.replace(/\/umsoknir\/?/i, '/')
-            : '/'
-
-        history.push(url)
+        history.push(user.state?.redirect ?? '/')
       })
       .catch((error) => {
         console.error(error)

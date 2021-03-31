@@ -10,8 +10,10 @@ import {
   GET_PRESIGNED_URL,
 } from '@island.is/application/graphql'
 import {
+  childrenResidenceInfo,
   formatAddress,
   getSelectedChildrenFromExternalData,
+  formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
 import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
@@ -37,10 +39,10 @@ const Overview = ({
   const applicant = externalData.nationalRegistry.data
   const children = getSelectedChildrenFromExternalData(
     applicant.children,
-    answers.selectChild,
+    answers.selectedChildren,
   )
   const parentB = children[0].otherParent
-  const parentAddress = formatAddress(parentB.address)
+  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
   const { formatMessage } = useIntl()
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
 
@@ -210,8 +212,8 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{applicant?.fullName}</Text>
-        <Text>{formatAddress(applicant.address)}</Text>
+        <Text>{childResidenceInfo.current.parentName}</Text>
+        <Text>{formatAddress(childResidenceInfo.current.address)}</Text>
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
@@ -219,16 +221,18 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{parentB?.fullName}</Text>
-        <Text fontWeight="light">{parentAddress}</Text>
+        <Text>{childResidenceInfo.future.parentName}</Text>
+        <Text fontWeight="light">
+          {formatAddress(childResidenceInfo.future.address)}
+        </Text>
       </Box>
       <Box marginTop={4}>
         <Text variant="h4" marginBottom={1}>
           {formatMessage(m.duration.general.sectionTitle)}
         </Text>
         <Text>
-          {answers.selectDuration.length > 1
-            ? answers.selectDuration[1]
+          {answers.durationType === 'temporary' && answers.durationDate
+            ? formatDate(answers.durationDate)
             : formatMessage(m.duration.permanentInput.label)}
         </Text>
       </Box>

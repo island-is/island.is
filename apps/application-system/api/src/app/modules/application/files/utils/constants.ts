@@ -5,6 +5,7 @@ export const PdfConstants = {
   BOLD_FONT: 'Helvetica-Bold',
   NORMAL_FONT: 'Helvetica',
   PERMANENT: 'permanent',
+  TEMPORARY: 'temporary',
   HEADER_FONT_SIZE: 26,
   SUB_HEADER_FONT_SIZE: 14,
   VALUE_FONT_SIZE: 12,

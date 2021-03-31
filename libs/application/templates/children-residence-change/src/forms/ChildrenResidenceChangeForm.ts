@@ -17,6 +17,7 @@ import {
 } from '@island.is/application/core'
 import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
+import { selectDurationInputs } from '../fields/Duration'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -102,9 +103,21 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   subTitle: m.externalData.applicant.subTitle,
                 }),
                 buildDataProviderItem({
+                  id: '',
+                  type: '',
+                  title: m.externalData.children.title,
+                  subTitle: m.externalData.children.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: '',
+                  type: '',
+                  title: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.subTitle,
+                }),
+                buildDataProviderItem({
                   id: 'userProfile',
                   type: DataProviderTypes.UserProfile,
-                  title: 'User profile',
+                  title: '',
                   subTitle: '',
                 }),
               ],
@@ -133,6 +146,18 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                   title: m.externalData.applicant.title,
                   subTitle: m.externalData.applicant.subTitle,
                 }),
+                buildDataProviderItem({
+                  id: '',
+                  type: '',
+                  title: m.externalData.children.title,
+                  subTitle: m.externalData.children.subTitle,
+                }),
+                buildDataProviderItem({
+                  id: '',
+                  type: '',
+                  title: m.externalData.otherParents.title,
+                  subTitle: m.externalData.otherParents.subTitle,
+                }),
               ],
             }),
           ],
@@ -142,7 +167,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           title: m.selectChildren.general.sectionTitle,
           children: [
             buildCustomField({
-              id: 'selectChild',
+              id: 'selectedChildren',
               title: m.selectChildren.general.pageTitle,
               component: 'SelectChildren',
             }),
@@ -217,6 +242,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             buildCustomField({
               id: 'selectDuration',
               title: m.duration.general.pageTitle,
+              childInputIds: selectDurationInputs,
               component: 'Duration',
             }),
           ],

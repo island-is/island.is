@@ -78,7 +78,7 @@ export class FileService {
     const applicant = nationalRegistry?.data
     const selectedChildren = getSelectedChildrenFromExternalData(
       applicant.children,
-      answers.selectChild,
+      answers.selectedChildren,
     )
     const parentB = selectedChildren[0].otherParent
 
@@ -116,23 +116,8 @@ export class FileService {
 
   private async createChildrenResidencePdf(application: CRCApplication) {
     const bucket = this.getBucketName()
-    const { answers, externalData } = application
-    const applicant = externalData.nationalRegistry.data
 
-    const selectedChildren = getSelectedChildrenFromExternalData(
-      applicant.children,
-      answers.selectChild,
-    )
-
-    const parentB = selectedChildren[0].otherParent
-
-    const pdfBuffer = await generateResidenceChangePdf(
-      selectedChildren,
-      applicant,
-      parentB,
-      answers.selectDuration,
-      answers.residenceChangeReason,
-    )
+    const pdfBuffer = await generateResidenceChangePdf(application)
 
     const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
       application.id

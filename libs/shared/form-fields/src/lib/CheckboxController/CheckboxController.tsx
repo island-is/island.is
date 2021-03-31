@@ -13,6 +13,7 @@ interface Option {
   label: React.ReactNode
   subLabel?: string
   tooltip?: React.ReactNode
+  disabled?: boolean
   excludeOthers?: boolean
 }
 interface CheckboxControllerProps {
@@ -22,8 +23,10 @@ interface CheckboxControllerProps {
   id: string
   name?: string
   large?: boolean
+  strong?: boolean
   options?: Option[]
   backgroundColor?: InputBackgroundColor
+  onSelect?: (s: string[]) => void
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
   defaultValue,
@@ -32,8 +35,10 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
   id,
   name = id,
   large,
+  strong,
   options = [],
   backgroundColor,
+  onSelect = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -66,17 +71,19 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
             {options.map((option, index) => (
               <Box display="block" key={`${id}-${index}`}>
                 <Checkbox
-                  disabled={disabled}
+                  disabled={disabled || option.disabled}
                   large={large}
                   onChange={() => {
                     clearErrors(id)
                     const newChoices = handleSelect(option, value || [])
                     onChange(newChoices)
                     setValue(id, newChoices)
+                    onSelect(newChoices)
                   }}
                   checked={value && value.includes(option.value)}
                   name={`${id}[${index}]`}
                   label={option.label}
+                  strong={strong}
                   subLabel={option.subLabel}
                   value={option.value}
                   hasError={error !== undefined}

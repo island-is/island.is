@@ -41,6 +41,11 @@ export const section = defineMessages({
     defaultMessage: 'Meiðyrði',
     description: 'Complaint regards libel',
   },
+  agreement: {
+    id: 'dpac.application:section.agreement',
+    defaultMessage: 'Samþykki',
+    description: 'Agreement section title',
+  },
   info: {
     id: 'dpac.application:section.info',
     defaultMessage: 'Upplýsingar',
@@ -118,5 +123,10 @@ export const sharedFields = defineMessages({
     id: 'dpac.application:sharedFields.remove',
     defaultMessage: 'Eyða',
     description: 'Remove',
+  },
+  word: {
+    id: 'dpac.application:sharedFields.word',
+    defaultMessage: 'orð',
+    description: 'Words',
   },
 })

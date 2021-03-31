@@ -2029,6 +2029,36 @@
         }
       }
     },
+    "application-ui-components": {
+      "root": "libs/application/ui-components",
+      "sourceRoot": "libs/application/ui-components/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/ui-components/tsconfig.lib.json",
+              "libs/application/ui-components/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/ui-components/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/ui-components/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/application/ui-components"]
+        }
+      }
+    },
     "application-ui-fields": {
       "root": "libs/application/ui-fields",
       "sourceRoot": "libs/application/ui-fields/src",
@@ -2331,6 +2361,66 @@
           "options": {
             "jestConfig": "libs/clients/national-registry/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-rsk": {
+      "root": "libs/clients/rsk",
+      "sourceRoot": "libs/clients/rsk/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/rsk/tsconfig.lib.json",
+              "libs/clients/rsk/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/rsk/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/rsk/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/rsk"]
+        }
+      }
+    },
+    "clients-vmst": {
+      "root": "libs/clients/vmst",
+      "sourceRoot": "libs/clients/vmst/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/clients/vmst/tsconfig.lib.json",
+              "libs/clients/vmst/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/clients/vmst/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/clients/vmst/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/clients/vmst"]
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/vmst/gen/fetch -i libs/clients/vmst/src/clientConfig.yaml"
           }
         }
       }
@@ -4294,33 +4384,6 @@
         }
       }
     },
-    "rsk": {
-      "root": "libs/clients/rsk",
-      "sourceRoot": "libs/clients/rsk/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/clients/rsk/tsconfig.lib.json",
-              "libs/clients/rsk/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/clients/rsk/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/clients/rsk/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/clients/rsk"]
-        }
-      }
-    },
     "service-portal": {
       "root": "apps/service-portal",
       "sourceRoot": "apps/service-portal/src",
@@ -5716,33 +5779,6 @@
         }
       }
     },
-    "shared-table": {
-      "root": "libs/shared/table",
-      "sourceRoot": "libs/shared/table/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/shared/table/tsconfig.lib.json",
-              "libs/shared/table/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/shared/table/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/shared/table/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/shared/table"]
-        }
-      }
-    },
     "shared-types": {
       "root": "libs/shared/types",
       "sourceRoot": "libs/shared/types/src",
@@ -6109,39 +6145,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/utils/environment"]
-        }
-      }
-    },
-    "vmst-client": {
-      "root": "libs/vmst-client",
-      "sourceRoot": "libs/vmst-client/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/vmst-client/tsconfig.lib.json",
-              "libs/vmst-client/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/vmst-client/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/vmst-client/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/vmst-client"]
-        },
-        "schemas/external-openapi-generator": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn openapi-generator -o libs/vmst-client/gen/fetch -i libs/vmst-client/src/clientConfig.yaml"
-          }
         }
       }
     },
