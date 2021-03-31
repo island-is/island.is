@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, ScrollView, View, Text } from 'react-native'
-import { Badge, Heading, StatusCard } from '@island.is/island-ui-native'
+import { Badge, Button, Heading, StatusCard } from '@island.is/island-ui-native'
 import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../stores/auth-store'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -11,10 +11,15 @@ import { useTheme } from 'styled-components'
 import { useScreenOptions } from '../../contexts/theme-provider'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
+import { useNavigation } from 'react-native-navigation-hooks'
+
+
 
 export const HomeScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
   const theme = useTheme()
+  const { setStackRoot } = useNavigation()
+
 
   useScreenOptions(
     () => ({

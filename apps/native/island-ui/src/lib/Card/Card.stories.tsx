@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/react-native'
 import { text, withKnobs } from '@storybook/addon-knobs';
 import React from 'react'
 import { View } from 'react-native';
-import { Card, CardColor } from './Card'
+import { Card } from './Card'
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>{children}</View>
@@ -17,6 +17,3 @@ storiesOf('Card', module)
       <Card title={title} />
     );
   })
-  .add('Yellow card', () => (
-    <Card title="Siglingapróf" color={CardColor.YELLOW} />
-  ))

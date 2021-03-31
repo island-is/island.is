@@ -11,6 +11,8 @@ import { NavigationBarTitle } from '../components/navigation-bar-title/navigatio
 import { ComponentRegistry } from '../utils/navigation-registry';
 import { DocumentDetailScreen } from './document-detail/document-detail'
 import { StorybookScreen } from './storybook/storybook';
+import { SetPinScreen } from './onboarding/set-pin'
+import { SetNotificationScreen } from './onboarding/set-notifications'
 
 export function registerAllComponents() {
   // storybook
@@ -24,6 +26,8 @@ export function registerAllComponents() {
   registerComponent(ComponentRegistry.UserScreen, UserScreen)
   registerComponent(ComponentRegistry.AppLockScreen, AppLockScreen)
   registerComponent(ComponentRegistry.WalletPassScreen, WalletPassScreen);
+  registerComponent(ComponentRegistry.SetPinScreen, SetPinScreen);
+  registerComponent(ComponentRegistry.SetNotifications, SetNotificationScreen);
   registerComponent(ComponentRegistry.DocumentDetailScreen, DocumentDetailScreen);
 
   // ui components
