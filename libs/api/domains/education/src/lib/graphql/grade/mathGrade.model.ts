@@ -25,6 +25,9 @@ export class MathGrade {
   @Field(() => Grade)
   algebra!: Grade
 
+  @Field(() => Grade)
+  numberComprehension!: Grade
+
   @Field(() => String)
   wordAndNumbers!: string
 

@@ -1,3 +1,5 @@
+import parse from 'date-fns/parse'
+import format from 'date-fns/format'
 import {
   Address,
   Answers,
@@ -20,29 +22,18 @@ export const getSelectedChildrenFromExternalData = (
   return children.filter((child) => selectedChildren.includes(child.nationalId))
 }
 
-enum ParentLetters {
-  A = 'A',
-  B = 'B',
-}
-
 interface ChildrenResidenceInfo {
-  parent: {
-    letter: ParentLetters
-    fullName: string
-  }
+  parentName: string
   address: Address
 }
 
-const extractParentInfo = (
-  { address, fullName }: NationalRegistry | PersonResidenceChange,
-  letter: ParentLetters,
-): ChildrenResidenceInfo => {
+const extractParentInfo = ({
+  address,
+  fullName,
+}: NationalRegistry | PersonResidenceChange): ChildrenResidenceInfo => {
   return {
     address,
-    parent: {
-      fullName,
-      letter,
-    },
+    parentName: fullName,
   }
 }
 
@@ -64,10 +55,19 @@ export const childrenResidenceInfo = (
 
   return {
     current: childrenLiveWithApplicant
-      ? extractParentInfo(applicant, ParentLetters.A)
-      : extractParentInfo(parentB, ParentLetters.B),
+      ? extractParentInfo(applicant)
+      : extractParentInfo(parentB),
     future: childrenLiveWithApplicant
-      ? extractParentInfo(parentB, ParentLetters.A)
-      : extractParentInfo(applicant, ParentLetters.B),
+      ? extractParentInfo(parentB)
+      : extractParentInfo(applicant),
+  }
+}
+
+export const formatDate = (date: string) => {
+  try {
+    const parsedDate = parse(date, 'yyyy-MM-dd', new Date())
+    return format(parsedDate, 'dd.MM.yyyy')
+  } catch {
+    return date
   }
 }

@@ -31,7 +31,7 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
             defaultMessage:
               'Hér getur þú fundið yfirlit yfir prófskírteini og lokapróf á öllum námsstigum.',
           }),
-          image: '/assets/images/educationDegree.svg',
+          image: './assets/images/educationDegree.svg',
           link: {
             title: defineMessage({
               id: 'sp.education:degree-link-title',
@@ -50,7 +50,7 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
             defaultMessage:
               'Hér getur þú fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda.',
           }),
-          image: '/assets/images/educationLicense.svg',
+          image: './assets/images/educationLicense.svg',
           link: {
             title: defineMessage({
               id: 'sp.education:license-link-title',
@@ -69,7 +69,7 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
             defaultMessage:
               'Hér getur þú fundið yfirlit yfir einkunnir, námsmat og niðurstöður úr samræmdum könnunarprófum.',
           }),
-          image: '/assets/images/educationGrades.svg',
+          image: './assets/images/educationGrades.svg',
           link: {
             title: defineMessage({
               id: 'sp.education:grades-link-title',
