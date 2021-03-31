@@ -1,14 +1,8 @@
-import {
-  IsString,
-  IsNumber,
-  IsOptional,
-  IsEnum,
-  IsBoolean,
-} from 'class-validator'
+import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
-enum NameType {
+enum EnumNameType {
   ST = 'ST',
   DR = 'DR',
   MI = 'MI',
@@ -16,11 +10,14 @@ enum NameType {
   RDR = 'RDR',
 }
 
-enum StatusType {
+enum EnumStatusType {
   ST = 'Haf',
   DR = 'Sam',
   OAF = 'Óaf',
 }
+
+type NameType = 'ST' | 'DR' | 'MI' | 'RST' | 'RDR'
+type StatusType = 'Haf' | 'Sam' | 'Óaf'
 
 export class UpdateIcelandicNameBody {
   @IsString()
@@ -28,16 +25,14 @@ export class UpdateIcelandicNameBody {
   @ApiProperty()
   readonly icelandic_name?: string
 
-  @IsString()
   @IsOptional()
   @ApiProperty()
-  @IsEnum(NameType)
+  @IsEnum(EnumNameType)
   readonly type?: NameType
 
-  @IsString()
   @IsOptional()
   @ApiProperty()
-  @IsEnum(StatusType)
+  @IsEnum(EnumStatusType)
   readonly status?: StatusType
 
   @IsString()
@@ -68,15 +63,15 @@ export class CreateIcelandicNameBody {
   @ApiProperty()
   readonly icelandic_name!: string
 
-  @IsString()
   @ApiProperty()
-  @IsEnum(NameType)
+  @IsString()
+  @IsEnum(EnumNameType)
   readonly type?: NameType
 
-  @IsString()
   @IsOptional()
   @ApiProperty()
-  @IsEnum(StatusType)
+  @IsString()
+  @IsEnum(EnumStatusType)
   readonly status?: StatusType
 
   @IsString()
