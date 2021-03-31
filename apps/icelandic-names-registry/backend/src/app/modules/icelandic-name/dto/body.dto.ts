@@ -2,22 +2,12 @@ import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
-enum EnumNameType {
-  ST = 'ST',
-  DR = 'DR',
-  MI = 'MI',
-  RST = 'RST',
-  RDR = 'RDR',
-}
-
-enum EnumStatusType {
-  ST = 'Haf',
-  DR = 'Sam',
-  OAF = 'Óaf',
-}
-
-type NameType = 'ST' | 'DR' | 'MI' | 'RST' | 'RDR'
-type StatusType = 'Haf' | 'Sam' | 'Óaf'
+import {
+  EnumNameType,
+  EnumStatusType,
+  NameType,
+  StatusType,
+} from '../../../../../types'
 
 export class UpdateIcelandicNameBody {
   @IsString()
