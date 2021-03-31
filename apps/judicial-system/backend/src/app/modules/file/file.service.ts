@@ -65,7 +65,7 @@ export class FileService {
   }
 
   deleteFileFromDatabase(id: string): Promise<boolean> {
-    this.logger.debug(`Delete case file by id ${id}`)
+    this.logger.debug(`Delete case file by id ${id} from database`)
 
     const success = this.fileModel
       .destroy({ where: { id } })
@@ -81,6 +81,8 @@ export class FileService {
   }
 
   deleteFileFromS3(key: string): Promise<DeleteFileResponse> {
+    this.logger.debug(`Delete case file by key ${key} from S3`)
+
     return this.awsS3Service.deleteFile(key)
   }
 }

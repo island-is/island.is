@@ -67,12 +67,19 @@ export class FileController {
     description: 'Deletes a file from an AWS S3 bucket',
   })
   async deleteFile(
+    @Param('caseId') caseId: string,
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<DeleteFileResponse> {
     const file = await this.fileService.getCaseFileById(id)
+    const hasPermissionToDelete = await this.caseService.findByIdAndUser(
+      caseId,
+      user,
+    )
 
-    return this.fileService.deleteFile(file)
+    if (hasPermissionToDelete) {
+      return this.fileService.deleteFile(file)
+    }
   }
 
   @RolesRules(prosecutorRule)
