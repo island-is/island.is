@@ -12,6 +12,9 @@ export class ArticleReference {
 
   @Field()
   slug?: string
+
+  @Field()
+  intro?: string
 }
 
 export const mapArticleReference = ({
@@ -22,4 +25,5 @@ export const mapArticleReference = ({
   id: sys.id,
   title: fields?.title ?? '',
   slug: fields?.slug ?? '',
+  intro: fields?.intro ?? '',
 })

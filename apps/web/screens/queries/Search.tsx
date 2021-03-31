@@ -34,6 +34,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           subArticles {
             title
             slug
+            parent {
+              id
+              title
+              intro
+            }
+            parentSlug
           }
         }
 
@@ -84,9 +90,10 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
           parent {
-            slug
+            id
             title
           }
+          parentSlug
         }
       }
     }
@@ -224,9 +231,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title
           slug
+          parentSlug
           parent {
             slug
             title
+            intro
           }
         }
       }

@@ -17,8 +17,8 @@ export class SubArticle {
   @Field()
   parentSlug!: string
 
-  @Field(() => ArticleReference)
-  parent!: ArticleReference
+  @Field(() => ArticleReference, { nullable: true })
+  parent?: ArticleReference
 
   @Field(() => [SliceUnion])
   body: Array<typeof SliceUnion> = []
@@ -31,7 +31,7 @@ export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
-  parentSlug: fields.slug,
+  parentSlug: fields.parentSlug,
   parent: fields.parent && mapArticleReference(fields.parent),
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   showTableOfContents: fields.showTableOfContents ?? false,

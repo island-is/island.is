@@ -47,6 +47,7 @@ import {
   SearchableContentTypes,
   SearchableTags,
   AdgerdirPage,
+  SubArticle,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
 import * as styles from './Search.treat'
@@ -187,11 +188,20 @@ const Search: Screen<CategoryProps> = ({
   }
 
   const searchResultsItems = (searchResults.items as Array<
-    Article & LifeEventPage & AboutPage & News & AdgerdirPage
+    Article & LifeEventPage & AboutPage & News & AdgerdirPage & SubArticle
   >).map((item) => ({
-    title: item.title,
-    description: item.intro ?? item.seoDescription ?? item.description,
-    link: linkResolver(typenameResolver(item.__typename), [item.slug]),
+    title: item.parent ? item.parent.title + '>' + item.title : item.title,
+    description:
+      item.intro ??
+      item.seoDescription ??
+      item.description ??
+      item.parent.intro,
+    link: item.parentSlug
+      ? linkResolver(
+          typenameResolver(item.__typename),
+          item.parentSlug.split('/'),
+        )
+      : linkResolver(typenameResolver(item.__typename), [item.slug]),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
@@ -463,6 +473,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       'webLifeEventPage' as SearchableContentTypes,
       'webAboutPage' as SearchableContentTypes,
       'webAdgerdirPage' as SearchableContentTypes,
+      'webSubArticle' as SearchableContentTypes,
     ]
   }
 
