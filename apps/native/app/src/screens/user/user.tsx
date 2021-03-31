@@ -57,6 +57,7 @@ export const UserScreen: NavigationFunctionComponent = () => {
         />
         <View style={{ flex: 1 }} />
         <Button
+          testID={testIDs.LOGOUT_BUTTON}
           title="Logout"
           onPress={async () => {
             await authStore.logout()

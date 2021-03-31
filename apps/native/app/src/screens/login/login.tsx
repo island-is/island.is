@@ -1,14 +1,28 @@
 import { Button, Heading } from '@island.is/island-ui-native'
-import React from 'react'
-import { SafeAreaView, Image, View } from 'react-native'
+import React, { useEffect } from 'react'
+import { SafeAreaView, Image, View, Text } from 'react-native'
 import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
 import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../stores/auth-store'
 import { getAppRoot, getMainRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
+import { NativeEventEmitter, NativeModules } from 'react-native';
+import { useState } from 'react'
 
 export const LoginScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
+
+  const [authState, setAuthState] = useState<{ nonce: string; codeChallenge: string; state: string; } | null>(null);
+
+  useEffect(() => {
+    const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth);
+    const onAuthRequestInitiated = (event: any) => setAuthState(event);
+    const subscription = eventEmitter.addListener('onAuthRequestInitiated', onAuthRequestInitiated);
+    return () => {
+      eventEmitter.removeListener('onAuthRequestInitiated', onAuthRequestInitiated);
+    }
+  }, []);
+
   return (
     <SafeAreaView
       style={{
@@ -28,6 +42,11 @@ export const LoginScreen: NavigationFunctionComponent = () => {
         <Heading isCenterAligned>
           Skráðu þig inn í appið með rafrænum skilríkjum
         </Heading>
+      </View>
+      <View style={{ position: 'absolute', opacity: 0 }}>
+        <Text testID="auth_nonce">{authState?.nonce ?? 'noop1'}</Text>
+        <Text testID="auth_code">{authState?.codeChallenge ?? 'noop2'}</Text>
+        <Text testID="auth_state">{authState?.state ?? 'noop3'}</Text>
       </View>
       <Button
         title="Auðkenna"

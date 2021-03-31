@@ -34,7 +34,8 @@
     "detox-recorder": "1.0.151",
     "jest": "26.6.3",
     "jest-circus": "26.6.3",
-    "patch-package": "6.4.7"
+    "patch-package": "6.4.7",
+    "puppeteer": "8.0.0"
   },
   "resolutions": {
     "@types/react-native": "0.64.0"

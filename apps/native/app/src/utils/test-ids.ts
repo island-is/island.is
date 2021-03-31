@@ -20,4 +20,5 @@ export const testIDs = {
 
   // user screen
   SCREEN_USER: 'SCREEN_USER',
+  LOGOUT_BUTTON: 'LOGOUT_BUTTON',
 }
