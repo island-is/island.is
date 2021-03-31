@@ -58,8 +58,24 @@ export class FileService {
   }
 
   getCaseFileById(id: string): Promise<File> {
-    this.logger.debug(`Get case file with id ${id}`)
+    this.logger.debug(`Get case file by id ${id}`)
 
     return this.fileModel.findByPk(id)
+  }
+
+  deleteFileById(id: string): Promise<boolean> {
+    this.logger.debug(`Delete case file by id ${id}`)
+
+    const success = this.fileModel
+      .destroy({ where: { id } })
+      .then((nrOfRowsDeleted) => {
+        return nrOfRowsDeleted === 1
+      })
+      .error((err) => {
+        this.logger.error(err)
+        return false
+      })
+
+    return success
   }
 }
