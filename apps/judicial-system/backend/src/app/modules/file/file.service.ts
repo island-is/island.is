@@ -56,4 +56,12 @@ export class FileService {
       order: [['created', 'DESC']],
     })
   }
+
+  getCaseFileById(id: string): Promise<File> {
+    this.logger.debug(`Get case file with id ${id}`)
+
+    return this.fileModel.findOne({
+      where: { id },
+    })
+  }
 }
