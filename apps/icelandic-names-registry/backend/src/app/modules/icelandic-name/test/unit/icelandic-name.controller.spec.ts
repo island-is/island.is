@@ -22,6 +22,15 @@ describe('IcelandicNameController', () => {
     modified: new Date().toISOString(),
   }
 
+  const icelandicNameDto: CreateIcelandicNameBody = {
+    icelandic_name: 'Laqueesha',
+    type: 'ST',
+    status: 'Haf',
+    visible: true,
+    verdict: 'verdict',
+    url: 'url',
+  }
+
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -52,24 +61,33 @@ describe('IcelandicNameController', () => {
     )
   })
 
-  describe('create', () => {
-    const icelandicNameDto: CreateIcelandicNameBody = {
-      icelandic_name: 'Laqueesha',
-      type: 'ST',
-      status: 'Haf',
-      visible: true,
-      verdict: 'verdict',
-      url: 'url',
-    }
+  it('should create an icelandic name', async () => {
+    jest
+      .spyOn(icelandicNameService as any, 'createName')
+      .mockImplementation(() => Promise.resolve(icelandicName))
 
-    it('should create an icelandic name ', async () => {
-      jest
-        .spyOn(icelandicNameService as any, 'createName')
-        .mockImplementation(() => Promise.resolve(icelandicName))
+    const result = await icelandicNameController.createName(icelandicNameDto)
 
-      const result = await icelandicNameController.createName(icelandicNameDto)
+    expect(result).toEqual(icelandicName)
+  })
 
-      expect(result).toEqual(icelandicName)
-    })
+  it('should get all icelandic names', async () => {
+    jest
+      .spyOn(icelandicNameService as any, 'getAll')
+      .mockImplementation(() => Promise.resolve([icelandicName]))
+
+    const result = await icelandicNameController.getAll()
+
+    expect(result).toEqual([icelandicName])
+  })
+
+  it('should get icelandic names by id', async () => {
+    jest
+      .spyOn(icelandicNameService as any, 'getById')
+      .mockImplementation(() => Promise.resolve(icelandicName))
+
+    const result = await icelandicNameController.getById(1)
+
+    expect(result).toEqual(icelandicName)
   })
 })

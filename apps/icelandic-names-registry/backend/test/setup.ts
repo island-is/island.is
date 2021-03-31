@@ -24,6 +24,7 @@ export const truncate = () => {
         cascade: true,
         truncate: true,
         force: true,
+        restartIdentity: true,
       })
     }),
   )

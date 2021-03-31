@@ -7,8 +7,15 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { IcelandicName as TIcelandicName } from '../../../../types'
+import {
+  IcelandicName as TIcelandicName,
+  EnumNameType,
+  EnumStatusType,
+  NameType,
+  StatusType,
+} from '../../../../types'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum } from 'class-validator'
 
 @Table({
   tableName: 'icelandic_names',
@@ -36,15 +43,17 @@ export class IcelandicName
     type: DataType.STRING,
     allowNull: false,
   })
+  @IsEnum(EnumNameType)
   @ApiProperty()
-  type!: string
+  type!: NameType
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
+  @IsEnum(EnumStatusType)
   @ApiProperty()
-  status!: string
+  status!: StatusType
 
   @Column({
     type: DataType.STRING,
@@ -71,9 +80,15 @@ export class IcelandicName
   })
   url!: string
 
+  @Column({
+    allowNull: true,
+  })
   @CreatedAt
   readonly created!: Date
 
+  @Column({
+    allowNull: true,
+  })
   @UpdatedAt
   readonly modified!: Date
 }

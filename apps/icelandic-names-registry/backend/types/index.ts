@@ -9,3 +9,20 @@ export type IcelandicName = {
   created: Date
   modified: Date
 }
+
+export enum EnumNameType {
+  ST = 'ST',
+  DR = 'DR',
+  MI = 'MI',
+  RST = 'RST',
+  RDR = 'RDR',
+}
+
+export enum EnumStatusType {
+  ST = 'Haf',
+  DR = 'Sam',
+  OAF = 'Óaf',
+}
+
+export type NameType = 'ST' | 'DR' | 'MI' | 'RST' | 'RDR'
+export type StatusType = 'Haf' | 'Sam' | 'Óaf'
