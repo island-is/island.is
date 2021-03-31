@@ -8,7 +8,7 @@ export const m = defineMessages({
   },
   applicantInfoSection: {
     id: 'hi.application:applicant.section',
-    defaultMessage: 'Tengiliðsupplýsingar',
+    defaultMessage: 'Tengiliðaupplýsingar',
     description: 'Your contact information',
   },
   externalDataTitle: {
@@ -90,7 +90,7 @@ export const m = defineMessages({
   },
   contactInfoTitle: {
     id: 'hi.application:contactInfo.title',
-    defaultMessage: 'Staðfestið tengiliðsupplýsingar',
+    defaultMessage: 'Staðfestið tengiliðaupplýsingar',
     description: 'Confirm your contact information',
   },
   name: {
