@@ -53,6 +53,10 @@ const EducationExamResultQuery = gql`
             grade
             weight
           }
+          numberComprehension {
+            grade
+            weight
+          }
           wordAndNumbers
           progressText
         }
@@ -214,6 +218,16 @@ const StudentAssessmentTable = () => {
                           rate: `(${res.mathGrade?.ratiosAndPercentages.weight}%)`,
                           serialRating:
                             res.mathGrade?.ratiosAndPercentages.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.mathGrade?.numberComprehension.grade
+                    ? [
+                        {
+                          subject: 'Tölur og talnaskilningur',
+                          rate: `(${res.mathGrade?.numberComprehension.weight}%)`,
+                          serialRating:
+                            res.mathGrade?.numberComprehension.grade,
                         },
                       ]
                     : []),
