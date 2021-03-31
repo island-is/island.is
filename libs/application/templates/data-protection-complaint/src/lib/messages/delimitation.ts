@@ -75,7 +75,7 @@ export const delimitation = {
       defaultMessage: `
        Vakin er athygli á því að erindi sem berast stofnuninni og öll
        gögn sem viðkomandi málvarða eru geymd í skjalageymslu
-       stofnunarinnar undir málsnúmeri uns þau verða afhentÞjóðskjalasafni
+       stofnunarinnar undir málsnúmeri uns þau verða afhent Þjóðskjalasafni
        Íslands til varðveislu í samræmi við ákvæði laga nr. 77/2014, um opinberskjalasöfn.
         `,
       description: 'Agreement description bullet Three',
