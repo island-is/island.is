@@ -82,8 +82,9 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
         ... on SubArticle {
           id
           title
-          parentSlug
+          slug
           parent {
+            slug
             title
           }
         }
@@ -222,8 +223,9 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         ... on SubArticle {
           id
           title
-          parentSlug
+          slug
           parent {
+            slug
             title
           }
         }

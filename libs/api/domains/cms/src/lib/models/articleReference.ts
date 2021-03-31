@@ -8,10 +8,10 @@ export class ArticleReference {
   id!: string
 
   @Field()
-  title!: string
+  title?: string
 
   @Field()
-  slug!: string
+  slug?: string
 }
 
 export const mapArticleReference = ({
@@ -20,6 +20,6 @@ export const mapArticleReference = ({
 }: IArticle): SystemMetadata<ArticleReference> => ({
   typename: 'Article',
   id: sys.id,
-  title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  title: fields?.title ?? '',
+  slug: fields?.slug ?? '',
 })

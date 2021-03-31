@@ -42,6 +42,20 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
           })
           .filter((relatedArticle) => Boolean(relatedArticle))
 
+        const subArticles = (entry.fields.subArticles || [])
+          .map(({ sys, fields }) => {
+            // handle if someone deletes an article without removing reference case, this will be fixed more permanently at a later time with nested resolvers
+            if (!fields?.parent) {
+              return undefined
+            }
+            const { parent, ...prunedSubArticleFields } = fields
+            return {
+              sys,
+              fields: prunedSubArticleFields,
+            }
+          })
+          .filter((subArticle) => Boolean(subArticle))
+
         // relatedArticles can include nested articles that point back to this entry
         const processedEntry = {
           ...entry,
@@ -50,6 +64,9 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             relatedArticles: (relatedArticles.length
               ? relatedArticles
               : undefined) as IArticleFields['relatedArticles'],
+            subArticles: (subArticles.length
+              ? subArticles
+              : undefined) as IArticleFields['subArticles'],
           },
         }
         if (!isCircular(processedEntry)) {

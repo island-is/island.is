@@ -4,6 +4,7 @@ export default {
   cacheTime: process.env.CACHE_TIME || 5,
   indexableTypes: [
     'article',
+    'subArticle',
     'lifeEventPage',
     'articleCategory',
     'news',
@@ -28,7 +29,6 @@ export default {
     'questionAndAnswer',
     'sectionHeading',
     'sectionWithImage',
-    'subArticle',
     'url',
     'articleGroup',
     'articleSubgroup',

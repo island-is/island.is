@@ -1,8 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
-import { Article, mapArticle } from './article.model'
-import { ArticleReference } from './articleReference'
+import { ArticleReference, mapArticleReference } from './articleReference'
 
 @ObjectType()
 export class SubArticle {
@@ -33,7 +32,7 @@ export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   parentSlug: fields.slug,
-  parent: fields.parent && mapArticle(fields.parent),
+  parent: fields.parent && mapArticleReference(fields.parent),
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   showTableOfContents: fields.showTableOfContents ?? false,
 })
