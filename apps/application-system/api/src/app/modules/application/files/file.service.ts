@@ -116,12 +116,8 @@ export class FileService {
 
   private async createChildrenResidencePdf(application: CRCApplication) {
     const bucket = this.getBucketName()
-    const { answers, externalData } = application
 
-    const pdfBuffer = await generateResidenceChangePdf(
-      externalData.nationalRegistry,
-      answers,
-    )
+    const pdfBuffer = await generateResidenceChangePdf(application)
 
     const fileName = `${BucketTypePrefix[PdfTypes.CHILDREN_RESIDENCE_CHANGE]}/${
       application.id

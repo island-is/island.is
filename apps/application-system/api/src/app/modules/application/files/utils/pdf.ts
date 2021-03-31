@@ -4,12 +4,11 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import {
-  ExternalData,
-  Answers,
   formatAddress,
   formatDate,
   getSelectedChildrenFromExternalData,
   childrenResidenceInfo,
+  CRCApplication,
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
@@ -19,12 +18,15 @@ const formatDays = (date: string): string => {
 }
 
 export async function generateResidenceChangePdf(
-  nationalRegistry: ExternalData['nationalRegistry'],
-  answers: Answers,
+  application: CRCApplication,
 ): Promise<Buffer> {
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
+  const {
+    answers,
+    externalData: { nationalRegistry },
+  } = application
   const applicant = nationalRegistry.data
   const nationalRegistryLookupDate = format(
     parseISO(nationalRegistry.date),
