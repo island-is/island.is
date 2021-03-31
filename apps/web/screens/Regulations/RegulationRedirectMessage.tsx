@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import { Link, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import { prettyName } from './regulationUtils'
 
@@ -30,17 +30,10 @@ export const RegulationRedirectMessage: FC<RegulationRedirectMessageProps> = (
           >
             {prettyName(regulation.name)} {regulation.title}
           </Text>
-          <Text>
-            {n('redirectText')}
-            <br />
-            <a
-              href={regulation.redirectUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {regulation.redirectUrl}
-            </a>
-          </Text>
+          <Text>{n('redirectText')}</Text>
+          <Link color="blue400" underline="small" href={regulation.redirectUrl}>
+            {regulation.redirectUrl}
+          </Link>
         </>
       }
     />

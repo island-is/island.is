@@ -120,8 +120,6 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     'diff',
     'earlierDate',
   ])
-  console.log({ p })
-
   const number = assertNumber(p.number)
   const viewType = assertViewType(p.viewType)
   const date = assertDate(p.date, viewType)
