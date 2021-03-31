@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-import { Table } from '@island.is/shared/table'
+import { Table } from '@island.is/application/ui-components'
 import { formatIsk } from '../../parentalLeaveUtils'
 import { Payment } from '../../types'
 

@@ -1,23 +1,33 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 import {
-  PersonResidenceChange,
-  Child,
+  NationalRegistry,
+  Answers,
   formatAddress,
+  formatDate,
+  getSelectedChildrenFromExternalData,
+  childrenResidenceInfo,
 } from '@island.is/application/templates/children-residence-change'
 import { PdfConstants } from './constants'
 import { DistrictCommissionerLogo } from './districtCommissionerLogo'
 
 export async function generateResidenceChangePdf(
-  childrenAppliedFor: Array<Child>,
-  parentA: PersonResidenceChange,
-  parentB: PersonResidenceChange,
-  expiry: Array<string>,
-  reason?: string,
+  applicant: NationalRegistry,
+  answers: Answers,
 ): Promise<Buffer> {
   const formatSsn = (ssn: string) => {
     return ssn.replace(/(\d{6})(\d+)/, '$1-$2')
   }
+  const { selectDuration, residenceChangeReason, selectedChildren } = answers
+  const reason = residenceChangeReason
+  const expiry = selectDuration
+  const parentA = applicant
+  const childrenAppliedFor = getSelectedChildrenFromExternalData(
+    applicant.children,
+    selectedChildren,
+  )
+  const parentB = childrenAppliedFor[0].otherParent
+  const childResidenceInfo = childrenResidenceInfo(applicant, answers)
 
   const doc = new PDFDocument({
     size: PdfConstants.PAGE_SIZE,
@@ -139,14 +149,14 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${parentA.fullName}, Foreldri A`,
+    `Fyrra lögheimili: ${childResidenceInfo.current.parentName}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Nýtt lögheimili: ${parentB.fullName}, Foreldri B`,
+    `Nýtt lögheimili: ${childResidenceInfo.future.parentName}`,
   )
 
   if (reason) {
@@ -178,7 +188,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.LARGE_LINE_GAP,
     expiry[0] === PdfConstants.PERMANENT
       ? 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.'
-      : `Samningurinn gildir til ${expiry[1]}`,
+      : `Samningurinn gildir til ${formatDate(expiry[1])}`,
   )
 
   addToDoc(
