@@ -4,17 +4,26 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
+  Patch,
   Put,
 } from '@nestjs/common'
-import { ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import { IcelandicNameService } from './icelandic-name.service'
 import { IcelandicName } from './icelandic-name.model'
 import { UpdateIcelandicNameBody, CreateIcelandicNameBody } from './dto'
 
-@Controller('api')
+@Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')
 export class IcelandicNameController {
   constructor(private readonly icelandicNameService: IcelandicNameService) {}
@@ -23,55 +32,87 @@ export class IcelandicNameController {
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
-    description: 'Gets all icelandic names',
+    description: 'Gets all icelandic names.',
   })
-  getAll(): Promise<IcelandicName[]> {
-    return this.icelandicNameService.getAll()
+  async getAll(): Promise<IcelandicName[]> {
+    return await this.icelandicNameService.getAll()
   }
 
-  @Get(':initialLetter')
+  @Get(':id')
+  @ApiOkResponse({
+    type: IcelandicName,
+    description: 'Gets icelandic name by id.',
+  })
+  @ApiNotFoundResponse({
+    description: 'The name was not found.',
+  })
+  async getById(@Param('id') id: number): Promise<IcelandicName> {
+    const result = await this.icelandicNameService.getById(id)
+
+    if (!result) {
+      throw new NotFoundException(`Name with id ${id} was not found!`)
+    }
+
+    return result
+  }
+
+  @Get('initial-letter/:initialLetter')
   @ApiOkResponse({
     type: IcelandicName,
     isArray: true,
-    description: 'Gets all icelandic names by initial letter',
+    description: 'Gets all icelandic names by initial letter.',
   })
-  getByInitialLetter(
+  async getByInitialLetter(
     @Param('initialLetter') initialLetter: string,
   ): Promise<IcelandicName[]> {
-    return this.icelandicNameService.getByInitialLetter(initialLetter)
+    return await this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOkResponse()
   async updateNameById(
     @Param('id') id: number,
     @Body() body: UpdateIcelandicNameBody,
-  ): Promise<void> {
+  ): Promise<IcelandicName> {
     const [
       affectedRows,
       [icelandicName],
     ] = await this.icelandicNameService.updateNameById(id, body)
 
-    if (!icelandicName) {
+    if (!affectedRows) {
       throw new BadRequestException(`Could not update user by id: ${id}`)
     }
+
+    return icelandicName
   }
 
-  @Put('create')
-  @ApiOkResponse()
-  async createName(@Body() body: CreateIcelandicNameBody): Promise<void> {
-    const result = await this.icelandicNameService.createName(body)
+  @Put()
+  @HttpCode(201)
+  @ApiCreatedResponse({
+    description: 'The name has been successfully created.',
+    type: IcelandicName,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'The request data was missing or had invalid values.',
+  })
+  createName(@Body() body: CreateIcelandicNameBody): Promise<IcelandicName> {
+    return this.icelandicNameService.createName(body)
   }
 
   @Delete(':id')
-  @ApiNoContentResponse()
+  @HttpCode(204)
+  @ApiNoContentResponse({
+    description: 'The name has been successfully deleted.',
+  })
+  @ApiNotFoundResponse({
+    description: 'The name was not found.',
+  })
   async deleteById(@Param('id') id: number): Promise<void> {
-    const icelandicName = await this.icelandicNameService.getById(id)
+    const count = await this.icelandicNameService.deleteById(id)
 
-    if (!icelandicName) {
-      throw new NotFoundException(`Name with id ${id} was not found`)
+    if (count === 0) {
+      throw new NotFoundException(`Name with id ${id} was not found!`)
     }
-
-    await this.icelandicNameService.deleteById(id)
   }
 }
