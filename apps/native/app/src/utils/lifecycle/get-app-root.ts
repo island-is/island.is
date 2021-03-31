@@ -14,8 +14,6 @@ export async function getAppRoot(): Promise<Layout> {
   // Check if user is authenticated
   const isAuthenticated = await checkIsAuthenticated()
 
-  return { component: { name: ComponentRegistry.SetNotifications } }
-
   // Show login screen if not authenticated
   if (!isAuthenticated) {
     return {
