@@ -159,7 +159,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
         (opts, { name, slug, subChapters }) => {
           opts.push({
             value: slug,
-            label: `${Number(slug)}. ${name}`,
+            label: `${name}`,
           })
           opts = opts.concat(
             subChapters.map(({ name, slug }) => ({

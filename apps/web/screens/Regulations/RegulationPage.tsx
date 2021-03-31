@@ -28,15 +28,16 @@ import { GET_REGULATION_QUERY } from '../queries'
 type RegulationPageProps = {
   regulation: Regulation | RegulationRedirect
   texts: RegulationPageTexts
+  viewType: ViewType
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, texts } = props
+  const { regulation, texts, viewType } = props
 
   return 'redirectUrl' in regulation ? (
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
   ) : (
-    <RegulationDisplay texts={texts} regulation={regulation} />
+    <RegulationDisplay texts={texts} regulation={regulation} viewType={viewType} />
   )
 }
 
@@ -46,7 +47,7 @@ const viewTypes = {
   diff: 1,
   d: 1,
 }
-type ViewType = keyof typeof viewTypes
+export type ViewType = keyof typeof viewTypes
 
 /** Throws if the slug doesn't roughly look like a valid regulation number
  *
@@ -168,6 +169,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     regulation,
     texts,
+    viewType,
   }
 }
 

@@ -8,6 +8,7 @@ import { RegulationLayout } from './RegulationLayout'
 import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
+import { ViewType } from './RegulationPage'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { dateFormat } from '@island.is/shared/constants'
@@ -26,17 +27,16 @@ const Ball: React.FC<BallProps> = ({ type, children }) => (
 
 export type RegulationDisplayProps = {
   regulation: Regulation
-  originalBody?: string
   texts: RegulationPageTexts
+  viewType?: ViewType
 }
 
 export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
-  const { regulation, texts } = props
+  const { regulation, texts, viewType } = props
   const { history, effects } = regulation
 
   const router = useRouter()
   const dateUtl = useDateUtils()
-  const [showDiff, setShowDiff] = useState(false)
   const formatDate = (isoDate: string) => {
     // Eff this! 👇
     // return dateUtl.format(new Date(isoDate), dateFormat[dateUtl.locale.code || defaultLanguage])
@@ -47,7 +47,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
   const regulationBody = regulation.text
 
-  console.log({ regulation })
+  const showDiff = viewType === 'diff'
 
   return (
     <RegulationLayout
@@ -55,12 +55,15 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
       main={
         <>
           {history.length > 0 && (
-            <button
+            <Link
+              href={
+                linkToRegulation(regulation.name) +
+                (showDiff ? '' : '/diff')
+              }
               className={s.diffToggler}
-              onClick={() => setShowDiff(!showDiff)}
             >
               {showDiff ? n('hideDiff') : n('showDiff')}
-            </button>
+            </Link>
           )}
 
           {!regulation.repealedDate ? (
@@ -128,8 +131,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               title="Stofnreglugerð"
               colorScheme="blueberry"
             >
-              {regulation.effects.slice(0, 1).map((item) => (
-                <Link href={linkToRegulation(item.name)}>
+              {regulation.effects.slice(0, 1).map((item, i) => (
+                <Link key={'effects-' + i} href={linkToRegulation(item.name)}>
                   <FocusableBox flexDirection={'column'}>
                     {({
                       isFocused,
@@ -167,8 +170,8 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               title={n('historyTitle') + ' ' + prettyName(regulation.name)}
               colorScheme="blueberry"
             >
-              {regulation.history.map((item) => (
-                <Link href={linkToRegulation(item.name) + '/d/' + item.date}>
+              {regulation.history.map((item, i) => (
+                <Link key={'history-' + i} href={linkToRegulation(item.name) + '/d/' + item.date}>
                   <FocusableBox flexDirection={'column'}>
                     {({
                       isFocused,
