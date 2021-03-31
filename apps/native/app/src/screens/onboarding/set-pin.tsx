@@ -1,8 +1,7 @@
-import { Button, Heading, Input, SwitchLabel } from '@island.is/island-ui-native';
+import { Button, Input, SwitchLabel } from '@island.is/island-ui-native';
 import { theme } from '@island.is/island-ui/theme';
-import React, { useEffect } from 'react'
-import { useState } from 'react';
-import { ScrollView, Text, Switch, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react'
+import { Switch, Keyboard} from 'react-native';
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { OnBoarding } from '../../components/onboarding/onboarding';
 
@@ -15,10 +14,9 @@ export const SetPinScreen: NavigationFunctionComponent = () => {
   const [pinMatches, setPinMatches] = useState(false);
 
   useEffect(() => {
-    console.log(pin, confirmPin, 'pins here', pin.length)
-
     if (pin === confirmPin && pin.length > 3) {
       setPinMatches(true)
+      Keyboard.dismiss();
     } else {
       setPinMatches(false);
     }
@@ -28,9 +26,9 @@ export const SetPinScreen: NavigationFunctionComponent = () => {
     <OnBoarding
       title="Setja upp skjálæsingu"
       copy="Veldu þér PIN númer á milli 4-16 tölustafi til þess að afælsa appinu."
-      action={<Button onPress={() => console.log('smellir')} title="Áfram" />}
+      action={<Button onPress={() => console.log('next step')} title="Halda áfram" disabled={!pinMatches} />}
     >
-      <SwitchLabel title="Nota FaceID">
+      <SwitchLabel title="Nota FaceID" onPress={toggleSwitch}>
         <Switch
           trackColor={{ false: theme.color.dark100, true: theme.color.blue400 }}
           thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
@@ -40,10 +38,8 @@ export const SetPinScreen: NavigationFunctionComponent = () => {
         />
       </SwitchLabel>
 
-      <Input onChangeText={text => setPin(text)} placeholder="Leyninúmer" keyboardType="number-pad" secureTextEntry={true} />
+      <Input onChangeText={text => setPin(text)} placeholder="Leyninúmer" keyboardType="number-pad" secureTextEntry={true} returnKeyType="next" />
       <Input onChangeText={text => setConfirmPin(text)} placeholder="Staðfesta leyninúmer" keyboardType="number-pad" secureTextEntry={true}  />
-      {pinMatches && <Text>PIN númer passar</Text>}
-
     </OnBoarding>
   )
 }

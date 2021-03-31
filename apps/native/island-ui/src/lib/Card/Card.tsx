@@ -2,15 +2,6 @@ import React from 'react'
 import styled from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
 
-// const colorTheme = {
-//   pink: '#f5e4ec',
-//   yellow: '#fff7e7',
-// }
-
-// export enum CardColor {
-//   YELLOW = 'yellow',
-//   PINK = 'pink'
-// }
 
 const Host = styled.View<{ color: string }>`
   padding: 30px 30px;
@@ -31,7 +22,7 @@ const Title = styled.Text`
 
 interface CardProps {
   title: string;
-  backgroundColor: string;
+  backgroundColor?: string;
 }
 
 export function Card({ title, backgroundColor = '#f5e4ec' }: CardProps) {

@@ -9,7 +9,8 @@ global.Intl = (global as any).IntlPolyfill;
 
 export function setupGlobals() {
   if (Platform.OS === 'ios') {
-    KeyboardManager.setEnable(false);
-    KeyboardManager.setEnableAutoToolbar(false);
+    KeyboardManager.setEnable(true);
+    KeyboardManager.setEnableAutoToolbar(true);
+    KeyboardManager.setToolbarPreviousNextButtonEnable(true);
   }
 }

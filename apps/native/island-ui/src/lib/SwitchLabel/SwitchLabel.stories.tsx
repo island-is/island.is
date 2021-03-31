@@ -14,8 +14,8 @@ storiesOf('SwitchLabel', module)
   .addDecorator(withKnobs)
   .add('Default', () => {
     const title = text('Switch labeb', 'Nota FaceID');
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    // const [isEnabled, setIsEnabled] = useState(false);
+    // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     return (
       <SwitchLabel title={title}>
         <Switch

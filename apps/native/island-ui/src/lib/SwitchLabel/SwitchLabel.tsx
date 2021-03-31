@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components/native';
-import { theme } from '@island.is/island-ui/theme';
 
 const Host = styled.View`
   display: flex;
@@ -22,13 +21,14 @@ const Title = styled.Text`
 interface SwitchLabelProps {
   children: React.ReactNode;
   title: string;
+  onPress?: () => void;
 }
 
-export function SwitchLabel({ children, title }: SwitchLabelProps) {
+export function SwitchLabel({ children, title, onPress }: SwitchLabelProps) {
   return (
     <Host>
       <Switch>{children}</Switch>
-      <Title>{title}</Title>
+      <Title onPress={onPress}>{title}</Title>
     </Host>
   )
 }
