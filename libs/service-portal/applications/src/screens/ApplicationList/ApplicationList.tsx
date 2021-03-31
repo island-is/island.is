@@ -16,6 +16,7 @@ import { useApplications } from '@island.is/service-portal/graphql'
 import { Application, getSlugFromType } from '@island.is/application/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
+import { dateFormat } from '@island.is/shared/constants'
 
 import { m } from '../../lib/messages'
 
@@ -36,9 +37,9 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
-  const { formatMessage, lang } = useLocale()
-  const { data: applications, loading, error } = useApplications()
-  const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
+  const { formatMessage, lang: locale } = useLocale()
+  const { data: applications, loading, error } = useApplications(locale)
+  const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
   return (
     <>
@@ -80,7 +81,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
           return (
             <ActionCard
               key={application.id}
-              date={format(new Date(application.modified), dateFormat)}
+              date={format(new Date(application.modified), formattedDate)}
               heading={application.name || application.typeId}
               tag={{
                 label: isComplete
