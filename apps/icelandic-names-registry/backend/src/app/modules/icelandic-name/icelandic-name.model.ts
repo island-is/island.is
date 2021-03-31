@@ -7,13 +7,16 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
+import { IcelandicName as TIcelandicName } from '../../../../types'
 import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'icelandic_names',
   timestamps: true,
 })
-export class IcelandicName extends Model<IcelandicName> {
+export class IcelandicName
+  extends Model<IcelandicName>
+  implements TIcelandicName {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -38,41 +41,41 @@ export class IcelandicName extends Model<IcelandicName> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
-  status!: string | null
+  status!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  description?: string
+  description!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  verdict?: string
+  verdict!: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  visible?: boolean
+  visible!: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  url?: string
+  url!: string
 
   @CreatedAt
   readonly created!: Date
 
   @UpdatedAt
-  readonly modified?: Date
+  readonly modified!: Date
 }
 
 export default IcelandicName
