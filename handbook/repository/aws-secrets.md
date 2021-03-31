@@ -16,7 +16,7 @@ SSO start URL [None]: https://island-is.awsapps.com/start
 SSO Region [None]: eu-west-1
 ```
 
-Then choose the environnement of your choice. Likely to be `island-is-development01`. You be prompted for the following:
+Then choose the environnement of your choice. Likely to be `island-is-development01`. You will be prompted for the following:
 
 ```md
 CLI default client Region [eu-west-1]: <Press Enter>
@@ -51,7 +51,7 @@ aws_session_token = <SESSION_TOKEN>
 Voilà, you are now ready to fetch and create secrets.
 
 {% hint style="warning" %}
-Remember, the session token expires every 8 hours so you will need to update it. You can either do `export AWS_SESSION_TOKEN="SESSION_TOKEN"` or change it manually by going into `~/.aws/credentials` and replacing with the new session token generated from your AWS account.
+Remember, the session token expires every 1 hours so you will need to update it. You can either do `export AWS_SESSION_TOKEN="SESSION_TOKEN"` or change it manually by going into `~/.aws/credentials` and replacing with the new session token generated from your AWS account. The SSO login expires every 8 hours.
 {% endhint %}
 
 ## Usage to fetch secrets
@@ -101,18 +101,26 @@ yarn create-secret
 ```
 
 You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace, a _secret value_ and the _secret type_ (`SecureString` or `String`).
+
 ### Example
+
 ```bash
 ➜ yarn create-secret
+
 Secret name: /k8s/my-app/MY_APP_KEY
 # Name: Ok!
 # Length: Ok!
+
 Secret value: a-very-secure-secret
 # Length: Ok!
+
 SecureString [Y/n]? # [enter] for SecureString
 # SecureString selected
+
 Add tags? [y/N]? # [enter] to skip creating tags
+
 Example: Key=Foo,Value=Bar Key=Another,Value=Tag: # note: Key and Value are case sensitive! Create multiple tags by separating with whitespace.
+
 Are you sure [Y/n]? # [enter] to confirm
 # Creating secret....
 ```
