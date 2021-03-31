@@ -212,7 +212,7 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{childResidenceInfo.current.parent.fullName}</Text>
+        <Text>{childResidenceInfo.current.parentName}</Text>
         <Text>{formatAddress(childResidenceInfo.current.address)}</Text>
       </Box>
       <Box marginTop={4}>
@@ -221,7 +221,7 @@ const Overview = ({
             count: children.length,
           })}
         </Text>
-        <Text>{childResidenceInfo.future.parent.fullName}</Text>
+        <Text>{childResidenceInfo.future.parentName}</Text>
         <Text fontWeight="light">
           {formatAddress(childResidenceInfo.future.address)}
         </Text>
