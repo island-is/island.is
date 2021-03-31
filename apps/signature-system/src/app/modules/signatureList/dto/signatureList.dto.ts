@@ -5,8 +5,7 @@ import {
   ValidateNested,
   IsArray,
 } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
-import { ValidationRuleDto } from './validationRuleDto'
+import { ValidationRuleDto } from './validationRule.dto'
 import { Type } from 'class-transformer'
 
 // TODO: Add this to metadata module
@@ -28,30 +27,25 @@ export enum SignatureTag {
 
 export class SignatureListDto {
   @IsString()
-  @ApiProperty()
   title!: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
   description = ''
 
   @IsOptional()
   @IsArray()
   @IsEnum(SignatureMetaField, { each: true })
-  @ApiProperty()
   signatureMeta = [] as SignatureMetaField[]
 
   @IsOptional()
   @IsArray()
   @IsEnum(SignatureTag, { each: true })
-  @ApiProperty()
   tags = [] as SignatureTag[]
 
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ValidationRuleDto)
   @IsArray()
-  @ApiProperty()
   validationRules = [] as ValidationRuleDto[]
 }

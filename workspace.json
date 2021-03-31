@@ -5767,7 +5767,8 @@
           "options": {
             "outputPath": "dist/apps/signature-system",
             "main": "apps/signature-system/src/main.ts",
-            "tsConfig": "apps/signature-system/tsconfig.app.json"
+            "tsConfig": "apps/signature-system/tsconfig.app.json",
+            "webpackConfig": "apps/signature-system/webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -5808,6 +5809,13 @@
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d",
             "cwd": "apps/signature-system"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/signature-system/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/signature-system/tsconfig.app.json apps/signature-system/src/buildOpenApi.ts"
           }
         },
         "migrate": {
