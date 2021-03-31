@@ -286,7 +286,7 @@ export const m = defineMessages({
   },
   formerInsuranceDetails: {
     id: 'hi.application:formerInsurance.details',
-    defaultMessage: 'Vinsamlegast gefið upplýsingar um fyrra tryggingarland.',
+    defaultMessage: 'Vinsamlegast gefið upplýsingar um fyrra tryggingarland. Veldu landsheiti á ensku.',
     description:
       'Please provide the following details regarding your former country of residence.',
   },
