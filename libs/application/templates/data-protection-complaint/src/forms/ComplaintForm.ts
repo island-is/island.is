@@ -16,6 +16,7 @@ import {
   DefaultEvents,
   buildExternalDataProvider,
   buildDataProviderItem,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { FILE_SIZE_LIMIT, YES, NO, SubjectOfComplaint } from '../shared'
 import {
@@ -225,6 +226,17 @@ export const ComplaintForm: Form = buildForm({
                   },
                 ),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'agreementSection',
+          title: section.agreement,
+          children: [
+            buildCustomField({
+              id: 'agreementSectionDescription',
+              title: section.agreement,
+              component: 'AgreementDescription',
             }),
           ],
         }),
