@@ -30,17 +30,13 @@ const CareerCards = () => {
   const { data, loading } = useQuery<Query>(EducationExamFamilyOverviewsQuery)
   const { formatMessage } = useLocale()
 
-  // Children should appear after user, cast bool to number for sorting
-  const sortedData =
-    data?.educationExamFamilyOverviews.sort(
-      (a, b) => Number(a.isChild) - Number(b.isChild),
-    ) || []
+  const educationExamFamilyOverviews = data?.educationExamFamilyOverviews || []
   if (loading) {
     return <LoadingTemplate />
   }
   return (
     <>
-      {sortedData.map((member, index) => (
+      {educationExamFamilyOverviews.map((member, index) => (
         <Box key={index} marginBottom={10}>
           <Text variant="h3" marginBottom={3}>
             {member.name}
@@ -74,7 +70,7 @@ const CareerCards = () => {
           />
         </Box>
       ))}
-      {sortedData.length === 0 && (
+      {educationExamFamilyOverviews.length === 0 && (
         <Box marginTop={8}>
           <EmptyState
             title={defineMessage({
