@@ -76,13 +76,13 @@ const LicenseCards = () => {
             CTA={
               <Button
                 variant="text"
-                icon="download"
+                icon={loading ? undefined : 'download'}
                 iconType="outline"
                 nowrap
                 onClick={() => handleDownload(license)}
                 disabled={loading}
               >
-                Sækja skjal
+                {loading ? 'Innsiglun skjals í vinnslu…' : 'Sækja skjal'}
               </Button>
             }
           />
