@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsUUID } from 'class-validator'
 
 export class SignatureDto {
-  @IsUUID()
+  @IsUUID(4)
   @ApiProperty()
   listId!: string
 }

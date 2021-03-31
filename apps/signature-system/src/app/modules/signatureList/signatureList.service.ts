@@ -6,6 +6,9 @@ import { SignatureListDto } from './dto/signatureList.dto'
 import { Signature } from '../signature/signature.model'
 import { Op } from 'sequelize'
 
+interface createInput extends SignatureListDto {
+  owner: string
+}
 @Injectable()
 export class SignatureListService {
   constructor (
@@ -17,8 +20,9 @@ export class SignatureListService {
 
   async findListsByTag (tag: string): Promise<SignatureList[]> {
     this.logger.debug(`Finding signature lists by tag "${tag}"`)
+    // TODO: Add option to get only open signature lists
     return this.signatureListModel.findAll({
-      where: { tags: { [Op.contains]: tag } },
+      where: { tags: { [Op.contains]: [tag] } },
     })
   }
 
@@ -41,16 +45,23 @@ export class SignatureListService {
 
   async close (id: string): Promise<SignatureList> {
     this.logger.debug('Closing signature list')
-    const [_, signatureListUpdates] = await this.signatureListModel.update(
+    const [_, signatureLists] = await this.signatureListModel.update(
       { closedDate: new Date() },
-      { where: { id } },
+      { where: { id }, returning: true },
     )
 
-    return signatureListUpdates[0] ?? null
+    return signatureLists[0] ?? null
   }
 
-  async create (resource: SignatureListDto): Promise<SignatureList> {
+  async create (list: createInput): Promise<SignatureList> {
     this.logger.debug('Creating signature list')
-    return this.signatureListModel.create(resource)
+    return this.signatureListModel.create({
+      title: list.title,
+      description: list.description,
+      signatureMeta: list.signatureMeta,
+      tags: list.tags,
+      validationRules: JSON.stringify(list.validationRules),
+      owner: list.owner,
+    })
   }
 }

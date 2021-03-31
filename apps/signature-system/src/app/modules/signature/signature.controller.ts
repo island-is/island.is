@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Post,
+  Query,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Signature } from './signature.model'
@@ -19,7 +20,7 @@ export class SignatureController {
 
   @Get()
   @ApiOkResponse({ type: [Signature] })
-  async findOne (@Body() { listId }: FindSignatureDto): Promise<Signature[]> {
+  async findOne (@Query() { listId }: FindSignatureDto): Promise<Signature[]> {
     // TODO: Add auth here
     const signature = await this.signatureService.findSignaturesByNationalId({
       nationalId: '0000000000', // TODO: Replace this with requesting user

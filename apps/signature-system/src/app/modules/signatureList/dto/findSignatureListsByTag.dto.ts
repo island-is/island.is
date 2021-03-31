@@ -4,5 +4,5 @@ import { ApiProperty } from '@nestjs/swagger'
 export class FindSignatureListByTagDto {
   @IsString()
   @ApiProperty()
-  readonly tag!: string
+  tag!: string
 }
