@@ -1,35 +1,36 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
 import get from 'lodash/get'
+
+import { logger } from '@island.is/logging'
+import { OrganisationsApi } from '@island.is/clients/document-provider'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-
 import {
   generateAssignReviewerEmail,
   generateApplicationApprovedEmail,
   generateApplicationRejectedEmail,
 } from './emailGenerators'
-import {
-  ClientsDocumentProviderService,
-  CreateContactInput,
-  CreateHelpdeskInput,
-  CreateOrganisationInput,
-} from '@island.is/clients/document-provider'
 
-interface Applicant {
-  nationalId: string
+interface Contact {
   name: string
   email: string
   phoneNumber: string
+}
+interface Applicant extends Contact {
+  nationalId: string
   address: string
+}
+interface Helpdesk {
+  email: string
+  phoneNumber: string
 }
 
 @Injectable()
 export class DocumentProviderOnboardingService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private service: ClientsDocumentProviderService,
+    private organisationsApi: OrganisationsApi,
   ) {}
 
   async assignReviewer({ application }: TemplateApiModuleActionProps) {
@@ -50,24 +51,27 @@ export class DocumentProviderOnboardingService {
       const adminContact = (get(
         application.answers,
         'administrativeContact',
-      ) as unknown) as CreateContactInput
+      ) as unknown) as Contact
       const techContact = (get(
         application.answers,
         'technicalContact',
-      ) as unknown) as CreateContactInput
+      ) as unknown) as Contact
       const helpdesk = (get(
         application.answers,
         'helpDesk',
-      ) as unknown) as CreateHelpdeskInput
+      ) as unknown) as Helpdesk
 
-      const createOrganisationDto = {
-        ...applicant,
-        administrativeContact: { ...adminContact },
-        technicalContact: { ...techContact },
-        helpdesk: { ...helpdesk },
-      } as CreateOrganisationInput
+      const dto = {
+        createOrganisationDto: {
+          ...applicant,
+          administrativeContact: { ...adminContact },
+          technicalContact: { ...techContact },
+          helpdesk: { ...helpdesk },
+        },
+        authorization,
+      }
 
-      this.service.createOrganisation(createOrganisationDto, authorization)
+      await this.organisationsApi.organisationControllerCreateOrganisation(dto)
     } catch (error) {
       logger.error('Failed to create organisation', error)
       throw error

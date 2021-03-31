@@ -1,8 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import {
-  ClientsDocumentProviderModule,
-  ClientsDocumentProviderService,
-} from '@island.is/clients/document-provider'
+import { ClientsDocumentProviderModule } from '@island.is/clients/document-provider'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { DocumentProviderOnboardingService } from './document-provider-onboarding.service'
@@ -20,14 +17,7 @@ export class DocumentProviderOnboardingModule {
           basePath: SERVICE_DOCUMENTS_BASEPATH,
         }),
       ],
-      providers: [
-        DocumentProviderOnboardingService,
-        ClientsDocumentProviderService,
-        {
-          provide: 'SERVICE_DOCUMENTS_BASEPATH',
-          useValue: SERVICE_DOCUMENTS_BASEPATH,
-        },
-      ],
+      providers: [DocumentProviderOnboardingService],
       exports: [DocumentProviderOnboardingService],
     }
   }
