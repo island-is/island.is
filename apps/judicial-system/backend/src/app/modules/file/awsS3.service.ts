@@ -1,10 +1,9 @@
 import { S3 } from 'aws-sdk'
-import { DeleteObjectOutput } from 'aws-sdk/clients/s3'
 
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { PresignedPost } from './models'
+import { DeleteFileResponse, PresignedPost } from './models'
 
 @Injectable()
 export class AwsS3Service {
@@ -33,7 +32,7 @@ export class AwsS3Service {
     })
   }
 
-  async deleteFile(key: string): Promise<DeleteObjectOutput> {
+  async deleteFile(key: string): Promise<DeleteFileResponse> {
     return new Promise((resolve, reject) => {
       this.s3.deleteObject(
         { Bucket: environment.files.bucket, Key: key },
@@ -41,7 +40,7 @@ export class AwsS3Service {
           if (err) {
             reject(err)
           } else {
-            resolve(data)
+            resolve({ success: true })
           }
         },
       )

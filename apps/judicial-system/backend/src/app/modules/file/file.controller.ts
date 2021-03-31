@@ -71,10 +71,11 @@ export class FileController {
     @Param('id') id: string,
     @CurrentHttpUser() user: User,
   ): Promise<DeleteFileResponse> {
-    // TODO: Call fileService to actually delete the file
+    // TODO get key and call file service
     return new Promise((resolve, reject) => {
       resolve({ success: true })
     })
+    // return this.fileService.deleteFile('')
   }
 
   @RolesRules(prosecutorRule)
