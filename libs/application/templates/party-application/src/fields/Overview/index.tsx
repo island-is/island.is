@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import Success from '../components/Success'
+import { Success } from '../components'
 
 export interface Props extends FieldBaseProps {
   title?: string

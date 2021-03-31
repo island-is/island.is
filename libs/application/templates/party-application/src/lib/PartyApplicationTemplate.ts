@@ -31,7 +31,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.PARTY_APPLICATION,
-  name: 'Reference application',
+  name: 'Framboð',
   dataSchema,
   stateMachineConfig: {
     initial: 'draft',
