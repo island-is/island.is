@@ -1,18 +1,26 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common'
 import { SignatureList } from './signatureList.model'
 import { SignatureListService } from './signatureList.service'
 import { SignatureListDto } from './dto/signatureList.dto'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { FindSignatureListByTagDto } from './dto/findSignatureListsByTag.dto'
 
 @ApiTags('signatureList')
 @Controller('signature-list')
 export class SignatureListController {
-  constructor (private readonly signatureListService: SignatureListService) {}
+  constructor(private readonly signatureListService: SignatureListService) {}
 
   @Get()
-  @ApiCreatedResponse({ type: SignatureList })
-  async findLists (
+  async findLists(
     @Query() { tag }: FindSignatureListByTagDto,
   ): Promise<SignatureList[]> {
     // TODO: Add dto for tags here?
@@ -21,31 +29,42 @@ export class SignatureListController {
   }
 
   @Get(':id')
-  @ApiCreatedResponse({ type: SignatureList })
-  async findOne (@Param('id') id: string): Promise<SignatureList | null> {
-    return await this.signatureListService.findSingleList(id)
+  async findOne(@Param('id') id: string): Promise<SignatureList> {
+    const response = await this.signatureListService.findSingleList(id)
+    if (!response) {
+      throw new NotFoundException('This signature list does not exist.')
+    } else {
+      return response
+    }
   }
 
   @Get(':id/signatures')
-  @ApiCreatedResponse({ type: SignatureList })
-  async findSignatures (
-    @Param('id') id: string,
-  ): Promise<SignatureList | null> {
+  async findSignatures(@Param('id') id: string): Promise<SignatureList> {
     // TODO: Add auth here
     // TODO: Add pagination
-    return await this.signatureListService.findSingleListSignatures(id)
+    const response = await this.signatureListService.findSingleListSignatures(
+      id,
+    )
+    if (!response) {
+      throw new NotFoundException('This signature list does not exist.')
+    } else {
+      return response
+    }
   }
 
   @Put(':id/close')
-  @ApiCreatedResponse({ type: SignatureList })
-  async close (@Param('id') id: string): Promise<SignatureList> {
+  async close(@Param('id') id: string): Promise<SignatureList> {
     // TODO: Add auth here
-    return await this.signatureListService.close(id)
+    const response = await this.signatureListService.close(id)
+    if (!response) {
+      throw new NotFoundException('This signature list does not exist.')
+    } else {
+      return response
+    }
   }
 
   @Post()
-  @ApiCreatedResponse({ type: SignatureList })
-  async create (
+  async create(
     @Body() signatureList: SignatureListDto,
   ): Promise<SignatureList> {
     // TODO: Add auth here

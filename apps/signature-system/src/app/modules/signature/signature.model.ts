@@ -8,7 +8,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
 import { SignatureList } from '../signatureList/signatureList.model'
 import { SignatureMetaField } from '../signatureList/dto/signatureList.dto'
 
@@ -31,14 +30,12 @@ export class Signature extends Model<Signature> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
   signaturee!: string
 
   @ForeignKey(() => SignatureList)
@@ -46,25 +43,20 @@ export class Signature extends Model<Signature> {
     type: DataType.UUID,
     allowNull: false,
   })
-  @ApiProperty()
   signatureListId!: string
 
   @BelongsTo(() => SignatureList, 'signatureListId')
-  @ApiProperty({ type: SignatureList })
   signatureList!: SignatureList
 
   @Column({
     type: DataType.JSONB,
     allowNull: false,
   })
-  @ApiProperty()
   meta!: SignatureMetaData
 
   @CreatedAt
-  @ApiProperty()
   readonly created!: Date
 
   @UpdatedAt
-  @ApiProperty()
   readonly modified!: Date
 }

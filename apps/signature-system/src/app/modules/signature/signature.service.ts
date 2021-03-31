@@ -20,17 +20,17 @@ interface DeleteFromListByNationalIdInput {
 }
 @Injectable()
 export class SignatureService {
-  constructor (
+  constructor(
     @InjectModel(Signature)
     private signatureModel: typeof Signature,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  async findSignaturesByNationalId ({
+  async findSignaturesByNationalId({
     nationalId,
     listId,
-  }: FindSignaturesByNationalIdInput): Promise<Signature[]> {
+  }: FindSignaturesByNationalIdInput) {
     this.logger.debug(
       `Finding signature in list "${listId}" by nationalId "${nationalId}"`,
     )
@@ -46,10 +46,10 @@ export class SignatureService {
     })
   }
 
-  async createSignatureOnList ({
+  async createSignatureOnList({
     listId,
     nationalId,
-  }: CreateSignatureOnListInput): Promise<Signature> {
+  }: CreateSignatureOnListInput) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // TODO: Prevent this from adding multiple signatures to same list
@@ -60,10 +60,10 @@ export class SignatureService {
     })
   }
 
-  async deleteFromListByNationalId ({
+  async deleteFromListByNationalId({
     nationalId,
     listId,
-  }: DeleteFromListByNationalIdInput): Promise<number> {
+  }: DeleteFromListByNationalIdInput) {
     this.logger.debug(
       `Removing signature from list "${listId}" by nationalId "${nationalId}"`,
     )

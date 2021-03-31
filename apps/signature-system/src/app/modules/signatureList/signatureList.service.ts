@@ -11,14 +11,14 @@ interface createInput extends SignatureListDto {
 }
 @Injectable()
 export class SignatureListService {
-  constructor (
+  constructor(
     @InjectModel(SignatureList)
     private signatureListModel: typeof SignatureList,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  async findListsByTag (tag: string): Promise<SignatureList[]> {
+  async findListsByTag(tag: string) {
     this.logger.debug(`Finding signature lists by tag "${tag}"`)
     // TODO: Add option to get only open signature lists
     return this.signatureListModel.findAll({
@@ -26,14 +26,14 @@ export class SignatureListService {
     })
   }
 
-  async findSingleList (id: string): Promise<SignatureList | null> {
+  async findSingleList(id: string) {
     this.logger.debug(`Finding single signature lists by id "${id}"`)
     return this.signatureListModel.findOne({
       where: { id },
     })
   }
 
-  async findSingleListSignatures (id: string): Promise<SignatureList | null> {
+  async findSingleListSignatures(id: string) {
     this.logger.debug(
       `Finding signatures form single signature lists by id "${id}"`,
     )
@@ -43,7 +43,7 @@ export class SignatureListService {
     })
   }
 
-  async close (id: string): Promise<SignatureList> {
+  async close(id: string): Promise<SignatureList | null> {
     this.logger.debug('Closing signature list')
     const [_, signatureLists] = await this.signatureListModel.update(
       { closedDate: new Date() },
@@ -53,7 +53,7 @@ export class SignatureListService {
     return signatureLists[0] ?? null
   }
 
-  async create (list: createInput): Promise<SignatureList> {
+  async create(list: createInput) {
     this.logger.debug('Creating signature list')
     return this.signatureListModel.create({
       title: list.title,
