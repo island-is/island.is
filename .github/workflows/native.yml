@@ -16,6 +16,8 @@ jobs:
 
       - name: Node
         uses: actions/setup-node@v1
+        with:
+          node-version: '14'
 
       # todo add yarn cache
 
