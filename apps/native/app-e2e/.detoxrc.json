@@ -4,7 +4,7 @@
   "apps": {
     "ios": {
       "type": "ios.app",
-      "binaryPath": "./app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app",
+      "binaryPath": "./app/ios/build/IslandApp/Build/Products/Release-iphonesimulator/IslandApp.app",
       "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ./app/ios/IslandApp.xcworkspace -scheme IslandApp -configuration Release -sdk iphonesimulator -derivedDataPath ./app/ios/build ONLY_ACTIVE_ARCH=YES -quiet -UseModernBuildSystem=YES"
     },
     "ios-debug":{

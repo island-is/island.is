@@ -8,8 +8,8 @@
     "postinstall": "patch-package && cd app && yarn build:env .env",
     "detox:build": "detox build -C app-e2e/.detoxrc.json -o app-e2e/config.json",
     "detox:test": "detox test -C app-e2e/.detoxrc.json -o app-e2e/config.json",
-    "detox:build:ios": "yarn detox:build -c ios-debug",
-    "detox:test:ios": "yarn detox:test -c ios-debug"
+    "detox:build:ios": "yarn detox:build -c ios",
+    "detox:test:ios": "yarn detox:test -c ios"
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.12.1",
