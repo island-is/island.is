@@ -20,6 +20,7 @@ export class IcelandicNameService {
 
     return this.icelandicNameModel.findAll({
       order: ['icelandic_name'],
+      raw: true,
     })
   }
 
@@ -63,15 +64,15 @@ export class IcelandicNameService {
     })
   }
 
-  async createName(body: CreateIcelandicNameBody): Promise<IcelandicName> {
+  createName(body: CreateIcelandicNameBody): Promise<IcelandicName> {
     this.logger.debug(`Creating new name`)
 
     return this.icelandicNameModel.create(body)
   }
 
-  async deleteById(id: number): Promise<void> {
+  deleteById(id: number): Promise<number> {
     this.logger.debug(`Deleting name by id: ${id}`)
 
-    await this.icelandicNameModel.destroy({ where: { id } })
+    return this.icelandicNameModel.destroy({ where: { id } })
   }
 }

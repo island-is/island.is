@@ -8,8 +8,8 @@ const remapped = data.map((x) => {
   }
 
   Object.keys(x).map((k) => {
-    if (x[k] === 'NULL') {
-      // clear any values that are the string 'NULL'
+    if (x[k] === 'NULL' || x[k].trim() === '') {
+      // reset empty values to null
       x[k] = null
     }
   })

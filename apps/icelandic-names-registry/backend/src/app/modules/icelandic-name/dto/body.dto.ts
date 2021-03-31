@@ -1,4 +1,10 @@
-import { IsString, IsNumber, IsOptional, IsEnum } from 'class-validator'
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -39,10 +45,10 @@ export class UpdateIcelandicNameBody {
   @ApiProperty()
   readonly description?: string
 
-  @IsNumber()
+  @IsBoolean()
   @IsOptional()
   @ApiProperty()
-  readonly visible?: number
+  readonly visible?: boolean
 
   @IsString()
   @IsOptional()
@@ -78,10 +84,10 @@ export class CreateIcelandicNameBody {
   @ApiProperty()
   readonly description?: string
 
-  @IsNumber()
+  @IsBoolean()
   @IsOptional()
   @ApiProperty()
-  readonly visible?: number
+  readonly visible?: boolean
 
   @IsString()
   @IsOptional()
