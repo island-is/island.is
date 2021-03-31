@@ -38,14 +38,14 @@ export class ChildrenResidenceChangeService {
   }
 
   async submitApplication({ application }: props) {
-    // const { answers, externalData } = application
-    // const { nationalRegistry } = externalData
-    // const applicant = nationalRegistry.data
-    // const s3FileName = `children-residence-change/${application.id}.pdf`
-    // const file = await this.s3
-    //   .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
-    //   .promise()
-    // const fileContent = file.Body as Buffer
+    const { answers, externalData } = application
+    const { nationalRegistry } = externalData
+    const applicant = nationalRegistry.data
+    const s3FileName = `children-residence-change/${application.id}.pdf`
+    const file = await this.s3
+      .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
+      .promise()
+    const fileContent = file.Body as Buffer
 
     // const selectedChildren = getSelectedChildrenFromExternalData(
     //   applicant.children,
