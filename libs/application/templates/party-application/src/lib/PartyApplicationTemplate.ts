@@ -44,11 +44,11 @@ const PartyApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicationForm').then((module) =>
-                  Promise.resolve(module.ApplicationForm),
+                import('../forms/ConstituencyForm').then((module) =>
+                  Promise.resolve(module.ConstituencyForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: 'SUBMIT', name: 'Hefja söfnun', type: 'primary' },
               ],
               write: 'all',
             },
@@ -66,10 +66,10 @@ const PartyApplicationTemplate: ApplicationTemplate<
           progress: 0.75,
           roles: [
             {
-              id: Roles.SIGNATUREE,
+              id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/CollectSignatures').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/ApplicationForm').then((val) =>
+                  Promise.resolve(val.ApplicationForm),
                 ),
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
@@ -77,7 +77,7 @@ const PartyApplicationTemplate: ApplicationTemplate<
               read: 'all',
             },
             {
-              id: Roles.APPLICANT,
+              id: Roles.SIGNATUREE,
               formLoader: () =>
                 import('../forms/CollectSignatures').then((val) =>
                   Promise.resolve(val.ReviewApplication),
