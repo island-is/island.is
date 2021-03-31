@@ -112,7 +112,7 @@ class BackendAPI extends RESTDataSource {
   }
 
   deleteFile(caseId: string, id: string): Promise<DeleteFileResponse> {
-    return this.delete(`case/${caseId}/file/delete/${id}`)
+    return this.delete(`case/${caseId}/file/${id}`)
   }
 
   getCaseFiles(id: string): Promise<File[]> {

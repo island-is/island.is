@@ -61,16 +61,12 @@ export class FileController {
   }
 
   @RolesRules(prosecutorRule)
-  @Delete('file/delete/:id')
+  @Delete('file/:id')
   @ApiCreatedResponse({
     type: DeleteFileResponse,
     description: 'Deletes a file from an AWS S3 bucket',
   })
-  async deleteFile(
-    @Param('caseId') caseId: string,
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-  ): Promise<DeleteFileResponse> {
+  async deleteFile(@CurrentHttpUser() user: User): Promise<DeleteFileResponse> {
     // TODO get key and call file service
     return new Promise((resolve, reject) => {
       resolve({ success: true })
