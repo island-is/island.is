@@ -1,22 +1,29 @@
-.translation-create-form-dropdown {
+.toggle-button {
   position: absolute;
-  z-index: 3;
-  left: -30px;
+  left: -15px;
   top: 25px;
-
-  &__container {
-    h1 {
-      font-size: 1rem;
-    }
-  }
-
   &__button__show {
     display: block;
     font-size: 1rem;
     cursor: pointer;
+    color: $color-link;
 
     span {
       visibility: hidden;
+    }
+  }
+}
+
+.translation-create-form-dropdown {
+  position: absolute;
+  z-index: 3;
+  left: -10px;
+  top: 50px;
+  width: 800px;
+
+  &__container {
+    h1 {
+      font-size: 1rem;
     }
   }
 
@@ -25,7 +32,6 @@
   }
 
   &__wrapper {
-    margin: 20px 0px;
     background: $color-bg-content;
     padding: 25px;
     border: solid 2px $color-border;

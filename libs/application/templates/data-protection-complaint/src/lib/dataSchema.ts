@@ -100,18 +100,14 @@ export const DataProtectionComplaintSchema = z.object({
       )
       .nonempty(),
   }),
-  complainee: z.object({
-    name: z.string().nonempty(error.required.defaultMessage),
-    address: z.string().nonempty(error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
-    operatesWithinEurope: z.enum([YES, NO]),
-    countryOfOperation: z.string().optional(),
-  }),
-  additionalComplainees: z.array(
+  complainees: z.array(
     z.object({
       name: z.string().nonempty(error.required.defaultMessage),
       address: z.string().nonempty(error.required.defaultMessage),
-      nationalId: z.string().refine((x) => (x ? kennitala.isValid(x) : false)),
+      nationalId: z
+        .string()
+        .refine((x) => (x ? kennitala.isValid(x) : false))
+        .optional(),
       operatesWithinEurope: z.enum([YES, NO]),
       countryOfOperation: z.string().optional(),
     }),
@@ -121,7 +117,13 @@ export const DataProtectionComplaintSchema = z.object({
     somethingElse: z.string().optional(),
   }),
   complaint: z.object({
-    description: z.string().nonempty(error.required.defaultMessage),
+    description: z
+      .string()
+      .nonempty(error.required.defaultMessage)
+      .refine(
+        (x) => x?.split(' ').length <= 500,
+        error.wordCountReached.defaultMessage,
+      ),
     documents: z.array(FileSchema).nonempty(),
   }),
   overview: z.object({
