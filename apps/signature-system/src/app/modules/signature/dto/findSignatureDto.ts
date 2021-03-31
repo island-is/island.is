@@ -3,7 +3,7 @@ import { IsOptional, IsUUID } from 'class-validator'
 
 export class FindSignatureDto {
   @IsOptional()
-  @IsUUID()
+  @IsUUID(4)
   @ApiProperty()
   listId?: string
 }

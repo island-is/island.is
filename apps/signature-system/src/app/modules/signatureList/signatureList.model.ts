@@ -10,9 +10,10 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { Signature } from '../signature/signature.model'
 import { ValidationRuleDto } from './dto/validationRuleDto'
+import { SignatureMetaField, SignatureTag } from './dto/signatureList.dto'
 
 @Table({
-  tableName: 'signatureList',
+  tableName: 'signature_list',
 })
 export class SignatureList extends Model<SignatureList> {
   @Column({
@@ -46,13 +47,13 @@ export class SignatureList extends Model<SignatureList> {
     type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()
-  signatureMeta!: string[]
+  signatureMeta!: SignatureMetaField[]
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()
-  tags!: string[]
+  tags!: SignatureTag[]
 
   @Column({
     type: DataType.JSONB,
@@ -69,7 +70,7 @@ export class SignatureList extends Model<SignatureList> {
   owner!: string
 
   @HasMany(() => Signature)
-  signatures!: Signature[]
+  readonly signatures!: Signature[]
 
   @CreatedAt
   @ApiProperty()

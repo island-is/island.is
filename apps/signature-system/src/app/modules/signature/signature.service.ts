@@ -52,7 +52,12 @@ export class SignatureService {
   }: CreateSignatureOnListInput): Promise<Signature> {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
-    return this.signatureModel.create({}) // TODO: Add signature bootstrap here
+    // TODO: Prevent this from adding multiple signatures to same list
+    return this.signatureModel.create({
+      signaturee: nationalId,
+      signatureListId: listId,
+      meta: [], // TODO: Add list metadata here
+    })
   }
 
   async deleteFromListByNationalId ({
@@ -62,10 +67,11 @@ export class SignatureService {
     this.logger.debug(
       `Removing signature from list "${listId}" by nationalId "${nationalId}"`,
     )
+    // TODO: Prevent this from deleting from a closed list
     return this.signatureModel.destroy({
       where: {
         signaturee: nationalId,
-        listId,
+        signatureListId: listId,
       },
     })
   }

@@ -6,7 +6,7 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { FindSignatureListByTagDto } from './dto/findSignatureListsByTag.dto'
 
 @ApiTags('signatureList')
-@Controller('signatureList')
+@Controller('signature-list')
 export class SignatureListController {
   constructor (private readonly signatureListService: SignatureListService) {}
 
@@ -46,9 +46,12 @@ export class SignatureListController {
   @Post()
   @ApiCreatedResponse({ type: SignatureList })
   async create (
-    @Body() SignatureList: SignatureListDto,
+    @Body() signatureList: SignatureListDto,
   ): Promise<SignatureList> {
     // TODO: Add auth here
-    return await this.signatureListService.create(SignatureList)
+    return await this.signatureListService.create({
+      ...signatureList,
+      owner: '0000000000',
+    })
   }
 }

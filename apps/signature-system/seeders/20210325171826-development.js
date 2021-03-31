@@ -18,8 +18,8 @@ module.exports = {
         tags: ['sudurkjordaemi'],
         validation_rules: JSON.stringify([
           {
-            type: 'min_age',
-            value: '18',
+            type: 'minAgeAtDate',
+            value: '2021-03-15:18',
           },
         ]),
         owner: '1111111111',
@@ -35,8 +35,8 @@ module.exports = {
         signature_meta: ['fullName'],
         validation_rules: JSON.stringify([
           {
-            type: 'min_age',
-            value: '18',
+            type: 'minAgeAtDate',
+            value: '2021-03-15:18',
           },
         ]),
         owner: '1111111111',
