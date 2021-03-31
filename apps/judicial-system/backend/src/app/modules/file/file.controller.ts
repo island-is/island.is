@@ -71,12 +71,9 @@ export class FileController {
     @CurrentHttpUser() user: User,
   ): Promise<DeleteFileResponse> {
     // TODO get key and call file service
-    const file = this.fileService.getCaseFileById(id)
+    const file = await this.fileService.getCaseFileById(id)
 
-    return new Promise((resolve, reject) => {
-      resolve({ success: true })
-    })
-    // return this.fileService.deleteFile('')
+    return this.fileService.deleteFile(file.getDataValue('key'))
   }
 
   @RolesRules(prosecutorRule)
