@@ -38,10 +38,13 @@ export async function generateResidenceChangePdf(
     'p',
     { locale: is },
   )
-  const { selectDuration, residenceChangeReason, selectedChildren } = answers
+  const {
+    durationType,
+    durationDate,
+    residenceChangeReason,
+    selectedChildren,
+  } = answers
   const reason = residenceChangeReason
-  const expiry = selectDuration
-  const parentA = applicant
   const childrenAppliedFor = getSelectedChildrenFromExternalData(
     applicant.children,
     selectedChildren,
@@ -127,14 +130,16 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Nafn og kennitala: ${parentA.fullName}, ${formatSsn(parentA.nationalId)}`,
+    `Nafn og kennitala: ${applicant.fullName}, ${formatSsn(
+      applicant.nationalId,
+    )}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Heimilisfang: ${formatAddress(parentA.address)}`,
+    `Heimilisfang: ${formatAddress(applicant.address)}`,
   )
 
   addToDoc(
@@ -169,14 +174,14 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Fyrra lögheimili: ${childResidenceInfo.current.parent.fullName}, Foreldri ${childResidenceInfo.current.parent.letter}`,
+    `Fyrra lögheimili: ${childResidenceInfo.current.parentName}`,
   )
 
   addToDoc(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    `Nýtt lögheimili: ${childResidenceInfo.future.parent.fullName}, Foreldri ${childResidenceInfo.future.parent.letter}`,
+    `Nýtt lögheimili: ${childResidenceInfo.future.parentName}`,
   )
 
   if (reason) {
@@ -206,9 +211,9 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.LARGE_LINE_GAP,
-    expiry[0] === PdfConstants.PERMANENT
-      ? 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.'
-      : `Samningurinn gildir til ${formatDate(expiry[1])}`,
+    durationType === PdfConstants.TEMPORARY && durationDate
+      ? `Samningurinn gildir til ${formatDate(durationDate)}`
+      : 'Samningurinn er til frambúðar, þar til barnið hefur náð 18 ára aldri.',
   )
 
   addToDoc(
@@ -299,7 +304,7 @@ export async function generateResidenceChangePdf(
     PdfConstants.NORMAL_FONT,
     PdfConstants.VALUE_FONT_SIZE,
     PdfConstants.NO_LINE_GAP,
-    `Undirritaður/uð, ${parentA.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
+    `Undirritaður/uð, ${applicant.fullName}, hefur heimilað fyrirspurn í Þjóðskrá og staðfest með undirritun sinni að ofangreindar upplýsingar séu réttar.`,
   )
 
   doc.moveDown()
