@@ -64,7 +64,6 @@ const LicenseCards = () => {
         <Box marginBottom={3} key={index}>
           <EducationCard
             eyebrow={license.school}
-            imgPlaceholder={'MRN'}
             title={`Leyfisbréf - ${license.programme}`}
             description={`Útgáfudagur: ${format(
               new Date(license.date),
