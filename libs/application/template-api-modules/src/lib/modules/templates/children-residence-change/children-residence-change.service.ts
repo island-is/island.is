@@ -38,86 +38,86 @@ export class ChildrenResidenceChangeService {
   }
 
   async submitApplication({ application }: props) {
-    const { answers, externalData } = application
-    const { nationalRegistry } = externalData
-    const applicant = nationalRegistry.data
-    const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.s3
-      .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
-      .promise()
-    const fileContent = file.Body as Buffer
+    // const { answers, externalData } = application
+    // const { nationalRegistry } = externalData
+    // const applicant = nationalRegistry.data
+    // const s3FileName = `children-residence-change/${application.id}.pdf`
+    // const file = await this.s3
+    //   .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
+    //   .promise()
+    // const fileContent = file.Body as Buffer
 
-    const selectedChildren = getSelectedChildrenFromExternalData(
-      applicant.children,
-      answers.selectedChildren,
-    )
+    // const selectedChildren = getSelectedChildrenFromExternalData(
+    //   applicant.children,
+    //   answers.selectedChildren,
+    // )
 
-    const otherParent = selectedChildren[0].otherParent
+    // const otherParent = selectedChildren[0].otherParent
 
-    const childResidenceInfo = childrenResidenceInfo(applicant, answers)
-    const currentAddress = childResidenceInfo.current.address
+    // const childResidenceInfo = childrenResidenceInfo(applicant, answers)
+    // const currentAddress = childResidenceInfo.current.address
 
-    if (!fileContent) {
-      throw new Error('File content was undefined')
-    }
+    // if (!fileContent) {
+    //   throw new Error('File content was undefined')
+    // }
 
-    const attachment: Attachment = {
-      name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-      content: fileContent.toString('base64'),
-    }
+    // const attachment: Attachment = {
+    //   name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
+    //   content: fileContent.toString('base64'),
+    // }
 
-    const parentA: Person = {
-      name: applicant.fullName,
-      ssn: applicant.nationalId,
-      phoneNumber: answers.parentA.phoneNumber,
-      email: answers.parentA.email,
-      homeAddress: applicant.address.streetName,
-      postalCode: applicant.address.postalCode,
-      city: applicant.address.city,
-      signed: true,
-      type: PersonType.Plaintiff,
-    }
+    // const parentA: Person = {
+    //   name: applicant.fullName,
+    //   ssn: applicant.nationalId,
+    //   phoneNumber: answers.parentA.phoneNumber,
+    //   email: answers.parentA.email,
+    //   homeAddress: applicant.address.streetName,
+    //   postalCode: applicant.address.postalCode,
+    //   city: applicant.address.city,
+    //   signed: true,
+    //   type: PersonType.Plaintiff,
+    // }
 
-    const parentB: Person = {
-      name: otherParent.fullName,
-      ssn: otherParent.nationalId,
-      phoneNumber: answers.parentB.phoneNumber,
-      email: answers.parentB.email,
-      homeAddress: otherParent.address.streetName,
-      postalCode: otherParent.address.postalCode,
-      city: otherParent.address.city,
-      signed: true,
-      type: PersonType.CounterParty,
-    }
+    // const parentB: Person = {
+    //   name: otherParent.fullName,
+    //   ssn: otherParent.nationalId,
+    //   phoneNumber: answers.parentB.phoneNumber,
+    //   email: answers.parentB.email,
+    //   homeAddress: otherParent.address.streetName,
+    //   postalCode: otherParent.address.postalCode,
+    //   city: otherParent.address.city,
+    //   signed: true,
+    //   type: PersonType.CounterParty,
+    // }
 
-    const participants: Array<Person> = selectedChildren.map((child) => {
-      return {
-        name: child.fullName,
-        ssn: child.nationalId,
-        homeAddress: currentAddress.streetName,
-        postalCode: currentAddress.postalCode,
-        city: currentAddress.city,
-        signed: false,
-        type: PersonType.Child,
-      }
-    })
+    // const participants: Array<Person> = selectedChildren.map((child) => {
+    //   return {
+    //     name: child.fullName,
+    //     ssn: child.nationalId,
+    //     homeAddress: currentAddress.streetName,
+    //     postalCode: currentAddress.postalCode,
+    //     city: currentAddress.city,
+    //     signed: false,
+    //     type: PersonType.Child,
+    //   }
+    // })
 
-    participants.push(parentA, parentB)
+    // participants.push(parentA, parentB)
 
-    const extraData = {
-      interviewRequested: answers.interview,
-      reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
-      transferExpirationDate:
-        answers.selectDuration[0] === 'permanent'
-          ? answers.selectDuration[0]
-          : formatDate(answers.selectDuration[1]),
-    }
+    // const extraData = {
+    //   interviewRequested: answers.interview,
+    //   reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
+    //   transferExpirationDate:
+    //     answers.selectDuration[0] === 'permanent'
+    //       ? answers.selectDuration[0]
+    //       : formatDate(answers.selectDuration[1]),
+    // }
 
-    const response = await this.syslumennService.uploadData(
-      participants,
-      attachment,
-      extraData,
-    )
+    // const response = await this.syslumennService.uploadData(
+    //   participants,
+    //   attachment,
+    //   extraData,
+    // )
 
     // await this.sharedTemplateAPIService.sendEmailWithAttachment(
     //   generateApplicationSubmittedEmail,
@@ -133,6 +133,6 @@ export class ChildrenResidenceChangeService {
     //   answers.parentB.email,
     // )
 
-    return response
+    return 'response'
   }
 }
