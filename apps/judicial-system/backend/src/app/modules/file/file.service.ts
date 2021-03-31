@@ -8,6 +8,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
 import { PresignedPost, File } from './models'
+import { DeleteObjectOutput } from 'aws-sdk/clients/s3'
 
 @Injectable()
 export class FileService {
@@ -26,6 +27,10 @@ export class FileService {
     return this.awsS3Service.createPresignedPost(
       `${caseId}/${uuid()}_${createPresignedPost.fileName}`,
     )
+  }
+
+  deleteFile(key: string): Promise<DeleteObjectOutput> {
+    return this.awsS3Service.deleteFile(key)
   }
 
   createCaseFile(caseId: string, createFile: CreateFileDto): Promise<File> {
