@@ -21,7 +21,7 @@ function EducationDegree(): JSX.Element {
           defaultMessage:
             'Hér getur þú fundið yfirlit yfir prófskírteini og lokapróf á öllum námsstigum.',
         })}
-        img="/assets/images/educationGrades.svg"
+        img="./assets/images/educationGrades.svg"
       />
       <DegreeCards />
     </Box>

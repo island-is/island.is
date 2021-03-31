@@ -10,7 +10,7 @@ import {
 import { EmptyState } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { gql, useQuery } from '@apollo/client'
-import { Query, EducationExamResult } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($nationalId: String!) {
@@ -94,82 +94,151 @@ const StudentAssessmentTable = () => {
     data?.educationExamResult?.grades.map((res) => ({
       title: `Samræmd könnunarpróf ${res.studentYear}. bekkur`,
       data: [
-        {
-          subject: 'Enska',
-          serialRating: res.englishGrade?.grade,
-          abilityRating: res.englishGrade?.competence,
-          status: res.englishGrade?.competenceStatus,
-          breakdown: [
-            {
-              subject: 'Lesskilningur',
-              rate: `(${res.englishGrade?.grammar.weight}%)`,
-              serialRating: res.englishGrade?.grammar.grade,
-            },
-            {
-              subject: 'Málnotkun',
-              rate: `(${res.englishGrade?.reading.weight}%)`,
-              serialRating: res.englishGrade?.reading.grade,
-            },
-            {
-              subject: 'Framfaraeinkunn',
-              progressRating: res?.englishGrade?.progressText,
-            },
-          ],
-        },
-        {
-          subject: 'Íslenska',
-          serialRating: res.icelandicGrade?.grade,
-          abilityRating: res.icelandicGrade?.competence,
-          status: res.icelandicGrade?.competenceStatus,
-          breakdown: [
-            {
-              subject: 'Lesskilningur',
-              rate: `(${res.icelandicGrade?.grammar.weight}%)`,
-              serialRating: res.icelandicGrade?.grammar.grade,
-            },
-            {
-              subject: 'Málnotkun',
-              rate: `(${res.icelandicGrade?.reading.weight}%)`,
-              serialRating: res.icelandicGrade?.reading.grade,
-            },
-            {
-              subject: 'Framfaraeinkunn',
-              progressRating: res?.icelandicGrade?.progressText,
-            },
-          ],
-        },
-        {
-          subject: 'Stærðfræði',
-          serialRating: res.mathGrade?.grade,
-          abilityRating: res.mathGrade?.competence,
-          status: res.mathGrade?.competenceStatus,
-          breakdown: [
-            {
-              subject: 'Reikningur og aðgerðir',
-              rate: `(${res.mathGrade?.calculation.weight}%)`,
-              serialRating: res.mathGrade?.calculation.grade,
-            },
-            {
-              subject: 'Rúmfræði og mælingar',
-              rate: `(${res.mathGrade?.geometry.weight}%)`,
-              serialRating: res.mathGrade?.geometry.grade,
-            },
-            {
-              subject: 'Algebra',
-              rate: `(${res.mathGrade?.algebra.weight}%)`,
-              serialRating: res.mathGrade?.algebra.grade,
-            },
-            {
-              subject: 'Hlutföll og prósentur',
-              rate: `(${res.mathGrade?.ratiosAndPercentages.weight}%)`,
-              serialRating: res.mathGrade?.ratiosAndPercentages.grade,
-            },
-            {
-              subject: 'Framfaraeinkunn',
-              progressRating: res?.mathGrade?.progressText,
-            },
-          ],
-        },
+        ...(res.englishGrade?.grade
+          ? [
+              {
+                subject: 'Enska',
+                serialRating: res.englishGrade?.grade,
+                abilityRating: res.englishGrade?.competence,
+                status: res.englishGrade?.competenceStatus,
+                breakdown: [
+                  ...(res.englishGrade?.grammar.grade
+                    ? [
+                        {
+                          subject: 'Lesskilningur',
+                          rate: `(${res.englishGrade?.grammar.weight}%)`,
+                          serialRating: res.englishGrade?.grammar.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.englishGrade?.reading.grade
+                    ? [
+                        {
+                          subject: 'Málnotkun',
+                          rate: `(${res.englishGrade?.reading.weight}%)`,
+                          serialRating: res.englishGrade?.reading.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.englishGrade?.progressText
+                    ? [
+                        {
+                          subject: 'Framfaraeinkunn',
+                          text: res.englishGrade?.progressText,
+                          multiCol: true,
+                        },
+                      ]
+                    : []),
+                ],
+              },
+            ]
+          : []),
+        ...(res.icelandicGrade?.grade
+          ? [
+              {
+                subject: 'Íslenska',
+                serialRating: res.icelandicGrade?.grade,
+                abilityRating: res.icelandicGrade?.competence,
+                status: res.icelandicGrade?.competenceStatus,
+                breakdown: [
+                  ...(res.icelandicGrade?.grammar.grade
+                    ? [
+                        {
+                          subject: 'Lesskilningur',
+                          rate: `(${res.icelandicGrade?.grammar.weight}%)`,
+                          serialRating: res.icelandicGrade?.grammar.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.icelandicGrade?.reading.grade
+                    ? [
+                        {
+                          subject: 'Málnotkun',
+                          rate: `(${res.icelandicGrade?.reading.weight}%)`,
+                          serialRating: res.icelandicGrade?.reading.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res?.icelandicGrade?.progressText
+                    ? [
+                        {
+                          subject: 'Framfaraeinkunn',
+                          text: res?.icelandicGrade?.progressText,
+                          multiCol: true,
+                        },
+                      ]
+                    : []),
+                ],
+              },
+            ]
+          : []),
+        ...(res.mathGrade?.grade
+          ? [
+              {
+                subject: 'Stærðfræði',
+                serialRating: res.mathGrade?.grade,
+                abilityRating: res.mathGrade?.competence,
+                status: res.mathGrade?.competenceStatus,
+                breakdown: [
+                  ...(res.mathGrade?.calculation.grade
+                    ? [
+                        {
+                          subject: 'Reikningur og aðgerðir',
+                          rate: `(${res.mathGrade?.calculation.weight}%)`,
+                          serialRating: res.mathGrade?.calculation.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.mathGrade?.geometry.grade
+                    ? [
+                        {
+                          subject: 'Rúmfræði og mælingar',
+                          rate: `(${res.mathGrade?.geometry.weight}%)`,
+                          serialRating: res.mathGrade?.geometry.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.mathGrade?.algebra.grade
+                    ? [
+                        {
+                          subject: 'Algebra',
+                          rate: `(${res.mathGrade?.algebra.weight}%)`,
+                          serialRating: res.mathGrade?.algebra.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res.mathGrade?.ratiosAndPercentages.grade
+                    ? [
+                        {
+                          subject: 'Hlutföll og prósentur',
+                          rate: `(${res.mathGrade?.ratiosAndPercentages.weight}%)`,
+                          serialRating:
+                            res.mathGrade?.ratiosAndPercentages.grade,
+                        },
+                      ]
+                    : []),
+                  ...(res?.mathGrade?.wordAndNumbers
+                    ? [
+                        {
+                          subject: 'Orðadæmi og talnadæmi',
+                          text: res?.mathGrade?.wordAndNumbers,
+                          multiCol: true,
+                        },
+                      ]
+                    : []),
+                  ...(res?.mathGrade?.progressText
+                    ? [
+                        {
+                          subject: 'Framfaraeinkunn',
+                          text: res?.mathGrade?.progressText,
+                          multiCol: true,
+                        },
+                      ]
+                    : []),
+                ],
+              },
+            ]
+          : []),
       ],
     })) || []
 
@@ -235,12 +304,12 @@ const StudentAssessmentTable = () => {
                         ...(isLast ? { borderBottomWidth: undefined } : {}),
                         paddingTop: undefined,
                       }
-                      if (breakdown.progressRating) {
+                      if (breakdown.multiCol) {
                         return (
                           <T.Row key={index}>
                             <T.Data box={dataBox}>{breakdown.subject}</T.Data>
                             <T.Data box={dataBox} colSpan={4}>
-                              {breakdown.progressRating}
+                              {breakdown.text}
                             </T.Data>
                           </T.Row>
                         )
