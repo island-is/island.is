@@ -10,6 +10,7 @@ import {
   RegulationYears,
   RegulationLawChapter,
   RegulationLawChapterTree,
+  RegulationRedirect,
 } from '@island.is/clients/regulations'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
@@ -29,7 +30,7 @@ export class RegulationsResolver {
   @Query(() => graphqlTypeJson)
   getRegulation(
     @Args('input') input: GetRegulationInput,
-  ): Promise<Regulation | null> {
+  ): Promise<Regulation | RegulationRedirect | null> {
     return this.regulationsService.getRegulation(
       input.viewType,
       input.name,

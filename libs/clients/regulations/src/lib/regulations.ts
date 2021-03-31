@@ -6,6 +6,7 @@ import {
   Regulation,
   RegulationLawChapterTree,
   RegulationMinistries,
+  RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
 } from './regulations.types'
@@ -30,16 +31,27 @@ export class RegulationsService extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
   }
-
+/*
+  Example api routes for regulation
+  regulation/nr/[name]/current
+  regulation/nr/[name]/original
+  regulation/nr/[name]/diff
+  regulation/nr/[name]/d/[date]
+  regulation/nr/[name]/d/[date]/diff
+  regulation/nr/[name]/d/[date]/diff/[earlierDate]
+*/
   async getRegulation(
     viewType: 'original' | 'current' | 'd' | 'diff',
     name: string,
     date?: string,
-  ): Promise<Regulation | null> {
-    const url = `regulation/nr/${name}/${viewType}${
-      viewType === 'd' && date ? '/' + date : ''
-    }`
-    const response = await this.get<Regulation | null>(url, {
+    earlierDate?: string,
+  ): Promise<Regulation | RegulationRedirect | null> {
+    const route = `regulation/nr/${name}${
+    date ? '/d/' + date : '/' + viewType}${
+    date && viewType === 'diff' ? '/diff' : ''}${
+    date && viewType === 'diff' && earlierDate ? '/' + earlierDate : ''}`
+
+    const response = await this.get<Regulation | RegulationRedirect |  null>(route, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
     })
     return response

@@ -150,7 +150,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           viewType,
           name: number,
-          date: String(date),
+          date: date,
         },
       },
     }),
