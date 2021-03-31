@@ -10,6 +10,7 @@ server {
         try_files $uri $uri/ /index.html =404;
         # We don't want to redirect to localhost:3333
         absolute_redirect off;
+        add_header Cache-Control "no-store, no-cache, must-revalidate";
     }
 
     location ~ "^$BASEPATH(.+\.[0-9a-f]{20}\..+)$" {
