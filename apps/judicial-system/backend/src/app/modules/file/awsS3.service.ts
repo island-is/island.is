@@ -34,14 +34,21 @@ export class AwsS3Service {
 
   async getSignedUrl(key: string): Promise<SignedUrl> {
     return new Promise((resolve, reject) => {
-      this.s3.getSignedUrl('getObject', {Bucket: 'bucket', Key: 'key', Expires: environment.files.timeToLivePost}, ,
-      (err, url) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve({url})
-        }
-      });
+      this.s3.getSignedUrl(
+        'getObject',
+        {
+          Bucket: 'bucket',
+          Key: 'key',
+          Expires: environment.files.timeToLivePost,
+        },
+        (err, url) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve({ url })
+          }
+        },
+      )
     })
   }
 
