@@ -65,7 +65,13 @@ const HealthInsuranceTemplate: ApplicationTemplate<
                 import('../forms/HealthInsuranceForm').then((module) =>
                   Promise.resolve(module.HealthInsuranceForm),
                 ),
-              actions: [{ event: DefaultEvents.SUBMIT, name: 'Submit', type: 'primary' }],
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],
