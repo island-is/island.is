@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -18,7 +18,6 @@ import {
   GetSignedUrlInput,
 } from './dto'
 import { PresignedPost, File, DeleteFile, SignedUrl } from './models'
-import { query } from 'winston'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -48,24 +47,24 @@ export class FileResolver {
     )
   }
 
-  // @query(() => SignedUrl, { nullable: true })
-  // getSignedUrl(
-  //   @Args('input', { type: () => GetSignedUrlInput })
-  //   input: GetSignedUrlInput,
-  //   @CurrentGraphQlUser() user: User,
-  //   @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  // ): Promise<SignedUrl> {
-  //   const { caseId, id } = input
+  @Query(() => SignedUrl, { nullable: true })
+  getSignedUrl(
+    @Args('input', { type: () => GetSignedUrlInput })
+    input: GetSignedUrlInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<SignedUrl> {
+    const { caseId, id } = input
 
-  //   this.logger.debug(`Get file from case ${caseId} with id ${id}`)
+    this.logger.debug(`Get file from case ${caseId} with id ${id}`)
 
-  //   return this.auditService.audit(
-  //     user.id,
-  //     AuditedAction.GET_FILE,
-  //     backendApi.getCaseFileUrl(caseId, id),
-  //     id,
-  //   )
-  // }
+    return this.auditService.audit(
+      user.id,
+      AuditedAction.GET_FILE,
+      backendApi.getCaseFileUrl(caseId, id),
+      id,
+    )
+  }
 
   @Mutation(() => DeleteFile)
   deleteFile(
