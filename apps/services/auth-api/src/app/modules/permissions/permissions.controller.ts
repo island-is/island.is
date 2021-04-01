@@ -43,6 +43,10 @@ export class PermissionsController {
       requestedScopes,
     )
 
-    return access.map((a) => a.scope)
+    if (access) {
+      return access.map((a) => a.scope)
+    }
+
+    return []
   }
 }
