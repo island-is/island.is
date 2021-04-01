@@ -7,7 +7,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AwsS3Service } from './awsS3.service'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
-import { PresignedPost, File, DeleteFileResponse } from './models'
+import { PresignedPost, File, DeleteFileResponse, SignedUrl } from './models'
 
 @Injectable()
 export class FileService {
@@ -26,6 +26,10 @@ export class FileService {
     return this.awsS3Service.createPresignedPost(
       `${caseId}/${uuid()}_${createPresignedPost.fileName}`,
     )
+  }
+
+  getSignedUrl(key: string): Promise<SignedUrl> {
+    return this.awsS3Service.getSignedUrl(key)
   }
 
   createCaseFile(caseId: string, createFile: CreateFileDto): Promise<File> {

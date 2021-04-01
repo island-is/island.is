@@ -3,7 +3,7 @@ import { S3 } from 'aws-sdk'
 import { Injectable } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { DeleteFileResponse, PresignedPost } from './models'
+import { DeleteFileResponse, PresignedPost, SignedUrl } from './models'
 
 @Injectable()
 export class AwsS3Service {
@@ -29,6 +29,19 @@ export class AwsS3Service {
           }
         },
       )
+    })
+  }
+
+  async getSignedUrl(key: string): Promise<SignedUrl> {
+    return new Promise((resolve, reject) => {
+      this.s3.getSignedUrl('getObject', {Bucket: 'bucket', Key: 'key', Expires: environment.files.timeToLivePost}, ,
+      (err, url) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({url})
+        }
+      });
     })
   }
 

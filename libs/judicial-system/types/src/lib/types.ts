@@ -306,6 +306,15 @@ export interface DeleteFileResponse {
   success: boolean
 }
 
+export interface GetSignedUrl {
+  caseId: string
+  id: string
+}
+
+export interface SignedUrl {
+  url: string
+}
+
 export interface File {
   id: string
   created: string

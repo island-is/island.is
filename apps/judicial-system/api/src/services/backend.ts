@@ -17,6 +17,7 @@ import {
   SendNotification,
   SendNotificationResponse,
   SignatureConfirmationResponse,
+  SignedUrl,
   TransitionCase,
   UpdateCase,
   UpdateUser,
@@ -109,6 +110,10 @@ class BackendAPI extends RESTDataSource {
 
   createCaseFile(id: string, createFile: CreateFile): Promise<File> {
     return this.post(`case/${id}/file`, createFile)
+  }
+
+  getCaseFileUrl(caseId: string, id: string): Promise<SignedUrl> {
+    return this.get(`case/${caseId}/file/${id}/url`)
   }
 
   deleteFile(caseId: string, id: string): Promise<DeleteFileResponse> {

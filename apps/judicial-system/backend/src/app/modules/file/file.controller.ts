@@ -16,7 +16,7 @@ import {
   RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { SignedUrl, User, UserRole } from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
 import { CreateFileDto, CreatePresignedPostDto } from './dto'
@@ -58,6 +58,28 @@ export class FileController {
       existingCase.id,
       createPresignedPost,
     )
+  }
+
+  @RolesRules(prosecutorRule, judgeRule)
+  @Get('file/:id/url')
+  @ApiCreatedResponse({
+    type: PresignedPost,
+    description: 'Creates a new presigned post',
+  })
+  async getSignedUrl(
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<SignedUrl> {
+    const file = await this.fileService.getCaseFileById(id)
+
+    const hasPermissionToDelete = await this.caseService.findByIdAndUser(
+      file.caseId,
+      user,
+    )
+
+    if (hasPermissionToDelete) {
+      return this.fileService.getSignedUrl(file.key)
+    }
   }
 
   @RolesRules(prosecutorRule)

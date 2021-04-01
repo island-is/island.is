@@ -151,3 +151,11 @@ export const CreateFileMutation = gql`
     }
   }
 `
+
+export const DeleteFileMutation = gql`
+  mutation DeleteFileMutation($input: DeleteFileInput!) {
+    deleteFile(input: $input) {
+      success
+    }
+  }
+`

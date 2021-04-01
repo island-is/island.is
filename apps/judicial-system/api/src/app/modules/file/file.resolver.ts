@@ -15,8 +15,10 @@ import {
   CreateFileInput,
   CreatePresignedPostInput,
   DeleteFileInput,
+  GetSignedUrlInput,
 } from './dto'
-import { PresignedPost, File, DeleteFile } from './models'
+import { PresignedPost, File, DeleteFile, SignedUrl } from './models'
+import { query } from 'winston'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -45,6 +47,25 @@ export class FileResolver {
       caseId,
     )
   }
+
+  // @query(() => SignedUrl, { nullable: true })
+  // getSignedUrl(
+  //   @Args('input', { type: () => GetSignedUrlInput })
+  //   input: GetSignedUrlInput,
+  //   @CurrentGraphQlUser() user: User,
+  //   @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  // ): Promise<SignedUrl> {
+  //   const { caseId, id } = input
+
+  //   this.logger.debug(`Get file from case ${caseId} with id ${id}`)
+
+  //   return this.auditService.audit(
+  //     user.id,
+  //     AuditedAction.GET_FILE,
+  //     backendApi.getCaseFileUrl(caseId, id),
+  //     id,
+  //   )
+  // }
 
   @Mutation(() => DeleteFile)
   deleteFile(
