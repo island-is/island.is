@@ -9,6 +9,7 @@ import { UsersModule } from './modules/users/users.module'
 import { environment } from '../environments'
 import { TranslationModule } from './modules/translation/translation.module'
 import { DelegationsModule } from './modules/delegations/delegations.module'
+import { PermissionsModule } from './modules/permissions/permissions.module'
 @Module({
   imports: [
     AuthModule.register({
@@ -25,6 +26,7 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
     GrantsModule,
     TranslationModule,
     DelegationsModule,
+    PermissionsModule,
   ],
 })
 export class AppModule {}
