@@ -10,9 +10,13 @@
     "ios-debug":{
       "type":"ios.app",
       "binaryPath":"./app/ios/build/IslandApp/Build/Products/Debug-iphonesimulator/IslandApp.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ./app/ios/IslandApp.xcworkspace -scheme IslandApp -configuration Debug -sdk iphonesimulator -derivedDataPath ./app/ios/build ONLY_ACTIVE_ARCH=YES -UseModernBuildSystem=YES"
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ./app/ios/IslandApp.xcworkspace -scheme IslandApp -configuration Debug -sdk iphonesimulator -derivedDataPath ./app/ios/build ONLY_ACTIVE_ARCH=YES -quiet -UseModernBuildSystem=YES"
     },
     "android": {
+      "type": "android.apk",
+      "binaryPath": "../app/android/app/build/outputs/apk/release/app-release.apk"
+    },
+    "android-debug": {
       "type": "android.apk",
       "binaryPath": "../app/android/app/build/outputs/apk/release/app-release.apk"
     }
@@ -43,6 +47,10 @@
     "android": {
       "device": "emulator",
       "app": "android"
+    },
+    "android-debug": {
+      "device": "emulator",
+      "app": "android-debug"
     }
   }
 }

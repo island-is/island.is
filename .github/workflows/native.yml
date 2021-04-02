@@ -64,4 +64,8 @@ jobs:
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: cd apps/native && yarn detox:build:ios
+      - name: Debug info
+        run: |
+          find apps/native/app/ios/build | grep Info.plist
+          /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist || echo "failure"
       - run: cd apps/native && yarn detox:test:ios
