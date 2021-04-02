@@ -32,7 +32,16 @@ jobs:
         run: cd apps/native && yarn install
 
       - name: Symlink Nx Dependencies
-        run: cd apps/native && ../../node_modules/.bin/ts-node -e "require('@nrwl/react-native/src/utils/ensure-node-modules-symlink').ensureNodeModulesSymlink('../..', './app');"
+        run: |
+          rm -rf apps/native/app/node_modules
+          mkdir -p apps/native/app/node_modules/{@babel,@nrwl,@react-native-community}
+          ln -s "$(pwd)/node_modules/@babel/runtime" "$(pwd)/apps/native/app/node_modules/@babel/runtime"
+          ln -s "$(pwd)/node_modules/@react-native-community/cli-platform-ios" "$(pwd)/apps/native/app/node_modules/@react-native-community/cli-platform-ios"
+          ln -s "$(pwd)/node_modules/@react-native-community/cli-platform-android" "$(pwd)/apps/native/app/node_modules/@react-native-community/cli-platform-android"
+          ln -s "$(pwd)/node_modules/@nrwl/react-native" "$(pwd)/apps/native/app/node_modules/@nrwl/react-native"
+          ln -s "$(pwd)/node_modules/hermes-engine" "$(pwd)/apps/native/app/node_modules/hermes-engine"
+          ln -s "$(pwd)/node_modules/jsc-android" "$(pwd)/apps/native/app/node_modules/jsc-android"
+          ln -s "$(pwd)/node_modules/react-native" "$(pwd)/apps/native/app/node_modules/react-native"
 
       - name: Update Pods
         run: |
