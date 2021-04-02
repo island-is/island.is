@@ -35,6 +35,7 @@ target 'IslandApp' do
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
 
   use_flipper!
+
   post_install do |installer|
     # Enables Flipper.
     #
@@ -44,9 +45,11 @@ target 'IslandApp' do
 
     nx_post_install(installer)
 
-    # Fixes iphonesimulator for detox builds
-    installer.pods_project.build_configurations.each do |config|
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
+      end
     end
   end
 end
