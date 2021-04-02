@@ -27,6 +27,23 @@ jobs:
       - name: Install Native Dependencies
         run: cd apps/native && yarn install
 
+      # todo get from secrets
+      - name: Generate .env file
+        uses: DamianReeves/write-file-action
+        with:
+          path: apps/native/app/.env
+          contents: |
+            IDENTITYSERVER_ISSUER=https://identity-server.dev01.devland.is
+            IDENTITYSERVER_CLIENT_ID=@island.is-app
+            IDENTITYSERVER_SCOPES=openid profile api_resource.scope offline_access
+            API_ENDPOINT=https://beta.dev01.devland.is/api
+            BUNDLE_ID_IOS=is.island.app-dev
+            BUNDLE_ID_ANDROID=is.island.app
+          write-mode: overwrite
+
+      - name: Symlink Nx Dependencies
+        run: cd apps/native && ../../node_modules/.bin/ts-node -e "require('@nrwl/react-native/src/utils/ensure-node-modules-symlink').ensureNodeModulesSymlink('../..', './app');"
+
       - name: Update Pods
         run: |
           gem update cocoapods xcodeproj

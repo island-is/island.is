@@ -258,8 +258,21 @@ index 0000000..a12ab39
 +@end
 +
 +NS_ASSUME_NONNULL_END
+diff --git a/node_modules/react-native-app-auth/ios/RNAppAuth.h b/node_modules/react-native-app-auth/ios/RNAppAuth.h
+index 9184a34..6795c19 100644
+--- a/node_modules/react-native-app-auth/ios/RNAppAuth.h
++++ b/node_modules/react-native-app-auth/ios/RNAppAuth.h
+@@ -1,6 +1,7 @@
+ #import <React/RCTBridgeModule.h>
++#import <React/RCTEventEmitter.h>
+ 
+-@interface RNAppAuth : NSObject <RCTBridgeModule>
++@interface RNAppAuth : RCTEventEmitter <RCTBridgeModule>
+ 
+ @end
+ 
 diff --git a/node_modules/react-native-app-auth/ios/RNAppAuth.m b/node_modules/react-native-app-auth/ios/RNAppAuth.m
-index 6a72e1c..235163d 100644
+index 6a72e1c..bae3a7a 100644
 --- a/node_modules/react-native-app-auth/ios/RNAppAuth.m
 +++ b/node_modules/react-native-app-auth/ios/RNAppAuth.m
 @@ -7,6 +7,7 @@
@@ -270,7 +283,61 @@ index 6a72e1c..235163d 100644
  
  @interface RNAppAuth()<RNAppAuthAuthorizationFlowManagerDelegate> {
      id<OIDExternalUserAgentSession> _currentSession;
-@@ -328,21 +329,22 @@ RCT_REMAP_METHOD(refresh,
+@@ -14,6 +15,29 @@
+ @end
+ 
+ @implementation RNAppAuth
++{
++  bool hasListeners;
++}
++
++- (NSArray<NSString *> *)supportedEvents {
++    return @[@"onAuthRequestInitiated"];
++}
++
++-(void)startObserving {
++    hasListeners = YES;
++}
++
++-(void)stopObserving {
++    hasListeners = NO;
++}
++
++- (void)authRequestInitiatedEvent:(NSDictionary *)data
++{
++  if (hasListeners) {
++    [self sendEventWithName:@"onAuthRequestInitiated" body:data];
++  }
++}
++
+ 
+ -(BOOL)resumeExternalUserAgentFlowWithURL:(NSURL *)url {
+     return [_currentSession resumeExternalUserAgentFlowWithURL:url];
+@@ -280,6 +304,14 @@ RCT_REMAP_METHOD(refresh,
+     NSString *codeVerifier = usePKCE ? [[self class] generateCodeVerifier] : nil;
+     NSString *codeChallenge = usePKCE ? [[self class] codeChallengeS256ForVerifier:codeVerifier] : nil;
+     NSString *nonce = useNonce ? [[self class] generateState] : nil;
++    NSString *state = [[self class] generateState];
++
++    [self authRequestInitiatedEvent:@{
++        @"codeVerifier": codeVerifier,
++        @"codeChallenge": codeChallenge,
++        @"nonce": nonce,
++        @"state": state
++    }];
+ 
+     // builds authentication request
+     OIDAuthorizationRequest *request =
+@@ -289,7 +321,7 @@ RCT_REMAP_METHOD(refresh,
+                                                      scope:[OIDScopeUtilities scopesWithArray:scopes]
+                                                redirectURL:[NSURL URLWithString:redirectUrl]
+                                               responseType:OIDResponseTypeCode
+-                                                     state:[[self class] generateState]
++                                                     state:state
+                                                      nonce:nonce
+                                               codeVerifier:codeVerifier
+                                              codeChallenge:codeChallenge
+@@ -328,21 +360,22 @@ RCT_REMAP_METHOD(refresh,
                                                         }
                                                     }]; // end [OIDAuthState presentAuthorizationRequest:request
      } else {
