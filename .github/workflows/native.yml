@@ -37,7 +37,12 @@ jobs:
       # todo get from secrets
       - name: Generate .env file
         run: |
-          echo "IDENTITYSERVER_ISSUER=https://identity-server.dev01.devland.is\nIDENTITYSERVER_CLIENT_ID=@island.is-app\nIDENTITYSERVER_SCOPES=openid profile api_resource.scope offline_access\nAPI_ENDPOINT=https://beta.dev01.devland.is/api\nBUNDLE_ID_IOS=is.island.app-dev\nBUNDLE_ID_ANDROID=is.island.app" > apps/native/app/.env
+          echo "IDENTITYSERVER_ISSUER=https://identity-server.dev01.devland.is
+          IDENTITYSERVER_CLIENT_ID=@island.is-app
+          IDENTITYSERVER_SCOPES=openid profile api_resource.scope offline_access
+          API_ENDPOINT=https://beta.dev01.devland.is/api
+          BUNDLE_ID_IOS=is.island.app-dev
+          BUNDLE_ID_ANDROID=is.island.app" > apps/native/app/.env
           cat apps/native/app/.env
 
 
