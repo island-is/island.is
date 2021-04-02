@@ -63,5 +63,5 @@ jobs:
 
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      # - run: cd apps/native && yarn detox:build:ios
-      # - run: cd apps/native && yarn detox:test:ios
+      - run: cd apps/native && yarn detox:build:ios
+      - run: cd apps/native && yarn detox:test:ios
