@@ -29,11 +29,12 @@ export type RegulationDisplayProps = {
   regulation: Regulation
   texts: RegulationPageTexts
   viewType?: ViewType
-  viewDate?: ISODate
+  date?: ISODate
+  isCustomDiff?: boolean
 }
 
 export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
-  const { regulation, texts, viewType, viewDate } = props
+  const { regulation, texts, viewType, date, isCustomDiff } = props
   const { history, effects } = regulation
 
   const router = useRouter()
@@ -57,12 +58,12 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             <Link
               href={
                 linkToRegulation(regulation.name) +
-                (viewType === 'd' ? '/d/' + viewDate : '') +
-                (viewType === 'diff' ? '' : '/diff')
+                (viewType === 'd' ? '/d/' + date : '') +
+                (viewType === 'diff' || isCustomDiff ? '' : '/diff')
               }
               className={s.diffToggler}
             >
-              {viewType === 'diff' ? n('hideDiff') : n('showDiff')}
+              {viewType === 'diff' || isCustomDiff ? n('hideDiff') : n('showDiff')}
             </Link>
           )}
 

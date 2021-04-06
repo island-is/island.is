@@ -12,4 +12,7 @@ export class GetRegulationInput {
   @Field({ nullable: true })
   @IsOptional()
   date?: string
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  isCustomDiff?: boolean
 }

@@ -35,6 +35,7 @@ export class RegulationsResolver {
       input.viewType,
       input.name,
       input.date,
+      input.isCustomDiff
     )
   }
 

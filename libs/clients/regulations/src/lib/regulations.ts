@@ -44,12 +44,13 @@ export class RegulationsService extends RESTDataSource {
     viewType: 'original' | 'current' | 'd' | 'diff',
     name: string,
     date?: string,
+    isCustomDiff?: boolean,
     earlierDate?: string,
   ): Promise<Regulation | RegulationRedirect | null> {
-    const route = `regulation/nr/${name}${
-    date ? '/d/' + date : '/' + viewType}${
-    date && viewType === 'diff' ? '/diff' : ''}${
-    date && viewType === 'diff' && earlierDate ? '/' + earlierDate : ''}`
+    const route = `regulation/nr/${name}/${viewType}${
+      viewType === 'd' && date ? '/' + date : ''}${
+      viewType === 'd' && isCustomDiff ? '/diff' : ''}${
+      isCustomDiff && earlierDate ? '/' + earlierDate : ''}`
 
     const response = await this.get<Regulation | RegulationRedirect |  null>(route, {
       cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes

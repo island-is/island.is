@@ -29,11 +29,12 @@ type RegulationPageProps = {
   regulation: Regulation | RegulationRedirect
   texts: RegulationPageTexts
   viewType: ViewType
-  viewDate?: ISODate
+  date?: ISODate
+  isCustomDiff?: boolean
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, texts, viewType, viewDate } = props
+  const { regulation, texts, viewType, date, isCustomDiff } = props
 
   return 'redirectUrl' in regulation ? (
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
@@ -42,7 +43,8 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
       texts={texts}
       regulation={regulation}
       viewType={viewType}
-      viewDate={viewDate}
+      date={date}
+      isCustomDiff={isCustomDiff}
     />
   )
 }
@@ -157,6 +159,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
             viewType,
             name: number,
             date: date,
+            isCustomDiff: !!isCustomDiff
           },
         },
       })
@@ -177,7 +180,8 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     regulation,
     texts,
     viewType,
-    viewDate: date
+    date,
+    isCustomDiff
   }
 }
 
