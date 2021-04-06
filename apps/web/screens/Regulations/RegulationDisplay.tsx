@@ -1,4 +1,4 @@
-import { RegulationPageTexts, Regulation } from './mockData'
+import { RegulationPageTexts, Regulation, ISODate } from './mockData'
 
 import * as s from './RegulationDisplay.treat'
 
@@ -29,10 +29,11 @@ export type RegulationDisplayProps = {
   regulation: Regulation
   texts: RegulationPageTexts
   viewType?: ViewType
+  viewDate?: ISODate
 }
 
 export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
-  const { regulation, texts, viewType } = props
+  const { regulation, texts, viewType, viewDate } = props
   const { history, effects } = regulation
 
   const router = useRouter()
@@ -45,10 +46,6 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   const n = useNamespace(texts)
   const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
 
-  const regulationBody = regulation.text
-
-  const showDiff = viewType === 'diff'
-
   const isOriginal = regulation.type === 'base' && (viewType === 'original' || regulation.timelineDate === regulation.effectiveDate);
 
   return (
@@ -60,11 +57,12 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             <Link
               href={
                 linkToRegulation(regulation.name) +
-                (showDiff ? '' : '/diff')
+                (viewType === 'd' ? '/d/' + viewDate : '') +
+                (viewType === 'diff' ? '' : '/diff')
               }
               className={s.diffToggler}
             >
-              {showDiff ? n('hideDiff') : n('showDiff')}
+              {viewType === 'diff' ? n('hideDiff') : n('showDiff')}
             </Link>
           )}
 
@@ -122,7 +120,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
           </Text>
           <div
             className={s.bodyText}
-            dangerouslySetInnerHTML={{ __html: regulationBody }}
+            dangerouslySetInnerHTML={{ __html: regulation.text }}
           />
         </>
       }
@@ -202,10 +200,6 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               ))}
             </RegulationsSidebarBox>
           )}
-
-          <RegulationsSidebarBox title="Tengt efni" colorScheme="blueberry">
-            <FocusableBox></FocusableBox>
-          </RegulationsSidebarBox>
         </Stack>
       }
     />

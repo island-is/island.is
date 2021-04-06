@@ -29,10 +29,11 @@ type RegulationPageProps = {
   regulation: Regulation | RegulationRedirect
   texts: RegulationPageTexts
   viewType: ViewType
+  viewDate?: ISODate
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, texts, viewType } = props
+  const { regulation, texts, viewType, viewDate } = props
 
   return 'redirectUrl' in regulation ? (
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
@@ -41,6 +42,7 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
       texts={texts}
       regulation={regulation}
       viewType={viewType}
+      viewDate={viewDate}
     />
   )
 }
@@ -175,6 +177,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     regulation,
     texts,
     viewType,
+    viewDate: date
   }
 }
 
