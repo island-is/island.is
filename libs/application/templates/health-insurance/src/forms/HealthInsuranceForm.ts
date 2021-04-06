@@ -185,7 +185,6 @@ export const HealthInsuranceForm: Form = buildForm({
               title: '',
               description: m.editNationalRegistryData,
             }),
-            buildDividerField({ title: ' ', color: 'transparent' }),
             buildTextField({
               id: 'applicant.email',
               title: m.email,
