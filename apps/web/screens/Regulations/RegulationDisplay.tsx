@@ -49,12 +49,14 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
   const showDiff = viewType === 'diff'
 
+  const isOriginal = regulation.type === 'base' && (viewType === 'original' || regulation.timelineDate === regulation.effectiveDate);
+
   return (
     <RegulationLayout
       texts={props.texts}
       main={
         <>
-          {history.length > 0 && (
+          {!isOriginal && history.length > 0 && (
             <Link
               href={
                 linkToRegulation(regulation.name) +
@@ -87,7 +89,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               ) : (
                 <>
                   <Ball type="red" />
-                  Úrelt útgáfa reglugerðar
+                  Úrelt reglugerð
                   {regulation.lastAmendDate ? (
                     <>
                       {' – '}
