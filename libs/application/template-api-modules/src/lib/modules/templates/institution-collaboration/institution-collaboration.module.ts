@@ -5,12 +5,15 @@ import { InstitutionCollaborationService } from './institution-collaboration.ser
 import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
 import { FileStorageModule } from '@island.is/file-storage'
 
-const recipientEmailAddress =
-  process.env.INSTITUTION_COLLABORATION_RECIPIENT_EMAIL_ADDRESS ??
-  'development@island.is'
-const senderEmailAddress =
-  process.env.INSTITUTION_COLLABORATION_SENDER_EMAIL_ADDRESS ??
-  'development@island.is'
+const applicationRecipientName =
+  process.env.EMAIL_REPLY_TO_NAME ?? 'Recipient Name'
+
+const applicationRecipientEmail =
+  process.env.EMAIL_REPLY_TO ?? 'development@island.is'
+
+const applicationSenderName = process.env.EMAIL_FROM_NAME ?? 'Sender Name'
+
+const applicationSenderEmail = process.env.EMAIL_FROM ?? 'development@island.is'
 
 export class InstitutionCollaborationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -23,7 +26,12 @@ export class InstitutionCollaborationModule {
       providers: [
         {
           provide: INSTITUTION_COLLABORATION_CONFIG,
-          useValue: { recipientEmailAddress, senderEmailAddress },
+          useValue: {
+            applicationRecipientName,
+            applicationRecipientEmail,
+            applicationSenderName,
+            applicationSenderEmail,
+          },
         },
         InstitutionCollaborationService,
       ],
