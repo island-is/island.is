@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { Box, AlertMessage, Button } from '@island.is/island-ui/core'
 import { signatureModal } from '../../../lib/messages'
@@ -8,29 +8,34 @@ interface ErrorMessageProps {
   errorCode?: number
 }
 
-// TODO: handle errors better when we have the support from the backend
 const ErrorMessage = ({ onClose, errorCode }: ErrorMessageProps) => {
   const { formatMessage } = useIntl()
+  const [errorMessage, setErrorMessage] = useState<MessageDescriptor>(
+    signatureModal.defaultError.message,
+  )
 
-  const message = (() => {
+  useEffect(() => {
     switch (errorCode) {
       case 404:
-        return signatureModal.error.noElectronicId
+        setErrorMessage(signatureModal.error.noElectronicId)
+        break
       case 400:
-        return signatureModal.error.userCancelled
+        setErrorMessage(signatureModal.error.userCancelled)
+        break
       case 409:
-        return signatureModal.error.timeOut
+        setErrorMessage(signatureModal.error.timeOut)
+        break
       default:
-        return signatureModal.defaultError.message
+        setErrorMessage(signatureModal.defaultError.message)
     }
-  })()
+  }, [errorCode])
 
   return (
     <>
       <AlertMessage
         type="error"
         title={formatMessage(signatureModal.defaultError.title)}
-        message={formatMessage(message)}
+        message={formatMessage(errorMessage)}
       />
       <Box marginTop={3} justifyContent="center">
         <Button onClick={onClose} variant="primary">
