@@ -173,7 +173,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               colorScheme="blueberry"
             >
               {regulation.history.map((item, i) => (
-                <Link key={'history-' + i} href={linkToRegulation(item.name) + '/d/' + item.date}>
+                <Link key={'history-' + i} href={linkToRegulation(regulation.name) + '/d/' + item.date}>
                   <FocusableBox flexDirection={'column'}>
                     {({
                       isFocused,
