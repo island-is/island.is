@@ -21,6 +21,20 @@
       "binaryPath": "../app/android/app/build/outputs/apk/release/app-release.apk"
     }
   },
+  "artifacts": {
+    "rootDir": "./app-e2e/artifacts",
+    "plugins": {
+      "log": { "enabled": true },
+      "uiHierarchy": "enabled",
+      "screenshot": {
+        "shouldTakeAutomaticSnapshots": true,
+        "takeWhen": {
+          "testStart": true,
+          "testDone": true
+        }
+      }
+    }
+  },
   "devices": {
     "simulator": {
       "type": "ios.simulator",

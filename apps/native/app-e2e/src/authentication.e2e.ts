@@ -3,6 +3,9 @@ import { testIDs } from '../../app/src/utils/test-ids';
 import puppeteer from 'puppeteer';
 
 describe('Authentication', () => {
+
+  let browser: puppeteer.Browser;
+
   beforeAll(async () => {
     // start app with faceid permissions
     await device.launchApp({
@@ -13,6 +16,12 @@ describe('Authentication', () => {
     // enroll into biometrics
     await device.setBiometricEnrollment(true);
   });
+
+  afterAll(async () => {
+    if (browser) {
+      browser.close();
+    }
+  })
 
   it('should be able to authenticate', async () => {
     await expect(element(by.id(testIDs.SCREEN_LOGIN))).toBeVisible();
@@ -40,7 +49,8 @@ describe('Authentication', () => {
     const returnUrl = encodeURIComponent(`/connect/authorize/callback?${qs}`);
     const url = `https://identity-server.dev01.devland.is/login?ReturnUrl=${returnUrl}`
 
-    const browser = await puppeteer.launch();
+    browser = await puppeteer.launch();
+
     const page = await browser.newPage();
     await page.goto(url);
     await page.type('#phoneNumber', '010-7789');
