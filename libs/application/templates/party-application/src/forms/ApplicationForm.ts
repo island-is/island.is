@@ -18,7 +18,6 @@ export const ApplicationForm: Form = buildForm({
   title: 'Meðmælendalisti',
   mode: FormModes.APPLYING,
   children: [
-
     buildSection({
       id: 'overview',
       title: 'Safna meðmælum',
