@@ -9,8 +9,6 @@ import { testIDs } from '../../utils/test-ids'
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { useState } from 'react'
 
-console.log(NativeModules);
-
 export const LoginScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
 
