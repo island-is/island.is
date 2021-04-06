@@ -18,7 +18,6 @@ export default {
     ],
   },
   audit: {
-    useGenericLogger: false,
     groupName: 'test-audit-log',
     serviceName: 'application-system-api',
     defaultNamespace: '@island.is/applications',
