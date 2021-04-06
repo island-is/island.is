@@ -7,7 +7,14 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { AUDIT_OPTIONS, AuditOptions } from './audit.options'
 
-type MetaValue = Date | null | boolean | number | string | MetaValue[] | MetaObject
+type MetaValue =
+  | Date
+  | null
+  | boolean
+  | number
+  | string
+  | MetaValue[]
+  | MetaObject
 type MetaObject = { [prop: string]: MetaValue }
 
 export interface AuditMessage {

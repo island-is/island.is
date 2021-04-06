@@ -110,7 +110,9 @@ describe('AuditInterceptor', () => {
       expect.anything(),
       expect.any(Promise),
     )
-    await expect(auditService.auditPromise.mock.calls[0][1]).resolves.toEqual(result)
+    await expect(auditService.auditPromise.mock.calls[0][1]).resolves.toEqual(
+      result,
+    )
   })
 
   it('forwards user', async () => {

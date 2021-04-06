@@ -40,7 +40,7 @@ const user: User = {
   authorization: '',
   client: 'test-client',
   ip: '12.12.12.12',
-  userAgent: 'Test agent'
+  userAgent: 'Test agent',
 }
 
 describe('AuditService against Cloudwatch', () => {
