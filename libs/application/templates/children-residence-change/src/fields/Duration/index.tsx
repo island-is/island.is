@@ -11,8 +11,8 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 
-const typeInput = 'durationType'
-const dateInput = 'durationDate'
+const typeInput = 'selectDuration.type'
+const dateInput = 'selectDuration.date'
 
 export const selectDurationInputs = [typeInput, dateInput]
 
@@ -20,13 +20,14 @@ export type ValidAnswers = 'permanent' | 'temporary' | undefined
 const Duration = ({ application, errors }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
+  console.log('errors from component', errors)
 
   const durationTypeError = errors?.[typeInput] as string
   const durationDateError = errors?.[dateInput] as string
 
-  const [statefulAnswer, setStatefulAnswer] = useState<
-    ValidAnswers | undefined
-  >(application.answers?.durationType)
+  const [statefulAnswer, setStatefulAnswer] = useState<string | undefined>(
+    application.answers?.selectDuration?.type,
+  )
   return (
     <>
       <Box marginTop={3} marginBottom={5}>

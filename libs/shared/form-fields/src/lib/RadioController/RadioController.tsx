@@ -59,7 +59,8 @@ export const RadioController: FC<Props> = ({
                 tooltip={option.tooltip}
                 key={`${id}-${index}`}
                 onChange={({ target }) => {
-                  clearErrors(id)
+                  console.log('id', id)
+                  clearErrors('type')
                   onChange(target.value)
                   onSelect(target.value)
                   setValue(id, target.value)

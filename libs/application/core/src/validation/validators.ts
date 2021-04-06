@@ -13,6 +13,9 @@ function populateError(
   newError: ZodError | undefined,
   pathToError: string,
 ): SchemaValidationError | undefined {
+  console.log('currentError', currentError)
+  console.log('newError', newError)
+  console.log('pathToError', pathToError)
   if (newError === undefined) {
     return currentError
   }

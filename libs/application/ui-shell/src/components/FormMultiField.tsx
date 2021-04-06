@@ -37,6 +37,7 @@ const FormMultiField: FC<{
 }) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
+  console.log('errors from multi', errors)
   return (
     <GridRow>
       <ConditionHandler

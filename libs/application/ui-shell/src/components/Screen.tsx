@@ -123,6 +123,7 @@ const Screen: FC<ScreenProps> = ({
     },
   )
   const { handleSubmit, errors, reset } = hookFormData
+  console.log('errors', errors)
   const submitField = useMemo(() => findSubmitField(screen), [screen])
   const dataSchemaOrApiErrors = isJSONObject(error?.message)
     ? parseMessage(error?.message)
@@ -148,6 +149,7 @@ const Screen: FC<ScreenProps> = ({
     let response
 
     setIsSubmitting(true)
+    console.log('e', e)
 
     if (typeof beforeSubmitCallback.current === 'function') {
       const [canContinue] = await beforeSubmitCallback.current()

@@ -37,6 +37,7 @@ const TextFormField: FC<Props> = ({
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
+  console.log('id from textfield', id)
 
   return (
     <div>
