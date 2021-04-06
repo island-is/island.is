@@ -21,7 +21,7 @@ function EducationLicense(): JSX.Element {
           defaultMessage:
             'Hér getur þú fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda.',
         })}
-        img="/assets/images/educationLicense.svg"
+        img="./assets/images/educationLicense.svg"
       />
       <LicenseCards />
     </Box>
