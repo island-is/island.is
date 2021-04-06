@@ -57,13 +57,15 @@ CMD [ "main.js" ]
 FROM cypress/included:6.5.0 as output-cypress
 # image with cypress test suites
 
+RUN addgroup runners && adduser runner && adduser runner runners
+RUN mkdir /out && chown runner /out
+ENV CYPRESS_VIDEOS_FOLDER=/out/videos
+ENV CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots
+
+USER runner
+
 WORKDIR /app
 COPY --from=deps /build/node_modules /app/node_modules
-# RUN npm install -g typescript
-# RUN which cypress && exit 1
-# RUN npm list -g --depth=0 && exit 1
-# RUN find / -name node_modules -type d && exit 1
-# RUN ls && exit 1
 
 ARG APP_HOME
 

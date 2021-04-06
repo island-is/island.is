@@ -38,15 +38,13 @@ Cypress.Commands.add('ensureLoggedIn', ({ path }) => {
             '.modal-content-desktop .submitButton-customizable',
           loginUrl: headers.location,
           headless: false,
-          logs: true,
-          // loginSelector: null,
           postLoginSelector: 'div#__next',
+          args: ['--no-sandbox'],
         }
         return cy
           .task<CustomizedLoginTaskType>('CustomizedLogin', socialLoginOptions)
           .then(({ cookies }) => {
             cy.clearCookies()
-            cy.log(`Cookies: ${cookies}`)
 
             const cookie = cookies
               .filter((cookie) => cookie.name === cookieName)
