@@ -17,7 +17,7 @@ import {
   Scopes,
   ScopesGuard,
   User,
-  CurrentRestUser,
+  CurrentUser,
 } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
@@ -31,7 +31,7 @@ export class PermissionsController {
   @Get('scopes')
   @ApiOkResponse({ isArray: true })
   async findAllPermittedScopes(
-    @CurrentRestUser() user: User,
+    @CurrentUser() user: User,
     @Query(
       'requestedScopes',
       new ParseArrayPipe({ optional: false, items: String, separator: ',' }),

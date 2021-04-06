@@ -4,7 +4,7 @@ import {
   Scopes,
   ScopesGuard,
   User,
-  CurrentRestUser,
+  CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -18,7 +18,7 @@ export class DelegationsController {
   @Scopes('@identityserver.api/authentication')
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllTo(@CurrentRestUser() user: User): Promise<IDelegation[]> {
+  async findAllTo(@CurrentUser() user: User): Promise<IDelegation[]> {
     return await this.delegationsService.findAllTo(user.nationalId)
   }
 }
