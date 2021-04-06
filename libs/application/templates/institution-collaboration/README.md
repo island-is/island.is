@@ -17,17 +17,6 @@ Run `nx test application-templates-institution-collaboration` to execute the uni
 
 To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/handbook/apps/application-system).
 
-- Local application URL: [http://localhost:4242/umsoknir/samstarf](http://localhost:4242/umsoknir/samstarf)
-
-#### Configure AWS
-
-- You have access to the `island-is-development01` AWS account
-- Run `aws configure`
-- Region should be set to `eu-west-1`
-- Output should be set to `json`
-- Add `aws_access_key_id`, `aws_secret_access_key` and `aws_session_token` from `island-is-development01` to your AWS credentials file `~/.aws/credentials`
-- Or export them manually in the terminal
-
 ### Additional Environment variables
 
 - You need to set few additional in order to submitting the application locally:
