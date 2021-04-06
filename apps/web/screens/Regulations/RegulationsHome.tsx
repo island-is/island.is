@@ -66,7 +66,7 @@ type RegulationsHomeProps = {
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
-  lawcCapters: Readonly<LawChapterTree>
+  lawChapters: Readonly<LawChapterTree>
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
@@ -214,7 +214,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             <RegulationsSearchSection
               searchResults={props.regulations}
               searchFilters={props.searchQuery}
-              lawcCapters={props.lawcCapters}
+              lawcCapters={props.lawChapters}
               ministries={props.ministries}
               years={props.years}
               texts={props.texts}
@@ -230,80 +230,87 @@ RegulationsHome.getInitialProps = async (ctx) => {
   const { apolloClient, locale, query } = ctx
   const serviceId = String(query.slug)
   const searchQuery = getParams(query, ['q', 'rn', 'year', 'ch', 'all'])
+  const doSearch = Object.values(searchQuery).some((value) => !!value)
 
   const [
     texts,
-    regulationsData,
-    regulationYears,
-    allMinistries,
-    allLawChaptersTree,
+    regulations,
+    years,
+    ministries,
+    lawChapters,
   ] = await Promise.all([
     await getUiTexts<RegulationHomeTexts>(
       apolloClient,
       locale,
       'Regulations_Home',
-      homeTexts,
     ),
 
-    apolloClient.query<GetRegulationsQuery, QueryGetRegulationsArgs>({
-      query: GET_REGULATIONS_QUERY,
-      variables: {
-        input: {
-          type: 'newest',
-          page: 1,
+    doSearch
+      ? [regulationsSearchResults[0]].concat(
+          shuffle(regulationsSearchResults).slice(
+            Math.floor(5 * Math.random()),
+          ),
+        )
+      : apolloClient
+          .query<GetRegulationsQuery, QueryGetRegulationsArgs>({
+            query: GET_REGULATIONS_QUERY,
+            variables: {
+              input: {
+                type: 'newest',
+                page: 1,
+              },
+            },
+          })
+          .then((res) => res.data?.getRegulations.data as RegulationListItem[]),
+
+    apolloClient
+      .query<GetRegulationsYearsQuery, QueryGetRegulationsYearsArgs>({
+        query: GET_REGULATIONS_YEARS_QUERY,
+        variables: {
+          input: {
+            year: 0, // TODO: remove this
+          },
         },
-      },
-    }),
-    apolloClient.query<GetRegulationsYearsQuery, QueryGetRegulationsYearsArgs>({
-      query: GET_REGULATIONS_YEARS_QUERY,
-      variables: {
-        input: {
-          year: 0, // TODO: remove this
+      })
+      .then((res) => res.data?.getRegulationsYears as Array<number>),
+
+    apolloClient
+      .query<GetRegulationsMinistriesQuery, QueryGetRegulationsMinistriesArgs>({
+        query: GET_REGULATIONS_MINISTRIES_QUERY,
+        variables: {
+          input: {
+            slug: '', // TODO: remove this
+          },
         },
-      },
-    }),
-    apolloClient.query<
-      GetRegulationsMinistriesQuery,
-      QueryGetRegulationsMinistriesArgs
-    >({
-      query: GET_REGULATIONS_MINISTRIES_QUERY,
-      variables: {
-        input: {
-          slug: '', // TODO: remove this
+      })
+      .then((res) => res.data?.getRegulationsMinistries as Array<MinistryFull>),
+
+    apolloClient
+      .query<
+        GetRegulationsLawChaptersQuery,
+        QueryGetRegulationsLawChaptersArgs
+      >({
+        query: GET_REGULATIONS_LAWCHAPTERS_QUERY,
+        variables: {
+          input: {
+            tree: true,
+          },
         },
-      },
-    }),
-    apolloClient.query<
-      GetRegulationsLawChaptersQuery,
-      QueryGetRegulationsLawChaptersArgs
-    >({
-      query: GET_REGULATIONS_LAWCHAPTERS_QUERY,
-      variables: {
-        input: {
-          tree: true,
-        },
-      },
-    }),
+      })
+      .then((res) => res.data?.getRegulationsLawChapters as LawChapterTree),
   ])
 
-  // TODO: Handle search - make all result sets look new and exciting!
-  const searchResults = [regulationsSearchResults[0]].concat(
-    shuffle(regulationsSearchResults).slice(Math.floor(5 * Math.random())),
-  )
-
-  const regulations =
-    (regulationsData?.data?.getRegulations?.data as RegulationListItem[]) ?? []
-
   return {
-    regulations: regulations || searchResults,
+    regulations,
     texts,
     searchQuery,
-    years: regulationYears?.data?.getRegulationsYears as Array<number>,
-    ministries: allMinistries?.data
-      ?.getRegulationsMinistries as Array<MinistryFull>,
-    lawcCapters: allLawChaptersTree?.data
-      ?.getRegulationsLawChapters as LawChapterTree,
+    years,
+    ministries,
+    lawChapters,
   }
 }
 
 export default withMainLayout(RegulationsHome)
+
+// // @ts-expect-error  (Make sure we're in strict mode)
+// const text: string = ({} as { bar?: string }).bar

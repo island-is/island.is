@@ -37,7 +37,11 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
   return 'redirectUrl' in regulation ? (
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
   ) : (
-    <RegulationDisplay texts={texts} regulation={regulation} viewType={viewType} />
+    <RegulationDisplay
+      texts={texts}
+      regulation={regulation}
+      viewType={viewType}
+    />
   )
 }
 
@@ -128,40 +132,43 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     ? assertEarlierDate(p.earlierDate, date)
     : undefined
 
-  console.log('FOOBAR', {
-    number,
-    viewType,
-    date,
-    isCustomDiff,
-    earlierDate,
-  })
+  // console.log('FOOBAR', {
+  //   number,
+  //   viewType,
+  //   date,
+  //   isCustomDiff,
+  //   earlierDate,
+  // })
 
-  const [texts, regulationData] = await Promise.all([
+  const [texts, regulation] = await Promise.all([
     await getUiTexts<RegulationPageTexts>(
       apolloClient,
       locale,
       'Regulations_Viewer',
-      regulationPageTexts,
     ),
 
-    apolloClient.query<GetRegulationQuery, QueryGetRegulationArgs>({
-      query: GET_REGULATION_QUERY,
-      variables: {
-        input: {
-          viewType,
-          name: number,
-          date: date,
+    apolloClient
+      .query<GetRegulationQuery, QueryGetRegulationArgs>({
+        query: GET_REGULATION_QUERY,
+        variables: {
+          input: {
+            viewType,
+            name: number,
+            date: date,
+          },
         },
-      },
-    }),
+      })
+      .then(
+        (res) =>
+          Object.values(res.data ?? {})[0] as
+            | Regulation
+            | RegulationRedirect
+            | undefined,
+      ),
   ])
 
-  const regulation = Object.values(regulationData?.data ?? {})[0] as
-    | Regulation
-    | RegulationRedirect
-
   if (!regulation) {
-    throw new CustomNextError(404, 'Þessi síða fannst ekki!')
+    throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')
   }
 
   return {

@@ -204,7 +204,8 @@ export const homeTexts = {
   crumbs_2: 'Upplýsingasvæði',
 }
 
-export type RegulationHomeTexts = typeof homeTexts
+// export type RegulationHomeTexts = Partial<typeof homeTexts>
+export type RegulationHomeTexts = Partial<typeof homeTexts>
 
 // ===========================================================================
 // ===========================================================================
@@ -235,7 +236,7 @@ export const regulationPageTexts = {
   crumbs_3: 'Reglugerðir',
 }
 
-export type RegulationPageTexts = typeof regulationPageTexts
+export type RegulationPageTexts = Partial<typeof regulationPageTexts>
 
 // ---------------------------------------------------------------------------
 
