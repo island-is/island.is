@@ -95,7 +95,7 @@ export class FileController {
   ): Promise<DeleteFileResponse> {
     const file = await this.fileService.getCaseFileById(id)
     const hasPermissionToDelete = await this.caseService.findByIdAndUser(
-      caseId,
+      file.caseId,
       user,
     )
 
