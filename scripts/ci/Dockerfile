@@ -54,6 +54,21 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp
 ENTRYPOINT [ "node" ]
 CMD [ "main.js" ]
 
+FROM cypress/included:6.5.0 as output-cypress
+# image with cypress test suites
+
+WORKDIR /app
+COPY --from=deps /build/node_modules /app/node_modules
+# RUN npm install -g typescript
+# RUN which cypress && exit 1
+# RUN npm list -g --depth=0 && exit 1
+# RUN find / -name node_modules -type d && exit 1
+# RUN ls && exit 1
+
+ARG APP_HOME
+
+ADD ${APP_HOME} .
+
 FROM output-base as output-next
 # image with build of an Next.js app
 

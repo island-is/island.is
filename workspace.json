@@ -6162,7 +6162,7 @@
           }
         }
       },
-      "docker-express": {}
+      "docker-cypress": {}
     },
     "utils-api": {
       "root": "libs/utils/api",

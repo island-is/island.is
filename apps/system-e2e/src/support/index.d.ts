@@ -5,9 +5,9 @@
 declare namespace Cypress {
   interface Chainable {
     /**
-     * Custom command to log into github
-     * @example cy.login()
+     * Custom command to log in using cognito
+     * @example cy.loginViaCognito()
      */
-    login(): Chainable<Element>
+    ensureLoggedIn({ path: string }): Chainable<Element>
   }
 }

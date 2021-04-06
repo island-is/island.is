@@ -1,21 +1,7 @@
 import { Plugins } from 'cypress-social-logins'
-const username = 'sindrigudmundsson+githubtest@gmail.com'
-const password = 'Y69cVnruYxHceTuGCvRs'
-const loginUrl = 'https://beta.dev01.devland.is'
-const cookieName = '_oauth2_proxy'
-const socialLoginOptions = {
-  username,
-  password,
-  loginUrl,
-  // cookieDelay: 100000,
-  // authorize: true,
-  headless: false,
-  logs: true,
-  isPopup: true,
-  // loginSelector: `a[href="${Cypress.env('SITE_NAME')}/api/auth/signin/google"]`,
-  loginSelector: null,
-  // postLoginSelector: 'div',
-}
+const testEnviron = Cypress.env('testEnvironment')
+
+const cookieName = `_oauth2_${testEnviron}`
 
 interface CookieType {
   name: string
@@ -27,35 +13,57 @@ interface CookieType {
   secure: boolean
 }
 
-interface GithubLoginTaskType {
+interface CustomizedLoginTaskType {
   cookies: CookieType[]
 }
 
-Cypress.Commands.add('login', () => {
+Cypress.Commands.add('ensureLoggedIn', ({ path }) => {
   Cypress.log({
-    name: 'loginViaGithub',
+    name: 'ensureLoggedIn',
   })
+
   return cy
-    .task<GithubLoginTaskType>('GitHubSocialLogin', socialLoginOptions)
-    .then(({ cookies }) => {
-      cy.clearCookies()
-      cy.log(`Cookies: ${cookies}`)
+    .request({
+      url: '/',
+      followRedirect: false,
+    })
+    .then(({ status, headers, body }) => {
+      if (headers.location) {
+        const socialLoginOptions = {
+          username: Cypress.env('cognito_username'),
+          password: Cypress.env('cognito_password'),
+          usernameField: '.modal-content-desktop input#signInFormUsername',
+          passwordField: '.modal-content-desktop input#signInFormPassword',
+          passwordSubmitBtn:
+            '.modal-content-desktop .submitButton-customizable',
+          loginUrl: headers.location,
+          headless: false,
+          logs: true,
+          // loginSelector: null,
+          postLoginSelector: 'div#__next',
+        }
+        return cy
+          .task<CustomizedLoginTaskType>('CustomizedLogin', socialLoginOptions)
+          .then(({ cookies }) => {
+            cy.clearCookies()
+            cy.log(`Cookies: ${cookies}`)
 
-      const cookie = cookies
-        .filter((cookie) => cookie.name === cookieName)
-        .pop()
-      if (cookie) {
-        cy.setCookie(cookie.name, cookie.value, {
-          domain: cookie.domain,
-          expiry: cookie.expires,
-          httpOnly: cookie.httpOnly,
-          path: cookie.path,
-          secure: cookie.secure,
-        })
-
-        Cypress.Cookies.defaults({
-          preserve: cookieName,
-        })
+            const cookie = cookies
+              .filter((cookie) => cookie.name === cookieName)
+              .pop()
+            if (cookie) {
+              Cypress.Cookies.defaults({
+                preserve: cookieName,
+              })
+              return cy.setCookie(cookie.name, cookie.value, {
+                domain: cookie.domain,
+                expiry: cookie.expires,
+                httpOnly: cookie.httpOnly,
+                path: cookie.path,
+                secure: cookie.secure,
+              })
+            }
+          })
       }
     })
 })

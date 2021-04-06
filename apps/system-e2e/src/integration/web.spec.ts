@@ -1,20 +1,16 @@
 /// <reference path="../support/index.d.ts" />
-import { cms } from '@island.is/api/mocks'
-import { getPageUrl } from '../support/app.po'
+
+Cypress.config(
+  'baseUrl',
+  `https://beta.${Cypress.env('testEnvironment')}01.devland.is`,
+)
 
 describe('web', () => {
   before(() => {
-    cy.login()
+    cy.ensureLoggedIn({ path: '/' })
   })
-  beforeEach(() =>
-    cy.visit(getPageUrl('beta', '/'), {
-      auth: {
-        username: 'preview',
-        password: 'n5gQGmrSCzTgp7bdn',
-      },
-    }),
-  )
   it('should navigate homepage', () => {
+    cy.visit('/')
     cy.get('h3').contains('Að eignast barn')
     cy.get('#search_input_home-input').scrollIntoView()
     cy.get('#search_input_home-input').click()
