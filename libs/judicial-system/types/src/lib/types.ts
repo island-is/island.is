@@ -1,3 +1,8 @@
+export enum Feature {
+  CREATE_CUSTODY_COURT_CASE = 'CREATE_CUSTODY_COURT_CASE',
+  CASE_FILES = 'CASE_FILES',
+}
+
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
   REGISTRAR = 'REGISTRAR',
@@ -176,6 +181,7 @@ export interface Case {
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
+  files?: File[]
 }
 
 export enum NotificationType {
@@ -281,4 +287,28 @@ export interface SignatureConfirmationResponse {
 
 export interface CreateCustodyCourtCase {
   policeCaseNumber: string
+}
+
+export interface PresignedPost {
+  url: string
+  fields: { [key: string]: string }
+}
+
+export interface CreatePresignedPost {
+  fileName: string
+}
+
+export interface File {
+  id: string
+  created: string
+  modified: string
+  caseId: string
+  name: string
+  key: string
+  size: number
+}
+
+export interface CreateFile {
+  key: string
+  size: number
 }
