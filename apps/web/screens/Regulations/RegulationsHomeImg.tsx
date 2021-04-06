@@ -84,9 +84,9 @@ export const RegulationsHomeImg: FC<React.SVGProps<SVGSVGElement>> = (
           y2="110.504"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#4C90FF" />
-          <stop offset="0.3921" stop-color="#9077D1" />
-          <stop offset="1" stop-color="#FF4C84" />
+          <stop stopColor="#4C90FF" />
+          <stop offset="0.3921" stopColor="#9077D1" />
+          <stop offset="1" stopColor="#FF4C84" />
         </linearGradient>
       </defs>
     </svg>
