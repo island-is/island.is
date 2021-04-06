@@ -214,7 +214,7 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             <RegulationsSearchSection
               searchResults={props.regulations}
               searchFilters={props.searchQuery}
-              lawcCapters={props.lawChapters}
+              lawChapters={props.lawChapters}
               ministries={props.ministries}
               years={props.years}
               texts={props.texts}

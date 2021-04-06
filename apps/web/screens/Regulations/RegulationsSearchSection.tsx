@@ -117,7 +117,7 @@ export type RegulationsSearchSectionProps = {
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
-  lawcCapters: Readonly<LawChapterTree>
+  lawChapters: Readonly<LawChapterTree>
   texts: RegulationHomeTexts
 } & NoChildren
 
@@ -155,7 +155,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
 
   const lawChapterOptions = useMemo(
     () =>
-      props.lawcCapters.reduce<Array<Option>>(
+      props.lawChapters.reduce<Array<Option>>(
         (opts, { name, slug, subChapters }) => {
           opts.push({
             value: slug,
@@ -171,7 +171,7 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
         },
         [emptyOption(txt('searchChapterEmptyOption'))],
       ) as ReadonlyArray<Option>,
-    [props.lawcCapters],
+    [props.lawChapters],
   )
 
   const doSearch = (key: RegulationSearchKeys, value: string) => {
