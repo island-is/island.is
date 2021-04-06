@@ -198,15 +198,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             }),
             path: ServicePortalPath.EducationCareer,
           },
-          {
-            name: defineMessage({
-              id: 'service.portal:grades',
-              defaultMessage: 'Einkunnir',
-            }),
-            path: ServicePortalPath.EducationExternal,
-            external: true,
-            systemRoute: true,
-          },
         ],
       },
 
