@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { IdsAuthGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import {
+  ApplicationIdentityServerScope,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
