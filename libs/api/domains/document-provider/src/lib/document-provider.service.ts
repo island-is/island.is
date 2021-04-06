@@ -63,20 +63,6 @@ export class DocumentProviderService {
     return !organisation ? false : true
   }
 
-  async createOrganisation(
-    input: CreateOrganisationInput,
-    authorization: string,
-  ): Promise<Organisation> {
-    const dto = {
-      createOrganisationDto: { ...input },
-      authorization,
-    }
-
-    return await this.organisationsApi
-      .organisationControllerCreateOrganisation(dto)
-      .catch(handleError)
-  }
-
   async updateOrganisation(
     id: string,
     organisation: UpdateOrganisationInput,

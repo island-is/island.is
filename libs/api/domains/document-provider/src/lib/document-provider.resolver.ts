@@ -59,19 +59,6 @@ export class DocumentProviderResolver {
     return await this.documentProviderService.organisationExists(nationalId)
   }
 
-  @Mutation(() => Organisation, { nullable: true })
-  async createOrganisation(
-    @Args('input') input: CreateOrganisationInput,
-    @CurrentUser() user: User,
-  ): Promise<Organisation | null> {
-    logger.info(`createOrganisation: user: ${user.nationalId}`)
-
-    return this.documentProviderService.createOrganisation(
-      input,
-      user.authorization,
-    )
-  }
-
   @UseGuards(AdminGuard)
   @Mutation(() => Organisation)
   async updateOrganisation(

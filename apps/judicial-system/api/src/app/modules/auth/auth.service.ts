@@ -23,7 +23,7 @@ export class AuthService {
     return await res.json()
   }
 
-  validateUser(user?: User): boolean {
-    return Boolean(user?.active)
+  validateUser(user: User): boolean {
+    return user.active
   }
 }

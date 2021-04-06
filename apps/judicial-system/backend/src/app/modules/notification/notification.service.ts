@@ -38,10 +38,10 @@ interface Recipient {
 @Injectable()
 export class NotificationService {
   constructor(
-    private readonly smsService: SmsService,
-    private readonly emailService: EmailService,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    private readonly smsService: SmsService,
+    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
