@@ -9,17 +9,23 @@ import { testIDs } from '../../utils/test-ids'
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { useState } from 'react'
 
+console.log(NativeModules);
+
 export const LoginScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
 
   const [authState, setAuthState] = useState<{ nonce: string; codeChallenge: string; state: string; } | null>(null);
 
   useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth);
-    const onAuthRequestInitiated = (event: any) => setAuthState(event);
-    const subscription = eventEmitter.addListener('onAuthRequestInitiated', onAuthRequestInitiated);
-    return () => {
-      eventEmitter.removeListener('onAuthRequestInitiated', onAuthRequestInitiated);
+    try {
+      const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth);
+      const onAuthRequestInitiated = (event: any) => setAuthState(event);
+      const subscription = eventEmitter.addListener('onAuthRequestInitiated', onAuthRequestInitiated);
+      return () => {
+        subscription.remove();
+      }
+    } catch (err) {
+      console.log('Error using NativeEventEmitter', Object.keys(NativeModules), NativeModules.RNAppAuth);
     }
   }, []);
 

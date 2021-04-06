@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Select Latest XCode
         uses: maxim-lobanov/setup-xcode@v1
@@ -78,3 +80,12 @@ jobs:
           cat apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist
           /usr/libexec/PlistBuddy -c "Print" apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist || echo "failure"
       - run: cd apps/native && yarn detox:test:ios
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: ios-e2e-artifacts
+          path: |
+            apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/
+            apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app.dSYM/
+            apps/native/app-e2e/artifacts/
