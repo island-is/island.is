@@ -27,7 +27,7 @@ const ChangeInformation = ({
           {formatMessage(newResidence.information.currentResidenceLabel)}
         </Text>
         <Text variant="h4" color="blue400">
-          {childResidenceInfo.current.parent.fullName}
+          {childResidenceInfo.current.parentName}
         </Text>
         <Text fontWeight="light">
           {formatAddress(childResidenceInfo.current.address)}
@@ -38,7 +38,7 @@ const ChangeInformation = ({
           {formatMessage(newResidence.information.newResidenceLabel)}
         </Text>
         <Text variant="h4" color="blue400">
-          {childResidenceInfo.future.parent.fullName}
+          {childResidenceInfo.future.parentName}
         </Text>
         <Text fontWeight="light">
           {formatAddress(childResidenceInfo.future.address)}

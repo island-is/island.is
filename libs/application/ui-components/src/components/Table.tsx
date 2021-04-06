@@ -1,8 +1,7 @@
 import React, { FC, PropsWithChildren, ReactElement, useState } from 'react'
 import { Row, useTable } from 'react-table'
 
-import { Box, Text } from '@island.is/island-ui/core'
-import * as styles from './Table.treat'
+import { Box, Text, Table as T } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 type column<T> = {
@@ -49,15 +48,15 @@ export const Table = <T extends object>(
   const renderRow = (row: Row<T>) => {
     prepareRow(row)
     return (
-      <tr {...row.getRowProps()} style={{}}>
+      <T.Row {...row.getRowProps()}>
         {row.cells.map((cell) => {
           return (
-            <td {...cell.getCellProps()} style={{}}>
+            <T.Data {...cell.getCellProps()}>
               <Text variant="small">{cell.render('Cell')}</Text>
-            </td>
+            </T.Data>
           )
         })}
-      </tr>
+      </T.Row>
     )
   }
 
@@ -67,15 +66,15 @@ export const Table = <T extends object>(
     style?: React.CSSProperties
   }> = ({ label, onClick, style }) => {
     return (
-      <tr>
-        <td colSpan={columns.length} style={{ textAlign: 'left', ...style }}>
+      <T.Row>
+        <T.Data colSpan={columns.length} style={{ textAlign: 'left' }}>
           <Box display="inlineBlock" cursor="pointer" onClick={onClick}>
             <Text color="blue400" variant="small">
               {label}
             </Text>
           </Box>
-        </td>
-      </tr>
+        </T.Data>
+      </T.Row>
     )
   }
 
@@ -104,30 +103,24 @@ export const Table = <T extends object>(
   }
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore - 'CSSProperties | undefined' is not assignable to type 'React.CSSProperties | undefined' ?
-    <table {...getTableProps()} className={styles.table}>
-      <thead className={styles.header}>
+    <T.Table {...getTableProps()}>
+      <T.Head>
         {headerGroups.map((headerGroup) => (
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore - Same as above
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <T.Row {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore - Same as above
-              <th {...column.getHeaderProps()}>
+              <T.HeadData {...column.getHeaderProps()}>
                 <Text variant="h5">{column.render('Header')}</Text>
-              </th>
+              </T.HeadData>
             ))}
-          </tr>
+          </T.Row>
         ))}
-      </thead>
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-      {/* @ts-ignore - Same as above */}
-      <tbody {...getTableBodyProps()}>
+      </T.Head>
+      <T.Body {...getTableBodyProps()}>
         {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
           rows.map((row) => renderRow(row))}
-      </tbody>
-    </table>
+      </T.Body>
+    </T.Table>
   )
 }
+
+export default Table

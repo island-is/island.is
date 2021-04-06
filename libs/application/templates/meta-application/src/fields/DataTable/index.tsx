@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react'
 import { Application, formatText } from '@island.is/application/core'
 import { Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Table } from '@island.is/shared/table'
+import { Table } from '@island.is/application/ui-components'
 
 import { m } from '../../forms/messages'
 import isEmpty from 'lodash/isEmpty'

@@ -32,6 +32,7 @@ const CheckboxFormField: FC<Props> = ({
     options,
     disabled,
     large,
+    strong,
     backgroundColor,
   } = field
   const { formatMessage } = useLocale()
@@ -66,6 +67,7 @@ const CheckboxFormField: FC<Props> = ({
             (getValueViaPath(application.answers, id) as string[]) ??
             getDefaultValue(field, application)
           }
+          strong={strong}
           error={error}
           options={finalOptions.map(({ label, tooltip, ...o }) => ({
             ...o,
