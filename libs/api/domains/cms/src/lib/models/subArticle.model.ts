@@ -1,3 +1,4 @@
+import { SystemMetadata } from '@island.is/shared/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -27,7 +28,8 @@ export class SubArticle {
   showTableOfContents?: boolean
 }
 
-export const mapSubArticle = ({ sys, fields }: ISubArticle): SubArticle => ({
+export const mapSubArticle = ({ sys, fields }: ISubArticle): SystemMetadata<SubArticle> => ({
+  typename: 'SubArticle',
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
