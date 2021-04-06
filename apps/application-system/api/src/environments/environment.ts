@@ -18,8 +18,6 @@ export default {
     ],
   },
   audit: {
-    groupName: 'test-audit-log',
-    serviceName: 'application-system-api',
     defaultNamespace: '@island.is/applications',
   },
   auth: {
