@@ -66,20 +66,24 @@ jobs:
           ln -s "$(pwd)/node_modules/jsc-android" "$(pwd)/apps/native/app/node_modules/jsc-android"
           ln -s "$(pwd)/node_modules/react-native" "$(pwd)/apps/native/app/node_modules/react-native"
 
-      - name: Update Pods
-        run: |
-          gem update cocoapods xcodeproj
-          cd apps/native/app/ios && pod install
-
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: cd apps/native && yarn detox:build:ios
+
+      - name: Install native deps and build
+        run: cd apps/native && yarn postinstall && yarn pod:install && yarn detox:build:ios
+
       - name: Debug info
         run: |
-          find apps/native/app/ios/build | grep Info.plist
-          /usr/libexec/PlistBuddy -c "Print" apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist || echo "failure"
-          cat apps/native/node_modules/react-native-app-auth/ios/RNAppAuth.h
-      - run: cd apps/native && yarn detox:test:ios
+          pod --version
+          /usr/libexec/PlistBuddy -c "Print" apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist || echo "fail"
+          cat apps/native/node_modules/react-native-app-auth/ios/RNAppAuth.h || echo "fail"
+          cat apps/native/app/ios/Pods/react-native-app-auth/ios/RNAppAuth.h || echo "fail"
+          ls -al apps/native/app/ios/Pods/react-native-app-auth/ios || echo "fail"
+          find apps/native/app/ios/build/Build | grep react-native-app-auth
+
+      - run: cd apps/native && yarn postinstall
+      - name: Run Detox e2e tests
+        run: cd apps/native && yarn detox:test:ios
 
       - name: Archive code coverage results
         if: always()

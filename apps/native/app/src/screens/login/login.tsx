@@ -26,6 +26,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
       }
     } catch (err) {
       console.log('Error using NativeEventEmitter', Object.keys(NativeModules), NativeModules.RNAppAuth);
+      console.log(err);
     }
   }, []);
 
