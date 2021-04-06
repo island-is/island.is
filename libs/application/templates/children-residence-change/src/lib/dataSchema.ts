@@ -28,11 +28,14 @@ export const dataSchema = z.object({
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
-  selectDuration: z
-    .array(z.string())
-    .refine((v) =>
-      v.length && v[0] === 'permanent' ? v.length === 1 : v.length === 2,
-    ),
+  durationType: z
+    .enum(['permanent', 'temporary'])
+    .optional()
+    .refine((v) => v, error.validation.durationType.defaultMessage),
+  durationDate: z
+    .string()
+    .optional()
+    .refine((v) => v && v !== '', error.validation.durationDate.defaultMessage),
   interview: z.enum(['yes', 'no']).refine((v) => v, {
     message: error.validation.interview.defaultMessage,
   }),

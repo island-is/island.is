@@ -17,6 +17,7 @@ import {
 } from '@island.is/application/core'
 import { DataProviderTypes } from '@island.is/application/templates/children-residence-change'
 import Logo from '../../assets/Logo'
+import { selectDurationInputs } from '../fields/Duration'
 import * as m from '../lib/messages'
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
@@ -241,6 +242,7 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
             buildCustomField({
               id: 'selectDuration',
               title: m.duration.general.pageTitle,
+              childInputIds: selectDurationInputs,
               component: 'Duration',
             }),
           ],

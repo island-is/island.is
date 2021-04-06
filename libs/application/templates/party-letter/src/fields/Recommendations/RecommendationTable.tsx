@@ -35,7 +35,7 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
                     {value}
                     <Box marginLeft={2}>
                       <Tooltip
-                        color="yellow600"
+                        color="blue400"
                         iconSize="medium"
                         text={formatMessage(
                           m.validationMessages.signatureInvalid,
@@ -60,10 +60,14 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
     <T.Table>
       <T.Head>
         <T.Row>
-          <T.HeadData>Dags skráðkóli</T.HeadData>
-          <T.HeadData>Nafn</T.HeadData>
-          <T.HeadData>Kennitala</T.HeadData>
-          <T.HeadData box={{ textAlign: 'right' }}>Heimilisfang</T.HeadData>
+          <T.HeadData>{formatMessage(m.recommendations.thDate)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.recommendations.thName)}</T.HeadData>
+          <T.HeadData>
+            {formatMessage(m.recommendations.thNationalNumber)}
+          </T.HeadData>
+          <T.HeadData box={{ textAlign: 'right' }}>
+            {formatMessage(m.recommendations.thAddress)}
+          </T.HeadData>
         </T.Row>
       </T.Head>
       <T.Body>

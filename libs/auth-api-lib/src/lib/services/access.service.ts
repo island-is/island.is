@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { AdminAccessDTO, AdminAccessUpdateDTO } from '../..'
 import { AdminAccess } from '../entities/models/admin-access.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class AccessService {
@@ -27,6 +28,22 @@ export class AccessService {
     const admin = await this.adminAccessModel.findByPk(nationalId)
 
     return admin
+  }
+
+  async findAll(
+    nationalId: string,
+    requestedScopes: string[],
+  ): Promise<AdminAccess[] | null> {
+    this.logger.debug(`Finding access for nationalId - "${nationalId}"`)
+
+    return await this.adminAccessModel.findAll({
+      where: {
+        [Op.and]: [
+          { nationalId: nationalId },
+          { scope: { [Op.in]: requestedScopes } },
+        ],
+      },
+    })
   }
 
   /** Gets all admins with paging */
