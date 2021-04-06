@@ -71,7 +71,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
           {!regulation.repealedDate ? (
             <Text>
               {!history.length ||
-              regulation.timelineDate === regulation.lastAmendDate ? (
+              !regulation.timelineDate ? (
                 <>
                   <Ball type="green" />
                   Núgildandi reglugerð
