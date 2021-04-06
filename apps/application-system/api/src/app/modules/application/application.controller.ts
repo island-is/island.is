@@ -94,6 +94,10 @@ import { Audit } from '@island.is/nest/audit'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('applications')
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 @ApiOAuth2([ApplicationIdentityServerScope.read])
 @Controller()
 export class ApplicationController {
