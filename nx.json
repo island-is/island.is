@@ -100,6 +100,9 @@
     "api-domains-health-insurance": {
       "tags": []
     },
+    "api-domains-icelandic-names-registry": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
