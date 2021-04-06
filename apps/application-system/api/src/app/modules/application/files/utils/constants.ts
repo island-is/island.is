@@ -27,7 +27,7 @@ export const DokobitFileName: KeyMapping<PdfTypes, string> = {
   ChildrenResidenceChange: 'Lögheimilisbreyting-barns.pdf',
 }
 
-export const DokobitErrorCodes: { [key: string]: number } = {
+export const DokobitErrorCodes = {
   UserCancelled: 7023,
   TimeOut: 99999,
   SessionExpired: 6005,

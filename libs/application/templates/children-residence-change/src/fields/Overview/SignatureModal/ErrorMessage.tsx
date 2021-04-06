@@ -1,41 +1,32 @@
-import React, { useState, useEffect } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import React from 'react'
+import { useIntl } from 'react-intl'
 import { Box, AlertMessage, Button } from '@island.is/island-ui/core'
 import { signatureModal } from '../../../lib/messages'
 
+const errorMessages = {
+  404: signatureModal.error.noElectronicId,
+  400: signatureModal.error.userCancelled,
+  409: signatureModal.error.timeOut,
+  500: signatureModal.defaultError.message,
+}
+
+const warningCodes = [409, 400]
+
 interface ErrorMessageProps {
   onClose: () => void
-  errorCode?: number
+  errorCode: number
 }
 
 const ErrorMessage = ({ onClose, errorCode }: ErrorMessageProps) => {
   const { formatMessage } = useIntl()
-  const [errorMessage, setErrorMessage] = useState<MessageDescriptor>(
-    signatureModal.defaultError.message,
-  )
-
-  useEffect(() => {
-    switch (errorCode) {
-      case 404:
-        setErrorMessage(signatureModal.error.noElectronicId)
-        break
-      case 400:
-        setErrorMessage(signatureModal.error.userCancelled)
-        break
-      case 409:
-        setErrorMessage(signatureModal.error.timeOut)
-        break
-      default:
-        setErrorMessage(signatureModal.defaultError.message)
-    }
-  }, [errorCode])
-
+  const errorMessageKey =
+    errorCode in errorMessages ? (errorCode as keyof typeof errorMessages) : 500
   return (
     <>
       <AlertMessage
-        type="error"
+        type={warningCodes.includes(errorMessageKey) ? 'warning' : 'error'}
         title={formatMessage(signatureModal.defaultError.title)}
-        message={formatMessage(errorMessage)}
+        message={formatMessage(errorMessages[errorMessageKey])}
       />
       <Box marginTop={3} justifyContent="center">
         <Button onClick={onClose} variant="primary">

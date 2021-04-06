@@ -23,7 +23,7 @@ type Action =
   | { type: Exclude<FileSignatureActionTypes, FileSignatureActionTypes.ERROR> }
   | {
       type: FileSignatureActionTypes.ERROR
-      error?: number
+      error: number
       status: ErrorStatus
     }
 
@@ -31,7 +31,7 @@ export type ReducerState =
   | { status: Exclude<FileSignatureStatus, ErrorStatus>; modalOpen: boolean }
   | {
       status: ErrorStatus
-      errorCode?: number
+      errorCode: number
       modalOpen: boolean
     }
 

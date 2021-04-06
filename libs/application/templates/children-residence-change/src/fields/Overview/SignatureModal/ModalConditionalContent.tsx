@@ -11,7 +11,7 @@ interface SignatureModalProps {
   errorCode?: number
 }
 
-const ModalCondidionalContent = ({
+const ModalConditionalContent = ({
   controlCode,
   signatureStatus,
   onClose,
@@ -24,10 +24,10 @@ const ModalCondidionalContent = ({
       return <ControlCode controlCode={controlCode} />
     case FileSignatureStatus.REQUEST_ERROR:
     case FileSignatureStatus.UPLOAD_ERROR:
-      return <ErrorMessage errorCode={errorCode} onClose={onClose} />
+      return <ErrorMessage errorCode={errorCode ?? 500} onClose={onClose} />
     default:
       return null
   }
 }
 
-export default ModalCondidionalContent
+export default ModalConditionalContent

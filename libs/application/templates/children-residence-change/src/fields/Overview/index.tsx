@@ -23,7 +23,6 @@ import {
   initialFileSignatureState,
   FileSignatureActionTypes,
   FileSignatureStatus,
-  ErrorStatus,
 } from './fileSignatureReducer'
 import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
