@@ -29,7 +29,7 @@ import {
 } from './dto'
 import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
-import { AdminGuard } from './admin.guard'
+import { AdminGuard } from './utils/admin.guard'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
@@ -210,6 +210,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProviderOnTest(
       input.nationalId,
       input.clientName,
+      user.authorization,
     )
   }
 

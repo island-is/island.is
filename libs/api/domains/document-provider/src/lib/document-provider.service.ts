@@ -195,17 +195,42 @@ export class DocumentProviderService {
       .catch(handleError)
   }
 
+  async isLastModifierOfOrganisation(
+    organisationNationalId: string,
+    authorization: string,
+  ): Promise<Boolean> {
+    return await this.organisationsApi.organisationControllerIsLastModifierOfOrganisation(
+      {
+        nationalId: organisationNationalId,
+        authorization,
+      },
+    )
+  }
+
   //-------------------- PROVIDER --------------------------
 
   async createProviderOnTest(
     nationalId: string,
     clientName: string,
+    authorization: string,
   ): Promise<ClientCredentials> {
     // return new ClientCredentials(
     //   '5016d8d5cb6ce0758107b9969ea3c301',
     //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
     //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
     // )
+
+    const isLastModifier = this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientTest
       .createClient(nationalId, clientName)
@@ -263,6 +288,18 @@ export class DocumentProviderService {
     //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
     //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
     // )
+
+    const isLastModifier = this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientProd
       .createClient(nationalId, clientName)
