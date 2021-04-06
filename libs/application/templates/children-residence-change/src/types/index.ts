@@ -36,9 +36,11 @@ export interface UserInfo {
 export interface ExternalData {
   nationalRegistry: {
     data: NationalRegistry
+    date: string
   }
   userProfile: {
     data: UserInfo
+    date: string
   }
 }
 
