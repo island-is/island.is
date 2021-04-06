@@ -119,6 +119,17 @@ export class DocumentProviderService {
     return { numberOfAffectedRows, updatedOrganisation }
   }
 
+  async isLastModifierOfOrganisation(
+    organisationNationalId: string,
+    modifier: string,
+  ): Promise<boolean> {
+    const org = this.organisationModel.findOne({
+      where: { nationalId: organisationNationalId, modifiedBy: modifier },
+    })
+
+    return org ? true : false
+  }
+
   // PROVIDER
   async getProviders(): Promise<Provider[] | null> {
     return await this.providerModel.findAll({ include: [Organisation] })
