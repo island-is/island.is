@@ -55,7 +55,7 @@ export class SyslumennClient {
     persons: Person[],
     attachment: Attachment,
     extraData: { [key: string]: string },
-  ): Promise<DataUploadResponse> {
+  ): Promise<string> {
     await this.login()
 
     const url = `${this.clientConfig.url}/api/v1/SyslMottakaGogn`
@@ -69,15 +69,17 @@ export class SyslumennClient {
       constructUploadDataObject(this.id, persons, attachment, extraData),
     )
 
-    const response: {
-      data: DataUploadResponse
-    } = await this.httpService
-      .post(url, request, { headers: headers })
-      .toPromise()
-      .catch((err) => {
-        throw err
-      })
+    return 'bla'
 
-    return response.data
+    // const response: {
+    //   data: DataUploadResponse
+    // } = await this.httpService
+    //   .post(url, request, { headers: headers })
+    //   .toPromise()
+    //   .catch((err) => {
+    //     throw err
+    //   })
+
+    // return response.data
   }
 }
