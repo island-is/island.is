@@ -77,11 +77,12 @@ jobs:
       - name: Debug info
         run: |
           find apps/native/app/ios/build | grep Info.plist
-          cat apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist
           /usr/libexec/PlistBuddy -c "Print" apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist || echo "failure"
+          cat apps/native/node_modules/react-native-app-auth/ios/RNAppAuth.h
       - run: cd apps/native && yarn detox:test:ios
 
       - name: Archive code coverage results
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: ios-e2e-artifacts
