@@ -1,0 +1,816 @@
+openapi: 3.0.0
+info:
+  title: Documents backend
+  description: Backend providing documents and document-providers info
+  version: '1.0'
+  contact: {}
+tags:
+  - name: Document Provider
+    description: ''
+servers: []
+components:
+  schemas:
+    Liveness:
+      type: object
+      properties:
+        ok:
+          type: boolean
+      required:
+        - ok
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+      required:
+        - version
+    Provider:
+      type: object
+      properties:
+        id:
+          type: string
+        endpoint:
+          type: string
+        endpointType:
+          type: string
+        apiScope:
+          type: string
+        modifiedBy:
+          type: string
+        xroad:
+          type: boolean
+        externalProviderId:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - endpoint
+        - endpointType
+        - apiScope
+        - modifiedBy
+        - xroad
+        - externalProviderId
+        - created
+        - modified
+    AdministrativeContact:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        modifiedBy:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - phoneNumber
+        - modifiedBy
+        - created
+        - modified
+    TechnicalContact:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        modifiedBy:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - phoneNumber
+        - modifiedBy
+        - created
+        - modified
+    Helpdesk:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        modifiedBy:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - email
+        - phoneNumber
+        - modifiedBy
+        - created
+        - modified
+    Organisation:
+      type: object
+      properties:
+        id:
+          type: string
+        nationalId:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        providers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Provider'
+        administrativeContact:
+          $ref: '#/components/schemas/AdministrativeContact'
+        technicalContact:
+          $ref: '#/components/schemas/TechnicalContact'
+        helpdesk:
+          $ref: '#/components/schemas/Helpdesk'
+        modifiedBy:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - nationalId
+        - name
+        - address
+        - email
+        - phoneNumber
+        - modifiedBy
+        - created
+        - modified
+    CreateContactDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+      required:
+        - name
+        - email
+        - phoneNumber
+    CreateHelpdeskDto:
+      type: object
+      properties:
+        email:
+          type: string
+        phoneNumber:
+          type: string
+    CreateOrganisationDto:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        administrativeContact:
+          $ref: '#/components/schemas/CreateContactDto'
+        technicalContact:
+          $ref: '#/components/schemas/CreateContactDto'
+        helpdesk:
+          $ref: '#/components/schemas/CreateHelpdeskDto'
+      required:
+        - nationalId
+        - name
+        - address
+        - email
+        - phoneNumber
+    UpdateOrganisationDto:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+    UpdateContactDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+    UpdateHelpdeskDto:
+      type: object
+      properties:
+        email:
+          type: string
+        phoneNumber:
+          type: string
+    CreateProviderDto:
+      type: object
+      properties:
+        organisationId:
+          type: string
+        endpoint:
+          type: string
+        endpointType:
+          type: string
+        apiScope:
+          type: string
+        xroad:
+          type: boolean
+        externalProviderId:
+          type: string
+      required:
+        - organisationId
+    UpdateProviderDto:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        endpointType:
+          type: string
+        apiScope:
+          type: string
+        xroad:
+          type: boolean
+        externalProviderId:
+          type: string
+    Readiness:
+      type: object
+      properties:
+        ok:
+          type: boolean
+      required:
+        - ok
+    Changelog:
+      type: object
+      properties:
+        id:
+          type: string
+        entityId:
+          type: string
+        entityType:
+          type: string
+          enum:
+            - Organisation
+            - AdministrativeContact
+            - TechnicalContact
+            - Helpdesk
+            - Provider
+        data:
+          type: object
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - entityId
+        - entityType
+        - created
+        - modified
+paths:
+  /liveness:
+    get:
+      operationId: DocumentsInfraController_liveness
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+      tags:
+        - internal
+  /version:
+    get:
+      operationId: DocumentsInfraController_version
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+      tags:
+        - internal
+  /organisations:
+    get:
+      operationId: OrganisationController_getOrganisations
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organisation'
+      tags:
+        - organisations
+    post:
+      operationId: OrganisationController_createOrganisation
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganisationDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+      tags:
+        - organisations
+  '/organisations/{nationalId}':
+    get:
+      operationId: OrganisationController_findByNationalId
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+      tags:
+        - organisations
+  '/organisations/{id}':
+    put:
+      operationId: OrganisationController_updateOrganisation
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrganisationDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organisation'
+      tags:
+        - organisations
+  '/organisations/{id}/administrativecontact':
+    post:
+      operationId: OrganisationController_createAdministrativeContact
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdministrativeContact'
+      tags:
+        - organisations
+  '/organisations/{id}/administrativecontact/{administrativeContactId}':
+    put:
+      operationId: OrganisationController_updateAdministrativeContact
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: administrativeContactId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContactDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdministrativeContact'
+      tags:
+        - organisations
+  '/organisations/{id}/technicalcontact':
+    post:
+      operationId: OrganisationController_createTechnicalContact
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechnicalContact'
+      tags:
+        - organisations
+  '/organisations/{id}/technicalcontact/{technicalContactId}':
+    put:
+      operationId: OrganisationController_updateTechnicalContact
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: technicalContactId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContactDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechnicalContact'
+      tags:
+        - organisations
+  '/organisations/{id}/helpdesk':
+    post:
+      operationId: OrganisationController_createHelpdesk
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHelpdeskDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Helpdesk'
+      tags:
+        - organisations
+  '/organisations/{id}/helpdesk/{helpdeskId}':
+    put:
+      operationId: OrganisationController_updateHelpdesk
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: helpdeskId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateHelpdeskDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Helpdesk'
+      tags:
+        - organisations
+  /providers:
+    get:
+      operationId: ProviderController_getAllProviders
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+      tags:
+        - providers
+    post:
+      operationId: ProviderController_createProvider
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProviderDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+      tags:
+        - providers
+  '/providers/{id}':
+    get:
+      operationId: ProviderController_findById
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+      tags:
+        - providers
+    put:
+      operationId: ProviderController_updateProvider
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProviderDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+      tags:
+        - providers
+  '/providers/external/{id}':
+    get:
+      operationId: ProviderController_findByExternalId
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+      tags:
+        - providers
+  /readiness:
+    get:
+      operationId: DocumentsInfraController_readiness
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+      tags:
+        - internal
+  '/changelogs/organisations/{organisationId}':
+    get:
+      operationId: ChangelogController_getChangelogsByOrganisationId
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: organisationId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Changelog'
+      tags:
+        - changelogs
+  '/changelogs/organisations/{organisationId}/entities/{entityId}':
+    get:
+      operationId: ChangelogController_getChangelogsByOrganisationIdAndEntityId
+      parameters:
+        - name: authorization
+          in: header
+          description: Bearer token authorization
+          schema:
+            type: string
+        - name: organisationId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: entityId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Changelog'
+      tags:
+        - changelogs
