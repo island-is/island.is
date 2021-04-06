@@ -69,8 +69,11 @@ jobs:
       - run: brew tap wix/brew
       - run: brew install applesimutils
 
-      - name: Install native deps and build
-        run: cd apps/native && yarn postinstall && yarn pod:install && yarn detox:build:ios
+      - name: Install pods
+        run: cd apps/native/app/ios && pod install --clean-install --verbose
+
+      - name: Build native binary
+        run: cd apps/native && yarn detox:build:ios
 
       - name: Debug info
         run: |
