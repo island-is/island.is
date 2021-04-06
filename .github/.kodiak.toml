@@ -1,3 +1,6 @@
 # .kodiak.toml
 # Minimal config. version is the only required field.
 version = 1
+
+# Always use the pull request title, which has been validated using conventional commit.
+merge.message.title = "pull_request_title"

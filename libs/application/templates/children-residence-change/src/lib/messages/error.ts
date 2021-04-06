@@ -38,5 +38,16 @@ export const error = {
       defaultMessage: 'Velja þarf valmöguleika',
       description: 'Error message when interview option is not selected',
     },
+    durationType: {
+      id: 'crc.application:error.durationType',
+      defaultMessage: 'Velja þarf valmöguleika',
+      description: 'Error message when durationType option is not selected',
+    },
+    durationDate: {
+      id: 'crc.application:error.durationDate',
+      defaultMessage: 'Velja þarf dagsetningu',
+      description:
+        'Error message when durationType is temporary and no date is selected',
+    },
   }),
 }

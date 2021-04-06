@@ -1,9 +1,6 @@
-import { DataSourceConfig } from 'apollo-datasource'
-
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsModule } from '@island.is/nova-sms'
 import { EmailModule } from '@island.is/email-service'
 

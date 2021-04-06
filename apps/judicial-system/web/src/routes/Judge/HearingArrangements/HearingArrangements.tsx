@@ -7,7 +7,7 @@ import {
   Option,
   Tooltip,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
