@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   Accordion,
   Box,
@@ -12,7 +12,6 @@ import {
   PoliceRequestAccordionItem,
   BlueBox,
   CaseNumbers,
-  DateTime,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import {
@@ -23,7 +22,6 @@ import {
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT, formatDate } from '@island.is/judicial-system/formatters'
 import {
   parseArray,
   parseString,
@@ -39,56 +37,33 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
-  validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
   setAndSendToServer,
   setCheckboxAndSendToServer,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import parseISO from 'date-fns/parseISO'
 import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
 import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
-import useDateTime from '@island.is/judicial-system-web/src/utils/hooks/useDateTime'
 import { useRouter } from 'next/router'
+import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 
 interface CaseData {
   case?: Case
 }
 
 export const RulingStepOne: React.FC = () => {
-  const custodyEndTimeRef = useRef<HTMLInputElement>(null)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
-  const [custodyEndDateErrorMessage, setCustodyEndDateErrorMessage] = useState(
-    '',
-  )
-  const [
-    isolationToTimeErrorMessage,
-    setIsolationToTimeErrorMessage,
-  ] = useState('')
-  const [custodyEndTimeErrorMessage, setCustodyEndTimeErrorMessage] = useState(
-    '',
-  )
-  const [
-    isolationToDateErrorMessage,
-    setIsolationToDateErrorMessage,
-  ] = useState('')
 
-  const [isolationToTime, setIsolationToTime] = useState<string>()
+  const [custodyEndDateIsValid, setCustodyEndDateIsValid] = useState(true)
+  const [isolationToIsValid, setIsolationToIsValid] = useState(true)
 
   const router = useRouter()
   const id = router.query.id
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
     fetchPolicy: 'no-cache',
-  })
-  const { isValidDate: isValidCustodyEndDate } = useDateTime({
-    date: workingCase?.custodyEndDate,
-  })
-  const { isValidTime: isValidCustodyEndTime } = useDateTime({
-    time: custodyEndTimeRef.current?.value,
   })
 
   const [updateCaseMutation] = useMutation(UpdateCaseMutation)
@@ -346,7 +321,7 @@ export const RulingStepOne: React.FC = () => {
                   </Text>
                 </Box>
                 <DateTime
-                  datepickerId="custodyEndDate"
+                  name="custodyEndDate"
                   datepickerLabel={
                     workingCase.type === CaseType.CUSTODY &&
                     workingCase.decision === CaseDecision.ACCEPTING
@@ -355,65 +330,22 @@ export const RulingStepOne: React.FC = () => {
                   }
                   selectedDate={
                     workingCase.custodyEndDate
-                      ? parseISO(workingCase.custodyEndDate?.toString())
-                      : null
+                      ? new Date(workingCase.custodyEndDate)
+                      : undefined
                   }
-                  datepickerErrorMessage={custodyEndDateErrorMessage}
-                  handleCloseCalander={(date) =>
-                    setAndSendDateToServer(
+                  minDate={new Date()}
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    newSetAndSendDateToServer(
                       'custodyEndDate',
-                      workingCase.custodyEndDate,
                       date,
-                      workingCase,
-                      true,
-                      setWorkingCase,
-                      updateCase,
-                      setCustodyEndDateErrorMessage,
-                    )
-                  }
-                  minDate={
-                    workingCase.isolationTo
-                      ? parseISO(workingCase.isolationTo?.toString())
-                      : undefined
-                  }
-                  dateIsRequired
-                  timeName="custodyEndTime"
-                  timeRef={custodyEndTimeRef}
-                  timeDefaultValue={
-                    workingCase.custodyEndDate?.includes('T')
-                      ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
-                      : workingCase.requestedCustodyEndDate?.includes('T')
-                      ? formatDate(
-                          workingCase.requestedCustodyEndDate,
-                          TIME_FORMAT,
-                        )
-                      : undefined
-                  }
-                  timeOnChange={(evt) =>
-                    validateAndSetTime(
-                      'custodyEndDate',
-                      workingCase.custodyEndDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
+                      valid,
                       workingCase,
                       setWorkingCase,
-                      custodyEndTimeErrorMessage,
-                      setCustodyEndTimeErrorMessage,
-                    )
-                  }
-                  timeOnBlur={(evt) =>
-                    validateAndSendTimeToServer(
-                      'custodyEndDate',
-                      workingCase.custodyEndDate,
-                      evt.target.value,
-                      ['empty', 'time-format'],
-                      workingCase,
+                      setCustodyEndDateIsValid,
                       updateCase,
-                      setCustodyEndTimeErrorMessage,
                     )
-                  }
-                  timeErrorMessage={custodyEndTimeErrorMessage}
-                  timeIsRequired
+                  }}
+                  required
                 />
               </Box>
             )}
@@ -443,81 +375,33 @@ export const RulingStepOne: React.FC = () => {
                       />
                     </Box>
                     <DateTime
-                      datepickerId="isolationTo"
+                      name="isolationTo"
                       datepickerLabel="Einangrun til"
-                      // If isolationTo has been set then use that otherwise, try to use custodyEndDate.
                       selectedDate={
                         workingCase.isolationTo
-                          ? parseISO(workingCase.isolationTo?.toString())
+                          ? new Date(workingCase.isolationTo)
                           : workingCase.custodyEndDate
-                          ? parseISO(workingCase.custodyEndDate?.toString())
-                          : null
-                      }
-                      // Isolation to should never last longer then the custody.
-                      maxDate={
-                        workingCase.custodyEndDate
-                          ? parseISO(workingCase.custodyEndDate?.toString())
+                          ? new Date(workingCase.custodyEndDate)
                           : undefined
                       }
                       // Isolation can never be set in the past.
                       minDate={new Date()}
-                      datepickerErrorMessage={isolationToDateErrorMessage}
-                      handleCloseCalander={(date) =>
-                        setAndSendDateToServer(
-                          'isolationTo',
-                          workingCase.isolationTo,
-                          date,
-                          workingCase,
-                          true,
-                          setWorkingCase,
-                          updateCase,
-                          setIsolationToDateErrorMessage,
-                        )
-                      }
-                      disabledDate={
-                        !workingCase.custodyRestrictions?.includes(
-                          CaseCustodyRestrictions.ISOLATION,
-                        )
-                      }
-                      disabledTime={
-                        !workingCase.isolationTo ||
-                        !workingCase.custodyRestrictions?.includes(
-                          CaseCustodyRestrictions.ISOLATION,
-                        )
-                      }
-                      timeOnChange={(evt) =>
-                        validateAndSetTime(
-                          'isolationTo',
-                          workingCase.isolationTo,
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          setWorkingCase,
-                          isolationToTimeErrorMessage,
-                          setIsolationToTimeErrorMessage,
-                          setIsolationToTime,
-                        )
-                      }
-                      timeOnBlur={(evt) =>
-                        validateAndSendTimeToServer(
-                          'isolationTo',
-                          workingCase.isolationTo,
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          updateCase,
-                          setIsolationToTimeErrorMessage,
-                        )
-                      }
-                      timeName="isolationToTime"
-                      timeDefaultValue={
-                        workingCase.isolationTo?.includes('T')
-                          ? formatDate(workingCase.isolationTo, TIME_FORMAT)
-                          : workingCase.custodyEndDate?.includes('T')
-                          ? formatDate(workingCase.custodyEndDate, TIME_FORMAT)
+                      maxDate={
+                        workingCase.custodyEndDate
+                          ? new Date(workingCase.custodyEndDate)
                           : undefined
                       }
-                      timeErrorMessage={isolationToTimeErrorMessage}
+                      onChange={(date: Date | undefined, valid: boolean) => {
+                        newSetAndSendDateToServer(
+                          'isolationTo',
+                          date,
+                          valid,
+                          workingCase,
+                          setWorkingCase,
+                          setIsolationToIsValid,
+                          updateCase,
+                        )
+                      }}
                       blueBox={false}
                       backgroundColor={
                         workingCase.custodyRestrictions?.includes(
@@ -539,8 +423,7 @@ export const RulingStepOne: React.FC = () => {
                 !workingCase.decision ||
                 !validate(workingCase.ruling || '', 'empty').isValid ||
                 (workingCase.decision !== CaseDecision.REJECTING &&
-                  (!isValidCustodyEndDate?.isValid ||
-                    !isValidCustodyEndTime?.isValid))
+                  (!custodyEndDateIsValid || !isolationToIsValid))
               }
             />
           </FormContentContainer>

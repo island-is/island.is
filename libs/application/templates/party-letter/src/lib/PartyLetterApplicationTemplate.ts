@@ -7,9 +7,8 @@ import {
   Application,
   DefaultEvents,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import { isValid } from 'kennitala'
 import { answerValidators } from './answerValidators'
+import { PartyLetterSchema } from './dataSchema'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -20,12 +19,6 @@ enum Roles {
   APPLICANT = 'applicant',
   SIGNATUREE = 'signaturee',
 }
-const dataSchema = z.object({
-  selectKennitala: z.string().refine((x) => isValid(x)),
-  partyLetter: z.string().length(1),
-  partyName: z.string(),
-  signatures: z.array(z.string()),
-})
 
 const PartyLetterApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -34,7 +27,7 @@ const PartyLetterApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PARTY_LETTER,
   name: 'Party letter',
-  dataSchema,
+  dataSchema: PartyLetterSchema,
   stateMachineConfig: {
     initial: 'draft',
     states: {

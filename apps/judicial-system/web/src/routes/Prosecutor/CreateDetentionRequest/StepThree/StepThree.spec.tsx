@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MockedProvider } from '@apollo/client/testing'
 
@@ -14,6 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
 import StepThree from './StepThree'
+import formatISO from 'date-fns/formatISO'
 
 describe('Create detention request, step three', () => {
   test('should not allow users to continue unless every required field has been filled out', async () => {
@@ -22,11 +23,15 @@ describe('Create detention request, step three', () => {
     useRouter.mockImplementation(() => ({
       query: { id: 'test_id_2' },
     }))
+
     const todaysDate = new Date()
-    const formattedTodaysDate = todaysDate.getDate().toString().padStart(2, '0')
-    const formattedTodaysMonth = (todaysDate.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')
+    const lastDateOfTheMonth = new Date(
+      todaysDate.getFullYear(),
+      todaysDate.getMonth() + 1,
+      0,
+      13,
+      37,
+    )
 
     render(
       <MockedProvider
@@ -42,10 +47,8 @@ describe('Create detention request, step three', () => {
               custodyProvisions: [CaseCustodyProvisions._95_1_C],
             } as UpdateCase,
             {
-              requestedCustodyEndDate: '2020-11-25',
-            } as UpdateCase,
-            {
-              requestedCustodyEndDate: '2020-11-25T13:37:00.00Z',
+              id: 'test_id_2',
+              requestedCustodyEndDate: formatISO(lastDateOfTheMonth),
             } as UpdateCase,
           ]),
         ]}
@@ -57,6 +60,29 @@ describe('Create detention request, step three', () => {
       </MockedProvider>,
     )
 
+    expect(
+      await screen.findByRole('button', {
+        name: /Halda áfram/i,
+      }),
+    ).toBeDisabled()
+
+    userEvent.click(await screen.findByLabelText('Gæsluvarðhald til *'))
+
+    const datePicker = await screen.findByTestId('date-time')
+
+    const lastDayOfTheMonth = lastDateOfTheMonth.getDate().toString()
+
+    const lastDays = within(datePicker).getAllByText(lastDayOfTheMonth)
+
+    const lastDayOfCurrentMonth = lastDays[lastDays.length - 1]
+
+    userEvent.click(lastDayOfCurrentMonth)
+
+    userEvent.type(
+      await screen.findByLabelText('Tímasetning (kk:mm) *'),
+      '13:37',
+    )
+
     // Act and Assert
     userEvent.type(
       await screen.findByLabelText(
@@ -65,24 +91,8 @@ describe('Create detention request, step three', () => {
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ille vero, si insipiens-quo certe, quoniam tyrannus -, numquam beatus; Cur iustitia laudatur? Haec et tu ita posuisti, et verba vestra sunt. Duo Reges: constructio interrete. Ait enim se, si uratur, Quam hoc suave! dicturum. ALIO MODO. Minime vero, inquit ille, consentit.',
     )
 
-    expect(
-      await screen.findByRole('button', {
-        name: /Halda áfram/i,
-      }),
-    ).toBeDisabled()
-
     userEvent.click(
       await screen.findByRole('checkbox', { name: 'c-lið 1. mgr. 95. gr.' }),
-    )
-
-    userEvent.type(
-      await screen.findByLabelText(/Gæsluvarðhald til */),
-      `${formattedTodaysDate}.${formattedTodaysMonth}.${todaysDate.getFullYear()}`,
-    )
-
-    userEvent.type(
-      await screen.findByLabelText('Tímasetning (kk:mm) *'),
-      '13:37',
     )
 
     expect(

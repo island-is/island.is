@@ -21,14 +21,14 @@ describe('create', () => {
     flightLegs: [
       {
         origin: 'VPN',
-        destination: 'AK',
+        destination: 'AEY',
         originalPrice: 50000,
         discountPrice: 30000,
         date: new Date('2021-03-12T12:35:50.971Z'),
       },
       {
         origin: 'VPN',
-        destination: 'AK',
+        destination: 'AEY',
         originalPrice: 50000,
         discountPrice: 30000,
         date: new Date('2021-03-12T12:35:50.971Z'),
@@ -49,7 +49,7 @@ describe('create', () => {
 
   it('should set the cooperation as norlandair when it is included in body', async () => {
     const airline = 'icelandair'
-    const result = await flightService.create(flightDto, user, airline)
+    const result = await flightService.create(flightDto, user, airline, false)
 
     expect(result.flightLegs.length).toEqual(2)
     expect(result.flightLegs[0].airline).toEqual(airline)

@@ -25,6 +25,7 @@
 /libs/application/templates/passport/                                                         @island-is/vice-versa
 /libs/api/domains/driving-license/                                                            @island-is/vice-versa
 /libs/api/domains/education/                                                                  @island-is/vice-versa
+/libs/clients/mms/                                                                            @island-is/vice-versa
 /libs/service-portal/driving-license/                                                         @island-is/vice-versa
 /libs/service-portal/eligibility/                                                             @island-is/vice-versa
 /libs/service-portal/education/                                                               @island-is/vice-versa @island-is/kosmos-kaos
@@ -35,6 +36,7 @@
 /libs/application/core/                                                                       @island-is/aranja
 /libs/application/data-providers/                                                             @island-is/aranja
 /libs/application/graphql/                                                                    @island-is/aranja
+/libs/application/ui-components/                                                              @island-is/aranja
 /libs/application/ui-fields/                                                                  @island-is/aranja
 /libs/application/ui-shell/                                                                   @island-is/aranja
 /libs/application/template-api-modules/                                                       @island-is/aranja
@@ -45,7 +47,7 @@
 /libs/contentful-translation-extension/                                                       @island-is/aranja
 /libs/localization/                                                                           @island-is/aranja
 /libs/utils/api/                                                                              @island-is/aranja
-/libs/vmst-client/                                                                            @island-is/aranja
+/libs/clients/vmst/                                                                           @island-is/aranja
 /libs/shared/form-fields/                                                                     @island-is/aranja
 
 /libs/application/templates/children-residence-change/                                        @island-is/kolibri-modern-family
@@ -62,6 +64,7 @@
 /apps/services/user-profile/                                                                  @island-is/sendiradid
 /libs/api/domains/documents/                                                                  @island-is/sendiradid
 /libs/api/domains/national-registry/                                                          @island-is/sendiradid @island-is/vice-versa
+/libs/clients/national-registry/                                                              @island-is/sendiradid @island-is/vice-versa
 /libs/service-portal/applications/                                                            @island-is/sendiradid
 /libs/service-portal/assets/                                                                  @island-is/sendiradid
 /libs/service-portal/constants/                                                               @island-is/sendiradid
@@ -81,6 +84,8 @@
 /libs/content-search-indexer/                                                                 @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/content-search/                                                             @island-is/stefna @island-is/kosmos-kaos @island-is/aranja
 /libs/api/domains/syslumenn/                                                                  @island-is/stefna
+/apps/web/screens/Organization/                                                               @island-is/stefna
+/apps/web/components/Organization/                                                            @island-is/stefna
 
 /libs/island-ui/                                                                              @island-is/island-ui
 
@@ -100,6 +105,7 @@
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /apps/services/xroad-collector/                                                               @island-is/advania
 /apps/services/documents                                                                      @island-is/advania
+/libs/clients/document-provider                                                               @island-is/advania
 
 /apps/skilavottord/                                                                           @island-is/deloitte
 /libs/application/templates/health-insurance/                                                 @island-is/deloitte

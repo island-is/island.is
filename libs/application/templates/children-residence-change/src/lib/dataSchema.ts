@@ -17,7 +17,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
     message: error.validation.approveChildrenResidenceChange.defaultMessage,
   }),
-  selectChild: z
+  selectedChildren: z
     .array(z.string())
     .min(1, { message: error.validation.selectChild.defaultMessage }),
   residenceChangeReason: z.string().optional(),
@@ -28,13 +28,14 @@ export const dataSchema = z.object({
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
-  // selectDuration: z
-  //   .enum(['temporary', 'permanent'])
-  //   .optional()
-  //   .refine((v) => v, {
-  //     message: 'Velja þarf valmöguleika',
-  //   }),
-  selectDuration: z.array(z.string()),
+  durationType: z
+    .enum(['permanent', 'temporary'])
+    .optional()
+    .refine((v) => v, error.validation.durationType.defaultMessage),
+  durationDate: z
+    .string()
+    .optional()
+    .refine((v) => v && v !== '', error.validation.durationDate.defaultMessage),
   interview: z.enum(['yes', 'no']).refine((v) => v, {
     message: error.validation.interview.defaultMessage,
   }),

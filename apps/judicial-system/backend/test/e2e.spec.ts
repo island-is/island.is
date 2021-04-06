@@ -230,6 +230,7 @@ function caseToCCase(dbCase: Case) {
     courtEndTime: theCase.courtEndTime && theCase.courtEndTime.toISOString(),
     custodyEndDate:
       theCase.custodyEndDate && theCase.custodyEndDate.toISOString(),
+    rulingDate: theCase.rulingDate && theCase.rulingDate.toISOString(),
     judge: theCase.judge && userToCUser(theCase.judge),
     registrar: theCase.registrar && userToCUser(theCase.registrar),
     isolationTo: theCase.isolationTo && theCase.isolationTo.toISOString(),
@@ -348,6 +349,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.prosecutorAppealAnnouncement || null).toBe(
     caseTwo.prosecutorAppealAnnouncement || null,
   )
+  expect(caseOne.rulingDate || null).toBe(caseTwo.rulingDate || null)
   expect(caseOne.judgeId || null).toBe(caseTwo.judgeId || null)
   expectUsersToMatch(caseOne.judge, caseTwo.judge)
   expect(caseOne.registrarId || null).toBe(caseTwo.registrarId || null)
@@ -370,42 +372,6 @@ describe('Institution', () => {
 })
 
 describe('User', () => {
-  it('GET /api/user/:id should get the user', async () => {
-    await request(app.getHttpServer())
-      .get(`/api/user/${prosecutor.id}`)
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
-      .send()
-      .expect(200)
-      .then((response) => {
-        const apiUser = response.body
-
-        expectUsersToMatch(apiUser, prosecutor)
-      })
-  })
-
-  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
-    let dbUser: CUser
-
-    await User.findOne({
-      where: { national_id: judgeNationalId },
-      include: [{ model: Institution, as: 'institution' }],
-    })
-      .then((value) => {
-        dbUser = userToCUser(value.toJSON() as User)
-
-        return request(app.getHttpServer())
-          .get(`/api/user/?nationalId=${judgeNationalId}`)
-          .set('authorization', `Bearer ${environment.auth.secretToken}`)
-          .send()
-          .expect(200)
-      })
-      .then((response) => {
-        const apiUser = response.body
-
-        expectUsersToMatch(apiUser, dbUser)
-      })
-  })
-
   it('POST /api/user should create a user', async () => {
     const data = {
       nationalId: '1234567890',
@@ -512,6 +478,50 @@ describe('User', () => {
       })
       .then((newValue) => {
         expectUsersToMatch(userToCUser(newValue.toJSON() as User), apiUser)
+      })
+  })
+
+  it('GET /api/users should get all users', async () => {
+    await request(app.getHttpServer())
+      .get('/api/users')
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        // Check the response - should have at least the three default users
+        expect(response.body.length).toBeGreaterThanOrEqual(3)
+      })
+  })
+
+  it('GET /api/user/:id should get the user', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/user/${prosecutor.id}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        expectUsersToMatch(response.body, prosecutor)
+      })
+  })
+
+  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
+    let dbUser: CUser
+
+    await User.findOne({
+      where: { national_id: judgeNationalId },
+      include: [{ model: Institution, as: 'institution' }],
+    })
+      .then((value) => {
+        dbUser = userToCUser(value.toJSON() as User)
+
+        return request(app.getHttpServer())
+          .get(`/api/user/?nationalId=${judgeNationalId}`)
+          .set('authorization', `Bearer ${environment.auth.secretToken}`)
+          .send()
+          .expect(200)
+      })
+      .then((response) => {
+        expectUsersToMatch(response.body, dbUser)
       })
   })
 })
@@ -790,23 +800,62 @@ describe('Case', () => {
   })
 
   it('GET /api/case/:id/signature should confirm a signature for a case', async () => {
+    let dbCase: CCase
+
     await Case.create({
       ...getCaseData(true, true, true),
       state: CaseState.ACCEPTED,
     })
-      .then((value) =>
-        request(app.getHttpServer())
-          .get(`/api/case/${value.id}/signature`)
+      .then((value) => {
+        dbCase = caseToCCase(value)
+
+        return request(app.getHttpServer())
+          .get(`/api/case/${dbCase.id}/signature`)
           .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${judgeAuthCookie}`)
           .query({ documentToken: 'DEVELOPMENT' })
-          .expect(200),
-      )
+          .expect(200)
+      })
       .then(async (response) => {
         // Check the response
         expect(response.body).not.toBeNull()
         expect(response.body.documentSigned).toBe(true)
         expect(response.body.code).toBeUndefined()
         expect(response.body.message).toBeUndefined()
+
+        // Check the data in the database
+        return Case.findOne({
+          where: { id: dbCase.id },
+          include: [
+            {
+              model: User,
+              as: 'prosecutor',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'judge',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+            {
+              model: User,
+              as: 'registrar',
+              include: [{ model: Institution, as: 'institution' }],
+            },
+          ],
+        })
+      })
+      .then((value) => {
+        const updatedDbCase = caseToCCase(value)
+
+        expect(updatedDbCase.rulingDate).not.toBeNull()
+        expectCasesToMatch(updatedDbCase, {
+          ...dbCase,
+          modified: updatedDbCase.modified,
+          rulingDate: updatedDbCase.rulingDate,
+          prosecutor,
+          judge,
+          registrar,
+        })
       })
   })
 

@@ -27,14 +27,15 @@ import {
   CreateContactInput,
   CreateHelpdeskInput,
 } from './dto'
-import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
+import { AdminGuard } from './utils/admin.guard'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Resolver()
 export class DocumentProviderResolver {
   constructor(private documentProviderService: DocumentProviderService) {}
 
+  @UseGuards(AdminGuard)
   @Query(() => [Organisation])
   async getProviderOrganisations(
     @CurrentUser() user: User,
@@ -42,6 +43,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.getOrganisations(user.authorization)
   }
 
+  @UseGuards(AdminGuard)
   @Query(() => Organisation)
   async getProviderOrganisation(
     @Args('nationalId') nationalId: string,
@@ -56,19 +58,7 @@ export class DocumentProviderResolver {
     return await this.documentProviderService.organisationExists(nationalId)
   }
 
-  @Mutation(() => Organisation, { nullable: true })
-  async createOrganisation(
-    @Args('input') input: CreateOrganisationInput,
-    @CurrentUser() user: User,
-  ): Promise<Organisation | null> {
-    logger.info(`createOrganisation: user: ${user.nationalId}`)
-
-    return this.documentProviderService.createOrganisation(
-      input,
-      user.authorization,
-    )
-  }
-
+  @UseGuards(AdminGuard)
   @Mutation(() => Organisation)
   async updateOrganisation(
     @Args('id') id: string,
@@ -86,6 +76,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact, { nullable: true })
   async createAdministrativeContact(
     @Args('organisationId') organisationId: string,
@@ -101,6 +92,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact)
   async updateAdministrativeContact(
     @Args('organisationId') organisationId: string,
@@ -120,6 +112,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact, { nullable: true })
   async createTechnicalContact(
     @Args('organisationId') organisationId: string,
@@ -135,6 +128,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Contact)
   async updateTechnicalContact(
     @Args('organisationId') organisationId: string,
@@ -154,6 +148,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Helpdesk, { nullable: true })
   async createHelpdesk(
     @Args('organisationId') organisationId: string,
@@ -169,6 +164,7 @@ export class DocumentProviderResolver {
     )
   }
 
+  @UseGuards(AdminGuard)
   @Mutation(() => Helpdesk)
   async updateHelpdesk(
     @Args('organisationId') organisationId: string,
@@ -200,6 +196,7 @@ export class DocumentProviderResolver {
     return this.documentProviderService.createProviderOnTest(
       input.nationalId,
       input.clientName,
+      user.authorization,
     )
   }
 

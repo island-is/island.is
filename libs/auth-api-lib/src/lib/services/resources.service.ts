@@ -18,6 +18,7 @@ import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { ApiResourceSecretDTO } from '../entities/dto/api-resource-secret.dto'
 import { ApiResourceAllowedScopeDTO } from '../entities/dto/api-resource-allowed-scope.dto'
+import { UserClaimDTO } from '../entities/dto/user-claim.dto'
 
 @Injectable()
 export class ResourcesService {
@@ -667,6 +668,36 @@ export class ResourcesService {
       attributes: [
         [Sequelize.fn('DISTINCT', Sequelize.col('claim_name')), 'claimName'],
       ],
+    })
+  }
+
+  /** Creates a new user claim for Api Resource */
+  async createApiResourceUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiResourceUserClaim | null> {
+    return this.apiResourceUserClaim.create({
+      apiResourceName: claim.resourceName,
+      claimName: claim.claimName,
+    })
+  }
+
+  /** Creates a new user claim for Identity Resource */
+  async createIdentityResourceUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<IdentityResourceUserClaim | null> {
+    return this.identityResourceUserClaimModel.create({
+      identityResourceName: claim.resourceName,
+      claimName: claim.claimName,
+    })
+  }
+
+  /** Creates a new user claim for Api Scope */
+  async createApiScopeUserClaim(
+    claim: UserClaimDTO,
+  ): Promise<ApiScopeUserClaim | null> {
+    return this.apiScopeUserClaimModel.create({
+      apiScopeName: claim.resourceName,
+      claimName: claim.claimName,
     })
   }
 }

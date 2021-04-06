@@ -23,6 +23,7 @@ interface InputComponentProps {
   required?: boolean
   placeholder?: string
   autoFocus?: boolean
+  maxLength?: number
   size?: keyof typeof styles.inputSize
   onFocus?: (
     event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -56,6 +57,7 @@ export interface InputProps extends InputComponentProps {
   tooltip?: string
   backgroundColor?: ResponsiveProp<InputBackgroundColor>
   textarea?: boolean
+  maxLength?: number
 }
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
@@ -101,6 +103,7 @@ export const Input = forwardRef(
       name,
       label,
       errorMessage = '',
+      maxLength,
       hasError = Boolean(errorMessage),
       value,
       defaultValue,
@@ -196,6 +199,7 @@ export const Input = forwardRef(
               ref={mergedRefs}
               placeholder={placeholder}
               value={value}
+              maxLength={maxLength}
               defaultValue={defaultValue}
               onFocus={(e) => {
                 setHasFocus(true)

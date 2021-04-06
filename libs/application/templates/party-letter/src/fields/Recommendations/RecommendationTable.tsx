@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
 import { Application } from '@island.is/application/core'
 import { Signature } from '../../types'
-import { Box, Table as T, Icon } from '@island.is/island-ui/core'
+import { Box, Table as T, Tooltip } from '@island.is/island-ui/core'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface RecommendationProps {
   application: Application
@@ -9,6 +11,7 @@ interface RecommendationProps {
 }
 
 const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
+  const { formatMessage } = useLocale()
   const renderRow = (signature: Signature, index: number) => {
     const cell = Object.entries(signature)
     return (
@@ -31,7 +34,13 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
                   >
                     {value}
                     <Box marginLeft={2}>
-                      <Icon icon="warning" color="blue400" />
+                      <Tooltip
+                        color="blue400"
+                        iconSize="medium"
+                        text={formatMessage(
+                          m.validationMessages.signatureInvalid,
+                        )}
+                      />
                     </Box>
                   </Box>
                 ) : (
@@ -51,10 +60,14 @@ const RecommendationTable: FC<RecommendationProps> = ({ signatures }) => {
     <T.Table>
       <T.Head>
         <T.Row>
-          <T.HeadData>Dags skráðkóli</T.HeadData>
-          <T.HeadData>Nafn</T.HeadData>
-          <T.HeadData>Kennitala</T.HeadData>
-          <T.HeadData box={{ textAlign: 'right' }}>Heimilisfang</T.HeadData>
+          <T.HeadData>{formatMessage(m.recommendations.thDate)}</T.HeadData>
+          <T.HeadData>{formatMessage(m.recommendations.thName)}</T.HeadData>
+          <T.HeadData>
+            {formatMessage(m.recommendations.thNationalNumber)}
+          </T.HeadData>
+          <T.HeadData box={{ textAlign: 'right' }}>
+            {formatMessage(m.recommendations.thAddress)}
+          </T.HeadData>
         </T.Row>
       </T.Head>
       <T.Body>

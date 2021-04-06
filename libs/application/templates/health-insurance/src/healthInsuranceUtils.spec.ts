@@ -7,7 +7,7 @@ import {
   getDraftApplications,
 } from './healthInsuranceUtils'
 
-describe('health insurance utils', () => {
+describe('Health insurance utils', () => {
   const applicant = {
     nationalId: '1234567890',
     fullName: 'Test name',
@@ -23,22 +23,21 @@ describe('health insurance utils', () => {
   }
 
   const createApplication = (
-    answers?: object,
-    typeId?: string,
-    externalData?: any,
     applicationState = 'draft',
     id = faker.random.uuid(),
+    externalData?: any,
+    createDate?: string,
   ) =>
     (({
       id: id,
       state: applicationState,
       applicant: applicant.nationalId,
       assignees: [],
-      typeId: typeId ?? ApplicationTypes.HEALTH_INSURANCE,
+      typeId: ApplicationTypes.HEALTH_INSURANCE,
       modified: new Date(),
-      created: new Date(),
+      created: createDate ?? new Date(),
       attachments: {},
-      answers: answers ?? {},
+      answers: {},
       externalData: {
         nationalRegistry:
           externalData?.nationalRegistry ?? undefinedExternalData,
@@ -52,7 +51,7 @@ describe('health insurance utils', () => {
       },
     } as unknown) as Application)
 
-  describe('Filter draft applications', () => {
+  describe('Check draft applications', () => {
     it('should return false if draft application list is undefined', () => {
       // assert
       const application = createApplication()
@@ -75,28 +74,26 @@ describe('health insurance utils', () => {
         applications: otherApplications,
       }
 
-      const application = createApplication(undefined, undefined, externalData)
+      const application = createApplication(
+        'draft',
+        faker.random.uuid(),
+        externalData,
+      )
 
       // act and arrange
       expect(hasActiveDraftApplication(application.externalData)).toEqual(false)
     })
 
-    it('should return false if there is only one (current) draft in application list', () => {
+    it('should return false if there is only one draft in application list', () => {
       // assert
       const currentApplicationId = faker.random.uuid()
 
       const otherApplications = {
         data: [
-          createApplication(
-            undefined,
-            undefined,
-            undefined,
-            'draft',
-            currentApplicationId,
-          ),
-          createApplication(undefined, undefined, undefined, 'inReview'),
-          createApplication(undefined, undefined, undefined, 'inReview'),
-          createApplication(undefined, undefined, undefined, 'inReview'),
+          createApplication('draft', currentApplicationId),
+          createApplication('inReview'),
+          createApplication('inReview'),
+          createApplication('inReview'),
         ],
         status: 'success',
         date: new Date(),
@@ -107,32 +104,25 @@ describe('health insurance utils', () => {
       }
 
       const application = createApplication(
-        undefined,
-        undefined,
-        externalData,
+        'draft',
         currentApplicationId,
+        externalData,
       )
 
       // act and arrange
       expect(hasActiveDraftApplication(application.externalData)).toEqual(false)
     })
 
-    it('should return true if there is more than one drafts in application list and is not active application', () => {
+    it('should return true if there is more than one draft in application list', () => {
       // assert
       const currentApplicationId = faker.random.uuid()
 
       const otherApplications = {
         data: [
-          createApplication(
-            undefined,
-            undefined,
-            undefined,
-            'draft',
-            currentApplicationId,
-          ),
-          createApplication(undefined, undefined, undefined),
-          createApplication(undefined, undefined, undefined, 'inReview'),
-          createApplication(undefined, undefined, undefined, 'inReview'),
+          createApplication('draft', currentApplicationId),
+          createApplication('draft'),
+          createApplication('inReview'),
+          createApplication('inReview'),
         ],
         status: 'success',
         date: new Date(),
@@ -144,10 +134,9 @@ describe('health insurance utils', () => {
 
       // act
       const application = createApplication(
-        undefined,
-        undefined,
-        externalData,
+        'draft',
         currentApplicationId,
+        externalData,
       )
 
       const hasActiveDraft = hasActiveDraftApplication(application.externalData)
@@ -162,7 +151,7 @@ describe('health insurance utils', () => {
       // Check so that we get true
       expect(hasActiveDraft).toEqual(true)
 
-      // check so that the oldest is not the current active.
+      // Check so that the oldest is not the current active.
       expect(currentApplicationId).not.toBe(oldestDraftId)
 
       // Check that we dont use any applications that are not drafts.
@@ -171,10 +160,6 @@ describe('health insurance utils', () => {
           expect.not.objectContaining({
             state: 'inReview',
           }),
-        ]),
-      )
-      expect(drafts).toEqual(
-        expect.arrayContaining([
           expect.objectContaining({
             state: 'draft',
           }),
@@ -182,9 +167,90 @@ describe('health insurance utils', () => {
       )
     })
 
-    // it('should return false if oldest draft is current application', () => {
-    // })
+    it('should return false if oldest draft is current application', () => {
+      // assert
+      const currentApplicationId = faker.random.uuid()
 
-    // TODO add test to check that dates are sorted by ascending
+      const windowSpy = jest.spyOn(window, 'window', 'get')
+
+      windowSpy.mockImplementation(
+        () =>
+          ({
+            location: {
+              pathname: `/umsoknir/sjukratryggingar/${currentApplicationId}`,
+            },
+          } as any),
+      )
+
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+
+      const otherApplications = {
+        data: [
+          createApplication(
+            'draft',
+            currentApplicationId,
+            faker.random.uuid(),
+            yesterday,
+          ),
+          createApplication('draft'),
+          createApplication('inReview'),
+          createApplication('inReview'),
+        ],
+        status: 'success',
+        date: new Date(),
+      }
+
+      const externalData = {
+        applications: otherApplications,
+      }
+
+      // act
+      const application = createApplication(
+        'draft',
+        currentApplicationId,
+        externalData,
+      )
+
+      const hasActiveDraft = hasActiveDraftApplication(application.externalData)
+
+      const oldestDraftId = getOldestDraftApplicationId(
+        application?.externalData?.applications?.data as Applications[],
+      )
+
+      // arrange
+      expect(hasActiveDraft).toEqual(false)
+      expect(currentApplicationId).toBe(oldestDraftId)
+
+      windowSpy.mockRestore()
+    })
+  })
+  describe('Getting oldest draft application id', () => {
+    it('should return application that was created first', () => {
+      // assert
+      const expectedApplicationId = faker.random.uuid()
+
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+
+      const lastYear = new Date()
+      lastYear.setDate(lastYear.getDate() - 365)
+
+      const applications = [
+        createApplication('draft', expectedApplicationId, undefined, lastYear),
+        createApplication('draft', faker.random.uuid(), undefined, yesterday),
+        createApplication('draft'),
+        createApplication('inReview', faker.random.uuid(), undefined, lastYear),
+        createApplication('inReview'),
+      ]
+
+      // act
+      const actualApplicationId = getOldestDraftApplicationId(
+        (applications as unknown) as Applications[],
+      )
+
+      // assert
+      expect(expectedApplicationId).toBe(actualApplicationId)
+    })
   })
 })

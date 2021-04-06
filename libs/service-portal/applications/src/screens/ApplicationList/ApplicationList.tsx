@@ -16,29 +16,28 @@ import { useApplications } from '@island.is/service-portal/graphql'
 import { Application, getSlugFromType } from '@island.is/application/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import * as Sentry from '@sentry/react'
-import { useHistory } from 'react-router-dom'
 
 import { m } from '../../lib/messages'
 
+const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
 const isStaging = window.location.origin.includes('beta.staging01.devland.is')
-const isProduction = window.location.origin === 'https://island.is'
 
-const baseUrlForm = isDev
-  ? 'https://dev01.devland.is/umsoknir'
+const baseUrlForm = isLocalhost
+  ? 'http://localhost:4242/umsoknir'
+  : isDev
+  ? 'https://beta.dev01.devland.is/umsoknir'
   : isStaging
-  ? 'https://staging01.devland.is/umsoknir'
-  : isProduction
-  ? 'https://island.is/umsoknir'
-  : 'http://localhost:4242/umsoknir'
+  ? 'https://beta.staging01.devland.is/umsoknir'
+  : 'https://island.is/umsoknir'
 
 const ApplicationList: ServicePortalModuleComponent = () => {
   useNamespaces('sp.applications')
+
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
   const { formatMessage, lang } = useLocale()
   const { data: applications, loading, error } = useApplications()
-  const history = useHistory()
   const dateFormat = lang === 'is' ? 'dd.MM.yyyy' : 'MM/dd/yyyy'
 
   return (
@@ -103,7 +102,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               text={
                 isComplete
                   ? formatMessage(m.cardStatusCopyDone)
-                  : formatMessage(m.cardStatusCopyDone)
+                  : formatMessage(m.cardStatusCopyInProgress)
               }
               progressMeter={{
                 active: !isComplete,

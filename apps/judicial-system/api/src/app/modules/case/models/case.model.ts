@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { User } from '../../user'
+import { File } from '../../file'
 import { Notification } from './notification.model'
 
 @ObjectType()
@@ -152,14 +153,14 @@ export class Case implements TCase {
   @Field({ nullable: true })
   isCustodyEndDateInThePast?: boolean
 
-  @Field({ nullable: true })
-  readonly isolationTo?: string
-
   @Field(() => [String], { nullable: true })
   readonly custodyRestrictions?: CaseCustodyRestrictions[]
 
   @Field({ nullable: true })
   readonly otherRestrictions?: string
+
+  @Field({ nullable: true })
+  readonly isolationTo?: string
 
   @Field(() => String, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
@@ -176,6 +177,9 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly prosecutorAppealAnnouncement?: string
 
+  @Field({ nullable: true })
+  readonly rulingDate?: string
+
   @Field(() => User, { nullable: true })
   readonly judge?: User
 
@@ -190,4 +194,7 @@ export class Case implements TCase {
 
   @Field(() => [Notification], { nullable: true })
   readonly notifications?: Notification[]
+
+  @Field(() => [File], { nullable: true })
+  readonly files?: File[]
 }
