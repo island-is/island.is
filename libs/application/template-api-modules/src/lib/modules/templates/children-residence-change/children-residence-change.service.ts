@@ -113,11 +113,11 @@ export class ChildrenResidenceChangeService {
           : formatDate(answers.selectDuration[1]),
     }
 
-    // const response = await this.syslumennService.uploadData(
-    //   participants,
-    //   attachment,
-    //   extraData,
-    // )
+    const response = await this.syslumennService.uploadData(
+      participants,
+      attachment,
+      extraData,
+    )
 
     await this.sharedTemplateAPIService.sendEmailWithAttachment(
       generateApplicationSubmittedEmail,
