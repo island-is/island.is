@@ -31,8 +31,10 @@ export class InstitutionCollaborationService {
       (props) =>
         generateApplicationEmail(
           props,
-          this.institutionConfig.senderEmailAddress,
-          this.institutionConfig.recipientEmailAddress,
+          this.institutionConfig.applicationSenderName,
+          this.institutionConfig.applicationSenderEmail,
+          this.institutionConfig.applicationRecipientName,
+          this.institutionConfig.applicationRecipientEmail,
           attachments,
         ),
       application,
@@ -42,7 +44,8 @@ export class InstitutionCollaborationService {
       (props) =>
         generateConfirmationEmail(
           props,
-          this.institutionConfig.senderEmailAddress,
+          this.institutionConfig.applicationSenderName,
+          this.institutionConfig.applicationSenderEmail,
           attachments,
         ),
       application,

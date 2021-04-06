@@ -8,14 +8,16 @@ import { InstitutionAttachment, NodemailAttachment } from '../types'
 interface ConfirmationEmail {
   (
     props: EmailTemplateGeneratorProps,
-    senderEmailAddress: string,
+    applicationSenderName: string,
+    applicationSenderEmail: string,
     attachments: InstitutionAttachment[],
   ): SendMailOptions
 }
 
 export const generateConfirmationEmail: ConfirmationEmail = (
   props,
-  senderEmailAddress,
+  applicationSenderName,
+  applicationSenderEmail,
   attachments,
 ) => {
   const {
@@ -29,9 +31,13 @@ export const generateConfirmationEmail: ConfirmationEmail = (
   )
 
   const contactEmail = getValueViaPath(application.answers, 'contact.email')
+  const contactName = getValueViaPath(application.answers, 'contact.name')
 
   const secondaryContactEmail =
     getValueViaPath(application.answers, 'secondaryContact.email') || ''
+
+  const secondaryContactName =
+    getValueViaPath(application.answers, 'secondaryContact.name') || ''
 
   const subject = `Umsókn þín fyrir ${institutionName} hefur verið móttekin.`
   const overview = applicationOverviewTemplate(application)
@@ -58,17 +64,17 @@ export const generateConfirmationEmail: ConfirmationEmail = (
 
   return {
     from: {
-      name: '',
-      address: senderEmailAddress,
+      name: applicationSenderName,
+      address: applicationSenderEmail,
     },
     to: [
       {
-        name: '',
+        name: contactName as string,
         address: contactEmail as string,
       },
     ],
     cc: {
-      name: '',
+      name: secondaryContactName as string,
       address: secondaryContactEmail as string,
     },
     attachments: mailAttachments,

@@ -8,16 +8,20 @@ import { InstitutionAttachment, NodemailAttachment } from '../types'
 interface ApplicationEmail {
   (
     props: EmailTemplateGeneratorProps,
-    applicationSender: string,
-    applicationRecipient: string,
+    applicationSenderName: string,
+    applicationSenderEmail: string,
+    applicationRecipientName: string,
+    applicationRecipientEmail: string,
     attachments: InstitutionAttachment[],
   ): SendMailOptions
 }
 
 export const generateApplicationEmail: ApplicationEmail = (
   props,
-  applicationSender,
-  applicationRecipient,
+  applicationSenderName,
+  applicationSenderEmail,
+  applicationRecipientName,
+  applicationRecipientEmail,
   attachments,
 ): SendMailOptions => {
   const {
@@ -45,13 +49,13 @@ export const generateApplicationEmail: ApplicationEmail = (
 
   return {
     from: {
-      name: 'Stafrænt Ísland',
-      address: applicationSender,
+      name: applicationSenderName,
+      address: applicationSenderEmail,
     },
     to: [
       {
-        name: '',
-        address: applicationRecipient,
+        name: applicationRecipientName,
+        address: applicationRecipientEmail,
       },
     ],
     attachments: mailAttachments,
