@@ -26,6 +26,7 @@ export class InstitutionCollaborationService {
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     const attachments = this.prepareAttachments(application)
+
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
         generateApplicationEmail(
@@ -42,6 +43,7 @@ export class InstitutionCollaborationService {
         generateConfirmationEmail(
           props,
           this.institutionConfig.senderEmailAddress,
+          attachments,
         ),
       application,
     )

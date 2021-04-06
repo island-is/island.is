@@ -3,12 +3,7 @@ import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
 import { getValueViaPath } from '@island.is/application/core'
-import { InstitutionAttachment } from '../types'
-
-export interface NodemailAttachment {
-  filename: string
-  href: string
-}
+import { InstitutionAttachment, NodemailAttachment } from '../types'
 
 interface ApplicationEmail {
   (

@@ -3,16 +3,20 @@ import { EmailTemplateGeneratorProps } from '../../../../types'
 import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
 import { getValueViaPath } from '@island.is/application/core'
+import { InstitutionAttachment, NodemailAttachment } from '../types'
+
 interface ConfirmationEmail {
   (
     props: EmailTemplateGeneratorProps,
     senderEmailAddress: string,
+    attachments: InstitutionAttachment[],
   ): SendMailOptions
 }
 
 export const generateConfirmationEmail: ConfirmationEmail = (
   props,
   senderEmailAddress,
+  attachments,
 ) => {
   const {
     application,
@@ -42,6 +46,15 @@ export const generateConfirmationEmail: ConfirmationEmail = (
         <h2>Yfirlit umsóknar</h2>
         ${overview}
       `)
+  const mailAttachments = attachments
+    ? attachments.map(
+        ({ url, name }) =>
+          ({
+            filename: name,
+            href: url,
+          } as NodemailAttachment),
+      )
+    : []
 
   return {
     from: {
@@ -58,6 +71,7 @@ export const generateConfirmationEmail: ConfirmationEmail = (
       name: '',
       address: secondaryContactEmail as string,
     },
+    attachments: mailAttachments,
     subject,
     html: body,
   }
