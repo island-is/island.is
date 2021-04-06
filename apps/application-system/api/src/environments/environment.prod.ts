@@ -27,7 +27,7 @@ export default {
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl,
     syslumenn: {
-      url: 'https://api.syslumenn.is/api',
+      url: 'https://api.syslumenn.is/dev',
       username: process.env.SYSLUMENN_USERNAME,
       password: process.env.SYSLUMENN_PASSWORD,
     },
