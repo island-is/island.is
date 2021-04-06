@@ -27,7 +27,6 @@ import {
   CreateContactInput,
   CreateHelpdeskInput,
 } from './dto'
-import { CreateOrganisationInput } from './dto/createOrganisation.input'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
 import { AdminGuard } from './utils/admin.guard'
 

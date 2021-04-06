@@ -13,7 +13,6 @@ import {
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
 import { DocumentProviderClientProd } from './client/documentProviderClientProd'
 import {
-  CreateOrganisationInput,
   UpdateOrganisationInput,
   UpdateContactInput,
   UpdateHelpdeskInput,
@@ -184,7 +183,7 @@ export class DocumentProviderService {
   async isLastModifierOfOrganisation(
     organisationNationalId: string,
     authorization: string,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     return await this.organisationsApi.organisationControllerIsLastModifierOfOrganisation(
       {
         nationalId: organisationNationalId,
