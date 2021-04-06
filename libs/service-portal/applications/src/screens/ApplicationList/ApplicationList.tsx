@@ -102,7 +102,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               text={
                 isComplete
                   ? formatMessage(m.cardStatusCopyDone)
-                  : formatMessage(m.cardStatusCopyDone)
+                  : formatMessage(m.cardStatusCopyInProgress)
               }
               progressMeter={{
                 active: !isComplete,
