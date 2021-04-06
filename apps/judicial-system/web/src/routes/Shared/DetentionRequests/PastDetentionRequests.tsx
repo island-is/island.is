@@ -73,18 +73,18 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
           row: { original: { type: CaseType; parentCase: Case } }
         }) => {
           return (
-            <Box display="flex" flexDirection="column">
-              <Text as="span">
+            <>
+              <Box component="span" display="block">
                 {row.row.original.type === CaseType.CUSTODY
                   ? 'Gæsluvarðhald'
                   : 'Farbann'}
-              </Text>
+              </Box>
               {row.row.original.parentCase && (
                 <Text as="span" variant="small">
                   Framlenging
                 </Text>
               )}
-            </Box>
+            </>
           )
         },
       },
