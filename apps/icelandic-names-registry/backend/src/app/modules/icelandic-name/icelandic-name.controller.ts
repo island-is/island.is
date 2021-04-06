@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Put,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -18,7 +19,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { IdsAuthGuard } from '@island.is/auth-nest-tools'
 
+import { NationalIdGuard } from '../../common'
 import { IcelandicNameService } from './icelandic-name.service'
 import { IcelandicName } from './icelandic-name.model'
 import { UpdateIcelandicNameBody, CreateIcelandicNameBody } from './dto'
@@ -68,6 +71,7 @@ export class IcelandicNameController {
     return await this.icelandicNameService.getByInitialLetter(initialLetter)
   }
 
+  @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Patch(':id')
   @ApiOkResponse()
   async updateNameById(
@@ -86,6 +90,7 @@ export class IcelandicNameController {
     return icelandicName
   }
 
+  @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Put()
   @HttpCode(201)
   @ApiCreatedResponse({
@@ -100,6 +105,7 @@ export class IcelandicNameController {
     return this.icelandicNameService.createName(body)
   }
 
+  @UseGuards(IdsAuthGuard, NationalIdGuard)
   @Delete(':id')
   @HttpCode(204)
   @ApiNoContentResponse({
