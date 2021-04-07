@@ -104,6 +104,15 @@ export const useS3Upload = (workingCase?: Case) => {
     setFiles(newFiles)
   }
 
+  const removeFileFromState = (file: UploadFile) => {
+    const newFiles = [...files]
+
+    if (newFiles.includes(file)) {
+      delete newFiles[files.indexOf(file)]
+      setFiles(newFiles)
+    }
+  }
+
   /**
    * Insert file in database.
    * @param size The file size.
@@ -144,20 +153,21 @@ export const useS3Upload = (workingCase?: Case) => {
     })
   }
 
-  const onRemove = (fileId: string) => {
+  const onRemove = (file: UploadFile) => {
     if (workingCase) {
       deleteFileMutation({
         variables: {
           input: {
             caseId: workingCase.id,
-            id: fileId,
+            id: file.key,
           },
         },
       }).then((res) => {
         if (!res.errors) {
-          // Remove file from state when file is deleted from S3
+          removeFileFromState(file)
         } else {
           // TODO: handle failure
+          console.log(res.errors)
         }
       })
     }
