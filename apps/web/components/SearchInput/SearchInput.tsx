@@ -426,28 +426,33 @@ const Results: FC<{
               <Text variant="eyebrow" color="purple400">
                 {quickContentLabel}
               </Text>
-              {(search.results.items as Article[] &
-                LifeEventPage[] &
-                AboutPage[] &
-                News[] &
-                SubArticle[])
+              {(search.results.items as
+                | (Article[] & LifeEventPage[] & AboutPage[] & News[])
+                | SubArticle[])
                 .slice(0, 5)
-                .map(({ id, title, slug, __typename }) => {
+                .map((item) => {
                   const { onClick, ...itemProps } = getItemProps({
                     item: '',
                   })
                   return (
                     <div
-                      key={id}
+                      key={item.id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
                     >
-                      <Link {...linkResolver(__typename as LinkType, [slug])}>
+                      <Link
+                        {...linkResolver(
+                          item.__typename as LinkType,
+                          item.parentSlug
+                            ? item.parentSlug.split('/')
+                            : [item.slug],
+                        )}
+                      >
                         <Text variant="h5" color="blue400">
-                          {title}
+                          {item.title}
                         </Text>
                       </Link>
                     </div>
