@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
 import { Header as IslandUIHeader, Link } from '@island.is/island-ui/core'
@@ -28,6 +28,7 @@ export const skilavottordUserQuery = gql`
 export const Header: FC = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
+  const [baseUrl, setBaseUrl] = useState<string>('island.is')
   const {
     activeLocale,
     locale,
@@ -62,8 +63,12 @@ export const Header: FC = () => {
     }
   }, [user, setUser])
 
+  useEffect(() => {
+    const baseUrl = getBaseUrl()
+    setBaseUrl(baseUrl)
+  }, [])
+
   const homeRoute = routes.home[user?.role as Role] ?? routes.home['citizen']
-  const baseUrl = getBaseUrl()
 
   return (
     <IslandUIHeader
