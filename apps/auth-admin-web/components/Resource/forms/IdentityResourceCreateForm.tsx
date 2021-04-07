@@ -8,7 +8,7 @@ import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 import { FormItem, FormPage } from './../../../entities/common/Translation'
 import TranslationUtils from './../../../utils/translation.utils'
-import { TranslationService } from 'apps/auth-admin-web/services/TranslationService'
+import stringify from 'csv-stringify'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -27,14 +27,21 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
-  const [translation, setTranslation] = useState<FormPage>(new FormPage())
+  const [translation, setTranslation] = useState<FormPage>(
+    TranslationUtils.getFormPage('IdentityResourceCreateForm'),
+  )
+  const [fields, setFields] = useState<Record<string, FormItem>>(
+    TranslationUtils.getFormPage('IdentityResourceCreateForm').fields,
+  )
 
   useEffect(() => {
     if (props.identityResource && props.identityResource.name) {
       setIsEditing(true)
       setAvailable(true)
     }
-    setTranslation(TranslationUtils.getFormPage('IdentityResourceCreateForm'))
+
+    // setFields(TranslationUtils.getFormPage('IdentityResourceCreateForm').fields)
+    // setTranslation(TranslationUtils.getFormPage('IdentityResourceCreateForm'))
   }, [props.identityResource])
 
   const checkAvailability = async (name: string) => {
@@ -70,7 +77,8 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
           <h1>{isEditing ? translation.editTitle : translation.title}</h1>
           <div className="identity-resource-form__container__form">
             <div className="identity-resource-form__help">
-              {translation.help}
+              {translation.help} - {translation.fields?.length} -{' '}
+              {fields['name'].label}
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="identity-resource-form__container__fields">
@@ -153,7 +161,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="description"
                     className="identity-resource-form__label"
                   >
-                    Description
+                    {translation.fields['description'].label}
                   </label>
                   <input
                     ref={register({
@@ -165,13 +173,17 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     defaultValue={props.identityResource.description}
                     className="identity-resource-form__input"
+                    placeholder={translation.fields['description'].placeholder}
+                    title={translation.fields['description'].helpText}
                   />
-                  <HelpBox helpText="The description value will be used e.g. on the consent screen." />
+                  <HelpBox
+                    helpText={translation.fields['description'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="description"
-                    message="Description needs to be in the right format"
+                    message={translation.fields['description'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="identityresource"
@@ -186,7 +198,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="enabled"
                     className="identity-resource-form__label"
                   >
-                    Enabled
+                    {translation.fields['enabled'].label}
                   </label>
                   <input
                     ref={register}
@@ -195,8 +207,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     type="checkbox"
                     defaultChecked={props.identityResource.enabled}
                     className="identity-resource-form__checkbox"
+                    title={translation.fields['enabled'].helpText}
                   />
-                  <HelpBox helpText="Specifies if the Identity Resource is enabled" />
+                  <HelpBox helpText={translation.fields['enabled'].helpText} />
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">
@@ -204,7 +217,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="showInDiscoveryDocument"
                     className="identity-resource-form__label"
                   >
-                    Show In Discovery Document
+                    {translation.fields['showInDiscoveryDocument'].label}
                   </label>
                   <input
                     ref={register}
@@ -215,8 +228,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       props.identityResource.showInDiscoveryDocument
                     }
                     className="identity-resource-form__checkbox"
+                    title={
+                      translation.fields['showInDiscoveryDocument'].helpText
+                    }
                   />
-                  <HelpBox helpText="Specifies whether this scope is shown in the discovery document." />
+                  <HelpBox
+                    helpText={
+                      translation.fields['showInDiscoveryDocument'].helpText
+                    }
+                  />
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">
@@ -224,7 +244,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="emphasize"
                     className="identity-resource-form__label"
                   >
-                    Emphasize
+                    {translation.fields['emphasize'].label}
                   </label>
                   <input
                     ref={register}
@@ -233,8 +253,11 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultChecked={props.identityResource.emphasize}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
+                    title={translation.fields['emphasize'].helpText}
                   />
-                  <HelpBox helpText="Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes." />
+                  <HelpBox
+                    helpText={translation.fields['emphasize'].helpText}
+                  />
                 </div>
 
                 <div className="identity-resource-form__container__checkbox__field">
@@ -242,7 +265,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="required"
                     className="identity-resource-form__label"
                   >
-                    Required
+                    {translation.fields['required'].label}
                   </label>
                   <input
                     ref={register}
@@ -251,8 +274,9 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                     defaultChecked={props.identityResource.required}
                     type="checkbox"
                     className="identity-resource-form__checkbox"
+                    title={translation.fields['required'].helpText}
                   />
-                  <HelpBox helpText="Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)" />
+                  <HelpBox helpText={translation.fields['required'].helpText} />
                 </div>
 
                 <section className="api-scope__section">
@@ -263,7 +287,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       htmlFor="grantToLegalGuardians"
                       className="api-scope-form__label"
                     >
-                      Grant To Legal Guardians
+                      {translation.fields['grantToLegalGuardians'].label}
                     </label>
                     <input
                       ref={register}
@@ -274,9 +298,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                         props.identityResource.grantToLegalGuardians
                       }
                       className="api-scope-form__checkbox"
-                      title="Should legal guardians automatically get this scope for their wards"
+                      title={
+                        translation.fields['grantToLegalGuardians'].helpText
+                      }
                     />
-                    <HelpBox helpText="Should legal guardians automatically get this scope for their wards" />
+                    <HelpBox
+                      helpText={
+                        translation.fields['grantToLegalGuardians'].helpText
+                      }
+                    />
                   </div>
 
                   <div className="api-scope-form__container__checkbox__field">
@@ -284,7 +314,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       htmlFor="grantToProcuringHolders"
                       className="api-scope-form__label"
                     >
-                      Grant To Procuring Holders
+                      {translation.fields['grantToProcuringHolders'].label}
                     </label>
                     <input
                       ref={register}
@@ -295,16 +325,22 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                         props.identityResource.grantToProcuringHolders
                       }
                       className="api-scope-form__checkbox"
-                      title="Should procuring holders automatically get this scope for their organisations"
+                      title={
+                        translation.fields['grantToProcuringHolders'].helpText
+                      }
                     />
-                    <HelpBox helpText="Should procuring holders automatically get this scope for their organisations" />
+                    <HelpBox
+                      helpText={
+                        translation.fields['grantToProcuringHolders'].helpText
+                      }
+                    />
                   </div>
                   <div className="api-scope-form__container__checkbox__field">
                     <label
                       htmlFor="allowExplicitDelegationGrant"
                       className="api-scope-form__label"
                     >
-                      Allow Explicit Delegation Grant
+                      {translation.fields['allowExplicitDelegationGrant'].label}
                     </label>
                     <input
                       ref={register}
@@ -315,16 +351,24 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                         props.identityResource.allowExplicitDelegationGrant
                       }
                       className="api-scope-form__checkbox"
-                      title="Should identities be able to delegate this scope to other users. Some scopes should not support delegation"
+                      title={
+                        translation.fields['allowExplicitDelegationGrant']
+                          .helpText
+                      }
                     />
-                    <HelpBox helpText="Should identities be able to delegate this scope to other users. Some scopes should not support delegation" />
+                    <HelpBox
+                      helpText={
+                        translation.fields['allowExplicitDelegationGrant']
+                          .helpText
+                      }
+                    />
                   </div>
                   <div className="api-scope-form__container__checkbox__field">
                     <label
                       htmlFor="automaticDelegationGrant"
                       className="api-scope-form__label"
                     >
-                      Automatic Delegation Grant
+                      {translation.fields['automaticDelegationGrant'].label}
                     </label>
                     <input
                       ref={register}
@@ -335,9 +379,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                         props.identityResource.automaticDelegationGrant
                       }
                       className="api-scope-form__checkbox"
-                      title="Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile"
+                      title={
+                        translation.fields['automaticDelegationGrant'].helpText
+                      }
                     />
-                    <HelpBox helpText="Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile" />
+                    <HelpBox
+                      helpText={
+                        translation.fields['automaticDelegationGrant'].helpText
+                      }
+                    />
                   </div>
 
                   <div className="api-scope-form__container__checkbox__field">
@@ -345,7 +395,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       htmlFor="alsoForDelegatedUser"
                       className="api-scope-form__label"
                     >
-                      Also For Delegated User
+                      {translation.fields['alsoForDelegatedUser'].label}
                     </label>
                     <input
                       ref={register}
@@ -356,9 +406,15 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                         props.identityResource.alsoForDelegatedUser
                       }
                       className="api-scope-form__checkbox"
-                      title="Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity"
+                      title={
+                        translation.fields['alsoForDelegatedUser'].helpText
+                      }
                     />
-                    <HelpBox helpText="Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity" />
+                    <HelpBox
+                      helpText={
+                        translation.fields['alsoForDelegatedUser'].helpText
+                      }
+                    />
                   </div>
                 </section>
 

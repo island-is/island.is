@@ -23,5 +23,77 @@
             "errorMessage": "Display name is required and needs to be in the right format",
             "available": "",
             "unAvailable": ""
+            }, 
+            "description": {
+            "label": "Description",
+            "placeholder": "Description for this resource",
+            "helpText": "The description value will be used e.g. on the consent screen.",
+            "errorMessage": "Description needs to be in the right format",
+            "available": "",
+            "unAvailable": ""
+            },
+            "showInDiscoveryDocument": {
+            "label": "Show In Discovery Document",
+            "placeholder": "",
+            "helpText": "Specifies whether this scope is shown in the discovery document.",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            }, 
+            "emphasize": {
+            "label": "Emphasize",
+            "placeholder": "",
+            "helpText": "Specifies whether the consent screen will emphasize this scope (if the consent screen wants to implement such a feature). Use this setting for sensitive or important scopes.",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            }, 
+            "required": {
+            "label": "Required",
+            "placeholder": "",
+            "helpText": "Specifies whether the user can de-select the scope on the consent screen (if the consent screen wants to implement such a feature)",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            }, 
+            "grantToLegalGuardians": {
+            "label": "Grant To Legal Guardians",
+            "placeholder": "",
+            "helpText": "Should legal guardians automatically get this scope for their wards",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            }, 
+            "grantToProcuringHolders": {
+            "label": "Grant To Procuring Holders",
+            "placeholder": "",
+            "helpText": "Should procuring holders automatically get this scope for their organisations",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            }, 
+            "allowExplicitDelegationGrant": {
+            "label": "Allow Explicit Delegation Grant",
+            "placeholder": "",
+            "helpText": "Should identities be able to delegate this scope to other users. Some scopes should not support delegation",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            }, 
+            "automaticDelegationGrant": {
+            "label": "Automatic Delegation Grant",
+            "placeholder": "",
+            "helpText": "Should this scope always be granted if a user has any other delegation grants. Mostly valid for system scopes. Let's say someone has a delegation grant for the @island.is/bills scope, they should automatically get the profile scope to look up the delegating identity's profile",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            }, 
+            "alsoForDelegatedUser": {
+            "label": "Also For Delegated User",
+            "placeholder": "",
+            "helpText": "Should this scope be kept around for the delegated user. Mostly valid for system scopes. When authenticated as a delegating identity, all non-required scopes are removed from the top-level scope array, indicating that the access token can mainly be used to get resources for the delegating identity",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
             }
         }}]}
