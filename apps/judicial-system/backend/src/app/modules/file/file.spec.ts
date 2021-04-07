@@ -20,7 +20,6 @@ describe('FileModule', () => {
     destroy: jest.Mock
   }
   let awsS3Service: AwsS3Service
-  let caseService: CaseService
   let fileController: FileController
 
   beforeEach(async () => {
@@ -72,7 +71,6 @@ describe('FileModule', () => {
     }).compile()
 
     awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
-    caseService = fileModule.get<CaseService>(CaseService)
     fileController = fileModule.get<FileController>(FileController)
   })
 
