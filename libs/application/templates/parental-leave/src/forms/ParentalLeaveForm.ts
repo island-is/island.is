@@ -716,10 +716,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
                   // HERE
-                  // excludeDates: (app) => getAllPeriodDates(app.answers.periods),
                   excludeDates: (app) => {
-                    // return getAllPeriodDates(app.answers.periods)
-                    return [new Date()]
+                    return getAllPeriodDates(app.answers.periods)
                   },
                   // (answers as {
                   //   periods: {
@@ -737,6 +735,9 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.endDate.label,
                       placeholder:
                         parentalLeaveFormMessages.endDate.placeholder,
+                      excludeDates: (app) => {
+                        return getAllPeriodDates(app.answers.periods)
+                      },
                     }),
                   ],
                 }),

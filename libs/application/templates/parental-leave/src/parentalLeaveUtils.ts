@@ -180,10 +180,9 @@ export const getOtherParentOptions = (application: Application) => {
 }
 
 export const getAllPeriodDates = (periods: Period[]) => {
-  console.log(periods)
-  return undefined
+  const filledPeriods = periods.filter((p) => p.startDate && p.endDate)
 
-  const dates = periods.flatMap((period) =>
+  const dates = filledPeriods.flatMap((period) =>
     eachDayOfInterval({
       start: new Date(period.startDate),
       end: new Date(period.endDate),
