@@ -13,6 +13,7 @@ import parseISO from 'date-fns/parseISO'
 import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/shared-components'
+import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 
 interface Props {
   cases: Case[]
@@ -60,7 +61,11 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
                 {row.row.original.accusedName}
               </Box>
               <Text as="span" variant="small">
-                {`kt. ${row.row.original.accusedNationalId}`}
+                {`kt. ${insertAt(
+                  row.row.original.accusedNationalId.replace('-', ''),
+                  '-',
+                  6,
+                )}`}
               </Text>
             </>
           )
