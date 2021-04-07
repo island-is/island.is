@@ -24,6 +24,7 @@ export * from './lib/entities/models/admin-access.model'
 export * from './lib/entities/models/idp-provider.model'
 export * from './lib/entities/models/translation.model'
 export * from './lib/entities/models/language.model'
+export * from './lib/entities/models/delegation.model'
 
 // DTO's
 export * from './lib/entities/dto/api-scopes.dto'
@@ -64,6 +65,7 @@ export * from './lib/services/access.service'
 export * from './lib/services/sequelizeConfig.service'
 export * from './lib/services/idp-provider.service'
 export * from './lib/services/translation.service'
+export * from './lib/services/delegations.service'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'

@@ -66,7 +66,7 @@ export class EducationService {
       (familyMember) =>
         nationalId === familyMember.Kennitala ||
         (!['1', '2', '7'].includes(familyMember.Kyn) &&
-          kennitala.info(nationalId).age < ADULT_AGE_LIMIT),
+          kennitala.info(familyMember.Kennitala).age < ADULT_AGE_LIMIT),
     )
   }
 
