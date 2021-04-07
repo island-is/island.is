@@ -37,9 +37,9 @@ export class AwsS3Service {
       this.s3.getSignedUrl(
         'getObject',
         {
-          Bucket: 'bucket',
-          Key: 'key',
-          Expires: +environment.files.timeToLivePost, // convert to number with +
+          Bucket: environment.files.bucket,
+          Key: key,
+          Expires: +environment.files.timeToLiveGet, // convert to number with +
         },
         (err, url) => {
           if (err) {
