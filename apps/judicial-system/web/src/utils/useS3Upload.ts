@@ -80,7 +80,7 @@ export const useS3Upload = (workingCase?: Case) => {
   /**
    * Get index of file in files. If file is not in files this returns the last index in files plus one.
    *
-   * Code smells
+   * Code smells:
    * This function is not pure, in that it sometimes returns the index of file in files and sometimes files.lenght
    *
    * @param file The file to search for in files.
