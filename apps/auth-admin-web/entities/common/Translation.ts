@@ -7,11 +7,14 @@ export class FormPage {
   id: string
   fields: Record<string, FormItem>
   title: string
-  sectionTitle1: string
+  sectionTitle1?: string
   editTitle: string
   help: string
   saveButton: string
   cancelButton: string
+  addButton?: string
+  removeButton?: string
+  removeConfirmation?: string
 }
 
 export class FormItem {

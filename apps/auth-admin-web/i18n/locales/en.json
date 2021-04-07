@@ -406,6 +406,99 @@
           "unAvailable": ""
         }
       }
+    },
+    {
+      "id": "ClientAllowedCorsOriginsForm",
+      "title": "Enter allowed cors origins",
+      "help": "Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any other origins (domain, scheme, or port) than its own from which a browser should permit loading of resources.",
+      "saveButton": "Next",
+      "cancelButton": "Back",
+      "removeButton": "Remove",
+      "addButton": "Add",
+      "sectionTitle1": "Allowed cors origins",
+      "removeConfirmation": "Are you sure want to delete this cors origin",
+      "fields": {
+        "origin": {
+          "label": "Allow cors origin",
+          "placeholder": "https://localhost:4200",
+          "helpText": "Enter an allowed cors origin",
+          "errorMessage": "Cors origin is required and needs to be in the right format"
+        },
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "0123456789",
+          "helpText": "The nationalId (Kennitala) registered for the api-resource-form",
+          "errorMessage": "NationalId must be 10 numeric characters",
+          "available": "",
+          "unAvailable": ""
+        },
+        "contactEmail": {
+          "label": "Contact Email",
+          "placeholder": "john@example.com",
+          "helpText": "Contact email for this Api Resource",
+          "errorMessage": "Contact email must be set and must be a valid email address",
+          "available": "",
+          "unAvailable": ""
+        },
+        "clientId": {
+          "label": "Client Id",
+          "placeholder": "example-client",
+          "helpText": "The unique identifier for this application. No spaces or special characters.",
+          "errorMessage": "The unique identifier for this application. No spaces or special characters.",
+          "available": "Available",
+          "unAvailable": "Unavailable"
+        },
+        "clientName": {
+          "label": "Display Name",
+          "placeholder": "Default Display Name",
+          "helpText": "Application name that will be seen on consent screens",
+          "errorMessage": "Display name is required since the client requires consent and needs to be in the right format",
+          "available": "",
+          "unAvailable": ""
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Example description",
+          "helpText": "Application description for use within AdminUI",
+          "errorMessage": "Description needs to be in the right format",
+          "available": "",
+          "unAvailable": ""
+        },
+        "baseUrl": {
+          "label": "Base Url",
+          "placeholder": "https://localhost:4200",
+          "helpText": "Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc",
+          "errorMessage": "Base Url is required and needs to be in the right format",
+          "available": "",
+          "unAvailable": "",
+          "popUpTitle": "Redirect (Callback) Uri will be:",
+          "popUpDescription": "This can be changed later"
+        },
+        "clientUri": {
+          "label": "Display URL",
+          "placeholder": "https://example.com",
+          "helpText": "Application URL that will be seen on consent screens",
+          "errorMessage": "Display url needs to be in the right format",
+          "available": "",
+          "unAvailable": ""
+        },
+        "enabled": {
+          "label": "Enabled",
+          "placeholder": "",
+          "helpText": "Specifies whether this client is enabled.",
+          "errorMessage": "",
+          "available": "",
+          "unAvailable": ""
+        },
+        "requireConsent": {
+          "label": "Require consent",
+          "placeholder": "",
+          "helpText": "Specifies whether a consent screen is required",
+          "errorMessage": "",
+          "available": "",
+          "unAvailable": ""
+        }
+      }
     }
   ]
 }
