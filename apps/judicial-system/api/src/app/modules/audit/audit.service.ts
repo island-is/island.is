@@ -16,10 +16,10 @@ export class AuditService {
   async audit<R>(
     userId: string,
     actionType: AuditedAction,
-    action: Promise<R>,
+    action: Promise<R> | R,
     auditedResult: string | ((result: R) => string | string[]),
   ): Promise<R> {
-    const result = await action
+    const result = action instanceof Promise ? await action : action
 
     this.auditTrailService.audit(
       userId,

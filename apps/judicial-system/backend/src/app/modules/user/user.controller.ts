@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   NotFoundException,
   Param,
   Post,
