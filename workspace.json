@@ -5839,20 +5839,20 @@
         }
       }
     },
-    "signature-system": {
-      "root": "apps/signature-system",
-      "sourceRoot": "apps/signature-system/src",
+    "endorsement-system": {
+      "root": "apps/endorsement-system",
+      "sourceRoot": "apps/endorsement-system/src",
       "projectType": "application",
-      "prefix": "signature-system",
+      "prefix": "endorsement-system",
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/signature-system",
-            "main": "apps/signature-system/src/main.ts",
-            "tsConfig": "apps/signature-system/tsconfig.app.json",
-            "webpackConfig": "apps/signature-system/webpack.config.js"
+            "outputPath": "dist/apps/endorsement-system",
+            "main": "apps/endorsement-system/src/main.ts",
+            "tsConfig": "apps/endorsement-system/tsconfig.app.json",
+            "webpackConfig": "apps/endorsement-system/webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -5861,8 +5861,8 @@
               "inspect": false,
               "fileReplacements": [
                 {
-                  "replace": "apps/signature-system/src/environments/environment.ts",
-                  "with": "apps/signature-system/src/environments/environment.prod.ts"
+                  "replace": "apps/endorsement-system/src/environments/environment.ts",
+                  "with": "apps/endorsement-system/src/environments/environment.prod.ts"
                 }
               ]
             }
@@ -5871,20 +5871,20 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "signature-system:build"
+            "buildTarget": "endorsement-system:build"
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/signature-system/**/*.ts"]
+            "lintFilePatterns": ["apps/endorsement-system/**/*.ts"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/signature-system"],
+          "outputs": ["coverage/apps/endorsement-system"],
           "options": {
-            "jestConfig": "apps/signature-system/jest.config.js",
+            "jestConfig": "apps/endorsement-system/jest.config.js",
             "passWithNoTests": true
           }
         },
@@ -5892,42 +5892,42 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
-            "cwd": "apps/signature-system"
+            "cwd": "apps/endorsement-system"
           }
         },
         "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "apps/signature-system/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/signature-system/tsconfig.app.json apps/signature-system/src/buildOpenApi.ts"
+            "outputPath": "apps/endorsement-system/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/endorsement-system/tsconfig.app.json apps/endorsement-system/src/buildOpenApi.ts"
           }
         },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "../../node_modules/.bin/sequelize-cli db:migrate",
-            "cwd": "apps/signature-system"
+            "cwd": "apps/endorsement-system"
           }
         },
         "seed": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "../../node_modules/.bin/sequelize-cli db:seed:all",
-            "cwd": "apps/signature-system"
+            "cwd": "apps/endorsement-system"
           }
         },
         "seed/undo": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "../../node_modules/.bin/sequelize-cli db:seed:undo:all",
-            "cwd": "apps/signature-system"
+            "cwd": "apps/endorsement-system"
           }
         },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
-            "cwd": "apps/signature-system"
+            "cwd": "apps/endorsement-system"
           }
         }
       }
