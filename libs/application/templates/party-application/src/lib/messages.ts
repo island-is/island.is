@@ -33,6 +33,27 @@ export const m: MessageDir = {
     },
   }),
   overviewSection: defineMessages({
+    title: {
+      id: 'pa.application:overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview title',
+    },
+    description: {
+      id: 'pa.application:overview.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
+      description: 'Overview description',
+    },
+    subtitle: {
+      id: 'pa.application:overview.subtitle',
+      defaultMessage: 'Upplýsingar um meðmælendalista',
+      description: 'Overview subtitle',
+    },
+    partyType: {
+      id: 'pa.application:overview.party.type',
+      defaultMessage: 'Tegund framboðs',
+      description: 'Type of party',
+    },
     partyletter: {
       id: 'pa.application:overview.party.letter',
       defaultMessage: 'Listabókstafur',
@@ -53,10 +74,35 @@ export const m: MessageDir = {
       defaultMessage: 'Kjördæmi',
       description: 'Selected constituency',
     },
+    signatureCount: {
+      id: 'pa.application:overview.signature.count',
+      defaultMessage: 'Fjöldi meðmælenda',
+      description: 'Signatures count',
+    },
+    signaturesInvalid: {
+      id: 'pa.application:overview.signatures.invalid',
+      defaultMessage: 'Fjöldi meðmælenda í vafa',
+      description: 'Invalid signatures count',
+    },
+    emailLabel: {
+      id: 'pa.application:overview.email.label',
+      defaultMessage: 'Tengiliðaupplýsingar',
+      description: 'Label for email field',
+    },
+    emailPlaceholder: {
+      id: 'pa.application:overview.email.placeholder',
+      defaultMessage: 'Netfang tengiliðs',
+      description: 'Placeholder for email field',
+    },
     submitButton: {
       id: 'pa.application:overview.submit',
       defaultMessage: 'Hefja söfnun',
       description: 'Submit button title',
+    },
+    submitApplication: {
+      id: 'pa.application:overview.submit.application',
+      defaultMessage: 'Skila meðmælum',
+      description: 'Submit application',
     },
   }),
   gatherSignatures: defineMessages({
@@ -163,6 +209,25 @@ export const m: MessageDir = {
       id: 'pa.application:recommendations.fileupload.label',
       defaultMessage: 'Velja skjöl til að hlaða upp',
       description: 'Label for file upload',
+    },
+  }),
+  conclusion: defineMessages({
+    title: {
+      id: 'pa.application:conclusion.title',
+      defaultMessage: 'Listi hefur verið sendur',
+      description: 'Title for conlcusion',
+    },
+    approvedTitle: {
+      id: 'pa.application:conclusion.approved.title',
+      defaultMessage:
+        'Meðmælendalisti hefur verið sendur yfirkjörstjórn til yfirferðar.',
+      description: 'Title for approved card',
+    },
+    approvedSubtitle: {
+      id: 'pa.application:conclusion.approved.subtitle',
+      defaultMessage:
+        'Þú munt fá skilaboð í pósthólf inni á mínum síðum Íslands.is með framhaldið.',
+      description: 'Subtitle for approved card',
     },
   }),
 }

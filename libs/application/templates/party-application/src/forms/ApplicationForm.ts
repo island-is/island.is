@@ -27,7 +27,7 @@ export const ApplicationForm: Form = buildForm({
           title: m.gatherSignatures.title,
           children: [
             buildCustomField({
-              id: 'overviewComponent',
+              id: 'signatures',
               title: m.gatherSignatures.title,
               component: 'Signatures',
             }),
@@ -64,32 +64,38 @@ export const ApplicationForm: Form = buildForm({
         }),
       ],
     }),
-
     buildSection({
-      id: 'partyName',
-      title: 'Nafn',
+      id: 'overviewSection',
+      title: m.overviewSection.title,
       children: [
         buildMultiField({
-          title: '',
+          id: 'overviewSubmit',
+          title: m.overviewSection.title,
+          description: m.overviewSection.description,
           children: [
+            buildCustomField({
+              id: 'review',
+              title: '',
+              component: 'Overview',
+            }),
             buildSubmitField({
               id: 'submit',
+              title: '',
               placement: 'footer',
-              title: 'Hefja söfnun',
               actions: [
-                { event: 'SUBMIT', name: 'Hefja söfnun', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: m.overviewSection.submitApplication,
+                  type: 'primary',
+                },
               ],
-            }),
-            buildTextField({
-              id: 'partyName',
-              title: m.partyName,
             }),
           ],
         }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: 'Umsókn þín er komin í vinnslu',
+        buildCustomField({
+          id: 'conclusion',
+          title: m.conclusion.title,
+          component: 'Conclusion',
         }),
       ],
     }),
