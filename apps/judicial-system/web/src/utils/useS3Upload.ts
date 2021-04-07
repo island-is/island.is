@@ -19,6 +19,7 @@ export const useS3Upload = (workingCase?: Case) => {
   const [createFileMutation] = useMutation(CreateFileMutation)
   const [deleteFileMutation] = useMutation(DeleteFileMutation)
 
+  // File upload spesific functions
   const createPresignedPost = async (
     filename: string,
   ): Promise<PresignedPost> => {
@@ -27,34 +28,6 @@ export const useS3Upload = (workingCase?: Case) => {
     })
 
     return presignedPostData?.createPresignedPost
-  }
-
-  const getFileIndexInFiles = (file: UploadFile) => {
-    return files.includes(file)
-      ? files.findIndex((fileInFiles) => fileInFiles.name === file.name)
-      : files.length
-  }
-
-  const updateFile = (file: UploadFile) => {
-    const newFiles = [...files]
-
-    newFiles[getFileIndexInFiles(file)] = file
-
-    setFiles(newFiles)
-  }
-
-  const addFileToCase = async (size: number, key: string) => {
-    if (workingCase) {
-      await createFileMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            key,
-            size,
-          },
-        },
-      })
-    }
   }
 
   const createFormData = (
@@ -103,6 +76,54 @@ export const useS3Upload = (workingCase?: Case) => {
     request.send(createFormData(presignedPost, file))
   }
 
+  // Utils
+  /**
+   * Get index of file in files. If file is not in files this returns the last index in files plus one.
+   *
+   * Code smells
+   * This function is not pure, in that it sometimes returns the index of file in files and sometimes files.lenght
+   *
+   * @param file The file to search for in files.
+   * @returns The index of the file or the last index in files plus one.
+   */
+  const getFileIndexInFiles = (file: UploadFile) => {
+    return files.includes(file)
+      ? files.findIndex((fileInFiles) => fileInFiles.name === file.name)
+      : files.length
+  }
+
+  /**
+   * Updates a file if it's in files and adds it to the end of files if not.
+   * @param file The file to update.
+   */
+  const updateFile = (file: UploadFile) => {
+    const newFiles = [...files]
+
+    newFiles[getFileIndexInFiles(file)] = file
+
+    setFiles(newFiles)
+  }
+
+  /**
+   * Insert file in database.
+   * @param size The file size.
+   * @param key A unique identifier for the case.
+   */
+  const addFileToCase = async (size: number, key: string) => {
+    if (workingCase) {
+      await createFileMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            key,
+            size,
+          },
+        },
+      })
+    }
+  }
+
+  // Event handlers
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles as UploadFile[]
 
@@ -123,15 +144,21 @@ export const useS3Upload = (workingCase?: Case) => {
     })
   }
 
-  const onRemove = async (fileId: string) => {
+  const onRemove = (fileId: string) => {
     if (workingCase) {
-      await deleteFileMutation({
+      deleteFileMutation({
         variables: {
           input: {
             caseId: workingCase.id,
             id: fileId,
           },
         },
+      }).then((res) => {
+        if (!res.errors) {
+          // Remove file from state when file is deleted from S3
+        } else {
+          // TODO: handle failure
+        }
       })
     }
   }
