@@ -11,6 +11,7 @@ interface SignatureModalProps {
   onClose: () => void
   modalOpen: boolean
   controlCode: string
+  errorCode?: number
 }
 
 const SignatureModal = ({
@@ -18,6 +19,7 @@ const SignatureModal = ({
   signatureStatus,
   modalOpen,
   onClose,
+  errorCode,
 }: SignatureModalProps) => {
   const { formatMessage } = useIntl()
   const hasError = [
@@ -55,6 +57,7 @@ const SignatureModal = ({
           onClose={onClose}
           controlCode={controlCode}
           signatureStatus={signatureStatus}
+          errorCode={errorCode}
         />
       </Box>
     </ModalBase>
