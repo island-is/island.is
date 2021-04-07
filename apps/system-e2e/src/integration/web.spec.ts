@@ -5,7 +5,7 @@ Cypress.config(
 
 describe('web', () => {
   before(() => {
-    cy.ensureLoggedIn({ path: '/' })
+    cy.ensureLoggedIn({ url: '/' })
   })
   it('should navigate homepage', () => {
     cy.visit('/')

@@ -5,7 +5,7 @@ Cypress.config(
 
 describe('web', () => {
   before(() => {
-    cy.ensureLoggedIn({ path: '/minarsidur' })
+    cy.ensureLoggedIn({ url: '/minarsidur' })
   })
   it('should navigate serviceportal', () => {
     cy.visit('/minarsidur')

@@ -1,4 +1,3 @@
-import { Plugins } from 'cypress-social-logins'
 const testEnviron = Cypress.env('testEnvironment')
 
 const cookieName = `_oauth2_${testEnviron}`
@@ -17,17 +16,17 @@ interface CustomizedLoginTaskType {
   cookies: CookieType[]
 }
 
-Cypress.Commands.add('ensureLoggedIn', ({ path }) => {
+Cypress.Commands.add('ensureLoggedIn', ({ url }) => {
   Cypress.log({
     name: 'ensureLoggedIn',
   })
 
   return cy
     .request({
-      url: '/',
+      url,
       followRedirect: false,
     })
-    .then(({ status, headers, body }) => {
+    .then(({ headers }) => {
       if (headers.location) {
         const socialLoginOptions = {
           username: Cypress.env('cognito_username'),
