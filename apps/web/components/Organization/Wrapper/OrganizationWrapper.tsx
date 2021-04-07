@@ -67,6 +67,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         title={pageTitle}
         description={pageDescription}
         imageUrl={pageFeaturedImage?.url}
+        imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
