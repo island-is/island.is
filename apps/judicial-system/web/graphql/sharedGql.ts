@@ -88,6 +88,7 @@ export const CaseQuery = gql`
         type
       }
       files {
+        id
         name
         size
       }
