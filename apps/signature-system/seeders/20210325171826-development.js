@@ -31,7 +31,7 @@ module.exports = {
         id: signatureIds[1],
         title: faker.lorem.words(3),
         description: faker.lorem.paragraph(1),
-        closed_date: new Date(),
+        closed_date: null,
         tags: ['nordausturkjordaemi'],
         signature_meta: ['fullName'],
         validation_rules: JSON.stringify([
@@ -90,7 +90,7 @@ module.exports = {
 
     // this signatures is deleted in tests
     signatures.push({
-      id: '9c0b4106-4213-43be-a6b2-ff324f4ba0d1',
+      id: faker.random.uuid(),
       signaturee: '0000000000',
       signature_list_id: signatureIds[1],
       meta: JSON.stringify({
