@@ -7,21 +7,18 @@ import {
   Option,
   Tooltip,
 } from '@island.is/island-ui/core'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   FormFooter,
   PageLayout,
   Modal,
   CaseNumbers,
   BlueBox,
-  DateTime,
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/shared-components'
 import { isNextDisabled } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   Case,
@@ -37,24 +34,21 @@ import {
   SendNotificationMutation,
   UpdateCaseMutation,
 } from '@island.is/judicial-system-web/graphql'
-import parseISO from 'date-fns/parseISO'
 import {
   JudgeSubsections,
   ReactSelectOption,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
-  validateAndSendTimeToServer,
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  validateAndSetTime,
   setAndSendToServer,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { ValueType } from 'react-select/src/types'
 import { useRouter } from 'next/router'
-import useDateTime from '../../../utils/hooks/useDateTime'
+import DateTime from '@island.is/judicial-system-web/src/shared-components/DateTime/DateTime'
 
 interface CaseData {
   case?: Case
@@ -68,22 +62,13 @@ export const HearingArrangements: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [workingCase, setWorkingCase] = useState<Case>()
   const [isStepIllegal, setIsStepIllegal] = useState<boolean>(true)
-  const [courtDateErrorMessage, setCourtDateErrorMessage] = useState('')
-  const [courtTimeErrorMessage, setCourtTimeErrorMessage] = useState('')
   const [courtroomErrorMessage, setCourtroomErrorMessage] = useState('')
   const [defenderEmailErrorMessage, setDefenderEmailErrorMessage] = useState('')
-
-  const courtTimeRef = useRef<HTMLInputElement>(null)
 
   const router = useRouter()
   const id = router.query.id
 
-  const { isValidDate: isValidCourtDate } = useDateTime({
-    date: workingCase?.courtDate,
-  })
-  const { isValidTime: isValidCourtTime } = useDateTime({
-    time: courtTimeRef.current?.value,
-  })
+  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
 
   const { data, loading } = useQuery<CaseData>(CaseQuery, {
     variables: { input: { id: id } },
@@ -305,61 +290,26 @@ export const HearingArrangements: React.FC = () => {
                 <BlueBox>
                   <Box marginBottom={2}>
                     <DateTime
-                      datepickerId="courtDate"
-                      datepickerErrorMessage={courtDateErrorMessage}
-                      minDate={new Date()}
+                      name="courtDate"
                       selectedDate={
                         workingCase.courtDate
-                          ? parseISO(workingCase.courtDate.toString())
-                          : null
-                      }
-                      handleCloseCalander={(date: Date | null) => {
-                        setAndSendDateToServer(
-                          'courtDate',
-                          workingCase.courtDate,
-                          date,
-                          workingCase,
-                          true,
-                          setWorkingCase,
-                          updateCase,
-                          setCourtDateErrorMessage,
-                        )
-                      }}
-                      dateIsRequired
-                      disabledTime={!workingCase.courtDate}
-                      timeOnChange={(evt) =>
-                        validateAndSetTime(
-                          'courtDate',
-                          workingCase.courtDate,
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          setWorkingCase,
-                          courtTimeErrorMessage,
-                          setCourtTimeErrorMessage,
-                        )
-                      }
-                      timeOnBlur={(evt) =>
-                        validateAndSendTimeToServer(
-                          'courtDate',
-                          workingCase.courtDate,
-                          evt.target.value,
-                          ['empty', 'time-format'],
-                          workingCase,
-                          updateCase,
-                          setCourtTimeErrorMessage,
-                        )
-                      }
-                      timeName="courtTime"
-                      timeErrorMessage={courtTimeErrorMessage}
-                      timeDefaultValue={
-                        workingCase.courtDate?.includes('T')
-                          ? formatDate(workingCase.courtDate, TIME_FORMAT)
+                          ? new Date(workingCase.courtDate)
                           : undefined
                       }
-                      timeRef={courtTimeRef}
-                      timeIsRequired
+                      minDate={new Date()}
+                      onChange={(date: Date | undefined, valid: boolean) => {
+                        newSetAndSendDateToServer(
+                          'courtDate',
+                          date,
+                          valid,
+                          workingCase,
+                          setWorkingCase,
+                          setCourtDateIsValid,
+                          updateCase,
+                        )
+                      }}
                       blueBox={false}
+                      required
                     />
                   </Box>
                   <Input
@@ -465,8 +415,7 @@ export const HearingArrangements: React.FC = () => {
               nextIsDisabled={
                 workingCase.state === CaseState.DRAFT ||
                 isStepIllegal ||
-                !isValidCourtDate?.isValid ||
-                !isValidCourtTime?.isValid
+                !courtDateIsValid
               }
               nextIsLoading={isSendingNotification}
               onNextButtonClick={async () => {

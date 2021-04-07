@@ -102,8 +102,7 @@ export const Complainees: FC<{ answers: DataProtectionComplaint }> = ({
 }) => (
   <>
     <SectionHeading title={complaint.general.complaineePageTitle} />
-    <ComplaineeTable {...answers.complainee} />
-    {answers.additionalComplainees?.map((complainee, index) => (
+    {answers.complainees?.map((complainee, index) => (
       <ComplaineeTable {...complainee} key={index} />
     ))}
   </>
@@ -118,19 +117,17 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
       <SectionHeading title={complaint.general.complaintPageTitle} />
       <ValueLine
         label={complaint.general.subjectOfComplaintPageTitle}
-        value={[
-          ...(answers.subjectOfComplaint.authorities || []),
-          ...(answers.subjectOfComplaint.other || []),
-          ...(answers.subjectOfComplaint.useOfPersonalInformation || []),
-        ]
-          .map((x) =>
-            formatMessage(
-              subjectOfComplaintValueLabelMapper[
-                x as keyof typeof subjectOfComplaintValueLabelMapper
-              ],
-            ),
-          )
-          .join(', ')}
+        value={
+          answers.subjectOfComplaint.values
+            ?.map((x) =>
+              formatMessage(
+                subjectOfComplaintValueLabelMapper[
+                  x as keyof typeof subjectOfComplaintValueLabelMapper
+                ],
+              ),
+            )
+            .join(', ') || ''
+        }
       />
       {answers.subjectOfComplaint.somethingElse && (
         <ValueLine

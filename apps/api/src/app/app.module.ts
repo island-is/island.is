@@ -59,9 +59,20 @@ const autoSchemaFile = environment.production
       secret: environment.drivingLicense.secret,
     }),
     EducationModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      xroadLicenseServiceId: environment.education.xroadLicenseServiceId,
+      xroad: {
+        baseUrl: environment.xroad.baseUrl,
+        clientId: environment.xroad.clientId,
+        services: {
+          license: environment.education.xroadLicenseServiceId,
+          grade: environment.education.xroadGradeServiceId,
+        },
+      },
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
       fileDownloadBucket: environment.education.fileDownloadBucket,
     }),
     ApplicationModule.register({
@@ -90,14 +101,18 @@ const autoSchemaFile = environment.production
       },
       documentsServiceBasePath:
         environment.documentProviderService.documentsServiceBasePath,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins,
     }),
     TranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
-      baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-      user: environment.nationalRegistry.user,
-      password: environment.nationalRegistry.password,
-      host: environment.nationalRegistry.host,
+      nationalRegistry: {
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
+        user: environment.nationalRegistry.user,
+        password: environment.nationalRegistry.password,
+        host: environment.nationalRegistry.host,
+      },
     }),
     HealthInsuranceModule.register({
       wsdlUrl: environment.healthInsurance.wsdlUrl,

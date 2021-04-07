@@ -5,6 +5,7 @@ import { ErrorMessage } from '@hookform/error-message'
 import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ValidationUtils from './../../../utils/validation.utils'
+import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
 
 interface Props {
   handleSave?: (object: ApiResourcesDTO) => void
@@ -176,6 +177,12 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     name="displayName"
                     message="Display name is required"
                   />
+                  <TranslationCreateFormDropdown
+                    className="apiresource"
+                    property="displayName"
+                    isEditing={isEditing}
+                    id={props.apiResource.name}
+                  />
                 </div>
                 <div className="api-resource-form__container__field">
                   <label
@@ -201,6 +208,12 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     errors={errors}
                     name="description"
                     message="Description can not contain special characters"
+                  />
+                  <TranslationCreateFormDropdown
+                    className="apiresource"
+                    property="description"
+                    isEditing={isEditing}
+                    id={props.apiResource.name}
                   />
                 </div>
 

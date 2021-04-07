@@ -67,6 +67,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/party-letter',
     '<rootDir>/libs/application/templates/passport',
     '<rootDir>/libs/application/templates/reference-template',
+    '<rootDir>/libs/application/ui-components',
     '<rootDir>/libs/application/ui-fields',
     '<rootDir>/libs/application/ui-shell',
     '<rootDir>/libs/auth-api-lib',
@@ -137,5 +138,6 @@ module.exports = {
     '<rootDir>/libs/skilavottord/types',
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
+    '<rootDir>/libs/clients/document-provider',
   ],
 }

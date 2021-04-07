@@ -3,6 +3,8 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import CopyLink from './CopyLink'
 import RecommendationTable from './RecommendationTable'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 const SIGNATURES = [
   {
@@ -46,17 +48,25 @@ const SIGNATURES = [
 ]
 
 const Recommendations: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
+
   const [searchTerm, setSearchTerm] = useState('')
   const [signatures, setSignatures] = useState(SIGNATURES)
   const [showWarning, setShowWarning] = useState(false)
+
+  const namesCountString = formatMessage(
+    SIGNATURES.length > 1
+      ? m.recommendations.namesCount
+      : m.recommendations.nameCount,
+  )
 
   return (
     <Box marginBottom={8}>
       <CopyLink
         linkUrl="www.island.is/listabókstafur/128877634/"
-        fieldDescription="Hér er hlekkur til að senda út á fólk"
+        fieldDescription={formatMessage(m.recommendations.linkDescription)}
       />
-      <Text variant="h3">{`${SIGNATURES.length} nöfn á lista (300)`}</Text>
+      <Text variant="h3">{`${SIGNATURES.length} ${namesCountString}`}</Text>
       <Box marginTop={2}>
         <Box
           display="flex"
@@ -65,7 +75,7 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
           marginBottom={3}
         >
           <Checkbox
-            label="Sjá einungis vafaatkvæði"
+            label={formatMessage(m.recommendations.invalidSignatures)}
             checked={showWarning}
             onChange={() => {
               setShowWarning(!showWarning)
@@ -76,8 +86,8 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
             }}
           />
           <Input
-            name="flightLeg.from"
-            placeholder="Leitaðu hér"
+            name="searchbar"
+            placeholder={formatMessage(m.recommendations.searchbar)}
             icon="search"
             backgroundColor="blue"
             size="sm"

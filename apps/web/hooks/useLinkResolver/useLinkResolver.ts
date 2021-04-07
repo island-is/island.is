@@ -53,17 +53,21 @@ export const routesTemplate = {
     is: '/frett',
     en: '/en/news',
   },
-  organizations: {
-    is: '/stofnanir',
-    en: '/en/organizations',
+  organizationservices: {
+    is: '/stofnanir/[slug]/thjonusta',
+    en: '/en/organizations/[slug]/services',
+  },
+  organizationsubpage: {
+    is: '/stofnanir/[slug]/[subSlug]',
+    en: '/en/organizations/[slug]/[subSlug]',
   },
   organizationpage: {
     is: '/stofnanir/[slug]',
     en: '/en/organizations/[slug]',
   },
-  organizationsubpage: {
-    is: '/stofnanir/[slug]/[subSlug]',
-    en: '/en/organizations/[slug]/[subSlug]',
+  organizations: {
+    is: '/stofnanir',
+    en: '/en/organizations',
   },
   lifeevents: {
     is: '/lifsvidburdir',
