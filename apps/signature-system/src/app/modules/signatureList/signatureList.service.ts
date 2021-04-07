@@ -44,7 +44,7 @@ export class SignatureListService {
   }
 
   async close(id: string): Promise<SignatureList | null> {
-    this.logger.debug('Closing signature list')
+    this.logger.debug('Closing signature list', id)
     const [_, signatureLists] = await this.signatureListModel.update(
       { closedDate: new Date() },
       { where: { id }, returning: true },
@@ -60,7 +60,7 @@ export class SignatureListService {
       description: list.description,
       signatureMeta: list.signatureMeta,
       tags: list.tags,
-      validationRules: JSON.stringify(list.validationRules),
+      validationRules: list.validationRules,
       owner: list.owner,
     })
   }

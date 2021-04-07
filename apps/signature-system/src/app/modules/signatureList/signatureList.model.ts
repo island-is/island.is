@@ -9,7 +9,21 @@ import {
 } from 'sequelize-typescript'
 import { Signature } from '../signature/signature.model'
 import { ValidationRuleDto } from './dto/validationRule.dto'
-import { SignatureMetaField, SignatureTag } from './dto/signatureList.dto'
+
+// TODO: Move this type to the metadata service
+export enum SignatureMetaField {
+  FULL_NAME = 'fullName',
+  ADDRESS = 'address',
+}
+
+export enum SignatureTag {
+  NORDAUSTURKJORDAEMI = 'nordausturkjordaemi',
+  NORDVESTURKJORDAEMI = 'nordvesturkjordaemi',
+  REYKJAVIKURKJORDAEMI_NORDUR = 'reykjavikurkjordaemiNordur',
+  REYKJAVIKURKJORDAEMI_SUDUR = 'reykjavikurkjordaemiSudur',
+  SUDURKJORDAEMI = 'sudurkjordaemi',
+  SUDVESTURKJORDAEMI = 'sudvesturkjordaemi',
+}
 
 @Table({
   tableName: 'signature_list',
@@ -29,7 +43,7 @@ export class SignatureList extends Model<SignatureList> {
   title!: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
   })
   description!: string | null
 

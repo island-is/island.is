@@ -9,6 +9,10 @@ module.exports = {
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
+  moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   coverageDirectory: '../../coverage/apps/signature-system',
+  setupFiles: ['./test/environment.jest.ts'],
+  setupFilesAfterEnv: ['./test/setup.ts'],
+  globalSetup: './test/globalSetup.ts',
+  globalTeardown: './test/globalTeardown.ts',
 }

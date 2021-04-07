@@ -16,6 +16,9 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
   createSequelizeOptions(): SequelizeModuleOptions {
     let config
     switch (process.env.NODE_ENV) {
+      case 'test':
+        config = databaseConfig.test
+        break
       case 'production':
         config = databaseConfig.production
         break

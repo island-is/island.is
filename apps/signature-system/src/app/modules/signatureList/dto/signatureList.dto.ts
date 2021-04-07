@@ -7,24 +7,7 @@ import {
 } from 'class-validator'
 import { ValidationRuleDto } from './validationRule.dto'
 import { Type } from 'class-transformer'
-
-// TODO: Add this to metadata module
-// TODO: Add these to models
-export enum SignatureMetaField {
-  FULL_NAME = 'fullName',
-  ADDRESS = 'address',
-}
-
-// TODO: Add these to models
-export enum SignatureTag {
-  NORDAUSTURKJORDAEMI = 'nordausturkjordaemi',
-  NORDVESTURKJORDAEMI = 'nordvesturkjordaemi',
-  REYKJAVIKURKJORDAEMI_NORDUR = 'reykjavikurkjordaemiNordur',
-  REYKJAVIKURKJORDAEMI_SUDUR = 'reykjavikurkjordaemiSudur',
-  SUDURKJORDAEMI = 'sudurkjordaemi',
-  SUDVESTURKJORDAEMI = 'sudvesturkjordaemi',
-}
-
+import { SignatureMetaField, SignatureTag } from '../signatureList.model'
 export class SignatureListDto {
   @IsString()
   title!: string

@@ -32,7 +32,7 @@ export class SignatureListController {
   async findOne(@Param('id') id: string): Promise<SignatureList> {
     const response = await this.signatureListService.findSingleList(id)
     if (!response) {
-      throw new NotFoundException('This signature list does not exist.')
+      throw new NotFoundException(['This signature list does not exist.'])
     } else {
       return response
     }
@@ -46,7 +46,7 @@ export class SignatureListController {
       id,
     )
     if (!response) {
-      throw new NotFoundException('This signature list does not exist.')
+      throw new NotFoundException(['This signature list does not exist.'])
     } else {
       return response
     }
@@ -57,7 +57,7 @@ export class SignatureListController {
     // TODO: Add auth here
     const response = await this.signatureListService.close(id)
     if (!response) {
-      throw new NotFoundException('This signature list does not exist.')
+      throw new NotFoundException(['This signature list does not exist.'])
     } else {
       return response
     }
