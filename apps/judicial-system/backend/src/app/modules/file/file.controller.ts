@@ -61,54 +61,6 @@ export class FileController {
     )
   }
 
-  @RolesRules(prosecutorRule, judgeRule)
-  @Get('file/:id/url')
-  @ApiOkResponse({
-    type: PresignedPost,
-    description: 'Gets a signed url for an existing file',
-  })
-  async getCaseFileSignedUrl(
-    @Param('caseId') caseId: string,
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-  ): Promise<SignedUrl> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
-
-    const file = await this.fileService.findById(id)
-
-    if (!file || file.caseId !== existingCase.id) {
-      throw new NotFoundException(
-        `File ${id} of case ${existingCase.id} does not exist`,
-      )
-    }
-
-    return this.fileService.getCaseFileSignedUrl(existingCase.id, file)
-  }
-
-  @RolesRules(prosecutorRule)
-  @Delete('file/:id')
-  @ApiOkResponse({
-    type: DeleteFileResponse,
-    description: 'Deletes a file',
-  })
-  async deleteCaseFile(
-    @Param('caseId') caseId: string,
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-  ): Promise<DeleteFileResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
-
-    const file = await this.fileService.findById(id)
-
-    if (!file || file.caseId !== existingCase.id) {
-      throw new NotFoundException(
-        `File ${id} of case ${existingCase.id} does not exist`,
-      )
-    }
-
-    return this.fileService.deleteCaseFile(existingCase.id, file)
-  }
-
   @RolesRules(prosecutorRule)
   @Post('file')
   @ApiCreatedResponse({
@@ -139,5 +91,53 @@ export class FileController {
     const existingCase = await this.caseService.findByIdAndUser(caseId, user)
 
     return this.fileService.getAllCaseFiles(existingCase.id)
+  }
+
+  @RolesRules(prosecutorRule)
+  @Delete('file/:id')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a file',
+  })
+  async deleteCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<DeleteFileResponse> {
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+
+    const file = await this.fileService.findById(id)
+
+    if (!file || file.caseId !== existingCase.id) {
+      throw new NotFoundException(
+        `File ${id} of case ${existingCase.id} does not exist`,
+      )
+    }
+
+    return this.fileService.deleteCaseFile(existingCase.id, file)
+  }
+
+  @RolesRules(prosecutorRule, judgeRule)
+  @Get('file/:id/url')
+  @ApiOkResponse({
+    type: PresignedPost,
+    description: 'Gets a signed url for an existing file',
+  })
+  async getCaseFileSignedUrl(
+    @Param('caseId') caseId: string,
+    @Param('id') id: string,
+    @CurrentHttpUser() user: User,
+  ): Promise<SignedUrl> {
+    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+
+    const file = await this.fileService.findById(id)
+
+    if (!file || file.caseId !== existingCase.id) {
+      throw new NotFoundException(
+        `File ${id} of case ${existingCase.id} does not exist`,
+      )
+    }
+
+    return this.fileService.getCaseFileSignedUrl(existingCase.id, file)
   }
 }
