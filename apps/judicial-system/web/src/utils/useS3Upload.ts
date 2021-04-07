@@ -62,10 +62,7 @@ export const useS3Upload = (workingCase?: Case) => {
         file.status = 'done'
 
         updateFile(file)
-
-        if (file.size && file.key) {
-          addFileToCase(file.size, file.key)
-        }
+        addFileToCase(file)
       } else {
         file.status = 'error'
         updateFile(file)
@@ -114,21 +111,23 @@ export const useS3Upload = (workingCase?: Case) => {
   }
 
   /**
-   * Insert file in database.
-   * @param size The file size.
-   * @param key A unique identifier for the case.
+   * Insert file in database and update state.
+   * @param file The file to add to case.
    */
-  const addFileToCase = async (size: number, key: string) => {
-    if (workingCase) {
-      await createFileMutation({
+  const addFileToCase = async (file: UploadFile) => {
+    if (workingCase && file.size && file.key) {
+      const { data: createFileMutationResponse } = await createFileMutation({
         variables: {
           input: {
             caseId: workingCase.id,
-            key,
-            size,
+            key: file.key,
+            size: file.size,
           },
         },
       })
+
+      file.id = createFileMutationResponse.createFile.id
+      updateFile(file)
     }
   }
 
