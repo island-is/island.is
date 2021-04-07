@@ -65,7 +65,8 @@ ENV CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots
 USER runner
 
 WORKDIR /app
-COPY --from=deps /build/node_modules /app/node_modules
+
+RUN npm install typescript
 
 ARG APP_HOME
 
