@@ -190,7 +190,8 @@ const Search: Screen<CategoryProps> = ({
   const searchResultsItems = (searchResults.items as Array<
     Article & LifeEventPage & AboutPage & News & AdgerdirPage & SubArticle
   >).map((item) => ({
-    title: item.parent ? item.parent.title + '>' + item.title : item.title,
+    title: item.title,
+    parentTitle: item.parent?.title,
     description:
       item.intro ??
       item.seoDescription ??
@@ -403,27 +404,30 @@ const Search: Screen<CategoryProps> = ({
           )}
         </Stack>
         <Stack space={2}>
-          {filteredItems.map(({ image, thumbnail, labels, ...rest }, index) => {
-            const tags: Array<CardTagsProps> = []
+          {filteredItems.map(
+            ({ image, thumbnail, labels, parentTitle, ...rest }, index) => {
+              const tags: Array<CardTagsProps> = []
 
-            labels.forEach((label) => {
-              tags.push({
-                title: label,
-                tagProps: {
-                  outlined: true,
-                },
+              labels.forEach((label) => {
+                tags.push({
+                  title: label,
+                  tagProps: {
+                    outlined: true,
+                  },
+                })
               })
-            })
 
-            return (
-              <Card
-                key={index}
-                tags={tags}
-                image={thumbnail ? thumbnail : image}
-                {...rest}
-              />
-            )
-          })}{' '}
+              return (
+                <Card
+                  key={index}
+                  tags={tags}
+                  image={thumbnail ? thumbnail : image}
+                  subTitle={parentTitle}
+                  {...rest}
+                />
+              )
+            },
+          )}{' '}
           {totalSearchResults > 0 && (
             <Box paddingTop={8}>
               <Pagination
