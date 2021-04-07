@@ -3,14 +3,13 @@ import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { interview } from '../../lib/messages'
-import { CRCFieldBaseProps } from '../../types'
+import { CRCFieldBaseProps, InterviewFieldIds } from '../../types'
 import { DescriptionText } from '../components'
 
 type ValidAnswers = 'yes' | 'no'
-type FieldIds = 'interview' | 'interviewParentB'
 
 const Interview = ({ field, application, error }: CRCFieldBaseProps) => {
-  const currentAnswer = application.answers[field.id as FieldIds]
+  const currentAnswer = application.answers[field.id as InterviewFieldIds]
   const { formatMessage } = useIntl()
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(

@@ -73,3 +73,8 @@ export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
 }
+
+export enum InterviewFieldIds {
+  parentA = 'interview',
+  parentB = 'interviewParentB',
+}
