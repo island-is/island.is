@@ -38,7 +38,8 @@ describe('FileModule', () => {
         {
           provide: CaseService,
           useClass: jest.fn(() => ({
-            findByIdAndUser: () => ({}),
+            findByIdAndUser: (id: string, _: User) =>
+              Promise.resolve({ id } as Case),
           })),
         },
         {
@@ -79,14 +80,6 @@ describe('FileModule', () => {
     const caseId = uuid()
     const user = {} as User
     const fileName = 'test.txt'
-
-    beforeEach(() => {
-      jest
-        .spyOn(caseService, 'findByIdAndUser')
-        .mockImplementation((id: string, _: User) =>
-          Promise.resolve({ id } as Case),
-        )
-    })
 
     it('should create a presigned post', async () => {
       const presignedPost = await fileController.createCasePresignedPost(
