@@ -6139,7 +6139,7 @@
           "options": {
             "outputPath": "dist/apps/system-e2e",
             "main": "apps/system-e2e/src/main.ts",
-            "tsConfig": "apps/system-e2e/tsconfig.app.json",
+            "tsConfig": "apps/system-e2e/tsconfig.json",
             "assets": ["apps/system-e2e/src/assets"]
           }
         },
@@ -6147,10 +6147,7 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": [
-              "apps/system-e2e/tsconfig.app.json",
-              "apps/system-e2e/tsconfig.spec.json"
-            ],
+            "tsConfig": ["apps/system-e2e/tsconfig.json"],
             "exclude": ["**/node_modules/**", "!apps/system-e2e/**/*"]
           }
         },

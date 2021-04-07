@@ -1,5 +1,3 @@
-/// <reference path="../support/index.d.ts" />
-
 Cypress.config(
   'baseUrl',
   `https://beta.${Cypress.env('testEnvironment')}01.devland.is`,
