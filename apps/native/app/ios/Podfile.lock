@@ -4,8 +4,14 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.4.0)
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
+  - Base64 (1.1.2)
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
+  - CodePush (7.0.0):
+    - Base64 (~> 1.1)
+    - JWT (~> 3.0.0-beta.12)
+    - React-Core
+    - SSZipArchive (~> 2.2.2)
   - DoubleConversion (1.1.6)
   - EXApplication (3.0.0):
     - UMCore
@@ -80,6 +86,8 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - glog (0.3.5)
   - IQKeyboardManagerSwift (6.5.4)
+  - JWT (3.0.0-beta.12):
+    - Base64 (~> 1.1.2)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.180)
   - RCT-Folly (2020.01.13.00):
@@ -365,6 +373,7 @@ PODS:
     - React
   - RNLocalize (2.0.2):
     - React-Core
+  - SSZipArchive (2.2.3)
   - UMAppLoader (1.4.0)
   - UMConstantsInterface (5.4.0)
   - UMCore (6.0.0)
@@ -381,6 +390,7 @@ PODS:
     - Yoga (~> 1.14)
 
 DEPENDENCIES:
+  - CodePush (from `../../node_modules/react-native-code-push`)
   - DoubleConversion (from `../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXApplication (from `../../node_modules/expo-application/ios`)
   - EXConstants (from `../../node_modules/expo-constants/ios`)
@@ -455,6 +465,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppAuth
+    - Base64
     - boost-for-react-native
     - CocoaAsyncSocket
     - Flipper
@@ -465,11 +476,15 @@ SPEC REPOS:
     - Flipper-RSocket
     - FlipperKit
     - IQKeyboardManagerSwift
+    - JWT
     - libevent
     - OpenSSL-Universal
+    - SSZipArchive
     - YogaKit
 
 EXTERNAL SOURCES:
+  CodePush:
+    :path: "../../node_modules/react-native-code-push"
   DoubleConversion:
     :podspec: "../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXApplication:
@@ -513,7 +528,7 @@ EXTERNAL SOURCES:
   React-jsinspector:
     :path: "../../../../node_modules/react-native/ReactCommon/jsinspector"
   react-native-app-auth:
-    :podspec: "../../node_modules/react-native-app-auth"
+    :path: "../../node_modules/react-native-app-auth"
   react-native-ultimate-config:
     :path: "../../node_modules/react-native-ultimate-config"
   react-native-webview:
@@ -545,13 +560,13 @@ EXTERNAL SOURCES:
   ReactNativeKeyboardManager:
     :path: "../../node_modules/react-native-keyboard-manager"
   ReactNativeNavigation:
-    :podspec: "../../node_modules/react-native-navigation"
+    :path: "../../node_modules/react-native-navigation"
   RNCAsyncStorage:
     :path: "../../node_modules/@react-native-community/async-storage"
   RNKeychain:
     :path: "../../node_modules/react-native-keychain"
   RNLocalize:
-    :podspec: "../../node_modules/react-native-localize"
+    :path: "../../node_modules/react-native-localize"
   UMAppLoader:
     :path: "../../node_modules/unimodules-app-loader/ios"
   UMConstantsInterface:
@@ -571,8 +586,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  CodePush: 4e72e70067c1442ddfe25e3e53b23a6fa573f5c6
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   EXApplication: e3a06b6d81f94e526f029a57b2121d6cde044004
   EXConstants: 07a3effb73d2f73b61079703f810bbdd5364a1c5
@@ -591,6 +608,7 @@ SPEC CHECKSUMS:
   FlipperKit: 8a20b5c5fcf9436cac58551dc049867247f64b00
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
   IQKeyboardManagerSwift: 2dde0fc70110e8eac7ccce2a46fdbec6a850b414
+  JWT: 9b5c05abbcc1a0e69c3c91e1655b3387fc7e581d
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
@@ -624,6 +642,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNLocalize: 43f6c30d8e19ad92282ae434d310fb463b31f419
+  SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   UMAppLoader: 92d044af52626af3d81a69796ad666fc7a9a7d78
   UMConstantsInterface: 6825ea3832d26ed392ca6eff2df84edd69968fd0
   UMCore: 97ba5041c9c92317ce61739f6d126a692c8ef4a8
@@ -634,6 +653,6 @@ SPEC CHECKSUMS:
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ec816053a1632517ce9324146c2ba449db80a1da
+PODFILE CHECKSUM: 49efd931cfe274047c7d0a0146995952d34c019a
 
 COCOAPODS: 1.10.1

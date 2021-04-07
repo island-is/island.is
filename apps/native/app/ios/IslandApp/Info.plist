@@ -48,6 +48,8 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>CodePushDeploymentKey</key>
+  <string>${CODEPUSH_DEPLOYMENT_KEY_IOS}</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Used for unlocking the app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

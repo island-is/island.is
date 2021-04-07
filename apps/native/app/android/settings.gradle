@@ -19,6 +19,9 @@ applyNativeModulesSettingsGradle(settings)
 include ':react-native-async-storage'
 project(':react-native-async-storage').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/async-storage/android')
 
+include ':app', ':react-native-code-push'
+project(':react-native-code-push').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-code-push/android/app')
+
 include ':react-native-navigation'
 project(':react-native-navigation').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-navigation/lib/android/app')
 

@@ -3,6 +3,7 @@ package is.island.app;
 import is.island.app.generated.BasePackageList;
 
 // npm packages
+import com.microsoft.codepush.react.CodePush;
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationPackage;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
@@ -65,6 +66,11 @@ public class MainApplication extends NavigationApplication {
         @Override
         protected String getJSMainModuleName() {
           return "apps/native/app/src/main";
+        }
+
+        @Override
+        protected String getJSBundleFile() {
+          return CodePush.getJSBundleFile();
         }
       };
 

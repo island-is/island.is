@@ -25,11 +25,12 @@ target 'IslandApp' do
     :hermes_enabled => false
   )
 
+  pod 'CodePush', :path => '../../node_modules/react-native-code-push'
   pod 'RNKeychain', :path => '../../node_modules/react-native-keychain'
-  pod 'RNLocalize', :podspec => '../../node_modules/react-native-localize'
+  pod 'RNLocalize', :path => '../../node_modules/react-native-localize'
   pod 'RNCAsyncStorage', :path => '../../node_modules/@react-native-community/async-storage'
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'
-  pod 'ReactNativeNavigation', :podspec => '../../node_modules/react-native-navigation'
+  pod 'ReactNativeNavigation', :path => '../../node_modules/react-native-navigation'
   pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
   pod 'react-native-app-auth', :path => '../../node_modules/react-native-app-auth'
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
