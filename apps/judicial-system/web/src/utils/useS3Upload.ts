@@ -59,9 +59,6 @@ export const useS3Upload = (workingCase?: Case) => {
 
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {
-        file.status = 'done'
-
-        updateFile(file)
         addFileToCase(file)
       } else {
         file.status = 'error'
@@ -115,7 +112,7 @@ export const useS3Upload = (workingCase?: Case) => {
    */
   const addFileToCase = async (file: UploadFile) => {
     if (workingCase && file.size && file.key) {
-      const { data: createFileMutationResponse } = await createFileMutation({
+      await createFileMutation({
         variables: {
           input: {
             caseId: workingCase.id,
@@ -124,9 +121,15 @@ export const useS3Upload = (workingCase?: Case) => {
           },
         },
       })
-
-      file.id = createFileMutationResponse.createFile.id
-      updateFile(file)
+        .then((res) => {
+          file.id = res.data.createFile.id
+          file.status = 'done'
+          updateFile(file)
+        })
+        .catch((reason) => {
+          // TODO: Log to sentry
+          console.log(reason)
+        })
     }
   }
 
@@ -144,7 +147,6 @@ export const useS3Upload = (workingCase?: Case) => {
       }
 
       file.key = presignedPost.fields.key
-
       updateFile(file)
 
       uploadToS3(file, presignedPost)
