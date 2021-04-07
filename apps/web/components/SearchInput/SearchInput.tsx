@@ -426,46 +426,30 @@ const Results: FC<{
               <Text variant="eyebrow" color="purple400">
                 {quickContentLabel}
               </Text>
-              {(search.results.items as
-                | (Article[] & LifeEventPage[] & AboutPage[] & News[])
-                | SubArticle[])
+              {(search.results.items as Article[] &
+                LifeEventPage[] &
+                AboutPage[] &
+                News[] &
+                SubArticle[])
                 .slice(0, 5)
-                .map((item) => {
+                .map(({ id, title, slug, __typename }) => {
                   const { onClick, ...itemProps } = getItemProps({
                     item: '',
                   })
                   return (
                     <div
-                      key={item.id}
+                      key={id}
                       {...itemProps}
                       onClick={(e) => {
                         onClick(e)
                         onRouting()
                       }}
                     >
-                      {item.parentSlug ? (
-                        <Link
-                          {...linkResolver(
-                            item.__typename as LinkType,
-                            item.parentSlug.split('/'),
-                          )}
-                        >
-                          <Text variant="small">{item.parent.title}</Text>
-                          <Text variant="h5" color="blue400">
-                            {item.title}
-                          </Text>
-                        </Link>
-                      ) : (
-                        <Link
-                          {...linkResolver(item.__typename as LinkType, [
-                            item.slug,
-                          ])}
-                        >
-                          <Text variant="h5" color="blue400">
-                            {item.title}
-                          </Text>
-                        </Link>
-                      )}
+                      <Link {...linkResolver(__typename as LinkType, [slug])}>
+                        <Text variant="h5" color="blue400">
+                          {title}
+                        </Text>
+                      </Link>
                     </div>
                   )
                 })}
