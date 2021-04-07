@@ -27,10 +27,16 @@
       "log": { "enabled": true },
       "uiHierarchy": "enabled",
       "screenshot": {
+        "enabled": true,
         "shouldTakeAutomaticSnapshots": true,
         "takeWhen": {
           "testStart": true,
           "testDone": true
+        }
+      },
+      "video": {
+        "simulator": {
+          "codec": "hevc"
         }
       }
     }

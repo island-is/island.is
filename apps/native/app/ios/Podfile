@@ -31,7 +31,7 @@ target 'IslandApp' do
   pod 'ReactNativeKeyboardManager', :path => '../../node_modules/react-native-keyboard-manager'
   pod 'ReactNativeNavigation', :podspec => '../../node_modules/react-native-navigation'
   pod 'react-native-webview', :path => '../../node_modules/react-native-webview'
-  pod 'react-native-app-auth', :podspec => '../../node_modules/react-native-app-auth'
+  pod 'react-native-app-auth', :path => '../../node_modules/react-native-app-auth'
   pod 'react-native-ultimate-config', :path => '../../node_modules/react-native-ultimate-config'
 
   use_flipper!

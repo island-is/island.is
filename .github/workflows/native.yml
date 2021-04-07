@@ -2,7 +2,7 @@ name: Native
 
 on:
   push:
-    branches: [ mobile-app/init ]
+    branches: [ mobile-app/** ]
   workflow_dispatch:
 
 jobs:
@@ -14,47 +14,45 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Select Latest XCode
+      - name: Select latest stable XCode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
 
-      - name: Node
+      - name: Use node 14
         uses: actions/setup-node@v1
         with:
           node-version: '14'
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v1
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      # todo get from secrets
-      - name: Generate .env file
+      - name: Calculate cache key for node_modules
+        id: calculate_node_modules_hash
         run: |
-          echo "IDENTITYSERVER_ISSUER=https://identity-server.dev01.devland.is
-          IDENTITYSERVER_CLIENT_ID=@island.is-app
-          IDENTITYSERVER_SCOPES=openid profile api_resource.scope offline_access
-          API_ENDPOINT=https://beta.dev01.devland.is/api
-          BUNDLE_ID_IOS=is.island.app-dev
-          BUNDLE_ID_ANDROID=is.island.app" > apps/native/app/.env
-          cat apps/native/app/.env
+          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
+          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
+          echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
 
+      - name: Restore node_modules from cache
+        id: node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-      - name: Install Dependencies
+      - name: Generate dotenv file
+        run: cp .env.example .env
+        working-directory: apps/native/app
+
+      - name: Install NPM dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: yarn install
 
-      - name: Install Native Dependencies
-        run: cd apps/native && yarn install
+      - name: Install native NPM dependencies
+        run: yarn install
+        working-directory: apps/native
 
-      - name: Symlink Nx Dependencies
+      - name: Symlink Nx dependencies
         run: |
           rm -rf apps/native/app/node_modules
           mkdir -p apps/native/app/node_modules/{@babel,@nrwl,@react-native-community}
@@ -66,27 +64,26 @@ jobs:
           ln -s "$(pwd)/node_modules/jsc-android" "$(pwd)/apps/native/app/node_modules/jsc-android"
           ln -s "$(pwd)/node_modules/react-native" "$(pwd)/apps/native/app/node_modules/react-native"
 
-      - name: Update Pods
+      - name: Install applesimutils
         run: |
-          gem update cocoapods xcodeproj
-          cd apps/native/app/ios && pod install
+          brew tap wix/brew
+          brew install applesimutils
 
-      - run: brew tap wix/brew
-      - run: brew install applesimutils
-      - run: cd apps/native && yarn detox:build:ios
-      - name: Debug info
-        run: |
-          find apps/native/app/ios/build | grep Info.plist
-          /usr/libexec/PlistBuddy -c "Print" apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/Info.plist || echo "failure"
-          cat apps/native/node_modules/react-native-app-auth/ios/RNAppAuth.h
-      - run: cd apps/native && yarn detox:test:ios
+      - name: Install Cocoapods
+        run: pod install
+        working-directory: apps/native/app/ios
 
-      - name: Archive code coverage results
+      - name: Build native binary
+        run: yarn detox:build:ios
+        working-directory: apps/native
+
+      - name: Run e2e tests
+        run: yarn detox:test:ios
+        working-directory: apps/native
+
+      - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: ios-e2e-artifacts
-          path: |
-            apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app/
-            apps/native/app/ios/build/Build/Products/Release-iphonesimulator/IslandApp.app.dSYM/
-            apps/native/app-e2e/artifacts/
+          path: apps/native/app-e2e/artifacts/

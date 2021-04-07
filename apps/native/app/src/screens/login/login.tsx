@@ -9,8 +9,6 @@ import { testIDs } from '../../utils/test-ids'
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { useState } from 'react'
 
-console.log(NativeModules);
-
 export const LoginScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
 
@@ -26,6 +24,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
       }
     } catch (err) {
       console.log('Error using NativeEventEmitter', Object.keys(NativeModules), NativeModules.RNAppAuth);
+      console.log(err);
     }
   }, []);
 
