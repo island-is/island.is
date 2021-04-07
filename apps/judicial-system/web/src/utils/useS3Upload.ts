@@ -105,8 +105,7 @@ export const useS3Upload = (workingCase?: Case) => {
     const newFiles = [...files]
 
     if (newFiles.includes(file)) {
-      delete newFiles[files.indexOf(file)]
-      setFiles(newFiles)
+      setFiles(newFiles.filter((fileInFiles) => fileInFiles !== file))
     }
   }
 
