@@ -147,7 +147,7 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   // TODO: Look into if we want to do this in a different way - using the application state seems wrong
-  const contactInfoKey = application.state === 'draft' ? 'parentA' : 'parentB'
+  const parentKey = application.state === 'draft' ? 'parentA' : 'parentB'
 
   return (
     <>
@@ -193,10 +193,10 @@ const Overview = ({
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.emailLabel)}</Text>
         <Text fontWeight="medium" marginBottom={2}>
-          {answers[contactInfoKey]?.email}
+          {answers[parentKey]?.email}
         </Text>
         <Text>{formatMessage(m.otherParent.inputs.phoneNumberLabel)}</Text>
-        <Text fontWeight="medium">{answers[contactInfoKey]?.phoneNumber}</Text>
+        <Text fontWeight="medium">{answers[parentKey]?.phoneNumber}</Text>
       </Box>
       {answers.residenceChangeReason && (
         <Box marginTop={4}>
@@ -241,7 +241,13 @@ const Overview = ({
           {formatMessage(m.interview.general.sectionTitle)}
         </Text>
         <Text>
-          {formatMessage(m.interview[answers.interview].overviewText)}
+          {formatMessage(
+            m.interview[
+              parentKey === 'parentA'
+                ? answers.interview
+                : answers.interviewParentB
+            ].overviewText,
+          )}
         </Text>
       </Box>
       <Box marginTop={5} marginBottom={3}>

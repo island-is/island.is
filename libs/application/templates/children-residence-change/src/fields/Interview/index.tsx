@@ -7,9 +7,10 @@ import { CRCFieldBaseProps } from '../../types'
 import { DescriptionText } from '../components'
 
 type ValidAnswers = 'yes' | 'no'
+type FieldIds = 'interview' | 'interviewParentB'
 
 const Interview = ({ field, application, error }: CRCFieldBaseProps) => {
-  const currentAnswer = application.answers.interview
+  const currentAnswer = application.answers[field.id as FieldIds]
   const { formatMessage } = useIntl()
 
   const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
