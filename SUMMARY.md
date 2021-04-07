@@ -110,6 +110,7 @@
     - [API Domains Driving License](libs/api/domains/driving-license/README.md)
     - [API Domains Education](libs/api/domains/education/README.md)
     - [API Domains Health Insurance](libs/api/domains/health-insurance/README.md)
+    - [API Domains Regulations](libs/api/domains/regulations/README.md)
     - [API Domains Rsk](libs/api/domains/rsk/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
