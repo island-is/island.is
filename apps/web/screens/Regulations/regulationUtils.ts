@@ -1,11 +1,22 @@
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { ParsedUrlQuery } from 'querystring'
+import { ISODate, RegName, RegQueryName } from './mockData'
+
+export const interpolate = (
+  text: string,
+  values: Record<string, string | number>,
+): string =>
+  text.replace(/\$\{([a-z0-9_$]+)\}/gi, (marker, name) =>
+    values[name] != null ? values[name] + '' : marker,
+  )
+
+// ---------------------------------------------------------------------------
 
 /** Pretty-formats a Regulation `name` for human consumption
  *
  * Chops off leading zeros
  */
-export const prettyName = (regulationName: string) =>
+export const prettyName = (regulationName: string): string =>
   regulationName.replace(/^0+/, '')
 
 // ---------------------------------------------------------------------------
@@ -14,20 +25,65 @@ export const prettyName = (regulationName: string) =>
  *
  *  Example: '0123/2020' --> '0123-2020'
  */
-export const nameToSlug = (regulationName: string, seperator?: string) => {
-  // const [number, year] = regulationName.split('/')
-  // return year + (seperator || '/') + number
-  return regulationName.replace('/', seperator || '-')
-}
+export const nameToSlug = (regulationName: RegName): RegQueryName =>
+  regulationName.replace('/', '-') as RegQueryName
 
 // ---------------------------------------------------------------------------
 
 export const useRegulationLinkResolver = () => {
+  // const router = useRouter()
   const utils = useLinkResolver()
+
   return {
+    // router,
     ...utils,
-    linkToRegulation: (regulationName: string) =>
-      utils.linkResolver('regulation', [nameToSlug(regulationName)]).href,
+
+    linkToRegulation: (
+      regulationName: RegName,
+      props?:
+        | { original: boolean }
+        | { diff: boolean }
+        | { d: ISODate; diff?: boolean }
+        | { d: ISODate; diff: true; earlierDate: ISODate | 'original' }
+        | { on: ISODate; diff?: boolean }
+        | { on: ISODate; diff: true; earlierDate: ISODate | 'original' },
+    ) => {
+      const href = utils.linkResolver('regulation', [
+        nameToSlug(regulationName),
+      ]).href
+      if (!props) {
+        return href
+      }
+      if ('d' in props || 'on' in props) {
+        const date = 'd' in props ? '/d/' + props.d : '/on/' + props.on
+        const diff = props.diff ? '/diff' : ''
+        const earlierDate =
+          diff && 'earlierDate' in props ? '/' + props.earlierDate : ''
+        return href + date + diff + earlierDate
+      }
+      if ('diff' in props && props.diff) {
+        return href + '/diff'
+      }
+      if ('original' in props && props.original) {
+        return href + '/original'
+      }
+      return href
+    },
+
+    // NOTE: It's doubtful we need this method, since the precense of
+    // `Regulation.timelineDate` should be enough of an indicator.
+    //
+    // /** Returns true if the given url (default to the current asPath)
+    //   * is a URL for viewing the current version of the regulation
+    //   * **OR** a full diff from the original text
+    //   */
+    // isCurrentVersionUrl: (path?: string) => {
+    //   path = path ?? router.asPath
+    //   const linkType = utils.typeResolver(
+    //     path.replace(/\/diff(?:$|[#?])/, ''),
+    //   )?.type
+    //   return linkType === 'regulation'
+    // },
   }
 }
 

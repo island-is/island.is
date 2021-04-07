@@ -1,4 +1,4 @@
-import { RegulationPageTexts } from './mockData'
+import { RegName, RegulationPageTexts } from './mockData'
 
 import React, { FC } from 'react'
 import {
@@ -9,10 +9,11 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-import { linkResolver } from '@island.is/web/hooks/useLinkResolver'
 import SubpageLayout from '../Layouts/Layouts'
+import { prettyName, useRegulationLinkResolver } from './regulationUtils'
 
 export type RegulationLayoutProps = {
+  name: RegName
   texts: RegulationPageTexts
   main: JSX.Element
   sidebar?: JSX.Element | false
@@ -20,6 +21,7 @@ export type RegulationLayoutProps = {
 
 export const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
   const n = useNamespace(props.texts)
+  const { linkResolver, linkToRegulation } = useRegulationLinkResolver()
 
   const breadCrumbs = (
     <Box display={['none', 'none', 'block']} marginBottom={4}>
@@ -37,6 +39,10 @@ export const RegulationLayout: FC<RegulationLayoutProps> = (props) => {
           {
             title: n('crumbs_3'),
             href: linkResolver('regulationshome').href,
+          },
+          {
+            title: prettyName(props.name),
+            href: linkToRegulation(props.name),
           },
         ]}
       />

@@ -4,6 +4,7 @@ import {
   RegulationRedirect,
   RegulationPageTexts,
   ISODate,
+  RegName,
 } from './mockData'
 
 import React from 'react'
@@ -28,13 +29,11 @@ import { GET_REGULATION_QUERY } from '../queries'
 type RegulationPageProps = {
   regulation: Regulation | RegulationRedirect
   texts: RegulationPageTexts
-  viewType: ViewType
-  date?: ISODate
-  isCustomDiff?: boolean
+  urlDate?: ISODate
 }
 
 const RegulationPage: Screen<RegulationPageProps> = (props) => {
-  const { regulation, texts, viewType, date, isCustomDiff } = props
+  const { regulation, texts, urlDate } = props
 
   return 'redirectUrl' in regulation ? (
     <RegulationRedirectMessage texts={texts} regulation={regulation} />
@@ -42,9 +41,7 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     <RegulationDisplay
       texts={texts}
       regulation={regulation}
-      viewType={viewType}
-      date={date}
-      isCustomDiff={isCustomDiff}
+      urlDate={urlDate}
     />
   )
 }
@@ -54,6 +51,7 @@ const viewTypes = {
   original: 1,
   diff: 1,
   d: 1,
+  on: 1, // same as d, except for explicit permalinks for a given day!
 }
 export type ViewType = keyof typeof viewTypes
 
@@ -61,9 +59,9 @@ export type ViewType = keyof typeof viewTypes
  *
  * Returns a fully zero-padded number.
  */
-const assertNumber = (slug: string): string => {
+const assertName = (slug: string): RegName => {
   if (/\d{1,4}-\d{4}/.test(slug)) {
-    return slug.length === 9 ? slug : ('000' + slug).substr(-9)
+    return (slug.length === 9 ? slug : ('000' + slug).substr(-9)) as RegName
   }
   throw new CustomNextError(404)
 }
@@ -122,13 +120,13 @@ const assertEarlierDate = (
 
 RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const p = getParams(query, [
-    'number',
+    'name',
     'viewType',
     'date',
     'diff',
     'earlierDate',
   ])
-  const number = assertNumber(p.number)
+  const name = assertName(p.name)
   const viewType = assertViewType(p.viewType)
   const date = assertDate(p.date, viewType)
   const isCustomDiff = date ? assertDiff(p.diff) : undefined
@@ -137,7 +135,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     : undefined
 
   // console.log('FOOBAR', {
-  //   number,
+  //   name,
   //   viewType,
   //   date,
   //   isCustomDiff,
@@ -157,9 +155,9 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         variables: {
           input: {
             viewType,
-            name: number,
-            date: date,
-            isCustomDiff: !!isCustomDiff
+            name,
+            date,
+            isCustomDiff,
           },
         },
       })
@@ -175,13 +173,12 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   if (!regulation) {
     throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')
   }
+  const urlDate = viewType === 'on' ? date : undefined
 
   return {
     regulation,
     texts,
-    viewType,
-    date,
-    isCustomDiff
+    urlDate,
   }
 }
 

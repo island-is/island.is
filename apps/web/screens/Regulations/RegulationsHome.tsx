@@ -71,7 +71,7 @@ type RegulationsHomeProps = {
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
   const router = useRouter()
-  const n = useNamespace(props.texts)
+  const txt = useNamespace(props.texts)
   const { linkResolver } = useLinkResolver()
 
   // const { disableApiCatalog } = publicRuntimeConfig
@@ -128,11 +128,11 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
       <Breadcrumbs
         items={[
           {
-            title: n('crumbs_1'),
+            title: txt('crumbs_1'),
             href: linkResolver('homepage').href,
           },
           {
-            title: n('crumbs_2'),
+            title: txt('crumbs_2'),
             href: linkResolver('article').href,
           },
         ]}
@@ -189,10 +189,10 @@ const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
             >
               {breadCrumbs}
               <Text as="h1" variant="h1" marginTop={2}>
-                {n('homeIntroLegend')}
+                {txt('homeIntroLegend')}
               </Text>
               <Text variant="intro" as="p">
-                {n('homeIntro')}
+                {txt('homeIntro')}
               </Text>
             </GridColumn>
 

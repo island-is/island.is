@@ -19,6 +19,7 @@ export const RegulationRedirectMessage: FC<RegulationRedirectMessageProps> = (
 
   return (
     <RegulationLayout
+      name={regulation.name}
       texts={texts}
       main={
         <>

@@ -2,7 +2,7 @@ declare const _RegNameToken_: unique symbol
 export type RegName = string & { [_RegNameToken_]: true }
 
 declare const _RegNameQueryToken_: unique symbol
-export type RegulationQueryName = string & { [_RegNameQueryToken_]: true }
+export type RegQueryName = string & { [_RegNameQueryToken_]: true }
 
 declare const _ISODateToken_: unique symbol
 export type ISODate = string & { [_ISODateToken_]: true }
@@ -10,7 +10,7 @@ export type ISODate = string & { [_ISODateToken_]: true }
 // ---------------------------------------------------------------------------
 
 // Regulation name, need to replace / with - before sending to the api
-export const demoRegName = '0244/2021'.replace('/', '-') as RegulationQueryName
+export const demoRegName = '0244/2021'.replace('/', '-') as RegQueryName
 
 // ---------------------------------------------------------------------------
 

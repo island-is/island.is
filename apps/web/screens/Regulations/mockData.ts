@@ -168,7 +168,7 @@ export const regulationYears = range(1999, 2021).filter(
 
 export const homeTexts = {
   // navigationTitle: 'Upplýsingasvæði',
-  homeIntoLegend: 'Reglugerðir',
+  homeIntroLegend: 'Reglugerðir',
   homeIntro:
     'Eitthvað hressandi um reglugerðir og fleira skemmtilegt og fræðandi.',
 
@@ -200,8 +200,8 @@ export const homeTexts = {
   searchLegacyMinistrySuffix: '(fyrrverandi ráðuneyti)',
   searchIncludeAmendingLabel: 'Leita líka í breytingareglugerðum',
 
-  crumbs_1: 'Ísland.is',
-  crumbs_2: 'Upplýsingasvæði',
+  // crumbs_1: 'Ísland.is',
+  // crumbs_2: 'Upplýsingasvæði',
 }
 
 // export type RegulationHomeTexts = Partial<typeof homeTexts>
@@ -224,16 +224,19 @@ export const regulationPageTexts = {
   effectsCancel: 'fellir brott %{name}',
 
   historyTitle: 'Breytingasaga reglugerðar %{name}',
+  historyStart: 'Upprunaleg útgáfa',
   historyChange: 'breytt af %{name}',
   historyCancel: 'brottfelld af %{name}',
+  historyCurrentVersion: 'Núgildandi útgáfa',
+  historyFutureSplitter: 'Væntanlegar breytingar',
 
   viewAffectingRegulation: 'Skoða %{title}',
 
   comments: 'Athugsemdir vefstjóra',
 
-  crumbs_1: 'Ísland.is',
-  crumbs_2: 'Upplýsingasvæði',
-  crumbs_3: 'Reglugerðir',
+  // crumbs_1: 'Ísland.is',
+  // crumbs_2: 'Upplýsingasvæði',
+  // crumbs_3: 'Reglugerðir',
 }
 
 export type RegulationPageTexts = Partial<typeof regulationPageTexts>
@@ -242,6 +245,9 @@ export type RegulationPageTexts = Partial<typeof regulationPageTexts>
 
 declare const _RegNameToken_: unique symbol
 export type RegName = string & { [_RegNameToken_]: true }
+
+declare const _RegNameQueryToken_: unique symbol
+export type RegQueryName = string & { [_RegNameQueryToken_]: true }
 
 declare const _ISODateToken_: unique symbol
 export type ISODate = string & { [_ISODateToken_]: true }
@@ -265,7 +271,7 @@ export type RegulationEffect = {
   /** effectiveDate for this impact */
   date: ISODate
   /** Publication name of the affected Regulation */
-  name: string
+  name: RegName
   /** Publication name of the affected Regulation */
   title: string
   /** Type of effect */
