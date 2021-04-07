@@ -6,9 +6,8 @@ import { ResourcesService } from '../../../services/ResourcesService'
 import IdentityResourceDTO from '../../../entities/dtos/identity-resource.dto'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
-import { FormItem, FormPage } from './../../../entities/common/Translation'
+import { FormPage } from './../../../entities/common/Translation'
 import TranslationUtils from './../../../utils/translation.utils'
-import stringify from 'csv-stringify'
 
 interface Props {
   handleSave?: (object: IdentityResourceDTO) => void
@@ -30,18 +29,12 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
   const [translation, setTranslation] = useState<FormPage>(
     TranslationUtils.getFormPage('IdentityResourceCreateForm'),
   )
-  const [fields, setFields] = useState<Record<string, FormItem>>(
-    TranslationUtils.getFormPage('IdentityResourceCreateForm').fields,
-  )
 
   useEffect(() => {
     if (props.identityResource && props.identityResource.name) {
       setIsEditing(true)
       setAvailable(true)
     }
-
-    // setFields(TranslationUtils.getFormPage('IdentityResourceCreateForm').fields)
-    // setTranslation(TranslationUtils.getFormPage('IdentityResourceCreateForm'))
   }, [props.identityResource])
 
   const checkAvailability = async (name: string) => {
@@ -77,8 +70,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
           <h1>{isEditing ? translation.editTitle : translation.title}</h1>
           <div className="identity-resource-form__container__form">
             <div className="identity-resource-form__help">
-              {translation.help} - {translation.fields?.length} -{' '}
-              {fields['name'].label}
+              {translation.help}
             </div>
             <form onSubmit={handleSubmit(save)}>
               <div className="identity-resource-form__container__fields">

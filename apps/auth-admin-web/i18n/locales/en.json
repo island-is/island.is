@@ -32,6 +32,14 @@
             "available": "",
             "unAvailable": ""
             },
+            "enabled": {
+            "label": "Enabled",
+            "placeholder": "",
+            "helpText": "Specifies whether this scope is enabled.",
+            "errorMessage": "",
+            "available": "",
+            "unAvailable": ""
+            },
             "showInDiscoveryDocument": {
             "label": "Show In Discovery Document",
             "placeholder": "",
