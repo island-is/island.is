@@ -213,7 +213,59 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               })}
               colorScheme="blueberry"
             >
+              {timelineItems.map((item, i, arr) => {
+                const name = prettyName(item.name)
+                const isCurrentVersion =
+                  item.date <= today &&
+                  item.effect === 'amend' &&
+                  (i === arr.length - 1 || arr[i + 1].date > today)
+                const label = interpolate(
+                  i === 0 // item.effect === 'root'
+                    ? txt('historyStart')
+                    : item.effect === 'amend'
+                    ? txt('historyChange')
+                    : txt('historyCancel'),
+                  { name },
+                )
 
+                const isTimelineActive = regulation.timelineDate === item.date
+
+                const futureSplitter = item.date > today &&
+                  (i === 0 || arr[i - 1].date <= today) && (
+                    <Text variant="small">{txt('historyFutureSplitter')}:</Text>
+                  )
+
+                return (
+                  <Fragment key={'history-' + i}>
+                    {futureSplitter}
+                    <Link
+                      href={linkToRegulation(
+                        regulation.name,
+                        item.effect === 'root'
+                          ? { original: true }
+                          : { d: item.date, diff: true },
+                      )}
+                    >
+                      <FocusableBox flexDirection={'column'}>
+                        {({
+                          isFocused,
+                          isHovered,
+                        }: {
+                          isFocused: boolean
+                          isHovered: boolean
+                        }) => (
+                          <Text
+                            color={
+                              isFocused || isHovered
+                                ? 'blueberry400'
+                                : 'blueberry600'
+                            }
+                            fontWeight={isTimelineActive ? 'medium' : undefined}
+                          >
+                            {isTimelineActive && ' ▶︎ '}
+                            <strong>{item.date}</strong>
+                            <br />
+                            {label}
                           </Text>
                         )}
                       </FocusableBox>
