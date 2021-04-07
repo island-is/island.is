@@ -14,7 +14,7 @@ import {
 } from '@island.is/clients/regulations'
 import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationInput } from './dto/getRegulation.input'
-import { GetRegulationsYearsInput } from './dto/GetRegulationsYears.input'
+import { GetRegulationsYearsInput } from './dto/getRegulationsYears.input'
 import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistries.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
 import { RegulationModel } from './model/regulation'
