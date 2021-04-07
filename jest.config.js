@@ -137,9 +137,6 @@ module.exports = {
     '<rootDir>/libs/utils/api',
     '<rootDir>/libs/utils/environment',
     '<rootDir>/libs/clients/document-provider',
-    '<rootDir>/libs/vmst-client',
-    '<rootDir>/libs/clients/mms',
-    '<rootDir>/libs/clients/zendesk',
     '<rootDir>/apps/endorsement-system',
   ],
 }

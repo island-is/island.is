@@ -246,6 +246,9 @@
     "email-service": {
       "tags": []
     },
+    "endorsement-system": {
+      "tags": []
+    },
     "feature-flags": {
       "tags": []
     },
@@ -466,9 +469,6 @@
       "tags": []
     },
     "shared-types": {
-      "tags": []
-    },
-    "endorsement-system": {
       "tags": []
     },
     "skilavottord-consts": {

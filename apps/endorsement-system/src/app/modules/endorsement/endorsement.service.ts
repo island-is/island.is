@@ -20,14 +20,14 @@ interface DeleteFromListByNationalIdInput {
 }
 @Injectable()
 export class EndorsementService {
-  constructor (
+  constructor(
     @InjectModel(Endorsement)
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
-  async findEndorsementsByNationalId ({
+  async findEndorsementsByNationalId({
     nationalId,
     listId,
   }: FindEndorsementsByNationalIdInput) {
@@ -46,7 +46,7 @@ export class EndorsementService {
     })
   }
 
-  async createEndorsementOnList ({
+  async createEndorsementOnList({
     listId,
     nationalId,
   }: CreateEndorsementOnListInput) {
@@ -61,7 +61,7 @@ export class EndorsementService {
     })
   }
 
-  async deleteFromListByNationalId ({
+  async deleteFromListByNationalId({
     nationalId,
     listId,
   }: DeleteFromListByNationalIdInput) {

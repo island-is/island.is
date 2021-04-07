@@ -2716,6 +2716,99 @@
         }
       }
     },
+    "endorsement-system": {
+      "root": "apps/endorsement-system",
+      "sourceRoot": "apps/endorsement-system/src",
+      "projectType": "application",
+      "prefix": "endorsement-system",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/endorsement-system",
+            "main": "apps/endorsement-system/src/main.ts",
+            "tsConfig": "apps/endorsement-system/tsconfig.app.json",
+            "webpackConfig": "apps/endorsement-system/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/endorsement-system/src/environments/environment.ts",
+                  "with": "apps/endorsement-system/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "endorsement-system:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/endorsement-system/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/endorsement-system"],
+          "options": {
+            "jestConfig": "apps/endorsement-system/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
+            "cwd": "apps/endorsement-system"
+          }
+        },
+        "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "outputPath": "apps/endorsement-system/src/openapi.yaml",
+            "command": "yarn ts-node -P apps/endorsement-system/tsconfig.app.json apps/endorsement-system/src/buildOpenApi.ts"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../node_modules/.bin/sequelize-cli db:migrate",
+            "cwd": "apps/endorsement-system"
+          }
+        },
+        "seed": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../node_modules/.bin/sequelize-cli db:seed:all",
+            "cwd": "apps/endorsement-system"
+          }
+        },
+        "seed/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../node_modules/.bin/sequelize-cli db:seed:undo:all",
+            "cwd": "apps/endorsement-system"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "cwd": "apps/endorsement-system"
+          }
+        }
+      }
+    },
     "feature-flags": {
       "root": "libs/feature-flags",
       "sourceRoot": "libs/feature-flags/src",
@@ -5836,99 +5929,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/shared/types"]
-        }
-      }
-    },
-    "endorsement-system": {
-      "root": "apps/endorsement-system",
-      "sourceRoot": "apps/endorsement-system/src",
-      "projectType": "application",
-      "prefix": "endorsement-system",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/endorsement-system",
-            "main": "apps/endorsement-system/src/main.ts",
-            "tsConfig": "apps/endorsement-system/tsconfig.app.json",
-            "webpackConfig": "apps/endorsement-system/webpack.config.js"
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/endorsement-system/src/environments/environment.ts",
-                  "with": "apps/endorsement-system/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "endorsement-system:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/endorsement-system/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/endorsement-system"],
-          "options": {
-            "jestConfig": "apps/endorsement-system/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "dev-services": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d --build",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "schemas/build-openapi": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "apps/endorsement-system/src/openapi.yaml",
-            "command": "yarn ts-node -P apps/endorsement-system/tsconfig.app.json apps/endorsement-system/src/buildOpenApi.ts"
-          }
-        },
-        "migrate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:migrate",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "seed": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:seed:all",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "seed/undo": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli db:seed:undo:all",
-            "cwd": "apps/endorsement-system"
-          }
-        },
-        "migrate/generate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
-            "cwd": "apps/endorsement-system"
-          }
         }
       }
     },
