@@ -9,6 +9,8 @@ import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
+import TranslationUtils from './../../../utils/translation.utils'
+import { FormPage } from './../../../entities/common/Translation'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: ClientDTO) => void
@@ -34,6 +36,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
+  const [translation, setTranslation] = useState<FormPage>(
+    TranslationUtils.getFormPage('ClientCreateForm'),
+  )
 
   const castToNumbers = (obj: ClientDTO): ClientDTO => {
     obj.absoluteRefreshTokenLifetime = +obj.absoluteRefreshTokenLifetime
@@ -137,15 +142,23 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
     return (
       <div className="detail-container">
-        <div className="detail-title">{clientInfo.title}</div>
-        <div className={`detail-flow${clientInfo.flow ? ' show' : ' hidden'}`}>
-          {clientInfo.flow}
+        <div className="detail-title">
+          {
+            translation.fields['clientType'].selectItems[clientType]
+              .selectItemText
+          }
         </div>
-        <div className="detail-description">{clientInfo.description}</div>
-        <div className="detail-link">
-          <a href={clientInfo.url} target="_blank" rel="noreferrer">
-            {clientInfo.urlText}
-          </a>
+        <div
+          className={`detail-flow${
+            translation.fields['clientType'].selectItems[clientType].flow
+              ? ' show'
+              : ' hidden'
+          }`}
+        >
+          {translation.fields['clientType'].selectItems[clientType].flow}
+        </div>
+        <div className="detail-description">
+          {translation.fields['clientType'].selectItems[clientType].helpText}
         </div>
       </div>
     )
@@ -192,69 +205,91 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
     <div className="client">
       <div className="client__wrapper">
         <div className="client__container">
-          <h1>{isEditing ? 'Edit Client' : 'Create a new Client'}</h1>
+          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
           <div className="client__container__form">
-            <div className="client__help">
-              Enter some basic details for this client. Click{' '}
-              <a href="#advanced">advanced</a> to configure preferences if
-              default settings need to be changed. You will then go through
-              steps to configure and add additional properties.
-            </div>
+            <div className="client__help">{translation.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client__container__fields">
                 <div className={clientTypeSelected ? '' : 'field-with-details'}>
                   <div className="client__container__field">
-                    <label className="client__label">Client Type</label>
+                    <label
+                      className="client__label"
+                      htmlFor="client.clientType"
+                    >
+                      {translation.fields['clientType'].label}
+                    </label>
                     <select
+                      id="client.clientType"
                       name="client.clientType"
                       ref={register({ required: true })}
-                      title="Type of Client"
+                      title={translation.fields['clientType'].helpText}
                       onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
                       onBlur={hideClientInfo}
                     >
                       <option value="" selected={!client.clientType}>
-                        Select Client Type
+                        {
+                          translation.fields['clientType'].selectItems['']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="spa"
                         selected={client.clientType === 'spa'}
                       >
-                        Single Page App
+                        {
+                          translation.fields['clientType'].selectItems['spa']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="native"
                         selected={client.clientType === 'native'}
                       >
-                        Native
+                        {
+                          translation.fields['clientType'].selectItems['native']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
                       >
-                        Web App
+                        {
+                          translation.fields['clientType'].selectItems['web']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="machine"
                         selected={client.clientType === 'machine'}
                       >
-                        Machine
+                        {
+                          translation.fields['clientType'].selectItems[
+                            'machine'
+                          ].selectItemText
+                        }
                       </option>
                       <option
                         value="device"
                         selected={client.clientType === 'device'}
                         disabled
                       >
-                        Device (not supported)
+                        {
+                          translation.fields['clientType'].selectItems['device']
+                            .selectItemText
+                        }
                       </option>
                     </select>
 
-                    <HelpBox helpText="Select the appropriate Client Type" />
+                    <HelpBox
+                      helpText={translation.fields['clientType'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientType"
-                      message="Client Type is required"
+                      message={translation.fields['clientType'].errorMessage}
                     />
                     <div
                       className={`client__container__field__details${

@@ -21,4 +21,11 @@ export class FormItem {
   errorMessage: string
   available: string
   unAvailable: string
+  selectItems: Record<string, SelectField>
+}
+
+export class SelectField {
+  helpText: string
+  selectItemText: string
+  flow?: string
 }

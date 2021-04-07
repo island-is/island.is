@@ -281,6 +281,105 @@
           "unAvailable": ""
         }
       }
+    },
+    {
+      "id": "ClientCreateForm",
+      "title": "Create a new Client",
+      "editTitle": "Edit Client",
+      "help": "Enter some basic details for this client. Click advanced to configure preferences if default settings need to be changed. You will then go through steps to configure and add additional properties.",
+      "saveButton": "Next",
+      "cancelButton": "Cancel",
+      "sectionTitle1": "",
+      "fields": {
+        "clientType": {
+          "label": "Client Type",
+          "placeholder": "",
+          "helpText": "Select the appropriate Client Type",
+          "errorMessage": "Client Type is required",
+          "available": "",
+          "unAvailable": "",
+          "selectItems": {
+            "": {
+              "selectItemText": "Select Client Type",
+              "flow": "",
+              "helpText": "You need to select the appropriate Client Type. Information about each type will be shown here when you change the selection."
+            },
+            "spa": {
+              "selectItemText": "SPA Client",
+              "flow": "Authorization code flow + PKCE",
+              "helpText": "A single-page application (spa) doesn't need to reload the page during its use and works within a browser, e.g. Facebook. Since it is running in the users browser, it cannot keep a secret."
+            },
+            "native": {
+              "selectItemText": "Native Client",
+              "flow": "Authorization code flow + PKCE",
+              "helpText": "A native application is designed specifically for use on a particular platform or device. Since it runs on user´s devices it cannot keep a secret"
+            },
+            "web": {
+              "selectItemText": "Web Client",
+              "flow": "Hybrid flow with client authentication",
+              "helpText": "A web application runs on a web server and is accessed by a web browser. Examples of common web applications are online banking and online retail sales. Is capable of keeping a secret"
+            },
+            "machine": {
+              "selectItemText": "Machine Client Type",
+              "flow": "Hybrid flow with client authentication",
+              "helpText": "An application or service running on a confidential server. This type of application is capable of keeping a secret."
+            },
+            "device": {
+              "selectItemText": "Device Type Client (not supported)",
+              "flow": "Device flow using external browser",
+              "helpText": "Description for this client type is not present."
+            }
+          }
+        },
+        "contactEmail": {
+          "label": "Contact Email",
+          "placeholder": "john@example.com",
+          "helpText": "Contact email for this Api Resource",
+          "errorMessage": "Contact email must be set and must be a valid email address",
+          "available": "",
+          "unAvailable": ""
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Unique identifier",
+          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
+          "errorMessage": "Name is required and needs to be in the right format",
+          "available": "Available",
+          "unAvailable": "Unavailable"
+        },
+        "displayName": {
+          "label": "Display Name",
+          "placeholder": "Default Display Name",
+          "helpText": "The display name value will be used e.g. on the consent screen.",
+          "errorMessage": "Display name is required and needs to be in the right format",
+          "available": "",
+          "unAvailable": ""
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Description for this scope",
+          "helpText": "The description value will be used e.g. on the consent screen.",
+          "errorMessage": "Description needs to be in the right format",
+          "available": "",
+          "unAvailable": ""
+        },
+        "enabled": {
+          "label": "Enabled",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is enabled.",
+          "errorMessage": "",
+          "available": "",
+          "unAvailable": ""
+        },
+        "showInDiscoveryDocument": {
+          "label": "Show In Discovery Document",
+          "placeholder": "",
+          "helpText": "Specifies whether this scope is shown in the discovery document.",
+          "errorMessage": "",
+          "available": "",
+          "unAvailable": ""
+        }
+      }
     }
   ]
 }
