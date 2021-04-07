@@ -28,7 +28,10 @@ export class SubArticle {
   showTableOfContents?: boolean
 }
 
-export const mapSubArticle = ({ sys, fields }: ISubArticle): SystemMetadata<SubArticle> => ({
+export const mapSubArticle = ({
+  sys,
+  fields,
+}: ISubArticle): SystemMetadata<SubArticle> => ({
   typename: 'SubArticle',
   id: sys.id,
   title: fields.title ?? '',
