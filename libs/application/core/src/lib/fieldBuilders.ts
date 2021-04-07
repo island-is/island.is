@@ -47,6 +47,7 @@ export function buildCheckboxField(data: {
   disabled?: boolean
   width?: FieldWidth
   large?: boolean
+  strong?: boolean
   backgroundColor?: InputBackgroundColor
   defaultValue?: MaybeWithApplication<unknown>
 }): CheckboxField {
@@ -58,6 +59,7 @@ export function buildCheckboxField(data: {
     options,
     disabled = false,
     width = 'full',
+    strong = false,
     large,
     backgroundColor,
     defaultValue,
@@ -68,6 +70,7 @@ export function buildCheckboxField(data: {
     disabled,
     width,
     large,
+    strong,
     backgroundColor,
     condition,
     id,

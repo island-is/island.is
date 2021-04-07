@@ -91,6 +91,7 @@ export interface CheckboxField extends BaseField {
   component: FieldComponents.CHECKBOX
   options: MaybeWithApplication<Option[]>
   large?: boolean
+  strong?: boolean
   backgroundColor?: InputBackgroundColor
 }
 

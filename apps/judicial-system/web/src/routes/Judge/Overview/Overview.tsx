@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useContext } from 'react'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import {
   formatDate,
@@ -27,6 +27,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  Feature,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
@@ -47,7 +48,7 @@ import {
 import { parseTransition } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useRouter } from 'next/router'
 import { CreateCustodyCourtCaseMutation } from '@island.is/judicial-system-web/src/utils/mutations'
-import { getFeature } from '@island.is/judicial-system-web/src/services/api'
+import { FeatureContext } from '@island.is/judicial-system-web/src/shared-components/FeatureProvider/FeatureProvider'
 import * as styles from './Overview.treat'
 
 interface CaseData {
@@ -69,10 +70,10 @@ export const JudgeOverview: React.FC = () => {
   ] = useState('')
   const [workingCase, setWorkingCase] = useState<Case>()
   const [modalVisible, setModalVisible] = useState<boolean>()
-  const [
-    showCreateCustodyCourtCase,
-    setShowCreateCustodyCourtCase,
-  ] = useState<boolean>(false)
+  const { features } = useContext(FeatureContext)
+  const [showCreateCustodyCourtCase, setShowCreateCustodyCourtCase] = useState(
+    false,
+  )
 
   const [
     createCustodyCourtCaseMutation,
@@ -186,17 +187,17 @@ export const JudgeOverview: React.FC = () => {
   }, [workingCase, setWorkingCase, transitionCaseMutation])
 
   useEffect(() => {
-    const tryToShowFeature = async (theCase: Case) => {
+    const tryToShowFeature = (theCase: Case) => {
       setShowCreateCustodyCourtCase(
         theCase.type === CaseType.CUSTODY &&
-          (await getFeature('CREATE_CUSTODY_COURT_CASE')),
+          features.includes(Feature.CREATE_CUSTODY_COURT_CASE),
       )
     }
 
     if (workingCase) {
       tryToShowFeature(workingCase)
     }
-  }, [workingCase, setShowCreateCustodyCourtCase])
+  }, [features, workingCase, setShowCreateCustodyCourtCase])
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'

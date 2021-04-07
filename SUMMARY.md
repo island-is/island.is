@@ -134,6 +134,7 @@
 - [Auth API Lib](libs/auth-api-lib/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
+  - [Clients Document Provider](libs/clients/document-provider/README.md)
   - [Clients Mms](libs/clients/mms/README.md)
   - [Clients National Registry](libs/clients/national-registry/README.md)
   - [Rsk](libs/clients/rsk/README.md)

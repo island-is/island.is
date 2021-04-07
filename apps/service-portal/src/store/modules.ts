@@ -42,7 +42,6 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'educationLicense',
   'educationCareer',
   'educationStudentAssessment',
-  'applications',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {

@@ -146,7 +146,7 @@ const DateTime: React.FC<Props> = (props) => {
           placeholderText="Veldu dagsetningu"
           locale="is"
           errorMessage={datepickerErrorMessage}
-          hasError={datepickerErrorMessage != undefined}
+          hasError={datepickerErrorMessage !== undefined}
           icon={locked ? 'lockClosed' : undefined}
           minDate={minDate}
           maxDate={maxDate}
@@ -157,7 +157,7 @@ const DateTime: React.FC<Props> = (props) => {
           backgroundColor={backgroundColor}
         />
         <TimeInputField
-          disabled={disabled || locked || currentDate == undefined}
+          disabled={disabled || locked || currentDate === undefined}
           onChange={onTimeChange}
           onBlur={onTimeBlur}
         >
