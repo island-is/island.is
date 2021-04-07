@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { RegulationsItemModel } from './RegulationsItem'
+import { RegulationsItemModel } from './regulationsItem'
 
 @ObjectType()
 export class RegulationsModel {
