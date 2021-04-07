@@ -78,6 +78,8 @@ export default {
     password: process.env.RSK_API_PASSWORD,
   },
   regulationsDomain: {
-    url: 'https://reglugerdir-api.herokuapp.com/api/v1',
+    url:
+      process.env.REGULATIONS_API_URL ??
+      'https://reglugerdir-api.herokuapp.com/api/v1',
   },
 }

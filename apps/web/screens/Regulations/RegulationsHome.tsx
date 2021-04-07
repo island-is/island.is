@@ -12,8 +12,8 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
-// import getConfig from 'next/config'
-// import { CustomNextError } from '@island.is/web/units/errors'
+import getConfig from 'next/config'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { SubpageDetailsContent } from '@island.is/web/components'
 import { RegulationsHomeImg } from './RegulationsHomeImg'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
@@ -56,7 +56,7 @@ import {
 } from '../queries'
 import { log } from 'xstate/lib/actions'
 
-// const { publicRuntimeConfig } = getConfig()
+const { publicRuntimeConfig } = getConfig()
 
 // ---------------------------------------------------------------------------
 
@@ -70,6 +70,11 @@ type RegulationsHomeProps = {
 }
 
 const RegulationsHome: Screen<RegulationsHomeProps> = (props) => {
+  const { disableRegulationsPage: disablePage } = publicRuntimeConfig
+  if (disablePage === 'true') {
+    throw new CustomNextError(404, 'Not found')
+  }
+
   const router = useRouter()
   const txt = useNamespace(props.texts)
   const { linkResolver } = useLinkResolver()
