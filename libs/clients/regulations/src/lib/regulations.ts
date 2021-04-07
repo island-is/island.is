@@ -31,7 +31,7 @@ export class RegulationsService extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
   }
-/*
+  /*
   Example api routes for regulation
   regulation/nr/[name]/current
   regulation/nr/[name]/original
@@ -48,13 +48,17 @@ export class RegulationsService extends RESTDataSource {
     earlierDate?: string,
   ): Promise<Regulation | RegulationRedirect | null> {
     const route = `regulation/nr/${name}/${viewType}${
-      viewType === 'd' && date ? '/' + date : ''}${
-      viewType === 'd' && isCustomDiff ? '/diff' : ''}${
-      isCustomDiff && earlierDate ? '/' + earlierDate : ''}`
+      viewType === 'd' && date ? '/' + date : ''
+    }${viewType === 'd' && isCustomDiff ? '/diff' : ''}${
+      isCustomDiff && earlierDate ? '/' + earlierDate : ''
+    }`
 
-    const response = await this.get<Regulation | RegulationRedirect |  null>(route, {
-      cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
-    })
+    const response = await this.get<Regulation | RegulationRedirect | null>(
+      route,
+      {
+        cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
+      },
+    )
     return response
   }
 

@@ -74,5 +74,5 @@ export default {
   },
   regulationsDomain: {
     url: process.env.REGULATIONS_API_URL,
-  }
+  },
 }

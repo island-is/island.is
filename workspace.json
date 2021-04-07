@@ -1080,7 +1080,10 @@
               "libs/api/domains/regulations/tsconfig.lib.json",
               "libs/api/domains/regulations/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api/domains/regulations/**/*"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/regulations/**/*"
+            ]
           }
         },
         "test": {
