@@ -41,6 +41,7 @@ const mapEvents = (
   events = events
     .slice()
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .reverse()
 
   const byYear = new Map()
   for (const event of events) {
@@ -80,7 +81,7 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
         const timestamp = new Date(event.date).getTime()
         offset += Math.max(
           90,
-          Math.min(160, (lastTimestamp - timestamp) / 4320000),
+          Math.min(160, (timestamp - lastTimestamp) / 4320000),
         )
         items.push(
           <>
@@ -131,7 +132,12 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
 
   const moveTimeline = (dir: 'left' | 'right') => {
     if (dir === 'right') {
-      setPosition(position + 500)
+      setPosition(
+        Math.min(
+          position + 500,
+          frameRef.current.scrollWidth - frameRef.current.offsetWidth,
+        ),
+      )
     } else {
       setPosition(Math.max(position - 500, 0))
     }
@@ -144,9 +150,15 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
     })
   }, [position])
 
+  useEffect(() => {
+    setPosition(frameRef.current.scrollWidth - frameRef.current.offsetWidth)
+    frameRef.current.scrollTo({
+      left: frameRef.current.scrollWidth - frameRef.current.offsetWidth,
+    })
+  }, [frameRef])
+
   const eventMap = useMemo(() => mapEvents(slice.events), [slice.events])
 
-  const [month, setMonth] = useState(0)
   const { getMonthByIndex } = useDateUtils()
 
   const months = flatten(
@@ -156,6 +168,8 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
       })
     }),
   )
+
+  const [month, setMonth] = useState(months.length - 1)
 
   const monthEvents = eventMap.get(months[month].year).get(months[month].month)
 

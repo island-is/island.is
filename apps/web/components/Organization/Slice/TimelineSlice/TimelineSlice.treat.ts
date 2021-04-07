@@ -116,7 +116,7 @@ export const bulletLine = style({
   position: 'absolute',
   top: 338,
   transformOrigin: '12px 12px',
-  zIndex: 1,
+  zIndex: 2,
 })
 
 export const arrowButton = style({
