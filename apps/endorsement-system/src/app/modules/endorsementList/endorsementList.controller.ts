@@ -8,21 +8,21 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
-import { EndorsementListDto } from './dto/endorsementList.dto'
-import { ApiTags } from '@nestjs/swagger'
-import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
+import { EndorsementListDto } from './dto/EndorsementLists.dto'
+import { FindEndorsementListByTagDto } from './dto/FindEndorsementListsByTags.dto'
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 export class EndorsementListController {
-  constructor(
+  constructor (
     private readonly endorsementListService: EndorsementListService,
   ) {}
 
   @Get()
-  async findLists(
+  async findLists (
     @Query() { tag }: FindEndorsementListByTagDto,
   ): Promise<EndorsementList[]> {
     // TODO: Add dto for tags here?
@@ -31,7 +31,7 @@ export class EndorsementListController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<EndorsementList> {
+  async findOne (@Param('id') id: string): Promise<EndorsementList> {
     const response = await this.endorsementListService.findSingleList(id)
     if (!response) {
       throw new NotFoundException(['This endorsement list does not exist.'])
@@ -41,7 +41,7 @@ export class EndorsementListController {
   }
 
   @Get(':id/endorsements')
-  async findEndorsements(@Param('id') id: string): Promise<EndorsementList> {
+  async findEndorsements (@Param('id') id: string): Promise<EndorsementList> {
     // TODO: Add auth here
     // TODO: Add pagination
     const response = await this.endorsementListService.findSingleListEndorsements(
@@ -55,7 +55,7 @@ export class EndorsementListController {
   }
 
   @Put(':id/close')
-  async close(@Param('id') id: string): Promise<EndorsementList> {
+  async close (@Param('id') id: string): Promise<EndorsementList> {
     // TODO: Add auth here
     const response = await this.endorsementListService.close(id)
     if (!response) {
@@ -66,7 +66,7 @@ export class EndorsementListController {
   }
 
   @Post()
-  async create(
+  async create (
     @Body() endorsementList: EndorsementListDto,
   ): Promise<EndorsementList> {
     // TODO: Add auth here

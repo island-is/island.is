@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Endorsement } from '../endorsement/endorsement.model'
-import { ValidationRuleDto } from './dto/validationRule.dto'
+import { ValidationRuleDto } from './dto/ValidationRules.dto'
 
 // TODO: Move this type to the metadata service
 export enum EndorsementMetaField {
