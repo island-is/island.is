@@ -20,8 +20,8 @@ To start the application system, follow the instructions in the handbook [here](
 ### Additional Environment variables
 
 - You need to set few additional in order to submitting the application locally:
-- Recipient email name: `EMAIL_REPLY_TO_NAME=`Recipient Name
-- Recipient email address: `EMAIL_REPLY_TO=`example@dev.is
+- Recipient email name: `INSTITUTION_APPLICATION_RECIPIENT_NAME=`Recipient Name
+- Recipient email address: `INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS=`example@dev.is
 - Application sender email name: `EMAIL_FROM_NAME=`Sender Name
 - Application sender email address: `EMAIL_FROM=`example@dev.is
 - Upload bucket for attachments: `FILE_STORAGE_UPLOAD_BUCKET=`bucket-name

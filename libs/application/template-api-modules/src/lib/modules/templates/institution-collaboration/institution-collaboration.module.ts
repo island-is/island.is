@@ -6,12 +6,13 @@ import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicatio
 import { FileStorageModule } from '@island.is/file-storage'
 
 const applicationRecipientName =
-  process.env.EMAIL_REPLY_TO_NAME ?? 'Recipient Name'
+  process.env.INSTITUTION_APPLICATION_RECIPIENT_NAME ?? ''
 
 const applicationRecipientEmail =
-  process.env.EMAIL_REPLY_TO ?? 'development@island.is'
+  process.env.INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS ??
+  'island@island.is'
 
-const applicationSenderName = process.env.EMAIL_FROM_NAME ?? 'Sender Name'
+const applicationSenderName = process.env.EMAIL_FROM_NAME ?? ''
 
 const applicationSenderEmail = process.env.EMAIL_FROM ?? 'development@island.is'
 
