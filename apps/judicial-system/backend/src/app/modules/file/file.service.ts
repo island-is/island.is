@@ -85,20 +85,12 @@ export class FileService {
     return { success }
   }
 
-  private deleteFileFromDatabase(id: string): Promise<boolean> {
+  private async deleteFileFromDatabase(id: string): Promise<boolean> {
     this.logger.debug(`Deleting file ${id} from database`)
 
-    const success = this.fileModel
-      .destroy({ where: { id } })
-      .then((nrOfRowsDeleted) => {
-        return nrOfRowsDeleted === 1
-      })
-      .error((err) => {
-        this.logger.error(err)
-        return false
-      })
+    const nrOfRowsDeleted = await this.fileModel.destroy({ where: { id } })
 
-    return success
+    return nrOfRowsDeleted > 0
   }
 
   private async tryDeleteFileFromS3(key: string) {

@@ -18,7 +18,7 @@ export class AwsS3Service {
       this.s3.createPresignedPost(
         {
           Bucket: environment.files.bucket,
-          Expires: +environment.files.timeToLivePost,
+          Expires: +environment.files.timeToLivePost, // convert to number with +
           Fields: { key },
         },
         (err, data) => {
@@ -39,7 +39,7 @@ export class AwsS3Service {
         {
           Bucket: 'bucket',
           Key: 'key',
-          Expires: environment.files.timeToLivePost,
+          Expires: +environment.files.timeToLivePost, // convert to number with +
         },
         (err, url) => {
           if (err) {
