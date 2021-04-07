@@ -6,7 +6,10 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { api } from '@island.is/skilavottord-web/services'
 import { Locale } from '@island.is/shared/types'
-import { getRoutefromLocale } from '@island.is/skilavottord-web/utils/routesMapper'
+import {
+  getBaseUrl,
+  getRoutefromLocale,
+} from '@island.is/skilavottord-web/utils/routesMapper'
 import { useQuery } from '@apollo/client'
 import { Role } from '@island.is/skilavottord-web/auth/utils'
 
@@ -60,6 +63,7 @@ export const Header: FC = () => {
   }, [user, setUser])
 
   const homeRoute = routes.home[user?.role as Role] ?? routes.home['citizen']
+  const baseUrl = getBaseUrl()
 
   return (
     <IslandUIHeader
@@ -71,7 +75,9 @@ export const Header: FC = () => {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push('/'))
+        api
+          .logout()
+          .then(() => (window.location.href = `${baseUrl}/skilavottord`))
       }}
     />
   )
