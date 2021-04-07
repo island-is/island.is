@@ -22,8 +22,10 @@ import {
 } from '@island.is/judicial-system/consts'
 import { User, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
+import { AuditedAction } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../../../environments'
+import { AuditService } from '../audit'
 import { AuthUser, Cookie } from './auth.types'
 import { AuthService } from './auth.service'
 
@@ -61,6 +63,7 @@ const REDIRECT_COOKIE: Cookie = {
 @Controller('api/auth')
 export class AuthController {
   constructor(
+    private readonly auditService: AuditService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
     @Inject('IslandisLogin')
@@ -167,9 +170,8 @@ export class AuthController {
     csrfToken?: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
-    const valid = this.authService.validateUser(user)
 
-    if (!valid) {
+    if (!user || !this.authService.validateUser(user)) {
       this.logger.error('Unknown user', {
         extra: {
           authUser,
@@ -186,19 +188,24 @@ export class AuthController {
       return res.redirect('/?villa=innskraning-ogild')
     }
 
-    return res
-      .cookie(
-        CSRF_COOKIE.name,
-        csrfToken as string,
-        {
-          ...CSRF_COOKIE.options,
+    this.auditService.audit(
+      user.id,
+      AuditedAction.LOGIN,
+      res
+        .cookie(
+          CSRF_COOKIE.name,
+          csrfToken as string,
+          {
+            ...CSRF_COOKIE.options,
+            maxAge: EXPIRES_IN_MILLISECONDS,
+          } as CookieOptions,
+        )
+        .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
+          ...ACCESS_TOKEN_COOKIE.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
-        } as CookieOptions,
-      )
-      .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
-        ...ACCESS_TOKEN_COOKIE.options,
-        maxAge: EXPIRES_IN_MILLISECONDS,
-      })
-      .redirect(user?.role === UserRole.ADMIN ? '/notendur' : returnUrl)
+        })
+        .redirect(user?.role === UserRole.ADMIN ? '/notendur' : returnUrl),
+      user.id,
+    )
   }
 }

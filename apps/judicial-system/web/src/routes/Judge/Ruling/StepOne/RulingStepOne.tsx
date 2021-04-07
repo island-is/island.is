@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   Accordion,
   Box,
@@ -333,11 +333,7 @@ export const RulingStepOne: React.FC = () => {
                       ? new Date(workingCase.custodyEndDate)
                       : undefined
                   }
-                  minDate={
-                    workingCase.isolationTo
-                      ? new Date(workingCase.isolationTo)
-                      : undefined
-                  }
+                  minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
                     newSetAndSendDateToServer(
                       'custodyEndDate',

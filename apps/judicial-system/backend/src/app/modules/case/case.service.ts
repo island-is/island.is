@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -19,16 +24,16 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { getCasesQueryFilter } from './filters'
+import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
 @Injectable()
 export class CaseService {
   constructor(
-    private readonly signingService: SigningService,
-    private readonly emailService: EmailService,
     @InjectModel(Case)
     private readonly caseModel: typeof Case,
+    private readonly signingService: SigningService,
+    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -166,6 +171,22 @@ export class CaseService {
         { model: Case, as: 'childCase' },
       ],
     })
+  }
+
+  async findByIdAndUser(id: string, user: TUser): Promise<Case> {
+    const existingCase = await this.findById(id)
+
+    if (!existingCase) {
+      throw new NotFoundException(`Case ${id} does not exist`)
+    }
+
+    if (isCaseBlockedFromUser(existingCase, user)) {
+      throw new ForbiddenException(
+        `User ${user.id} does not have access to case ${id}`,
+      )
+    }
+
+    return existingCase
   }
 
   create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {

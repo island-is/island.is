@@ -204,6 +204,9 @@
     "cache": {
       "tags": []
     },
+    "clients-document-provider": {
+      "tags": []
+    },
     "clients-documents": {
       "tags": []
     },

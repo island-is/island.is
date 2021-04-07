@@ -5,7 +5,6 @@
  * - Please do NOT serve this file on production.
  */
 /* eslint-disable */
-/* tslint:disable */
 
 const INTEGRITY_CHECKSUM = 'd1e0e502f550d40a34bee90822e4bf98'
 const bypassHeaderName = 'x-msw-bypass'

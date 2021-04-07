@@ -141,5 +141,6 @@ module.exports = {
     '<rootDir>/libs/clients/zendesk',
     '<rootDir>/apps/download-service',
     '<rootDir>/libs/clients/documents',
+    '<rootDir>/libs/clients/document-provider',
   ],
 }

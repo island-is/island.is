@@ -25,6 +25,7 @@
 /libs/application/templates/passport/                                                         @island-is/vice-versa
 /libs/api/domains/driving-license/                                                            @island-is/vice-versa
 /libs/api/domains/education/                                                                  @island-is/vice-versa
+/libs/clients/mms/                                                                            @island-is/vice-versa
 /libs/service-portal/driving-license/                                                         @island-is/vice-versa
 /libs/service-portal/eligibility/                                                             @island-is/vice-versa
 /libs/service-portal/education/                                                               @island-is/vice-versa @island-is/kosmos-kaos
@@ -106,6 +107,7 @@
 /libs/service-portal/document-provider/                                                       @island-is/advania
 /apps/services/xroad-collector/                                                               @island-is/advania
 /apps/services/documents                                                                      @island-is/advania
+/libs/clients/document-provider                                                               @island-is/advania
 
 /apps/skilavottord/                                                                           @island-is/deloitte
 /libs/application/templates/health-insurance/                                                 @island-is/deloitte
