@@ -29,7 +29,6 @@ export type ModuleKeys =
   | 'finance'
   | 'settings'
   | 'education'
-  | 'educationDegree'
   | 'educationLicense'
   | 'educationCareer'
   | 'educationStudentAssessment'
@@ -38,11 +37,9 @@ export type ModuleKeys =
 export const featureFlaggedModules: ModuleKeys[] = [
   'documentProvider',
   'education',
-  'educationDegree',
   'educationLicense',
   'educationCareer',
   'educationStudentAssessment',
-  'applications',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -52,7 +49,6 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   finance: financeModule,
   settings: settingsModule,
   education: educationModule,
-  educationDegree: educationDegreeModule,
   educationLicense: educationLicenseModule,
   educationCareer: educationCareerModule,
   educationStudentAssessment: educationStudentAssessmentModule,
