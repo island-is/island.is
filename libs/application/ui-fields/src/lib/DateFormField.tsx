@@ -23,6 +23,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
     description,
     placeholder,
     backgroundColor,
+    excludeDates,
   } = field
   const { formatMessage, lang } = useLocale()
 
@@ -40,6 +41,7 @@ const DateFormField: FC<Props> = ({ application, error, field }) => {
           id={id}
           name={`${id}`}
           locale={lang}
+          excludeDates={excludeDates}
           backgroundColor={backgroundColor}
           label={formatText(title, application, formatMessage)}
           placeholder={

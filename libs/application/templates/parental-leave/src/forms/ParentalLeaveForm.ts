@@ -23,6 +23,7 @@ import {
   formatIsk,
   getEstimatedMonthlyPay,
   getOtherParentOptions,
+  getAllPeriodDates,
 } from '../parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -714,6 +715,17 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
+                  // HERE
+                  // excludeDates: (app) => getAllPeriodDates(app.answers.periods),
+                  excludeDates: (app) => {
+                    // return getAllPeriodDates(app.answers.periods)
+                    return [new Date()]
+                  },
+                  // (answers as {
+                  //   periods: {
+                  //     isSelfEmployed: string
+                  //   }
+                  // })?.employer?.isSelfEmployed !== YES,
                 }),
                 buildMultiField({
                   id: 'endDate',
