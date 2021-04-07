@@ -162,14 +162,19 @@ export const useS3Upload = (workingCase?: Case) => {
             id: file.key,
           },
         },
-      }).then((res) => {
-        if (!res.errors) {
-          removeFileFromState(file)
-        } else {
-          // TODO: handle failure
-          console.log(res.errors)
-        }
       })
+        .then((res) => {
+          if (!res.errors) {
+            removeFileFromState(file)
+          } else {
+            // TODO: handle failure
+            console.log(res.errors)
+          }
+        })
+        .catch((res) => {
+          // TODO: Log to Sentry and display an error message.
+          console.log(res.graphQLErrors)
+        })
     }
   }
 
