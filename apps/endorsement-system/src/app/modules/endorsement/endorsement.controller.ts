@@ -10,16 +10,16 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { Endorsement } from './endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import { FindEndorsementDto } from './dto/FindEndorsements.dto'
+import { FindEndorsementDto } from './dto/FindEndorsement.dto'
 import { EndorsementDto } from './dto/Endorsement.dto'
 
 @ApiTags('endorsement')
 @Controller('endorsement')
 export class EndorsementController {
-  constructor (private readonly endorsementService: EndorsementService) {}
+  constructor(private readonly endorsementService: EndorsementService) {}
 
   @Get()
-  async findAll (
+  async findAll(
     @Query() { listId }: FindEndorsementDto,
   ): Promise<Endorsement[]> {
     // TODO: Add auth here
@@ -34,7 +34,7 @@ export class EndorsementController {
   }
 
   @Post()
-  async create (@Body() { listId }: EndorsementDto): Promise<Endorsement> {
+  async create(@Body() { listId }: EndorsementDto): Promise<Endorsement> {
     // TODO: Add auth here
     // TODO: Validate rules here
     try {
@@ -48,7 +48,7 @@ export class EndorsementController {
   }
 
   @Delete()
-  async delete (@Body() { listId }: EndorsementDto): Promise<boolean> {
+  async delete(@Body() { listId }: EndorsementDto): Promise<boolean> {
     // TODO: Add auth here
     const endorsement = await this.endorsementService.deleteFromListByNationalId(
       {

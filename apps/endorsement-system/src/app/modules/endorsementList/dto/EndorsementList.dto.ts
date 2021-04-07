@@ -5,7 +5,7 @@ import {
   ValidateNested,
   IsArray,
 } from 'class-validator'
-import { ValidationRuleDto } from './ValidationRules.dto'
+import { ValidationRuleDto } from './ValidationRule.dto'
 import { Type } from 'class-transformer'
 import { EndorsementMetaField, EndorsementTag } from '../endorsementList.model'
 export class EndorsementListDto {
