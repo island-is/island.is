@@ -9,7 +9,7 @@ import {
   DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
 } from './client/documentProviderClientConfig'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
-import { DOCUMENT_PROVIDER_ADMINS } from './admin.guard'
+import { DOCUMENT_PROVIDER_ADMINS } from './utils/admin.guard'
 
 export interface Config extends DocumentProviderConfig {
   documentsServiceBasePath: string

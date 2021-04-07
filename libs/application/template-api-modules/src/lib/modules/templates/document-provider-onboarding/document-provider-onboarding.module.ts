@@ -1,20 +1,22 @@
 import { DynamicModule } from '@nestjs/common'
-
-// This is a shared module that gives you access to common methods
+import { ClientsDocumentProviderModule } from '@island.is/clients/document-provider'
 import { SharedTemplateAPIModule } from '../../shared'
-
-// The base config that template api modules are registered with by default
-// (configurable inside `template-api.module.ts`)
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-
-// Here you import your module service
 import { DocumentProviderOnboardingService } from './document-provider-onboarding.service'
+
+const SERVICE_DOCUMENTS_BASEPATH =
+  process.env.SERVICE_DOCUMENTS_BASEPATH ?? 'http://localhost:3369'
 
 export class DocumentProviderOnboardingModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: DocumentProviderOnboardingModule,
-      imports: [SharedTemplateAPIModule.register(config)],
+      imports: [
+        SharedTemplateAPIModule.register(config),
+        ClientsDocumentProviderModule.register({
+          basePath: SERVICE_DOCUMENTS_BASEPATH,
+        }),
+      ],
       providers: [DocumentProviderOnboardingService],
       exports: [DocumentProviderOnboardingService],
     }
