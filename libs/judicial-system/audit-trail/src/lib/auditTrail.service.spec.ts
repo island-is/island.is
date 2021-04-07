@@ -51,7 +51,7 @@ describe('AuditTrailService', () => {
   it('should throw an exception if not initialized', () => {
     // Arrange
     const userId = 'some-user-id'
-    const action = AuditedAction.OVERVIEW
+    const action = AuditedAction.GET_CASES
     const ids = ['some-id', 'another-id']
     const act = () => {
       service.audit(userId, action, ids)
@@ -65,7 +65,7 @@ describe('AuditTrailService', () => {
     // Arrange
     const spy = jest.spyOn(auditTrail, 'info')
     const userId = 'some-user-id'
-    const action = AuditedAction.VIEW_DETAILS
+    const action = AuditedAction.GET_CASE
     const id = 'some-id'
     service.initTrail({ useGenericLogger: false })
 
@@ -88,7 +88,7 @@ describe('AuditTrailService', () => {
     // Arrange
     const spy = jest.spyOn(genericLogger, 'info')
     const userId = 'some-user-id'
-    const action = AuditedAction.VIEW_DETAILS
+    const action = AuditedAction.GET_CASE
     const id = 'some-id'
     service.initTrail({ useGenericLogger: true })
 
