@@ -4,6 +4,7 @@ import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFileMutation,
   CreatePresignedPostMutation,
+  DeleteFileMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { Case, PresignedPost } from '@island.is/judicial-system/types'
 
@@ -15,8 +16,8 @@ export const useS3Upload = (workingCase?: Case) => {
   }, [workingCase])
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
-
   const [createFileMutation] = useMutation(CreateFileMutation)
+  const [deleteFileMutation] = useMutation(DeleteFileMutation)
 
   const createPresignedPost = async (
     filename: string,
@@ -122,7 +123,18 @@ export const useS3Upload = (workingCase?: Case) => {
     })
   }
 
-  const onRemove = () => console.log('Remove')
+  const onRemove = async (fileId: string) => {
+    if (workingCase) {
+      await deleteFileMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            id: fileId,
+          },
+        },
+      })
+    }
+  }
 
   return { files, onChange, onRemove }
 }
