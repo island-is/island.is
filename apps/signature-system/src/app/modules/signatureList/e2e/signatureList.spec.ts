@@ -101,7 +101,7 @@ describe('SignatureList', () => {
   })
   it(`PUT /signature-list/:uid/close should close existing signature list`, async () => {
     const response = await request(app.getHttpServer())
-      .put('/signature-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c1/close')
+      .put('/signature-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c2/close')
       .send()
       .expect(200)
 
