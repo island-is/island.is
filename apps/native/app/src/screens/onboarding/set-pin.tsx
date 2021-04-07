@@ -3,10 +3,13 @@ import { theme } from '@island.is/island-ui/theme';
 import React, { useEffect, useRef, useState } from 'react'
 import { Switch, Keyboard} from 'react-native';
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useTheme } from 'styled-components';
 import { OnBoarding } from '../../components/onboarding/onboarding';
+import { useScreenOptions } from '../../contexts/theme-provider';
+import { navigateTo } from '../../utils/deep-linking';
 
 export const SetPinScreen: NavigationFunctionComponent = () => {
-
+  const theme = useTheme()
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const [pin, setPin] = useState('');
@@ -22,11 +25,20 @@ export const SetPinScreen: NavigationFunctionComponent = () => {
     }
   }, [pin, confirmPin])
 
+  useScreenOptions(
+    () => ({
+      popGesture: false,
+      topBar: {
+        visible: false,
+      }
+    }), [theme]
+  )
+
   return (
     <OnBoarding
       title="Setja upp skjálæsingu"
       copy="Veldu þér PIN númer á milli 4-16 tölustafi til þess að afælsa appinu."
-      action={<Button onPress={() => console.log('next step')} title="Halda áfram" disabled={!pinMatches} />}
+      action={<Button onPress={() => navigateTo(`/setnotification`)} title="Halda áfram" disabled={!pinMatches} />}
     >
       <SwitchLabel title="Nota FaceID" onPress={toggleSwitch}>
         <Switch

@@ -6,30 +6,37 @@ import { TouchableHighlightProps } from 'react-native';
 interface ButtonProps extends TouchableHighlightProps {
   title: string;
   disabled?: boolean;
+  isTransparent?: boolean;
 }
 
-const Host = styled.TouchableHighlight<{ disabled?: boolean }>`
+const Host = styled.TouchableHighlight<{ disabled?: boolean, isTransparent?: boolean }>`
   padding: ${theme.spacing.p3}px ${theme.spacing.p4}px;
-  background-color: ${(props) => props.disabled ? theme.color.dark200 : theme.color.blue400};
+  background-color: ${(props) => props.disabled ?
+    theme.color.dark200 :
+    props.isTransparent ?
+    'transparent' :
+    theme.color.blue400
+  };
   border-radius: ${theme.border.radius.large};
   min-width: 192px;
 `;
 
-const Text = styled.Text`
-  color: #fff;
+const Text = styled.Text<{ isTransparent?: boolean }>`
+  color: ${(props) => props.isTransparent ? '#808080' : '#fff'} ;
   text-align: center;
   font-family: 'IBMPlexSans-SemiBold';
   font-size: 16px;
   line-height: 20px;
 `;
 
-export function Button({ title, ...rest }: ButtonProps) {
+export function Button({ title, isTransparent, ...rest }: ButtonProps) {
   return (
     <Host
       underlayColor={theme.color.blue600}
+      isTransparent={isTransparent}
       {...rest}
     >
-      <Text>{title}</Text>
+      <Text isTransparent={isTransparent}>{title}</Text>
     </Host>
   )
 }

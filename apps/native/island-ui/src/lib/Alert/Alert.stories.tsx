@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { Alert } from './Alert';
 
 const CenterView = ({ children }: any) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>{children}</View>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20}}>{children}</View>
 )
 
 storiesOf('Alert', module)

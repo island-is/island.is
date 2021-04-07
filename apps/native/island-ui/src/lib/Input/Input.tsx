@@ -1,11 +1,12 @@
 import React from 'react'
 import styled from 'styled-components/native';
 import { theme } from '@island.is/island-ui/theme';
-import { TextInput, TextInputProps } from 'react-native';
+import { TextInputProps } from 'react-native';
 
 const Host = styled.TextInput`
   padding: 16px 16px;
   margin-bottom: ${(props) => props.theme.spacing.gutter}px;
+  width: 100%;
 
   border: ${theme.border.width.standard}px ${theme.border.style.solid} ${theme.border.color.standard};
   border-radius: ${theme.border.radius.large};

@@ -3,7 +3,7 @@ import { text, withKnobs } from '@storybook/addon-knobs';
 import React, { useState } from 'react'
 import { View, Switch } from 'react-native';
 import { SwitchLabel } from './SwitchLabel'
-import { theme } from 'libs/island-ui/theme/src';
+import { theme } from '@island.is/island-ui/theme';
 
 const CenterView = ({ children }: any) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>{children}</View>
@@ -14,8 +14,8 @@ storiesOf('SwitchLabel', module)
   .addDecorator(withKnobs)
   .add('Default', () => {
     const title = text('Switch labeb', 'Nota FaceID');
-    // const [isEnabled, setIsEnabled] = useState(false);
-    // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     return (
       <SwitchLabel title={title}>
         <Switch

@@ -12,7 +12,6 @@ import { testIDs } from '../../utils/test-ids'
 import { LIST_LICENSES_QUERY } from '../../graphql/queries/list-licenses.query'
 import { Logo } from '../../components/logo/logo'
 import { LicenseType } from '../../types/license-type'
-import { theme } from '@island.is/island-ui/theme'
 
 function mapLicenseColor(type: LicenseType) {
   let backgroundColor = '#eeeeee'
