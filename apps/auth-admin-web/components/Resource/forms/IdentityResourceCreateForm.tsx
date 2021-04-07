@@ -272,7 +272,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                 </div>
 
                 <section className="api-scope__section">
-                  <h3>Delegation</h3>
+                  <h3>{translation.sectionTitle1}</h3>
 
                   <div className="api-scope-form__container__checkbox__field">
                     <label
@@ -417,7 +417,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       className="identity-resource-form__button__cancel"
                       onClick={props.handleCancel}
                     >
-                      Cancel
+                      {translation.cancelButton}
                     </button>
                   </div>
                   <div className="identity-resource-form__button__container">
@@ -425,7 +425,7 @@ const IdentityResourceCreateForm: React.FC<Props> = (props) => {
                       type="submit"
                       className="identity-resource-form__button__save"
                       disabled={isSubmitting || !available}
-                      value="Next"
+                      value={translation.saveButton}
                     />
                   </div>
                 </div>
