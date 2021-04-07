@@ -254,7 +254,7 @@ const Overview = ({
           {formatMessage(
             m.interview[
               parentKey === Roles.ParentA
-                ? answers.interviewParentB
+                ? answers.interviewParentA
                 : answers.interviewParentB
             ].overviewText,
           )}
