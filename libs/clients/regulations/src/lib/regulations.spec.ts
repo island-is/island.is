@@ -88,20 +88,10 @@ describe('getRegulation', () => {
     regulationsService = await getNestModule(expectedResult.SUCCESS)
   })
 
-  it('should return success in the correct format', async () => {
-    const results = await regulationsService.getRegulation(
-      'original',
-      demoRegName,
-    )
-    expect(results).toStrictEqual(demoRegulation)
-  })
-
-  it('should return empty array when use has no company', async () => {
-    const results = await regulationsService.getRegulation('original', '')
-    expect(results).toEqual([])
-  })
-
   it('should throw on error', async () => {
+    await expect(
+      regulationsService.getRegulation('original', ''),
+    ).rejects.toThrow()
     await expect(
       regulationsService.getRegulation('original', 'NNNN-NNNN'),
     ).rejects.toThrow()
