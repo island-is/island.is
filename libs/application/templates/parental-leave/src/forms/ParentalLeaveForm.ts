@@ -39,6 +39,7 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
+import { Period } from '../types'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -715,15 +716,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   title: parentalLeaveFormMessages.startDate.title,
                   description: parentalLeaveFormMessages.startDate.description,
                   placeholder: parentalLeaveFormMessages.startDate.placeholder,
-                  // HERE
-                  excludeDates: (app) => {
-                    return getAllPeriodDates(app.answers.periods)
+                  excludeDates: (application) => {
+                    const {
+                      answers: { periods },
+                    } = application
+
+                    return getAllPeriodDates(periods as Period[])
                   },
-                  // (answers as {
-                  //   periods: {
-                  //     isSelfEmployed: string
-                  //   }
-                  // })?.employer?.isSelfEmployed !== YES,
                 }),
                 buildMultiField({
                   id: 'endDate',
@@ -735,8 +734,12 @@ export const ParentalLeaveForm: Form = buildForm({
                       title: parentalLeaveFormMessages.endDate.label,
                       placeholder:
                         parentalLeaveFormMessages.endDate.placeholder,
-                      excludeDates: (app) => {
-                        return getAllPeriodDates(app.answers.periods)
+                      excludeDates: (application) => {
+                        const {
+                          answers: { periods },
+                        } = application
+
+                        return getAllPeriodDates(periods as Period[])
                       },
                     }),
                   ],
