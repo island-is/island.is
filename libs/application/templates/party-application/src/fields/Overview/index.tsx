@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import { Success } from '../components'
+import { Approved } from '@island.is/application/ui-components'
 
 export interface Props extends FieldBaseProps {
   title?: string
@@ -15,7 +15,7 @@ const Overview: FC<Props> = () => {
         Reykjavíkurkjördæmi suður
       </Text>
 
-      <Success
+      <Approved
         title="Meðmælendalista hefur verið skilað"
         subtitle=" Þú munt fá skilaboð í pósthólf inni á mínum síðum Ísland.is með framhaldið."
       />

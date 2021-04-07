@@ -6,7 +6,7 @@ export interface Props {
   subtitle: string
 }
 
-const Success: FC<Props> = ({ title, subtitle }) => {
+const Approved: FC<Props> = ({ title, subtitle }) => {
   return (
     <Box
       padding={2}
@@ -17,7 +17,7 @@ const Success: FC<Props> = ({ title, subtitle }) => {
     >
       <Box display="flex" alignItems="center">
         <Box marginRight={2}>
-          <Icon icon="checkmarkCircle" color="mint400" size="large" />
+          <Icon icon="checkmarkCircle" color="blue400" size="large" />
         </Box>
         <Text variant="h4">{title}</Text>
       </Box>
@@ -26,4 +26,4 @@ const Success: FC<Props> = ({ title, subtitle }) => {
   )
 }
 
-export default Success
+export default Approved

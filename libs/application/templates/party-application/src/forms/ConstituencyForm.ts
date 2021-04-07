@@ -12,75 +12,68 @@ import { m } from '../lib/messages'
 
 export const ConstituencyForm: Form = buildForm({
   id: 'ApplicationDraft',
-  title: 'Framboð',
+  title: 'Framboð í kjördæmi',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'constituency',
-      title: 'Velja kjördæmi',
+      id: 'constituencySection',
+      title: m.constituencySection.title,
       children: [
-        buildMultiField({
-          id: 'information',
-          title: 'Upplýsingar',
-          description:
-            'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplisýngar hafi verið gefnar upp.',
-          children: [
-            buildCustomField({
-              id: 'applicantOverview',
-              title: '',
-              component: 'Applicant',
-            }),
-            buildRadioField({
-              id: 'constituencies',
-              title: 'Veldu kjördæmi',
-              width: 'half',
-              largeButtons: true,
-              options: [
-                { value: 'Norðausturkjördæmi', label: 'Norðausturkjördæmi' },
-                {
-                  value: 'Reykjavíkurkjördæmi norður',
-                  label: 'Reykjavíkurkjördæmi norður',
-                },
-                { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
-                { value: 'Norðvesturkjördæmi', label: 'Norðvesturkjördæmi' },
-                {
-                  value: 'Reykjavíkurkjördæmi suður',
-                  label: 'Reykjavíkurkjördæmi suður',
-                },
-                { value: 'Suðvesturkjördæmi', label: 'Suðvesturkjördæmi' },
-              ],
-            }),
+        buildRadioField({
+          id: 'constituency',
+          title: m.constituencySection.selectConstituency,
+          width: 'half',
+          largeButtons: true,
+          options: [
+            // todo get constituencies elsewhere?
+            { value: 'Norðausturkjördæmi', label: 'Norðausturkjördæmi' },
+            { value: 'Norðvesturkjördæmi', label: 'Norðvesturkjördæmi' },
+            {
+              value: 'Reykjavíkurkjördæmi norður',
+              label: 'Reykjavíkurkjördæmi norður',
+            },
+            {
+              value: 'Reykjavíkurkjördæmi suður',
+              label: 'Reykjavíkurkjördæmi suður',
+            },
+            { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
+            { value: 'Suðvesturkjördæmi', label: 'Suðvesturkjördæmi' },
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'overview',
-      title: 'Staðfesta',
+      id: 'overviewSection',
+      title: m.constituencySection.confirmationTitle,
       children: [
         buildMultiField({
-          id: 'residenceChangeOverview',
-          title: '',
+          id: 'overviewSubmit',
+          title: m.constituencySection.confirmation,
+          description: m.constituencySection.confirmationDescription,
           children: [
             buildCustomField({
-              id: 'residenceChangeReview',
-              title: 'm.contract.general.pageTitle',
-              component: 'SubmitConfirmation',
+              id: 'review',
+              title: '',
+              component: 'ReviewConstituency',
             }),
             buildSubmitField({
               id: 'submit',
               title: '',
               placement: 'footer',
               actions: [
-                { event: 'SUBMIT', name: 'Hefja söfnun', type: 'primary' },
+                {
+                  event: 'SUBMIT',
+                  name: m.overviewSection.submitButton,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
         buildCustomField({
           id: 'overviewComponent',
-          title: 'Yfirlit hér verður söfnunarlisti',
-          component: 'Overview',
+          title: m.gatherSignatures.title,
+          component: 'Signatures',
         }),
       ],
     }),

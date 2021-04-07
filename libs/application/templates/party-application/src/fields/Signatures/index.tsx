@@ -47,7 +47,7 @@ const SIGNATURES = [
   },
 ]
 
-const Recommendations: FC<FieldBaseProps> = ({ application }) => {
+const Signatures: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -56,15 +56,15 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
 
   const namesCountString = formatMessage(
     SIGNATURES.length > 1
-      ? m.recommendations.namesCount
-      : m.recommendations.nameCount,
+      ? formatMessage(m.gatherSignatures.namesCount)
+      : formatMessage(m.gatherSignatures.nameCount),
   )
 
   return (
     <Box marginBottom={8}>
       <CopyLink
         linkUrl="www.island.is/listabókstafur/128877634/"
-        buttonTitle={formatMessage(m.recommendations.copyLinkButton)}
+        buttonTitle={formatMessage(m.gatherSignatures.copyLinkButton)}
       />
       <Text variant="h3">{`${SIGNATURES.length} ${namesCountString}`}</Text>
       <Box marginTop={2}>
@@ -75,7 +75,7 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
           marginBottom={3}
         >
           <Checkbox
-            label={formatMessage(m.recommendations.invalidSignatures)}
+            label={formatMessage(m.gatherSignatures.invalidSignatures)}
             checked={showWarning}
             onChange={() => {
               setShowWarning(!showWarning)
@@ -87,7 +87,7 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
           />
           <Input
             name="searchbar"
-            placeholder={formatMessage(m.recommendations.searchbar)}
+            placeholder={formatMessage(m.gatherSignatures.searchbar)}
             icon="search"
             backgroundColor="blue"
             size="sm"
@@ -111,4 +111,4 @@ const Recommendations: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export default Recommendations
+export default Signatures
