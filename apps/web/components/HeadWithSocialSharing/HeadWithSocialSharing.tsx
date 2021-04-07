@@ -24,7 +24,6 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
   const isSvg = imageUrl.trim().toLocaleLowerCase().endsWith('svg')
   const isUsableImage = !isSvg && usableContentTypes.includes(imageContentType)
 
-  console.log(imageUrl, imageContentType, 'isUsable', isUsableImage)
   return (
     <Head>
       {title.length > 0 ? (
