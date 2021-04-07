@@ -75,6 +75,6 @@ export enum DataProviderTypes {
 }
 
 export enum InterviewFieldIds {
-  parentA = 'interview',
+  parentA = 'interviewParentA',
   parentB = 'interviewParentB',
 }

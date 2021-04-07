@@ -1,5 +1,6 @@
 import { error } from './messages/index'
 import * as z from 'zod'
+import { InterviewFieldIds } from '../types'
 
 const parentContactInfo = z.object({
   email: z.string().email(error.validation.invalidEmail.defaultMessage),
@@ -40,8 +41,8 @@ export const dataSchema = z.object({
     .string()
     .optional()
     .refine((v) => v && v !== '', error.validation.durationDate.defaultMessage),
-  interview: interview,
-  interviewParentB: interview,
+  [InterviewFieldIds.parentA]: interview,
+  [InterviewFieldIds.parentB]: interview,
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

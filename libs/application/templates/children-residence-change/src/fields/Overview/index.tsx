@@ -16,7 +16,10 @@ import {
   formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import { ApplicationStates } from '../../lib/ChildrenResidenceChangeTemplate'
+import {
+  ApplicationStates,
+  Roles,
+} from '../../lib/ChildrenResidenceChangeTemplate'
 import { DescriptionText } from '../components'
 import {
   fileSignatureReducer,
@@ -147,7 +150,8 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   // TODO: Look into if we want to do this in a different way - using the application state seems wrong
-  const parentKey = application.state === 'draft' ? 'parentA' : 'parentB'
+  const parentKey =
+    application.state === 'draft' ? Roles.ParentA : Roles.ParentB
 
   return (
     <>
@@ -171,7 +175,7 @@ const Overview = ({
           text={m.contract.general.description}
           format={{
             otherParent:
-              application.state === 'draft'
+              parentKey === Roles.ParentA
                 ? parentB.fullName
                 : applicant.fullName,
           }}
@@ -243,8 +247,8 @@ const Overview = ({
         <Text>
           {formatMessage(
             m.interview[
-              parentKey === 'parentA'
-                ? answers.interview
+              parentKey === Roles.ParentA
+                ? answers.interviewParentB
                 : answers.interviewParentB
             ].overviewText,
           )}
