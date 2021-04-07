@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
 import {
   ApplicationTypes,
   ExternalData,
@@ -23,7 +22,6 @@ export const useModalContent = (
   typeId: ApplicationTypes,
 ) => {
   const [content, setContent] = useState<ContentType>()
-  const history = useHistory()
   const baseUrl = getBaseUrl()
   const { lang } = useLocale()
   const applicationSlug = getSlugFromType(typeId)
