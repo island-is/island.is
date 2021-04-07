@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
-import { EndorsementListDto } from './dto/EndorsementList.dto'
+import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/endorsement.model'
-import { Op } from 'sequelize'
 
 interface createInput extends EndorsementListDto {
   owner: string

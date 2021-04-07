@@ -11,8 +11,8 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
-import { EndorsementListDto } from './dto/EndorsementList.dto'
-import { FindEndorsementListByTagDto } from './dto/FindEndorsementListsByTag.dto'
+import { EndorsementListDto } from './dto/endorsementList.dto'
+import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')

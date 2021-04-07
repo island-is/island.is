@@ -10,8 +10,8 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { Endorsement } from './endorsement.model'
 import { EndorsementService } from './endorsement.service'
-import { FindEndorsementDto } from './dto/FindEndorsement.dto'
-import { EndorsementDto } from './dto/Endorsement.dto'
+import { FindEndorsementDto } from './dto/findEndorsement.dto'
+import { EndorsementDto } from './dto/endorsement.dto'
 
 @ApiTags('endorsement')
 @Controller('endorsement')
