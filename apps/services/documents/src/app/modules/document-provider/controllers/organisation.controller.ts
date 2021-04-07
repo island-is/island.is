@@ -97,6 +97,18 @@ export class OrganisationController {
     return updatedOrganisation
   }
 
+  @Get(':nationalId/islastmodifier')
+  @ApiOkResponse({ type: Boolean })
+  async isLastModifierOfOrganisation(
+    @Param('nationalId') organisationNationalId: string,
+    @NationalId() modifier: string,
+  ): Promise<boolean> {
+    return this.documentProviderService.isLastModifierOfOrganisation(
+      organisationNationalId,
+      modifier,
+    )
+  }
+
   @Post(':id/administrativecontact')
   @ApiOkResponse({ type: AdministrativeContact })
   async createAdministrativeContact(
