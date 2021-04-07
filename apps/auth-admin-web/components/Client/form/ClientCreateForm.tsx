@@ -303,10 +303,11 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
 
                 <div className={clientTypeSelected ? '' : 'hidden'}>
                   <div className="client__container__field">
-                    <label className="client__label">
-                      National Id (Kennitala)
+                    <label className="client__label" htmlFor="nationalId">
+                      {translation.fields['nationalId'].label}
                     </label>
                     <input
+                      id="nationalId"
                       type="text"
                       name="client.nationalId"
                       ref={register({
@@ -317,21 +318,26 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.nationalId}
                       className="client__input"
-                      placeholder="0123456789"
+                      placeholder={translation.fields['nationalId'].placeholder}
                       maxLength={10}
-                      title="The nationalId (Kennitala) registered for the client"
+                      title={translation.fields['nationalId'].helpText}
                     />
-                    <HelpBox helpText="The nationalId (Kennitala) registered for the client" />
+                    <HelpBox
+                      helpText={translation.fields['nationalId'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.nationalId"
-                      message="NationalId must be 10 numeric characters"
+                      message={translation.fields['nationalId'].errorMessage}
                     />
                   </div>
                   <div className="client__container__field">
-                    <label className="client__label">Contact email</label>
+                    <label className="client__label" htmlFor="contactEmail">
+                      {translation.fields['contactEmail'].label}
+                    </label>
                     <input
+                      id="contactEmail"
                       type="text"
                       ref={register({
                         required: true,
@@ -340,19 +346,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client__input"
-                      title="The email of the person who can be contacted regarding this Client"
-                      placeholder="john@example.com"
+                      title={translation.fields['contactEmail'].helpText}
+                      placeholder={
+                        translation.fields['contactEmail'].placeholder
+                      }
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.contactEmail"
-                      message="Contact email must be set and must be a valid email address"
+                      message={translation.fields['contactEmail'].errorMessage}
                     />
-                    <HelpBox helpText="The email of the person who can be contacted regarding this Client" />
+                    <HelpBox
+                      helpText={translation.fields['contactEmail'].helpText}
+                    />
                   </div>
                   <div className="client__container__field">
-                    <label className="client__label">Client Id</label>
+                    <label className="client__label" htmlFor="clientId">
+                      {translation.fields['clientId'].label}
+                    </label>
                     <input
                       type="text"
                       name="client.clientId"
@@ -362,9 +374,9 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientId}
                       className="client__input"
-                      placeholder="example-client"
+                      placeholder={translation.fields['clientId'].placeholder}
                       onChange={(e) => checkAvailability(e.target.value)}
-                      title="The unique identifier for this application"
+                      title={translation.fields['clientId'].helpText}
                       readOnly={isEditing}
                     />
                     <div
@@ -372,19 +384,25 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         available ? 'ok ' : 'taken '
                       } ${clientIdLength > 0 ? 'show' : 'hidden'}`}
                     >
-                      {available ? 'Available' : 'Unavailable'}
+                      {available
+                        ? translation.fields['clientId'].available
+                        : translation.fields['clientId'].unAvailable}
                     </div>
-                    <HelpBox helpText="The unique identifier for this application. No spaces or special characters." />
+                    <HelpBox
+                      helpText={translation.fields['clientId'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message="Client Id is required and needs to be in the right format (no spaces or special characters)"
+                      message={translation.fields['clientId'].errorMessage}
                     />
                   </div>
 
                   <div className="client__container__field">
-                    <label className="client__label">Description</label>
+                    <label className="client__label" htmlFor="description">
+                      {translation.fields['description'].label}
+                    </label>
                     <input
                       type="text"
                       ref={register({
@@ -393,22 +411,29 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.description"
                       defaultValue={client.description ?? ''}
                       className="client__input"
-                      title="Application description for use within AdminUI"
-                      placeholder="Example description"
+                      title={translation.fields['description'].helpText}
+                      placeholder={
+                        translation.fields['description'].placeholder
+                      }
                     />
-                    <HelpBox helpText="Application description for use within the IDS management" />
+                    <HelpBox
+                      helpText={translation.fields['description'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.description"
-                      message="Description can not include special characters"
+                      message={translation.fields['description'].errorMessage}
                     />
                   </div>
 
                   <div>
                     <div className="client__container__field">
-                      <label className="client__label">Base Url:</label>
+                      <label className="client__label" htmlFor="baseUrl">
+                        {translation.fields['baseUrl'].label}
+                      </label>
                       <input
+                        id="baseUrl"
                         readOnly={isEditing}
                         name="baseUrl"
                         type="text"
@@ -418,39 +443,44 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client__input"
-                        placeholder="https://localhost:4200"
-                        title="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc"
+                        placeholder={translation.fields['baseUrl'].placeholder}
+                        title={translation.fields['baseUrl'].helpText}
                         onChange={(e) => setCallbackUri(e.target.value)}
                         onFocus={() => setShowBaseUrlInfo(true)}
                         onBlur={() => setShowBaseUrlInfo(false)}
                       />
-                      <HelpBox helpText="Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc" />
+                      <HelpBox
+                        helpText={translation.fields['baseUrl'].helpText}
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message="Base Url is required and needs to be in the right format"
+                        message={translation.fields['baseUrl'].helpText}
                       />
                       <div
                         className={`client__container__field__details
                           ${showBaseUrlInfo ? ' show' : ' hidden'}`}
                       >
                         <div className="detail-title">
-                          Redirect (Callback) Uri will be:
+                          {translation.fields['baseUrl'].popUpTitle}
                         </div>
                         <div className="detail-uri">
                           {callbackUri}/signin-oidc
                         </div>
                         <div className="detail-link">
-                          This can be changed later
+                          {translation.fields['baseUrl'].popUpDescription}
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="client__container__field">
-                    <label className="client__label">Display Name</label>
+                    <label className="client__label" htmlFor="clientName">
+                      {translation.fields['clientName'].label}
+                    </label>
                     <input
+                      id="clientName"
                       type="text"
                       name="client.clientName"
                       ref={register({
@@ -458,15 +488,17 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientName ?? ''}
                       className="client__input"
-                      title="Application name that will be seen on consent screens"
-                      placeholder="Example name"
+                      title={translation.fields['clientName'].helpText}
+                      placeholder={translation.fields['clientName'].placeholder}
                     />
-                    <HelpBox helpText="Application name that will be seen on consent screens" />
+                    <HelpBox
+                      helpText={translation.fields['clientName'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientName"
-                      message="Display name is required since the client requires consent"
+                      message={translation.fields['clientName'].errorMessage}
                     />
                     <TranslationCreateFormDropdown
                       className="client"
@@ -477,49 +509,65 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
                   </div>
 
                   <div className="client__container__field">
-                    <label className="client__label">Display URL</label>
+                    <label className="client__label" htmlFor="clientUri">
+                      {translation.fields['clientUri'].label}
+                    </label>
                     <input
+                      id="clientUri"
                       name="client.clientUri"
                       ref={register({ validate: ValidationUtils.validateUrl })}
                       type="text"
                       defaultValue={client.clientUri ?? ''}
                       className="client__input"
-                      placeholder="https://example.com"
-                      title="Application URL that will be seen on consent screens"
+                      placeholder={translation.fields['clientUri'].placeholder}
+                      title={translation.fields['clientUri'].helpText}
                     />
-                    <HelpBox helpText="URI to further information about client (used on consent screen)" />
+                    <HelpBox
+                      helpText={translation.fields['clientUri'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientUri"
-                      message="Display url needs to be in the right format"
+                      message={translation.fields['clientUri'].errorMessage}
                     />
                   </div>
 
                   <div className="client__container__checkbox__field">
-                    <label className="client__label">Enabled</label>
+                    <label className="client__label" htmlFor="enabled">
+                      {translation.fields['enabled'].label}
+                    </label>
                     <input
+                      id="enabled"
                       type="checkbox"
                       name="client.enabled"
                       className="client__checkbox"
                       defaultChecked={client.enabled}
                       ref={register}
+                      title={translation.fields['enabled'].helpText}
                     ></input>
-                    <HelpBox helpText="Sets client enabled or disabled" />
+                    <HelpBox
+                      helpText={translation.fields['enabled'].helpText}
+                    />
                   </div>
 
                   <div className="client__container__checkbox__field">
-                    <label className="client__label">Require consent</label>
+                    <label className="client__label" htmlFor="requireConsent">
+                      {translation.fields['requireConsent'].label}
+                    </label>
                     <input
+                      id="requireConsent"
                       type="checkbox"
                       defaultChecked={client.requireConsent}
                       className="client__input"
                       name="client.requireConsent"
                       ref={register}
-                      title="Specifies whether a consent screen is required"
+                      title={translation.fields['requireConsent'].helpText}
                       onChange={(e) => setRequireConsent(e.target.checked)}
                     />
-                    <HelpBox helpText="Specifies whether a consent screen is required" />
+                    <HelpBox
+                      helpText={translation.fields['requireConsent'].helpText}
+                    />
                   </div>
 
                   <div className="client__container__button" id="advanced">
@@ -1132,7 +1180,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    Cancel
+                    {translation.cancelButton}
                   </button>
                 </div>
                 <div className="client__button__container">
@@ -1140,7 +1188,7 @@ Sliding when refreshing the token, the lifetime of the refresh token will be ren
                     type="submit"
                     className="client__button__save"
                     disabled={isSubmitting || !available}
-                    value="Next"
+                    value={translation.saveButton}
                   />
                 </div>
               </div>

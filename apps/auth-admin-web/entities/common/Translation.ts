@@ -19,9 +19,11 @@ export class FormItem {
   placeholder: string
   helpText: string
   errorMessage: string
-  available: string
-  unAvailable: string
+  available?: string
+  unAvailable?: string
   selectItems: Record<string, SelectField>
+  popUpTitle?: string
+  popUpDescription?: string
 }
 
 export class SelectField {

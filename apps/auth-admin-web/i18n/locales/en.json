@@ -331,6 +331,14 @@
             }
           }
         },
+        "nationalId": {
+          "label": "National Id",
+          "placeholder": "0123456789",
+          "helpText": "The nationalId (Kennitala) registered for the api-resource-form",
+          "errorMessage": "NationalId must be 10 numeric characters",
+          "available": "",
+          "unAvailable": ""
+        },
         "contactEmail": {
           "label": "Contact Email",
           "placeholder": "john@example.com",
@@ -339,42 +347,60 @@
           "available": "",
           "unAvailable": ""
         },
-        "name": {
-          "label": "Name",
-          "placeholder": "Unique identifier",
-          "helpText": "The unique name of the identity resource. This is the value a client will use for the scope parameter in the authorize request.",
-          "errorMessage": "Name is required and needs to be in the right format",
+        "clientId": {
+          "label": "Client Id",
+          "placeholder": "example-client",
+          "helpText": "The unique identifier for this application. No spaces or special characters.",
+          "errorMessage": "The unique identifier for this application. No spaces or special characters.",
           "available": "Available",
           "unAvailable": "Unavailable"
         },
-        "displayName": {
+        "clientName": {
           "label": "Display Name",
           "placeholder": "Default Display Name",
-          "helpText": "The display name value will be used e.g. on the consent screen.",
-          "errorMessage": "Display name is required and needs to be in the right format",
+          "helpText": "Application name that will be seen on consent screens",
+          "errorMessage": "Display name is required since the client requires consent and needs to be in the right format",
           "available": "",
           "unAvailable": ""
         },
         "description": {
           "label": "Description",
-          "placeholder": "Description for this scope",
-          "helpText": "The description value will be used e.g. on the consent screen.",
+          "placeholder": "Example description",
+          "helpText": "Application description for use within AdminUI",
           "errorMessage": "Description needs to be in the right format",
+          "available": "",
+          "unAvailable": ""
+        },
+        "baseUrl": {
+          "label": "Base Url",
+          "placeholder": "https://localhost:4200",
+          "helpText": "Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc",
+          "errorMessage": "Base Url is required and needs to be in the right format",
+          "available": "",
+          "unAvailable": "",
+          "popUpTitle": "Redirect (Callback) Uri will be:",
+          "popUpDescription": "This can be changed later"
+        },
+        "clientUri": {
+          "label": "Display URL",
+          "placeholder": "https://example.com",
+          "helpText": "Application URL that will be seen on consent screens",
+          "errorMessage": "Display url needs to be in the right format",
           "available": "",
           "unAvailable": ""
         },
         "enabled": {
           "label": "Enabled",
           "placeholder": "",
-          "helpText": "Specifies whether this scope is enabled.",
+          "helpText": "Specifies whether this client is enabled.",
           "errorMessage": "",
           "available": "",
           "unAvailable": ""
         },
-        "showInDiscoveryDocument": {
-          "label": "Show In Discovery Document",
+        "requireConsent": {
+          "label": "Require consent",
           "placeholder": "",
-          "helpText": "Specifies whether this scope is shown in the discovery document.",
+          "helpText": "Specifies whether a consent screen is required",
           "errorMessage": "",
           "available": "",
           "unAvailable": ""
