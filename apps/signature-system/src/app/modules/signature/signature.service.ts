@@ -53,6 +53,7 @@ export class SignatureService {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // TODO: Prevent this from adding multiple signatures to same list
+
     return this.signatureModel.create({
       signaturee: nationalId,
       signatureListId: listId,

@@ -8,9 +8,13 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { SignatureList } from '../signatureList/signatureList.model'
-import { SignatureMetaField } from '../signatureList/dto/signatureList.dto'
+import {
+  SignatureList,
+  SignatureMetaField,
+} from '../signatureList/signatureList.model'
 
+// TODO: Move this type to the metadata service
+// TODO: Map out all potential key/values types
 export type SignatureMetaData = {
   [key in keyof typeof SignatureMetaField]?: any
 }

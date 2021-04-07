@@ -1,6 +1,7 @@
-import { IsString } from 'class-validator'
+import { IsEnum } from 'class-validator'
+import { SignatureTag } from '../signatureList.model'
 
 export class FindSignatureListByTagDto {
-  @IsString()
-  tag!: string
+  @IsEnum(SignatureTag)
+  tag!: SignatureTag
 }

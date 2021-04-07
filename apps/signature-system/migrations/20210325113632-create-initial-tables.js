@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false,
       },
       description: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       closed_date: {
         type: Sequelize.DATE,
@@ -86,7 +86,7 @@ module.exports = {
     )
   },
 
-  down: async (queryInterface) => {
+  down: async (queryInterface, Sequelize) => {
     return Promise.all([
       queryInterface.dropTable('signature'),
       queryInterface.dropTable('signature_list'),

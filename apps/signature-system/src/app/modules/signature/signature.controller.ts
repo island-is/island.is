@@ -19,16 +19,12 @@ export class SignatureController {
   constructor(private readonly signatureService: SignatureService) {}
 
   @Get()
-  async findOne(@Query() { listId }: FindSignatureDto): Promise<Signature[]> {
+  async findAll(@Query() { listId }: FindSignatureDto): Promise<Signature[]> {
     // TODO: Add auth here
     const signature = await this.signatureService.findSignaturesByNationalId({
       nationalId: '0000000000', // TODO: Replace this with requesting user
       listId,
     })
-
-    if (!signature) {
-      throw new NotFoundException("This signature doesn't exist")
-    }
 
     return signature
   }
@@ -37,10 +33,14 @@ export class SignatureController {
   async create(@Body() { listId }: SignatureDto): Promise<Signature> {
     // TODO: Add auth here
     // TODO: Validate rules here
-    return await this.signatureService.createSignatureOnList({
-      nationalId: '0000000000', // TODO: Replace this with requesting user
-      listId,
-    })
+    try {
+      return await this.signatureService.createSignatureOnList({
+        nationalId: '0000000000', // TODO: Replace this with requesting user
+        listId,
+      })
+    } catch (error) {
+      throw new NotFoundException(["This list doesn't exist"])
+    }
   }
 
   @Delete()
@@ -52,7 +52,7 @@ export class SignatureController {
     })
 
     if (signature === 0) {
-      throw new NotFoundException("This signature doesn't exist")
+      throw new NotFoundException(["This signature doesn't exist"])
     }
 
     return signature > 0
