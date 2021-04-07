@@ -19,20 +19,24 @@ export class FileService {
     private readonly logger: Logger,
   ) {}
 
+  findById(id: string): Promise<File> {
+    return this.fileModel.findByPk(id)
+  }
+
   createCasePresignedPost(
     caseId: string,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
+    this.logger.debug(`Creating a presigned post for case ${caseId}`)
+
     return this.awsS3Service.createPresignedPost(
       `${caseId}/${uuid()}_${createPresignedPost.fileName}`,
     )
   }
 
-  getSignedUrl(key: string): Promise<SignedUrl> {
-    return this.awsS3Service.getSignedUrl(key)
-  }
-
   createCaseFile(caseId: string, createFile: CreateFileDto): Promise<File> {
+    this.logger.debug(`Creating a file for case ${caseId}`)
+
     const { key } = createFile
 
     const regExp = new RegExp(`^${caseId}/.{36}_(.*)$`)
@@ -57,19 +61,32 @@ export class FileService {
     })
   }
 
-  getCaseFileById(id: string): Promise<File> {
-    this.logger.debug(`Get case file by id ${id}`)
+  getCaseFileSignedUrl(caseId: string, file: File): Promise<SignedUrl> {
+    this.logger.debug(
+      `Getting a signed url for file ${file.id} of case ${caseId}`,
+    )
 
-    return this.fileModel.findByPk(id)
+    return this.awsS3Service.getSignedUrl(file.key)
   }
 
-  async deleteFile(file: File): Promise<DeleteFileResponse> {
-    await this.deleteFileFromDatabase(file.id)
-    return this.awsS3Service.deleteFile(file.key)
+  async deleteCaseFile(
+    caseId: string,
+    file: File,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting file ${file.id} of case ${caseId}`)
+
+    const success = await this.deleteFileFromDatabase(file.id)
+
+    if (success) {
+      // Fire and forget, no need to wait for the result
+      this.tryDeleteFileFromS3(file.key)
+    }
+
+    return { success }
   }
 
-  deleteFileFromDatabase(id: string): Promise<boolean> {
-    this.logger.debug(`Delete case file by id ${id} from database`)
+  private deleteFileFromDatabase(id: string): Promise<boolean> {
+    this.logger.debug(`Deleting file ${id} from database`)
 
     const success = this.fileModel
       .destroy({ where: { id } })
@@ -84,9 +101,14 @@ export class FileService {
     return success
   }
 
-  deleteFileFromS3(key: string): Promise<DeleteFileResponse> {
-    this.logger.debug(`Delete case file by key ${key} from S3`)
+  private async tryDeleteFileFromS3(key: string) {
+    this.logger.debug(`Attempting to delete file ${key} from S3`)
 
-    return this.awsS3Service.deleteFile(key)
+    // We don't really care if this succeeds
+    try {
+      await this.awsS3Service.deleteObject(key)
+    } catch (error) {
+      this.logger.error(`Error while deleting file ${key} from S3`, error)
+    }
   }
 }

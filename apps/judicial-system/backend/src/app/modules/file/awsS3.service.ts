@@ -52,10 +52,13 @@ export class AwsS3Service {
     })
   }
 
-  async deleteFile(key: string): Promise<DeleteFileResponse> {
+  async deleteObject(key: string): Promise<DeleteFileResponse> {
     return new Promise((resolve, reject) => {
       this.s3.deleteObject(
-        { Bucket: environment.files.bucket, Key: key },
+        {
+          Bucket: environment.files.bucket,
+          Key: key,
+        },
         (err, data) => {
           if (err) {
             reject(err)

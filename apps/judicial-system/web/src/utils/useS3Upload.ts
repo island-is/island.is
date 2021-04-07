@@ -122,7 +122,7 @@ export const useS3Upload = (workingCase?: Case) => {
     })
   }
 
-  const onRemove = () => console.log('Rmove')
+  const onRemove = () => console.log('Remove')
 
   return { files, onChange, onRemove }
 }

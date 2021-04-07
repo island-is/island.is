@@ -17,7 +17,7 @@ import {
   DeleteFileInput,
   GetSignedUrlInput,
 } from './dto'
-import { PresignedPost, File, DeleteFile, SignedUrl } from './models'
+import { PresignedPost, File, DeleteFileResponse, SignedUrl } from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -56,31 +56,31 @@ export class FileResolver {
   ): Promise<SignedUrl> {
     const { caseId, id } = input
 
-    this.logger.debug(`Get file from case ${caseId} with id ${id}`)
+    this.logger.debug(`Getting a signed url for file ${id} of case ${caseId}`)
 
     return this.auditService.audit(
       user.id,
-      AuditedAction.GET_FILE,
-      backendApi.getCaseFileUrl(caseId, id),
+      AuditedAction.GET_SIGNED_URL,
+      backendApi.getCaseFileSignedUrl(caseId, id),
       id,
     )
   }
 
-  @Mutation(() => DeleteFile)
+  @Mutation(() => DeleteFileResponse)
   deleteFile(
     @Args('input', { type: () => DeleteFileInput })
     input: DeleteFileInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<DeleteFile> {
+  ): Promise<DeleteFileResponse> {
     const { caseId, id } = input
 
-    this.logger.debug(`Deleting file on case ${caseId} with id ${id}`)
+    this.logger.debug(`Deleting file ${id} of case ${caseId}`)
 
     return this.auditService.audit(
       user.id,
       AuditedAction.DELETE_FILE,
-      backendApi.deleteFile(caseId, id),
+      backendApi.deleteCaseFile(caseId, id),
       id,
     )
   }

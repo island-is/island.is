@@ -112,11 +112,11 @@ class BackendAPI extends RESTDataSource {
     return this.post(`case/${id}/file`, createFile)
   }
 
-  getCaseFileUrl(caseId: string, id: string): Promise<SignedUrl> {
+  getCaseFileSignedUrl(caseId: string, id: string): Promise<SignedUrl> {
     return this.get(`case/${caseId}/file/${id}/url`)
   }
 
-  deleteFile(caseId: string, id: string): Promise<DeleteFileResponse> {
+  deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${id}`)
   }
 
