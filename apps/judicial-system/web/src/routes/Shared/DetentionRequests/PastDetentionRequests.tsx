@@ -120,15 +120,31 @@ const PastDetentionRequests: React.FC<Props> = (props) => {
         accessor: 'rulingDate' as keyof Case,
         disableSortBy: true,
         Cell: (row: {
-          row: { original: { rulingDate: string; custodyEndDate: string } }
+          row: {
+            original: {
+              rulingDate: string
+              custodyEndDate: string
+              courtEndTime: string
+            }
+          }
         }) => {
-          return `${formatDate(
-            parseISO(row.row.original.rulingDate),
-            'd.M.y',
-          )} - ${formatDate(
-            parseISO(row.row.original.custodyEndDate),
-            'd.M.y',
-          )}`
+          const rulingDate = row.row.original.rulingDate
+          const custodyEndDate = row.row.original.custodyEndDate
+          const courtEndDate = row.row.original.courtEndTime
+
+          if (rulingDate) {
+            return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
+              parseISO(custodyEndDate),
+              'd.M.y',
+            )}`
+          } else if (courtEndDate) {
+            return `${formatDate(
+              parseISO(courtEndDate),
+              'd.M.y',
+            )} - ${formatDate(parseISO(custodyEndDate), 'd.M.y')}`
+          } else {
+            return formatDate(parseISO(custodyEndDate), 'd.M.y')
+          }
         },
       },
     ],
