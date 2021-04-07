@@ -6,6 +6,8 @@ import { ApiResourcesDTO } from '../../../entities/dtos/api-resources-dto'
 import { ResourcesService } from '../../../services/ResourcesService'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationCreateFormDropdown from '../../Admin/form/TranslationCreateFormDropdown'
+import TranslationUtils from './../../../utils/translation.utils'
+import { FormPage } from './../../../entities/common/Translation'
 
 interface Props {
   handleSave?: (object: ApiResourcesDTO) => void
@@ -24,6 +26,9 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
   const [nameLength, setNameLength] = useState(0)
+  const [translation, setTranslation] = useState<FormPage>(
+    TranslationUtils.getFormPage('ResourceCreateForm'),
+  )
 
   useEffect(() => {
     if (props.apiResource && props.apiResource.name) {
@@ -62,18 +67,17 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
     <div className="api-resource-form">
       <div className="api-resource-form__wrapper">
         <div className="api-resource-form__container">
-          <h1>{isEditing ? 'Edit Api Resource' : 'Create Api Resource'}</h1>
+          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
           <div className="api-resource-form__container__form">
-            <div className="api-resource-form__help">
-              The server hosting the protected resources, and which is capable
-              of accepting and responding to protected resource requests using
-              access tokens.
-            </div>
+            <div className="api-resource-form__help">{translation.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="api-resource-form__container__fields">
                 <div className="api-resource-form__container__field">
-                  <label className="api-resource-form__label">
-                    National Id (Kennitala)
+                  <label
+                    className="api-resource-form__label"
+                    htmlFor="nationalId"
+                  >
+                    {translation.fields['nationalId'].label}
                   </label>
                   <input
                     type="text"
@@ -86,21 +90,26 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     })}
                     defaultValue={props.apiResource.nationalId}
                     className="api-resource-form__input"
-                    placeholder="0123456789"
+                    placeholder={translation.fields['nationalId'].placeholder}
                     maxLength={10}
-                    title="The nationalId (Kennitala) registered for the api-resource-form"
+                    title={translation.fields['nationalId'].helpText}
                   />
-                  <HelpBox helpText="The nationalId (Kennitala) registered for the api-resource-form" />
+                  <HelpBox
+                    helpText={translation.fields['nationalId'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="nationalId"
-                    message="NationalId must be 10 numeric characters"
+                    message={translation.fields['nationalId'].helpText}
                   />
                 </div>
                 <div className="api-resource-form__container__field">
-                  <label className="client-basic__label">Contact email</label>
+                  <label className="client-basic__label" htmlFor="contactEmail">
+                    {translation.fields['contactEmail'].label}
+                  </label>
                   <input
+                    id="contactEmail"
                     type="text"
                     ref={register({
                       required: true,
@@ -109,20 +118,22 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     name="contactEmail"
                     defaultValue={props.apiResource.contactEmail ?? ''}
                     className="api-resource-form__input"
-                    title="The email of the person who can be contacted regarding this API Resource"
-                    placeholder="john@example.com"
+                    title={translation.fields['contactEmail'].helpText}
+                    placeholder={translation.fields['contactEmail'].placeholder}
                   />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="contactEmail"
-                    message="Contact email must be set and must be a valid email address"
+                    message={translation.fields['contactEmail'].errorMessage}
                   />
-                  <HelpBox helpText="The email of the person who can be contacted regarding this API Resource" />
+                  <HelpBox
+                    helpText={translation.fields['contactEmail'].helpText}
+                  />
                 </div>
                 <div className="api-resource-form__container__field">
                   <label htmlFor="name" className="api-resource-form__label">
-                    Name
+                    {translation.fields['name'].label}
                   </label>
                   <input
                     ref={register({
@@ -136,20 +147,24 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     defaultValue={props.apiResource.name}
                     readOnly={isEditing}
                     onChange={(e) => checkAvailability(e.target.value)}
+                    title={translation.fields['name'].helpText}
+                    placeholder={translation.fields['name'].placeholder}
                   />
                   <div
                     className={`api-resource-form__container__field__available ${
                       available ? 'ok ' : 'taken '
                     } ${nameLength > 0 ? 'show' : 'hidden'}`}
                   >
-                    {available ? 'Available' : 'Unavailable'}
+                    {available
+                      ? translation.fields['name'].available
+                      : translation.fields['name'].unAvailable}
                   </div>
-                  <HelpBox helpText="The unique name of the API. This value is used for authentication with introspection and will be added to the audience of the outgoing access token." />
+                  <HelpBox helpText={translation.fields['name'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="name"
-                    message="Name is required and needs to be in the right format"
+                    message={translation.fields['name'].errorMessage}
                   />
                 </div>
                 <div className="api-resource-form__container__field">
@@ -157,7 +172,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="displayName"
                     className="api-resource-form__label"
                   >
-                    Display Name
+                    {translation.fields['displayName'].label}
                   </label>
                   <input
                     ref={register({
@@ -169,13 +184,17 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     className="api-resource-form__input"
                     defaultValue={props.apiResource.displayName}
+                    title={translation.fields['displayName'].helpText}
+                    placeholder={translation.fields['displayName'].placeholder}
                   />
-                  <HelpBox helpText="The Display Name value can be used e.g. on the consent screen." />
+                  <HelpBox
+                    helpText={translation.fields['displayName'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="displayName"
-                    message="Display name is required"
+                    message={translation.fields['displayName'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="apiresource"
@@ -189,7 +208,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="description"
                     className="api-resource-form__label"
                   >
-                    Description
+                    {translation.fields['description'].label}
                   </label>
                   <input
                     ref={register({
@@ -201,13 +220,16 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="text"
                     defaultValue={props.apiResource.description}
                     className="api-resource-form__input"
+                    title={translation.fields['description'].helpText}
                   />
-                  <HelpBox helpText="The Description value can be used e.g. on the consent screen." />
+                  <HelpBox
+                    helpText={translation.fields['description'].helpText}
+                  />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="description"
-                    message="Description can not contain special characters"
+                    message={translation.fields['description'].errorMessage}
                   />
                   <TranslationCreateFormDropdown
                     className="apiresource"
@@ -219,7 +241,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
 
                 <div className="api-resource-form__container__checkbox__field">
                   <label htmlFor="enabled" className="api-resource-form__label">
-                    Enabled
+                    {translation.fields['enabled'].label}
                   </label>
                   <input
                     ref={register}
@@ -228,8 +250,9 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="checkbox"
                     defaultChecked={props.apiResource.enabled}
                     className="api-resource-form__checkbox"
+                    title={translation.fields['enabled'].helpText}
                   />
-                  <HelpBox helpText="Indicates if this resource is enabled and can be requested." />
+                  <HelpBox helpText={translation.fields['enabled'].helpText} />
                 </div>
 
                 <div className="api-resource-form__container__checkbox__field">
@@ -237,7 +260,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     htmlFor="showInDiscoveryDocument"
                     className="api-resource-form__label"
                   >
-                    Show In Discovery Document
+                    {translation.fields['showInDiscoveryDocument'].label}
                   </label>
                   <input
                     ref={register}
@@ -246,8 +269,15 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                     type="checkbox"
                     defaultChecked={props.apiResource.showInDiscoveryDocument}
                     className="api-resource-form__checkbox"
+                    title={
+                      translation.fields['showInDiscoveryDocument'].helpText
+                    }
                   />
-                  <HelpBox helpText="Specifies whether this resource is shown in the discovery document." />
+                  <HelpBox
+                    helpText={
+                      translation.fields['showInDiscoveryDocument'].helpText
+                    }
+                  />
                 </div>
 
                 <div className="api-resource-form__buttons__container">
@@ -257,7 +287,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                       className="api-resource-form__button__cancel"
                       onClick={props.handleCancel}
                     >
-                      Cancel
+                      {translation.cancelButton}
                     </button>
                   </div>
                   <div className="api-resource-form__button__container">
@@ -265,7 +295,7 @@ const ResourceCreateForm: React.FC<Props> = (props) => {
                       type="submit"
                       className="api-resource-form__button__save"
                       disabled={isSubmitting || !available}
-                      value="Next"
+                      value={translation.saveButton}
                     />
                   </div>
                 </div>
