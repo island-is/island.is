@@ -86,7 +86,7 @@ export const useModalContent = (
       setContent({
         ...contentList.activeDraftApplication,
         buttonAction: () =>
-          history.push(`../${applicationSlug}/${oldestDraftApplicationId}`),
+          (window.location.href = `/umsoknir/${applicationSlug}/${oldestDraftApplicationId}`),
       })
     }
   }, [externalData])
