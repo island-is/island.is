@@ -237,6 +237,15 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             slug
             title
             intro
+            group {
+              title
+            }
+            organization {
+              id
+              title
+              description
+              slug
+            }
           }
         }
       }

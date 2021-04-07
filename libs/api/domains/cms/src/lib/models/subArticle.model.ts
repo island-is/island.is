@@ -37,7 +37,7 @@ export const mapSubArticle = ({
   title: fields.title ?? '',
   slug: fields.slug ?? '',
   parentSlug: fields.parentSlug ?? '',
-  parent: fields.parent && mapArticleReference(fields.parent),
+  parent: fields.parent?.fields && mapArticleReference(fields.parent),
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   showTableOfContents: fields.showTableOfContents ?? false,
 })
