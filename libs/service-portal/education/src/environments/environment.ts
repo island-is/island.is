@@ -1,3 +1,5 @@
+import { getStaticEnv } from '@island.is/utils/environment'
+
 export default {
-  featureFlagSdkKey: 'YcfYCOwBTUeI04mWOWpPdA/KgCHhUk0_k2BdiKMaNh3qA',
+  featureFlagSdkKey: getStaticEnv('SI_PUBLIC_CONFIGCAT_SDK_KEY'),
 }
