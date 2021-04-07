@@ -233,6 +233,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           slug
           parentSlug
           parent {
+            id
             slug
             title
             intro
