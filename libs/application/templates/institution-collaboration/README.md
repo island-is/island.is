@@ -15,7 +15,7 @@ Run `nx test application-templates-institution-collaboration` to execute the uni
 
 ## Setup
 
-To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/handbook/apps/application-system).
+To start the application system, follow the instructions in the handbook [here](../../../../apps/application-system/README.md).
 
 ### Additional Environment variables
 
