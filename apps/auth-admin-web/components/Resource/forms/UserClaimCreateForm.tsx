@@ -4,6 +4,8 @@ import { ErrorMessage } from '@hookform/error-message'
 import { useForm } from 'react-hook-form'
 import ValidationUtils from './../../../utils/validation.utils'
 import { UserClaimDTO } from './../../../entities/dtos/user-claim-dto'
+import TranslationUtils from './../../../utils/translation.utils'
+import { FormPage } from './../../../entities/common/Translation'
 
 interface Props {
   resourceName: string
@@ -16,6 +18,9 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false)
   const [isAvailable, setIsAvailable] = useState<boolean>(true)
   const [claimLength, setClaimLength] = useState<number>(0)
+  const [translation, setTranslation] = useState<FormPage>(
+    TranslationUtils.getFormPage('UserClaimCreateForm'),
+  )
 
   useEffect(() => {}, [])
 
@@ -45,7 +50,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
           title={`Create new claim`}
         >
           <i className="icon__new"></i>
-          <span>Create new Claim</span>
+          <span>{translation.title}</span>
         </a>
       </div>
 
@@ -55,11 +60,11 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
         }`}
       >
         <div className="user-claim-create-form__container">
-          <h1>Create new User Claim</h1>
+          <h1>{translation.title}</h1>
 
           <div className="user-claim-create-form__container__form">
             <div className="user-claim-create-form__help">
-              Create a new claim if needed for this resource
+              {translation.help}
             </div>
 
             <form onSubmit={handleSubmit(save)}>
@@ -69,14 +74,15 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                     className="user-claim-create-form__label"
                     htmlFor="claimName"
                   >
-                    Claim Name
+                    {translation.fields['claimName'].label}
                   </label>
                   <input
                     id="claimName"
                     type="text"
                     name="claimName"
                     className="user-claim-create-form__input"
-                    title={`Write a name for the claim. It needs to be one word without special characters`}
+                    placeholder={translation.fields['claimName'].placeholder}
+                    title={translation.fields['claimName'].helpText}
                     onChange={(e) => checkAvailability(e.target.value)}
                     ref={register({
                       required: true,
@@ -92,16 +98,14 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                   </div>
 
                   <HelpBox
-                    helpText={
-                      'Write a name for the claim. It needs to be one word without special characters'
-                    }
+                    helpText={translation.fields['claimName'].helpText}
                   />
 
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="claimName"
-                    message="Claim name is required and needs to be in the right format"
+                    message={translation.fields['claimName'].errorMessage}
                   />
                 </div>
               </div>
@@ -114,7 +118,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                     value="Cancel"
                     onClick={(e) => setVisible(false)}
                   >
-                    Cancel
+                    {translation.cancelButton}
                   </button>
                 </div>
                 <div className="user-claim-create-form__button__container">
@@ -124,7 +128,7 @@ const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
                     value="Save"
                     disabled={!isAvailable}
                   >
-                    Save
+                    {translation.saveButton}
                   </button>
                 </div>
               </div>

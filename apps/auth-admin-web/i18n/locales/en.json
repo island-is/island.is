@@ -170,6 +170,33 @@
       }
     },
     {
+      "id": "UserClaimCreateForm",
+      "title": "Create a new User Claim",
+      "help": "Create a new claim if needed for this resource",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "claimName": {
+          "label": "Claim Name",
+          "placeholder": "example-name",
+          "helpText": "Write a name for the claim. It needs to be one word without special characters",
+          "errorMessage": "Claim name is required and needs to be in the right format"
+        },
+        "type": {
+          "label": "Type",
+          "placeholder": "Type of secret",
+          "helpText": "SharedSecret is the only type supported",
+          "errorMessage": "Type is required"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Secret description",
+          "helpText": "Description of the secret",
+          "errorMessage": "Description is required"
+        }
+      }
+    },
+    {
       "id": "ApiResourceUserClaimsForm",
       "title": "Select the appropriate user claims",
       "help": "List of associated user claim types that should be included in the access token. The claims specified here will be added to the list of claims specified for the API.",
