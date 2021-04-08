@@ -11,9 +11,9 @@ export class NationalIdGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const userNationalId = this.getUserNationalId(context)
 
-    const ids = environment.allowedNationalIds.split(',')
+    const ids = environment.allowedNationalIds?.split(',')
 
-    if (!ids.includes(userNationalId)) {
+    if (!ids?.includes(userNationalId)) {
       return false
     }
 

@@ -91,6 +91,7 @@ module.exports = {
     '<rootDir>/libs/gjafakort/consts',
     '<rootDir>/libs/gjafakort/types',
     '<rootDir>/libs/health-insurance',
+    '<rootDir>/libs/icelandic-names-registry/types',
     '<rootDir>/libs/infra-express-server',
     '<rootDir>/libs/infra-metrics',
     '<rootDir>/libs/infra-monitoring',

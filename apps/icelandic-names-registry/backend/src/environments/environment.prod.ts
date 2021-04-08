@@ -1,10 +1,9 @@
 export default {
   production: true,
-  auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
-    jwksUri:
-      'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
+  identityServer: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    audience: '',
+    jwksUri: process.env.IDENTITY_SERVER_JWKS_URI,
   },
   allowedNationalIds: process.env.ICELANDIC_NAMES_REGISTRY_ALLOWED_NATIONAL_IDS,
 }

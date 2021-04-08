@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RESTDataSource } from 'apollo-datasource-rest'
 
+import { IcelandicName } from '@island.is/icelandic-names-registry-types'
+
 import { environment } from '../environments'
 
 @Injectable()
@@ -12,27 +14,27 @@ class BackendAPI extends RESTDataSource {
     this.baseURL = `${environment.backendUrl}/api/icelandic-names-registry`
   }
 
-  getAll(): Promise<any> {
+  getAll(): Promise<IcelandicName[]> {
     return this.get(`/all`)
   }
 
-  getById(id: number): Promise<any> {
+  getById(id: number): Promise<IcelandicName> {
     return this.get(`/${id}`)
   }
 
-  getByInitialLetter(initialLetter: string): Promise<any> {
+  getByInitialLetter(initialLetter: string): Promise<IcelandicName[]> {
     return this.get(`/initial-letter/${initialLetter}`)
   }
 
-  updateById(id: number, body: object): Promise<any> {
+  updateById(id: number, body: object): Promise<IcelandicName> {
     return this.patch(`/${id}`, body)
   }
 
-  create(body: object): Promise<any> {
+  create(body: object): Promise<IcelandicName> {
     return this.put(`/`, body)
   }
 
-  deleteById(id: number): Promise<any> {
+  deleteById(id: number): Promise<void> {
     return this.delete(`/${id}`)
   }
 }

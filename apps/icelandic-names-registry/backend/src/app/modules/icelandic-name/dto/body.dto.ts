@@ -7,7 +7,7 @@ import {
   EnumStatusType,
   NameType,
   StatusType,
-} from '../../../../../types'
+} from '@island.is/icelandic-names-registry-types'
 
 export class UpdateIcelandicNameBody {
   @IsString()

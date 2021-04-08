@@ -6,5 +6,5 @@ export default {
     jwksUri:
       'https://identity-server.dev01.devland.is/.well-known/openid-configuration/jwks',
   },
-  allowedNationalIds: '1122334455,2233445566',
+  allowedNationalIds: process.env.ICELANDIC_NAMES_REGISTRY_ALLOWED_NATIONAL_IDS,
 }

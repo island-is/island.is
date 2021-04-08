@@ -13,7 +13,7 @@ import {
   EnumStatusType,
   NameType,
   StatusType,
-} from '../../../../types'
+} from '@island.is/icelandic-names-registry-types'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEnum } from 'class-validator'
 

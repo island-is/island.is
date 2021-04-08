@@ -284,6 +284,9 @@
     "icelandic-names-registry-backend": {
       "tags": []
     },
+    "icelandic-names-registry-types": {
+      "tags": []
+    },
     "infra-express-server": {
       "tags": []
     },
