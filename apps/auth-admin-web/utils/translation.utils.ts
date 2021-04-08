@@ -7,7 +7,6 @@ import { LOCALE_KEY } from '../i18n/locales'
 
 class TranslationUtils {
   private static DEFAULT_TRANSLATION = englishTranslations
-  private static TRANSLATIONS = [englishTranslations]
 
   private static language(): string {
     return localStorage.getItem(LOCALE_KEY) ?? 'en'

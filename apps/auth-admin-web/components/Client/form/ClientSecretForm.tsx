@@ -11,7 +11,7 @@ import InfoModal from '../../common/InfoModal'
 import ValidationUtils from './../../../utils/validation.utils'
 import TranslationUtils from './../../../utils/translation.utils'
 import { FormPage } from './../../../entities/common/Translation'
-import { TranslationService } from 'apps/auth-admin-web/services/TranslationService'
+
 interface Props {
   clientId: string
   clientType: string
@@ -244,9 +244,9 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
                 </div>
 
                 <NoActiveConnections
-                  title="No secrets are defined"
+                  title={translation.noActiveConnections?.title}
                   show={!props.secrets || props.secrets.length === 0}
-                  helpText="Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."
+                  helpText={translation.noActiveConnections?.helpText}
                 ></NoActiveConnections>
 
                 <div
@@ -318,11 +318,11 @@ const ClientSecretForm: React.FC<Props> = (props: Props) => {
       ></ConfirmModal>
       <InfoModal
         modalIsOpen={infoModalIsOpen}
-        headerText="Your secret has been copied to your clipboard. Don't lose it, you won't be able to see it again:"
+        headerText={translation.infoModal?.headerText}
         closeModal={closeInfoModal}
         handleButtonClicked={closeInfoModal}
         infoText={secretValue}
-        buttonText="Ok"
+        buttonText={translation.infoModal?.buttonText}
       ></InfoModal>
     </div>
   )

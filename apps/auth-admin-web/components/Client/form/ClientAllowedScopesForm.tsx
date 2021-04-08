@@ -177,9 +177,9 @@ const ClientAllowedScopesForm: React.FC<Props> = (props: Props) => {
               </div>
 
               <NoActiveConnections
-                title="No active scopes"
+                title={translation.noActiveConnections?.title}
                 show={!props.scopes || props.scopes.length === 0}
-                helpText="Select a scope and push the Add button to add a scope"
+                helpText={translation.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div

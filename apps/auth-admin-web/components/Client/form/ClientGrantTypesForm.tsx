@@ -106,9 +106,9 @@ const ClientGrantTypesForm: React.FC<Props> = (props: Props) => {
             </div>
 
             <NoActiveConnections
-              title="No grant types are defined"
+              title={translation.noActiveConnections?.title}
               show={!props.grantTypes || props.grantTypes.length === 0}
-              helpText="Check the appropriate grant type(s) for the client"
+              helpText={translation.noActiveConnections?.helpText}
             ></NoActiveConnections>
 
             <div className="client-grant-types__buttons__container">

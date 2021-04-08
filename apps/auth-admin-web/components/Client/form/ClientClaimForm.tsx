@@ -153,9 +153,9 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
               </div>
 
               <NoActiveConnections
-                title="No active claims"
+                title={translation.noActiveConnections?.title}
                 show={!props.claims || props.claims.length === 0}
-                helpText="Fill out the form and push the Add button to add a claim"
+                helpText={translation.noActiveConnections?.helpText}
               ></NoActiveConnections>
 
               <div

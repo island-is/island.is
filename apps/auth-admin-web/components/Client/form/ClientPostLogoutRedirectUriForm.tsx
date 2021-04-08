@@ -137,9 +137,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                 </div>
 
                 <NoActiveConnections
-                  title="No client post logout redirect uris are defined"
+                  title={translation.noActiveConnections?.title}
                   show={!props.uris || props.uris.length === 0}
-                  helpText="Add a post logout uri (if needed) and push the Add button. If a uri exists in the form, it's the display uri defined in the Client form"
+                  helpText={translation.noActiveConnections?.helpText}
                 ></NoActiveConnections>
 
                 <div

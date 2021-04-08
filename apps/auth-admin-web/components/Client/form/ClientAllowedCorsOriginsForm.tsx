@@ -83,7 +83,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        {translation.removeConfirmation}: <span>{corsOriginToRemove}</span>
+        {translation.removeConfirmation}:<span>{corsOriginToRemove}</span>
       </p>
     )
   }
@@ -137,9 +137,9 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                 </div>
 
                 <NoActiveConnections
-                  title="No active cors origins"
+                  title={translation.noActiveConnections?.title}
                   show={!props.origins || props.origins.length === 0}
-                  helpText="Define a cors origin and push the Add button to add a cors origin"
+                  helpText={translation.noActiveConnections?.helpText}
                 ></NoActiveConnections>
 
                 <div
@@ -149,7 +149,7 @@ const ClientAllowedCorsOriginsForm: React.FC<Props> = (props: Props) => {
                       : 'hidden'
                   }`}
                 >
-                  <h3>Allowed cors origins</h3>
+                  <h3>{translation.sectionTitle1}</h3>
                   {props.origins?.map((origin: string) => {
                     return (
                       <div

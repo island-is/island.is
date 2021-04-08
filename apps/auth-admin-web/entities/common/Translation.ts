@@ -16,6 +16,8 @@ export class FormPage {
   addButton?: string
   removeButton?: string
   removeConfirmation?: string
+  noActiveConnections?: NoActiveConnectionsTranslation
+  infoModal?: InfoModalTranslation
 }
 
 export class FormItem {
@@ -34,4 +36,14 @@ export class SelectField {
   helpText: string
   selectItemText: string
   flow?: string
+}
+
+export class NoActiveConnectionsTranslation {
+  title: string
+  helpText: string
+}
+
+export class InfoModalTranslation {
+  headerText: string
+  buttonText: string
 }
