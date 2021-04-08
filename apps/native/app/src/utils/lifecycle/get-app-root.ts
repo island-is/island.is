@@ -14,6 +14,15 @@ export async function getAppRoot(): Promise<Layout> {
   // Check if user is authenticated
   const isAuthenticated = await checkIsAuthenticated()
 
+  return {
+    stack: {
+      id: 'ONBOARDING',
+      children: [{
+        component: { name: ComponentRegistry.SetPinScreen, id: 'SET_PIN_SCREEN' },
+      }]
+    }
+  };
+
   // Show login screen if not authenticated
   if (!isAuthenticated) {
     return {

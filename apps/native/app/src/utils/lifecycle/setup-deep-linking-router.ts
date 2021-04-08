@@ -2,14 +2,16 @@ import { Navigation } from 'react-native-navigation'
 import { config } from '../config'
 import { addRoute, addScheme } from '../deep-linking'
 import { ComponentRegistry } from '../navigation-registry'
+import { getMainRoot } from './get-app-root'
 
 export function setupDeepLinkingRouter() {
   // Setup app scheme (is.island.app://)
   addScheme(`${config.bundleId}://`)
 
   // Routes
-  addRoute('/', () => {
-    console.log('home')
+  addRoute('/', (...x) => {
+    console.log('home', x)
+    Navigation.setRoot({ root: getMainRoot() })
   })
 
   addRoute('/inbox', () => {
@@ -17,6 +19,15 @@ export function setupDeepLinkingRouter() {
   })
   addRoute('/wallet', (...x) => {
     console.log('wallet', x)
+  })
+
+  addRoute('/setnotification', (...x) => {
+    console.log('set notification', x)
+    Navigation.push('ONBOARDING', {
+      component: {
+        name: ComponentRegistry.SetNotifications,
+      },
+    })
   })
 
   addRoute('/wallet/:passId', ({ passId, backgroundColor = '#f5e4ec' }: any) => {

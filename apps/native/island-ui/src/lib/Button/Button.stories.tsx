@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/react-native'
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { text, withKnobs, boolean } from '@storybook/addon-knobs';
 import React from 'react'
 import { View } from 'react-native';
 import { Button } from './Button'
@@ -15,5 +15,12 @@ storiesOf('Button', module)
     const title = text('Button title', 'Auðkenna');
     return (
       <Button title={title} onPress={() => void 0} />
+    );
+  })
+  .add('Transparent', () => {
+    const title = text('Button transparent title', 'Sleppa í bili');
+
+    return (
+      <Button title={title} isTransparent={boolean('Disabled', true)} onPress={() => void 0} />
     );
   })
