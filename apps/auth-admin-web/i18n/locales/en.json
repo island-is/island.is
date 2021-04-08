@@ -181,6 +181,28 @@
       }
     },
     {
+      "id": "ApiScopeUserClaimsForm",
+      "title": "Select the appropriate user claims",
+      "help": "If needed, select the user claims for this Api Scope",
+      "saveButton": "Next",
+      "cancelButton": "Cancel",
+      "noActiveConnections": {
+        "title": "No user claims are selected",
+        "helpText": "If necessary, check user the user claims needed"
+      }
+    },
+    {
+      "id": "IdentityResourceUserClaims",
+      "title": "Select the appropriate user claims",
+      "help": "List of associated user claim types that should be included in the identity token.",
+      "saveButton": "Next",
+      "cancelButton": "Cancel",
+      "noActiveConnections": {
+        "title": "No user claims are selected",
+        "helpText": "Some claims need to be associated with this Identity Resource"
+      }
+    },
+    {
       "id": "ApiScopeCreateForm",
       "title": "Create Api Scope",
       "editTitle": "Edit Api Scope",
