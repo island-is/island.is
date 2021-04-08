@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Box, ResponsiveProp, Space } from '@island.is/island-ui/core'
+import { CUSTOMER_ID, SCRIPT_URL } from './config'
 
 declare global {
   interface Window {
@@ -13,15 +14,13 @@ declare global {
 declare const ReadSpeaker: any
 
 interface WebReaderProps {
-  readid?: string
-  customerid?: number
+  readId?: string
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
 }
 
 export const Webreader: FC<WebReaderProps> = ({
-  readid = 'main-content',
-  customerid = 11963,
+  readId = 'main-content',
   marginTop = 3,
   marginBottom = 3,
 }) => {
@@ -47,12 +46,22 @@ export const Webreader: FC<WebReaderProps> = ({
   }, [])
 
   useEffect(() => {
+    if (!window.rsConf) {
+      const el = document.createElement('script')
+      el.src = SCRIPT_URL
+      el.type = 'text/javascript'
+      document.body.appendChild(el)
+      window.rsConf = { general: { usePost: true } }
+    }
+  }, [])
+
+  useEffect(() => {
     const lang = 'is_is'
     const encodedUrl = encodeURIComponent(window.location.href)
     const h =
       '//app-eu.readspeaker.com/cgi-bin/rsent' +
       '?customerid=' +
-      customerid +
+      CUSTOMER_ID +
       '&lang=' +
       lang +
       '&readid=' +
@@ -61,16 +70,10 @@ export const Webreader: FC<WebReaderProps> = ({
       '&url=' +
       encodedUrl
     setHref(h)
-
-    window.rsConf = { general: { usePost: true } }
   }, [href])
 
   return (
     <>
-      <script
-        src="//cdn1.readspeaker.com/script/11963/webReader/webReader.js?pids=wr"
-        type="text/javascript"
-      />
       <Box marginTop={marginTop} marginBottom={marginBottom}>
         <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
           <a
