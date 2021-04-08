@@ -7,7 +7,8 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import ValidationUtils from './../../../utils/validation.utils'
-
+import TranslationUtils from './../../../utils/translation.utils'
+import { FormPage } from './../../../entities/common/Translation'
 interface Props {
   clientId: string
   defaultUrl?: string
@@ -30,6 +31,9 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   )
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [uriToRemove, setUriToRemove] = React.useState('')
+  const [translation, setTranslation] = useState<FormPage>(
+    TranslationUtils.getFormPage('ClientPostLogoutRedirectUriForm'),
+  )
 
   const add = async (data: ClientPostLogoutRedirectUriDTO) => {
     const postLogoutUri = new ClientPostLogoutRedirectUriDTO()
@@ -76,8 +80,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this post logout uri:{' '}
-        <span>{uriToRemove}</span>
+        {translation.removeConfirmation}:<span>{uriToRemove}</span>
       </p>
     )
   }
@@ -87,26 +90,23 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
       <div className="client-post-logout">
         <div className="client-post-logout__wrapper">
           <div className="client-post-logout__container">
-            <h1>Enter a post logout redirect URL</h1>
+            <h1>{translation.title}</h1>
             <div className="client-post-logout__container__form">
-              <div className="client-post-logout__help">
-                Specifies allowed URIs to redirect to after logout. See the{' '}
-                <a
-                  href="https://openid.net/specs/openid-connect-session-1_0.html"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  OIDC Connect Session Management spec
-                </a>{' '}
-                for more details.
-              </div>
+              <div
+                className="client-post-logout__help"
+                dangerouslySetInnerHTML={{ __html: translation.help }}
+              ></div>
               <form id="postLogoutForm" onSubmit={handleSubmit(add)}>
                 <div className="client-post-logout__container__fields">
                   <div className="client-post-logout__container__field">
-                    <label className="client-post-logout__label">
-                      Logout URL
+                    <label
+                      className="client-post-logout__label"
+                      htmlFor="redirectUri"
+                    >
+                      {translation.fields['redirectUri'].label}
                     </label>
                     <input
+                      id="redirectUri"
                       type="text"
                       name="redirectUri"
                       ref={register({
@@ -115,21 +115,23 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={defaultUrl}
                       className="client-post-logout__input"
-                      placeholder="https://localhost:4200"
-                      title="Users can be returned to this URL after logging out. These protocols rely upon TLS in production"
+                      placeholder={
+                        translation.fields['redirectUri'].placeholder
+                      }
+                      title={translation.fields['redirectUri'].helpText}
                     />
                     <HelpBox helpText="Users can be returned to this URL after logging out. These protocols rely upon TLS in production" />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="redirectUri"
-                      message="Path is required and needs to be in the right format"
+                      message={translation.fields['redirectUri'].errorMessage}
                     />
                     <input
                       type="submit"
                       className="client-post-logout__button__add"
                       disabled={isSubmitting}
-                      value="Add"
+                      value={translation.addButton}
                     />
                   </div>
                 </div>
@@ -145,7 +147,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                     props.uris && props.uris.length > 0 ? 'show' : 'hidden'
                   }`}
                 >
-                  <h3>Active post logout URLs</h3>
+                  <h3>{translation.sectionTitle1}</h3>
                   {props.uris?.map((uri: string) => {
                     return (
                       <div
@@ -158,10 +160,10 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                             type="button"
                             onClick={() => confirmRemove(uri)}
                             className="client-post-logout__container__list__button__remove"
-                            title="Remove"
+                            title={translation.removeButton}
                           >
                             <i className="icon__delete"></i>
-                            <span>Remove</span>
+                            <span>{translation.removeButton}</span>
                           </button>
                         </div>
                       </div>
@@ -176,7 +178,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       className="client-post-logout__button__cancel"
                       onClick={props.handleBack}
                     >
-                      Back
+                      {translation.cancelButton}
                     </button>
                   </div>
                   <div className="client-post-logout__button__container">
@@ -185,7 +187,7 @@ const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
                       className="client-post-logout__button__save"
                       onClick={props.handleNext}
                     >
-                      Next
+                      {translation.saveButton}
                     </button>
                   </div>
                 </div>

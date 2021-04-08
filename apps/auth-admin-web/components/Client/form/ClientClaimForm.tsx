@@ -1,5 +1,5 @@
 import { ErrorMessage } from '@hookform/error-message'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ClientClaim } from '../../../entities/models/client-claim.model'
 import { ClientClaimDTO } from '../../../entities/dtos/client-claim.dto'
@@ -8,7 +8,8 @@ import NoActiveConnections from '../../common/NoActiveConnections'
 import { ClientService } from '../../../services/ClientService'
 import ConfirmModal from '../../common/ConfirmModal'
 import ValidationUtils from './../../../utils/validation.utils'
-
+import TranslationUtils from './../../../utils/translation.utils'
+import { FormPage } from './../../../entities/common/Translation'
 interface Props {
   clientId: string
   claims?: ClientClaim[]
@@ -25,8 +26,11 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     formState,
   } = useForm<ClientClaimDTO>()
   const { isSubmitting } = formState
-  const [modalIsOpen, setIsOpen] = React.useState(false)
-  const [claimToRemove, setClaimToRemove] = React.useState<ClientClaimDTO>(
+  const [modalIsOpen, setIsOpen] = useState(false)
+  const [translation, setTranslation] = useState<FormPage>(
+    TranslationUtils.getFormPage('ClientClaimForm'),
+  )
+  const [claimToRemove, setClaimToRemove] = useState<ClientClaimDTO>(
     new ClientClaimDTO(),
   )
 
@@ -75,8 +79,8 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
   const setHeaderElement = () => {
     return (
       <p>
-        Are you sure want to delete this claim:{' '}
-        <span>{claimToRemove.type}</span> - <span>{claimToRemove.value}</span>
+        {translation.removeConfirmation}:<span>{claimToRemove.type}</span>-
+        <span>{claimToRemove.value}</span>
       </p>
     )
   }
@@ -85,19 +89,17 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
     <div className="client-claim">
       <div className="client-claim__wrapper">
         <div className="client-claim__container">
-          <h1>Add claims for the Client</h1>
+          <h1>{translation.title}</h1>
           <form id="claimForm" onSubmit={handleSubmit(add)}>
             <div className="client-claim__container__form">
-              <div className="client-claim__help">
-                Allows settings claims for the client (will be included in the
-                access token).
-              </div>
+              <div className="client-claim__help">{translation.help}</div>
               <div className="client-claim__container__fields">
                 <div className="client-claim__container__field">
-                  <label className="client-claim__label">
-                    Claim type (key)
+                  <label className="client-claim__label" htmlFor="type">
+                    {translation.fields['type'].label}
                   </label>
                   <input
+                    id="type"
                     type="text"
                     name="type"
                     ref={register({
@@ -106,26 +108,29 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={''}
                     className="client-claim__input"
-                    placeholder="exampleClaim"
-                    title="The key that represents this claim"
+                    placeholder={translation.fields['type'].placeholder}
+                    title={translation.fields['type'].helpText}
                   />
-                  <HelpBox helpText="The key that represents this claim" />
+                  <HelpBox helpText={translation.fields['type'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="type"
-                    message="Claim type is required and needs to be in the right format"
+                    message={translation.fields['type'].errorMessage}
                   />
                   <input
                     type="submit"
                     className="client-claim__button__add"
                     disabled={isSubmitting}
-                    value="Add"
+                    value={translation.addButton}
                   />
                 </div>
                 <div className="client-claim__container__field">
-                  <label className="client-claim__label">Claim value</label>
+                  <label className="client-claim__label" htmlFor="value">
+                    {translation.fields['value'].label}
+                  </label>
                   <input
+                    id="value"
                     type="text"
                     name="value"
                     ref={register({
@@ -134,15 +139,15 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     })}
                     defaultValue={''}
                     className="client-claim__input"
-                    placeholder="exampleClaim"
-                    title="The value of the claim"
+                    placeholder={translation.fields['value'].placeholder}
+                    title={translation.fields['value'].helpText}
                   />
-                  <HelpBox helpText="The value of the claim" />
+                  <HelpBox helpText={translation.fields['value'].helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="value"
-                    message="Value is required and can not contain special characters"
+                    message={translation.fields['value'].errorMessage}
                   />
                 </div>
               </div>
@@ -158,7 +163,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                   props.claims && props.claims.length > 0 ? 'show' : 'hidden'
                 }`}
               >
-                <h3>Active client claims</h3>
+                <h3>{translation.sectionTitle1}</h3>
                 {props.claims?.map((claim: ClientClaim) => {
                   return (
                     <div
@@ -172,10 +177,10 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                           type="button"
                           onClick={() => confirmRemove(claim)}
                           className="client-claim__container__list__button__remove"
-                          title="Remove"
+                          title={translation.removeButton}
                         >
                           <i className="icon__delete"></i>
-                          <span>Remove</span>
+                          <span>{translation.removeButton}</span>
                         </button>
                       </div>
                     </div>
@@ -189,7 +194,7 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     className="client-claim__button__cancel"
                     onClick={props.handleBack}
                   >
-                    Back
+                    {translation.cancelButton}
                   </button>
                 </div>
                 <div className="client-claim__button__container">
@@ -197,9 +202,9 @@ const ClientClaimForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     className="client-claim__button__save"
                     onClick={props.handleNext}
-                    value="Next"
+                    value={translation.saveButton}
                   >
-                    Next
+                    {translation.saveButton}
                   </button>
                 </div>
               </div>

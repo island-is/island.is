@@ -423,80 +423,91 @@
           "placeholder": "https://localhost:4200",
           "helpText": "Enter an allowed cors origin",
           "errorMessage": "Cors origin is required and needs to be in the right format"
+        }
+      }
+    },
+    {
+      "id": "ClientAllowedScopesForm",
+      "title": "Allowed scopes",
+      "help": "By default a client has no access to any resources. Specify the allowed resources by adding the corresponding scopes names.",
+      "saveButton": "Next",
+      "cancelButton": "Back",
+      "removeButton": "Remove",
+      "addButton": "Add",
+      "sectionTitle1": "Active scopes",
+      "removeConfirmation": "Are you sure want to delete this scope",
+      "fields": {
+        "scopeName": {
+          "label": "Scope Name",
+          "placeholder": "",
+          "helpText": "Select an allowed scope",
+          "errorMessage": "Scope is required"
+        }
+      }
+    },
+    {
+      "id": "ClientGrantTypesForm",
+      "title": "Select the appropriate grant type",
+      "help": "Select the types of authentication that are allowed for this Client",
+      "saveButton": "Next",
+      "cancelButton": "Back",
+      "removeButton": "Remove",
+      "addButton": "Add",
+      "sectionTitle1": "Active client claims",
+      "removeConfirmation": "Are you sure want to delete this claim",
+      "fields": {
+        "type": {
+          "label": "Claim type (key)",
+          "placeholder": "example-claim",
+          "helpText": "The key that represents this claim",
+          "errorMessage": "Claim type is required and needs to be in the right format"
         },
-        "nationalId": {
-          "label": "National Id",
-          "placeholder": "0123456789",
-          "helpText": "The nationalId (Kennitala) registered for the api-resource-form",
-          "errorMessage": "NationalId must be 10 numeric characters",
-          "available": "",
-          "unAvailable": ""
+        "value": {
+          "label": "Claim value",
+          "placeholder": "example-value",
+          "helpText": "The value of the claim",
+          "errorMessage": "Value is required and can not contain special characters"
+        }
+      }
+    },
+    {
+      "id": "ClientIdpRestrictionsForm",
+      "title": "Identity provider restrictions",
+      "help": "Specifies which external identity providers (IdPs) can be used when authenticating. Note that Sim Card login is always allowed.",
+      "saveButton": "Next",
+      "cancelButton": "Back",
+      "fields": {
+        "all": {
+          "label": "Allow All",
+          "helpText": "Allow all identity providers",
+          "errorMessage": "Claim type is required and needs to be in the right format"
         },
-        "contactEmail": {
-          "label": "Contact Email",
-          "placeholder": "john@example.com",
-          "helpText": "Contact email for this Api Resource",
-          "errorMessage": "Contact email must be set and must be a valid email address",
-          "available": "",
-          "unAvailable": ""
-        },
-        "clientId": {
-          "label": "Client Id",
-          "placeholder": "example-client",
-          "helpText": "The unique identifier for this application. No spaces or special characters.",
-          "errorMessage": "The unique identifier for this application. No spaces or special characters.",
-          "available": "Available",
-          "unAvailable": "Unavailable"
-        },
-        "clientName": {
-          "label": "Display Name",
-          "placeholder": "Default Display Name",
-          "helpText": "Application name that will be seen on consent screens",
-          "errorMessage": "Display name is required since the client requires consent and needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
-        },
-        "description": {
-          "label": "Description",
-          "placeholder": "Example description",
-          "helpText": "Application description for use within AdminUI",
-          "errorMessage": "Description needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
-        },
-        "baseUrl": {
-          "label": "Base Url",
+        "restricted": {
+          "label": "Allow Only",
+          "helpText": "Allow only selected identity providers"
+        }
+      }
+    },
+    {
+      "id": "ClientPostLogoutRedirectUriForm",
+      "title": "Enter a post logout redirect URL",
+      "help": "Specifies allowed URIs to redirect to after logout. See the <a href=\"https://openid.net/specs/openid-connect-session-1_0.html\" target=\"_blank\" rel=\"noreferrer\">OIDC Connect Session Management spec</a> for more details.",
+      "saveButton": "Next",
+      "cancelButton": "Back",
+      "removeButton": "Remove",
+      "addButton": "Add",
+      "sectionTitle1": "Active post logout URLs",
+      "removeConfirmation": "Are you sure want to delete this post logout uri",
+      "fields": {
+        "redirectUri": {
+          "label": "Logout URL",
           "placeholder": "https://localhost:4200",
-          "helpText": "Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc",
-          "errorMessage": "Base Url is required and needs to be in the right format",
-          "available": "",
-          "unAvailable": "",
-          "popUpTitle": "Redirect (Callback) Uri will be:",
-          "popUpDescription": "This can be changed later"
+          "helpText": "Users can be returned to this URL after logging out. These protocols rely upon TLS in production",
+          "errorMessage": "Path is required and needs to be in the right format"
         },
-        "clientUri": {
-          "label": "Display URL",
-          "placeholder": "https://example.com",
-          "helpText": "Application URL that will be seen on consent screens",
-          "errorMessage": "Display url needs to be in the right format",
-          "available": "",
-          "unAvailable": ""
-        },
-        "enabled": {
-          "label": "Enabled",
-          "placeholder": "",
-          "helpText": "Specifies whether this client is enabled.",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
-        },
-        "requireConsent": {
-          "label": "Require consent",
-          "placeholder": "",
-          "helpText": "Specifies whether a consent screen is required",
-          "errorMessage": "",
-          "available": "",
-          "unAvailable": ""
+        "restricted": {
+          "label": "Allow Only",
+          "helpText": "Allow only selected identity providers"
         }
       }
     }
