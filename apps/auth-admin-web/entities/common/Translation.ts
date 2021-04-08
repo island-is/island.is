@@ -8,8 +8,9 @@ export class FormPage {
   fields: Record<string, FormItem>
   title: string
   sectionTitle1?: string
-  editTitle: string
+  editTitle?: string
   help: string
+  conditionalHelp?: string
   saveButton: string
   cancelButton: string
   addButton?: string

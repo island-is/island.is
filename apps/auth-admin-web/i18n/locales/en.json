@@ -517,6 +517,38 @@
           "errorMessage": "Value is required and can not contain special characters"
         }
       }
+    },
+    {
+      "id": "ClientSecretForm",
+      "title": "Client Secrets",
+      "help": "List of Client Secrets - credentials to access the token endpoint.",
+      "conditionalHelp": "Your client type doesn't support a Client Secret. You don't need to add anything here.",
+      "saveButton": "Next",
+      "cancelButton": "Back",
+      "removeButton": "Remove",
+      "addButton": "Add",
+      "sectionTitle1": "Active secrets",
+      "removeConfirmation": "Are you sure want to delete this secret",
+      "fields": {
+        "secretValue": {
+          "label": "Client Secret",
+          "placeholder": "Some secret text",
+          "helpText": "Your secret value should be a rather complicated string",
+          "errorMessage": "Value is required"
+        },
+        "type": {
+          "label": "Type",
+          "placeholder": "Type of secret",
+          "helpText": "SharedSecret is the only type supported",
+          "errorMessage": "Type is required"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Secret description",
+          "helpText": "Description of the secret",
+          "errorMessage": "Description is required and needs to be in the right format"
+        }
+      }
     }
   ]
 }
