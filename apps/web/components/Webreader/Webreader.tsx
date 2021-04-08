@@ -15,12 +15,14 @@ declare const ReadSpeaker: any
 
 interface WebReaderProps {
   readId?: string
+  readClass?: string
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
 }
 
 export const Webreader: FC<WebReaderProps> = ({
   readId = 'main-content',
+  readClass,
   marginTop = 3,
   marginBottom = 3,
 }) => {
@@ -57,18 +59,21 @@ export const Webreader: FC<WebReaderProps> = ({
 
   useEffect(() => {
     const lang = 'is_is'
-    const encodedUrl = encodeURIComponent(window.location.href)
-    const h =
+    let h =
       '//app-eu.readspeaker.com/cgi-bin/rsent' +
       '?customerid=' +
       CUSTOMER_ID +
       '&lang=' +
       lang +
-      '&readid=' +
-      readid +
-      //'&amp;readclass=rs_read' +
       '&url=' +
-      encodedUrl
+      encodeURIComponent(window.location.href)
+
+    if (readId) {
+      h += '&readid=' + readId
+    }
+    if (readClass) {
+      h += '&readclass=' + readClass
+    }
     setHref(h)
   }, [href])
 
