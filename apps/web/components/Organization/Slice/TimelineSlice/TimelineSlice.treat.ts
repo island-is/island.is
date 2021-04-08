@@ -118,6 +118,7 @@ export const bulletLine = style({
   top: 338,
   transformOrigin: '12px 12px',
   zIndex: 2,
+  pointerEvents: 'none',
 })
 
 export const arrowButton = style({

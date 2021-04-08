@@ -321,7 +321,12 @@ const TimelineItem = ({ event, offset, index, detailed, mobile = false }) => {
       </div>
       {visible &&
         ReactDOM.createPortal(
-          <ModalBase baseId="eventDetails" isVisible={true}>
+          <ModalBase
+            baseId="eventDetails"
+            isVisible={true}
+            hideOnClickOutside={false}
+            hideOnEsc={false}
+          >
             <EventModal event={event} onClose={() => setVisible(false)} />
           </ModalBase>,
           portalRef.current,
