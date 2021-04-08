@@ -16,10 +16,7 @@ import {
   formatDate,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import {
-  ApplicationStates,
-  Roles,
-} from '../../lib/ChildrenResidenceChangeTemplate'
+import { ApplicationStates, Roles } from '../../lib/constants'
 import { DescriptionText } from '../components'
 import {
   fileSignatureReducer,
