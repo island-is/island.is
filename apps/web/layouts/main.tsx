@@ -556,7 +556,15 @@ export const withMainLayout = <T,>(
       Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
     ])
 
-    return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }
+    const themeConfig: Partial<LayoutProps> =
+      'darkTheme' in componentProps
+        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
+        : {}
+
+    return {
+      layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },
+      componentProps,
+    }
   }
 
   return WithMainLayout
