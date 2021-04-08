@@ -744,17 +744,6 @@ export const ParentalLeaveForm: Form = buildForm({
                     }),
                   ],
                 }),
-                // buildCustomField(
-                //   {
-                //     id: 'endDate',
-                //     name: parentalLeaveFormMessages.shared.duration,
-                //     description: parentalLeaveFormMessages.duration.description,
-                //     component: 'Duration',
-                //   },
-                //   {
-                //     showTimeline: true,
-                //   },
-                // ),
                 buildMultiField({
                   id: 'ratio',
                   title: parentalLeaveFormMessages.ratio.title,
