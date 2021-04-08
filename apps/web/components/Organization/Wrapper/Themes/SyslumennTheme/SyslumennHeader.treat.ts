@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { blueberry100, themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   height: 385,
@@ -25,6 +25,8 @@ export const headerBg = style({
 export const iconCircle = style({
   height: 136,
   width: 136,
+  background: '#fff',
+  borderRadius: '50%',
   margin: '0 auto',
   display: 'flex',
   justifyContent: 'center',
@@ -43,6 +45,9 @@ export const iconCircle = style({
 
 export const headerBorder = style({
   ...themeUtils.responsiveStyle({
+    xs: {
+      marginTop: 32,
+    },
     md: {
       borderBottom: '4px solid #ffbe43',
     },

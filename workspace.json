@@ -4342,7 +4342,8 @@
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
             "assets": ["apps/reference-backend/src/assets"],
-            "maxWorkers": 2
+            "maxWorkers": 2,
+            "webpackConfig": "apps/reference-backend/webpack.config.js"
           },
           "configurations": {
             "production": {
