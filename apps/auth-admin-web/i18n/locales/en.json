@@ -170,6 +170,17 @@
       }
     },
     {
+      "id": "ApiResourceUserClaimsForm",
+      "title": "Select the appropriate user claims",
+      "help": "List of associated user claim types that should be included in the access token. The claims specified here will be added to the list of claims specified for the API.",
+      "saveButton": "Next",
+      "cancelButton": "Cancel",
+      "noActiveConnections": {
+        "title": "No User Claims are selected",
+        "helpText": "If necessary, check user the user claims needed"
+      }
+    },
+    {
       "id": "ApiScopeCreateForm",
       "title": "Create Api Scope",
       "editTitle": "Edit Api Scope",
