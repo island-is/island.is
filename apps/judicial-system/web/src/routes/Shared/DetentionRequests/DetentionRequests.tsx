@@ -163,7 +163,7 @@ export const DetentionRequests: React.FC = () => {
       caseToOpen.state === CaseState.RECEIVED &&
       caseToOpen.isCourtDateInThePast
     ) {
-      router.push(`${Constants.STEP_FIVE_ROUTE}/${caseToOpen.id}`)
+      router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`)
     } else {
       router.push(`${Constants.STEP_ONE_ROUTE}/${caseToOpen.id}`)
     }
