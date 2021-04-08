@@ -26,3 +26,10 @@ export const BucketTypePrefix: KeyMapping<PdfTypes, string> = {
 export const DokobitFileName: KeyMapping<PdfTypes, string> = {
   ChildrenResidenceChange: 'Lögheimilisbreyting-barns.pdf',
 }
+
+export const DokobitErrorCodes = {
+  UserCancelled: 7023,
+  TimeOut: 99999,
+  SessionExpired: 6005,
+  NoMobileSignature: 6001,
+}

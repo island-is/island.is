@@ -118,6 +118,7 @@ export const CasesQuery = gql`
       isCustodyEndDateInThePast
       courtCaseNumber
       rulingDate
+      courtEndTime
       parentCase {
         id
       }
