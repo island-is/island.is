@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { Box } from '@island.is/island-ui/core'
+import { Box, ResponsiveProp, Space } from '@island.is/island-ui/core'
 
 declare global {
   interface Window {
@@ -15,11 +15,15 @@ declare const ReadSpeaker: any
 interface WebReaderProps {
   readid?: string
   customerid?: number
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
 }
 
 export const Webreader: FC<WebReaderProps> = ({
   readid = 'main-content',
   customerid = 11963,
+  marginTop = 3,
+  marginBottom = 3,
 }) => {
   const [href, setHref] = useState('')
   const router = useRouter()
@@ -67,7 +71,7 @@ export const Webreader: FC<WebReaderProps> = ({
         src="//cdn1.readspeaker.com/script/11963/webReader/webReader.js?pids=wr"
         type="text/javascript"
       />
-      <Box marginTop={3} marginBottom={3}>
+      <Box marginTop={marginTop} marginBottom={marginBottom}>
         <div id="readspeaker_button1" className="rs_skip rsbtn rs_preserve">
           <a
             rel="nofollow"
