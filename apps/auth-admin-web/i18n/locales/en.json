@@ -109,6 +109,26 @@
       }
     },
     {
+      "id": "ApiResourceScopeForm",
+      "title": "Allowed scopes",
+      "help": "An API must have at least one scope. Each scope can have different settings.",
+      "saveButton": "Next",
+      "cancelButton": "Cancel",
+      "sectionTitle1": "Active scopes",
+      "removeConfirmation": "Are you sure want to delete this scope",
+      "noActiveConnections": {
+        "title": "No active scopes",
+        "helpText": "Select a scope and push the Add button to add a scope"
+      },
+      "fields": {
+        "scopeName": {
+          "label": "Scope Name",
+          "helpText": "Select an allowed scope",
+          "errorMessage": "Scope Name is required"
+        }
+      }
+    },
+    {
       "id": "ApiScopeCreateForm",
       "title": "Create Api Scope",
       "editTitle": "Edit Api Scope",
