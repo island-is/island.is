@@ -2,19 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Endorsement } from './endorsement.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Op } from 'sequelize'
 
-interface FindEndorsementsByNationalIdInput {
-  nationalId: string
-  listId?: string
-}
-
-interface CreateEndorsementOnListInput {
-  listId: string
-  nationalId: string
-}
-
-interface DeleteFromListByNationalIdInput {
+interface EndorsementListInput {
   listId: string
   nationalId: string
 }
@@ -27,29 +16,20 @@ export class EndorsementService {
     private logger: Logger,
   ) {}
 
-  async findEndorsementsByNationalId({
+  async findEndorsementByNationalId({
     nationalId,
     listId,
-  }: FindEndorsementsByNationalIdInput) {
+  }: EndorsementListInput) {
     this.logger.debug(
       `Finding endorsement in list "${listId}" by nationalId "${nationalId}"`,
     )
 
-    // we get all endorsements for given national id and optionally scope that to a list (returns single nationalId in the given list)
-    const whereConditions: object[] = [
-      { endorser: nationalId },
-      ...(listId ? [{ endorsementListId: listId }] : []),
-    ]
-
-    return this.endorsementModel.findAll({
-      where: { [Op.and]: whereConditions },
+    return this.endorsementModel.findOne({
+      where: { endorser: nationalId, endorsementListId: listId },
     })
   }
 
-  async createEndorsementOnList({
-    listId,
-    nationalId,
-  }: CreateEndorsementOnListInput) {
+  async createEndorsementOnList({ listId, nationalId }: EndorsementListInput) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // TODO: Prevent this from adding multiple endorsements to same list
@@ -64,7 +44,7 @@ export class EndorsementService {
   async deleteFromListByNationalId({
     nationalId,
     listId,
-  }: DeleteFromListByNationalIdInput) {
+  }: EndorsementListInput) {
     this.logger.debug(
       `Removing endorsement from list "${listId}" by nationalId "${nationalId}"`,
     )

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   NotFoundException,
   Param,
   Post,
@@ -13,12 +14,17 @@ import { EndorsementList } from './endorsementList.model'
 import { EndorsementListService } from './endorsementList.service'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { FindEndorsementListByTagDto } from './dto/findEndorsementListsByTag.dto'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Endorsement } from '../endorsement/endorsement.model'
+import { FindEndorsementListDto } from './dto/findEndorsementLists.dto'
 
 @ApiTags('endorsementList')
 @Controller('endorsement-list')
 export class EndorsementListController {
   constructor(
     private readonly endorsementListService: EndorsementListService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   @Get()
@@ -30,23 +36,24 @@ export class EndorsementListController {
     return await this.endorsementListService.findListsByTag(tag)
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<EndorsementList> {
-    const response = await this.endorsementListService.findSingleList(id)
-    if (!response) {
-      throw new NotFoundException(['This endorsement list does not exist.'])
-    } else {
-      return response
-    }
-  }
-
-  @Get(':id/endorsements')
-  async findEndorsements(@Param('id') id: string): Promise<EndorsementList> {
+  @Get('/endorsements')
+  async findEndorsements(): Promise<Endorsement[]> {
     // TODO: Add auth here
     // TODO: Add pagination
-    const response = await this.endorsementListService.findSingleListEndorsements(
-      id,
+    const response = await this.endorsementListService.findAllEndorsementsByNationalId(
+      '0000000000', // TODO: Replace with auth
     )
+
+    console.log('response', response)
+
+    return response
+  }
+
+  @Get(':listId')
+  async findOne(
+    @Param() { listId }: FindEndorsementListDto,
+  ): Promise<EndorsementList> {
+    const response = await this.endorsementListService.findSingleList(listId)
     if (!response) {
       throw new NotFoundException(['This endorsement list does not exist.'])
     } else {
@@ -54,11 +61,14 @@ export class EndorsementListController {
     }
   }
 
-  @Put(':id/close')
-  async close(@Param('id') id: string): Promise<EndorsementList> {
+  @Put(':listId/close')
+  async close(
+    @Param() { listId }: FindEndorsementListDto,
+  ): Promise<EndorsementList> {
     // TODO: Add auth here
-    const response = await this.endorsementListService.close(id)
+    const response = await this.endorsementListService.close(listId)
     if (!response) {
+      this.logger.warn('Failed to close list', { listId })
       throw new NotFoundException(['This endorsement list does not exist.'])
     } else {
       return response

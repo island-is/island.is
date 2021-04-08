@@ -14,6 +14,8 @@ export class EndorsementListService {
   constructor(
     @InjectModel(EndorsementList)
     private endorsementListModel: typeof EndorsementList,
+    @InjectModel(Endorsement)
+    private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -33,13 +35,10 @@ export class EndorsementListService {
     })
   }
 
-  async findSingleListEndorsements(id: string) {
-    this.logger.debug(
-      `Finding endorsements form single endorsement lists by id "${id}"`,
-    )
-    return this.endorsementListModel.findOne({
-      include: [{ model: Endorsement, as: 'endorsements' }],
-      where: { id },
+  async findAllEndorsementsByNationalId(nationalId: string) {
+    this.logger.debug(`Finding endorsements for single national id`)
+    return this.endorsementModel.findAll({
+      where: { endorser: nationalId },
     })
   }
 

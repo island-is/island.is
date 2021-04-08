@@ -46,7 +46,7 @@ describe('EndorsementList', () => {
     expect(response.body).toHaveLength(2)
   })
 
-  it(`GET /endorsement-list/:uid should return 404 error when uid does not exist`, async () => {
+  it(`GET /endorsement-list/:listId should return 404 error when uid does not exist`, async () => {
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777') // random uuid
       .send()
@@ -57,7 +57,18 @@ describe('EndorsementList', () => {
       statusCode: 404,
     })
   })
-  it(`GET /endorsement-list/:uid should return 200 and a valid endorsement list`, async () => {
+  it(`GET /endorsement-list/:listId should return 400 valdiation error when listId is not UUID`, async () => {
+    const response = await request(app.getHttpServer())
+      .get('/endorsement-list/notAUUID')
+      .send()
+      .expect(400)
+
+    expect(response.body).toMatchObject({
+      ...errorExpectedStructure,
+      statusCode: 400,
+    })
+  })
+  it(`GET /endorsement-list/:listId should return 200 and a valid endorsement list`, async () => {
     const response = await request(app.getHttpServer())
       .get('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c1')
       .send()
@@ -67,32 +78,18 @@ describe('EndorsementList', () => {
     await expect(endorsementList.validate()).resolves.not.toThrow()
   })
 
-  it(`GET /endorsement-list/:uid/endorsements should return 200 and a list of endorsements`, async () => {
+  // TODO: Test failure case here when auth is implemented
+  it(`GET /endorsement-list/endorsements should return 200 and a list of endorsements`, async () => {
     const response = await request(app.getHttpServer())
-      .get(
-        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c1/endorsements',
-      )
+      .get('/endorsement-list/endorsements')
       .send()
       .expect(200)
 
-    expect(Array.isArray(response.body.endorsements)).toBeTruthy()
-    expect(response.body.endorsements.length > 0).toBeTruthy()
-  })
-  it(`GET /endorsement-list/:uid/endorsements should return 404 error when uid does not exist`, async () => {
-    const response = await request(app.getHttpServer())
-      .get(
-        '/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/endorsements',
-      )
-      .send()
-      .expect(404)
-
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 404,
-    })
+    expect(Array.isArray(response.body)).toBeTruthy()
+    expect(response.body.length > 0).toBeTruthy()
   })
 
-  it(`PUT /endorsement-list/:uid/close should return 404 when closing an non existing list`, async () => {
+  it(`PUT /endorsement-list/:listId/close should return 404 when closing an non existing list`, async () => {
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba777/close')
       .send()
@@ -103,7 +100,7 @@ describe('EndorsementList', () => {
       statusCode: 404,
     })
   })
-  it(`PUT /endorsement-list/:uid/close should close existing endorsement list`, async () => {
+  it(`PUT /endorsement-list/:listId/close should close existing endorsement list`, async () => {
     const response = await request(app.getHttpServer())
       .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba0c2/close')
       .send()
