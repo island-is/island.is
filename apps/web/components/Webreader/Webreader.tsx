@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 
 declare global {
@@ -12,15 +12,6 @@ declare global {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const ReadSpeaker: any
 
-Router.events.on('routeChangeStart', (url) => {
-  if (typeof ReadSpeaker !== "undefined" ) {
-    ReadSpeaker.PlayerAPI.stop()
-    if (ReadSpeaker.PlayerAPI.audio.state.current) {
-      window.location.href = url
-    }
-  }
-})
-
 interface WebReaderProps {
   readid?: string
   customerid?: number
@@ -31,6 +22,25 @@ export const Webreader: FC<WebReaderProps> = ({
   customerid = 11963,
 }) => {
   const [href, setHref] = useState('')
+  const router = useRouter()
+
+  useEffect(() => {
+    const routeChangestart = (url) => {
+      if (typeof ReadSpeaker !== 'undefined') {
+        ReadSpeaker.PlayerAPI.stop()
+
+        if (ReadSpeaker.PlayerAPI.audio.state.current) {
+          window.location.href = url
+        }
+      }
+    }
+
+    router.events.on('routeChangeStart', routeChangestart)
+
+    return () => {
+      router.events.off('routeChangeStart', routeChangestart)
+    }
+  }, [])
 
   useEffect(() => {
     const lang = 'is_is'
