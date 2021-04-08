@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
@@ -9,7 +9,8 @@ import {
 import { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
-  const [files, setFiles] = useState<UploadFile[]>([])
+  const [files, _setFiles] = useState<UploadFile[]>([])
+  const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
     setFiles(workingCase?.files || [])
@@ -72,6 +73,15 @@ export const useS3Upload = (workingCase?: Case) => {
 
   // Utils
   /**
+   * Sets ref and state value
+   * @param files Files to set to state.
+   */
+  const setFiles = (files: UploadFile[]) => {
+    filesRef.current = files
+    _setFiles(files)
+  }
+
+  /**
    * Get index of file in files. If file is not in files this returns the last index in files plus one.
    *
    * Code smells:
@@ -91,11 +101,29 @@ export const useS3Upload = (workingCase?: Case) => {
    * @param file The file to update.
    */
   const updateFile = (file: UploadFile) => {
-    const newFiles = [...files]
+    /**
+     * Use the filesRef value instead of the files state value because
+     *
+     * 1. The process to update state is asynchronous therfore we can't trust
+     * that we always have the correct state in this function.
+     * 2. We are updating state in the event handlers in the uploadToS3 function
+     * and the listener belongs to the initial render and is not updated on
+     * subsequent rerenders.
+     * (source: https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559)
+     */
+    const newFiles = [...filesRef.current]
 
-    newFiles[getFileIndexInFiles(file)] = file
+    const indexOfFileInFiles = newFiles.findIndex(
+      (fileInFiles) => fileInFiles.name === file.name,
+    )
 
-    setFiles(newFiles)
+    const updatedFiles = newFiles.map((newFile) => {
+      return newFile.id === indexOfFileInFiles.toString()
+        ? Object.assign({}, newFile, { file })
+        : newFile
+    })
+
+    setFiles(updatedFiles)
   }
 
   const removeFileFromState = (file: UploadFile) => {
