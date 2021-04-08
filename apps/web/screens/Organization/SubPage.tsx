@@ -108,7 +108,6 @@ const SubPage: Screen<SubPageProps> = ({
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
-      fullWidthContent={true}
     >
       <GridContainer>
         <Box paddingBottom={4}>
