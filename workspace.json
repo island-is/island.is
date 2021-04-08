@@ -3524,6 +3524,36 @@
         }
       }
     },
+    "icelandic-names-registry-types": {
+      "root": "libs/icelandic-names-registry/types",
+      "sourceRoot": "libs/icelandic-names-registry/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/icelandic-names-registry/types/tsconfig.lib.json",
+              "libs/icelandic-names-registry/types/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/icelandic-names-registry/types/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/icelandic-names-registry/types/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/icelandic-names-registry/types"]
+        }
+      }
+    },
     "infra-express-server": {
       "root": "libs/infra-express-server",
       "sourceRoot": "libs/infra-express-server/src",

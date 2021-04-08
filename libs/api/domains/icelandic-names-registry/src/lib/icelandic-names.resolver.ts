@@ -13,7 +13,7 @@ export class IcelandicNamesResolver {
   constructor(private backendAPI: BackendAPI) {}
 
   @Query(() => [IcelandicName])
-  async getAllIcelandicNames(): Promise<IcelandicName> {
+  async getAllIcelandicNames(): Promise<IcelandicName[]> {
     return this.backendAPI.getAll()
   }
 
@@ -52,7 +52,7 @@ export class IcelandicNamesResolver {
   @Mutation(() => IcelandicName, { nullable: true })
   async deleteIcelandicNameById(
     @Args('input') input: GetIcelandicNameByIdInput,
-  ): Promise<IcelandicName> {
+  ): Promise<void> {
     const { id, ...body } = input
 
     return this.backendAPI.deleteById(id)

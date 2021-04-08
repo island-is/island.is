@@ -1,7 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { IcelandicName as TIcelandicName } from '@island.is/icelandic-names-registry-types'
 
 @ObjectType()
-export class IcelandicName {
+export class IcelandicName implements TIcelandicName {
   @Field()
   id!: number
 
@@ -22,4 +23,10 @@ export class IcelandicName {
 
   @Field({ nullable: true })
   url!: string
+
+  @Field({ nullable: true })
+  created!: Date
+
+  @Field({ nullable: true })
+  modified!: Date
 }
