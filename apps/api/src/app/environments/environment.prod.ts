@@ -73,6 +73,8 @@ export default {
     url: process.env.RSK_API_URL,
   },
   regulationsDomain: {
-    url: process.env.REGULATIONS_API_URL,
+    url:
+      process.env.REGULATIONS_API_URL ??
+      'https://reglugerdir-api.herokuapp.com/api/v1',
   },
 }
