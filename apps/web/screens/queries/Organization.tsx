@@ -56,6 +56,13 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           url
         }
       }
+      secondaryMenu {
+        name
+        childrenLinks {
+          text
+          url
+        }
+      }
       organization {
         logo {
           url
