@@ -4,11 +4,13 @@ import { Box } from '@island.is/island-ui/core'
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rsConf: any
   }
 }
 
-declare var ReadSpeaker: any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const ReadSpeaker: any
 
 Router.events.on('routeChangeStart', (url) => {
   if (typeof ReadSpeaker !== "undefined" ) {
