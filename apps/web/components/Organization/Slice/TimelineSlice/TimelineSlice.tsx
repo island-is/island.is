@@ -113,12 +113,6 @@ const TimelineComponent: React.FC<TimelineComponentProps> = ({ eventMap }) => {
     })
   })
 
-  items.push(
-    <div
-      className={timelineStyles.timelineGradient}
-      style={{ width: offset + 150 }}
-    ></div>,
-  )
   return <div>{items}</div>
 }
 
@@ -198,6 +192,7 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
                   onClick={() => moveTimeline('right')}
                 />
               </ArrowButtonShadow>
+              <div className={timelineStyles.timelineGradient} />
               <div ref={frameRef} className={timelineStyles.timelineComponent}>
                 <TimelineComponent eventMap={eventMap} />
               </div>

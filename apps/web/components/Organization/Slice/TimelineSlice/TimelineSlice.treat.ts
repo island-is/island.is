@@ -77,11 +77,12 @@ export const monthText = style({
 
 export const timelineGradient = style({
   position: 'absolute',
-  height: '10px',
+  width: '100%',
+  height: 10,
+  top: 345,
+  zIndex: 1,
   background:
     'linear-gradient(287.27deg, #0161FD 30.04%, #3F46D2 43.89%, #812EA4 58.3%, #C21578 72.7%, #FD0050 85.44%)',
-  width: '100%',
-  top: 100,
   ...themeUtils.responsiveStyle({
     lg: {
       top: 345,
