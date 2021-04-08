@@ -76,6 +76,14 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
 }) => {
+  const secondaryNavList: NavigationItem[] = organizationPage.secondaryMenu?.childrenLinks.map(
+    ({ text, url }) => ({
+      title: text,
+      href: url,
+      active: text === pageTitle,
+    }),
+  )
+
   return (
     <>
       <HeadWithSocialSharing
@@ -108,6 +116,24 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     )
                   }}
                 />
+                {organizationPage.secondaryMenu && (
+                  <Box marginTop={3}>
+                    <Navigation
+                      colorScheme="purple"
+                      baseId="secondarynav"
+                      activeItemTitle={pageTitle}
+                      title={organizationPage.secondaryMenu.name}
+                      items={secondaryNavList}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href}>{link}</NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  </Box>
+                )}
                 {sidebarContent}
               </Sticky>
             }
@@ -129,6 +155,24 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   }}
                 />
               </Box>
+              {organizationPage.secondaryMenu && (
+                <Box marginY={2}>
+                  <Navigation
+                    colorScheme="purple"
+                    baseId="secondarynav"
+                    isMenuDialog={true}
+                    title={organizationPage.secondaryMenu.name}
+                    items={secondaryNavList}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                </Box>
+              )}
             </Hidden>
             <Breadcrumbs
               items={breadcrumbItems ?? []}
