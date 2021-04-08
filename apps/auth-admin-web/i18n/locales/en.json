@@ -131,6 +131,45 @@
       }
     },
     {
+      "id": "ApiResourceSecretForm",
+      "title": "Api Resource Secrets",
+      "help": "The API secret is used for the introspection endpoint. The API can authenticate with introspection using the API name and secret.",
+      "saveButton": "Next",
+      "cancelButton": "Cancel",
+      "sectionTitle1": "Active secrets",
+      "addButton": "Add",
+      "removeButton": "Remove",
+      "removeConfirmation": "Are you sure want to delete this secret",
+      "noActiveConnections": {
+        "title": "No secrets are defined",
+        "helpText": "Add a secret and push the Add button. A random string has been generated for you that you can use if you decide to."
+      },
+      "infoModal": {
+        "buttonText": "Ok",
+        "headerText": "Your secret has been copied to your clipboard. Don't lose it, you won't be able to see it again:"
+      },
+      "fields": {
+        "secretValue": {
+          "label": "Api resource Secret",
+          "placeholder": "Some complicated text",
+          "helpText": "Your secret value should be a rather complicated string",
+          "errorMessage": "Value is required"
+        },
+        "type": {
+          "label": "Type",
+          "placeholder": "Type of secret",
+          "helpText": "SharedSecret is the only type supported",
+          "errorMessage": "Type is required"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Secret description",
+          "helpText": "Description of the secret",
+          "errorMessage": "Description is required"
+        }
+      }
+    },
+    {
       "id": "ApiScopeCreateForm",
       "title": "Create Api Scope",
       "editTitle": "Edit Api Scope",
