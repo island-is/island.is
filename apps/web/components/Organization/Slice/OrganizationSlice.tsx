@@ -72,10 +72,6 @@ export const OrganizationSlice: FC<OrganizationSliceProps> = ({
   fullWidth = false,
 }) => (
   <GridContainer>
-    {console.log({
-      fullWidth,
-      test: fullWidthSlices.includes(slice.__typename),
-    })}
     <GridRow>
       <GridColumn
         paddingTop={6}
