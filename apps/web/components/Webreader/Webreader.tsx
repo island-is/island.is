@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useI18n } from '@island.is/web/i18n'
 import { Box, ResponsiveProp, Space } from '@island.is/island-ui/core'
 import { CUSTOMER_ID, SCRIPT_URL } from './config'
 
@@ -28,6 +29,7 @@ export const Webreader: FC<WebReaderProps> = ({
 }) => {
   const [href, setHref] = useState('')
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
   useEffect(() => {
     const routeChangestart = (url) => {
@@ -58,7 +60,7 @@ export const Webreader: FC<WebReaderProps> = ({
   }, [])
 
   useEffect(() => {
-    const lang = 'is_is'
+    const lang = activeLocale === 'is' ? 'is_is' : 'en_uk'
     let h =
       '//app-eu.readspeaker.com/cgi-bin/rsent' +
       '?customerid=' +
@@ -77,6 +79,12 @@ export const Webreader: FC<WebReaderProps> = ({
     setHref(h)
   }, [href])
 
+  const buttonLabel = activeLocale === 'is' ? 'Hlusta' : 'Listen'
+  const buttonTitle =
+    activeLocale === 'is'
+      ? 'Hlustaðu á þessa síðu lesna af ReadSpeaker webReader'
+      : 'Listen to this page using ReadSpeaker'
+
   return (
     <>
       <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -85,12 +93,12 @@ export const Webreader: FC<WebReaderProps> = ({
             rel="nofollow"
             className="rsbtn_play"
             accessKey="L"
-            title="Hlustaðu á þessa síðu lesna af ReadSpeaker webReader"
+            title={buttonTitle}
             href={href}
           >
             <span className="rsbtn_left rsimg rspart">
               <span className="rsbtn_text">
-                <span>Hlusta</span>
+                <span>{buttonLabel}</span>
               </span>
             </span>
             <span className="rsbtn_right rsimg rsplay rspart" />
