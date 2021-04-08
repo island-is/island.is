@@ -33,7 +33,7 @@ export class DocumentController {
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Get a pdf document from the Documents service',
+    description: 'Get a PDF document from the Documents service',
   })
   async getPdf(
     @Param('pdfId') pdfId: string,
