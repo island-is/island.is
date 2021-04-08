@@ -7,11 +7,11 @@ services:
       dockerfile: ../../scripts/ci/Dockerfile.test
       args:
         DB_NAME: db_endorsement_system
-        APP: reference-backend
+        APP: endorsement-system
     networks:
       - local
     depends_on:
-      - db_reference_backend
+      - db_endorsement_system
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
