@@ -1,45 +1,72 @@
 import {
   buildForm,
-  buildDescriptionField,
+  buildCustomField,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildTextField,
   Form,
   FormModes,
+  Application,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
+import { NationalRegistryUser } from '@island.is/api/schema'
+import { ExternalData } from '@island.is/application/core'
+
+const fullName = (externalData: ExternalData) => {
+  const fullName = (externalData?.nationalRegistry?.data as {
+    fullName?: NationalRegistryUser
+  })?.fullName
+  return fullName ?? ''
+}
 
 export const ReviewApplication: Form = buildForm({
   id: 'Collect signatures',
-  title: 'Safna undirskriftum',
+  title: m.collectSignatures.applicationTitle,
   mode: FormModes.REVIEW,
   children: [
     buildSection({
       id: 'intro',
-      title: 'Safna meðmælum',
+      title: m.collectSignatures.stepTitle,
       children: [
         buildMultiField({
           id: 'about',
           title: '',
           children: [
-            buildDescriptionField({
-              id: 'final',
-              title: 'Safna meðmælum',
-              description: 'Þú getur nú farið að taka á móti meðmælum',
+            buildCustomField({
+              id: 'disclaimer',
+              title: '',
+              component: 'SignatureDisclaimer',
             }),
+            buildTextField({
+              id: 'signature',
+              title: m.collectSignatures.nameInput,
+              variant: 'text',
+              placeholder: m.collectSignatures.nameInput,
+              backgroundColor: 'blue',
+              width: 'half',
+              defaultValue: (application: Application) =>
+                fullName(application.externalData),
+            }),
+
             buildSubmitField({
-              id: 'approvedByReviewer',
+              id: 'sign',
               placement: 'footer',
-              title: 'Senda inn umsókn',
+              title: m.collectSignatures.submitButton,
               actions: [
-                { event: 'APPROVE', name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: 'APPROVE',
+                  name: m.collectSignatures.submitButton,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Umsókn móttekin',
-          description: 'Umsókn hefur verið mótekin',
+        buildCustomField({
+          id: 'disclaimer',
+          title: '',
+          component: 'SignedConclusion',
         }),
       ],
     }),

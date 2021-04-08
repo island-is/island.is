@@ -1,6 +1,7 @@
 export { default as Overview } from './Overview'
 export { default as ReviewConstituency } from './ReviewConstituency'
-export { default as Applicant } from './Applicant'
 export { default as Signatures } from './Signatures'
 export { default as FileUploadDisclaimer } from './FileUploadDisclaimer'
 export { default as Conclusion } from './Conclusion'
+export { default as SignatureDisclaimer } from './SignatureDisclaimer'
+export { default as SignedConclusion } from './SignedConclusion'

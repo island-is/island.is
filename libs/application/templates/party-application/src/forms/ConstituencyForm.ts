@@ -7,6 +7,8 @@ import {
   FormModes,
   buildRadioField,
   buildMultiField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 
@@ -38,6 +40,27 @@ export const ConstituencyForm: Form = buildForm({
             },
             { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
             { value: 'Suðvesturkjördæmi', label: 'Suðvesturkjördæmi' },
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'disclaimerSection',
+      title: m.disclaimerSection.title,
+      children: [
+        buildExternalDataProvider({
+          title: m.disclaimerSection.title,
+          id: 'approveDisclaimer',
+          subTitle: m.disclaimerSection.subtitle,
+          description: m.disclaimerSection.descriptionPt1,
+          checkboxLabel: m.disclaimerSection.checkboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'disclaimer',
+              type: undefined,
+              title: '',
+              subTitle: m.disclaimerSection.descriptionPt2,
+            }),
           ],
         }),
       ],

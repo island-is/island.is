@@ -32,6 +32,39 @@ export const m: MessageDir = {
       description: 'Description of confirmation',
     },
   }),
+  /*
+  
+Hér er hægt að skila framboðum til yfirkjörstjórna og gera frambjóðendum kleift að undirrita yfirlýsingu sína um framboð rafrænt.
+  */
+  disclaimerSection: defineMessages({
+    title: {
+      id: 'pa.application:disclaimerSection.title',
+      defaultMessage: 'Skilmálar',
+      description: 'Title of disclaimer section',
+    },
+    subtitle: {
+      id: 'pa.application:disclaimerSection.subtitle',
+      defaultMessage: 'Eftirfarandi gildir um söfnun meðmælenda',
+      description: 'Subtitle of disclaimer section',
+    },
+    descriptionPt1: {
+      id: 'pa.application:disclaimerSection.descrtipion.p1',
+      defaultMessage:
+        'Eingöngu Þjóðskrá Íslands og yfirkjörstjórnir hafa aðgang  að söfnun meðmælanna ásamt þeim stjórnmálaflokki sem stofnar viðkomandi söfnun. Óheimilt er að dreifa meðmælunum eða þeim upplýsingum sem þar koma fram.',
+      description: 'Description part one',
+    },
+    descriptionPt2: {
+      id: 'pa.application:disclaimerSection.descrtipion.p2',
+      defaultMessage:
+        'Hér er hægt að skila framboðum til yfirkjörstjórna og gera frambjóðendum kleift að undirrita yfirlýsingu sína um framboð rafrænt.',
+      description: 'Description part two',
+    },
+    checkboxLabel: {
+      id: 'pa.application:disclaimerSection.checkboxLabel',
+      defaultMessage: 'Ég samþykki skilmála hér að ofan',
+      description: 'Checkbox label',
+    },
+  }),
   overviewSection: defineMessages({
     title: {
       id: 'pa.application:overview.title',
@@ -228,6 +261,106 @@ export const m: MessageDir = {
       defaultMessage:
         'Þú munt fá skilaboð í pósthólf inni á mínum síðum Íslands.is með framhaldið.',
       description: 'Subtitle for approved card',
+    },
+  }),
+  collectSignatures: defineMessages({
+    applicationTitle: {
+      id: 'ple.application:collect.applicationtitle',
+      defaultMessage: 'Framboð í kjördæmi',
+      description: 'Title for collect signatures application',
+    },
+    stepTitle: {
+      id: 'ple.application:collect.steptitle',
+      defaultMessage: 'Samþykkja',
+      description: 'Title for section step',
+    },
+    sectionTitle: {
+      id: 'ple.application:collect.secitontitle',
+      defaultMessage: 'Listabókstafs meðmælendalisti',
+      description:
+        'Partial title for section, party letter will be added programmatically',
+    },
+    nameInput: {
+      id: 'ple.application:collect.name.input',
+      defaultMessage: 'Nafn',
+      description: 'Label and placeholder for name input field',
+    },
+    descriptionPt1: {
+      id: 'ple.application:collect.descripton.pt.one',
+      defaultMessage:
+        'Með því að mæla með úthlutun tiltekins listabókstafs til tilgreinds stjórnamálaflokks samþykkir þú að viðkomandi stjórnmálaflokkur, dómsmálaráðuneytið og Þjóðskrá Íslands fái aðgang að þeim upplýsingum sem skráðar eru. Þeir aðilar hafa ekki heimild til að miðla þeim upplýsingum frekar.',
+      description: 'Disclaimer description, first paragraph',
+    },
+    descriptionPt2: {
+      id: 'ple.application:collect.descripton.pt.two',
+      defaultMessage:
+        'Þjóðskrá Íslands er heimilt, að beiðni dómsmálaráðuneytisins, að samkeyra meðmælendalistann við þjóðskrá að fullnægðum heimildum laga um persónuvernd og vinnslu persónuupplýsinga gilda hverju sinni.',
+      description: 'Disclaimer description, second paragraph',
+    },
+    agreeTermsLabel: {
+      id: 'ple.application:collect.agree.label',
+      defaultMessage: 'Ég hef kynnt mér ofangreint',
+      description: 'Label for terms and conditions',
+    },
+    submitButton: {
+      id: 'ple.application:collect.submit.button',
+      defaultMessage: 'Setja nafn mitt á lista',
+      description: 'Title for submit button',
+    },
+  }),
+  signatureDisclaimer: defineMessages({
+    title: {
+      id: 'ple.application:signature.title',
+      defaultMessage: 'Meðmælendalisti',
+      description: 'Title for signature disclaimer',
+    },
+    part1: {
+      id: 'ple.application:signature.pt.1',
+      defaultMessage: 'Ég undirritaður kjósandi í',
+      description: 'Part 1 of signature disclaimer',
+    },
+    part2: {
+      id: 'ple.application:signature.pt.2',
+      defaultMessage:
+        'lýsi hér með yfir stuðningi eftirfarandi lista vegna alþingiskosninganna 25. september 2021.',
+      description: 'Part 2 of signature disclaimer',
+    },
+    part3: {
+      id: 'ple.application:signature.pt.3',
+      defaultMessage: 'Listi:',
+      description: 'Part 3 of signature disclaimer',
+    },
+    part4: {
+      id: 'ple.application:signature.pt.4',
+      defaultMessage: 'Stjórnmálasamtök:',
+      description: 'Part 4 of signature disclaimer',
+    },
+  }),
+  signedConclusion: defineMessages({
+    title: {
+      id: 'ple.application:signed.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Approved card title',
+    },
+    approvedTitle: {
+      id: 'ple.application:signed.approved.title',
+      defaultMessage: 'Þú hefur verið skráður sem meðmælandi',
+      description: 'Approved card title',
+    },
+    approvedSubtitle: {
+      id: 'ple.application:signed.approved.subtitle',
+      defaultMessage: 'Hægt er að skoða virka lista undir ',
+      description: 'Approved card subtitle',
+    },
+    myPagesButton: {
+      id: 'ple.application:signed.button.mypages',
+      defaultMessage: 'Til baka á mínar síður',
+      description: 'Button back to my pages',
+    },
+    partyListButton: {
+      id: 'ple.application:signed.button.partylist',
+      defaultMessage: 'Skoða lista',
+      description: 'Button to party list',
     },
   }),
 }
