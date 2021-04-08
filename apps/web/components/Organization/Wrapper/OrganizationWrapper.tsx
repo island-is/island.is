@@ -8,23 +8,16 @@ import {
   GridContainer,
   GridRow,
   Hidden,
-  Link,
   Navigation,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './OrganizationWrapper.treat'
 import NextLink from 'next/link'
-import {
-  HeadWithSocialSharing,
-  Main,
-  OrganizationFooter,
-  Sticky,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Main, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
+import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
+import { DefaultHeader } from './Themes/DefaultTheme'
 
 interface NavigationData {
   title: string
@@ -45,6 +38,32 @@ interface WrapperProps {
   minimal?: boolean
 }
 
+interface HeaderProps {
+  organizationPage: OrganizationPage
+}
+
+export const lightThemes = ['digital_iceland']
+
+const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+  switch (organizationPage.theme) {
+    case 'syslumenn':
+      return <SyslumennHeader organizationPage={organizationPage} />
+    case 'digital_iceland':
+      return <DigitalIcelandHeader organizationPage={organizationPage} />
+    default:
+      return <DefaultHeader organizationPage={organizationPage} />
+  }
+}
+
+const OrganizationFooter: React.FC<HeaderProps> = ({ organizationPage }) => {
+  switch (organizationPage.theme) {
+    case 'syslumenn':
+      return <SyslumennFooter organizationPage={organizationPage} />
+    default:
+      return null
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -54,13 +73,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   mainContent,
   sidebarContent,
   navigationData,
-  fullWidthContent = false,
   children,
   minimal = false,
 }) => {
-  const isMobile = useWindowSize().width < theme.breakpoints.md
-  const { linkResolver } = useLinkResolver()
-
   return (
     <>
       <HeadWithSocialSharing
@@ -70,69 +85,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <Box className={styles.headerBg}>
-        <Box className={styles.headerWrapper}>
-          <SidebarLayout
-            sidebarContent={
-              !!organizationPage.organization.logo &&
-              !minimal && (
-                <Link
-                  href={
-                    linkResolver('organizationpage', [organizationPage.slug])
-                      .href
-                  }
-                >
-                  <Box
-                    borderRadius="circle"
-                    className={styles.iconCircle}
-                    background="white"
-                  >
-                    <img
-                      src={organizationPage.organization.logo.url}
-                      className={styles.headerLogo}
-                      alt=""
-                    />
-                  </Box>
-                </Link>
-              )
-            }
-          >
-            <Hidden above="sm">
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-              >
-                <Box
-                  borderRadius="circle"
-                  className={styles.iconCircle}
-                  background="white"
-                >
-                  <img
-                    src={organizationPage.organization.logo.url}
-                    className={styles.headerLogo}
-                    alt=""
-                  />
-                </Box>
-              </Link>
-            </Hidden>
-            <Box
-              marginTop={[2, 2, 6]}
-              textAlign={['center', 'center', 'right']}
-            >
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-              >
-                <Text variant="h1" color="white">
-                  {organizationPage.title}
-                </Text>
-              </Link>
-            </Box>
-          </SidebarLayout>
-        </Box>
-      </Box>
+      <OrganizationHeader organizationPage={organizationPage} />
       <Main>
         {!minimal && (
           <SidebarLayout
@@ -143,7 +96,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               <Sticky>
                 <Navigation
                   baseId="pageNav"
-                  isMenuDialog={isMobile}
                   items={navigationData.items}
                   title={navigationData.title}
                   activeItemTitle={navigationData.activeItemTitle}
@@ -163,7 +115,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNav"
-                  isMenuDialog={isMobile}
+                  isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
                   activeItemTitle={navigationData.activeItemTitle}

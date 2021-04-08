@@ -179,7 +179,7 @@ const ActiveDetentionRequests: React.FC<Props> = (props) => {
               <Text>
                 {c.accusedNationalId && (
                   <Text as="span" variant="small" color="dark400">
-                    {`kt: ${
+                    {`kt. ${
                       insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
                       '-'
                     }`}

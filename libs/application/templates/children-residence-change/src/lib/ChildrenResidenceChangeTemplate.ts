@@ -20,7 +20,7 @@ export enum ApplicationStates {
   SUBMITTED = 'submitted',
 }
 
-enum Roles {
+export enum Roles {
   ParentA = 'parentA',
   ParentB = 'parentB',
 }
