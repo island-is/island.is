@@ -115,6 +115,8 @@
       "saveButton": "Next",
       "cancelButton": "Cancel",
       "sectionTitle1": "Active scopes",
+      "addButton": "Add",
+      "removeButton": "Remove",
       "removeConfirmation": "Are you sure want to delete this scope",
       "noActiveConnections": {
         "title": "No active scopes",
