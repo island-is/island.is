@@ -4250,7 +4250,7 @@
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
             "assets": ["apps/reference-backend/src/assets"],
             "maxWorkers": 2,
-            "webpackConfig": "apps/endorsement-system/webpack.config.js"
+            "webpackConfig": "apps/reference-backend/webpack.config.js"
           },
           "configurations": {
             "production": {
