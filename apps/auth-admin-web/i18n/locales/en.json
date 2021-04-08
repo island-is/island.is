@@ -450,25 +450,7 @@
       "title": "Select the appropriate grant type",
       "help": "Select the types of authentication that are allowed for this Client",
       "saveButton": "Next",
-      "cancelButton": "Back",
-      "removeButton": "Remove",
-      "addButton": "Add",
-      "sectionTitle1": "Active client claims",
-      "removeConfirmation": "Are you sure want to delete this claim",
-      "fields": {
-        "type": {
-          "label": "Claim type (key)",
-          "placeholder": "example-claim",
-          "helpText": "The key that represents this claim",
-          "errorMessage": "Claim type is required and needs to be in the right format"
-        },
-        "value": {
-          "label": "Claim value",
-          "placeholder": "example-value",
-          "helpText": "The value of the claim",
-          "errorMessage": "Value is required and can not contain special characters"
-        }
-      }
+      "cancelButton": "Back"
     },
     {
       "id": "ClientIdpRestrictionsForm",
@@ -508,6 +490,31 @@
         "restricted": {
           "label": "Allow Only",
           "helpText": "Allow only selected identity providers"
+        }
+      }
+    },
+    {
+      "id": "ClientClaimForm",
+      "title": "Add claims for the Client",
+      "help": "Allows settings claims for the client (will be included in the access token).",
+      "saveButton": "Next",
+      "cancelButton": "Back",
+      "removeButton": "Remove",
+      "addButton": "Add",
+      "sectionTitle1": "Active client claims",
+      "removeConfirmation": "Are you sure want to delete this post logout uri",
+      "fields": {
+        "type": {
+          "label": "Claim type (key)",
+          "placeholder": "example-claim",
+          "helpText": "The key that represents this claim",
+          "errorMessage": "Claim type is required and needs to be in the right format"
+        },
+        "value": {
+          "label": "Claim value",
+          "placeholder": "example-value",
+          "helpText": "The value of the claim",
+          "errorMessage": "Value is required and can not contain special characters"
         }
       }
     }
