@@ -79,6 +79,7 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
       pageDescription={organizationPage.description}
       organizationPage={organizationPage}
       pageFeaturedImage={organizationPage.featuredImage}
+      fullWidthContent={true}
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -94,7 +95,12 @@ const Home: Screen<HomeProps> = ({ news, organizationPage, namespace }) => {
         items: navList,
       }}
       mainContent={organizationPage.slices.map((slice) => (
-        <OrganizationSlice key={slice.id} slice={slice} namespace={namespace} />
+        <OrganizationSlice
+          key={slice.id}
+          slice={slice}
+          namespace={namespace}
+          fullWidth={true}
+        />
       ))}
       sidebarContent={organizationPage.sidebarCards.map((card) => (
         <SidebarCard sidebarCard={card} />
