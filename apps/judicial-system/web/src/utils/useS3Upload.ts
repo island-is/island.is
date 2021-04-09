@@ -82,21 +82,6 @@ export const useS3Upload = (workingCase?: Case) => {
   }
 
   /**
-   * Get index of file in files. If file is not in files this returns the last index in files plus one.
-   *
-   * Code smells:
-   * This function is not pure, in that it sometimes returns the index of file in files and sometimes files.lenght
-   *
-   * @param file The file to search for in files.
-   * @returns The index of the file or the last index in files plus one.
-   */
-  const getFileIndexInFiles = (file: UploadFile) => {
-    return files.includes(file)
-      ? files.findIndex((fileInFiles) => fileInFiles.name === file.name)
-      : files.length
-  }
-
-  /**
    * Updates a file if it's in files and adds it to the end of files if not.
    * @param file The file to update.
    */
