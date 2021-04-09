@@ -65,8 +65,9 @@ export class RegulationsService extends RESTDataSource {
 
   async getRegulations(
     type: 'newest',
-    page: number,
+    page?: number,
   ): Promise<RegulationSearchResults | null> {
+    page = page && page > 1 ? page : undefined
     const response = await this.get<RegulationSearchResults | null>(
       `regulations/${type}${page ? '?page=' + page : ''}`,
       {
