@@ -139,6 +139,8 @@ export const regulationPageTexts = {
   historyCurrentVersion: 'Núgildandi útgáfa',
   historyFutureSplitter: 'Væntanlegar breytingar',
 
+  infoTitle: 'Upplýsingar',
+
   viewAffectingRegulation: 'Skoða %{title}',
 
   comments: 'Athugsemdir vefstjóra',

@@ -235,6 +235,51 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               })}
             </RegulationsSidebarBox>
           )}
+
+          {regulation.type === 'base' && (
+            <RegulationsSidebarBox
+              title={txt('infoTitle', 'Upplýsingar')}
+              colorScheme="blueberry"
+            >
+              {regulation.ministry && (
+                <Text>
+                  <strong>Ráðuneyti</strong>
+                  <br />
+                  {regulation.ministry.name}
+                </Text>
+              )}
+
+              {regulation.lawChapters.length > 0 && (
+                <Text>
+                  <strong>Lagakaflar</strong>
+                  <br />
+                  <ul>
+                  {regulation.lawChapters.map((chapter, i) => (
+                    <li key={i}>
+                      {chapter.name} <br />
+                    </li>
+                  ))}
+                  </ul>
+                </Text>
+              )}
+
+              {regulation.effectiveDate && (
+                <Text>
+                  <strong>Tók gildi</strong>
+                  <br />
+                  {formatDate(regulation.effectiveDate)}
+                </Text>
+              )}
+
+              {regulation.lastAmendDate && (
+                <Text>
+                  <strong>Síðast uppfærð</strong>
+                  <br />
+                  {formatDate(regulation.lastAmendDate)}
+                </Text>
+              )}
+            </RegulationsSidebarBox>
+          )}
         </Stack>
       }
     />
