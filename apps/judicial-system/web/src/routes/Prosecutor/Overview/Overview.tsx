@@ -334,12 +334,12 @@ export const Overview: React.FC = () => {
                   }`}
                   labelVariant="h3"
                 >
-                  {workingCase.files?.map((file) => (
+                  {workingCase.files?.map((file, index) => (
                     <Box marginBottom={3}>
                       <CaseFile
-                        name={file.name}
+                        name={`${index + 1}. ${file.name}`}
                         size={file.size}
-                        uploadedAt={new Date(file.modified)}
+                        uploadedAt={'dsfdsf'}
                         link=""
                       />
                     </Box>
