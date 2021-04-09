@@ -90,6 +90,7 @@ export const CaseQuery = gql`
       files {
         name
         size
+        modified
       }
     }
   }
