@@ -1,9 +1,7 @@
 import React, { FC, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { SubpageMainContent } from '@island.is/web/components'
 import {
-  CategoryCard,
+  Button,
   Checkbox,
   Filter,
   FilterInput,
@@ -12,13 +10,12 @@ import {
   GridRow,
   Option,
   Select,
-  Text,
 } from '@island.is/island-ui/core'
-import { NamespaceGetter, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { NoChildren } from '@island.is/web/types'
-import { LawChapterTree, Ministry, RegulationHomeTexts } from './mockData'
+import { LawChapterTree, Ministry } from './Regulations.types'
+import { RegulationHomeTexts } from './Regulations.mock'
 import { OptionTypeBase, ValueType } from 'react-select'
-import { useRegulationLinkResolver } from './regulationUtils'
 
 // ---------------------------------------------------------------------------
 
@@ -109,11 +106,6 @@ export type RegulationSearchFilters = Record<RegulationSearchKeys, string>
 // ---------------------------------------------------------------------------
 
 export type RegulationsSearchSectionProps = {
-  searchResults: ReadonlyArray<{
-    name: string
-    title: string
-    ministry?: { name: string; slug: string }
-  }>
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
   ministries: ReadonlyArray<Ministry>
@@ -126,14 +118,8 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
 ) => {
   const filters = props.searchFilters
   const txt = useNamespace(props.texts)
-
-  const { linkToRegulation } = useRegulationLinkResolver()
   const router = useRouter()
-
-  const activeFilters = useMemo(
-    () => Object.values(filters).some((value) => !!value),
-    [filters],
-  )
+  const [advancedActive, setAdvancedActive] = useState(false)
 
   const yearOptions = useMemo(() => {
     return [emptyOption(txt('searchYearEmptyOption'))].concat(
@@ -189,97 +175,109 @@ export const RegulationsSearchSection: FC<RegulationsSearchSectionProps> = (
   }
 
   return (
-    <SidebarLayout
-      paddingTop={6}
-      fullWidthContent="right"
-      sidebarContent={
-        <Filter
-          labelClear={txt('searchClearLabel')}
-          labelOpen={txt('searchOpenLabel')}
-          labelClose={txt('searchCloseLabel')}
-          labelResult={txt('searchResultLabel')}
-          labelTitle={txt('searchTitleLabel')}
-          onFilterClear={clearSearch}
-        >
-          <FilterInput
-            name="q"
-            placeholder={txt('searchQueryLabel')}
-            value={filters.q}
-            onChange={(value) => doSearch('q', value)}
-          />
-          <Select
-            name="year"
-            isSearchable
-            label={txt('searchYearLabel')}
-            placeholder={txt('searchYearPlaceholder')}
-            value={findValueOption(yearOptions, filters.year)}
-            options={yearOptions}
-            onChange={(option) => doSearch('year', getRSValue(option) || '')}
-            size="sm"
-          />
-          <Select
-            name="ch"
-            isSearchable
-            label={txt('searchChapterLabel')}
-            placeholder={txt('searchChapterPlaceholder')}
-            value={findValueOption(lawChapterOptions, filters.ch)}
-            options={lawChapterOptions}
-            onChange={(option) => doSearch('ch', getRSValue(option) || '')}
-            size="sm"
-          />
-          <Select
-            name="rn"
-            isSearchable
-            label={txt('searchMinistryLabel')}
-            placeholder={txt('searchMinistryPlaceholder')}
-            value={findValueOption(ministryOptions, filters.rn)}
-            options={ministryOptions}
-            onChange={(option) => doSearch('rn', getRSValue(option) || '')}
-            size="sm"
-          />
-          <Checkbox
-            id="regulations-search-amendments-checkbox"
-            label={txt('searchIncludeAmendingLabel')}
-            checked={!!filters.all}
-            onChange={() => doSearch('all', !filters.all ? 'y' : '')}
-          />
-        </Filter>
-      }
+    <Filter
+      labelClear={txt('searchClearLabel')}
+      labelOpen={txt('searchOpenLabel')}
+      labelClose={txt('searchCloseLabel')}
+      labelResult={txt('searchResultLabel')}
+      labelTitle={txt('searchTitleLabel')}
+      onFilterClear={clearSearch}
     >
-      <SubpageMainContent
-        main={
-          <>
-            <Text variant="h2" as="h2" marginBottom={3}>
-              {activeFilters
-                ? txt('searchResultsLegend')
-                : txt('defaultRegulationListsLegend')}
-            </Text>
+      <GridContainer>
+        <GridRow alignItems="center">
+          <GridColumn
+            span={['1/1', '1/1', '9/12', '7/12', '6/12']}
+            offset={['0', '0', '0', '0', '1/12']}
+            paddingTop={0}
+            paddingBottom={0}
+          >
+            <FilterInput
+              name="q"
+              placeholder={txt('searchQueryLabel')}
+              value={filters.q}
+              onChange={(value) => doSearch('q', value)}
+            />
+          </GridColumn>
+          <GridColumn
+            span={['1/1', '1/1', '3/12']}
+            paddingTop={[1, 1, 0]}
+            paddingBottom={[3, 3, 0]}
+          >
+            <Button
+              variant="text"
+              size="small"
+              icon="chevronDown"
+              onClick={() => {
+                setAdvancedActive(!advancedActive)
+              }}
+            >
+              Ýtarlegri leit{' '}
+            </Button>
+          </GridColumn>
+        </GridRow>
+        {advancedActive && (
+          <GridRow>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '3/12', '2/12']}
+              offset={['0', '0', '0', '0', '1/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="year"
+                isSearchable
+                label={txt('searchYearLabel')}
+                placeholder={txt('searchYearPlaceholder')}
+                value={findValueOption(yearOptions, filters.year)}
+                options={yearOptions}
+                onChange={(option) =>
+                  doSearch('year', getRSValue(option) || '')
+                }
+                size="sm"
+              />
+            </GridColumn>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="ch"
+                isSearchable
+                label={txt('searchChapterLabel')}
+                placeholder={txt('searchChapterPlaceholder')}
+                value={findValueOption(lawChapterOptions, filters.ch)}
+                options={lawChapterOptions}
+                onChange={(option) => doSearch('ch', getRSValue(option) || '')}
+                size="sm"
+              />
+            </GridColumn>
+            <GridColumn
+              span={['1/1', '1/1', '4/12', '4/12', '3/12']}
+              paddingTop={[0, 0, 4]}
+              paddingBottom={[2, 2, 0]}
+            >
+              <Select
+                name="rn"
+                isSearchable
+                label={txt('searchMinistryLabel')}
+                placeholder={txt('searchMinistryPlaceholder')}
+                value={findValueOption(ministryOptions, filters.rn)}
+                options={ministryOptions}
+                onChange={(option) => doSearch('rn', getRSValue(option) || '')}
+                size="sm"
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+      </GridContainer>
 
-            <GridContainer>
-              <GridRow>
-                {props.searchResults.map((reg, i) => (
-                  <GridColumn
-                    key={reg.name}
-                    span={['1/1', '1/1', '1/2']}
-                    paddingBottom={4}
-                  >
-                    <CategoryCard
-                      href={linkToRegulation(reg.name)}
-                      heading={reg.name}
-                      text={reg.title}
-                      tags={
-                        reg.ministry && [
-                          { label: reg.ministry.name, disabled: true },
-                        ]
-                      }
-                    />
-                  </GridColumn>
-                ))}
-              </GridRow>
-            </GridContainer>
-          </>
-        }
-      />
-    </SidebarLayout>
+      {/* <Checkbox
+        id="regulations-search-amendments-checkbox"
+        label={txt('searchIncludeAmendingLabel')}
+        checked={!!filters.all}
+        onChange={() => doSearch('all', !filters.all ? 'y' : '')}
+      />*/}
+    </Filter>
   )
 }
