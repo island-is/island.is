@@ -54,7 +54,7 @@ export class RegulationsService extends RESTDataSource {
       if (date) {
         params = 'd/' + date
         if (isCustomDiff) {
-          params = '/diff' + (earlierDate ? '/' + earlierDate : '')
+          params += '/diff' + (earlierDate ? '/' + earlierDate : '')
         }
       } else {
         // Treat `viewType` 'd' with no `date` as 'current'
