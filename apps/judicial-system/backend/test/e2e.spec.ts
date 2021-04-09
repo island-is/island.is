@@ -372,42 +372,6 @@ describe('Institution', () => {
 })
 
 describe('User', () => {
-  it('GET /api/user/:id should get the user', async () => {
-    await request(app.getHttpServer())
-      .get(`/api/user/${prosecutor.id}`)
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
-      .send()
-      .expect(200)
-      .then((response) => {
-        const apiUser = response.body
-
-        expectUsersToMatch(apiUser, prosecutor)
-      })
-  })
-
-  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
-    let dbUser: CUser
-
-    await User.findOne({
-      where: { national_id: judgeNationalId },
-      include: [{ model: Institution, as: 'institution' }],
-    })
-      .then((value) => {
-        dbUser = userToCUser(value.toJSON() as User)
-
-        return request(app.getHttpServer())
-          .get(`/api/user/?nationalId=${judgeNationalId}`)
-          .set('authorization', `Bearer ${environment.auth.secretToken}`)
-          .send()
-          .expect(200)
-      })
-      .then((response) => {
-        const apiUser = response.body
-
-        expectUsersToMatch(apiUser, dbUser)
-      })
-  })
-
   it('POST /api/user should create a user', async () => {
     const data = {
       nationalId: '1234567890',
@@ -514,6 +478,50 @@ describe('User', () => {
       })
       .then((newValue) => {
         expectUsersToMatch(userToCUser(newValue.toJSON() as User), apiUser)
+      })
+  })
+
+  it('GET /api/users should get all users', async () => {
+    await request(app.getHttpServer())
+      .get('/api/users')
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        // Check the response - should have at least the three default users
+        expect(response.body.length).toBeGreaterThanOrEqual(3)
+      })
+  })
+
+  it('GET /api/user/:id should get the user', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/user/${prosecutor.id}`)
+      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${adminAuthCookie}`)
+      .send()
+      .expect(200)
+      .then((response) => {
+        expectUsersToMatch(response.body, prosecutor)
+      })
+  })
+
+  it('GET /api/user/?nationalId=<national id> should get the user', async () => {
+    let dbUser: CUser
+
+    await User.findOne({
+      where: { national_id: judgeNationalId },
+      include: [{ model: Institution, as: 'institution' }],
+    })
+      .then((value) => {
+        dbUser = userToCUser(value.toJSON() as User)
+
+        return request(app.getHttpServer())
+          .get(`/api/user/?nationalId=${judgeNationalId}`)
+          .set('authorization', `Bearer ${environment.auth.secretToken}`)
+          .send()
+          .expect(200)
+      })
+      .then((response) => {
+        expectUsersToMatch(response.body, dbUser)
       })
   })
 })

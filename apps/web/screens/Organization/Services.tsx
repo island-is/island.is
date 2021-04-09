@@ -33,7 +33,7 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper } from '@island.is/web/components'
+import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -222,7 +222,12 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               value={sortOptions.find((x) => x.value === sort)}
               options={sortOptions}
               onChange={({ value }: Option) => {
-                Router.replace(`?sort=${value}`)
+                Router.push({
+                  pathname: linkResolver('organizationservices', [
+                    organizationPage.slug,
+                  ]).href,
+                  query: { sort: value },
+                })
               }}
               size="sm"
             />
@@ -328,6 +333,8 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }
   }
 
+  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+
   return {
     organizationPage: getOrganizationPage,
     services: getArticles,
@@ -336,10 +343,8 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
+    ...(lightTheme ? {} : { darkTheme: true }),
   }
 }
 
-export default withMainLayout(ServicesPage, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(ServicesPage)

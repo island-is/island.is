@@ -179,6 +179,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-ui-components": {
+      "tags": []
+    },
     "application-ui-fields": {
       "tags": []
     },
@@ -199,6 +202,9 @@
       "tags": []
     },
     "cache": {
+      "tags": []
+    },
+    "clients-document-provider": {
       "tags": []
     },
     "clients-mms": {
@@ -238,6 +244,9 @@
       "tags": []
     },
     "email-service": {
+      "tags": []
+    },
+    "endorsement-system": {
       "tags": []
     },
     "feature-flags": {
@@ -459,9 +468,6 @@
     "shared-mocking": {
       "tags": []
     },
-    "shared-table": {
-      "tags": []
-    },
     "shared-types": {
       "tags": []
     },
@@ -479,6 +485,9 @@
       "implicitDependencies": ["skilavottord-web"]
     },
     "skilavottord-ws": {
+      "tags": []
+    },
+    "system-e2e": {
       "tags": []
     },
     "utils-api": {

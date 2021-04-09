@@ -14,11 +14,13 @@ export type UploadFileStatus = 'error' | 'done' | 'uploading'
 
 export interface UploadFile {
   name: string
+  id?: string
   key?: string
   status?: UploadFileStatus
   percent?: number
   originalFileObj?: File | Blob
   error?: string
+  size?: number
 }
 
 export const fileToObject = (
@@ -41,6 +43,7 @@ const UploadingIndicator = (
   { percent }: UploadingIndicatorProps = { percent: 0 },
 ) => {
   const isDoneUploading = percent === 100
+
   return (
     <Box
       position="absolute"
@@ -56,10 +59,15 @@ const UploadingIndicator = (
 
 interface UploadedFileProps {
   file: UploadFile
+  showFileSize: boolean
   onRemoveClick: (file: UploadFile) => void
 }
 
-const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
+const UploadedFile = ({
+  file,
+  showFileSize,
+  onRemoveClick,
+}: UploadedFileProps) => {
   const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
       case 'error':
@@ -82,6 +90,10 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
     }
   }
 
+  const kb = (bytes?: number) => {
+    return bytes ? Math.ceil(bytes / 1024) : ''
+  }
+
   const isUploading =
     file.percent && file.percent < 100 && file.status === 'uploading'
 
@@ -102,8 +114,11 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
       className={styles.uploadedFile}
       onClick={(e) => e.stopPropagation()}
     >
-      <Text truncate variant="small">
+      <Text truncate fontWeight="semiBold">
         {file.name}
+        {showFileSize && file.size && (
+          <Text as="span">{` (${kb(file.size)}KB)`}</Text>
+        )}
       </Text>
       {isUploading ? (
         <div
@@ -132,6 +147,7 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
 
 export interface InputFileUploadProps {
   name?: string
+  showFileSize?: boolean
   id?: string
   header?: string
   description?: string
@@ -148,6 +164,7 @@ export interface InputFileUploadProps {
 
 export const InputFileUpload = ({
   name,
+  showFileSize = false,
   id,
   header,
   description,
@@ -215,7 +232,12 @@ export const InputFileUpload = ({
 
       <Box width="full" paddingX={[2, 2, 12]}>
         {fileList.map((file, index) => (
-          <UploadedFile key={index} file={file} onRemoveClick={onRemove} />
+          <UploadedFile
+            key={index}
+            file={file}
+            showFileSize={showFileSize}
+            onRemoveClick={onRemove}
+          />
         ))}
       </Box>
 

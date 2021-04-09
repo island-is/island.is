@@ -36,9 +36,11 @@ export interface UserInfo {
 export interface ExternalData {
   nationalRegistry: {
     data: NationalRegistry
+    date: string
   }
   userProfile: {
     data: UserInfo
+    date: string
   }
 }
 
@@ -70,4 +72,9 @@ export enum DataProviderTypes {
   MOCK_NationalRegistry = 'MockNationalRegistryProvider',
   NationalRegistry = 'NationalRegistryProvider',
   UserProfile = 'UserProfileProvider',
+}
+
+export enum InterviewFieldIds {
+  parentA = 'interviewParentA',
+  parentB = 'interviewParentB',
 }

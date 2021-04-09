@@ -1,5 +1,6 @@
 import { error } from './messages/index'
 import * as z from 'zod'
+import { InterviewFieldIds } from '../types'
 
 const parentContactInfo = z.object({
   email: z.string().email(error.validation.invalidEmail.defaultMessage),
@@ -11,6 +12,10 @@ const parentContactInfo = z.object({
 const terms = z
   .array(z.string())
   .length(3, error.validation.approveTerms.defaultMessage)
+
+const interview = z.enum(['yes', 'no']).refine((v) => v, {
+  message: error.validation.interview.defaultMessage,
+})
 
 export const dataSchema = z.object({
   useMocks: z.enum(['yes', 'no']).optional(),
@@ -28,14 +33,16 @@ export const dataSchema = z.object({
   confirmResidenceChangeInfo: z
     .array(z.string())
     .length(1, error.validation.approveChildrenResidenceChange.defaultMessage),
-  selectDuration: z
-    .array(z.string())
-    .refine((v) =>
-      v.length && v[0] === 'permanent' ? v.length === 1 : v.length === 2,
-    ),
-  interview: z.enum(['yes', 'no']).refine((v) => v, {
-    message: error.validation.interview.defaultMessage,
-  }),
+  durationType: z
+    .enum(['permanent', 'temporary'])
+    .optional()
+    .refine((v) => v, error.validation.durationType.defaultMessage),
+  durationDate: z
+    .string()
+    .optional()
+    .refine((v) => v && v !== '', error.validation.durationDate.defaultMessage),
+  [InterviewFieldIds.parentA]: interview,
+  [InterviewFieldIds.parentB]: interview,
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

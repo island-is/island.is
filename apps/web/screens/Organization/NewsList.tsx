@@ -7,6 +7,7 @@ import { Screen } from '../../types'
 import {
   Select as NativeSelect,
   OrganizationWrapper,
+  lightThemes,
 } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
@@ -400,6 +401,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
+  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
+
   return {
     organizationPage: getOrganizationPage,
     newsList,
@@ -410,10 +413,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
+    ...(lightTheme ? {} : { darkTheme: true }),
   }
 }
 
-export default withMainLayout(NewsList, {
-  headerButtonColorScheme: 'negative',
-  headerColorScheme: 'white',
-})
+export default withMainLayout(NewsList)

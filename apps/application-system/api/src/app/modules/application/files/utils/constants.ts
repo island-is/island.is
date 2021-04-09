@@ -5,6 +5,7 @@ export const PdfConstants = {
   BOLD_FONT: 'Helvetica-Bold',
   NORMAL_FONT: 'Helvetica',
   PERMANENT: 'permanent',
+  TEMPORARY: 'temporary',
   HEADER_FONT_SIZE: 26,
   SUB_HEADER_FONT_SIZE: 14,
   VALUE_FONT_SIZE: 12,
@@ -24,4 +25,11 @@ export const BucketTypePrefix: KeyMapping<PdfTypes, string> = {
 
 export const DokobitFileName: KeyMapping<PdfTypes, string> = {
   ChildrenResidenceChange: 'Lögheimilisbreyting-barns.pdf',
+}
+
+export const DokobitErrorCodes = {
+  UserCancelled: 7023,
+  TimeOut: 99999,
+  SessionExpired: 6005,
+  NoMobileSignature: 6001,
 }

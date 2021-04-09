@@ -29,6 +29,7 @@ export interface MathGrade extends BaseGrade {
   rumfraedi: GradeResult
   algebra: GradeResult
   hlutfollOgProsentur: GradeResult
+  tolurOgTalnaskilningur: GradeResult
   ordOgTalnadaemi: string
 }
 
