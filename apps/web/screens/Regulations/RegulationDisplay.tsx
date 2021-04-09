@@ -1,13 +1,8 @@
-import {
-  RegulationPageTexts,
-  Regulation,
-  ISODate,
-  RegulationHistoryItem,
-} from './mockData'
+import { RegulationPageTexts, Regulation, ISODate } from './mockData'
 
 import * as s from './RegulationDisplay.treat'
 
-import React, { FC, Fragment, useMemo, useState } from 'react'
+import React, { FC, Fragment } from 'react'
 import { FocusableBox, Link, Stack, Text } from '@island.is/island-ui/core'
 import { RegulationLayout } from './RegulationLayout'
 import {
