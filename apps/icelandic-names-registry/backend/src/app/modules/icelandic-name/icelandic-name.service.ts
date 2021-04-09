@@ -26,7 +26,7 @@ export class IcelandicNameService {
 
   getByInitialLetter(initialLetter: string): Promise<IcelandicName[]> {
     this.logger.debug(
-      `Getting all icelandic names by inital letter ${initialLetter}`,
+      `Getting all icelandic names by inital letter: "${initialLetter}"`,
     )
 
     return this.icelandicNameModel.findAll({
@@ -36,6 +36,19 @@ export class IcelandicNameService {
             [Op.startsWith]: initialLetter.toLowerCase(),
             [Op.startsWith]: initialLetter.toUpperCase(),
           },
+        },
+      },
+      order: ['icelandic_name'],
+    })
+  }
+
+  getBySearch(q: string): Promise<IcelandicName[]> {
+    this.logger.debug(`Getting all icelandic names by search: "${q}"`)
+
+    return this.icelandicNameModel.findAll({
+      where: {
+        icelandic_name: {
+          [Op.iLike]: `%${q.trim()}%`,
         },
       },
       order: ['icelandic_name'],

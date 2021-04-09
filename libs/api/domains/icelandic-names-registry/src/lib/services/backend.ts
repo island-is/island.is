@@ -26,6 +26,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`/initial-letter/${initialLetter}`)
   }
 
+  getBySearch(q: string): Promise<IcelandicName[]> {
+    return this.get(`/search/${q}`)
+  }
+
   updateById(id: number, body: object): Promise<IcelandicName> {
     return this.patch(`/${id}`, body)
   }
