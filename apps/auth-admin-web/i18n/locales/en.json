@@ -92,6 +92,11 @@
       "text": "Identity Resources"
     }
   },
+  "paginator": {
+    "nextButton": "Next",
+    "backButton": "Back",
+    "count": "Count"
+  },
   "listPages": [
     {
       "id": "ApiResourcesList",

@@ -31,7 +31,8 @@ export class FormPage {
 
 export class Paginator {
   nextButton: string,
-  backButton: string
+  backButton: string,
+  count: string
 }
 
 export class ListPage {
