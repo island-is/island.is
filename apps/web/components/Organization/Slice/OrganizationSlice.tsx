@@ -3,8 +3,7 @@ import { Slice } from '@island.is/web/graphql/schema'
 import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
-import { TeamList } from '../../../../../libs/island-ui/contentful/src/lib/TeamList/TeamList'
-import { TellUsAStoryForm, ContactUs } from '@island.is/island-ui/contentful'
+import { RichText } from '../../RichText/RichText'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),
@@ -93,18 +92,8 @@ const renderSlice = (slice, namespace) => {
       return <BulletListSlice slice={slice} />
     case 'StorySlice':
       return <StorySlice slice={slice} />
-    case 'TeamList':
-      return <TeamList {...slice} />
-    case 'ContactUs':
-      return (
-        <ContactUs
-          {...slice}
-          onSubmit={async (data) => console.warn(data)}
-          state="edit"
-        />
-      )
     default:
-      return <></>
+      return <RichText body={[slice]} />
   }
 }
 
