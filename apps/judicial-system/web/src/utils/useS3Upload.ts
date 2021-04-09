@@ -108,14 +108,8 @@ export const useS3Upload = (workingCase?: Case) => {
      */
     const newFiles = [...filesRef.current]
 
-    const indexOfFileInFiles = newFiles.findIndex(
-      (fileInFiles) => fileInFiles.name === file.name,
-    )
-
     const updatedFiles = newFiles.map((newFile) => {
-      return newFile.id === indexOfFileInFiles.toString()
-        ? Object.assign({}, newFile, { file })
-        : newFile
+      return newFile.id === file.id ? file : newFile
     })
 
     setFiles(updatedFiles)
@@ -165,7 +159,7 @@ export const useS3Upload = (workingCase?: Case) => {
     const newUploadFiles = newFiles as UploadFile[]
 
     if (!isRetry) {
-      setFiles([...files, ...newUploadFiles])
+      setFiles([...newUploadFiles, ...files])
     }
 
     newUploadFiles.forEach(async (file) => {
