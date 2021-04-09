@@ -10,10 +10,17 @@ import { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
-    setFiles(workingCase?.files || [])
+    const uploadCaseFiles = workingCase?.files?.map((caseFile) => {
+      const uploadCaseFile = caseFile as UploadFile
+      uploadCaseFile.status = 'done'
+      return uploadCaseFile
+    })
+
+    setFiles(uploadCaseFiles || [])
   }, [workingCase])
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
@@ -64,6 +71,9 @@ export const useS3Upload = (workingCase?: Case) => {
       } else {
         file.status = 'error'
         updateFile(file)
+        setUploadErrorMessage(
+          'Ekki tókst að hlaða upp öllum skránum. Vinsamlega reynið aftur',
+        )
       }
     })
 
@@ -98,14 +108,8 @@ export const useS3Upload = (workingCase?: Case) => {
      */
     const newFiles = [...filesRef.current]
 
-    const indexOfFileInFiles = newFiles.findIndex(
-      (fileInFiles) => fileInFiles.name === file.name,
-    )
-
     const updatedFiles = newFiles.map((newFile) => {
-      return newFile.id === indexOfFileInFiles.toString()
-        ? Object.assign({}, newFile, { file })
-        : newFile
+      return newFile.id === file.id ? file : newFile
     })
 
     setFiles(updatedFiles)
@@ -141,19 +145,29 @@ export const useS3Upload = (workingCase?: Case) => {
         })
         .catch((reason) => {
           // TODO: Log to sentry
+          setUploadErrorMessage(
+            'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+          )
           console.log(reason)
         })
     }
   }
 
   // Event handlers
-  const onChange = (newFiles: File[]) => {
+  const onChange = (newFiles: File[], isRetry?: boolean) => {
+    setUploadErrorMessage(undefined)
     const newUploadFiles = newFiles as UploadFile[]
 
-    setFiles([...files, ...newUploadFiles])
+    if (!isRetry) {
+      setFiles([...newUploadFiles, ...files])
+    }
 
     newUploadFiles.forEach(async (file) => {
-      const presignedPost = await createPresignedPost(file.name)
+      const presignedPost = await createPresignedPost(file.name).catch(() =>
+        setUploadErrorMessage(
+          'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+        ),
+      )
 
       if (!presignedPost) {
         return
@@ -167,6 +181,8 @@ export const useS3Upload = (workingCase?: Case) => {
   }
 
   const onRemove = (file: UploadFile) => {
+    setUploadErrorMessage(undefined)
+
     if (workingCase) {
       deleteFileMutation({
         variables: {
@@ -187,9 +203,17 @@ export const useS3Upload = (workingCase?: Case) => {
         .catch((res) => {
           // TODO: Log to Sentry and display an error message.
           console.log(res.graphQLErrors)
+          setUploadErrorMessage(
+            'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+          )
         })
     }
   }
 
-  return { files, onChange, onRemove }
+  const onRetry = (file: UploadFile) => {
+    setUploadErrorMessage(undefined)
+    onChange([file as File], true)
+  }
+
+  return { files, uploadErrorMessage, onChange, onRemove, onRetry }
 }
