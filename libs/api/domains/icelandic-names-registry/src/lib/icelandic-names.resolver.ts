@@ -5,6 +5,7 @@ import { IcelandicName } from './models/icelandicName.model'
 import {
   GetIcelandicNameByIdInput,
   GetIcelandicNameByInitialLetterInput,
+  GetIcelandicNameBySearchInput,
   IcelandicNameBody,
 } from './dto/icelandic-name.input'
 
@@ -29,6 +30,13 @@ export class IcelandicNamesResolver {
     @Args('input') input: GetIcelandicNameByInitialLetterInput,
   ): Promise<IcelandicName[]> {
     return this.backendAPI.getByInitialLetter(input?.initialLetter)
+  }
+
+  @Query(() => [IcelandicName])
+  async getIcelandicNameBySearch(
+    @Args('input') input: GetIcelandicNameBySearchInput,
+  ): Promise<IcelandicName[]> {
+    return this.backendAPI.getBySearch(input?.q)
   }
 
   @Mutation(() => IcelandicName, { nullable: true })

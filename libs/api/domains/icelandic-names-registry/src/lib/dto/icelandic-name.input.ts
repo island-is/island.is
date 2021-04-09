@@ -1,5 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsBoolean, IsNumber, IsString, Length } from 'class-validator'
+import {
+  IsBoolean,
+  IsNumber,
+  IsString,
+  Length,
+  MinLength,
+} from 'class-validator'
 
 @InputType()
 export class GetIcelandicNameByIdInput {
@@ -14,6 +20,14 @@ export class GetIcelandicNameByInitialLetterInput {
   @IsString()
   @Length(1, 1)
   initialLetter!: string
+}
+
+@InputType()
+export class GetIcelandicNameBySearchInput {
+  @Field()
+  @IsString()
+  @MinLength(1)
+  q!: string
 }
 
 @InputType()
