@@ -73,7 +73,7 @@ const UploadedFile = ({
       case 'error':
         return 'red100'
       case 'done':
-        return 'white'
+        return 'blue100'
       default:
         return 'transparent'
     }
@@ -82,7 +82,7 @@ const UploadedFile = ({
   const statusIcon = (status?: UploadFileStatus): IconTypes => {
     switch (status) {
       case 'error':
-        return 'close'
+        return 'reload'
       case 'done':
         return 'close'
       default:
