@@ -18,7 +18,6 @@ import {
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { dateFormat } from '@island.is/shared/constants'
 import cn from 'classnames'
 
 // ---------------------------------------------------------------------------
@@ -48,7 +47,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
   const formatDate = (isoDate: string) => {
     // Eff this! 👇
     // return dateUtl.format(new Date(isoDate), dateFormat[dateUtl.locale.code || defaultLanguage])
-    return dateUtl.format(new Date(isoDate), dateFormat.is)
+    return dateUtl.format(new Date(isoDate), 'd. MMM yyyy')
   }
   const txt = useNamespace(texts)
   const { linkToRegulation } = useRegulationLinkResolver()
@@ -273,7 +272,7 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                             fontWeight={isTimelineActive ? 'medium' : undefined}
                           >
                             {isTimelineActive && ' ▶︎ '}
-                            <strong>{item.date}</strong>
+                            <strong>{formatDate(item.date)}</strong>
                             <br />
                             {label}
                           </Text>
