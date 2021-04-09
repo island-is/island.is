@@ -88,6 +88,7 @@ export const CaseQuery = gql`
         type
       }
       files {
+        id
         name
         size
         modified
@@ -149,6 +150,14 @@ export const CreateFileMutation = gql`
       name
       key
       size
+    }
+  }
+`
+
+export const DeleteFileMutation = gql`
+  mutation DeleteFileMutation($input: DeleteFileInput!) {
+    deleteFile(input: $input) {
+      success
     }
   }
 `

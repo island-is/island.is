@@ -1,23 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFileMutation,
   CreatePresignedPostMutation,
+  DeleteFileMutation,
 } from '@island.is/judicial-system-web/graphql'
 import { Case, PresignedPost } from '@island.is/judicial-system/types'
 
 export const useS3Upload = (workingCase?: Case) => {
-  const [files, setFiles] = useState<UploadFile[]>([])
+  const [files, _setFiles] = useState<UploadFile[]>([])
+  const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
     setFiles(workingCase?.files || [])
   }, [workingCase])
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
-
   const [createFileMutation] = useMutation(CreateFileMutation)
+  const [deleteFileMutation] = useMutation(DeleteFileMutation)
 
+  // File upload spesific functions
   const createPresignedPost = async (
     filename: string,
   ): Promise<PresignedPost> => {
@@ -26,34 +29,6 @@ export const useS3Upload = (workingCase?: Case) => {
     })
 
     return presignedPostData?.createPresignedPost
-  }
-
-  const getFileIndexInFiles = (file: UploadFile) => {
-    return files.includes(file)
-      ? files.findIndex((fileInFiles) => fileInFiles.name === file.name)
-      : files.length
-  }
-
-  const updateFile = (file: UploadFile) => {
-    const newFiles = [...files]
-
-    newFiles[getFileIndexInFiles(file)] = file
-
-    setFiles(newFiles)
-  }
-
-  const addFileToCase = async (size: number, key: string) => {
-    if (workingCase) {
-      await createFileMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            key,
-            size,
-          },
-        },
-      })
-    }
   }
 
   const createFormData = (
@@ -85,13 +60,7 @@ export const useS3Upload = (workingCase?: Case) => {
 
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {
-        file.status = 'done'
-
-        updateFile(file)
-
-        if (file.size && file.key) {
-          addFileToCase(file.size, file.key)
-        }
+        addFileToCase(file)
       } else {
         file.status = 'error'
         updateFile(file)
@@ -102,6 +71,82 @@ export const useS3Upload = (workingCase?: Case) => {
     request.send(createFormData(presignedPost, file))
   }
 
+  // Utils
+  /**
+   * Sets ref and state value
+   * @param files Files to set to state.
+   */
+  const setFiles = (files: UploadFile[]) => {
+    filesRef.current = files
+    _setFiles(files)
+  }
+
+  /**
+   * Updates a file if it's in files and adds it to the end of files if not.
+   * @param file The file to update.
+   */
+  const updateFile = (file: UploadFile) => {
+    /**
+     * Use the filesRef value instead of the files state value because
+     *
+     * 1. The process to update state is asynchronous therfore we can't trust
+     * that we always have the correct state in this function.
+     * 2. We are updating state in the event handlers in the uploadToS3 function
+     * and the listener belongs to the initial render and is not updated on
+     * subsequent rerenders.
+     * (source: https://medium.com/geographit/accessing-react-state-in-event-listeners-with-usestate-and-useref-hooks-8cceee73c559)
+     */
+    const newFiles = [...filesRef.current]
+
+    const indexOfFileInFiles = newFiles.findIndex(
+      (fileInFiles) => fileInFiles.name === file.name,
+    )
+
+    const updatedFiles = newFiles.map((newFile) => {
+      return newFile.id === indexOfFileInFiles.toString()
+        ? Object.assign({}, newFile, { file })
+        : newFile
+    })
+
+    setFiles(updatedFiles)
+  }
+
+  const removeFileFromState = (file: UploadFile) => {
+    const newFiles = [...files]
+
+    if (newFiles.includes(file)) {
+      setFiles(newFiles.filter((fileInFiles) => fileInFiles !== file))
+    }
+  }
+
+  /**
+   * Insert file in database and update state.
+   * @param file The file to add to case.
+   */
+  const addFileToCase = async (file: UploadFile) => {
+    if (workingCase && file.size && file.key) {
+      await createFileMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            key: file.key,
+            size: file.size,
+          },
+        },
+      })
+        .then((res) => {
+          file.id = res.data.createFile.id
+          file.status = 'done'
+          updateFile(file)
+        })
+        .catch((reason) => {
+          // TODO: Log to sentry
+          console.log(reason)
+        })
+    }
+  }
+
+  // Event handlers
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles as UploadFile[]
 
@@ -115,14 +160,36 @@ export const useS3Upload = (workingCase?: Case) => {
       }
 
       file.key = presignedPost.fields.key
-
       updateFile(file)
 
       uploadToS3(file, presignedPost)
     })
   }
 
-  const onRemove = () => console.log('Rmove')
+  const onRemove = (file: UploadFile) => {
+    if (workingCase) {
+      deleteFileMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            id: file.id,
+          },
+        },
+      })
+        .then((res) => {
+          if (!res.errors) {
+            removeFileFromState(file)
+          } else {
+            // TODO: handle failure
+            console.log(res.errors)
+          }
+        })
+        .catch((res) => {
+          // TODO: Log to Sentry and display an error message.
+          console.log(res.graphQLErrors)
+        })
+    }
+  }
 
   return { files, onChange, onRemove }
 }
