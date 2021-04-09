@@ -140,5 +140,6 @@ module.exports = {
     '<rootDir>/libs/utils/environment',
     '<rootDir>/libs/clients/document-provider',
     '<rootDir>/apps/endorsement-system',
+    '<rootDir>/apps/icelandic-names-registry/web',
   ],
 }
