@@ -57,6 +57,7 @@ CMD [ "main.js" ]
 FROM cypress/included:6.5.0 as output-cypress
 # image with cypress test suites
 
+RUN apt-get install jq -y
 RUN addgroup runners && adduser runner && adduser runner runners
 RUN mkdir /out && chown runner /out
 ENV CYPRESS_VIDEOS_FOLDER=/out/videos
@@ -71,6 +72,8 @@ RUN npm install typescript
 ARG APP_HOME
 
 ADD ${APP_HOME} .
+
+ENTRYPOINT [ "/app/entrypoint.sh" ]
 
 FROM output-base as output-next
 # image with build of an Next.js app
