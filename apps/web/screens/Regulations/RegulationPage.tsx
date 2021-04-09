@@ -159,7 +159,7 @@ RegulationPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_REGULATION_QUERY,
         variables: {
           input: {
-            viewType,
+            viewType: viewType === 'on' ? 'd' : viewType,
             name,
             date,
             isCustomDiff,
