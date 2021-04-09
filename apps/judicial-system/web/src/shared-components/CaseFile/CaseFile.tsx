@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import BlueBox from '../BlueBox/BlueBox'
 import { kb } from '../../utils/stepHelper'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
@@ -35,9 +35,9 @@ const CaseFile: React.FC<Props> = (props) => {
               )} kl. ${formatDate(uploadedAt, TIME_FORMAT)}`}</Text>
             </Box>
           )}
-          <Button size="small" variant="ghost">
+          <Tag variant="darkerBlue" onClick={() => console.log('TODO')}>
             Opna
-          </Button>
+          </Tag>
         </Box>
       </Box>
     </BlueBox>
