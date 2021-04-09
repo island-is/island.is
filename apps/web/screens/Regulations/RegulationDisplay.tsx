@@ -252,13 +252,10 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
               {regulation.lawChapters.length > 0 && (
                 <Text>
                   <strong>Lagakaflar</strong>
-                  <br />
                   <ul>
-                  {regulation.lawChapters.map((chapter, i) => (
-                    <li key={i}>
-                      {chapter.name} <br />
-                    </li>
-                  ))}
+                    {regulation.lawChapters.map((chapter, i) => (
+                      <li key={i}>{chapter.name}</li>
+                    ))}
                   </ul>
                 </Text>
               )}
