@@ -43,7 +43,7 @@ export const LogoList: FC<LogoListProps> = ({
         <Box
           marginBottom={5}
           className={
-            variant === 'dark'
+            variant === 'light'
               ? styles.logo
               : cn(styles.logo, styles.invertedLogo)
           }
