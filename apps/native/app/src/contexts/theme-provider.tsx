@@ -5,7 +5,7 @@ import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 import { useEffect } from 'react';
 import { Options } from 'react-native-navigation';
 import { useNavigation } from 'react-native-navigation-hooks/dist';
-import { userPreferencesStore, AppearanceMode } from '../stores/preferences-store';
+import { AppearanceMode, usePreferencesStore } from '../stores/preferences-store';
 
 export const shades = {
   light: {
@@ -74,7 +74,7 @@ export function getThemeWithPreferences({ appearanceMode }: { appearanceMode: Ap
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const preferences = userPreferencesStore();
+  const preferences = usePreferencesStore();
   const selectedTheme = getThemeWithPreferences(preferences)
 
   return (

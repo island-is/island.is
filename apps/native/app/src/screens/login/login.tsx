@@ -1,13 +1,13 @@
 import { Button, Heading } from '@island.is/island-ui-native'
 import React, { useEffect } from 'react'
 import { SafeAreaView, Image, View, Text } from 'react-native'
-import { Navigation, NavigationFunctionComponent } from 'react-native-navigation'
+import { NavigationFunctionComponent } from 'react-native-navigation'
 import logo from '../../assets/logo/logo-64w.png'
 import { useAuthStore } from '../../stores/auth-store'
-import { getAppRoot, getMainRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { useState } from 'react'
+import { nextOnboardingStep } from '../../utils/onboarding'
 
 export const LoginScreen: NavigationFunctionComponent = () => {
   const authStore = useAuthStore()
@@ -23,8 +23,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
         subscription.remove();
       }
     } catch (err) {
-      console.log('Error using NativeEventEmitter', Object.keys(NativeModules), NativeModules.RNAppAuth);
-      console.log(err);
+      // noop
     }
   }, []);
 
@@ -62,7 +61,7 @@ export const LoginScreen: NavigationFunctionComponent = () => {
             if (isAuth) {
               const userInfo = await authStore.fetchUserInfo()
               if (userInfo) {
-                Navigation.setRoot({ root: getMainRoot() })
+                nextOnboardingStep();
               }
             }
           } catch (err) {
@@ -76,9 +75,8 @@ export const LoginScreen: NavigationFunctionComponent = () => {
 }
 
 LoginScreen.options = {
+  popGesture: false,
   topBar: {
-    title: {
-      text: 'Login',
-    },
+    visible: false,
   },
 }

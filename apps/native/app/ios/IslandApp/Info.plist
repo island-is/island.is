@@ -33,6 +33,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CodePushDeploymentKey</key>
+	<string>${CODEPUSH_DEPLOYMENT_KEY_IOS}</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -48,8 +50,6 @@
 			</dict>
 		</dict>
 	</dict>
-  <key>CodePushDeploymentKey</key>
-  <string>${CODEPUSH_DEPLOYMENT_KEY_IOS}</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Used for unlocking the app</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

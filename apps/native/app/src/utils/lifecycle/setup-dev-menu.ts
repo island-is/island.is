@@ -1,5 +1,6 @@
 import { ActionSheetIOS, DevSettings } from 'react-native';
 import { Navigation } from 'react-native-navigation';
+import { authStore } from '../../stores/auth-store';
 import { ComponentRegistry } from '../navigation-registry';
 import { getAppRoot } from './get-app-root';
 
@@ -20,6 +21,11 @@ async function toggleStorybook() {
   devMenuOptions.storybook = !devMenuOptions.storybook;
 }
 
+async function enforceLogout() {
+  await authStore.getState().logout();
+  Navigation.setRoot({ root: await getAppRoot() });
+}
+
 export function setupDevMenu() {
   if (!__DEV__) {
     return null;
@@ -28,6 +34,7 @@ export function setupDevMenu() {
   DevSettings.addMenuItem('Ísland Dev Menu', () => {
     const options = [
       devMenuOptions.storybook ? 'Disable Storybook' : 'Enable Storybook',
+      'Logout'
     ];
 
     ActionSheetIOS.showActionSheetWithOptions({
@@ -35,10 +42,13 @@ export function setupDevMenu() {
         ...options,
         'Cancel'
       ],
-      cancelButtonIndex: 1,
+      cancelButtonIndex: options.length,
     }, (buttonIndex: number) => {
       if (buttonIndex === 0) {
         toggleStorybook();
+      }
+      if (buttonIndex === 1) {
+        enforceLogout();
       }
     });
   });

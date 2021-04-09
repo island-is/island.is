@@ -5,6 +5,7 @@ import { authStore } from '../../stores/auth-store'
 import { config } from '../config'
 import { evaluateUrl, navigateTo } from '../deep-linking'
 import { ButtonRegistry, ComponentRegistry } from '../navigation-registry'
+import { isOnboarded } from '../onboarding'
 
 const LOCK_SCREEN_TIMEOUT = 5000
 
@@ -34,7 +35,7 @@ export function setupEventHandlers() {
       userInfo,
     } = authStore.getState()
 
-    if (!userInfo) {
+    if (!userInfo || !isOnboarded()) {
       return
     }
 

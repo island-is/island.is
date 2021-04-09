@@ -8,10 +8,15 @@ export type Locale = 'en-US' | 'is-IS';
 export type AppearanceMode = 'light' | 'dark' | 'automatic';
 
 interface PreferencesStore extends State {
+  hasOnboardedPinCode: boolean;
+  hasOnboardedNotifications: boolean;
+  hasAcceptedNotifications: boolean;
+  useBiometrics: boolean;
   locale: Locale,
   appearanceMode: AppearanceMode;
   setLocale(locale: Locale): void;
   setAppearanceMode(appearanceMode: AppearanceMode): void;
+  setUseBiometrics(useBiometrics: boolean): void;
 }
 
 const availableLocales: Locale[] = ['en-US', 'is-IS'];
@@ -20,6 +25,10 @@ const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(availableLoca
 export const preferencesStore = create<PreferencesStore>(persist((set, get) => ({
   appearanceMode: 'light',
   locale: bestAvailableLanguage || 'is-IS',
+  useBiometrics: false,
+  hasOnboardedPinCode: false,
+  hasOnboardedNotifications: false,
+  hasAcceptedNotifications: false,
   setLocale(locale: Locale) {
     if (!availableLocales.includes(locale)) {
       throw new Error('Not supported locale');
@@ -28,10 +37,13 @@ export const preferencesStore = create<PreferencesStore>(persist((set, get) => (
   },
   setAppearanceMode(appearanceMode: AppearanceMode) {
     set(() => { appearanceMode })
+  },
+  setUseBiometrics(useBiometrics: boolean) {
+    set(() => ({ useBiometrics }))
   }
 }), {
-  name: "preferences01",
+  name: "preferences02",
   getStorage: () => AsyncStorage,
 }));
 
-export const userPreferencesStore = createUse(preferencesStore);
+export const usePreferencesStore = createUse(preferencesStore);

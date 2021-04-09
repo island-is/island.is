@@ -1,7 +1,7 @@
 import { Navigation } from 'react-native-navigation'
 import { registerAllComponents } from './screens'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
-import { setupDeepLinkingRouter } from './utils/lifecycle/setup-deep-linking-router'
+import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { setupNotifications } from './utils/lifecycle/setup-notifications'
 import { getAppRoot }from './utils/lifecycle/get-app-root';
 import { getDefaultOptions } from './utils/get-default-options'
@@ -21,7 +21,7 @@ function startApp() {
   setupDevMenu();
 
   // Setup app routing layer
-  setupDeepLinkingRouter();
+  setupRoutes();
 
   // Setup notifications
   setupNotifications();

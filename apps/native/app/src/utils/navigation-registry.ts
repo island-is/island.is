@@ -3,18 +3,20 @@ import { config } from "./config";
 const prefix = config.bundleId;
 
 export const ComponentRegistry = {
+  // dev screens
+  StorybookScreen: `${prefix}.screens.Storybook`,
+
   // screens
+  LoginScreen: `${prefix}.screens.Login`,
+  AppLockScreen: `${prefix}.screens.AppLock`,
+  OnboardingAppLockScreen: `${prefix}.screens.OnboardingAppLockScreen`,
+  OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotificationsScreen`,
   HomeScreen: `${prefix}.screens.Home`,
   InboxScreen: `${prefix}.screens.Inbox`,
   WalletScreen: `${prefix}.screens.Wallet`,
   UserScreen: `${prefix}.screens.User`,
-  LoginScreen: `${prefix}.screens.Login`,
-  AppLockScreen: `${prefix}.screens.AppLock`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
-  StorybookScreen: `${prefix}.screens.Storybook`,
-  SetPinScreen: `${prefix}.screens.SetPin`,
-  SetNotifications: `${prefix}.screens.SetNotifications`,
 
   // ui components
   NavigationBarTitle: `${prefix}.ui.NavigationBarTitle`,

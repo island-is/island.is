@@ -10,9 +10,11 @@ describe('Authentication', () => {
     // start app with faceid permissions
     await device.launchApp({
       permissions: {
-        faceid: 'YES'
+        faceid: 'YES',
+        notifications: 'YES',
       },
     });
+
     // enroll into biometrics
     await device.setBiometricEnrollment(true);
   });
@@ -69,8 +71,22 @@ describe('Authentication', () => {
     })
     await browser.close();
     await device.openURL({ url: appUrlRedirect });
-    await expect(element(by.id(testIDs.SCREEN_HOME))).toBeVisible();
+    await expect(element(by.id(testIDs.SCREEN_LOGIN))).toBeNotVisible();
   });
+
+  it('should set pin number', async () => {
+    await expect(element(by.id(testIDs.SCREEN_ONBOARDING_APP_LOCK))).toBeVisible();
+    await element(by.id(testIDs.ENTER_PIN_NUMBER_INPUT)).typeText('1234');
+    await element(by.id(testIDs.CONFIRM_PIN_NUMBER_INPUT)).typeText('1234');
+    await element(by.id(testIDs.ONBOARDING_APP_LOCK_CONTINUE_BUTTON)).tap();
+    await expect(element(by.id(testIDs.SCREEN_ONBOARDING_APP_LOCK))).toBeNotVisible();
+  })
+
+  it('should allow notifications', async () => {
+    await expect(element(by.id(testIDs.SCREEN_ONBOARDING_NOTIFICATIONS))).toBeVisible();
+    await element(by.id(testIDs.ONBOARDING_NOTIFICATIONS_ALLOW_BUTTON)).tap();
+    await expect(element(by.id(testIDs.SCREEN_ONBOARDING_NOTIFICATIONS))).toBeNotVisible();
+  })
 
   it('should be able to logout', async () => {
     await expect(element(by.id(testIDs.TOPBAR_USER_BUTTON))).toBeVisible();

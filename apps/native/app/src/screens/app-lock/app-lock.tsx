@@ -18,7 +18,6 @@ function resetLockScreen() {
 
 function unlockApp() {
   const { lockScreenComponentId, lockScreenType } = authStore.getState();
-  console.log({ lockScreenComponentId, lockScreenType })
   if (lockScreenComponentId && lockScreenType === 'overlay') {
     Navigation.dismissOverlay(lockScreenComponentId);
   } else {

@@ -41,12 +41,13 @@ interface InputProps {
   copy?: string;
   children?: React.ReactNode;
   action?: React.ReactNode;
+  testID?: string;
 }
 
-export function OnBoarding({ title, copy, children, action }: InputProps) {
+export function OnBoarding({ title, copy, children, action, testID }: InputProps) {
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} testID={testID}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <Host>

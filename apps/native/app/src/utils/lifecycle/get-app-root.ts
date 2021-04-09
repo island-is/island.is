@@ -4,6 +4,7 @@ import { checkIsAuthenticated } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { config } from '../config'
 import { ButtonRegistry, ComponentRegistry } from '../navigation-registry'
+import { getOnboardingScreens } from '../onboarding'
 import { testIDs } from '../test-ids'
 
 /**
@@ -13,34 +14,38 @@ import { testIDs } from '../test-ids'
 export async function getAppRoot(): Promise<Layout> {
   // Check if user is authenticated
   const isAuthenticated = await checkIsAuthenticated()
-
-  return {
-    stack: {
-      id: 'ONBOARDING',
-      children: [{
-        component: { name: ComponentRegistry.SetPinScreen, id: 'SET_PIN_SCREEN' },
-      }]
-    }
-  };
+  const onboardingScreens = getOnboardingScreens()
+  const isOnboarding = isAuthenticated && onboardingScreens.length > 0
 
   // Show login screen if not authenticated
-  if (!isAuthenticated) {
+  // And if not onboarded yet, show those screens
+  if (!isAuthenticated || isOnboarding) {
     return {
       stack: {
         id: 'LOGIN_STACK',
-        children: [{
-          component: { name: ComponentRegistry.LoginScreen, id: 'LOGIN_SCREEN' },
-        }]
-      }
-    };
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.LoginScreen,
+              id: 'LOGIN_SCREEN',
+            },
+          },
+        ].concat(isAuthenticated ? onboardingScreens : []),
+      },
+    }
   }
 
   if (config.disableLockScreen) {
-    return getMainRoot();
+    return getMainRoot()
   }
 
   // Show app lock screen if authenticated
-  return { component: { name: ComponentRegistry.AppLockScreen, passProps: { isRoot: true, status: 'active' } } }
+  return {
+    component: {
+      name: ComponentRegistry.AppLockScreen,
+      passProps: { isRoot: true, status: 'active' },
+    },
+  }
 }
 
 /**
