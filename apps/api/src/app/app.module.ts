@@ -143,7 +143,7 @@ const autoSchemaFile = environment.production
       url: environment.rskDomain.url,
       username: environment.rskDomain.username,
     }),
-    IcelandicNamesModule.register({ url: '' }),
+    IcelandicNamesModule.register(),
   ],
 })
 export class AppModule {}
