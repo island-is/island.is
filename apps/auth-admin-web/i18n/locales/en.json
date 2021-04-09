@@ -8,7 +8,9 @@
       "editButton": "Edit",
       "title": "Api resources",
       "createNewItem": "Create new Api resource",
-      "searchLabel": "National Id or Resource name",
+      "search": {
+        "label": "National Id or Resource name"
+      },
       "searchButton": "Search",
       "exportButton": "Export",
       "columns": {
@@ -24,11 +26,72 @@
       }
     },
     {
+      "id": "UsersList",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "User management",
+      "viewButton": "View Claims",
+      "active": "User is active. Click to deactivate",
+      "deactivated": "User is deactivated. Click to activate",
+      "activateButton": "Activate",
+      "deactivateButton": "Deactivate",
+      "notFound": "Nothing found for",
+      "sectionTitle1": "Users found",
+      "search": {
+        "label": "Search by National Id or Subject Id",
+        "placeholder": "0123456789",
+        "helpText": "You can search for user identities by national Id or User Identity subject Id. National ID must be typed in as a number with 10 number characters otherwise you will be looking up by Subject Id",
+        "errorMessage": "SubjectId or nationalId is required and should be in the right format. NationalId must 10 numeric characters"
+      },
+      "searchButton": "Search",
+      "exportButton": "Export",
+      "columns": {
+        "subjectId": {
+          "headerText": "Subject Id"
+        },
+        "name": {
+          "headerText": "Name"
+        },
+        "providerName": {
+          "headerText": "Provider Name"
+        },
+        "providerSubjectId": {
+          "headerText": "Provider Subject Id"
+        }
+      }
+    },
+    {
       "id": "ApiScopeList",
       "removeConfirmation": "Are you sure want to archive this Api scope",
-      "removeButton": "Delete",
+      "removeButton": "Archive",
       "title": "Api scopes",
       "createNewItem": "Create new Api scope"
+    },
+    {
+      "id": "IdentityResourcesList",
+      "removeConfirmation": "Are you sure want to archive this Identity resource",
+      "removeButton": "Archive",
+      "title": "Identity resources",
+      "createNewItem": "Create new Identity Resource"
+    },
+    {
+      "id": "ResourceListDisplay",
+      "removeConfirmation": "Are you sure want to archive this Identity resource",
+      "removeButton": "Delete",
+      "editButton": "Edit",
+      "title": "Identity resources",
+      "createNewItem": "Create new Identity Resource",
+      "columns": {
+        "name": {
+          "headerText": "Name"
+        },
+        "displayName": {
+          "headerText": "Display Name"
+        },
+        "contactEmail": {
+          "headerText": "Contact Email"
+        }
+      }
     }
   ],
   "formPages": [

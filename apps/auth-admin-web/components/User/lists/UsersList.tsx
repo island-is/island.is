@@ -8,6 +8,8 @@ import { UserService } from '../../../services/UserService'
 import UserIdentity from './../../../entities/models/user-identity.model'
 import { Claim } from './../../../entities/models/claim.model'
 import ValidationUtils from './../../../utils/validation.utils'
+import TranslationUtils from './../../../utils/translation.utils'
+import { ListPage } from './../../../entities/common/Translation'
 
 interface ClaimShow {
   subjectId: string
@@ -25,6 +27,9 @@ const UsersList: React.FC = () => {
   const [showNotFound, setShowNotFound] = useState<boolean>(false)
   const { handleSubmit, register, errors, formState } = useForm()
   const { isSubmitting } = formState
+  const [translation, setTranslation] = useState<ListPage>(
+    TranslationUtils.getListPage('UsersList'),
+  )
 
   const getIndex = (subjectId: string): number => {
     for (let i = 0; i < claimShow.length; i++) {
@@ -83,13 +88,13 @@ const UsersList: React.FC = () => {
     <div className="users">
       <div className="users__wrapper">
         <div className="users__container">
-          <h1>User management</h1>
+          <h1>{translation.title}</h1>
           <div className="users__container__form">
             <form onSubmit={handleSubmit(getUser)}>
               <div className="users__container__fields">
                 <div className="users__container__field">
                   <label className="users__label" htmlFor="search">
-                    Search by National Id or Subject Id
+                    {translation.search.label}
                   </label>
                   <input
                     id="search"
@@ -101,18 +106,18 @@ const UsersList: React.FC = () => {
                       required: true,
                       validate: ValidationUtils.validateIdentifier,
                     })}
-                    placeholder="0123456789"
+                    placeholder={translation.search.placeholder}
                   />
-                  <HelpBox helpText="You can search for user identities by national Id or User Identity subject Id. National ID must be typed in as a number with 10 number characters otherwise you will be looking up by Subject Id" />
+                  <HelpBox helpText={translation.search.helpText} />
                   <ErrorMessage
                     as="span"
                     errors={errors}
                     name="id"
-                    message="SubjectId or nationalId is required and should be in the right format. NationalId must 10 numeric characters"
+                    message={translation.search.errorMessage}
                   />
                   <input
                     type="submit"
-                    value="Search"
+                    value={translation.searchButton}
                     disabled={isSubmitting}
                     className="users__button__search"
                   />
@@ -126,14 +131,14 @@ const UsersList: React.FC = () => {
               users && users.length > 0 ? 'show' : 'hidden'
             }`}
           >
-            <h3>Users found:</h3>
+            <h3>{translation.sectionTitle1}</h3>
             <table className="users__table">
               <thead>
                 <tr>
-                  <th>Subject Id</th>
-                  <th>Name</th>
-                  <th>Provider Name</th>
-                  <th>Provider Subject Id</th>
+                  <th>{translation.columns['subjectId'].headerText}</th>
+                  <th>{translation.columns['name'].headerText}</th>
+                  <th>{translation.columns['providerName'].headerText}</th>
+                  <th>{translation.columns['providerSubjectId'].headerText}</th>
                   <th colSpan={2}></th>
                 </tr>
               </thead>
@@ -151,7 +156,7 @@ const UsersList: React.FC = () => {
                           className="users__button__view"
                           onClick={() => handleShowClaimsClicked(user)}
                         >
-                          View claims
+                          {translation.viewButton}
                         </button>
 
                         <div
@@ -189,11 +194,13 @@ const UsersList: React.FC = () => {
                           onClick={() => toggleActive(user)}
                           title={
                             user.active
-                              ? 'User is active. Click to deactivate'
-                              : 'User is deactivated. Click to activate'
+                              ? translation.active
+                              : translation.deactivated
                           }
                         >
-                          {user.active ? 'Deactivate' : 'Activate'}
+                          {user.active
+                            ? translation.deactivateButton
+                            : translation.activateButton}
                         </button>
                       </td>
                     </tr>
@@ -204,7 +211,7 @@ const UsersList: React.FC = () => {
           </div>
           {showNotFound && (
             <NotFound title="User Identity not found">
-              Nothing found for: {id}
+              {translation.notFound}: {id}
             </NotFound>
           )}
         </div>

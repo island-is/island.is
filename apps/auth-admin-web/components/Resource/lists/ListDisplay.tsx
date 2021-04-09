@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useState } from 'react'
 import Paginator from '../../common/Paginator'
 import Link from 'next/link'
+import TranslationUtils from './../../../utils/translation.utils'
+import { ListPage } from './../../../entities/common/Translation'
 
 interface Props {
   list: any
@@ -25,6 +27,10 @@ const ResourceListDisplay: React.FC<Props> = ({
   edit,
   remove,
 }) => {
+  const [translation, setTranslation] = useState<ListPage>(
+    TranslationUtils.getListPage('ResourceListDisplay'),
+  )
+
   return (
     <div>
       <div className="identity-resources">
@@ -46,8 +52,8 @@ const ResourceListDisplay: React.FC<Props> = ({
               <table className="identity-resources__table">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Display Name</th>
+                    <th>{translation.columns['name'].headerText}</th>
+                    <th>{translation.columns['displayName'].headerText}</th>
                     <th colSpan={2}></th>
                   </tr>
                 </thead>
@@ -67,10 +73,10 @@ const ResourceListDisplay: React.FC<Props> = ({
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => edit(resource)}
-                            title="Edit"
+                            title={translation.editButton}
                           >
                             <i className="icon__edit"></i>
-                            <span>Edit</span>
+                            <span>{translation.editButton}</span>
                           </button>
                         </td>
                         <td className="identity-resources__table__button">
@@ -80,10 +86,10 @@ const ResourceListDisplay: React.FC<Props> = ({
                               resource.archived ? ' hidden' : ''
                             }`}
                             onClick={() => remove(resource.name)}
-                            title="Delete"
+                            title={translation.removeButton}
                           >
                             <i className="icon__delete"></i>
-                            <span>Delete</span>
+                            <span>{translation.removeButton}</span>
                           </button>
                         </td>
                       </tr>

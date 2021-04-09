@@ -24,15 +24,21 @@ export class FormPage {
 export class ListPage {
   id: string
   title: string
-  createNewItem: string
-  searchLabel: string
-  searchPlaceholder?: string
-  searchButton: string
-  removeConfirmation: string
-  removeButton: string
-  editButton: string
-  exportButton: string
-  columns: Record<string, ColumnHeader>
+  createNewItem?: string
+  search?: FormItem
+  searchButton?: string
+  removeConfirmation?: string
+  removeButton?: string
+  editButton?: string
+  viewButton?: string
+  exportButton?: string
+  columns?: Record<string, ColumnHeader>
+  active?: string
+  deactivated?: string
+  activateButton?: string
+  deactivateButton?: string
+  notFound?: string
+  sectionTitle1?: string
 }
 
 export class ColumnHeader {
