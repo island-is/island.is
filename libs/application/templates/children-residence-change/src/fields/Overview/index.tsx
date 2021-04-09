@@ -109,7 +109,6 @@ const Overview = ({
           return response.data?.requestFileSignature?.documentToken
         })
         .catch((error: ApolloError) => {
-          console.log('error', error.graphQLErrors[0].extensions?.code)
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
