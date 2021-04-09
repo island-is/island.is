@@ -13,7 +13,13 @@ export const useS3Upload = (workingCase?: Case) => {
   const filesRef = useRef<UploadFile[]>(files)
 
   useEffect(() => {
-    setFiles(workingCase?.files || [])
+    const uploadCaseFiles = workingCase?.files?.map((caseFile) => {
+      const uploadCaseFile = caseFile as UploadFile
+      uploadCaseFile.status = 'done'
+      return uploadCaseFile
+    })
+
+    setFiles(uploadCaseFiles || [])
   }, [workingCase])
 
   const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
