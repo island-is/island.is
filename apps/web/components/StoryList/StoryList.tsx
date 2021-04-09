@@ -14,23 +14,26 @@ export interface StoryProps {
   readMoreText: string
   link?: string
   linkedPage?: string
+  variant: 'light' | 'dark'
 }
 
 export interface StoryListProps {
   readMoreText: string
   stories: StoryProps[]
+  variant?: 'light' | 'dark'
 }
 
 export const StoryList: FC<StoryListProps> = ({
   readMoreText,
   stories = [],
+  variant = 'light',
 }) => {
   const { linkResolver } = useLinkResolver()
 
   return (
     <Stack space={8}>
       {stories.map((story, i) => (
-        <Story key={i} {...story} />
+        <Story key={i} variant={variant} {...story} />
       ))}
       {stories.length > 0 ? (
         <div className={styles.margin}>
@@ -41,7 +44,10 @@ export const StoryList: FC<StoryListProps> = ({
             }}
             pureChildren
           >
-            <Button variant="ghost" colorScheme="negative">
+            <Button
+              variant="ghost"
+              colorScheme={variant === 'light' ? 'negative' : 'default'}
+            >
               {readMoreText}
             </Button>
           </Link>
@@ -59,6 +65,7 @@ const Story: FC<StoryProps> = ({
   readMoreText,
   linkedPage,
   link,
+  variant,
 }) => {
   return (
     <div className={styles.margin}>
@@ -66,16 +73,27 @@ const Story: FC<StoryProps> = ({
         <IconBullet variant="gradient" image={logoUrl} />
       </div>
       <Stack space={2}>
-        <Text variant="eyebrow" color="white">
+        <Text
+          variant="eyebrow"
+          color={variant === 'light' ? 'white' : 'dark400'}
+        >
           {label}
         </Text>
-        <Text variant="h2" as="h2" color="white">
+        <Text
+          variant="h2"
+          as="h2"
+          color={variant === 'light' ? 'white' : 'dark400'}
+        >
           {title}
         </Text>
-        <Text color="white">{intro}</Text>
+        <Text color={variant === 'light' ? 'white' : 'dark400'}>{intro}</Text>
         {!!(linkedPage || link) && (
           <ContentLink pageData={linkedPage} fallbackLink={link}>
-            <Button variant="text" colorScheme="negative" icon="arrowForward">
+            <Button
+              variant="text"
+              colorScheme={variant === 'light' ? 'negative' : 'default'}
+              icon="arrowForward"
+            >
               {readMoreText}
             </Button>
           </ContentLink>

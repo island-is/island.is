@@ -5,3 +5,7 @@ export const logo = style({
   display: 'inline-block',
   textAlign: 'center',
 })
+
+export const invertedLogo = style({
+  filter: 'invert(0.9)',
+})
