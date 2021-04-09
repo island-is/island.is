@@ -22,6 +22,7 @@ export class AwsS3Service {
           Fields: {
             key,
             'content-type': '',
+            'Content-Disposition': 'inline',
           },
         },
         (err, data) => {
