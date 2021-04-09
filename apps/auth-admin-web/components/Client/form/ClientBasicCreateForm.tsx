@@ -8,6 +8,8 @@ import { Client } from './../../../entities/models/client.model'
 import { ClientTypeInfoService } from './../../../services/ClientTypeInfoService'
 import { TimeUtils } from './../../../utils/time.utils'
 import ValidationUtils from './../../../utils/validation.utils'
+import TranslationUtils from './../../../utils/translation.utils'
+import { FormPage } from './../../../entities/common/Translation'
 interface Props {
   client: ClientDTO
   onNextButtonClick?: (client: Client) => void
@@ -31,6 +33,9 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
   const [callbackUri, setCallbackUri] = useState('')
   const [showClientTypeInfo, setShowClientTypeInfo] = useState<boolean>(false)
   const [showBaseUrlInfo, setShowBaseUrlInfo] = useState<boolean>(false)
+  const [translation] = useState<FormPage>(
+    TranslationUtils.getFormPage('ClientCreateForm'),
+  )
 
   useEffect(() => {
     if (props.client && props.client.clientId) {
@@ -85,19 +90,25 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const getClientTypeHTML = (clientType): JSX.Element => {
-    const clientInfo = ClientTypeInfoService.getClientTypeInfo(clientType)
-
     return (
       <div className="detail-container">
-        <div className="detail-title">{clientInfo.title}</div>
-        <div className={`detail-flow${clientInfo.flow ? ' show' : ' hidden'}`}>
-          {clientInfo.flow}
+        <div className="detail-title">
+          {
+            translation.fields['clientType'].selectItems[clientType]
+              .selectItemText
+          }
         </div>
-        <div className="detail-description">{clientInfo.description}</div>
-        <div className="detail-link">
-          <a href={clientInfo.url} target="_blank" rel="noreferrer">
-            {clientInfo.urlText}
-          </a>
+        <div
+          className={`detail-flow${
+            translation.fields['clientType'].selectItems[clientType].flow
+              ? ' show'
+              : ' hidden'
+          }`}
+        >
+          {translation.fields['clientType'].selectItems[clientType].flow}
+        </div>
+        <div className="detail-description">
+          {translation.fields['clientType'].selectItems[clientType].helpText}
         </div>
       </div>
     )
@@ -149,57 +160,77 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
     <div className="client-basic">
       <div className="client-basic__wrapper">
         <div className="client-basic__container">
-          <h1>{isEditing ? 'Edit Client' : 'Create a new Client'}</h1>
+          <h1>{isEditing ? translation.editTitle : translation.title}</h1>
           <div className="client-basic__container__form">
-            <div className="client-basic__help">
-              Enter some basic information for this client.
-            </div>
+            <div className="client-basic__help">{translation.help}</div>
             <form onSubmit={handleSubmit(save)}>
               <div className="client-basic__container__fields">
                 <div className={clientTypeSelected ? '' : 'field-with-details'}>
                   <div className="client-basic__container__field">
-                    <label className="client-basic__label">Client Type</label>
+                    <label className="client-basic__label" htmlFor="clientType">
+                      {translation.fields['clientType'].label}
+                    </label>
                     <select
+                      id="clientType"
                       name="client.clientType"
                       ref={register({ required: true })}
-                      title="Type of Client"
+                      title={translation.fields['clientType'].helpText}
                       onChange={(e) => setClientType(e.target.value)}
                       onFocus={() => setShowClientTypeInfo(true)}
                       onBlur={hideClientInfo}
                     >
                       <option value="" selected={!client.clientType}>
-                        Select Client Type
+                        {
+                          translation.fields['clientType'].selectItems['']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="spa"
                         selected={client.clientType === 'spa'}
                       >
-                        Single Page App
+                        {
+                          translation.fields['clientType'].selectItems['spa']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="native"
                         selected={client.clientType === 'native'}
                       >
-                        Native
+                        {
+                          translation.fields['clientType'].selectItems['native']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="web"
                         selected={client.clientType === 'web'}
                       >
-                        Web App
+                        {
+                          translation.fields['clientType'].selectItems['web']
+                            .selectItemText
+                        }
                       </option>
                       <option
                         value="machine"
                         selected={client.clientType === 'machine'}
                       >
-                        Machine
+                        {
+                          translation.fields['clientType'].selectItems[
+                            'machine'
+                          ].selectItemText
+                        }
                       </option>
                       <option
                         value="device"
                         selected={client.clientType === 'device'}
                         disabled
                       >
-                        Device (not supported)
+                        {
+                          translation.fields['clientType'].selectItems['device']
+                            .selectItemText
+                        }
                       </option>
                     </select>
 
@@ -208,7 +239,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       as="span"
                       errors={errors}
                       name="client.clientType"
-                      message="Client Type is required"
+                      message={translation.fields['clientType'].errorMessage}
                     />
                     <div
                       className={`client__container__field__details${
@@ -222,10 +253,11 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
 
                 <div className={clientTypeSelected ? '' : 'hidden'}>
                   <div className="client-basic__container__field">
-                    <label className="client-basic__label">
-                      National Id (Kennitala)
+                    <label className="client-basic__label" htmlFor="nationalId">
+                      {translation.fields['nationalId'].label}
                     </label>
                     <input
+                      id="nationalId"
                       type="text"
                       name="client.nationalId"
                       ref={register({
@@ -236,21 +268,29 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.nationalId}
                       className="client-basic__input"
-                      placeholder="0123456789"
+                      placeholder={translation.fields['nationalId'].placeholder}
                       maxLength={10}
-                      title="The nationalId (Kennitala) registered for the client"
+                      title={translation.fields['nationalId'].helpText}
                     />
-                    <HelpBox helpText="The nationalId (Kennitala) registered for the client" />
+                    <HelpBox
+                      helpText={translation.fields['nationalId'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.nationalId"
-                      message="NationalId must be 10 numeric characters"
+                      message={translation.fields['nationalId'].errorMessage}
                     />
                   </div>
                   <div className="client-basic__container__field">
-                    <label className="client-basic__label">Contact email</label>
+                    <label
+                      className="client-basic__label"
+                      htmlFor="contactEmail"
+                    >
+                      {translation.fields['contactEmail'].label}
+                    </label>
                     <input
+                      id="contactEmail"
                       type="text"
                       ref={register({
                         required: true,
@@ -259,20 +299,27 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       name="client.contactEmail"
                       defaultValue={client.contactEmail ?? ''}
                       className="client-basic__input"
-                      title="The email of the person who can be contacted regarding this Client"
-                      placeholder="john@example.com"
+                      title={translation.fields['contactEmail'].helpText}
+                      placeholder={
+                        translation.fields['contactEmail'].placeholder
+                      }
                     />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.contactEmail"
-                      message="Contact email must be set and must be a valid email address"
+                      message={translation.fields['contactEmail'].errorMessage}
                     />
-                    <HelpBox helpText="The email of the person who can be contacted regarding this Client" />
+                    <HelpBox
+                      helpText={translation.fields['contactEmail'].helpText}
+                    />
                   </div>
                   <div className="client-basic__container__field">
-                    <label className="client-basic__label">Client Id</label>
+                    <label className="client-basic__label" htmlFor="clientId">
+                      {translation.fields['clientId'].label}
+                    </label>
                     <input
+                      id="clientId"
                       type="text"
                       name="client.clientId"
                       ref={register({
@@ -281,9 +328,9 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                       })}
                       defaultValue={client.clientId}
                       className="client-basic__input"
-                      placeholder="example-client"
+                      placeholder={translation.fields['clientId'].placeholder}
                       onChange={(e) => checkAvailability(e.target.value)}
-                      title="The unique identifier for this application"
+                      title={translation.fields['clientId'].helpText}
                       readOnly={isEditing}
                     />
                     <div
@@ -291,20 +338,27 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         available ? 'ok ' : 'taken '
                       } ${clientIdLength > 0 ? 'show' : 'hidden'}`}
                     >
-                      {available ? 'Available' : 'Unavailable'}
+                      {available
+                        ? translation.fields['clientId'].available
+                        : translation.fields['clientId'].unAvailable}
                     </div>
-                    <HelpBox helpText="The unique identifier for this application" />
+                    <HelpBox
+                      helpText={translation.fields['clientId'].helpText}
+                    />
                     <ErrorMessage
                       as="span"
                       errors={errors}
                       name="client.clientId"
-                      message="Client Id is required and needs to be in the right format"
+                      message={translation.fields['clientId'].errorMessage}
                     />
                   </div>
                   <div className="field-with-details">
                     <div className="client-basic__container__field">
-                      <label className="client-basic__label">Base Url:</label>
+                      <label className="client-basic__label" htmlFor="baseUrl">
+                        {translation.fields['baseUrl'].label}
+                      </label>
                       <input
+                        id="baseUrl"
                         name="baseUrl"
                         type="text"
                         ref={register({
@@ -313,18 +367,20 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         })}
                         defaultValue={client.clientUri ?? ''}
                         className="client-basic__input"
-                        placeholder="https://localhost:4200"
-                        title="Base Url of the application. Used for Cors Origin and callback URI. The callback uri will be the specified Base Url /signin-oidc"
+                        placeholder={translation.fields['baseUrl'].placeholder}
+                        title={translation.fields['baseUrl'].helpText}
                         onChange={(e) => setCallbackUri(e.target.value)}
                         onFocus={() => setShowBaseUrlInfo(true)}
                         onBlur={() => setShowBaseUrlInfo(false)}
                       />
-                      <HelpBox helpText="Base Url of the application. Used for adding Cors Origin, Redirect (callback) URI and Post Logout URI. The Redirect (callback) URI will be the specified Base Url /signin-oidc" />
+                      <HelpBox
+                        helpText={translation.fields['baseUrl'].helpText}
+                      />
                       <ErrorMessage
                         as="span"
                         errors={errors}
                         name="baseUrl"
-                        message="Base Url is required and needs to be in the right format"
+                        message={translation.fields['baseUrl'].errorMessage}
                       />
                       <div
                         className={`client-basic__container__field__details${
@@ -332,13 +388,13 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         }`}
                       >
                         <div className="detail-title">
-                          Redirect (Callback) Uri will be:
+                          {translation.fields['baseUrl'].popUpTitle}
                         </div>
                         <div className="detail-uri">
                           {callbackUri}/signin-oidc
                         </div>
                         <div className="detail-link">
-                          This can be changed later
+                          {translation.fields['baseUrl'].popUpDescription}
                         </div>
                       </div>
                     </div>
@@ -352,7 +408,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     type="button"
                     onClick={props.handleCancel}
                   >
-                    Cancel
+                    {translation.cancelButton}
                   </button>
                 </div>
                 <div className="client-basic__button__container">
@@ -360,7 +416,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                     type="submit"
                     className="client-basic__button__save"
                     disabled={isSubmitting || !available}
-                    value="Next"
+                    value={translation.saveButton}
                   />
                 </div>
               </div>

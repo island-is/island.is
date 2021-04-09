@@ -138,8 +138,6 @@ const ClientCreateForm: React.FC<Props> = (props: Props) => {
   }
 
   const getClientTypeHTML = (clientType): JSX.Element => {
-    const clientInfo = ClientTypeInfoService.getClientTypeInfo(clientType)
-
     return (
       <div className="detail-container">
         <div className="detail-title">
