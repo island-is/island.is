@@ -17,6 +17,7 @@ means your service will be packaged as a NextJS Docker container image. We have 
 - `docker-next`: suitable for [NextJS](https://nextjs.org/) services.
 - `docker-express`, suitable for [ExpressJS](https://expressjs.com) as well as [NestJS](https://nestjs.com) services.
 - `docker-static`, suitable for serving all types of static content. Suitable for pure HTML or React SPAs.
+- `docker-cypress`, suitable for running cypress tests in docker.
 
 If you would like to see some examples, simply search for "docker" in that file and you should find plenty.
 

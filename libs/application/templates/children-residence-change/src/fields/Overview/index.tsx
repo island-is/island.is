@@ -112,9 +112,8 @@ const Overview = ({
           dispatchFileSignature({
             type: FileSignatureActionTypes.ERROR,
             status: FileSignatureStatus.REQUEST_ERROR,
-            error: error.graphQLErrors[0].extensions?.code,
+            error: error.graphQLErrors[0].extensions?.code ?? 500,
           })
-          throw new Error(`Request signature error ${JSON.stringify(error)}`)
         })
       if (documentToken) {
         dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD })
@@ -134,9 +133,8 @@ const Overview = ({
             dispatchFileSignature({
               type: FileSignatureActionTypes.ERROR,
               status: FileSignatureStatus.UPLOAD_ERROR,
-              error: error.graphQLErrors[0].extensions?.code,
+              error: error.graphQLErrors[0].extensions?.code ?? 500,
             })
-            throw new Error(`Upload signed pdf error ${JSON.stringify(error)}`)
           })
 
         if (success) {
@@ -162,14 +160,7 @@ const Overview = ({
             type: FileSignatureActionTypes.RESET,
           })
         }
-        modalOpen={fileSignatureState.modalOpen}
-        signatureStatus={fileSignatureState.status}
-        errorCode={
-          fileSignatureState.status === FileSignatureStatus.UPLOAD_ERROR ||
-          fileSignatureState.status === FileSignatureStatus.REQUEST_ERROR
-            ? fileSignatureState.errorCode
-            : undefined
-        }
+        fileSignatureState={fileSignatureState}
       />
       <AlertMessage
         type="info"

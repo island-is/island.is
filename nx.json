@@ -252,6 +252,9 @@
     "email-service": {
       "tags": []
     },
+    "endorsement-system": {
+      "tags": []
+    },
     "feature-flags": {
       "tags": []
     },
@@ -488,6 +491,9 @@
       "implicitDependencies": ["skilavottord-web"]
     },
     "skilavottord-ws": {
+      "tags": []
+    },
+    "system-e2e": {
       "tags": []
     },
     "utils-api": {
