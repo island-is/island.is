@@ -153,10 +153,12 @@ export const useS3Upload = (workingCase?: Case) => {
   }
 
   // Event handlers
-  const onChange = (newFiles: File[]) => {
+  const onChange = (newFiles: File[], isRetry?: boolean) => {
     const newUploadFiles = newFiles as UploadFile[]
 
-    setFiles([...files, ...newUploadFiles])
+    if (!isRetry) {
+      setFiles([...files, ...newUploadFiles])
+    }
 
     newUploadFiles.forEach(async (file) => {
       const presignedPost = await createPresignedPost(file.name)
@@ -197,5 +199,9 @@ export const useS3Upload = (workingCase?: Case) => {
     }
   }
 
-  return { files, onChange, onRemove }
+  const onRetry = (file: UploadFile) => {
+    onChange([file as File], true)
+  }
+
+  return { files, onChange, onRemove, onRetry }
 }

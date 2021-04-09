@@ -61,12 +61,14 @@ interface UploadedFileProps {
   file: UploadFile
   showFileSize: boolean
   onRemoveClick: (file: UploadFile) => void
+  onRetryClick?: (file: UploadFile) => void
 }
 
 const UploadedFile = ({
   file,
   showFileSize,
   onRemoveClick,
+  onRetryClick,
 }: UploadedFileProps) => {
   const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
@@ -82,7 +84,7 @@ const UploadedFile = ({
   const statusIcon = (status?: UploadFileStatus): IconTypes => {
     switch (status) {
       case 'error':
-        return 'reload'
+        return 'close'
       case 'done':
         return 'close'
       default:
@@ -127,12 +129,27 @@ const UploadedFile = ({
         >
           <Icon color="blue400" icon={statusIcon(file.status)} />
         </div>
+      ) : file.status === 'error' && onRetryClick ? (
+        <button
+          type={'button'}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (!isUploading) {
+              onRetryClick(file)
+            }
+          }}
+          aria-label="Reyna aftur"
+        >
+          <Icon color="blue400" icon="reload" />
+        </button>
       ) : (
         <button
           type={'button'}
           onClick={(e) => {
             e.stopPropagation()
-            if (!isUploading) onRemoveClick(file)
+            if (!isUploading) {
+              onRemoveClick(file)
+            }
           }}
           aria-label="Fjarlægja skrá"
         >
@@ -158,6 +175,7 @@ export interface InputFileUploadProps {
   fileList: UploadFile[]
   maxSize?: number
   onRemove: (file: UploadFile) => void
+  onRetry?: (file: UploadFile) => void
   onChange?: (files: File[]) => void
   errorMessage?: string
 }
@@ -176,6 +194,7 @@ export const InputFileUpload = ({
   maxSize,
   onChange,
   onRemove,
+  onRetry,
   errorMessage,
 }: InputFileUploadProps) => {
   const onDrop = (acceptedFiles: File[]) => {
@@ -237,6 +256,7 @@ export const InputFileUpload = ({
             file={file}
             showFileSize={showFileSize}
             onRemoveClick={onRemove}
+            onRetryClick={onRetry}
           />
         ))}
       </Box>
