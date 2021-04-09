@@ -8,9 +8,9 @@ import { GetSignedUrl } from '@island.is/judicial-system/types'
 export class GetSignedUrlInput implements GetSignedUrl {
   @Allow()
   @Field()
-  readonly caseId!: string
+  readonly id!: string
 
   @Allow()
   @Field()
-  readonly id!: string
+  readonly caseId!: string
 }
