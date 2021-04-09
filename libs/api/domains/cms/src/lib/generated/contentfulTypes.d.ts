@@ -1887,6 +1887,9 @@ export interface IOrganizationPageFields {
   /** Menu Links */
   menuLinks?: ILinkGroup[] | undefined
 
+  /** Secondary Menu */
+  secondaryMenu?: ILinkGroup | undefined
+
   /** Organization */
   organization: IOrganization
 
