@@ -64,7 +64,7 @@ export class RegulationsService extends RESTDataSource {
       }
     }
     const response = await this.get<Regulation | RegulationRedirect | null>(
-      `/regulation/${name}/${params}`,
+      `/regulation/nr/${name}/${params}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },
