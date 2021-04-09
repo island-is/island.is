@@ -1,10 +1,13 @@
 declare const _RegNameToken_: unique symbol
+/** Regulation name – `0123/2012` */
 export type RegName = string & { [_RegNameToken_]: true }
 
 declare const _RegNameQueryToken_: unique symbol
+/** Regulation name formatted for URL param insertion – `0123-2012` */
 export type RegQueryName = string & { [_RegNameQueryToken_]: true }
 
 declare const _ISODateToken_: unique symbol
+/** Valid ISODate string – e.g. `2012-09-30` */
 export type ISODate = string & { [_ISODateToken_]: true }
 
 // ---------------------------------------------------------------------------
