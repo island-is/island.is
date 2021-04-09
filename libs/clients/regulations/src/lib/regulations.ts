@@ -34,12 +34,12 @@ export class RegulationsService extends RESTDataSource {
   }
   /*
   Example api routes for regulation
-  regulation/nr/[name]/current
-  regulation/nr/[name]/original
-  regulation/nr/[name]/diff
-  regulation/nr/[name]/d/[date]
-  regulation/nr/[name]/d/[date]/diff
-  regulation/nr/[name]/d/[date]/diff/[earlierDate]
+  regulation/[name]/current
+  regulation/[name]/original
+  regulation/[name]/diff
+  regulation/[name]/d/[date]
+  regulation/[name]/d/[date]/diff
+  regulation/[name]/d/[date]/diff/[earlierDate]
 */
   async getRegulation(
     viewType: 'current' | 'diff' | 'original' | 'd',
@@ -64,7 +64,7 @@ export class RegulationsService extends RESTDataSource {
       }
     }
     const response = await this.get<Regulation | RegulationRedirect | null>(
-      `/regulation/nr/${name}/${params}`,
+      `/regulation/${name}/${params}`,
       {
         cacheOptions: { ttl: this.options.ttl ?? 600 }, // defaults to 10 minutes
       },

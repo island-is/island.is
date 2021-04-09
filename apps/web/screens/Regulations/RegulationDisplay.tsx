@@ -14,16 +14,7 @@ import {
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import cn from 'classnames'
-
-// ---------------------------------------------------------------------------
-
-type BallProps = {
-  type?: 'green' | 'red'
-}
-const Ball: React.FC<BallProps> = ({ type, children }) => (
-  <span className={cn(s.ball, type === 'red' && s.ballRed)}>{children}</span>
-)
+import { RegulationStatus } from './RegulationStatus'
 
 // ---------------------------------------------------------------------------
 
@@ -41,14 +32,11 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
 
   const dateUtl = useDateUtils()
   const formatDate = (isoDate: string) => {
-    // Eff this! 👇
-    // return dateUtl.format(new Date(isoDate), dateFormat[dateUtl.locale.code || defaultLanguage])
     return dateUtl.format(new Date(isoDate), 'd. MMM yyyy')
   }
   const txt = useNamespace(texts)
   const { linkToRegulation } = useRegulationLinkResolver()
 
-  const regulationBody = regulation.text
   const name = prettyName(regulation.name)
 
   const timelineItems = [
@@ -86,68 +74,13 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
             </Link>
           )}
 
-          {!regulation.repealedDate ? (
-            <Text>
-              {!regulation.timelineDate ? (
-                <>
-                  <Ball type="green" />
-                  Núgildandi reglugerð
-                  {regulation.lastAmendDate ? (
-                    <>
-                      {' – '}
-                      <span className={s.metaDate}>
-                        uppfærð {formatDate(regulation.lastAmendDate)}
-                      </span>
-                    </>
-                  ) : (
-                    ''
-                  )}
-                </>
-              ) : viewingOriginal ? (
-                <>
-                  <Ball type="red" />
-                  Upprunaleg útgáfa reglugerðar
-                  {' – '}
-                  <span className={s.metaDate}>
-                    sem gók gildi þann {formatDate(regulation.timelineDate)}
-                  </span>
-                </>
-              ) : regulation.timelineDate > today ? (
-                <>
-                  <Ball type="red" />
-                  Væntanleg útgáfa reglugerðar
-                  {' – '}
-                  <span className={s.metaDate}>
-                    sem mun taka gildi þann{' '}
-                    {formatDate(regulation.timelineDate)}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Ball type="red" />
-                  Úrelt útgáfa reglugerðar
-                  {' – '}
-                  {props.urlDate ? (
-                    <span className={s.metaDate}>
-                      eins og leit út þann {formatDate(props.urlDate)}
-                    </span>
-                  ) : (
-                    <span className={s.metaDate}>
-                      sem tók gildi þann {formatDate(regulation.timelineDate)}
-                    </span>
-                  )}
-                </>
-              )}
-            </Text>
-          ) : (
-            <Text>
-              <Ball type="red" />
-              Úrelt reglugerð{' – '}
-              <span className={s.metaDate}>
-                felld úr gildi {formatDate(regulation.repealedDate)}
-              </span>
-            </Text>
-          )}
+          <RegulationStatus
+            regulation={regulation}
+            viewingOriginal={viewingOriginal}
+            urlDate={props.urlDate}
+            today={today}
+          />
+
           <Text
             as="h1"
             variant="h3"
@@ -300,6 +233,51 @@ export const RegulationDisplay: FC<RegulationDisplayProps> = (props) => {
                   </Fragment>
                 )
               })}
+            </RegulationsSidebarBox>
+          )}
+
+          {regulation.type === 'base' && (
+            <RegulationsSidebarBox
+              title={txt('infoTitle', 'Upplýsingar')}
+              colorScheme="blueberry"
+            >
+              {regulation.ministry && (
+                <Text>
+                  <strong>Ráðuneyti</strong>
+                  <br />
+                  {regulation.ministry.name}
+                </Text>
+              )}
+
+              {regulation.lawChapters.length > 0 && (
+                <Text>
+                  <strong>Lagakaflar</strong>
+                  <br />
+                  <ul>
+                  {regulation.lawChapters.map((chapter, i) => (
+                    <li key={i}>
+                      {chapter.name} <br />
+                    </li>
+                  ))}
+                  </ul>
+                </Text>
+              )}
+
+              {regulation.effectiveDate && (
+                <Text>
+                  <strong>Tók gildi</strong>
+                  <br />
+                  {formatDate(regulation.effectiveDate)}
+                </Text>
+              )}
+
+              {regulation.lastAmendDate && (
+                <Text>
+                  <strong>Síðast uppfærð</strong>
+                  <br />
+                  {formatDate(regulation.lastAmendDate)}
+                </Text>
+              )}
             </RegulationsSidebarBox>
           )}
         </Stack>

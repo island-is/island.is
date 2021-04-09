@@ -102,7 +102,7 @@ export const routesTemplate = {
     en: '',
   },
   regulation: {
-    is: '/reglugerdir/nr/[number]',
+    is: '/reglugerdir/[number]',
     en: '',
   },
   webservicedetailpage: {
