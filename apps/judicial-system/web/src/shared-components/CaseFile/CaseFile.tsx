@@ -8,8 +8,9 @@ interface Props {
   link: string
 }
 
-const File: React.FC<Props> = (props) => {
-  return <BlueBox>Herro</BlueBox>
+const CaseFile: React.FC<Props> = (props) => {
+  const { name } = props
+  return <BlueBox>{name}</BlueBox>
 }
 
-export default File
+export default CaseFile
