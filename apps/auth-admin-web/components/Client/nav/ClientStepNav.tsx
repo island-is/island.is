@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ClientStep } from '../../../entities/common/ClientStep'
+import TranslationUtils from './../../../utils/translation.utils'
+import { Translation } from './../../../entities/common/Translation'
 
 interface Props {
   handleStepChange: (step: ClientStep) => void
@@ -11,6 +13,9 @@ const ClientStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
+  const [translation, setTranslation] = useState<Translation>(
+    TranslationUtils.getTranslation(),
+  )
   return (
     <div>
       <nav className="client-step-nav">
@@ -21,7 +26,7 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.Client)}
               className={activeStep === ClientStep.Client ? 'active' : ''}
             >
-              Client Settings
+              {translation.clientSteps['client'].text}
             </button>
           </li>
           <li>
@@ -32,7 +37,7 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientRedirectUri ? 'active' : ''
               }
             >
-              Redirect Uri
+              {translation.clientSteps['clientRedirectUri'].text}
             </button>
           </li>
           <li>
@@ -43,7 +48,7 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientIdpRestrictions ? 'active' : ''
               }
             >
-              Idp Restricions
+              {translation.clientSteps['clientIdpRestrictions'].text}
             </button>
           </li>
           <li>
@@ -58,7 +63,7 @@ const ClientStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Post Logout Uris
+              {translation.clientSteps['clientPostLogoutRedirectUri'].text}
             </button>
           </li>
           <li>
@@ -73,7 +78,7 @@ const ClientStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Allowed Cors Origins
+              {translation.clientSteps['clientAllowedCorsOrigin'].text}
             </button>
           </li>
           <li>
@@ -84,7 +89,7 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientGrantTypes ? 'active' : ''
               }
             >
-              Grant types
+              {translation.clientSteps['clientGrantTypes'].text}
             </button>
           </li>
           <li>
@@ -95,7 +100,7 @@ const ClientStepNav: React.FC<Props> = ({
                 activeStep === ClientStep.ClientAllowedScopes ? 'active' : ''
               }
             >
-              Allowed Scopes
+              {translation.clientSteps['clientAllowedScopes'].text}
             </button>
           </li>
           <li>
@@ -104,7 +109,7 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.ClientClaims)}
               className={activeStep === ClientStep.ClientClaims ? 'active' : ''}
             >
-              Client claims
+              {translation.clientSteps['clientClaims'].text}
             </button>
           </li>
           <li>
@@ -113,7 +118,7 @@ const ClientStepNav: React.FC<Props> = ({
               onClick={() => handleStepChange(ClientStep.ClientSecret)}
               className={activeStep === ClientStep.ClientSecret ? 'active' : ''}
             >
-              Client secret
+              {translation.clientSteps['clientSecret'].text}
             </button>
           </li>
         </ul>

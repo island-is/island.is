@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ApiResourceStep } from '../../../entities/common/ApiResourceStep'
+import TranslationUtils from './../../../utils/translation.utils'
+import { Translation } from './../../../entities/common/Translation'
 
 interface Props {
   handleStepChange: (step: ApiResourceStep) => void
@@ -11,6 +13,10 @@ const ApiResourceStepNav: React.FC<Props> = ({
   activeStep,
   children,
 }) => {
+  const [translation, setTranslation] = useState<Translation>(
+    TranslationUtils.getTranslation(),
+  )
+
   return (
     <div>
       <nav className="api-resource-step-nav">
@@ -25,7 +31,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
                 activeStep === ApiResourceStep.ApiResourceBasics ? 'active' : ''
               }
             >
-              Api resource basics
+              {translation.apiResourceSteps['apiResourceBasics'].text}
             </button>
           </li>
           <li>
@@ -38,7 +44,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
                 activeStep === ApiResourceStep.ApiResourceScopes ? 'active' : ''
               }
             >
-              Api resource scopes
+              {translation.apiResourceSteps['apiResourceScopes'].text}
             </button>
           </li>
           <li>
@@ -53,7 +59,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Api resource secrets
+              {translation.apiResourceSteps['apiResourceSecrets'].text}
             </button>
           </li>
           <li>
@@ -68,7 +74,7 @@ const ApiResourceStepNav: React.FC<Props> = ({
                   : ''
               }
             >
-              Api resource user claims
+              {translation.apiResourceSteps['apiResourceUserClaims'].text}
             </button>
           </li>
         </ul>

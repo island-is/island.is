@@ -1,14 +1,19 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { isLoggedIn } from '../../utils/auth.utils'
 import { useSession } from 'next-auth/client'
 import { SessionInfo } from './../../entities/common/SessionInfo'
+import { Translation } from './../../entities/common/Translation'
+import TranslationUtils from './../../utils/translation.utils'
 
 const Nav: React.FC = () => {
   const [session, loading] = useSession()
   const router = useRouter()
+  const [translation, setTranslation] = useState<Translation>(
+    TranslationUtils.getTranslation(),
+  )
 
   if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
     return <div className="nav-logged-out"></div>
@@ -19,7 +24,9 @@ const Nav: React.FC = () => {
       <ul>
         <li className="nav__container">
           <Link href="/">
-            <a className={router?.pathname === '/' ? 'active' : ''}>Home</a>
+            <a className={router?.pathname === '/' ? 'active' : ''}>
+              {translation.navigation['home'].text}
+            </a>
           </Link>
         </li>
         <li className="nav__container">
@@ -32,7 +39,7 @@ const Nav: React.FC = () => {
                   : ''
               }
             >
-              Clients
+              {translation.navigation['clients'].text}
             </a>
           </Link>
         </li>
@@ -41,21 +48,21 @@ const Nav: React.FC = () => {
             <a
               className={router?.pathname.includes('resource') ? 'active' : ''}
             >
-              Resources
+              {translation.navigation['resources'].text}
             </a>
           </Link>
         </li>
         <li className="nav__container">
           <Link href="/users">
             <a className={router?.pathname === '/users' ? 'active' : ''}>
-              Users
+              {translation.navigation['users'].text}
             </a>
           </Link>
         </li>
         <li className="nav__container">
           <Link href="/admin">
             <a className={router?.pathname.includes('admin') ? 'active' : ''}>
-              Admin control
+              {translation.navigation['admin'].text}
             </a>
           </Link>
         </li>

@@ -1,10 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
+import TranslationUtils from './../../../utils/translation.utils'
+import { Translation } from './../../../entities/common/Translation'
 
 const ResourcesTabsNav: React.FC = () => {
   const router = useRouter()
+  const [translation, setTranslation] = useState<Translation>(
+    TranslationUtils.getTranslation(),
+  )
   return (
     <nav className="resource-tab-nav">
       <ul>
@@ -19,7 +24,7 @@ const ResourcesTabsNav: React.FC = () => {
                 router?.pathname.includes('api-resource') ? 'active' : ''
               }
             >
-              Api Resources
+              {translation.resourcesTabs['apiResource'].text}
             </a>
           </Link>
         </li>
@@ -32,7 +37,7 @@ const ResourcesTabsNav: React.FC = () => {
             <a
               className={router?.pathname.includes('api-scope') ? 'active' : ''}
             >
-              Api Scopes
+              {translation.resourcesTabs['apiScope'].text}
             </a>
           </Link>
         </li>
@@ -47,7 +52,7 @@ const ResourcesTabsNav: React.FC = () => {
                 router?.pathname.includes('identity-resource') ? 'active' : ''
               }
             >
-              Identity Resources
+              {translation.resourcesTabs['identityResource'].text}
             </a>
           </Link>
         </li>

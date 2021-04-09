@@ -9,12 +9,29 @@ class TranslationUtils {
   private static DEFAULT_TRANSLATION = englishTranslations
 
   private static language(): string {
-    return localStorage.getItem(LOCALE_KEY) ?? 'en'
+    try {
+      return localStorage.getItem(LOCALE_KEY) ?? 'en'
+    } catch {
+      return 'en'
+    }
+  }
+
+  private static getActiveTranslation(): Translation {
+    if (this.language() === 'en') {
+      return this.english()
+    } else {
+      // return another language when available
+      return this.english()
+    }
   }
 
   private static english(): Translation {
     const english = TranslationUtils.DEFAULT_TRANSLATION as unknown
     return english as Translation
+  }
+
+  public static getTranslation(): Translation {
+    return this.getActiveTranslation()
   }
 
   public static getFormPage(id: string) {
