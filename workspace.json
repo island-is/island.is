@@ -6221,6 +6221,31 @@
         "docker-express": {}
       }
     },
+    "system-e2e": {
+      "root": "apps/system-e2e",
+      "sourceRoot": "apps/system-e2e/src",
+      "projectType": "application",
+      "prefix": "system-e2e",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/system-e2e/tsconfig.json"],
+            "exclude": ["**/node_modules/**", "!apps/system-e2e/**/*"]
+          }
+        },
+        "system-test": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/system-e2e/cypress.json",
+            "tsConfig": "apps/system-e2e/tsconfig.json"
+          }
+        },
+        "docker-cypress": {}
+      }
+    },
     "utils-api": {
       "root": "libs/utils/api",
       "sourceRoot": "libs/utils/api/src",
